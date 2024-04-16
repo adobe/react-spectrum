@@ -60,7 +60,7 @@
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@react-aria/dnd": "workspace:^",
     "@react-spectrum/button": "workspace:^",
     "@react-stately/dnd": "workspace:^"

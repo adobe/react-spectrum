@@ -63,7 +63,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: enable corepack
+          command: corepack enable
 
       - run:
           name: build
@@ -89,7 +89,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: enable corepack
+          command: corepack enable
 
       - run:
           name: build
@@ -115,7 +115,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: enable corepack
+          command: corepack enable
 
       - run:
           name: build
@@ -141,7 +141,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: enable corepack
+          command: corepack enable
 
       - run:
           name: build

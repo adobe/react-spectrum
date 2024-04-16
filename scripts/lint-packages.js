@@ -93,40 +93,46 @@ for (let pkg of packagePaths) {
   }
 
   if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1')) {
-    softAssert(json.main, `${pkg} did not have "main"`);
-    softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
-    softAssert(json.module, `${pkg} did not have "module"`);
-    softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
-    if (json.exports['.']) {
+    // yarn enforceExports constraint
+    // softAssert(json.main, `${pkg} did not have "main"`);
+    // softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
+    // softAssert(json.module, `${pkg} did not have "module"`);
+    // softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
+    if (json.exports['.']) { // TODO migrate eventually when yarn can handle the '.' key
       for (let key in json.exports) {
         softAssert(json.exports[key].require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports[key].require}"`);
         softAssert(json.exports[key].import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports[key].import}"`);
       }
-    } else {
-      softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
-      softAssert(json.exports.import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports.import}"`);
     }
-    softAssert(json.source, `${pkg} did not have "source"`);
-    softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
-    softAssert(json.files.includes('dist'), `${pkg} files does not include dist`);
-    softAssert(json.files.includes('src'), `${pkg} files does not include src`);
-    if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden')) {
-      softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
-    } else {
-      softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
-    }
-    softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
-    softAssert(json.dependencies && json.dependencies['@swc/helpers'], `${pkg} is missing a dependency on @swc/helpers`);
-    softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
-    softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
+    // yarn enforceExports constraint
+    // else {
+    //   softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
+    //   softAssert(json.exports.import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports.import}"`);
+    // }
+    // softAssert(json.source, `${pkg} did not have "source"`);
+    // softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
+    // softAssert(json.files.includes('dist'), `${pkg} files does not include dist`);
+    // softAssert(json.files.includes('src'), `${pkg} files does not include src`);
+    // if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden')) {
+    //   softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
+    // } else {
+    //   softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
+    // }
 
-    if (json.peerDependencies?.react) {
-      softAssert.equal(json.peerDependencies.react, '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react peer dep`);
-    }
+    // yarn enforceConsistentDependenciesAcrossTheProject constraint
+    // softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
+    // softAssert(json.dependencies && json.dependencies['@swc/helpers'], `${pkg} is missing a dependency on @swc/helpers`);
+    // softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
+    // softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
 
-    if (json.peerDependencies?.['react-dom']) {
-      softAssert.equal(json.peerDependencies['react-dom'], '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react-dom peer dep`);
-    }
+    // yarn enforceConsistentDependenciesAcrossTheProject constraint
+    // if (json.peerDependencies?.react) {
+    //   softAssert.equal(json.peerDependencies.react, '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react peer dep`);
+    // }
+    //
+    // if (json.peerDependencies?.['react-dom']) {
+    //   softAssert.equal(json.peerDependencies['react-dom'], '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react-dom peer dep`);
+    // }
 
     // yarn enforceCSS constraint
     // if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {

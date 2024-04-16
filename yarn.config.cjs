@@ -2,6 +2,10 @@
 
 /** @type {import('@yarnpkg/types')} */
 const {defineConfig} = require(`@yarnpkg/types`);
+/**
+ * @typedef {import('@yarnpkg/types').Yarn.Constraints.Workspace} Workspace
+ * @typedef {import('@yarnpkg/types').Yarn.Constraints.Dependency} Dependency
+ */
 
 /**
  * This rule will enforce that a workspace MUST depend on the same version of
@@ -9,20 +13,53 @@ const {defineConfig} = require(`@yarnpkg/types`);
  *
  * @param {Context} context
  */
-// function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
-//   for (const dependency of Yarn.dependencies()) {
-//     if (dependency.type === `peerDependencies`)
-//       continue;
-//
-//     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-//       if (otherDependency.type === `peerDependencies`)
-//         continue;
-//
-//       dependency.update(otherDependency.range);
-//     }
-//   }
-// }
-function isPublishing(name) {
+function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
+  for (const dependency of Yarn.dependencies()) {
+    if (dependency.type === `peerDependencies`) {
+      if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
+        if (dependency.workspace.ident === 'storybook-builder-parcel') {
+          dependency.update('*');
+        } else {
+          dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0');
+        }
+      }
+      continue;
+    }
+
+    for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
+      if (otherDependency.type === `peerDependencies`)
+        continue;
+
+      // useful, however, i haven't quite made it relaxed enough
+      // dependency.update(otherDependency.range);
+    }
+  }
+
+  for (const workspace of Yarn.workspaces()) {
+    if (isPublishing(workspace)
+      // should these be included in the requirement?
+      && workspace.ident !== '@adobe/react-spectrum'
+      && workspace.ident !== 'react-aria'
+      && workspace.ident !== 'react-stately'
+      && workspace.ident !== '@internationalized/string-compiler'
+      && workspace.ident !== 'tailwindcss-react-aria-components') {
+      workspace.set('dependencies.@swc/helpers', '^0.5.0');
+      workspace.set('dependencies.@adobe/spectrum-css-temp');
+      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils')) {
+        workspace.set('devDependencies.@adobe/spectrum-css-temp', '3.0.0-alpha.1');
+      }
+      // these should not be in dependencies, but should be in dev or peer
+      // can't change the error message, but the package knows if it even needs it
+      workspace.set('dependencies.@react-spectrum/test-utils');
+      workspace.set('dependencies.react');
+      workspace.set('dependencies.react-dom');
+    }
+  }
+}
+
+/** @param {Dependency} dependency */
+function isOurPackage(dependency) {
+  let name = dependency.ident;
   return name.includes('@react-spectrum')
     || name.includes('@react-aria')
     || name.includes('@react-stately')
@@ -35,6 +72,7 @@ function isPublishing(name) {
     || name.startsWith('react-stately');
 }
 
+/** @param {Context} context */
 function enforceWorkspaceDependencies({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
     if (dependency.type === `peerDependencies`)
@@ -44,13 +82,14 @@ function enforceWorkspaceDependencies({Yarn}) {
       if (otherDependency.type === `peerDependencies`)
         continue;
 
-      if (isPublishing(dependency.ident)) {
+      if (isOurPackage(dependency)) {
         dependency.update('workspace:^');
       }
     }
   }
 }
 
+/** @param {Context} context */
 function enforceCSS({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
@@ -63,21 +102,28 @@ function enforceCSS({Yarn}) {
   }
 }
 
+/** @param {Workspace} workspace */
+function isPublishing(workspace) {
+  let name = workspace.ident;
+  // should whitelist instead?
+  return !name.includes('@react-types')
+    && !name.includes('@spectrum-icons')
+    && !name.includes('@react-aria/example-theme')
+    && !name.includes('@react-spectrum/style-macro-s1')
+    && !name.includes('@react-spectrum/docs')
+    && !name.includes('parcel')
+    && !name.includes('@adobe/spectrum-css-temp')
+    && !name.includes('css-module-types')
+    && !name.includes('eslint')
+    && !name.includes('optimize-locales-plugin')
+    && name !== 'react-spectrum-monorepo';
+}
+
+/** @param {Context} context */
 function enforcePublishing({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    // should whitelist instead
-    if (!name.includes('@react-types')
-      && !name.includes('@spectrum-icons')
-      && !name.includes('@react-aria/example-theme')
-      && !name.includes('@react-spectrum/style-macro-s1')
-      && !name.includes('@react-spectrum/docs')
-      && !name.includes('parcel')
-      && !name.includes('@adobe/spectrum-css-temp')
-      && !name.includes('css-module-types')
-      && !name.includes('eslint')
-      && !name.includes('optimize-locales-plugin')) {
-      let name = workspace.ident;
+    if (isPublishing(workspace)) {
       if (name.startsWith('@react-spectrum')) {
         workspace.set('license', 'Apache-2.0');
       }
@@ -94,11 +140,75 @@ function enforcePublishing({Yarn}) {
   }
 }
 
+function setExtension(filepath, ext = '.js') {
+  if (!filepath) {
+    return;
+  }
+  return filepath.replace(/\.[a-zA-Z0-9]*$/, ext);
+}
+
+/** @param {Context} context */
+function enforceExports({Yarn}) {
+  for (const workspace of Yarn.workspaces()) {
+    let name = workspace.ident;
+    if (isPublishing(workspace)) {
+      if (workspace.manifest.main) {
+        workspace.set('main', setExtension(workspace.manifest.main));
+      } else {
+        workspace.set('main', 'dist/main.js');
+      }
+
+      if (name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
+        workspace.set('module', 'dist/module.js');
+      }
+
+      let exportsRequire = workspace.manifest?.exports?.require;
+      let exportsImport = workspace.manifest?.exports?.import;
+      if (workspace.manifest.exports['.']) {
+        // TODO contribute to yarn? lodash toPath can handle it, but yarn appears to break
+        // for (let key in workspace.manifest.exports) {
+        //   let subExportsRequire = workspace.manifest.exports[key].require;
+        //   let subExportsImport = workspace.manifest.exports[key].import;
+        //   workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire));
+        //   workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+        // }
+      } else {
+        workspace.set('exports.require', setExtension(exportsRequire));
+        workspace.set('exports.import', setExtension(exportsImport, '.mjs'));
+      }
+
+      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
+        workspace.set('source', 'src/index.ts');
+      }
+
+      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
+        if (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src')) {
+          workspace.set('files', [...workspace.manifest.files, 'dist', 'src']);
+        } else if (!workspace.manifest.files.includes('dist')) {
+          workspace.set('files', [...workspace.manifest.files, 'dist']);
+        } else if (!workspace.manifest.files.includes('src')) {
+          workspace.set('files', [...workspace.manifest.files, 'src']);
+        }
+      }
+
+      // better to do in enforceCSS? it doesn't match the set of packages handled
+      if (name !== 'react-aria-components') {
+        if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
+          workspace.set('sideEffects', ['*.css']);
+        } else {
+          workspace.set('sideEffects', false);
+        }
+      }
+    }
+  }
+}
+
 module.exports = defineConfig({
   constraints: async ctx => {
     enforceWorkspaceDependencies(ctx);
-    // enforceConsistentDependenciesAcrossTheProject(ctx);
-    enforceCSS(ctx)
-    enforcePublishing(ctx)
+    enforceConsistentDependenciesAcrossTheProject(ctx);
+    enforceCSS(ctx);
+    enforcePublishing(ctx);
+    enforceExports(ctx);
   },
 });
