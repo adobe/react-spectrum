@@ -62,7 +62,7 @@ jobs:
             fi
 
       - run:
-          name: Corepack
+          name: Yarn version
           command: |
             yarn -v
 
@@ -89,7 +89,7 @@ jobs:
             fi
 
       - run:
-          name: Corepack
+          name: Yarn version
           command: |
             yarn -v
 
@@ -116,7 +116,7 @@ jobs:
             fi
 
       - run:
-          name: Corepack
+          name: Yarn version
           command: |
             yarn -v
 
@@ -143,7 +143,7 @@ jobs:
             fi
 
       - run:
-          name: Corepack
+          name: Yarn version
           command: |
             yarn -v
 
@@ -584,11 +584,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/dist
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: deploy
