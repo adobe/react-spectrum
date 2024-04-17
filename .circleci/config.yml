@@ -713,9 +713,6 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
-          filters:
-            branches:
-              only: main
           requires:
             - install
       - deploy:
