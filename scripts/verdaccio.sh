@@ -71,7 +71,7 @@ commit_to_revert="HEAD~1"
 # Publish packages to verdaccio
 #yarn lerna publish from-package --registry $registry --yes
 npm set registry $registry
-yarn workspaces foreach --all --no-private publish
+yarn workspaces foreach --all --no-private npm publish
 
 if [ "$ci" = true ];
 then
