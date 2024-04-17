@@ -76,7 +76,7 @@ export function DroppableListBoxExample(props) {
   };
 
   return (
-    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref}>
+    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref} isDisabled={props.isDisabled}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -104,6 +104,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   }));
 
   let dropState = useDroppableCollectionState({
+    isDisabled: props.isDisabled,
     collection: state.collection,
     selectionManager: state.selectionManager,
     getDropOperation: (target, _, allowedOperations) => {

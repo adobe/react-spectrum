@@ -247,8 +247,10 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   );
 };
 
+let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']);
+
 export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
-  <Tree {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
         {item.name}
@@ -273,7 +275,7 @@ export const WithActions = {
 };
 
 export const WithLinks = (args: TreeProps<unknown>) => (
-  <Tree {...args} defaultExpandedKeys="all" className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
         {item.name}
