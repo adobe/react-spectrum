@@ -144,7 +144,7 @@ async function build() {
   }
   // Install dependencies from npm
   fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['--immutable="false"'], {cwd: dir, stdio: 'inherit'});
 
   // Build the website
   console.log('building api files');
