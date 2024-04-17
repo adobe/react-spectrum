@@ -5364,7 +5364,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/config-default@npm:2.12.0":
+"@parcel/config-default@npm:2.12.0, @parcel/config-default@npm:^2.12.0":
   version: 2.12.0
   resolution: "@parcel/config-default@npm:2.12.0"
   dependencies:
@@ -31720,6 +31720,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.12.7"
     "@babel/register": "npm:^7.12.10"
     "@octokit/rest": "npm:*"
+    "@parcel/config-default": "npm:^2.12.0"
     "@parcel/optimizer-data-url": "npm:^2.12.0"
     "@parcel/optimizer-terser": "npm:^2.12.0"
     "@parcel/packager-ts": "npm:^2.12.0"

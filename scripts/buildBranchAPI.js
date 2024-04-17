@@ -56,7 +56,11 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/*/*'
+      "packages/react-stately",
+      "packages/react-aria",
+      "packages/react-aria-components",
+      "packages/tailwindcss-react-aria-components",
+      "packages/*/*"
     ],
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
@@ -95,7 +99,6 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
@@ -104,6 +107,9 @@ async function build() {
   // does it in a different format
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+
+  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
+  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
@@ -136,8 +142,11 @@ async function build() {
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
   }
+  await run('corepack', ['enable'], {cwd: dir, stdio: 'inherit'});
 
+  await run('yarn', ['set', 'version', 'berry'], {cwd: dir, stdio: 'inherit'});
   // Install dependencies from npm
+  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
   await run('yarn', {cwd: dir, stdio: 'inherit'});
 
   // Build the website
