@@ -21,9 +21,7 @@ interface TableOptions {
   interactionType?: InteractionType
 }
 
-// TODO: move somewhere central if it ends up being used
-// TODO will probably need to add a check for fake timers for this one
-// https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
+// TODO: move somewhere central if it ends up being used in multiple places
 function jestFakeTimersAreEnabled() {
   if (typeof jest !== 'undefined' && jest !== null) {
     // Logic for this is from https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
@@ -36,10 +34,13 @@ function jestFakeTimersAreEnabled() {
   return false;
 }
 
+async function triggerLongPress(element: HTMLElement, pointerOpts = {}, waitTime: number = 500) {
+  // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
+  // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
+  // util before first render. Will need to document it well
 
-async function triggerLongPress(element: HTMLElement, pointerOpts = {}, timerType: 'fake' | 'real' = 'fake', waitTime: number = 500) {
   await fireEvent.pointerDown(element, {pointerType: 'touch', ...pointerOpts});
-  if (timerType === 'real') {
+  if (!jestFakeTimersAreEnabled()) {
     await act(async () => await new Promise((resolve) => setTimeout(resolve, waitTime)));
   } else {
     act(() => {
@@ -48,6 +49,10 @@ async function triggerLongPress(element: HTMLElement, pointerOpts = {}, timerTyp
   }
 
   await fireEvent.pointerUp(element, {pointerType: 'touch', ...pointerOpts});
+  // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
+  // Try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
+  // run Table.test's "should support long press to enter selection mode on touch" test to see what happens
+  await fireEvent.click(element);
 }
 
 export class TableTester {
@@ -85,23 +90,26 @@ export class TableTester {
       text,
       needsLongPress
     } = opts;
-    jestFakeTimersAreEnabled();
-    let row;
-    if (index) {
-      row = this.rows[index];
-    } else if (text) {
-      row = within(this.rowgroups[1]).getByText(text);
-      while (row && !/^row$/.test(row.getAttribute('role'))) {
-        row = row.parentElement;
-      }
+
+    let action;
+    if (this._interactionType === 'mouse') {
+      action = async (element) => await this.user.click(element);
+    } else if (this._interactionType === 'keyboard') {
+      action = async (element) => {
+        act(() => element.focus());
+        await this.user.keyboard('[Space]');
+      };
+    } else if (this._interactionType === 'touch') {
+      action = async (element) => await this.user.pointer({target: element, keys: '[TouchA]'});
     }
 
+    let row = this.findRow({index, text});
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
-      await this.user.click(rowCheckbox);
+      await action(rowCheckbox);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      needsLongPress ? await triggerLongPress(cell) : await this.user.click(cell);
+      needsLongPress ? await triggerLongPress(cell) : await action(cell);
     }
   }
 
@@ -145,28 +153,33 @@ export class TableTester {
   }
   // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
   // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
-  async triggerRowAction(opts: {index?: number, text?: string}) {
+  // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
+  // For now just always fire
+  async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean}) {
     let {
       index,
-      text
+      text,
+      needsDoubleClick
     } = opts;
 
-    let row;
-    if (index != null) {
-      row = this.rows[index];
-    } else if (text != null) {
-      row = within(this.rowgroups[1]).getByText(text);
-      while (row && !/gridcell|rowheader|columnheader/.test(row.getAttribute('role'))) {
-        row = row.parentElement;
-      }
+    let action;
+    if (this._interactionType === 'mouse') {
+      action = async (element) => needsDoubleClick ?  await this.user.dblClick(element) : await this.user.click(element);
+    } else if (this._interactionType === 'keyboard') {
+      action = async (element) => {
+        // For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
+        // stick to simulting an actual user's keyboard operations as closely as possible
+        act(() => element.focus());
+        await this.user.keyboard('[Enter]');
+      };
+    } else if (this._interactionType === 'touch') {
+      action = async (element) => await this.user.pointer({target: element, keys: '[TouchA]'});
     }
 
+    let row = this.findRow({index, text});
     if (row) {
-      await this.user.click(row);
+      await action(row);
     }
-
-    // For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
-    // stick to simulting an actual user's keyboard operations as closely as possible
   }
 
   // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
@@ -178,6 +191,38 @@ export class TableTester {
     await this.user.click(checkbox);
   }
 
+  findRow(opts: {index?: number, text?: string}) {
+    let {
+      index,
+      text
+    } = opts;
+
+    let row;
+    if (index != null) {
+      row = this.rows[index];
+    } else if (text != null) {
+      row = within(this.rowgroups[1]).getByText(text);
+      while (row && row.getAttribute('role') !== 'row') {
+        row = row.parentElement;
+      }
+    }
+
+    return row;
+  }
+
+  findCell(opts: {text?: string}) {
+    let {
+      text
+    } = opts;
+
+    let cell = within(this.table).getByText(text);
+    while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role'))) {
+      cell = cell.parentElement;
+    }
+
+    return cell;
+  }
+
   get table() {
     if (!this._table) {
       console.error('Table element hasn\'t been set yet. Did you call `setTable()` yet?');
@@ -187,6 +232,7 @@ export class TableTester {
   }
 
   // TODO: for now make the getters always grab the latest set of elements, might be expesive though
+  // After some benchmark testing it doesn't seem to make much of a difference though, seemingly negligible
   get rowgroups() {
     return within(this._table).getAllByRole('rowgroup');
   }
