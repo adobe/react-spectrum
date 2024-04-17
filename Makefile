@@ -93,7 +93,7 @@ publish-nightly: build
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
-	yarn lerna run prepublishOnly
+	yarn workspaces foreach --all -pt run prepublishOnly
 	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
 		do node scripts/buildEsm.js $$pkg; \
 	done

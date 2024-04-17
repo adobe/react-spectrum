@@ -63,6 +63,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
+    "@babel/cli": "npm:^7.12.10"
     "@internationalized/string": "workspace:^"
     "@react-aria/i18n": "workspace:^"
     "@react-aria/ssr": "workspace:^"
@@ -6633,6 +6634,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
+    "@babel/cli": "npm:^7.12.10"
     "@internationalized/date": "workspace:^"
     "@internationalized/message": "workspace:^"
     "@internationalized/number": "workspace:^"
@@ -31512,6 +31514,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
+    "@babel/cli": "npm:^7.12.10"
     "@internationalized/string": "workspace:^"
     "@react-aria/breadcrumbs": "workspace:^"
     "@react-aria/button": "workspace:^"
@@ -31835,6 +31838,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
+    "@babel/cli": "npm:^7.12.10"
     "@react-stately/calendar": "workspace:^"
     "@react-stately/checkbox": "workspace:^"
     "@react-stately/collections": "workspace:^"
