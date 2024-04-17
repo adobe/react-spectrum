@@ -117,7 +117,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
 
   let isPendingProps = isPending ? {
     onClick: (e) => {
-      if (e.currentTarget instanceof HTMLButtonElement && e.currentTarget.type === 'submit') {
+      if (e.currentTarget instanceof HTMLButtonElement) {
         e.preventDefault();
       }
     }
