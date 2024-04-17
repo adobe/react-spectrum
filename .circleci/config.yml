@@ -63,7 +63,9 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable --install-directory ~/bin
+          command: |
+            corepack enable --install-directory ~/bin
+            yarn -v
 
       - run:
           name: build
@@ -89,7 +91,9 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable --install-directory ~/bin
+          command: |
+            corepack enable --install-directory ~/bin
+            yarn -v
 
       - run:
           name: build
@@ -115,7 +119,9 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable --install-directory ~/bin
+          command: |
+            corepack enable --install-directory ~/bin
+            yarn -v
 
       - run:
           name: build
@@ -141,7 +147,9 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable --install-directory ~/bin
+          command: |
+            corepack enable --install-directory ~/bin
+            yarn -v
 
       - run:
           name: build
@@ -158,6 +166,11 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: Yarn version
+          command: |
+            yarn -v
 
       - run:
           name: test ssr
