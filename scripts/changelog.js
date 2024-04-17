@@ -81,17 +81,18 @@ async function run() {
       user = commit[2];
     }
 
+    let commitInfo = `* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : '');
 
-    if ((/docs?|documents?|examples?|descriptions?/i).test(message)) {
-      categories.docs.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+    if ((/(pre-release)/i).test(message)) {
+      categories.construction.push(commitInfo);
+    } else if ((/docs?|documents?|examples?|descriptions?/i).test(message)) {
+      categories.docs.push(commitInfo);
     } else if ((/fix(es)?|remove|bump|refactor/i).test(message)) {
-      categories.fixes.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+      categories.fixes.push(commitInfo);
     } else if ((/adds?|support|feat(ure)?/i).test(message)) {
-      categories.enhancements.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
-    } else if ((/(pre-release)/i).test(message)) {
-      categories.construction.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+      categories.enhancements.push(commitInfo);
     } else {
-      categories.other.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+      categories.other.push(commitInfo);
     }
   }
 
