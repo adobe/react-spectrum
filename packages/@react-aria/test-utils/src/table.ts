@@ -50,7 +50,7 @@ async function triggerLongPress(element: HTMLElement, pointerOpts = {}, waitTime
 
   await fireEvent.pointerUp(element, {pointerType: 'touch', ...pointerOpts});
   // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
-  // Try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
+  // To reproduce, try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
   // run Table.test's "should support long press to enter selection mode on touch" test to see what happens
   await fireEvent.click(element);
 }
@@ -82,8 +82,24 @@ export class TableTester {
     this._interactionType = type;
   }
 
-  // TODO need to actually try this toggleRow selection with long press out, see if I even need to do the timers
-  // (probably do since I can't just use waitFor since there might not be something to actually "waitFor" instead)
+  private async pressElement(element: HTMLElement) {
+    if (this._interactionType === 'mouse') {
+      await this.user.click(element);
+    } else if (this._interactionType === 'keyboard') {
+      // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
+      // stick to simulting an actual user's keyboard operations as closely as possible
+      // Also focus the table in case it isn't focused already
+      if (!this._table.contains(document.activeElement)) {
+        act(() => this._table.focus());
+      }
+
+      await act(() => element.focus());
+      await this.user.keyboard('[Space]');
+    } else if (this._interactionType === 'touch') {
+      await this.user.pointer({target: element, keys: '[TouchA]'});
+    }
+  }
+ // TODO try all of these with each interaction type
   async toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean}) {
     let {
       index,
@@ -91,25 +107,23 @@ export class TableTester {
       needsLongPress
     } = opts;
 
-    let action;
-    if (this._interactionType === 'mouse') {
-      action = async (element) => await this.user.click(element);
-    } else if (this._interactionType === 'keyboard') {
-      action = async (element) => {
-        act(() => element.focus());
-        await this.user.keyboard('[Space]');
-      };
-    } else if (this._interactionType === 'touch') {
-      action = async (element) => await this.user.pointer({target: element, keys: '[TouchA]'});
-    }
-
     let row = this.findRow({index, text});
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
-      await action(rowCheckbox);
+      await this.pressElement(rowCheckbox);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      needsLongPress ? await triggerLongPress(cell) : await action(cell);
+      needsLongPress ? await triggerLongPress(cell) : await this.pressElement(cell);
+    }
+
+    // Handle cases where the table may transition in response to the row selection/deselection
+    if (!jestFakeTimersAreEnabled()) {
+      // TODO: figure out how long to wait for real timers
+      await act(async () => await new Promise((resolve) => setTimeout(resolve, 1000)));
+    } else {
+      act(() => {
+        jest.runOnlyPendingTimers();
+      });
     }
   }
 
@@ -133,28 +147,37 @@ export class TableTester {
     let menuButton = within(columnheader).queryByRole('button');
     if (menuButton) {
       let currentSort = columnheader.getAttribute('aria-sort');
-      await this.user.click(menuButton);
+      await this.pressElement(menuButton);
       await waitFor(() => expect(menuButton).toHaveAttribute('aria-controls'));
 
       let menuId = menuButton.getAttribute('aria-controls');
       await waitFor(() => expect(document.getElementById(menuId)).toBeInTheDocument());
       let menu = document.getElementById(menuId);
       if (currentSort === 'ascending') {
-        await this.user.click(within(menu).getAllByRole('menuitem')[1]);
+        await this.pressElement(within(menu).getAllByRole('menuitem')[1]);
       } else {
-        await this.user.click(within(menu).getAllByRole('menuitem')[0]);
+        await this.pressElement(within(menu).getAllByRole('menuitem')[0]);
       }
 
+      await waitFor(() => expect(menu).not.toBeInTheDocument());
       await waitFor(() => expect(document.activeElement).toBe(menuButton));
-      expect(menu).not.toBeInTheDocument();
+
+      // Handle cases where the table may transition in response to the row selection/deselection
+      if (!jestFakeTimersAreEnabled()) {
+        // TODO: figure out how long to wait for real timers
+        await act(async () => await new Promise((resolve) => setTimeout(resolve, 1000)));
+      } else {
+        act(() => {
+          jest.runOnlyPendingTimers();
+        });
+      }
     } else {
-      await this.user.click(columnheader);
+      await this.pressElement(columnheader);
     }
   }
   // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
   // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
   // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
-  // For now just always fire
   async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean}) {
     let {
       index,
@@ -162,33 +185,28 @@ export class TableTester {
       needsDoubleClick
     } = opts;
 
-    let action;
-    if (this._interactionType === 'mouse') {
-      action = async (element) => needsDoubleClick ?  await this.user.dblClick(element) : await this.user.click(element);
-    } else if (this._interactionType === 'keyboard') {
-      action = async (element) => {
-        // For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
-        // stick to simulting an actual user's keyboard operations as closely as possible
-        act(() => element.focus());
-        await this.user.keyboard('[Enter]');
-      };
-    } else if (this._interactionType === 'touch') {
-      action = async (element) => await this.user.pointer({target: element, keys: '[TouchA]'});
-    }
-
     let row = this.findRow({index, text});
     if (row) {
-      await action(row);
+      if (needsDoubleClick) {
+        await this.user.dblClick(row);
+      } else if (this._interactionType === 'keyboard') {
+        act(() => row.focus());
+        await this.user.keyboard('[Enter]');
+      } else {
+        await this.pressElement(row);
+      }
     }
   }
 
   // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
   // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
   // on the mocks the user sets up for their row height/etc.
+  // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
+  // add much value if we provide that to them
 
   async toggleSelectAll() {
     let checkbox = within(this._table).getByLabelText('Select All');
-    await this.user.click(checkbox);
+    await this.pressElement(checkbox);
   }
 
   findRow(opts: {index?: number, text?: string}) {

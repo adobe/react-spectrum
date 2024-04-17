@@ -2390,15 +2390,18 @@ export let tableTests = () => {
 
     describe('select all', function () {
       it('should support selecting all via the checkbox', async function () {
+        let tableUtil = new User().table;
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
+        tableUtil.setInteractionType('keyboard')
+        tableUtil.setTable(tree.getByRole('grid'));
 
         checkSelectAll(tree, 'unchecked');
 
-        let rows = tree.getAllByRole('row');
+        let rows = tableUtil.rows;
         checkRowSelection(rows.slice(1), false);
 
-        await user.click(tree.getByLabelText('Select All'));
+        await tableUtil.toggleSelectAll();
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
@@ -3128,16 +3131,19 @@ export let tableTests = () => {
         describe('still needs pointer events install', function () {
           installPointerEvent();
           it('should support long press to enter selection mode on touch', async function () {
+            let tableUtil = new User().table;
+            tableUtil.setInteractionType('touch');
             let onSelectionChange = jest.fn();
             let onAction = jest.fn();
             let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-
+            tableUtil.setTable(tree.getByRole('grid'));
             act(() => {
               jest.runAllTimers();
             });
             await user.click(document.body);
 
-            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            // TODO: Not replacing this with util for long press since it tests various things in the middle of the press
+            fireEvent.pointerDown(tableUtil.findCell({text: 'Baz 5'}), {pointerType: 'touch'});
             let description = tree.getByText('Long press to enter selection mode.');
             expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
             expect(announce).not.toHaveBeenCalled();
@@ -3170,26 +3176,15 @@ export let tableTests = () => {
             checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
             // Deselect all to exit selection mode
-            await user.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-            act(() => {
-              jest.runAllTimers();
-            });
+            await tableUtil.toggleRowSelection({text: 'Foo 10'});
             expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
             expect(announce).toHaveBeenCalledTimes(3);
             onSelectionChange.mockReset();
 
-            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            fireEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            act(() => {
-              jest.runAllTimers();
-            });
+            await tableUtil.toggleRowSelection({text: 'Foo 5'});
             expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
             expect(announce).toHaveBeenCalledTimes(4);
 
-            act(() => {
-              jest.runAllTimers();
-            });
             checkSelection(onSelectionChange, []);
             expect(onAction).not.toHaveBeenCalled();
             expect(tree.queryByLabelText('Select All')).toBeNull();
@@ -4330,11 +4325,12 @@ export let tableTests = () => {
     });
 
     it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
+      let tableUtil = new User().table;
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
-
-      let table = tree.getByRole('grid');
-      let columnheaders = within(table).getAllByRole('columnheader');
+      tableUtil.setInteractionType('keyboard');
+      tableUtil.setTable(tree.getByRole('grid'));
+      let columnheaders = tableUtil.columns;
       expect(columnheaders).toHaveLength(3);
       expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
@@ -4345,7 +4341,7 @@ export let tableTests = () => {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      await user.click(columnheaders[1]);
+      await tableUtil.toggleSort({index: 1});
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
 
       uaMock.mockRestore();
