@@ -30,6 +30,9 @@ clean_node_modules:
 clean_dist:
 	rm -rf packages/*/*/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
+	rm -rf packages/@adobe/react-spectrum/i18n
+	rm -rf packages/@react-aria/i18n/server
 
 clean_parcel:
 	rm -rf .parcel-cache

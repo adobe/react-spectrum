@@ -33079,6 +33079,7 @@ __metadata:
     "@babel/register": "npm:^7.23.7"
     "@octokit/rest": "npm:*"
     "@parcel/config-default": "npm:^2.12.0"
+    "@parcel/core": "npm:^2.12.0"
     "@parcel/optimizer-data-url": "npm:^2.12.0"
     "@parcel/optimizer-terser": "npm:^2.12.0"
     "@parcel/packager-ts": "npm:^2.12.0"

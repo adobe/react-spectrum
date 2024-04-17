@@ -56,11 +56,11 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      "packages/react-stately",
-      "packages/react-aria",
-      "packages/react-aria-components",
-      "packages/tailwindcss-react-aria-components",
-      "packages/*/*"
+      'packages/react-stately',
+      'packages/react-aria',
+      'packages/react-aria-components',
+      'packages/tailwindcss-react-aria-components',
+      'packages/*/*'
     ],
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
@@ -71,7 +71,9 @@ async function build() {
           name.startsWith('@spectrum-css') ||
           name.startsWith('@testing-library') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe')
+          name.startsWith('@adobe') ||
+          name === 'react' ||
+          name === 'react-dom'
         )
     ),
     dependencies: {},
