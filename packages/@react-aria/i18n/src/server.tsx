@@ -19,7 +19,8 @@ type PackageLocalizedStrings = {
 
 interface PackageLocalizationProviderProps {
   locale: string,
-  strings: PackageLocalizedStrings
+  strings: PackageLocalizedStrings,
+  nonce?: string
 }
 
 /**
@@ -33,7 +34,7 @@ export function PackageLocalizationProvider(props: PackageLocalizationProviderPr
   }
 
   let {locale, strings} = props;
-  return <script dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}} />;
+  return <script nonce={props.nonce} dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}} />;
 }
 
 /**
