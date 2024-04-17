@@ -87,7 +87,7 @@ async function run() {
       categories.construction.push(commitInfo);
     } else if ((/docs?|documents?|examples?|descriptions?/i).test(message)) {
       categories.docs.push(commitInfo);
-    } else if ((/fix(es)?|remove|bump|refactor/i).test(message)) {
+    } else if ((/fix(es)?|remove|bump|update/i).test(message)) {
       categories.fixes.push(commitInfo);
     } else if ((/adds?|support|feat(ure)?/i).test(message)) {
       categories.enhancements.push(commitInfo);
