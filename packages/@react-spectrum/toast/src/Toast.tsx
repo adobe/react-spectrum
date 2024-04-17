@@ -78,13 +78,13 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let Icon = ICONS[variant];
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  const handleAction = (evt: PressEvent) => {
+  const handleAction = () => {
     if (onAction) {
       onAction();
     }
 
     if (shouldCloseOnAction) {
-      closeButtonProps.onPress(evt);
+      state.close(key);
     }
   };
 
