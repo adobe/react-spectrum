@@ -108,6 +108,10 @@ async function run() {
     console.log(doc);
   }
 
+  for (let construction of categories.construction) {
+    console.log(construction);
+  }
+
   for (let other of categories.other) {
     console.log(other);
   }
