@@ -142,9 +142,6 @@ async function build() {
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
   }
-  await run('corepack', ['enable'], {cwd: dir, stdio: 'inherit'});
-
-  await run('yarn', ['set', 'version', 'berry'], {cwd: dir, stdio: 'inherit'});
   // Install dependencies from npm
   fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
   await run('yarn', {cwd: dir, stdio: 'inherit'});

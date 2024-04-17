@@ -324,6 +324,10 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: Corepack
+          command: corepack enable --install-directory ~/bin
+
+      - run:
           name: build branch apis
           command: yarn build:api-branch
 
