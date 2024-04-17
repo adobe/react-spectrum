@@ -52,11 +52,11 @@ async function run() {
   let sortedCommits = [...commits.values()].sort((a, b) => a[1] < b[1] ? -1 : 1);
 
   let categories = {
-    'enhancements': ['Enhancements'],
-    'fixes': ['Fixes'],
-    'docs': ['Docs'],
-    'construction': ['Under Construction'],
-    'other': ['Other']
+    'enhancements': ['## Enhancements'],
+    'fixes': ['## Fixes'],
+    'docs': ['## Docs'],
+    'construction': ['## Under Construction'],
+    'other': ['## Other']
   };
 
   for (let commit of sortedCommits) {
