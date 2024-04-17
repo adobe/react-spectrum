@@ -303,7 +303,7 @@ If you will use a Select in multiple places in your app, you can wrap all of the
 This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
-import type {SelectProps, ListBoxItemProps, ValidationResult} from 'react-aria-components';
+import type {SelectProps, SelectValueRenderProps, ListBoxItemProps, ValidationResult} from 'react-aria-components';
 import {Text, FieldError} from 'react-aria-components';
 
 interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children'> {
@@ -312,6 +312,7 @@ interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children
   errorMessage?: string | ((validation: ValidationResult) => string),
   items?: Iterable<T>,
   children: React.ReactNode | ((item: T) => React.ReactNode)
+  renderValue?: (selectValue: Omit<SelectValueRenderProps<T>, "isPlaceholder">) => ReactNode;
 }
 
 function MySelect<T extends object>({label, description, errorMessage, children, items, ...props}: MySelectProps<T>) {
@@ -319,7 +320,12 @@ function MySelect<T extends object>({label, description, errorMessage, children,
     <Select {...props}>
       <Label>{label}</Label>
       <Button>
-        <SelectValue />
+        <SelectValue>
+          {renderValue
+            ? ({ selectedItem, selectedText }) =>
+                selectedItem ? renderValue({ selectedItem: selectedItem as T, selectedText }) : props.placeholder ?? "Select an item"
+            : undefined}
+        </SelectValue>
         <span aria-hidden="true">▼</span>
       </Button>
       {description && <Text slot="description">{description}</Text>}
