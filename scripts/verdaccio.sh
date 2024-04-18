@@ -70,6 +70,7 @@ yarn workspaces foreach --all --no-private -p npm publish
 
 if [ "$ci" = true ];
 then
+  echo 'build prod docs'
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
 
@@ -79,6 +80,7 @@ then
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
+  echo 'build rsp-cra-18'
   # install packages in CRA test app
   cd examples/rsp-cra-18
   yarn install --no-immutable
@@ -90,6 +92,7 @@ then
   mv build-stats.txt ../../
   mv build ../../$verdaccio_path
 
+  echo 'build webpack 4 test app'
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
   yarn install --no-immutable
@@ -101,6 +104,7 @@ then
   mv webpack-4-build-stats.txt ../../$verdaccio_path/publish-stats
   mv dist ../../$verdaccio_path/webpack-4
 
+  echo 'build nextjs test app'
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
   yarn install --no-immutable
@@ -112,12 +116,14 @@ then
   mv next-build-stats.txt ../../$verdaccio_path/publish-stats
   mv out ../../$verdaccio_path/next
 
+  echo 'build RAC Tailwind app'
   # Install/build RAC Tailwind app
   cd ../../examples/rac-tailwind
   yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-tailwind
 
+  echo 'build RAC Spectrum Tailwind app'
   # Install/build RAC + Spectrum + Tailwind app
   cd ../../examples/rac-spectrum-tailwind
   yarn install --no-immutable
