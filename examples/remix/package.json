@@ -3,6 +3,7 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "vite build && vite build --ssr",
     "dev": "vite dev",

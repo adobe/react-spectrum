@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "test esm with webpack 4",
   "main": "src/index.jsx",
+  "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open",
