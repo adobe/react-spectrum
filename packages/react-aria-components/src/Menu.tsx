@@ -179,7 +179,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
   });
 
-  let prevPopoverContainer = useRef<HTMLDivElement>(null) ;
+  let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useEffect(() => {
     if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
