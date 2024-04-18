@@ -43,7 +43,7 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '255');
     expect(slider).toHaveAttribute('step', '1');
-    expect(slider).toHaveAttribute('aria-valuetext', '0');
+    expect(slider).toHaveAttribute('aria-valuetext', '0, black');
   });
 
   it('sets aria-valuetext to formatted value', () => {
@@ -54,7 +54,7 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
-    expect(slider).toHaveAttribute('aria-valuetext', '10°');
+    expect(slider).toHaveAttribute('aria-valuetext', '10°, red orange');
   });
 
   describe('labeling', () => {
