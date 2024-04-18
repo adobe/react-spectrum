@@ -15,7 +15,8 @@ import {act, waitFor, within} from '@testing-library/react';
 type InteractionType = 'mouse' | 'touch' | 'keyboard'
 
 interface SelectOptions {
-  user, // I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
+  // I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
+  user: any,
   interactionType?: InteractionType
 }
 export class SelectTester {

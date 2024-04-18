@@ -15,7 +15,7 @@ import {act, fireEvent, waitFor, within} from '@testing-library/react';
 type InteractionType = 'mouse' | 'touch' | 'keyboard'
 
 interface TableOptions {
-  user,
+  user: any,
   interactionType?: InteractionType
 }
 
