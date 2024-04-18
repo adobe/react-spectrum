@@ -81,7 +81,7 @@ then
 
   # install packages in CRA test app
   cd examples/rsp-cra-18
-  yarn install
+  yarn install --no-immutable
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
   yarn build | tee build-stats.txt
@@ -92,7 +92,7 @@ then
 
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
-  yarn install
+  yarn install --no-immutable
   yarn jest
 
   # Build Webpack 4 test app and move to dist folder. Store the size of the build in a text file.
@@ -103,7 +103,7 @@ then
 
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
-  yarn install
+  yarn install --no-immutable
 
   # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
   VERDACCIO=true yarn build | tee next-build-stats.txt
@@ -114,13 +114,13 @@ then
 
   # Install/build RAC Tailwind app
   cd ../../examples/rac-tailwind
-  yarn install
+  yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-tailwind
 
   # Install/build RAC + Spectrum + Tailwind app
   cd ../../examples/rac-spectrum-tailwind
-  yarn install
+  yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
 
