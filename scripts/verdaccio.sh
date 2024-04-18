@@ -71,13 +71,13 @@ yarn workspaces foreach --all --no-private -p npm publish
 if [ "$ci" = true ];
 then
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
-#  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
-#
-#  # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
-#  # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
-#  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
-#  mkdir -p $verdaccio_path
-#  mv dist/production/docs $verdaccio_path
+  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
+
+  # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
+  # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
+  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+  mkdir -p $verdaccio_path
+  mv dist/production/docs $verdaccio_path
 
   # install packages in CRA test app
   cd examples/rsp-cra-18

@@ -24,6 +24,23 @@ build().catch(err => {
   process.exit(1);
 });
 
+function moveWorkspaceToPeer(dir, pkgPath) {
+  let devPkg = JSON.parse(fs.readFileSync(path.join(dir, pkgPath), 'utf8'));
+  if (!devPkg.dependencies) {
+    return;
+  }
+  if (!devPkg.peerDependencies) {
+    devPkg.peerDependencies = {};
+  }
+  Object.entries(devPkg.dependencies).forEach(([name, version]) => {
+    if (version === 'workspace:^') {
+      devPkg.peerDependencies[name] = 'latest';
+      delete devPkg.dependencies[name];
+    }
+  });
+  fs.writeFileSync(path.join(dir, pkgPath), JSON.stringify(devPkg, false, 2));
+}
+
 async function build() {
   let publicUrlFlag = process.argv[2] ? `--public-url ${process.argv[2]}` : '';
   // Create a temp directory to build the site in
@@ -37,11 +54,8 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/react-stately',
-      'packages/react-aria',
-      'packages/react-aria-components',
-      'packages/tailwindcss-react-aria-components',
-      'packages/*/*'
+      'packages/dev/*',
+      'packages/@adobe/spectrum-css-temp'
     ],
     packageManager: 'yarn@4.1.1',
     devDependencies: Object.fromEntries(
@@ -120,7 +134,7 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
+  // fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
   fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
@@ -131,7 +145,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
   fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
-  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
@@ -144,6 +158,11 @@ async function build() {
     }
   }
 
+  // remove all references to workspace:^ dependencies in dev package.json
+  for (let file of glob.sync('packages/dev/**/package.json', {cwd: dir})) {
+    moveWorkspaceToPeer(dir, file);
+  }
+
   // Only copy babel and parcel patches over
   let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('@spectrum-css') || name.startsWith('postcss'));
   for (let patch of patches) {
@@ -151,7 +170,7 @@ async function build() {
   }
 
   // Install dependencies from npm
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   for (let p of packages) {
@@ -161,28 +180,28 @@ async function build() {
   }
 
   // Patch react-aria-components package.json for example CSS.
-  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
-  let json = JSON.parse(fs.readFileSync(p));
-  json.sideEffects = ['*.css'];
-  fs.writeFileSync(p, JSON.stringify(json, false, 2));
-
-  // TEMP HACK: Patch textfield css to workaround parcel bug
-  fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
-  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
-  let tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'import "./label.css";\n' + tf;
-  fs.writeFileSync(tfpath, tf);
-  tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
-  tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'require("./label.css");\n' + tf;
-  fs.writeFileSync(tfpath, tf);
-
-  // Build the website
-  await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
-
-  // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
-  fs.removeSync(dir);
+  // let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
+  // let json = JSON.parse(fs.readFileSync(p));
+  // json.sideEffects = ['*.css'];
+  // fs.writeFileSync(p, JSON.stringify(json, false, 2));
+  //
+  // // TEMP HACK: Patch textfield css to workaround parcel bug
+  // fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
+  // let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
+  // let tf = fs.readFileSync(tfpath, 'utf8');
+  // tf = 'import "./label.css";\n' + tf;
+  // fs.writeFileSync(tfpath, tf);
+  // tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
+  // tf = fs.readFileSync(tfpath, 'utf8');
+  // tf = 'require("./label.css");\n' + tf;
+  // fs.writeFileSync(tfpath, tf);
+  //
+  // // Build the website
+  // await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
+  //
+  // // Copy the build back into dist, and delete the temp dir.
+  // fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
+  // fs.removeSync(dir);
 }
 
 function run(cmd, args, opts) {
