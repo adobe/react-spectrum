@@ -37,9 +37,13 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/*/*',
-      'packages/react-aria-components'
+      "packages/react-stately",
+      "packages/react-aria",
+      "packages/react-aria-components",
+      "packages/tailwindcss-react-aria-components",
+      "packages/*/*"
     ],
+    packageManager: 'yarn@4.1.1',
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
         .filter(([name]) =>
