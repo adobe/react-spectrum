@@ -40,10 +40,6 @@ describe('useAsyncList', () => {
     jest.useFakeTimers();
   });
 
-  afterEach(async () => {
-    await act(async () => jest.runAllTimers());
-  });
-
   it('should call load function on init', async () => {
     let load = jest.fn().mockImplementation(getItems);
     let {result} = renderHook(() => useAsyncList({load}));
