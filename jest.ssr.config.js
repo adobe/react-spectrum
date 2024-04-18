@@ -47,5 +47,26 @@ module.exports = {
   // The glob patterns Jest uses to detect test files
   testMatch: [
     '**/packages/**/*.ssr.test.[tj]s?(x)'
-  ]
+  ],
+
+  transform: {
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true,
+            importAssertions: true
+          },
+
+          transform: {
+            react: {
+              runtime: 'automatic'
+            }
+          }
+        }
+      }
+    ]
+  },
 };
