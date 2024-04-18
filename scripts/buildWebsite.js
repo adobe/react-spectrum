@@ -69,7 +69,6 @@ async function build() {
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe') ||
           name === 'sharp' ||
           name === 'recast' ||
           name === 'framer-motion' ||
@@ -89,7 +88,9 @@ async function build() {
       'react-aria': 'latest',
       'react-stately': 'latest',
       'react-aria-components': 'latest',
-      'tailwindcss-react-aria-components': 'latest'
+      'tailwindcss-react-aria-components': 'latest',
+      '@spectrum-icons/illustrations': 'latest',
+      '@react-spectrum/autocomplete': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
@@ -141,7 +142,6 @@ async function build() {
   // fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
