@@ -11,16 +11,15 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
 
 type InteractionType = 'mouse' | 'touch' | 'keyboard'
 
 interface SelectOptions {
-  user: UserEvent,
+  user, // I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
   interactionType?: InteractionType
 }
 export class SelectTester {
-  private user: UserEvent;
+  private user;
   private _interactionType: InteractionType;
   // TODO: Potential problem with tracking these internally is that the user might perform some interactions
   // themselves and thus we won't update them... I've tried to mitigate this by making the getters update these values

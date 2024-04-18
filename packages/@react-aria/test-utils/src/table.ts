@@ -11,13 +11,11 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
-// TODO: better place to get this type
-import {UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
 
 type InteractionType = 'mouse' | 'touch' | 'keyboard'
 
 interface TableOptions {
-  user: UserEvent,
+  user,
   interactionType?: InteractionType
 }
 
@@ -109,8 +107,7 @@ export class TableTester {
 
     // Handle cases where the table may transition in response to the row selection/deselection
     if (!jestFakeTimersAreEnabled()) {
-      // TODO: figure out how long to wait for real timers
-      await act(async () => await new Promise((resolve) => setTimeout(resolve, 1000)));
+      await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
     } else {
       act(() => {
         jest.runOnlyPendingTimers();
@@ -163,8 +160,7 @@ export class TableTester {
 
       // Handle cases where the table may transition in response to the row selection/deselection
       if (!jestFakeTimersAreEnabled()) {
-        // TODO: figure out how long to wait for real timers
-        await act(async () => await new Promise((resolve) => setTimeout(resolve, 1000)));
+        await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
       } else {
         act(() => {
           jest.runOnlyPendingTimers();

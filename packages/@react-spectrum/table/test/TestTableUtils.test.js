@@ -16,7 +16,6 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-aria/test-utils';
-import userEvent from '@testing-library/user-event';
 
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
