@@ -48,6 +48,9 @@ grep -q 'http address' <(tail -f $output)
 
 yarn config set npmPublishRegistry $registry
 yarn config set npmRegistryServer $registry
+yarn config set npmAlwaysAuth true
+yarn config set npmAuthIdent abc
+yarn config set npmAuthToken blah
 
 if [ "$ci" = true ];
 then
@@ -63,7 +66,7 @@ npm set registry $registry
 commit_to_revert="HEAD~0"
 
 # Publish packages anonymously to verdaccio
-yarn workspaces foreach --all --no-private npm publish
+yarn workspaces foreach --all --no-private -p npm publish
 
 if [ "$ci" = true ];
 then
