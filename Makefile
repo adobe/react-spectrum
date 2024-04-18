@@ -15,6 +15,7 @@ run_chromatic:
 clean:
 	yarn clean:icons
 	rm -rf dist public src/dist
+	rm -rf storage
 
 clean_all:
 	$(MAKE) clean

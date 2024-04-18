@@ -33,8 +33,11 @@ function moveWorkspaceToPeer(dir, pkgPath) {
     devPkg.peerDependencies = {};
   }
   Object.entries(devPkg.dependencies).forEach(([name, version]) => {
-    if (version === 'workspace:^') {
-      devPkg.peerDependencies[name] = 'latest';
+    if (version === 'workspace:^' && name === '@spectrum-icons/workflow') {
+      devPkg.peerDependencies[name] = '^4.0.0';
+      delete devPkg.dependencies[name];
+    } else if (version === 'workspace:^') {
+      devPkg.peerDependencies[name] = '^3.0.0';
       delete devPkg.dependencies[name];
     }
   });
@@ -76,7 +79,8 @@ async function build() {
           name === 'lucide-react' ||
           name === 'tailwind-variants' ||
           name === 'react' ||
-          name === 'react-dom'
+          name === 'react-dom' ||
+          name === 'typescript'
         )
     ),
     dependencies: {
