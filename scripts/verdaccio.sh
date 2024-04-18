@@ -66,7 +66,7 @@ npm set registry $registry
 commit_to_revert="HEAD~0"
 
 # Publish packages anonymously to verdaccio
-yarn workspaces foreach --all --no-private -p npm publish
+yarn workspaces foreach --all --no-private -pt npm publish
 
 if [ "$ci" = true ];
 then
