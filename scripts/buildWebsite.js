@@ -37,11 +37,11 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      "packages/react-stately",
-      "packages/react-aria",
-      "packages/react-aria-components",
-      "packages/tailwindcss-react-aria-components",
-      "packages/*/*"
+      'packages/react-stately',
+      'packages/react-aria',
+      'packages/react-aria-components',
+      'packages/tailwindcss-react-aria-components',
+      'packages/*/*'
     ],
     packageManager: 'yarn@4.1.1',
     devDependencies: Object.fromEntries(
@@ -60,7 +60,9 @@ async function build() {
           name === 'tailwindcss' ||
           name === 'autoprefixer' ||
           name === 'lucide-react' ||
-          name === 'tailwind-variants'
+          name === 'tailwind-variants' ||
+          name === 'react' ||
+          name === 'react-dom'
         )
     ),
     dependencies: {
@@ -129,6 +131,8 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
   fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
+  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
+  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
