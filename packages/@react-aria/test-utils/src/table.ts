@@ -54,7 +54,7 @@ async function triggerLongPress(element: HTMLElement, pointerOpts = {}, waitTime
 }
 
 export class TableTester {
-  private user: UserEvent;
+  private user;
   private _interactionType;
   private _table: HTMLElement;
 
