@@ -83,7 +83,7 @@
     "@parcel/transformer-inline-string": "^2.12.0",
     "@parcel/transformer-svg-react": "^2.12.0",
     "@parcel/transformer-typescript-types": "^2.12.0",
-    "@spectrum-css/component-builder": "^1.0.0",
+    "@spectrum-css/component-builder": "1.0.1",
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^6.5.12",
     "@storybook/addon-actions": "^6.5.12",

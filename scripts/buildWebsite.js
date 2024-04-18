@@ -180,28 +180,28 @@ async function build() {
   }
 
   // Patch react-aria-components package.json for example CSS.
-  // let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
-  // let json = JSON.parse(fs.readFileSync(p));
-  // json.sideEffects = ['*.css'];
-  // fs.writeFileSync(p, JSON.stringify(json, false, 2));
-  //
-  // // TEMP HACK: Patch textfield css to workaround parcel bug
-  // fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
-  // let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
-  // let tf = fs.readFileSync(tfpath, 'utf8');
-  // tf = 'import "./label.css";\n' + tf;
-  // fs.writeFileSync(tfpath, tf);
-  // tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
-  // tf = fs.readFileSync(tfpath, 'utf8');
-  // tf = 'require("./label.css");\n' + tf;
-  // fs.writeFileSync(tfpath, tf);
-  //
-  // // Build the website
-  // await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
-  //
-  // // Copy the build back into dist, and delete the temp dir.
-  // fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
-  // fs.removeSync(dir);
+  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
+  let json = JSON.parse(fs.readFileSync(p));
+  json.sideEffects = ['*.css'];
+  fs.writeFileSync(p, JSON.stringify(json, false, 2));
+
+  // TEMP HACK: Patch textfield css to workaround parcel bug
+  fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
+  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
+  let tf = fs.readFileSync(tfpath, 'utf8');
+  tf = 'import "./label.css";\n' + tf;
+  fs.writeFileSync(tfpath, tf);
+  tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
+  tf = fs.readFileSync(tfpath, 'utf8');
+  tf = 'require("./label.css");\n' + tf;
+  fs.writeFileSync(tfpath, tf);
+
+  // Build the website
+  await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
+
+  // Copy the build back into dist, and delete the temp dir.
+  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
+  fs.removeSync(dir);
 }
 
 function run(cmd, args, opts) {
