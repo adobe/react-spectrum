@@ -19,6 +19,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
+import {useLocale} from '@react-aria/i18n';
 
 export type ColorSliderStory = ComponentStoryObj<typeof ColorSlider>;
 
@@ -92,8 +93,8 @@ export const ContextualHelpStory: ColorSliderStory = {
     channel: 'hue',
     contextualHelp: (
       <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Heading>What is Hue?</Heading>
+        <Content>Hue is a degree on the color wheel from 0 to 360. 0 (or 360) is red, 120 is green, 240 is blue.</Content>
       </ContextualHelp>
     )
   },
@@ -113,6 +114,7 @@ export const HSBA: ColorSliderStory = {
 };
 
 function RGBASlider(props) {
+  let {locale} = useLocale();
   let [color, setColor] = useState(parseColor('#ff00ff'));
   let onChange = (v) => {
     setColor(v);
@@ -128,9 +130,10 @@ function RGBASlider(props) {
           <ColorSlider {...props} value={color} onChange={onChange} channel={'blue'} />
           <ColorSlider {...props} value={color} onChange={onChange} channel={'alpha'} />
         </Flex>
-        <Flex direction="column" alignItems="center"gap="size-100">
+        <Flex direction="column" alignItems="center" gap="size-100">
           <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
           <Text>{color.toString('hexa')}</Text>
+          <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
     </div>
@@ -138,7 +141,8 @@ function RGBASlider(props) {
 }
 
 function HSLASlider(props) {
-  let [color, setColor] = useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
+  let {locale} = useLocale();
+  let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
   let onChange = (v) => {
     setColor(v);
     props?.onChange?.(v);
@@ -155,6 +159,7 @@ function HSLASlider(props) {
         </Flex>
         <Flex direction="column" alignItems="center" gap="size-100">
           <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+          <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
     </div>
@@ -162,7 +167,8 @@ function HSLASlider(props) {
 }
 
 function HSBASlider(props) {
-  let [color, setColor] = useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
+  let {locale} = useLocale();
+  let [color, setColor] = useState(parseColor('hsb(0, 100%, 50%)'));
   let onChange = (v) => {
     setColor(v);
     props?.onChange?.(v);
@@ -179,6 +185,7 @@ function HSBASlider(props) {
         </Flex>
         <Flex direction="column" alignItems="center" gap="size-100">
           <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+          <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
     </div>

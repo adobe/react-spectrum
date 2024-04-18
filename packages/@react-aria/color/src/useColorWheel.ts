@@ -311,7 +311,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         min: String(minValue),
         max: String(maxValue),
         step: String(step),
-        'aria-valuetext': state.value.formatChannelValue('hue', locale),
+        'aria-valuetext': `${state.value.formatChannelValue('hue', locale)}, ${state.value.getHueName(locale)}`,
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
         name,
