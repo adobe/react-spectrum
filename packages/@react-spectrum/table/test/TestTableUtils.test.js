@@ -16,6 +16,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
@@ -62,7 +63,12 @@ describe('Table ', function () {
     tableUtil = new User().table;
   });
 
-  describe('with real timers', function () {
+  describe.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `('with real timers, interactionType: $interactionType ', ({interactionType}) => {
     beforeAll(function () {
       jest.useRealTimers();
     });
@@ -73,7 +79,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-
+      tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -103,7 +109,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      tableUtil.setInteractionType('keyboard');
+      tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -127,7 +133,12 @@ describe('Table ', function () {
     });
   });
 
-  describe('with fake timers', function () {
+  describe.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `('with fake timers, interactionType: $interactionType ', ({interactionType}) => {
     beforeAll(function () {
       jest.useFakeTimers();
     });
@@ -139,7 +150,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-
+      tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -169,9 +180,9 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      // TODO This currently fails when attempting to run this with keyboard interaction because the focus and subsequent
-      // Space press causes two onselection change events. Figure out a better way to handle this
+      tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
+
       await tableUtil.toggleRowSelection({index: 2, focusToSelect: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));

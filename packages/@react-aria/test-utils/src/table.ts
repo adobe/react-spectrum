@@ -57,13 +57,8 @@ async function triggerLongPress(element: HTMLElement, pointerOpts = {}, waitTime
 
 export class TableTester {
   private user: UserEvent;
-  // TODO: support this in the functions below?
   private _interactionType;
   private _table: HTMLElement;
-  // TODO see if I actually want any of the below, try just having the gettings fetch the rows and columns for now
-  // private _rows: HTMLElement[];
-  // private _columns: HTMLElement[];
-  // private _rowgroups: HTMLElement[];
 
   constructor(opts: TableOptions) {
     this.user = opts.user;
@@ -95,7 +90,7 @@ export class TableTester {
       await this.user.pointer({target: element, keys: '[TouchA]'});
     }
   }
- // TODO try all of these with each interaction type
+
   async toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean}) {
     let {
       index,
@@ -144,9 +139,14 @@ export class TableTester {
     if (menuButton) {
       let currentSort = columnheader.getAttribute('aria-sort');
       // TODO: Focus management is all kinda of messed up if I just use .focus and Space to open the sort menu. Seems like
-      // the focused key doesn't get properly set to the desired column header. For now just use a click
-      // await this.pressElement(menuButton);
-      await this.user.click(menuButton);
+      // the focused key doesn't get properly set to the desired column header. Have to do this strange flow where I focus the
+      // column header except if the active element is already the menu button within the column header
+      if (this._interactionType === 'keyboard' && document.activeElement !== menuButton) {
+        await this.pressElement(columnheader);
+      } else {
+        await this.pressElement(menuButton);
+      }
+
       await waitFor(() => expect(menuButton).toHaveAttribute('aria-controls'));
 
       let menuId = menuButton.getAttribute('aria-controls');
