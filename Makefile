@@ -127,7 +127,7 @@ check-examples:
 
 starter:
 	node scripts/extractStarter.mjs
-	cd starters/docs && yarn && yarn tsc
+	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
@@ -138,7 +138,7 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-	cd starters/tailwind && yarn && yarn tsc
+	cd starters/tailwind && yarn --no-immutable && yarn tsc
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
