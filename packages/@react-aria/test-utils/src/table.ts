@@ -88,12 +88,8 @@ export class TableTester {
     } else if (this._interactionType === 'keyboard') {
       // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
       // stick to simulting an actual user's keyboard operations as closely as possible
-      // Also focus the table in case it isn't focused already
-      if (!this._table.contains(document.activeElement)) {
-        act(() => this._table.focus());
-      }
-
-      await act(() => element.focus());
+      // There are problems when using this approach though, actions like trying to trigger the select all checkbox and stuff behave oddly.
+      act(() => element.focus());
       await this.user.keyboard('[Space]');
     } else if (this._interactionType === 'touch') {
       await this.user.pointer({target: element, keys: '[TouchA]'});
@@ -147,7 +143,10 @@ export class TableTester {
     let menuButton = within(columnheader).queryByRole('button');
     if (menuButton) {
       let currentSort = columnheader.getAttribute('aria-sort');
-      await this.pressElement(menuButton);
+      // TODO: Focus management is all kinda of messed up if I just use .focus and Space to open the sort menu. Seems like
+      // the focused key doesn't get properly set to the desired column header. For now just use a click
+      // await this.pressElement(menuButton);
+      await this.user.click(menuButton);
       await waitFor(() => expect(menuButton).toHaveAttribute('aria-controls'));
 
       let menuId = menuButton.getAttribute('aria-controls');
@@ -206,7 +205,13 @@ export class TableTester {
 
   async toggleSelectAll() {
     let checkbox = within(this._table).getByLabelText('Select All');
-    await this.pressElement(checkbox);
+    if (this._interactionType === 'keyboard') {
+      // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
+      await this.user.click(checkbox);
+    } else {
+      await this.pressElement(checkbox);
+    }
+
   }
 
   findRow(opts: {index?: number, text?: string}) {

@@ -29,10 +29,8 @@ let columns = [
 ];
 
 describe('Table ', function () {
-  let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  // let user;
   let tableUtil;
 
   let TableExample = (props) => {
@@ -62,14 +60,6 @@ describe('Table ', function () {
 
   beforeAll(function () {
     tableUtil = new User().table;
-    // user = userEvent.setup({delay: null, pointerMap});
-    // offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    // offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-  });
-
-  afterAll(function () {
-    // offsetWidth.mockReset();
-    // offsetHeight.mockReset();
   });
 
   describe('with real timers', function () {
@@ -113,7 +103,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-
+      tableUtil.setInteractionType('keyboard');
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -179,13 +169,14 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-
+      // TODO This currently fails when attempting to run this with keyboard interaction because the focus and subsequent
+      // Space press causes two onselection change events. Figure out a better way to handle this
       tableUtil.setTable(screen.getByTestId('test'));
-      await tableUtil.toggleRowSelection({index: 2});
+      await tableUtil.toggleRowSelection({index: 2, focusToSelect: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      await tableUtil.toggleRowSelection({text: 'Foo 4'});
+      await tableUtil.toggleRowSelection({text: 'Foo 4', focusToSelect: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 4']));
 
