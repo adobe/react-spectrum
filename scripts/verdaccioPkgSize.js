@@ -11,14 +11,18 @@ function verdaccioPkgSize() {
   let verdaccioStorePath = exec('echo ~/.config/verdaccio/storage/').toString().trim();
 
   if (!fs.existsSync(verdaccioStorePath)) {
+    console.log(verdaccioStorePath + ' does not exist, trying the default path');
     verdaccioStorePath = path.join(__dirname, '..', 'verdaccio', 'storage/');
   }
+  console.log('verdaccioStorePath', verdaccioStorePath);
 
   let json = {};
   let verdaccioDBPath = path.join(__dirname, '..', 'storage', '.verdaccio-db.json');
   let publishedPackages = JSON.parse(fs.readFileSync(verdaccioDBPath), 'utf').list;
+  console.log('list of published packages', publishedPackages);
   for (let pkg of publishedPackages) {
     let tarballPath = glob.sync(`**/${pkg}/*.tgz`, {cwd: verdaccioStorePath});
+    console.log('tarball path', tarballPath);
     let size = fs.statSync(verdaccioStorePath + tarballPath).size / 1000;
     json[pkg] = size;
   }
