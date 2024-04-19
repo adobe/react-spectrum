@@ -71,6 +71,11 @@ yarn workspaces foreach --all --no-private -pt npm publish
 if [ "$ci" = true ];
 then
   echo 'build prod docs'
+  cd starters/docs
+  yarn config set npmRegistryServer $registry
+  cd ../tailwind
+  yarn config set npmRegistryServer $registry
+  cd ../..
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
 
