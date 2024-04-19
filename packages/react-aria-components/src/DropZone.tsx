@@ -117,6 +117,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
           </div>
           <button
             {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
+            type="button"
             ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}

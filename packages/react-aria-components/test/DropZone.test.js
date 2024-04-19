@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
-import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
+import {Button, DropZone, DropZoneContext, FileTrigger, Form, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
 import React from 'react';
@@ -181,6 +181,27 @@ describe('DropZone', () => {
 
     let dropzone = getByTestId('foo');
     expect(ref.current).toEqual(dropzone);
+  });
+
+  it('should not submit a parent form', async () => {
+    const submitSpy = jest.fn();
+
+    let {getByRole} = render(
+      <Form onSubmit={submitSpy}>
+        <DropZone>
+          <Text slot="label">Test</Text>
+        </DropZone>
+      </Form>
+    );
+
+    await user.tab();
+
+    let button = getByRole('button');
+    expect(document.activeElement).toBe(button);
+
+    await user.keyboard('{Enter}');
+
+    expect(submitSpy).not.toHaveBeenCalled();
   });
 
   describe('drag and drop', function () {
@@ -528,7 +549,7 @@ describe('DropZone', () => {
           </DropZone>
         </>
       );
-  
+
       let button = getByRole('button');
       await user.tab();
       expect(document.activeElement).not.toBe(button);
