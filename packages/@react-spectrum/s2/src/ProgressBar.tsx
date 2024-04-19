@@ -1,3 +1,4 @@
+import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
@@ -6,8 +7,8 @@ import {
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
-import {StyleProps, centerPadding, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {ReactNode, forwardRef} from 'react';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -45,39 +46,18 @@ const indeterminate = keyframes(`
 `);
 
 const wrapper = style<ProgressBarStyleProps>({
-  position: 'relative',
-  display: 'grid',
-  gridTemplateColumns: '1fr auto',
-  gridTemplateAreas: [
-    'label value',
-    'bar bar'
-  ],
+  ...bar(),
   width: {
     default: 192
-  },
-  minWidth: 48, // progress-bar-minimum-width
-  maxWidth: '[768px]', // progress-bar-maximum-width
-  isolation: 'isolate',
-  minHeight: 'control',
-  '--field-gap': {
-    type: 'rowGap',
-    value: centerPadding()
-  },
-  columnGap: 12 // spacing-200
+  }
 }, getAllowedOverrides());
-
-const labelStyles = style({
-  gridArea: 'label'
-});
 
 const valueStyles = style({
   gridArea: 'value'
 });
 
-const track = style<ProgressBarStyleProps>({
-  gridArea: 'bar',
-  overflow: 'hidden',
-  marginTop: 4,
+const trackStyles = style({
+  ...track(),
   height: {
     default: size(6),
     size: {
@@ -86,34 +66,7 @@ const track = style<ProgressBarStyleProps>({
       L: 8, // progress-bar-thickness-large
       XL: size(10) // progress-bar-thickness-extra-large
     }
-  },
-  borderRadius: 'full',
-  backgroundColor: {
-    default: 'gray-100',
-    staticColor: {
-      white: {
-        default: 'transparent-white-100'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-400'
-      }
-    },
-    forcedColors: 'ButtonFace'
-  },
-  outlineWidth: {
-    default: 0,
-    forcedColors: 1
-  },
-  outlineStyle: {
-    default: 'none',
-    forcedColors: 'solid'
-  },
-  outlineColor: {
-    default: 'transparent',
-    forcedColors: 'ButtonText'
-  },
-  zIndex: 1 // to fix a weird webkit bug with rounded corners and masking
+  }
 });
 
 const fill = style<ProgressBarStyleProps>({
@@ -156,10 +109,10 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
       className={UNSAFE_className + wrapper({...props, size}, props.styles)}>
       {({percentage, valueText}) => (
         <>
-          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor} styles={labelStyles}>{label}</FieldLabel>
+          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>
           {/* TODO: this cannot be a label because they will both receive context */}
           <FieldLabel size={size} labelAlign="end" staticColor={staticColor} styles={valueStyles}>{valueText}</FieldLabel>
-          <div className={track({...props})}>
+          <div className={trackStyles({...props})}>
             <div
               className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}
               style={{width: isIndeterminate ? `${100 * (136 / 192)}%` : percentage + '%'}} />
