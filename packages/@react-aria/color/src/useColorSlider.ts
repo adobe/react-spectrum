@@ -63,8 +63,8 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     inputRef
   }, state);
 
+  let value = state.getDisplayColor();
   let generateBackground = () => {
-    let value = state.getDisplayColor();
     let to: string;
     if (orientation === 'vertical') {
       to = 'top';
@@ -102,6 +102,12 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
   };
 
   let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
+
+  if (channel === 'hue') {
+    inputProps['aria-valuetext'] += `, ${value.getHueName(locale)}`;
+  } else if (channel !== 'alpha') {
+    inputProps['aria-valuetext'] += `, ${value.getColorName(locale)}`;
+  }
 
   return {
     trackProps: {

@@ -20,6 +20,8 @@ import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
+import {useAsyncList} from '@react-stately/data';
+
 
 type SearchAutocompleteStory = ComponentStoryObj<typeof SearchAutocomplete>;
 
@@ -295,5 +297,50 @@ export const WithAvatars: SearchAutocompleteStory = {
         <Text>User 4</Text>
       </Item>
     </SearchAutocomplete>
+  )
+};
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // If no cursor is available, then we're loading the first page,
+      // filtering the results returned via a query string that
+      // mirrors the SearchAutocomplete input text.
+      // Otherwise, the cursor is the next URL to load,
+      // as returned from the previous page.
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <SearchAutocomplete
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </SearchAutocomplete>
+  );
+}
+
+export const AsyncList: SearchAutocompleteStory = {
+  render: (args) => (
+    <AsyncLoadingExample {...args} />
   )
 };
