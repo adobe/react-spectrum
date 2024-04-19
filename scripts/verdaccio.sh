@@ -96,7 +96,7 @@ then
   echo 'build webpack 4 test app'
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
-  node ./scripts/prepareForProd
+  node ./scripts/prepareForProd.mjs
   yarn config set npmRegistryServer $registry
   yarn install --no-immutable
   yarn jest
