@@ -22,7 +22,7 @@ import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -179,6 +179,16 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
   });
 
+  let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
+  let [leftOffset, setLeftOffset] = useState({left: 0});
+  useEffect(() => {
+    if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
+      prevPopoverContainer.current = popoverContainer;
+      let {left} = popoverContainer.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
+  }, [leftOffset, popoverContainer]);
+
   return (
     <FocusScope>
       <div
@@ -198,7 +208,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           {children}
         </Provider>
       </div>
-      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0}} />
+      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
     </FocusScope>
   );
 }
@@ -282,7 +292,11 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string,
   /** An accessibility label for this item. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the item is selected. */
+  onAction?: () => void
 }
 
 function MenuItem<T extends object>(props: MenuItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {

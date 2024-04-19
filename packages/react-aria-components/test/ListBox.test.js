@@ -11,7 +11,18 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
+import {
+  Button, Dialog,
+  DialogTrigger,
+  DropIndicator,
+  Header, Heading,
+  ListBox,
+  ListBoxContext,
+  ListBoxItem, Modal,
+  Section,
+  Text,
+  useDragAndDrop
+} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -397,6 +408,37 @@ describe('ListBox', () => {
     expect(option).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog" isDisabled>Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat" onAction={onAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support empty state', () => {
     let {getByRole} = render(
       <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -456,6 +498,63 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should not throw TypeError at boundaries of vertical grid layout when keyboard navigating (up/down)', async () => {
+    /**
+     * The following ListBox is roughly in this shape:
+     *
+     * -------------------
+     * | 1,1 | 1,2 | 1,3 |
+     * -------------------
+     * | 2,1 | 2,2 | 2,3 |
+     * -------------------
+     * | 3,1 | 3,2 | 3,3 |
+     * -------------------
+     */
+    let {getAllByRole} = render(
+      <ListBox layout="grid" aria-label="Test">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>);
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: Math.floor(index / 3) * 40, left: (index % 3) * 100, bottom: Math.floor(index / 3) * 40 + 40, right: (index % 3) * 100 + 100, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowDown');  // the end reached
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowDown');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowUp');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowUp');  // the end reached
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowUp');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+  });
+
   it('should support horizontal grid layout', async () => {
     let {getAllByRole} = renderListbox({layout: 'grid', orientation: 'horizontal'});
     let options = getAllByRole('option');
@@ -483,6 +582,63 @@ describe('ListBox', () => {
 
     keyPress('ArrowDown');
     expect(document.activeElement).toBe(options[1]);
+  });
+
+  it('should not throw TypeError at boundaries of horizontal grid layout when keyboard navigating (left/right)', async () => {
+    /**
+     * The following ListBox is roughly in this shape:
+     *
+     * -------------------
+     * | 1,1 | 2,1 | 3,1 |
+     * -------------------
+     * | 1,2 | 2,2 | 3,2 |
+     * -------------------
+     * | 1,3 | 3,2 | 3,3 |
+     * -------------------
+     */
+    let {getAllByRole} = render(
+      <ListBox layout="grid" orientation="horizontal" aria-label="Test">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>);
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: (index % 3) * 40, left: Math.floor(index / 3) * 100, bottom: (index % 3) * 40 + 40, right: Math.floor(index / 3) * 100 + 100, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowRight');  // the end reached
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowRight');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowLeft');  // the end reached
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowLeft');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[0]);  // 1,1
   });
 
   it('should support onScroll', () => {
@@ -665,6 +821,51 @@ describe('ListBox', () => {
 
       keyPress('Escape');
       act(() => jest.runAllTimers());
+    });
+  });
+
+  describe('inside modals', () => {
+    it('should clear selection on first Escape, then allow the modal to close on the second Escape', async () => {
+      let onOpenChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <DialogTrigger onOpenChange={onOpenChange}>
+          <Button>Open Dialog</Button>
+          <Modal>
+            <Dialog>
+              <form>
+                <Heading slot="title">Sign up</Heading>
+                <ListBox aria-label="Test" selectionMode="multiple">
+                  <ListBoxItem id="cat">Cat</ListBoxItem>
+                  <ListBoxItem id="dog">Dog</ListBoxItem>
+                  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+                </ListBox>
+              </form>
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button'));
+      await user.keyboard('{Enter}');
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+
+      let options = getAllByRole('option');
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{Enter}');
+
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+      keyPress('Escape');
+
+      expect(options[0]).toBeInTheDocument();
+      expect(options[0]).toHaveAttribute('aria-selected', 'false');
+
+      keyPress('Escape');
+      expect(options[0]).not.toBeInTheDocument();
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
     });
   });
 

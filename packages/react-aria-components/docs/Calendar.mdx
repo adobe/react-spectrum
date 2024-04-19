@@ -859,6 +859,55 @@ function CalendarValue() {
 </Calendar>
 ```
 
+#### Reset value
+
+This example shows a custom `Footer` component that can be placed inside the `Calendar.` In this component, we use `CalendarStateContext` to get the `setValue` method from the `CalendarState` object. Next, by clicking on the button, we set the `setValue` to `null` to reset the `Calendar` `value`.
+
+```tsx example
+import {useContext} from 'react';
+import {CalendarStateContext, Button} from 'react-aria-components';
+
+function Footer() {
+  const state = useContext(CalendarStateContext);
+  {/*- begin highlight -*/}
+  const { setValue } = state;
+  {/*- end highlight -*/}
+
+  return (
+    <div>
+      <Button
+        slot={null}
+        className="reset-button"
+        onPress={() => {
+          // reset value
+          {/*- begin highlight -*/}
+          setValue(null)
+          {/*- end highlight -*/}
+        }}
+      >
+        Reset value
+      </Button>
+    </div>
+  );
+}
+
+<Calendar>
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <CalendarGrid>
+    {date => <CalendarCell date={date} />}
+  </CalendarGrid>
+  {/*- begin highlight -*/}
+  <Footer />
+  {/*- end highlight -*/}
+</Calendar>
+```
+
+
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useCalendar](useCalendar.html) for more details.
