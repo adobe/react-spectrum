@@ -143,6 +143,7 @@ then
 
   cd ../..
 
+  pwd
   echo 'get size of each package published to verdaccio'
   # Get the tarball size of each published package.
   node scripts/verdaccioPkgSize.js

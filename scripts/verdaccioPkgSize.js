@@ -13,6 +13,9 @@ function verdaccioPkgSize() {
   if (!fs.existsSync(verdaccioStorePath)) {
     console.log(verdaccioStorePath + ' does not exist, trying the default path');
     verdaccioStorePath = path.join(__dirname, '..', 'verdaccio', 'storage/');
+    if (fs.existsSync(verdaccioStorePath)) {
+      console.log('default path found')
+    }
   }
   console.log('verdaccioStorePath', verdaccioStorePath);
 
@@ -22,7 +25,7 @@ function verdaccioPkgSize() {
   console.log('list of published packages', publishedPackages);
   for (let pkg of publishedPackages) {
     let tarballPath = glob.sync(`**/${pkg}/*.tgz`, {cwd: verdaccioStorePath});
-    console.log('tarball path', tarballPath);
+    console.log('tarball path', verdaccioStorePath + tarballPath);
     let size = fs.statSync(verdaccioStorePath + tarballPath).size / 1000;
     json[pkg] = size;
   }
