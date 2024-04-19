@@ -383,10 +383,6 @@ jobs:
             yarn -v
 
       - run:
-          name: Corepack
-          command: corepack enable --install-directory ~/bin
-
-      - run:
           name: build branch apis
           command: yarn build:api-branch
 

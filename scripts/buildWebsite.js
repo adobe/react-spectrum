@@ -24,6 +24,8 @@ build().catch(err => {
   process.exit(1);
 });
 
+// Changes dependencies in the workspace from 'workspace:^' to
+// a range which can actually be installed from npm/verdaccio.
 function moveWorkspaceToPeer(dir, pkgPath) {
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, pkgPath), 'utf8'));
   if (!devPkg.dependencies) {
@@ -139,7 +141,6 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Copy necessary code and configuration over
-  // fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));

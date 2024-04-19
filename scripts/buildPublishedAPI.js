@@ -197,7 +197,6 @@ async function build() {
       json.targets = {
         apiCheck: {}
       };
-      // json.source = json.
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
   }
