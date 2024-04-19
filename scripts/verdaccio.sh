@@ -138,12 +138,15 @@ then
 
   cd ../..
 
+  echo 'get size of each package published to verdaccio'
   # Get the tarball size of each published package.
   node scripts/verdaccioPkgSize.js
 
+  echo 'compare sizes'
   # Compare the size of the built app and the published packages.
   node scripts/compareSize.js
 
+  echo 'move to folder for azure'
   # Store into folder for azure.
   mv size-diff.txt build-stats.txt publish.json $verdaccio_path/publish-stats
 else
