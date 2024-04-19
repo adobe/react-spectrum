@@ -12,7 +12,7 @@ function verdaccioPkgSize() {
 
   if (!fs.existsSync(verdaccioStorePath)) {
     console.log(verdaccioStorePath + ' does not exist, trying the default path');
-    verdaccioStorePath = path.join(__dirname, '..', 'verdaccio', 'storage/');
+    verdaccioStorePath = path.join(__dirname, '..', 'storage/');
     if (fs.existsSync(verdaccioStorePath)) {
       console.log('default path found')
     }
