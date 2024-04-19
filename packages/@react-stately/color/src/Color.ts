@@ -39,6 +39,8 @@ export function normalizeColor(v: string | IColor) {
 
 // Lightness threshold between orange and brown.
 const ORANGE_LIGHTNESS_THRESHOLD = 0.68;
+// Lightness threshold between pure yellow and "yellow green".
+const YELLOW_GREEN_LIGHTNESS_THRESHOLD = 0.85;
 // The maximum lightness considered to be "dark".
 const MAX_DARK_LIGHTNESS = 0.55;
 // The chroma threshold between gray and color.
@@ -48,8 +50,8 @@ const OKLCH_HUES: [number, string][] = [
   [15, 'red'],
   [48, 'orange'],
   [94, 'yellow'],
-  [124, 'green'],
-  [180, 'cyan'],
+  [135, 'green'],
+  [175, 'cyan'],
   [264, 'blue'],
   [284, 'purple'],
   [320, 'magenta'],
@@ -189,6 +191,9 @@ abstract class Color implements IColor {
         // If the hue is at least halfway to the next hue, add the next hue name as well.
         if (h > hue + (nextHue - hue) / 2 && hueName !== nextHueName) {
           hueName = `${hueName} ${nextHueName}`;
+        } else if (hueName === 'yellow' && l < YELLOW_GREEN_LIGHTNESS_THRESHOLD) {
+          // Yellow shifts toward green at lower lightnesses.
+          hueName = 'yellow green';
         }
 
         let name = strings.getStringForLocale(hueName, locale).toLocaleLowerCase(locale);
