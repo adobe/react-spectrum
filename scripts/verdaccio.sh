@@ -83,6 +83,7 @@ then
   echo 'build rsp-cra-18'
   # install packages in CRA test app
   cd examples/rsp-cra-18
+  yarn config set npmRegistryServer $registry
   yarn install --no-immutable
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
@@ -95,7 +96,8 @@ then
   echo 'build webpack 4 test app'
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
-  yarn prepareForProd
+  node ./scripts/prepareForProd
+  yarn config set npmRegistryServer $registry
   yarn install --no-immutable
   yarn jest
 
@@ -108,6 +110,7 @@ then
   echo 'build nextjs test app'
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
+  yarn config set npmRegistryServer $registry
   yarn install --no-immutable
 
   # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
@@ -120,6 +123,7 @@ then
   echo 'build RAC Tailwind app'
   # Install/build RAC Tailwind app
   cd ../../examples/rac-tailwind
+  yarn config set npmRegistryServer $registry
   yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-tailwind
@@ -127,6 +131,7 @@ then
   echo 'build RAC Spectrum Tailwind app'
   # Install/build RAC + Spectrum + Tailwind app
   cd ../../examples/rac-spectrum-tailwind
+  yarn config set npmRegistryServer $registry
   yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
