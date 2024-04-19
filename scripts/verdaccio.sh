@@ -95,6 +95,7 @@ then
   echo 'build webpack 4 test app'
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
+  yarn prepareForProd
   yarn install --no-immutable
   yarn jest
 
