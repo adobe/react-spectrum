@@ -8,7 +8,7 @@
   "red": "红色",
   "saturation": "饱和度",
   "colorName": "{transparency} {lightness} {chroma} {hue}",
-  "transparency": "{percent} transparent",
+  "transparentColorName": "{lightness} {chroma} {hue}, {percentTransparent} transparent",
   "very dark": "very dark",
   "dark": "dark",
   "light": "light",

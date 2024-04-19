@@ -8,7 +8,7 @@
   "red": "Czerwony",
   "saturation": "Nasycenie",
   "colorName": "{transparency} {lightness} {chroma} {hue}",
-  "transparency": "{percent} transparent",
+  "transparentColorName": "{lightness} {chroma} {hue}, {percentTransparent} transparent",
   "very dark": "very dark",
   "dark": "dark",
   "light": "light",
