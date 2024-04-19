@@ -7,7 +7,7 @@
   "lightness": "Lichtsterkte",
   "red": "Rood",
   "saturation": "Verzadiging",
-  "colorName": "{transparency} {lightness} {chroma} {hue}",
+  "colorName": "{lightness} {chroma} {hue}",
   "transparentColorName": "{lightness} {chroma} {hue}, {percentTransparent} transparent",
   "very dark": "very dark",
   "dark": "dark",
