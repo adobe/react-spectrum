@@ -21,7 +21,7 @@ import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, use
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -283,8 +283,8 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   /** A list of child tree row objects used when dynamically rendering the tree row children. */
   childItems?: Iterable<T>,
   // TODO: made this required since the user needs to pass Content at least
-  /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
-  children: ReactNode | ((item: T) => ReactElement)
+  /** The content of the tree row along with any nested children. Supports static nested tree rows or use of a Collection to dynamically render nested tree rows. */
+  children: ReactNode
 }
 
 function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -339,6 +339,8 @@ export function TreeItemContent(props: TreeItemContentProps) {
   }
 }
 
+export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
+
 function TreeRow<T>({item}: {item: Node<T>}) {
   let state = useContext(TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
@@ -346,7 +348,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
-  let level = rowProps['aria-level'];
+  let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection && !states.hasAction
@@ -359,7 +361,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   );
 
   let props: TreeItemProps<unknown> = item.props;
-  let renderPropValues = React.useMemo(() => ({
+  let renderPropValues = React.useMemo<TreeItemContentRenderProps>(() => ({
     ...states,
     isHovered,
     isFocusVisible,
@@ -410,7 +412,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     children: item => {
       switch (item.type) {
         case 'content': {
-          return <TreeRowContent values={renderPropValues} item={item} />;
+          return <TreeRowContent item={item} />;
         }
         // Skip item since we don't render the nested rows as children of the parent row, the flattened collection
         // will render them each as siblings instead
@@ -419,9 +421,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
         default:
           throw new Error('Unsupported element type in TreeRow: ' + item.type);
       }
-    },
-    // TODO: double check if this is the best way to go about making sure TreeRowContent's render props is always up to date
-    dependencies: [renderPropValues]
+    }
   });
 
   return (
@@ -460,6 +460,9 @@ function TreeRow<T>({item}: {item: Node<T>}) {
                     ref: expandButtonRef
                   }
                 }
+              }],
+              [TreeItemContentContext, {
+                ...renderPropValues
               }]
             ]}>
             {children}
@@ -471,7 +474,8 @@ function TreeRow<T>({item}: {item: Node<T>}) {
 }
 
 // This is separate from TreeItemContent since it needs to call useRenderProps
-function TreeRowContent({item, values}) {
+function TreeRowContent({item}) {
+  let values = useContext(TreeItemContentContext);
   let renderProps = useRenderProps({
     children: item.rendered,
     values
