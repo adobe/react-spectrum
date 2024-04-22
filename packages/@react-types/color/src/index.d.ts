@@ -58,6 +58,8 @@ export interface Color {
   toFormat(format: ColorFormat): Color,
   /** Converts the color to a string in the given format. */
   toString(format: ColorFormat | 'css'): string,
+  /** Returns a duplicate of the color value. */
+  clone(): Color,
   /** Converts the color to hex, and returns an integer representation. */
   toHexInt(): number,
   /**
@@ -94,7 +96,15 @@ export interface Color {
   /**
    * Returns an array of the color channels within the current color space space.
    */
-  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel],
+  /**
+   * Returns a localized name for the color, for use in visual or accessibility labels.
+   */
+  getColorName(locale: string): string,
+  /**
+   * Returns a localized name for the hue, for use in visual or accessibility labels.
+   */
+  getHueName(locale: string): string
 }
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {

@@ -56,7 +56,7 @@ describe('ColorWheel', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
-    expect(slider).toHaveAttribute('aria-valuetext', '0°');
+    expect(slider).toHaveAttribute('aria-valuetext', '0°, red');
   });
 
   it('the slider is focusable', async () => {
@@ -345,7 +345,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
-      let container = _container?.firstChild?.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);

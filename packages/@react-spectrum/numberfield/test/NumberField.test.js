@@ -16,7 +16,7 @@ import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Form} from '@react-spectrum/form';
-import messages from '../../../@react-aria/numberfield/intl/*';
+import messages from '../../../@react-aria/numberfield/intl/*.json';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -24,7 +24,7 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 // for some reason hu-HU isn't supported in jsdom/node
-let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
+let locales = Object.keys(messages).filter(locale => locale !== 'hu-HU');
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
