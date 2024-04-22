@@ -526,6 +526,33 @@ This behavior is slightly different when `selectionBehavior="replace"`, where si
 </div>
 ```
 
+Rows may also have a row action specified by directly applying `onAction` on the `GridListItem` itself. If `onAction` is also provided to the `GridList`, both the grid list's and the row's `onAction` are called.
+
+```tsx example
+<MyGridList aria-label="List with onAction applied on the rows directly" selectionMode="multiple">
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening Games`)}>
+  {/*- end highlight -*/}
+    Games
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening Program Files`)}>
+  {/*- end highlight -*/}
+    Program Files
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening bootmgr`)}>
+  {/*- end highlight -*/}
+    bootmgr
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening log.txt`)}>
+  {/*- end highlight -*/}
+    log.txt
+  </MyItem>
+</MyGridList>
+```
+
 ### Links
 
 Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<GridListItem>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
@@ -577,6 +604,19 @@ When `disabledBehavior` is set to `selection`, interactions such as focus, dragg
   disabledBehavior="selection"
   /*- end highlight -*/
 />
+```
+
+Rows may also be disabled by directly applying `isDisabled` on the `GridListItem` itself. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+<MyGridList aria-label="List with isDisabled applied on the rows directly" selectionMode="multiple">
+  <MyItem>Charizard</MyItem>
+  <MyItem>Blastoise</MyItem>
+  {/*- begin highlight -*/}
+  <MyItem isDisabled>Venusaur</MyItem>
+  {/*- end highlight -*/}
+  <MyItem>Pikachu</MyItem>
+</MyGridList>
 ```
 
 ## Asynchronous loading

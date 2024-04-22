@@ -849,6 +849,23 @@ to the `items` prop. See the [Collections](collections.html) guide for more deta
 
 </details>
 
+Rows may also be disabled by directly applying `isDisabled` on the `ListBoxItem` itself. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+<ListBox
+  aria-label="Choose sandwich contents example, isDisabled applied on row directly"
+  selectionMode="multiple">
+  <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+  <ListBoxItem id="tomato">Tomato</ListBoxItem>
+  <ListBoxItem id="cheese">Cheese</ListBoxItem>
+  {/*- begin highlight -*/}
+  <ListBoxItem id="tuna" isDisabled>Tuna Salad</ListBoxItem>
+  {/*- end highlight -*/}
+  <ListBoxItem id="egg">Egg Salad</ListBoxItem>
+  <ListBoxItem id="ham">Ham</ListBoxItem>
+</ListBox>
+```
+
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what the `ListBox` will display if there are no items.

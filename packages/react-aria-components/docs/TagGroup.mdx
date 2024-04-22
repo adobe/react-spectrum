@@ -407,6 +407,24 @@ See the [Collections](collections.html) guide for more details.
 
 </details>
 
+Tags may also be disabled by directly applying `isDisabled` on the `Tag` itself. A tag is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+<MyTagGroup
+ label="Sandwich contents"
+ selectionMode="multiple"
+>
+  <MyTag id="lettuce">Lettuce</MyTag>
+  <MyTag id="tomato">Tomato</MyTag>
+  <MyTag id="cheese">Cheese</MyTag>
+  {/*- begin highlight -*/}
+  <MyTag id="tuna" isDisabled>Tuna Salad</MyTag>
+  {/*- end highlight -*/}
+  <MyTag id="egg">Egg Salad</MyTag>
+  <MyTag id="ham">Ham</MyTag>
+</MyTagGroup>
+```
+
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what a `TagList` will display if there are no items.

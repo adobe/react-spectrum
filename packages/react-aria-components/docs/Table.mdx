@@ -620,6 +620,48 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
+Rows may also have a row action specified by directly applying `onAction` on the `Row` itself. If `onAction` is also provided to the `Table`, both the table's and the row's `onAction` are called.
+
+```tsx example
+<Table aria-label="Table with onAction applied on the rows directly" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Charizard`)}>
+    {/*- end highlight -*/}
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Blastoise`)}>
+    {/*- end highlight -*/}
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Venusaur`)}>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Pikachu`)}>
+    {/*- end highlight -*/}
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
 ### Links
 
 Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
@@ -675,6 +717,42 @@ By default, only row selection is disabled. When `disabledBehavior` is set to `a
 
 ```tsx example
 <PokemonTable selectionMode="multiple" disabledKeys={[3]} disabledBehavior="all" />
+```
+
+Rows may also be disabled by directly applying `isDisabled` on the `Row` itself. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+<Table aria-label="Table with isDisabled applied on the rows directly" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
 ```
 
 ## Sorting

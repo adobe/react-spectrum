@@ -462,6 +462,23 @@ to the `items` prop. See the [Collections](collections.html) guide for more deta
 </Tabs>
 ```
 
+Tabs may also be disabled by directly applying `isDisabled` on the `Tab` itself. A tab is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+<Tabs>
+  <TabList aria-label="Input settings">
+    <Tab id="mouse">Mouse Settings</Tab>
+    <Tab id="keyboard">Keyboard Settings</Tab>
+    {/*- begin highlight -*/}
+    <Tab id="gamepad" isDisabled>Gamepad Settings</Tab>
+    {/*- end highlight -*/}
+  </TabList>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
+</Tabs>
+```
+
 ## Links
 
 Tabs may be rendered as links to different routes in your application. This can be achieved by passing the `href` prop to the `<Tab>` component. By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
