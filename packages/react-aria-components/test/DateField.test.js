@@ -259,6 +259,33 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
+  it('should use controlled validation first', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <DateField name="date" isRequired isInvalid={false}>
+          <Label>Birth Date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FieldError />
+        </DateField>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
   it('should focus previous segment when backspacing on an empty date segment', async () => {
     let {getAllByRole} = render(
       <DateField defaultValue={new CalendarDate(2024, 12, 31)}>

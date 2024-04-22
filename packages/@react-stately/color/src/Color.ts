@@ -154,18 +154,21 @@ abstract class Color implements IColor {
 
     let alpha = this.getChannelValue('alpha');
     let formatter = new LocalizedStringFormatter(locale, strings);
-    let transparency = '';
     if (alpha < 1) {
-      let percent = new NumberFormatter(locale, {style: 'percent'}).format(1 - alpha);
-      transparency = formatter.format('transparency', {percent});
+      let percentTransparent = new NumberFormatter(locale, {style: 'percent'}).format(1 - alpha);
+      return formatter.format('transparentColorName', {
+        lightness,
+        chroma,
+        hue,
+        percentTransparent
+      }).replace(/\s+/g, ' ').trim();
+    } else {
+      return formatter.format('colorName', {
+        lightness,
+        chroma,
+        hue
+      }).replace(/\s+/g, ' ').trim();
     }
-    
-    return formatter.format('colorName', {
-      lightness,
-      chroma,
-      hue,
-      transparency
-    }).replace(/\s+/g, ' ').trim();
   }
 
   private getOklchHue(l: number, c: number, h: number, locale: string): [string, number] {

@@ -123,13 +123,12 @@ describe('DropZone', () => {
         </Text>
       </DropZone>);
     let text = getByText('Test');
-    let div = getByText('DropZone');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${div.id} ${text.id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
   });
 
   it('should allow custom aria-label', () => {
-    let {getByRole, getByText} = render(
+    let {getByRole} = render(
       <DropZone
         data-testid="foo"
         aria-label="test aria-label">
@@ -138,8 +137,7 @@ describe('DropZone', () => {
         </FileTrigger>
       </DropZone>);
     let button = getByRole('button');
-    let div = getByText('test aria-label');
-    expect(button).toHaveAttribute('aria-labelledby', `${div.id}`);
+    expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
 
   it('should support render props', async () => {
