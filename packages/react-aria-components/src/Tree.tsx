@@ -16,11 +16,9 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, Key, LinkDOMProps} from '@react-types/shared';
-import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
-import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
@@ -344,8 +342,9 @@ export const TreeItemContentContext = createContext<TreeItemContentRenderProps |
 function TreeRow<T>({item}: {item: Node<T>}) {
   let state = useContext(TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
-  let {rowProps, gridCellProps, ...states} = useTreeGridListItem({node: item}, state, ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+  // TODO: remove this when we support description in tree row
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
   let level = rowProps['aria-level'] || 1;
@@ -386,18 +385,6 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     }
   }, [item.textValue]);
 
-
-  let expandButtonProps = {
-    onPress: () => {
-      if (!states.isDisabled) {
-        state.toggleKey(item.key);
-      }
-    },
-    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
-    // TODO: the below actually isn't enough to have keyboard navigation skip over it, we need it to be a span type button but
-    // RAC buttons are always a "button" type element.
-    tabIndex: isAndroid() ? -1 : null
-  };
 
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -449,7 +436,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
                   selection: checkboxProps
                 }
               }],
-              // TODO: No description slot supported, doesn't exist in design
+              // TODO: support description in the tree row
               // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
               // TODO: make the button get automatically skipped by keyboard navigation
               [ButtonContext, {
