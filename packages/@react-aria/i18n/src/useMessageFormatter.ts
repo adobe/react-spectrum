@@ -12,7 +12,7 @@
 
 import {LocalizedStrings, MessageDictionary, MessageFormatter} from '@internationalized/message';
 import {useCallback, useMemo} from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from './context';
 
 export type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
 
