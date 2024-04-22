@@ -25,7 +25,7 @@ interface FormContextValue extends SpectrumLabelableProps {
 
 let FormContext = React.createContext<FormContextValue | null>(null);
 export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
-  let ctx = useContext(FormContext);
+  let ctx = useContext(FormContext) || {};
   if (ctx) {
     return {...ctx, ...props};
   }
