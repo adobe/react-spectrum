@@ -15,9 +15,9 @@ import React, {RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {usePortalContext} from '@react-aria/overlays';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
+import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 
@@ -129,7 +129,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
 
 function CursorOverlay(props) {
   let {show, children} = props;
-  let {getContainer} = usePortalContext();
+  let {getContainer} = useUNSTABLE_PortalContext();
   return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }
 

@@ -19,7 +19,7 @@ import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-stately/toast';
 import {useFocusRing} from '@react-aria/focus';
-import {usePortalContext} from '@react-aria/overlays';
+import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
 
 interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,
@@ -37,7 +37,7 @@ export function Toaster(props: ToastContainerProps): ReactElement {
   let ref = useRef();
   let {regionProps} = useToastRegion(props, state, ref);
   let {focusProps, isFocusVisible} = useFocusRing();
-  let {getContainer} = usePortalContext();
+  let {getContainer} = useUNSTABLE_PortalContext();
 
   let contents = (
     <Provider UNSAFE_style={{background: 'transparent'}}>

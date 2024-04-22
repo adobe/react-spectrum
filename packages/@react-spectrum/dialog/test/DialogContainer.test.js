@@ -18,10 +18,10 @@ import {Dialog, DialogContainer, useDialogContainer} from '../src';
 import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from '../stories/DialogContainerExamples';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
-import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef, useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 describe('DialogContainer', function () {
@@ -247,13 +247,13 @@ describe('DialogContainer', function () {
       return (
         <Provider theme={theme}>
           <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
-          <PortalProvider getContainer={() => container.current}>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
             <DialogContainer onDismiss={() => setOpen(false)} {...props}>
               {isOpen &&
                 <ExampleDialog {...props} />
               }
             </DialogContainer>
-          </PortalProvider>
+          </UNSTABLE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
         </Provider>
       );

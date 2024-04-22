@@ -19,10 +19,10 @@ import {createLandmarkController, useLandmark} from '@react-aria/landmark';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {PortalProvider} from '@react-aria/overlays';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 
 export default {
   title: 'Toast',
@@ -359,11 +359,11 @@ function FullscreenApp(props) {
   }, []);
   return (
     <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
-      <PortalProvider getContainer={() => ref.current}>
+      <UNSTABLE_PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
         {isFullscreen && <ToastContainer key="miniapp" />}
-      </PortalProvider>
+      </UNSTABLE_PortalProvider>
       {!isFullscreen && <ToastContainer key="app" />}
     </div>
   );

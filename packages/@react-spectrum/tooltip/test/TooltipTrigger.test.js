@@ -12,11 +12,11 @@
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
-import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 // Sync with useTooltipTriggerState.ts
@@ -966,14 +966,14 @@ describe('TooltipTrigger', function () {
   describe('portalContainer', () => {
     function InfoTooltip(props) {
       return (
-        <PortalProvider getContainer={() => props.container.current}>
+        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
           <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>
               <div data-testid="content">hello</div>
             </Tooltip>
           </TooltipTrigger>
-        </PortalProvider>
+        </UNSTABLE_PortalProvider>
       );
     }
     function App() {

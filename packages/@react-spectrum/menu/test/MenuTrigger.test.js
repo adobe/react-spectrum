@@ -26,10 +26,10 @@ import {
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
-import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let triggerText = 'Menu Button';
@@ -1251,7 +1251,7 @@ describe('MenuTrigger', function () {
     function InfoMenu(props) {
       return (
         <Provider theme={theme}>
-          <PortalProvider getContainer={() => props.container.current}>
+          <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
             <MenuTrigger>
               <ActionButton aria-label="trigger" />
               <Menu>
@@ -1260,7 +1260,7 @@ describe('MenuTrigger', function () {
                 <Item key="3">Three</Item>
               </Menu>
             </MenuTrigger>
-          </PortalProvider>
+          </UNSTABLE_PortalProvider>
         </Provider>
       );
     }

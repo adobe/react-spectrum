@@ -18,10 +18,14 @@ export interface PortalProviderProps {
 
 export const PortalContext = createContext<PortalProviderProps>({});
 
-export function PortalProvider(props: PortalProviderProps & {children: ReactNode}) {
-  return <PortalContext.Provider value={{getContainer: props.getContainer}}>{props.children}</PortalContext.Provider>;
+export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: ReactNode}) {
+  return (
+    <PortalContext.Provider value={{getContainer: props.getContainer}}>
+      {props.children}
+    </PortalContext.Provider>
+  );
 }
 
-export function usePortalContext() {
+export function useUNSTABLE_PortalContext() {
   return useContext(PortalContext) ?? {};
 }

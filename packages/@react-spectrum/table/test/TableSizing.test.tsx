@@ -20,13 +20,13 @@ import {ControllingResize} from '../stories/ControllingResize';
 import {fireEvent, installPointerEvent, pointerMap, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
-import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {Scale} from '@react-types/provider';
 import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let columns = [
@@ -1049,7 +1049,7 @@ describe('TableViewSizing', function () {
       let Example = (props) => {
         let container = useRef(null);
         return (
-          <PortalProvider getContainer={() => container.current}>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
             <TableView aria-label="Table" onResizeEnd={props.onResizeEnd}>
               <TableHeader>
                 <Column allowsResizing key="foo">Foo</Column>
@@ -1065,7 +1065,7 @@ describe('TableViewSizing', function () {
               </TableBody>
             </TableView>
             <div id="custom-portal-container" ref={container} />
-          </PortalProvider>
+          </UNSTABLE_PortalProvider>
         );
       };
       let customPortalRender = (props) => render(<Example {...props} />);
