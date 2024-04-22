@@ -86,6 +86,7 @@ describe('Submenu', function () {
     let submenuTrigger1 = menuItems[1];
     expect(submenuTrigger1).toHaveAttribute('aria-haspopup', 'menu');
     expect(submenuTrigger1).toHaveAttribute('aria-expanded', 'false');
+    expect(submenuTrigger1).toHaveAttribute('data-key', 'Lvl 1 Item 2');
 
     await user.pointer({target: submenuTrigger1});
     act(() => {jest.runAllTimers();});
@@ -105,6 +106,7 @@ describe('Submenu', function () {
     expect(within(submenuTrigger2).getByRole('img', {hidden: true})).toBeTruthy();
     expect(submenuTrigger2).toHaveAttribute('aria-haspopup', 'menu');
     expect(submenuTrigger2).toHaveAttribute('aria-expanded', 'false');
+    expect(submenuTrigger2).toHaveAttribute('data-key', 'Lvl 2 Item 3');
     await user.pointer({target: submenuTrigger2});
     act(() => {jest.runAllTimers();});
 
