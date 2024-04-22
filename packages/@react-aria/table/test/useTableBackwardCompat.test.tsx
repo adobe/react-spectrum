@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {
   TableCell,
