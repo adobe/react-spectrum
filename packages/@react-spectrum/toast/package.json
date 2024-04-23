@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "workspace:^",
+    "@react-spectrum/test-utils-internal": "workspace:^",
     "@types/use-sync-external-store": "^0.0.3"
   },
   "peerDependencies": {

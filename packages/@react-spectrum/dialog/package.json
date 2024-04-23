@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "workspace:^"
+    "@react-spectrum/test-utils-internal": "workspace:^"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
