@@ -331,11 +331,9 @@ callbacks will not fire for items made unavailable by a ContextualHelpTrigger.
 
 The example below illustrates how one would setup a Menu to use ContextualHelpTrigger.
 
-```tsx example
+```tsx example keepIndividualImports
+import {Content, Dialog, Heading} from '@adobe/react-spectrum';
 import {ContextualHelpTrigger} from '@react-spectrum/menu';
-import {Dialog} from '@react-spectrum/dialog';
-import {Heading} from '@react-spectrum/text';
-import {Content} from '@react-spectrum/view';
 
 <MenuTrigger>
   <ActionButton>Edit</ActionButton>
@@ -374,7 +372,8 @@ Each submenu's Menu accepts its own set of menu props, allowing you to customize
 
 ### Static
 
-```tsx example
+```tsx example keepIndividualImports
+
 import {SubmenuTrigger} from '@react-spectrum/menu';
 
 <MenuTrigger>
@@ -406,7 +405,7 @@ import {SubmenuTrigger} from '@react-spectrum/menu';
 
 You can define a recursive function to render the nested menu items dynamically.
 
-```tsx example
+```tsx example keepIndividualImports
 import {SubmenuTrigger} from '@react-spectrum/menu';
 
 let items = [
