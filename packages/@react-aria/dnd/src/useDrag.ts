@@ -357,6 +357,7 @@ export function useDrag(options: DragOptions): DragResult {
       onDragEnd
     },
     dragButtonProps: {
+      ...descriptionProps,
       onPress
     },
     isDragging
