@@ -267,11 +267,11 @@ export {_Tree as Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
-  // Whether the tree item is expanded.
+  /** Whether the tree item is expanded. */
   isExpanded: boolean,
   // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
   // Maybe should have this for the other collection item render props
-  // Whether the tree item's children have keyboard focus.
+  /** Whether the tree item's children have keyboard focus. */
   isFocusVisibleWithin: boolean
 }
 

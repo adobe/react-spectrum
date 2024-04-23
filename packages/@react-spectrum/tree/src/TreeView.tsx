@@ -277,7 +277,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
             )}
             <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-            {(hasChildRows || hasChildItems) && <ExpandableRowChevronMacros isDisabled={isDisabled} isExpanded={isExpanded} />}
+            {(hasChildRows || hasChildItems) && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
@@ -330,7 +330,7 @@ const expandButton = style<ExpandableRowChevronProps>({
   transition: '[transform ease var(--spectrum-global-animation-duration-100)]'
 });
 
-function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
+function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef();
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;

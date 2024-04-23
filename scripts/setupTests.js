@@ -94,7 +94,5 @@ expect.extend({
   }
 });
 
-configure({asyncUtilTimeout: 400});
-
 failTestOnConsoleWarn();
 failTestOnConsoleError();
