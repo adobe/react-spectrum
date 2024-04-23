@@ -582,7 +582,7 @@ function transformExample(node, preRelease, keepIndividualImports) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !/test-utils/.test(path.node.source.value) && !keepIndividualImports) {
           let lib = path.node.source.value.split('/')[0];
           let s = path.node.importKind === 'type' ? typeSpecifiers : specifiers;
           if (!s[lib]) {
