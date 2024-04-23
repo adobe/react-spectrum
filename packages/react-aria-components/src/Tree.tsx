@@ -15,7 +15,7 @@ import {BaseCollection, CollectionProps, CollectionRendererContext, ItemRenderPr
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, Expandable, Key, LinkDOMProps} from '@react-types/shared';
+import {DisabledBehavior, Expandable, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -271,7 +271,7 @@ export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDraggi
   isExpanded: boolean
 }
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree row represents. When using dynamic collections, this is set automatically. */
@@ -351,7 +351,10 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: !states.allowsSelection && !states.hasAction,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
