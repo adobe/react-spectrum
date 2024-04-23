@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {DateInput, DateSegment, FieldError, Label, Text, TimeField, TimeFieldContext} from '../';
 import React from 'react';
 import {Time} from '@internationalized/date';

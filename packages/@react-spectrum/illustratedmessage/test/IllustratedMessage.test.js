@@ -14,7 +14,7 @@ import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 let dataTestId = 'IMsvg1';
 

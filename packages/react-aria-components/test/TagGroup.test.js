@@ -11,7 +11,7 @@
  */
 
 import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
