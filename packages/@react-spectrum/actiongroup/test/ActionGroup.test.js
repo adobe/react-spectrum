@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, screen, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, within} from '@react-spectrum/test-utils-internal';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -316,45 +316,45 @@ describe('ActionGroup', function () {
     expect(document.activeElement).toBe(buttons[1]);
   });
 
-  it('ActionGroup handles single selection', function () {
+  it('ActionGroup handles single selection', async function () {
     let {getAllByRole} = renderComponent({selectionMode: 'single'});
 
     let [button1, button2] = getAllByRole('radio');
-    triggerPress(button1);
+    await user.click(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
 
-    triggerPress(button2);
+    await user.click(button2);
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ActionGroup handles multiple selection', function () {
+  it('ActionGroup handles multiple selection', async function () {
     let {getByRole, getAllByRole} = renderComponent({selectionMode: 'multiple'});
 
     expect(getByRole('toolbar')).toBeTruthy();
     let [button1, button2] = getAllByRole('checkbox');
-    triggerPress(button1);
+    await user.click(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
 
-    triggerPress(button2);
+    await user.click(button2);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ActionGroup should not allow selecting all items with cmd + a', function () {
+  it('ActionGroup should not allow selecting all items with cmd + a', async function () {
     let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
 
     let [button1, button2] = getAllByRole('checkbox');
-    triggerPress(button1);
+    await user.click(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
 
-    fireEvent.keyDown(button1, {key: 'a', ctrlKey: true});
+    await user.keyboard('{Control>}{a}{/Control}');
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('ActionGroup handles none selection', function () {
+  it('ActionGroup handles none selection', async function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none">
@@ -364,7 +364,7 @@ describe('ActionGroup', function () {
     );
 
     let button1 = getByRole('button');
-    triggerPress(button1);
+    await user.click(button1);
     expect(button1).not.toHaveAttribute('aria-checked');
   });
 
@@ -386,54 +386,54 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('tabIndex', '0');
   });
 
-  it('ActionGroup handles disabledKeys', function () {
+  it('ActionGroup handles disabledKeys', async function () {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderComponent({selectionMode: 'single', disabledKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
-    triggerPress(button1);
+    await user.click(button1);
     expect(button1).toHaveAttribute('disabled');
     expect(onSelectionChange).toBeCalledTimes(0);
-    triggerPress(button2);
+    await user.click(button2);
     expect(button2).not.toHaveAttribute('disabled');
     expect(onSelectionChange).toBeCalledTimes(1);
   });
 
-  it('ActionGroup handles selectedKeys (controlled)', function () {
+  it('ActionGroup handles selectedKeys (controlled)', async function () {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderComponent({selectionMode: 'single', selectedKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
-    triggerPress(button2);
+    await user.click(button2);
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('ActionGroup handles selectedKeys (uncontrolled)', function () {
+  it('ActionGroup handles selectedKeys (uncontrolled)', async function () {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderComponent({selectionMode: 'single', defaultSelectedKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
-    triggerPress(button2);
+    await user.click(button2);
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ActionGroup deselects the selected button', function () {
+  it('ActionGroup deselects the selected button', async function () {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderComponent({selectionMode: 'single', onSelectionChange});
 
     let [button1] = getAllByRole('radio');
-    triggerPress(button1);
+    await user.click(button1);
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
-    triggerPress(button1);
+    await user.click(button1);
     expect(onSelectionChange).toBeCalledTimes(2);
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set([]));
   });
@@ -518,7 +518,7 @@ describe('ActionGroup', function () {
     expect(item).toHaveAttribute('data-testid', 'test');
   });
 
-  it('fires onAction when a button is pressed', function () {
+  it('fires onAction when a button is pressed', async function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
@@ -529,13 +529,13 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledWith('test');
   });
 
-  it('does not fire onAction if the action group is disabled', function () {
+  it('does not fire onAction if the action group is disabled', async function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
@@ -546,12 +546,12 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     expect(onAction).not.toHaveBeenCalled();
   });
 
-  it('does not fire onAction if the item is disabled', function () {
+  it('does not fire onAction if the item is disabled', async function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
@@ -562,12 +562,12 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     expect(onAction).not.toHaveBeenCalled();
   });
 
-  it('supports DialogTrigger as a wrapper around items', function () {
+  it('supports DialogTrigger as a wrapper around items', async function () {
     let tree = render(
       <Provider theme={theme}>
         <ActionGroup>
@@ -583,7 +583,7 @@ describe('ActionGroup', function () {
 
     let button = tree.getByRole('button');
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {
       jest.runAllTimers();
     });
@@ -591,8 +591,7 @@ describe('ActionGroup', function () {
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
 
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     act(() => {
       jest.runAllTimers();
     });
@@ -600,7 +599,7 @@ describe('ActionGroup', function () {
     expect(tree.queryByRole('dialog')).toBeNull();
   });
 
-  it('supports TooltipTrigger as a wrapper around items', function () {
+  it('supports TooltipTrigger as a wrapper around items', async function () {
     let tree = render(
       <Provider theme={theme}>
         <ActionGroup>
@@ -615,8 +614,7 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    fireEvent.keyDown(document.body, {key: 'Tab'});
-    fireEvent.keyUp(document.body, {key: 'Tab'});
+    await user.keyboard('{Tab}');
     act(() => button.focus());
 
     let tooltip = tree.getByRole('tooltip');
@@ -702,7 +700,7 @@ describe('ActionGroup', function () {
       });
     });
 
-    it('collapses overflowing items into a menu', function () {
+    it('collapses overflowing items into a menu', async function () {
       let onAction = jest.fn();
       let tree = render(
         <Provider theme={theme}>
@@ -723,7 +721,7 @@ describe('ActionGroup', function () {
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
       expect(buttons[1]).not.toHaveAttribute('aria-checked');
 
-      triggerPress(buttons[1]);
+      await user.click(buttons[1]);
 
       let menu = tree.getByRole('menu');
       let items = within(menu).getAllByRole('menuitem');
@@ -732,11 +730,11 @@ describe('ActionGroup', function () {
       expect(items[1]).toHaveTextContent('Three');
       expect(items[2]).toHaveTextContent('Four');
 
-      triggerPress(items[1]);
+      await user.click(items[1]);
       expect(onAction).toHaveBeenCalledWith('three');
     });
 
-    it('collapsed menu items can have DOM attributes passed to them', function () {
+    it('collapsed menu items can have DOM attributes passed to them', async function () {
       let onAction = jest.fn();
       let tree = render(
         <Provider theme={theme}>
@@ -752,7 +750,7 @@ describe('ActionGroup', function () {
       let actiongroup = tree.getByRole('toolbar');
       let buttons = within(actiongroup).getAllByRole('button');
 
-      triggerPress(buttons[1]);
+      await user.click(buttons[1]);
 
       let menu = tree.getByRole('menu');
       let items = within(menu).getAllByRole('menuitem');
@@ -822,7 +820,7 @@ describe('ActionGroup', function () {
       expect(buttons[2]).toHaveAttribute('tabIndex', '0');
     });
 
-    it('passes aria labeling props through to menu button if it is the only child', function () {
+    it('passes aria labeling props through to menu button if it is the only child', async function () {
       jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
           return {width: 100, height: 0, top: 0, left: 0, bottom: 0, right: 0};
@@ -849,7 +847,7 @@ describe('ActionGroup', function () {
       expect(button).toHaveAttribute('aria-haspopup', 'true');
       expect(button).not.toHaveAttribute('aria-checked');
 
-      triggerPress(button);
+      await user.click(button);
 
       let menu = tree.getByRole('menu');
       let items = within(menu).getAllByRole('menuitem');
@@ -859,11 +857,11 @@ describe('ActionGroup', function () {
       expect(items[2]).toHaveTextContent('Three');
       expect(items[3]).toHaveTextContent('Four');
 
-      triggerPress(items[1]);
+      await user.click(items[1]);
       expect(onAction).toHaveBeenCalledWith('two');
     });
 
-    it('collapses all items if selectionMode="single"', function () {
+    it('collapses all items if selectionMode="single"', async function () {
       let onSelectionChange = jest.fn();
       let tree = render(
         <Provider theme={theme}>
@@ -883,7 +881,7 @@ describe('ActionGroup', function () {
       expect(button).toHaveAttribute('aria-haspopup', 'true');
       expect(button).not.toHaveAttribute('aria-checked');
 
-      triggerPress(button);
+      await user.click(button);
 
       let menu = tree.getByRole('menu');
       let items = within(menu).getAllByRole('menuitemradio');
@@ -894,11 +892,11 @@ describe('ActionGroup', function () {
       expect(items[2]).toHaveTextContent('Three');
       expect(items[3]).toHaveTextContent('Four');
 
-      triggerPress(items[2]);
+      await user.click(items[2]);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['three']));
 
-      triggerPress(button);
+      await user.click(button);
       menu = tree.getByRole('menu');
       items = within(menu).getAllByRole('menuitemradio');
 
@@ -906,7 +904,7 @@ describe('ActionGroup', function () {
       expect(items[2]).toHaveAttribute('aria-checked', 'true');
     });
 
-    it('collapses all items if selectionMode="multiple"', function () {
+    it('collapses all items if selectionMode="multiple"', async function () {
       let onSelectionChange = jest.fn();
       let tree = render(
         <Provider theme={theme}>
@@ -926,7 +924,7 @@ describe('ActionGroup', function () {
       expect(button).toHaveAttribute('aria-haspopup', 'true');
       expect(button).not.toHaveAttribute('aria-checked');
 
-      triggerPress(button);
+      await user.click(button);
 
       let menu = tree.getByRole('menu');
       let items = within(menu).getAllByRole('menuitemcheckbox');
@@ -940,7 +938,7 @@ describe('ActionGroup', function () {
       expect(items[3]).toHaveTextContent('Four');
       expect(items[3]).not.toHaveAttribute('aria-checked', 'true');
 
-      triggerPress(items[3]);
+      await user.click(items[3]);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['two', 'three', 'four']));
 
@@ -973,7 +971,7 @@ describe('ActionGroup', function () {
       expect(buttons[1]).toBeDisabled();
     });
 
-    it('menu items should be disabled for items listed in disabledKeys', function () {
+    it('menu items should be disabled for items listed in disabledKeys', async function () {
       const handleOnAction = jest.fn();
 
       render(
@@ -995,7 +993,7 @@ describe('ActionGroup', function () {
       expect(moreButton).not.toHaveAttribute('aria-checked');
       expect(moreButton).toBeVisible();
 
-      triggerPress(moreButton);
+      await user.click(moreButton);
 
       const menu = screen.getByRole('menu');
       expect(within(menu).getAllByRole('menuitem')).toHaveLength(3);
@@ -1012,13 +1010,13 @@ describe('ActionGroup', function () {
       expect(itemFour).toBeVisible();
       expect(itemFour).toHaveAttribute('aria-disabled', 'true');
 
-      triggerPress(itemTwo);
+      await user.click(itemTwo);
       expect(handleOnAction).not.toHaveBeenCalled();
 
-      triggerPress(itemFour);
+      await user.click(itemFour);
       expect(handleOnAction).not.toHaveBeenCalled();
 
-      triggerPress(itemThree);
+      await user.click(itemThree);
       expect(handleOnAction).toHaveBeenCalled();
     });
   });
@@ -1057,7 +1055,7 @@ describe('ActionGroup', function () {
       expect(buttons[0]).toHaveAttribute('aria-describedby', tooltip.id);
     });
 
-    it('should show the text when collapsed into a dropdown', function () {
+    it('should show the text when collapsed into a dropdown', async function () {
       let tree = render(
         <Provider theme={theme}>
           <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
@@ -1081,7 +1079,7 @@ describe('ActionGroup', function () {
       let buttons = within(actiongroup).getAllByRole('button');
       expect(buttons.length).toBe(2);
 
-      triggerPress(buttons[1]);
+      await user.click(buttons[1]);
 
       let menu = tree.getByRole('menu');
       let items = within(menu).getAllByRole('menuitem');

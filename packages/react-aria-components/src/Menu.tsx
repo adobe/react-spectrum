@@ -33,7 +33,7 @@ export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
-  children?: ReactNode
+  children: ReactNode
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
