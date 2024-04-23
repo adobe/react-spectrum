@@ -13,14 +13,17 @@
 import React, {createContext, ReactNode, useContext} from 'react';
 
 export interface PortalProviderProps {
-  getContainer?: () => HTMLElement
+  /* Should return the element where we should portal to. Can clear the context by passing null. */
+  getContainer?: () => HTMLElement | null
 }
 
 export const PortalContext = createContext<PortalProviderProps>({});
 
 export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: ReactNode}) {
+  let {getContainer} = props;
+  let {getContainer: ctxGetContainer} = useUNSTABLE_PortalContext();
   return (
-    <PortalContext.Provider value={{getContainer: props.getContainer}}>
+    <PortalContext.Provider value={{getContainer: getContainer === null ? null : getContainer ?? ctxGetContainer}}>
       {props.children}
     </PortalContext.Provider>
   );
