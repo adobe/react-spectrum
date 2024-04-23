@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Checkbox, DropIndicator, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
