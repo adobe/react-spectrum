@@ -377,7 +377,10 @@ describe('Tree', () => {
 
   describe('general interactions', () => {
     it('should support hover on rows', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let onHoverStart = jest.fn();
+      let onHoverChange = jest.fn();
+      let onHoverEnd = jest.fn();
+      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
@@ -386,10 +389,14 @@ describe('Tree', () => {
       await user.hover(row);
       expect(row).toHaveAttribute('data-hovered', 'true');
       expect(row).toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(1);
 
       await user.unhover(row);
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverEnd).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(2);
 
       rerender(<StaticTree treeProps={{selectionMode: 'none', onAction: jest.fn()}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
       row = getAllByRole('row')[0];
