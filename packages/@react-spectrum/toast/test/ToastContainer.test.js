@@ -81,7 +81,7 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('supports testid prop', () => {
+  it('supports testid prop', async () => {
     const testid = 'toast-container';
     const domProps = {
       'data-testid': testid
@@ -90,7 +90,7 @@ describe('Toast Provider and Container', function () {
     let button = getByRole('button');
 
     expect(queryByTestId(testid)).toBeNull();
-    triggerPress(button);
+    await user.click(button);
     expect(getByTestId(testid)).not.toBeNull();
     expect(queryByText(/Show Default Toast/)).not.toBeNull();
   });
