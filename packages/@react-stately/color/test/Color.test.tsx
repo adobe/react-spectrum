@@ -291,7 +291,7 @@ describe('Color', function () {
       color = parseColor('hsb(0, 100%, 100%)');
       expect(color.getColorName('en-US')).toBe('vibrant red');
       color = parseColor('hsba(0, 100%, 100%, 0.2)');
-      expect(color.getColorName('en-US')).toBe('80% transparent vibrant red');
+      expect(color.getColorName('en-US')).toBe('vibrant red, 80% transparent');
       // Based on the css named colors
       expect(parseColor('#FFFF00').getColorName('en-US')).toBe('very light vibrant yellow'); // yellow
       expect(parseColor('#800080').getColorName('en-US')).toBe('dark vibrant magenta'); // purple

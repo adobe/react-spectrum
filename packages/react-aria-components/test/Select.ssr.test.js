@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {screen, testSSR} from '@react-spectrum/test-utils';
+import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Select SSR', function () {
   it('should render text of default selected key', async function () {
