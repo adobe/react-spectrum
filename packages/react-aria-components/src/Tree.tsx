@@ -130,12 +130,12 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
 }
 
 
-export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
-export const TreeStateContext = createContext<TreeState<any> | null>(null);
+export const UNSTABLE_TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(null);
 
 function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  [props, ref] = useContextProps(props, ref, TreeContext);
+  [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
   let {collection, portal} = useCollection(props);
 
   return (
@@ -246,7 +246,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
           values={[
-            [TreeStateContext, state]
+            [UNSTABLE_TreeStateContext, state]
           ]}>
           {children}
         </Provider>
@@ -261,7 +261,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
  * and selection.
  */
 const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
-export {_Tree as Tree};
+export {_Tree as UNSTABLE_Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
@@ -312,7 +312,7 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
  * A TreeItem represents an individual item in a Tree.
  */
 const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
-export {_TreeItem as TreeItem};
+export {_TreeItem as UNSTABLE_TreeItem};
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
   // Whether the tree row is expanded.
@@ -329,7 +329,7 @@ export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRe
 
 // TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
 // having those
-export function TreeItemContent(props: TreeItemContentProps) {
+export function UNSTABLE_TreeItemContent(props: TreeItemContentProps) {
   let ref = useRef(null);
   let shallow = useShallowRender('content', props, ref);
   if (shallow) {
@@ -340,7 +340,7 @@ export function TreeItemContent(props: TreeItemContentProps) {
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
 function TreeRow<T>({item}: {item: Node<T>}) {
-  let state = useContext(TreeStateContext)!;
+  let state = useContext(UNSTABLE_TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

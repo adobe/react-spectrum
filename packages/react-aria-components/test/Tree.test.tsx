@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Checkbox, Collection, Text, Tree, TreeItem, TreeItemContent} from '../';
+import {Button, Checkbox, Collection, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -21,8 +21,8 @@ let onExpandedChange = jest.fn();
 
 let StaticTreeItem = (props) => {
   return (
-    <TreeItem {...props}>
-      <TreeItemContent>
+    <UNSTABLE_TreeItem {...props}>
+      <UNSTABLE_TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
           <>
             {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
@@ -34,14 +34,14 @@ let StaticTreeItem = (props) => {
             <Button aria-label="Menu">☰</Button>
           </>
         )}
-      </TreeItemContent>
+      </UNSTABLE_TreeItemContent>
       {props.title && props.children}
-    </TreeItem>
+    </UNSTABLE_TreeItem>
   );
 };
 
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <UNSTABLE_Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
@@ -56,7 +56,7 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
         Projects-3
       </StaticTreeItem>
     </StaticTreeItem>
-  </Tree>
+  </UNSTABLE_Tree>
 );
 
 let rows = [
@@ -91,8 +91,8 @@ let rows = [
 
 let DynamicTreeItem = (props) => {
   return (
-    <TreeItem {...props}>
-      <TreeItemContent>
+    <UNSTABLE_TreeItem {...props}>
+      <UNSTABLE_TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
           <>
             {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
@@ -104,7 +104,7 @@ let DynamicTreeItem = (props) => {
             <Button aria-label="Menu">☰</Button>
           </>
         )}
-      </TreeItemContent>
+      </UNSTABLE_TreeItemContent>
       <Collection items={props.childItems}>
         {(item: any) => (
           <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
@@ -112,18 +112,18 @@ let DynamicTreeItem = (props) => {
           </DynamicTreeItem>
         )}
       </Collection>
-    </TreeItem>
+    </UNSTABLE_TreeItem>
   );
 };
 
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <UNSTABLE_Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item: any) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         {item.name}
       </DynamicTreeItem>
     )}
-  </Tree>
+  </UNSTABLE_Tree>
 );
 
 describe('Tree', () => {
@@ -1094,19 +1094,19 @@ describe('Tree', () => {
   describe('empty state', () => {
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
-        <Tree
+        <UNSTABLE_Tree
           className={({isFocused, isFocusVisible}) => `isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
           aria-label="test empty tree"
           items={[]}
           renderEmptyState={({isFocused, isFocusVisible}) => <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
           {() => (
-            <TreeItem textValue="dummy value">
-              <TreeItemContent>
+            <UNSTABLE_TreeItem textValue="dummy value">
+              <UNSTABLE_TreeItemContent>
                 Dummy Value
-              </TreeItemContent>
-            </TreeItem>
+              </UNSTABLE_TreeItemContent>
+            </UNSTABLE_TreeItem>
           )}
-        </Tree>
+        </UNSTABLE_Tree>
       );
 
       let tree = getByRole('treegrid');
