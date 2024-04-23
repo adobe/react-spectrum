@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils';
+import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Divider SSR', function () {
   it('should render without errors', async function () {

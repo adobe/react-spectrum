@@ -16,11 +16,10 @@ jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Calendar} from '../';
 import {CalendarDate, isWeekend} from '@internationalized/date';
-import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
-
-let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
+import userEvent from '@testing-library/user-event';
 
 describe('Calendar', () => {
   beforeAll(() => {
@@ -113,29 +112,29 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar
       ${'v3'}   | ${Calendar}
-    `('$Name selects a date on keyDown Enter/Space (uncontrolled)', ({Calendar}) => {
+    `('$Name selects a date on keyDown Enter/Space (uncontrolled)', async ({Calendar}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
-      let {getByLabelText, getByRole} = render(
+      let {getByLabelText} = render(
         <Calendar
           defaultValue={new CalendarDate(2019, 6, 5)}
           autoFocus
           onChange={onChange} />
       );
 
-      let grid = getByRole('grid');
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
 
       // Select a new date
-      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('{Enter}');
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('4');
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange.mock.calls[0][0]).toEqual(new CalendarDate(2019, 6, 4));
 
-      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(grid, {key: ' ', keyCode: keyCodes[' ']});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('[Space]');
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('3');
       expect(onChange).toHaveBeenCalledTimes(2);
@@ -145,29 +144,29 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar
       ${'v3'}   | ${Calendar}
-    `('$Name selects a date on keyDown Enter/Space (controlled)', ({Calendar}) => {
+    `('$Name selects a date on keyDown Enter/Space (controlled)', async ({Calendar}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
-      let {getByLabelText, getByRole} = render(
+      let {getByLabelText} = render(
         <Calendar
           value={new CalendarDate(2019, 6, 5)}
           autoFocus
           onChange={onChange} />
       );
 
-      let grid = getByRole('grid');
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
 
       // Select a new date
-      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('{Enter}');
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5'); // controlled
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange.mock.calls[0][0]).toEqual(new CalendarDate(2019, 6, 4));
 
-      fireEvent.keyDown(grid, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(grid, {key: ' ', keyCode: keyCodes[' ']});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('[Space]');
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5'); // controlled
       expect(onChange).toHaveBeenCalledTimes(2);
@@ -177,7 +176,8 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar      | props
       ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
-    `('$Name does not select a date on keyDown Enter/Space if isReadOnly', ({Calendar, props}) => {
+    `('$Name does not select a date on keyDown Enter/Space if isReadOnly', async ({Calendar, props}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText} = render(
         <Calendar
@@ -190,14 +190,14 @@ describe('Calendar', () => {
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(document.activeElement, {key: 'Enter', keyCode: keyCodes.Enter});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('{Enter}');
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
       expect(onChange).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', keyCode: keyCodes.ArrowLeft});
-      fireEvent.keyDown(document.activeElement, {key: ' ', keyCode: keyCodes[' ']});
+      await user.keyboard('{ArrowLeft}');
+      await user.keyboard('[Space]');
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
       expect(onChange).not.toHaveBeenCalled();
@@ -206,7 +206,8 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar
       ${'v3'}   | ${Calendar}
-    `('$Name selects a date on click (uncontrolled)', ({Calendar}) => {
+    `('$Name selects a date on click (uncontrolled)', async ({Calendar}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
         <Calendar
@@ -215,7 +216,7 @@ describe('Calendar', () => {
       );
 
       let newDate = getByText('17');
-      triggerPress(newDate);
+      await user.click(newDate);
 
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('17');
@@ -226,7 +227,8 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar
       ${'v3'}   | ${Calendar}
-    `('$Name selects a date on click (controlled)', ({Calendar}) => {
+    `('$Name selects a date on click (controlled)', async ({Calendar}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
         <Calendar
@@ -235,7 +237,7 @@ describe('Calendar', () => {
       );
 
       let newDate = getByText('17');
-      triggerPress(newDate);
+      await user.click(newDate);
 
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
@@ -246,7 +248,8 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar      | props
       ${'v3'}   | ${Calendar}   | ${{isDisabled: true}}
-    `('$Name does not select a date on click if isDisabled', ({Calendar, props}) => {
+    `('$Name does not select a date on click if isDisabled', async ({Calendar, props}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(
         <Calendar
@@ -256,7 +259,7 @@ describe('Calendar', () => {
       );
 
       let newDate = getByText('17');
-      triggerPress(newDate);
+      await user.click(newDate);
 
       expect(() => {
         getAllByLabelText('selected', {exact: false});
@@ -267,7 +270,8 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar      | props
       ${'v3'}   | ${Calendar}   | ${{isReadOnly: true}}
-    `('$Name does not select a date on click if isReadOnly', ({Calendar, props}) => {
+    `('$Name does not select a date on click if isReadOnly', async ({Calendar, props}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText, getByText} = render(
         <Calendar
@@ -277,7 +281,7 @@ describe('Calendar', () => {
       );
 
       let newDate = getByText('17');
-      triggerPress(newDate);
+      await user.click(newDate);
 
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
@@ -287,7 +291,8 @@ describe('Calendar', () => {
     it.each`
       Name      | Calendar      | props
       ${'v3'}   | ${Calendar}   | ${{defaultValue: new CalendarDate(2019, 2, 8), minValue: new CalendarDate(2019, 2, 5), maxValue: new CalendarDate(2019, 2, 15)}}
-    `('$Name does not select a date on click if outside the valid date range', ({Calendar, props}) => {
+    `('$Name does not select a date on click if outside the valid date range', async ({Calendar, props}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onChange = jest.fn();
       let {getByLabelText} = render(
         <Calendar
@@ -295,25 +300,25 @@ describe('Calendar', () => {
           {...props} />
       );
 
-      triggerPress(getByLabelText('Sunday, February 3, 2019'));
+      await user.click(getByLabelText('Sunday, February 3, 2019'));
 
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('8');
       expect(onChange).not.toHaveBeenCalled();
 
-      triggerPress(getByLabelText('Sunday, February 17, 2019'));
+      await user.click(getByLabelText('Sunday, February 17, 2019'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('8');
       expect(onChange).not.toHaveBeenCalled();
 
-      triggerPress(getByLabelText('Tuesday, February 5, 2019, First available date'));
+      await user.click(getByLabelText('Tuesday, February 5, 2019, First available date'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      triggerPress(getByLabelText('Friday, February 15, 2019, Last available date'));
+      await user.click(getByLabelText('Friday, February 15, 2019, Last available date'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('15');
@@ -390,46 +395,48 @@ describe('Calendar', () => {
   });
 
   describe('announcing', () => {
-    it('announces when the current month changes', () => {
+    it('announces when the current month changes', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
       let nextButton = getAllByLabelText('Next')[0];
-      triggerPress(nextButton);
+      await user.click(nextButton);
       act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('July 2019');
     });
 
-    it('announces when the selected date changes', () => {
+    it('announces when the selected date changes', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getByText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
       let newDate = getByText('17');
-      triggerPress(newDate);
+      await user.click(newDate);
       act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('Selected Date: Monday, June 17, 2019', 'polite', 4000);
     });
 
-    it('ensures that the active descendant is announced when the focused date changes', () => {
-      let {getByRole, getByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} autoFocus />);
+    it('ensures that the active descendant is announced when the focused date changes', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let {getByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} autoFocus />);
 
-      let grid = getByRole('grid');
       let selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate).toHaveFocus();
 
-      fireEvent.keyDown(grid, {key: 'ArrowRight'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      await user.keyboard('{ArrowRight}');
       act(() => {jest.runAllTimers();});
       expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
     });
 
-    it('includes era in BC dates', () => {
+    it('includes era in BC dates', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getByText, getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate('BC', 5, 2, 3)} />);
 
       let newDate = getByText('17');
-      triggerPress(newDate);
+      await user.click(newDate);
       act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
@@ -437,7 +444,7 @@ describe('Calendar', () => {
 
       announce.mockReset();
       let nextButton = getAllByLabelText('Next')[0];
-      triggerPress(nextButton);
+      await user.click(nextButton);
       act(() => {jest.runAllTimers();});
 
       expect(announce).toHaveBeenCalledTimes(1);
