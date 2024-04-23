@@ -33,7 +33,7 @@ export interface TreeGridListItemAria extends GridListItemAria {
   /** Props for the tree grid row description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the tree grid row expand button. */
-    expandButtonProps: AriaButtonProps
+  expandButtonProps: AriaButtonProps
 }
 
 /**
