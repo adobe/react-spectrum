@@ -968,7 +968,7 @@ describe('TooltipTrigger', function () {
       return (
         <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
           <TooltipTrigger>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>
               <div data-testid="content">hello</div>
             </Tooltip>
@@ -981,8 +981,8 @@ describe('TooltipTrigger', function () {
       let container = React.useRef(null);
       return (
         <>
-          <InfoTooltip container={container}/>
-          <div ref={container} data-testid="custom-container"/>
+          <InfoTooltip container={container} />
+          <div ref={container} data-testid="custom-container" />
         </>
       );
     }
@@ -990,7 +990,7 @@ describe('TooltipTrigger', function () {
     it('should render the tooltip in the portal container', async () => {
       let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
-          <App/>
+          <App />
         </Provider>
       );
 
@@ -1026,10 +1026,10 @@ describe('TooltipTrigger', function () {
       let container = React.useRef(null);
       return (
         <>
-        <UNSTABLE_PortalProvider getContainer={() => container.current}>
-          <InfoTooltip container={container} />
-          <div ref={container} data-testid="custom-container" />
-        </UNSTABLE_PortalProvider>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <InfoTooltip container={container} />
+            <div ref={container} data-testid="custom-container" />
+          </UNSTABLE_PortalProvider>
         </>
       );
     }
