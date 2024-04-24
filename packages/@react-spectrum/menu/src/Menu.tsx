@@ -158,6 +158,23 @@ export function TrayHeaderWrapper(props) {
     };
   }, []);
 
+  // Focus the first item in the submenu after animation completes
+  // This fixes an issue with iOS VO where the closed submenu was getting focus
+  let focusTimeoutRef = useRef(null);
+  useEffect(() => {
+    focusTimeoutRef.current = setTimeout(() => {
+      if (isMobile && traySubmenuAnimation === 'spectrum-TraySubmenu-enter') {
+        let firstItem = document.querySelector('[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]') as HTMLElement;
+        firstItem?.focus();
+      }
+    }, 220);
+    return () => {
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current);
+      }
+    };
+  }, [isMobile, traySubmenuAnimation]);
+
   return (
     <>
       <div
