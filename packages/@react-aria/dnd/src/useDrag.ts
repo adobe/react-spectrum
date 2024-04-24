@@ -341,9 +341,7 @@ export function useDrag(options: DragOptions): DragResult {
       dragProps: {
         draggable: 'false'
       },
-      dragButtonProps: {
-        onPress() {}
-      },
+      dragButtonProps: {},
       isDragging: false
     };
   }
