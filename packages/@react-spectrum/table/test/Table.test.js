@@ -2389,7 +2389,7 @@ export let tableTests = () => {
     });
 
     describe('select all', function () {
-      it.only('should support selecting all via the checkbox', async function () {
+      it('should support selecting all via the checkbox', async function () {
         let tableUtil = new User().table;
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
