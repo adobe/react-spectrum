@@ -54,9 +54,8 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
       }
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
-    // TODO: the below actually isn't enough to have keyboard navigation skip over it, we need it to be a span type button but
-    // RAC buttons are always a "button" type element.
-    tabIndex: isAndroid() ? -1 : null
+    tabIndex: isAndroid() ? -1 : null,
+    'data-rsp-prevent-focus': true
   };
 
   // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?

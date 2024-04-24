@@ -685,8 +685,6 @@ describe('Tree', () => {
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(checkbox);
         await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(buttons[0]);
-        await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(buttons[1]);
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(buttons[2]);
@@ -708,8 +706,6 @@ describe('Tree', () => {
         expect(document.activeElement).toBe(buttons[2]);
         await user.keyboard('{ArrowLeft}');
         expect(document.activeElement).toBe(buttons[1]);
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(buttons[0]);
         await user.keyboard('{ArrowLeft}');
         expect(document.activeElement).toBe(checkbox);
       });
@@ -933,7 +929,7 @@ describe('Tree', () => {
         // Since selection is enabled, we need to click the chevron even for disabled rows since it is still regarded as the primary action
         let chevron = within(rows[0]).getAllByRole('button')[0];
         await trigger(chevron, 'ArrowLeft');
-        // TODO: reenable this when we make it so the chevron button isn't focusable via click/keyboard nav
+        // TODO: reenable this when we make it so the chevron button isn't focusable via click
         // expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).toHaveAttribute('data-expanded', 'false');

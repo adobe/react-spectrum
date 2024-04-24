@@ -438,7 +438,6 @@ function TreeRow<T>({item}: {item: Node<T>}) {
               }],
               // TODO: support description in the tree row
               // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
-              // TODO: make the button get automatically skipped by keyboard navigation
               [ButtonContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
