@@ -592,7 +592,7 @@ export {_TableBody as TableBody};
 
 export interface RowRenderProps extends ItemRenderProps {}
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the row. */
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
@@ -1018,7 +1018,10 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: !states.allowsSelection && !states.hasAction,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
   let {checkboxProps} = useTableSelectionCheckbox(
