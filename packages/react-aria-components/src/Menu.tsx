@@ -17,7 +17,7 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTrigge
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
@@ -284,7 +284,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -320,7 +320,12 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: states.isDisabled,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
+  });
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
