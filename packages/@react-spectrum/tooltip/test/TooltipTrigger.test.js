@@ -968,6 +968,52 @@ describe('TooltipTrigger', function () {
       return (
         <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
           <TooltipTrigger>
+            <ActionButton aria-label="trigger"/>
+            <Tooltip>
+              <div data-testid="content">hello</div>
+            </Tooltip>
+          </TooltipTrigger>
+        </UNSTABLE_PortalProvider>
+      );
+    }
+
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoTooltip container={container}/>
+          <div ref={container} data-testid="custom-container"/>
+        </>
+      );
+    }
+
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App/>
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+    });
+  });
+
+  describe('portalContainer overwrite', () => {
+    function InfoTooltip(props) {
+      return (
+        <UNSTABLE_PortalProvider getContainer={null}>
+          <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>
               <div data-testid="content">hello</div>
@@ -980,8 +1026,10 @@ describe('TooltipTrigger', function () {
       let container = React.useRef(null);
       return (
         <>
+        <UNSTABLE_PortalProvider getContainer={() => container.current}>
           <InfoTooltip container={container} />
           <div ref={container} data-testid="custom-container" />
+        </UNSTABLE_PortalProvider>
         </>
       );
     }
@@ -997,7 +1045,7 @@ describe('TooltipTrigger', function () {
         button.focus();
       });
 
-      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).not.toBe(getByTestId('custom-container'));
       act(() => {
         button.blur();
       });
