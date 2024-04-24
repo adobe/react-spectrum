@@ -152,6 +152,64 @@ describe('useDrag and useDrop', function () {
       });
     });
 
+    it('useDrag should support isDisabled', async () => {
+      let onDragStart = jest.fn();
+      let onDragMove = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDropEnter = jest.fn();
+      let onDropMove = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable isDisabled onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
+      </>);
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+      expect(draggable).toHaveAttribute('draggable', 'false');
+
+      let dataTransfer = new DataTransfer();
+      fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+
+      expect(onDragStart).not.toHaveBeenCalled();
+      expect(onDragMove).not.toHaveBeenCalled();
+      expect(onDragEnd).not.toHaveBeenCalled();
+      expect(onDropEnter).not.toHaveBeenCalled();
+      expect(onDropMove).not.toHaveBeenCalled();
+      expect(onDrop).not.toHaveBeenCalled();
+    });
+
+    it('useDrop should support isDisabled', async () => {
+      let onDragStart = jest.fn();
+      let onDragMove = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDropEnter = jest.fn();
+      let onDropMove = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+        <Droppable isDisabled onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
+      </>);
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+      
+      let dataTransfer = new DataTransfer();
+      fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+      
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragMove).not.toHaveBeenCalled();
+      expect(onDragEnd).not.toHaveBeenCalled();
+      expect(onDropEnter).not.toHaveBeenCalled();
+      expect(onDropMove).not.toHaveBeenCalled();
+      expect(onDrop).not.toHaveBeenCalled();
+    });
+
     describe('events', () => {
       it('fires onDragMove only when the drag actually moves', () => {
         let onDragStart = jest.fn();
@@ -1431,6 +1489,76 @@ describe('useDrag and useDrop', function () {
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
       expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+    });
+
+    it('useDrag should support isDisabled', async () => {
+      let onDragStart = jest.fn();
+      let onDragMove = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDropEnter = jest.fn();
+      let onDropMove = jest.fn();
+      let onDropExit = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable isDisabled onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit} />
+      </>);
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+      expect(draggable).toHaveAttribute('draggable', 'false');
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+
+      await user.tab();
+      expect(document.activeElement).toBe(draggable);
+      expect(draggable).not.toHaveAttribute('aria-describedby');
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(draggable);
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+      expect(onDragStart).not.toHaveBeenCalled();
+      expect(onDragMove).not.toHaveBeenCalled();
+      expect(onDragEnd).not.toHaveBeenCalled();
+      expect(onDropEnter).not.toHaveBeenCalled();
+      expect(onDropMove).not.toHaveBeenCalled();
+      expect(onDropExit).not.toHaveBeenCalled();
+      expect(onDrop).not.toHaveBeenCalled();
+    });
+
+    it('useDrop should support isDisabled', async () => {
+      let onDragStart = jest.fn();
+      let onDragMove = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDropEnter = jest.fn();
+      let onDropMove = jest.fn();
+      let onDropExit = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+        <Droppable isDisabled onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit} />
+      </>);
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+
+      await user.tab();
+      expect(document.activeElement).toBe(draggable);
+
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toBe(draggable);
+      expect(droppable).toHaveAttribute('data-droptarget', 'false');
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragMove).not.toHaveBeenCalled();
+      expect(onDragEnd).not.toHaveBeenCalled();
+      expect(onDropEnter).not.toHaveBeenCalled();
+      expect(onDropMove).not.toHaveBeenCalled();
+      expect(onDropExit).not.toHaveBeenCalled();
+      expect(onDrop).not.toHaveBeenCalled();
     });
 
     describe('keyboard navigation', () => {

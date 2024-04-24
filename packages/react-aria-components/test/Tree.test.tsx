@@ -377,7 +377,10 @@ describe('Tree', () => {
 
   describe('general interactions', () => {
     it('should support hover on rows', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let onHoverStart = jest.fn();
+      let onHoverChange = jest.fn();
+      let onHoverEnd = jest.fn();
+      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
@@ -386,10 +389,14 @@ describe('Tree', () => {
       await user.hover(row);
       expect(row).toHaveAttribute('data-hovered', 'true');
       expect(row).toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(1);
 
       await user.unhover(row);
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverEnd).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(2);
 
       rerender(<StaticTree treeProps={{selectionMode: 'none', onAction: jest.fn()}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
       row = getAllByRole('row')[0];
@@ -406,15 +413,24 @@ describe('Tree', () => {
     });
 
     it('should not update the hover state if the row is not interactive', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let onHoverStart = jest.fn();
+      let onHoverChange = jest.fn();
+      let onHoverEnd = jest.fn();
+      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(0);
+      expect(onHoverChange).toHaveBeenCalledTimes(0);
+      expect(onHoverEnd).toHaveBeenCalledTimes(0);
 
       await user.hover(row);
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(0);
+      expect(onHoverChange).toHaveBeenCalledTimes(0);
+      expect(onHoverEnd).toHaveBeenCalledTimes(0);
 
       let expandableRow = getAllByRole('row')[1];
       expect(expandableRow).not.toHaveAttribute('data-hovered');
@@ -423,14 +439,22 @@ describe('Tree', () => {
       await user.hover(expandableRow);
       expect(expandableRow).toHaveAttribute('data-hovered', 'true');
       expect(expandableRow).toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(1);
+      expect(onHoverEnd).toHaveBeenCalledTimes(0);
 
       await user.unhover(expandableRow);
       expect(expandableRow).not.toHaveAttribute('data-hovered');
       expect(expandableRow).not.toHaveClass('hover');
+      expect(onHoverEnd).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(2);
 
       // Test a completely inert expandable row
       // Note the disabledBehavior setting here, by default we make disableKey keys NOT restrict expandablity of the row. Similar pattern to Table
-      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let inertOnHoverStart = jest.fn();
+      let inertOnHoverChange = jest.fn();
+      let inertOnHoverEnd = jest.fn();
+      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: inertOnHoverStart, onHoverChange: inertOnHoverChange, onHoverEnd: inertOnHoverEnd}} />);
 
       expandableRow = getAllByRole('row')[1];
       expect(expandableRow).toHaveAttribute('data-disabled', 'true');
@@ -440,6 +464,9 @@ describe('Tree', () => {
       await user.hover(expandableRow);
       expect(expandableRow).not.toHaveAttribute('data-hovered');
       expect(expandableRow).not.toHaveClass('hover');
+      expect(inertOnHoverStart).toHaveBeenCalledTimes(0);
+      expect(inertOnHoverChange).toHaveBeenCalledTimes(0);
+      expect(inertOnHoverEnd).toHaveBeenCalledTimes(0);
     });
 
     it('should support press on rows', async () => {
