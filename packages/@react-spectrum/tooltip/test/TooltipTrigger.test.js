@@ -1033,7 +1033,7 @@ describe('TooltipTrigger', function () {
         </>
       );
     }
-    it('should render the tooltip in the portal container', async () => {
+    it('should no longer render the tooltip in the portal container', async () => {
       let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
           <App />
