@@ -250,7 +250,12 @@ export const MultipleCollectionDropTargets = {
 
 export const Reorderable = () => <ReorderableGridExample />;
 
-export function Draggable() {
+export const DraggableDisabled = {
+  render: () => <Draggable isDisabled />,
+  name: 'Draggable isDisabled'
+};
+
+export function Draggable({isDisabled = false}) {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
@@ -262,7 +267,8 @@ export function Draggable() {
     },
     onDragStart: action('onDragStart'),
     // onDragMove: action('onDragMove'),
-    onDragEnd: action('onDragEnd')
+    onDragEnd: action('onDragEnd'),
+    isDisabled
   });
 
   let {clipboardProps} = useClipboard({
