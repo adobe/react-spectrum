@@ -55,7 +55,7 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
     tabIndex: isAndroid() ? -1 : null,
-    'data-rsp-prevent-focus': true
+    'data-react-aria-prevent-focus': true
   };
 
   // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?

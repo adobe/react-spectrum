@@ -75,11 +75,11 @@ describe('<HiddenSelect />', () => {
     expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
   });
 
-  it('should always add a data attribute data-rsp-prevent-focus', () => {
+  it('should always add a data attribute data-react-aria-prevent-focus', () => {
     render(
       <HiddenSelectExample items={makeItems(5)} />
     );
 
-    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-rsp-prevent-focus');
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-react-aria-prevent-focus');
   });
 });
