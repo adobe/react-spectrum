@@ -36,9 +36,7 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
     },
     defaultClassName: 'react-aria-ColorWheel',
     defaultStyle: {
-      position: 'relative',
-      width: props.outerRadius * 2,
-      height: props.outerRadius * 2
+      position: 'relative'
     }
   });
 

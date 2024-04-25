@@ -653,6 +653,8 @@ function ColorNumberField({channel}) {
     <NumberField
       aria-labelledby={labelProps.id}
       value={state.value.getChannelValue(channel)}
+      minValue={state.value.getChannelRange(channel).minValue}
+      maxValue={state.value.getChannelRange(channel).maxValue}
       onChange={v => state.setValue(state.value.withChannelValue(channel, v))}
       formatOptions={state.value.getChannelFormatOptions(channel)}>
       <Input />

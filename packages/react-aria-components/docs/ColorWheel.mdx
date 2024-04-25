@@ -404,9 +404,11 @@ function HueField() {
     <NumberField
       aria-label={state.value.getChannelName('hue', locale)}
       value={state.value.getChannelValue('hue')}
+      minValue={0}
+      maxValue={360}
       onChange={v => state.setValue(state.value.withChannelValue('hue', v))}
       formatOptions={state.value.getChannelFormatOptions('hue')}>
-      <Input />
+      <Input style={{width: '4ch'}} />
     </NumberField>
   );
 }
@@ -419,17 +421,6 @@ function HueField() {
   {/*- end highlight -*/}
 </ColorWheel>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Input {
-  width: 4ch;
-}
-```
-
-</details>
 
 ### Hooks
 

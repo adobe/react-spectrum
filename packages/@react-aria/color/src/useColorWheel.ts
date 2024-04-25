@@ -307,8 +307,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       ...thumbInteractions,
       style: {
         position: 'absolute',
-        left: '50%',
-        top: '50%',
+        left: outerRadius,
+        top: outerRadius,
         transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
         touchAction: 'none',
         ...forcedColorAdjustNoneStyle

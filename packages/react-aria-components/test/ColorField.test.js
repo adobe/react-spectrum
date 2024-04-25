@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ColorField, ColorFieldContext, FieldError, Input, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorThumb, ColorWheel} from '../src';
+import {ColorThumb, ColorWheel, ColorWheelTrack} from '../src';
 import React from 'react';
 
 export default {
@@ -24,6 +24,7 @@ const THUMB_SIZE = 20;
 
 export const ColorWheelExample = (args) => (
   <ColorWheel {...args} outerRadius={RADIUS} innerRadius={RADIUS - TRACK_THICKNESS}>
+    <ColorWheelTrack />
     <ColorThumb
       style={({isFocusVisible, color}) => ({
         border: '2px solid white',
