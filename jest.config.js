@@ -197,7 +197,7 @@ module.exports = {
             tsx: true,
             importAssertions: true
           },
-          
+
           transform: {
             react: {
               runtime: 'automatic'
