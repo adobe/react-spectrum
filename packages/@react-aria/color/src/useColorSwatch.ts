@@ -60,8 +60,8 @@ export function useColorSwatch(props: AriaColorSwatchProps): ColorSwatchAria {
       ...DOMProps,
       role: 'img',
       'aria-roledescription': stringFormatter.format('colorSwatch'),
-      'aria-label': [props['aria-label'] || '', colorName].filter(Boolean).join(', '),
-      'aria-labelledby': props['aria-labelledby'] ? `${props['aria-labelledby']} ${id}` : undefined,
+      'aria-label': [colorName, props['aria-label'] || ''].filter(Boolean).join(', '),
+      'aria-labelledby': props['aria-labelledby'] ? `${id} ${props['aria-labelledby']}` : undefined,
       id,
       style: {
         backgroundColor: color.toString('css')

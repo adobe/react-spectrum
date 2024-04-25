@@ -12,7 +12,7 @@
 
 import {ColorSwatch, ColorSwatchContext} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 describe('ColorSwatch', () => {
   it('should render a slider with default class', () => {
@@ -55,13 +55,13 @@ describe('ColorSwatch', () => {
     );
 
     let img = getByRole('img');
-    expect(img).toHaveAttribute('aria-label', 'very light vibrant yellow green');
+    expect(img).toHaveAttribute('aria-label', 'very light vibrant yellow');
   });
 
   it('should support custom aria-label', () => {
     let {getByRole} = render(<ColorSwatch color="#f00" aria-label="Background" />);
     let img = getByRole('img');
-    expect(img).toHaveAttribute('aria-label', 'Background, vibrant red');
+    expect(img).toHaveAttribute('aria-label', 'vibrant red, Background');
   });
 
   it('should support custom aria-labelledby', () => {
@@ -69,7 +69,7 @@ describe('ColorSwatch', () => {
     let img = getByRole('img');
     expect(img).toHaveAttribute('aria-label', 'vibrant red');
     expect(img).toHaveAttribute('id');
-    expect(img).toHaveAttribute('aria-labelledby', `label-id ${img.id}`);
+    expect(img).toHaveAttribute('aria-labelledby', `${img.id} label-id`);
   });
 
   it('should support custom colorName', () => {

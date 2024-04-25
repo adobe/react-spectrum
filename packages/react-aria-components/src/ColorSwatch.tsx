@@ -1,6 +1,6 @@
 import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
 import {Color} from '@react-types/color';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ColorSwatchRenderProps {
@@ -8,7 +8,7 @@ export interface ColorSwatchRenderProps {
   color: Color
 }
 
-export interface ColorSwatchProps extends AriaColorSwatchProps, RenderProps<ColorSwatchRenderProps>, SlotProps {}
+export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, SlotProps {}
 
 export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
 

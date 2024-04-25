@@ -26,7 +26,7 @@ export const ColorSwatchExample = (args) => (
       borderRadius: 4,
       boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.1)',
       background: `
-        linear-gradient(${color.toString('css')}, ${color.toString('css')}),
+        linear-gradient(${color}, ${color}),
         repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
     })} />
 );
