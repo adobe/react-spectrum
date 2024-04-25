@@ -13,7 +13,7 @@
 import {Color, ColorWheelProps} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export interface ColorWheelState {
   /** The current color value represented by the color wheel. */
@@ -102,7 +102,11 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [value, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let [stateValue, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let value = useMemo(() => {
+    let colorSpace = stateValue.getColorSpace();
+    return colorSpace === 'hsl' || colorSpace === 'hsb' ? stateValue : stateValue.toFormat('hsl');
+  }, [stateValue]);
   let valueRef = useRef(value);
   let setValue = (value: Color) => {
     valueRef.current = value;

@@ -160,6 +160,11 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
 }
 
 export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
+  /** 
+   * The color space that the slider operates in. The `channel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */
@@ -178,6 +183,11 @@ export interface SpectrumColorSliderProps extends AriaColorSliderProps, StylePro
 }
 
 export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
+  /** 
+   * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
   /** Color channel for the horizontal axis. */
   xChannel?: ColorChannel,
   /** Color channel for the vertical axis. */
