@@ -16,6 +16,7 @@ import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing,
 import {filterDOMProps, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isFocusable} from '@react-aria/focus';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -50,24 +51,6 @@ export interface DropZoneRenderProps {
 export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
-
-const focusableElements = [
-  'input:not([disabled]):not([type=hidden])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  'button:not([disabled])',
-  'a[href]',
-  'area[href]',
-  'summary',
-  'iframe',
-  'object',
-  'embed',
-  'audio[controls]',
-  'video[controls]',
-  '[contenteditable]'
-];
-
-const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {isDisabled} = props;
@@ -120,7 +103,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         onClick={(e) => {
           let target = e.target as HTMLElement | null;
           while (target && dropzoneRef.current?.contains(target)) {
-            if (target.matches(FOCUSABLE_ELEMENT_SELECTOR)) {
+            if (isFocusable(target)) {
               break;
             } else if (target === dropzoneRef.current) {
               buttonRef.current?.focus();
