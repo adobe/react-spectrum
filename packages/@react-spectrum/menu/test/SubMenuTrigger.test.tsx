@@ -897,7 +897,7 @@ describe('Submenu', function () {
       expect(menus).toHaveLength(2);
       menuItems = within(menus[0]).getAllByRole('menuitem');
       expect(menuItems[0]).toHaveTextContent('Lvl 2');
-      expect(document.activeElement).toBe(submenuTrigger2);
+      expect(document.activeElement).toBe(menuItems[0]);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
       expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${submenuTrigger1.textContent}`);
