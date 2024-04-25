@@ -44,7 +44,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
   let [value, setValue] = useControlledState<RangeValue<T>>(
     valueProp!,
-    defaultValue || undefined,
+    defaultValue || null!,
     onChange
   );
 
@@ -60,8 +60,8 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   }
 
   // Available range must be stored in a ref so we have access to the updated version immediately in `isInvalid`.
-  let availableRangeRef = useRef<RangeValue<DateValue>|null>(null);
-  let [availableRange, setAvailableRange] = useState<RangeValue<DateValue>|null>(null);
+  let availableRangeRef = useRef<Partial<RangeValue<DateValue>>|null>(null);
+  let [availableRange, setAvailableRange] = useState<Partial<RangeValue<DateValue>>|null>(null);
   let min = useMemo(() => maxDate(minValue, availableRange?.start), [minValue, availableRange]);
   let max = useMemo(() => minDate(maxValue, availableRange?.end), [maxValue, availableRange]);
 
@@ -79,13 +79,11 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   let updateAvailableRange = (date) => {
     if (date && props.isDateUnavailable && !props.allowsNonContiguousRanges) {
       const nextAvailableStartDate = nextUnavailableDate(date, calendar, -1);
-      const nextAvailableEndDate = nextUnavailableDate(date, calendar, -1);
-      if (nextAvailableStartDate && nextAvailableEndDate) {
-        availableRangeRef.current = {
-          start: nextAvailableStartDate,
-          end: nextAvailableEndDate
-        };
-      }
+      const nextAvailableEndDate = nextUnavailableDate(date, calendar, 1);
+      availableRangeRef.current = {
+        start: nextAvailableStartDate,
+        end: nextAvailableEndDate
+      };
       setAvailableRange(availableRangeRef.current);
     } else {
       availableRangeRef.current = null;
@@ -112,7 +110,6 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
 
   let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
   let selectDate = (date: CalendarDate) => {
-
     if (props.isReadOnly) {
       return;
     }
@@ -196,7 +193,7 @@ function makeRange(start: DateValue, end: DateValue): RangeValue<CalendarDate>|n
   return {start: toCalendarDate(start), end: toCalendarDate(end)};
 }
 
-function convertValue(newValue: CalendarDate, oldValue: DateValue) :DateValue {
+function convertValue(newValue: CalendarDate, oldValue: DateValue): DateValue {
   // The display calendar should not have any effect on the emitted value.
   // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
   newValue = toCalendar(newValue, oldValue?.calendar || new GregorianCalendar());
@@ -222,5 +219,4 @@ function nextUnavailableDate(anchorDate: CalendarDate, state: CalendarState, dir
     return nextDate.add({days: -dir});
   }
 
-  return null;
 }
