@@ -124,6 +124,16 @@ export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps,
 }
 
 export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
+  /**
+   * The color channel that this field edits. If not provided, 
+   * the color is edited as a hex value.
+   */
+  channel?: ColorChannel,
+  /**
+   * The color space that the color field operates in if a `channel` prop is provided.
+   * If no `channel` is provided, the color field always displays the color as an RGB hex value.
+   */
+  colorSpace?: ColorSpace,
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }

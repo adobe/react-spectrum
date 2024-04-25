@@ -14,12 +14,14 @@ export type {ColorAreaState} from './useColorAreaState';
 export type {ColorSliderState} from './useColorSliderState';
 export type {ColorWheelState} from './useColorWheelState';
 export type {ColorFieldState} from './useColorFieldState';
+export type {ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from './useColorChannelFieldState';
 
 export {parseColor} from './Color';
 export {useColorAreaState} from './useColorAreaState';
 export {useColorSliderState} from './useColorSliderState';
 export {useColorWheelState} from './useColorWheelState';
 export {useColorFieldState} from './useColorFieldState';
+export {useColorChannelFieldState} from './useColorChannelFieldState';
 
 export type {Color, ColorAreaProps, ColorFieldProps, ColorWheelProps} from '@react-types/color';
 export type {ColorSliderStateOptions} from './useColorSliderState';
