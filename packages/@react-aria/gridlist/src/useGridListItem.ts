@@ -16,11 +16,13 @@ import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import type {TreeState} from '@react-stately/tree';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaGridListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
@@ -65,6 +67,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     shouldSelectOnPressUp
   } = props;
 
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
   let {onAction, linkBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
@@ -226,11 +229,20 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
+  let rowAnnouncement;
+  if (onAction) {
+    rowAnnouncement = stringFormatter.format('hasActionAnnouncement');
+  } else if (hasLink) {
+    rowAnnouncement = stringFormatter.format('hasLinkAnnouncement', {
+      link: node.props.href
+    });
+  }
+
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
-    'aria-label': node.textValue || undefined,
+    'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
     'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
