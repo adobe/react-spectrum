@@ -81,6 +81,20 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
+  it('supports testid prop', async () => {
+    const testid = 'toast-container';
+    const domProps = {
+      'data-testid': testid
+    };
+    let {getByRole, queryByTestId, getByTestId, queryByText} = renderComponent(<RenderToastButton {...domProps} />);
+    let button = getByRole('button');
+
+    expect(queryByTestId(testid)).toBeNull();
+    await user.click(button);
+    expect(getByTestId(testid)).not.toBeNull();
+    expect(queryByText(/Show Default Toast/)).not.toBeNull();
+  });
+
   it('should label icon by variant', async () => {
     let {getByRole} = renderComponent(<RenderToastButton variant="positive" />);
     let button = getByRole('button');
