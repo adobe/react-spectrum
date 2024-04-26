@@ -71,6 +71,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
+        containerRef={containerRef}
         className={classNames(styles, 'spectrum-ColorArea-handle')}
         {...thumbProps}>
         <div role="presentation">

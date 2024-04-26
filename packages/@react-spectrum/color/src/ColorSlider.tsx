@@ -127,6 +127,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           isFocused={isFocused && isFocusVisible}
           isDisabled={isDisabled}
           isDragging={state.isThumbDragging(0)}
+          containerRef={trackRef}
           className={classNames(styles, 'spectrum-ColorSlider-handle')}
           {...thumbProps}>
           <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />

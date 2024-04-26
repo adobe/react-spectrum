@@ -98,6 +98,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
+        containerRef={containerRef}
         className={classNames(styles, 'spectrum-ColorWheel-handle')}
         {...thumbProps}>
         <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
