@@ -194,7 +194,7 @@ interface MyColorFieldProps extends ColorFieldProps {
   errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
-function MyColorField({label, description, errorMessage, ...props}: MyColorFieldProps) {
+export function MyColorField({label, description, errorMessage, ...props}: MyColorFieldProps) {
   return (
     <ColorField {...props}>
       {label && <Label>{label}</Label>}

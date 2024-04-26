@@ -134,7 +134,7 @@ This example wraps `ColorSwatchPicker` and `ColorSwatchPickerItem`, reusing the 
 import type {ColorSwatchPickerProps, ColorSwatchPickerItemProps} from 'react-aria-components';
 import {MyColorSwatch} from './ColorSwatch';
 
-function MyColorSwatchPicker({children, ...props}: ColorSwatchPickerProps) {
+export function MyColorSwatchPicker({children, ...props}: ColorSwatchPickerProps) {
   return (
     <ColorSwatchPicker {...props}>
       {children}
@@ -142,7 +142,7 @@ function MyColorSwatchPicker({children, ...props}: ColorSwatchPickerProps) {
   );
 }
 
-function MyColorSwatchPickerItem(props: ColorSwatchPickerItemProps) {
+export function MyColorSwatchPickerItem(props: ColorSwatchPickerItemProps) {
   return (
     <ColorSwatchPickerItem {...props}>
       <MyColorSwatch />

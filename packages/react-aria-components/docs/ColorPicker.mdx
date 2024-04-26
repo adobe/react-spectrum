@@ -235,16 +235,17 @@ function Example() {
 This example uses [ColorSlider](ColorSlider.html) to allow a user to adjust each channel of a color value, with a [Select](Select.html) to switch between color spaces.
 
 ```tsx example
+import type {ColorSpace} from 'react-aria-components';
 import {getColorChannels} from 'react-aria-components';
 import {MyColorSlider} from './ColorSlider';
 import {MySelect, MyItem} from './Select';
 
 function Example() {
-  let [space, setSpace] = React.useState('rgb');
+  let [space, setSpace] = React.useState<ColorSpace>('rgb');
 
   return (
     <MyColorPicker label="Fill color" defaultValue="#184">
-      <MySelect aria-label="Color space" selectedKey={space} onSelectionChange={setSpace}>
+      <MySelect aria-label="Color space" selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
         <MyItem id="rgb">RGB</MyItem>
         <MyItem id="hsl">HSL</MyItem>
         <MyItem id="hsb">HSB</MyItem>
@@ -269,7 +270,7 @@ import {MyColorWheel} from './ColorWheel';
 import {MyColorArea} from './ColorArea';
 
 <MyColorPicker label="Stroke color" defaultValue="#345">
-  <MyColorWheel colorSpace="hsb" outerRadius={100} innerRadius={74} />
+  <MyColorWheel />
   <MyColorArea 
     colorSpace="hsb"
     xChannel="saturation"
@@ -283,6 +284,7 @@ import {MyColorArea} from './ColorArea';
 This example uses [ColorField](ColorField.html) to allow a user to edit the value of each color channel as a number, along with a [Select](Select.html) to switch between color spaces.
 
 ```tsx example
+import type {ColorSpace} from 'react-aria-components';
 import {getColorChannels} from 'react-aria-components';
 import {MyColorArea} from './ColorArea';
 import {MyColorSlider} from './ColorSlider';
@@ -290,13 +292,13 @@ import {MySelect, MyItem} from './Select';
 import {MyColorField} from './ColorField';
 
 function Example() {
-  let [space, setSpace] = React.useState('rgb');
+  let [space, setSpace] = React.useState<ColorSpace>('rgb');
 
   return (
     <MyColorPicker label="Color" defaultValue="#f80">
       <MyColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
       <MyColorSlider colorSpace="hsb" channel="hue" />
-      <MySelect aria-label="Color space" selectedKey={space} onSelectionChange={setSpace}>
+      <MySelect aria-label="Color space" selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
         <MyItem id="rgb">RGB</MyItem>
         <MyItem id="hsl">HSL</MyItem>
         <MyItem id="hsb">HSB</MyItem>
@@ -359,6 +361,7 @@ function EyeDropperButton() {
   let state = React.useContext(ColorPickerStateContext)!;
 
   // Check browser support.
+  // @ts-ignore
   if (typeof EyeDropper === 'undefined') {
     return 'EyeDropper is not supported in your browser.';
   }
@@ -368,6 +371,7 @@ function EyeDropperButton() {
       aria-label="Eye dropper"
       style={{alignSelf: 'start'}}
       onPress={() => {
+        // @ts-ignore
         new EyeDropper().open().then(result => state.setColor(parseColor(result.sRGBHex)));
       }}>
       <SamplerIcon size="S" />

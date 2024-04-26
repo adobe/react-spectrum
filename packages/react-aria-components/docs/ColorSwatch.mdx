@@ -110,7 +110,7 @@ interface MyColorSwatchProps extends ColorSwatchProps {
   label?: string
 }
 
-function MyColorSwatch({label, ...props}: MyColorSwatchProps) {
+export function MyColorSwatch({label, ...props}: MyColorSwatchProps) {
   return (
     <ColorSwatch 
       {...props}

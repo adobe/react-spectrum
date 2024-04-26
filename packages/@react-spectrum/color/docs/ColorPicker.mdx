@@ -202,16 +202,17 @@ import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/color';
 This example uses [ColorSlider](ColorSlider.html) to allow a user to adjust each channel of a color value, with a [Picker](Picker.html) to switch between color spaces.
 
 ```tsx example
+import type {ColorSpace} from '@react-spectrum/color';
 import {ColorSlider, getColorChannels} from '@react-spectrum/color';
 import {Picker, Item} from '@react-spectrum/picker';
 
 function Example() {
-  let [space, setSpace] = React.useState('rgb');
+  let [space, setSpace] = React.useState<ColorSpace>('rgb');
 
   return (
     <ColorPicker label="Color" defaultValue="#184">
       <Flex direction="column" gap="size-100">
-        <Picker aria-label="Color space" isQuiet selectedKey={space} onSelectionChange={setSpace}>
+        <Picker aria-label="Color space" isQuiet selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
           <Item key="rgb">RGB</Item>
           <Item key="hsl">HSL</Item>
           <Item key="hsb">HSB</Item>

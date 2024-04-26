@@ -25,3 +25,4 @@ export type {SpectrumColorSwatchProps} from './ColorSwatch';
 export type {SpectrumColorPickerProps} from './ColorPicker';
 export type {SpectrumColorEditorProps} from './ColorEditor';
 export type {SpectrumColorSwatchPickerProps} from './ColorSwatchPicker';
+export type {Color, ColorSpace, ColorFormat} from '@react-types/color';

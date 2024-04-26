@@ -18,7 +18,7 @@ export default new Transformer({
 
       if (node.type === 'code' && node.lang === 'tsx') {
         if (heading === 'Reusable wrappers') {
-          reusableWrapper += node.value.replace(/function /g, 'export function ').replace(/import .*? from .*?;/g, '') + '\n';
+          reusableWrapper += node.value.replace(/import .*? from .*?;/g, '') + '\n';
         }
 
         let m = node.value.match(/import .*? from .*?;/g);

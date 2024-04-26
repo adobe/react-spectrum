@@ -126,7 +126,7 @@ import type {ColorWheelProps} from 'react-aria-components';
 
 interface MyColorWheelProps extends Omit<ColorWheelProps, 'outerRadius' | 'innerRadius'> {}
 
-function MyColorWheel(props: MyColorWheelProps) {
+export function MyColorWheel(props: MyColorWheelProps) {
   return (
     <ColorWheel {...props} outerRadius={100} innerRadius={74}>
       <ColorWheelTrack />

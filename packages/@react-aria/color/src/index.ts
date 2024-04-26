@@ -21,4 +21,4 @@ export type {AriaColorWheelOptions, ColorWheelAria} from './useColorWheel';
 export type {AriaColorFieldProps} from '@react-types/color';
 export type {ColorFieldAria} from './useColorField';
 export type {AriaColorSwatchProps, ColorSwatchAria} from './useColorSwatch';
-export type {AriaColorChannelFieldProps, ColorChannelFieldArea} from './useColorChannelField';
+export type {AriaColorChannelFieldProps, ColorChannelFieldAria} from './useColorChannelField';

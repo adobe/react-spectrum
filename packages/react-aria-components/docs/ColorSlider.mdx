@@ -185,7 +185,7 @@ interface MyColorSliderProps extends ColorSliderProps {
   label?: string
 }
 
-function MyColorSlider({label, ...props}: MyColorSliderProps) {
+export function MyColorSlider({label, ...props}: MyColorSliderProps) {
   return (
     <ColorSlider {...props}>
       <Label>{label}</Label>
