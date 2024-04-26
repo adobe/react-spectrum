@@ -155,7 +155,10 @@ export class ToastQueue<T> {
     if (index >= 0) {
       this.queue[index].onClose?.();
       this.queue.splice(index, 1);
-      this.visibleToasts.find(t => t.key === key).animation = 'exiting';
+      let closedToast = this.visibleToasts.find(t => t.key === key);
+      if (closedToast) {
+        closedToast.animation = 'exiting';
+      }
     }
 
     this.updateVisibleToasts({action: 'close', key});
