@@ -159,7 +159,7 @@ export function TrayHeaderWrapper(props) {
     };
   }, []);
 
-  // Focus the first item in the submenu after animation completes
+  // When opening submenu in tray, focus the first item in the submenu after animation completes
   // This fixes an issue with iOS VO where the closed submenu was getting focus
   let focusTimeoutRef = useRef(null);
   useEffect(() => {
@@ -174,7 +174,7 @@ export function TrayHeaderWrapper(props) {
         clearTimeout(focusTimeoutRef.current);
       }
     };
-  }, [hasOpenSubmenu, isMobile, isSubmenu, traySubmenuAnimation]);
+  }, [hasOpenSubmenu, isMobile, isSubmenu, menuRef, traySubmenuAnimation]);
 
   return (
     <>
