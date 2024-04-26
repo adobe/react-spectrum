@@ -24,8 +24,8 @@ export interface ColorChannelFieldState extends NumberFieldState {
 export function useColorChannelFieldState(props: ColorChannelFieldStateOptions): ColorChannelFieldState {
   let {channel, colorSpace, locale} = props;
   let initialValue = useColor(props.value);
-  let initialDefaultValue = useColor(props.defaultValue);
-  let [colorValue, setColor] = useControlledState(initialValue, initialDefaultValue, props.onChange);
+  let initialDefaultValue = useColor(props.defaultValue || '#0000')!;
+  let [colorValue, setColor] = useControlledState(initialValue || undefined, initialDefaultValue, props.onChange);
   let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
   let value = color.getChannelValue(channel);
   let range = color.getChannelRange(channel);

@@ -35,7 +35,7 @@ function ColorThumb(props: ColorThumbProps) {
   let {value, isDisabled, isDragging, isFocused, children, className = '', style, containerRef, ...otherProps} = props;
 
   let valueCSS = value.toString('css');
-  let loupeRef = useRef(null);
+  let loupeRef = useRef<HTMLElement | null>(null);
   let provider = useProvider();
 
   return (

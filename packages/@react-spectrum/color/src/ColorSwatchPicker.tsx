@@ -42,14 +42,15 @@ function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HT
   let {
     density = 'regular',
     size = 'M',
-    rounding = 'none'
+    rounding = 'none',
+    ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
   return (
     <AriaColorSwatchPicker
-      {...props}
+      {...otherProps}
       style={styleProps.style}
       ref={domRef}
       className={styleProps.className + style({

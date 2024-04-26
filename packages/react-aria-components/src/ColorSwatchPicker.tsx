@@ -6,11 +6,11 @@ import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
-export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color | null, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
   /** The children of the ColorSwatchPicker. */
   children?: ReactNode,
   /**
@@ -71,7 +71,7 @@ export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPicke
   isDisabled?: boolean
 }
 
-function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: RefObject<HTMLDivElement>) {
+function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: ForwardedRef<HTMLDivElement>) {
   let propColor = props.color || '#0000';
   let color = useMemo(() => typeof propColor === 'string' ? parseColor(propColor) : propColor, [propColor]);
   let {locale} = useLocale();
