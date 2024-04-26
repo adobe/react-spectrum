@@ -17,5 +17,7 @@ export {ColorSlider} from './ColorSlider';
 export {ColorField} from './ColorField';
 export {ColorSwatch} from './ColorSwatch';
 export {parseColor} from '@react-stately/color';
+export {ColorSwatchPicker} from './ColorSwatchPicker';
 export type {SpectrumColorAreaProps, SpectrumColorFieldProps, SpectrumColorSliderProps, SpectrumColorWheelProps} from '@react-types/color';
 export type {SpectrumColorSwatchProps} from './ColorSwatch';
+export type {SpectrumColorSwatchPickerProps} from './ColorSwatchPicker';

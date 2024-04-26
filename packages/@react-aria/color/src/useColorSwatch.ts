@@ -64,7 +64,9 @@ export function useColorSwatch(props: AriaColorSwatchProps): ColorSwatchAria {
       'aria-labelledby': props['aria-labelledby'] ? `${id} ${props['aria-labelledby']}` : undefined,
       id,
       style: {
-        backgroundColor: color.toString('css')
+        backgroundColor: color.toString('css'),
+        // @ts-ignore
+        forcedColorAdjust: 'none'
       }
     },
     color: color || null
