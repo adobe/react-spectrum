@@ -19,7 +19,8 @@
 
   @media (forced-colors: active) {
     .spectrum-ColorArea {
-      --spectrum-colorarea-fill-color-disabled : GrayText;
+      --spectrum-colorarea-fill-color-disabled: GrayText;
+      --spectrum-colorarea-border-color: ButtonBorder;
     }
     .spectrum-ColorArea {
       forced-color-adjust: none;
