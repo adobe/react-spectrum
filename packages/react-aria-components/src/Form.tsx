@@ -25,17 +25,17 @@ export interface FormProps extends SharedFormProps, DOMProps {
   validationBehavior?: 'aria' | 'native'
 }
 
-export const FormValidationBehaviorContext = createContext<FormProps['validationBehavior'] | null>(null);
+export const FormContext = createContext<{validationBehavior: FormProps['validationBehavior']} | null>(null);
 
 function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
     <form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
-      <FormValidationBehaviorContext.Provider value={validationBehavior}>
+      <FormContext.Provider value={{validationBehavior}}>
         <FormValidationContext.Provider value={validationErrors ?? {}}>
           {children}
         </FormValidationContext.Provider>
-      </FormValidationBehaviorContext.Provider>
+      </FormContext.Provider>
     </form>
   );
 }

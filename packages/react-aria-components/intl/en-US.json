@@ -1,7 +1,5 @@
 {
   "selectPlaceholder": "Select an item",
   "tableResizer": "Resizer",
-  "dropzoneLabel": "DropZone",
-  "expand": "Expand",
-  "collapse": "Collapse"
+  "dropzoneLabel": "DropZone"
 }

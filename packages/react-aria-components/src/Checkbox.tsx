@@ -14,7 +14,7 @@ import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-s
 import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {FormValidationBehaviorContext} from './Form';
+import {FormContext} from './Form';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useContext} from 'react';
 import {TextContext} from './Text';
@@ -112,7 +112,7 @@ export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useCheckboxGroupState({
     ...props,
@@ -173,7 +173,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
     ...otherProps
   } = props;
   [props, ref] = useContextProps(otherProps, ref, CheckboxContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let groupState = useContext(CheckboxGroupStateContext);
   let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
