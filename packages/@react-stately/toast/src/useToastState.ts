@@ -142,7 +142,7 @@ export class ToastQueue<T> {
       this.queue[i++].animation = 'queued';
     }
 
-    this.updateVisibleToasts({action: 'add'});
+    this.updateVisibleToasts('add');
     return toastKey;
   }
 
@@ -161,16 +161,16 @@ export class ToastQueue<T> {
       }
     }
 
-    this.updateVisibleToasts({action: 'close', key});
+    this.updateVisibleToasts('close');
   }
 
   /** Removes a toast from the visible toasts after an exiting animation. */
   remove(key: string) {
-    this.updateVisibleToasts({action: 'remove', key});
+    this.queue = this.queue.filter(t => t.key !== key);
+    this.updateVisibleToasts('remove');
   }
 
-  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
-    let {action} = options;
+  private updateVisibleToasts(action: 'add' | 'close' | 'remove') {
     let toasts = this.queue.slice(0, this.maxVisibleToasts);
 
     if (action === 'close' && this.hasExitAnimation) {
