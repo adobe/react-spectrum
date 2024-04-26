@@ -265,23 +265,27 @@ export {_Tree as UNSTABLE_Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
-  // Whether the tree row is expanded.
-  isExpanded: boolean
+  /** Whether the tree item is expanded. */
+  isExpanded: boolean,
+  // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
+  // Maybe should have this for the other collection item render props
+  /** Whether the tree item's children have keyboard focus. */
+  isFocusVisibleWithin: boolean
 }
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the tree row. */
   id?: Key,
-  /** The object value that this tree row represents. When using dynamic collections, this is set automatically. */
+  /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
   value?: T,
-  /** A string representation of the tree row's contents, used for features like typeahead. */
+  /** A string representation of the tree item's contents, used for features like typeahead. */
   textValue: string,
-  /** An accessibility label for this tree row. */
+  /** An accessibility label for this tree item. */
   'aria-label'?: string,
-  /** A list of child tree row objects used when dynamically rendering the tree row children. */
+  /** A list of child tree item objects used when dynamically rendering the tree item children. */
   childItems?: Iterable<T>,
   // TODO: made this required since the user needs to pass Content at least
-  /** The content of the tree row along with any nested children. Supports static nested tree rows or use of a Collection to dynamically render nested tree rows. */
+  /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
   children: ReactNode
 }
 
@@ -315,12 +319,14 @@ const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
 export {_TreeItem as UNSTABLE_TreeItem};
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
-  // Whether the tree row is expanded.
+  // Whether the tree item is expanded.
   isExpanded: boolean,
-  // Whether the tree row has child rows.
+  // Whether the tree item has child rows.
   hasChildRows: boolean,
-  // What level the tree row has within the tree.
-  level: number
+  // What level the tree item has within the tree.
+  level: number,
+  // Whether the tree item's children have keyboard focus.
+  isFocusVisibleWithin: boolean
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
@@ -357,6 +363,10 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
   let {checkboxProps} = useGridListSelectionCheckbox(
     {key: item.key},
     state
@@ -371,8 +381,9 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     hasChildRows,
     level,
     selectionMode: state.selectionManager.selectionMode,
-    selectionBehavior: state.selectionManager.selectionBehavior
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level]);
+    selectionBehavior: state.selectionManager.selectionBehavior,
+    isFocusVisibleWithin
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -388,11 +399,10 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     }
   }, [item.textValue]);
 
-
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (hasChildRows && !expandButtonRef.current) {
-      console.warn('Expandable tree rows must contain a expand button so screen reader users can expand/collapse the row.');
+      console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
     }
   // eslint-disable-next-line
   }, []);
@@ -417,7 +427,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   return (
     <>
       <div
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, focusWithinProps)}
         {...renderProps}
         ref={ref}
         // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
@@ -482,7 +492,7 @@ function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
     : new Set(expanded);
 }
 interface TreeGridCollectionOptions {
-  expandedKeys: 'all' | Set<Key>
+  expandedKeys: Set<Key>
 }
 
 interface FlattenedTree<T> {
@@ -513,7 +523,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         keyMap.set(node.key, node as NodeValue<T>);
       }
 
-      if (node.level === 0 || (expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
+      if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
         // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
         flattenedRows.push(keyMap.get(node.key) || node);
       }

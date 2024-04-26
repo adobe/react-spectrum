@@ -43,6 +43,7 @@ export interface TreeGridListItemAria extends GridListItemAria {
  * @param ref - The ref attached to the row element.
  */
 export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement>): TreeGridListItemAria {
+  let {node} = props;
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
@@ -50,7 +51,9 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
   let expandButtonProps = {
     onPress: () => {
       if (!gridListAria.isDisabled) {
-        state.toggleKey(props.node.key);
+        state.toggleKey(node.key);
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(node.key);
       }
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
