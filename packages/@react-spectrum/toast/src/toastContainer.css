@@ -21,6 +21,7 @@
   pointer-events: none;
   outline: none;
   margin-block-end: 8px;
+  flex-direction: column-reverse;
 
   .spectrum-Toast {
     margin: 8px;

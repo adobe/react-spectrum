@@ -134,11 +134,7 @@ export class ToastQueue<T> {
       }
     }
 
-    if (toast.priority) {
-      this.queue.splice(low, 0, toast);
-    } else {
-      this.queue.unshift(toast);
-    }
+    this.queue.splice(low, 0, toast);
 
     toast.animation = low < this.maxVisibleToasts ? 'entering' : 'queued';
     let i = this.maxVisibleToasts;
@@ -146,7 +142,7 @@ export class ToastQueue<T> {
       this.queue[i++].animation = 'queued';
     }
 
-    this.updateVisibleToasts();
+    this.updateVisibleToasts({action: 'add'});
     return toastKey;
   }
 
@@ -159,30 +155,26 @@ export class ToastQueue<T> {
     if (index >= 0) {
       this.queue[index].onClose?.();
       this.queue.splice(index, 1);
+      this.visibleToasts.find(t => t.key === key).animation = 'exiting';
     }
 
-    this.updateVisibleToasts(index);
+    this.updateVisibleToasts({action: 'close', key});
   }
 
   /** Removes a toast from the visible toasts after an exiting animation. */
   remove(key: string) {
-    let index = this.queue.findIndex(t => t.key === key);
-    this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
-    this.updateVisibleToasts(index);
+    this.updateVisibleToasts({action: 'remove', key});
   }
 
-  private updateVisibleToasts(oldIndex = -1) {
+  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
+    let {action, key} = options;
     let toasts = this.queue.slice(0, this.maxVisibleToasts);
-    if (this.hasExitAnimation) {
-      let prevToasts: QueuedToast<T>[] = this.visibleToasts
-          .filter(t => !toasts.some(t2 => t.key === t2.key))
-          .map(t => ({...t, animation: 'exiting'}));
 
-      if (oldIndex !== -1) {
-        toasts.splice(oldIndex, 0, prevToasts?.[0]);
-      }
-
-      this.visibleToasts = toasts;
+    if (action === 'remove') {
+      this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
+    } else if (action === 'close' && this.hasExitAnimation) {
+      // Cause a rerender to happen for exit animation
+      this.visibleToasts = this.visibleToasts.map(t => t);
     } else {
       this.visibleToasts = toasts;
     }
