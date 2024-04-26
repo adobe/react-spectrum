@@ -21,7 +21,6 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {useLocale} from '@react-aria/i18n';
-import {useProvider} from '@react-spectrum/provider';
 
 interface SubmenuTriggerProps {
   /**
@@ -74,8 +73,6 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   };
 
   let overlay;
-  let {scale} = useProvider();
-  let offset = scale === 'medium' ? -5 : -6; // --spectrum-global-dimension-size-65
 
   if (isMobile)  {
     delete submenuTriggerProps.onBlur;
@@ -97,8 +94,6 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainer}
         containerPadding={0}
-        crossOffset={offset}
-        offset={offset}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
         state={submenuTriggerState}
