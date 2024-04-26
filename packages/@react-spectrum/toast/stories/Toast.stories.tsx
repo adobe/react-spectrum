@@ -84,6 +84,26 @@ WithAction.story = {
   }
 };
 
+
+export const WithTestId = (args) => (
+  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} data-testid="hello i am a test id" />
+);
+
+WithTestId.story = {
+  name: 'With test id',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
 export const WithDialog = (args) => (
   <DialogTrigger isDismissable>
     <Button variant="accent">Open dialog</Button>
