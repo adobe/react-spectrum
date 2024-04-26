@@ -32,7 +32,13 @@ function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement
         }
       </div>
       <div className={style({display: 'flex', gap: 4})()}>
-        <Picker aria-label="Color format" isQuiet width="size-700" menuWidth="size-1000" selectedKey={format} onSelectionChange={f => setFormat(f as typeof format)}>
+        <Picker 
+          aria-label={formatter.format('colorFormat')}
+          isQuiet
+          width="size-700"
+          menuWidth="size-1000"
+          selectedKey={format}
+          onSelectionChange={f => setFormat(f as typeof format)}>
           <Item key="hex">{formatter.format('hex')}</Item>
           <Item key="rgb">{formatter.format('rgb')}</Item>
           <Item key="hsl">{formatter.format('hsl')}</Item>

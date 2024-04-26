@@ -1,4 +1,5 @@
 {
+  "colorFormat": "Color format",
   "hex": "Hex",
   "rgb": "RGB",
   "hsl": "HSL",
