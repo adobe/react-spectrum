@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ColorWheel, ColorSwatch} from '../';
+import {ColorSwatch, ColorWheel} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex, useLocale} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
@@ -63,7 +63,6 @@ export const Controlled: ColorWheelStory = {
 export function ControlledHSL(props) {
   let {locale} = useLocale();
   let [color, setColor] = useState(props.defaultValue || parseColor('hsl(0, 100%, 50%)'));
-  let colorCSS = color.toString('css');
   let onChangeEnd = (color) => {
     props.onChangeEnd && props.onChangeEnd(color);
     setColor(color);
