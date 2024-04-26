@@ -35,15 +35,31 @@ describe('ColorSwatchPicker', function () {
 
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('aria-label', 'Color swatches');
+    expect(listbox).toHaveAttribute('class', 'react-aria-ColorSwatchPicker');
 
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(4);
+    expect(options[0]).toHaveAttribute('class', 'react-aria-ColorSwatchPickerItem');
     expect(within(options[0]).getByRole('img')).toHaveAttribute('aria-label', 'vibrant red');
 
     await user.click(options[1]);
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(parseColor('#0f0'));
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('supports custom class', function () {
+    let {getByRole} = render(
+      <ColorSwatchPicker className="picker">
+        <ColorSwatchPickerItem color="#f00" className="item"><ColorSwatch /></ColorSwatchPickerItem>
+      </ColorSwatchPicker>
+    );
+
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('class', 'picker');
+
+    let options = within(listbox).getAllByRole('option');
+    expect(options[0]).toHaveAttribute('class', 'item');
   });
 
   it('supports custom aria-label', async function () {

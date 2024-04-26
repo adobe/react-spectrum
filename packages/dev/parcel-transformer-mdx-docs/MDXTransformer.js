@@ -304,6 +304,9 @@ module.exports = new Transformer({
               specifierType: 'url'
             });
           }
+          if (yamlData.preRelease) {
+            preRelease = yamlData.preRelease;
+          }
         }
 
         return node;

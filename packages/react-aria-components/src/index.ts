@@ -20,6 +20,7 @@ export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHe
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, CheckboxGroupStateContext} from './Checkbox';
 export {ColorArea, ColorAreaContext, ColorAreaStateContext} from './ColorArea';
 export {ColorField, ColorFieldContext, ColorFieldStateContext} from './ColorField';
+export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from './ColorPicker';
 export {ColorSlider, ColorSliderContext, ColorSliderStateContext} from './ColorSlider';
 export {ColorSwatch, ColorSwatchContext} from './ColorSwatch';
 export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from './ColorSwatchPicker';
@@ -70,7 +71,7 @@ export {UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeIte
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
-export {parseColor} from '@react-stately/color';
+export {parseColor, getColorChannels} from '@react-stately/color';
 
 export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
@@ -82,6 +83,7 @@ export type {ColorSliderProps, ColorSliderRenderProps} from './ColorSlider';
 export type {ColorSwatchProps, ColorSwatchRenderProps} from './ColorSwatch';
 export type {ColorSwatchPickerProps, ColorSwatchPickerRenderProps, ColorSwatchPickerItemProps, ColorSwatchPickerItemRenderProps} from './ColorSwatchPicker';
 export type {ColorThumbProps, ColorThumbRenderProps} from './ColorThumb';
+export type {ColorPickerProps, ColorPickerRenderProps} from './ColorPicker';
 export type {ColorWheelProps, ColorWheelRenderProps, ColorWheelTrackProps, ColorWheelTrackRenderProps} from './ColorWheel';
 export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';

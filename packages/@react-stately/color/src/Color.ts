@@ -37,6 +37,18 @@ export function normalizeColor(v: string | IColor) {
   }
 }
 
+/** Returns a list of color channels for a given color space. */
+export function getColorChannels(colorSpace: ColorSpace) {
+  switch (colorSpace) {
+    case 'rgb':
+      return RGBColor.colorChannels;
+    case 'hsl':
+      return HSLColor.colorChannels;
+    case 'hsb':
+      return HSBColor.colorChannels;
+  }
+}
+
 // Lightness threshold between orange and brown.
 const ORANGE_LIGHTNESS_THRESHOLD = 0.68;
 // Lightness threshold between pure yellow and "yellow green".
@@ -402,7 +414,7 @@ class RGBColor extends Color {
     return 'rgb';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return RGBColor.colorChannels;
   }
@@ -541,7 +553,7 @@ class HSBColor extends Color {
     return 'hsb';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSBColor.colorChannels;
   }
@@ -682,7 +694,7 @@ class HSLColor extends Color {
     return 'hsl';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSLColor.colorChannels;
   }

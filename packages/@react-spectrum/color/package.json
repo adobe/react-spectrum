@@ -41,15 +41,20 @@
     "@react-aria/i18n": "^3.10.2",
     "@react-aria/interactions": "^3.21.1",
     "@react-aria/utils": "^3.23.2",
+    "@react-spectrum/dialog": "^3.8.9",
     "@react-spectrum/form": "^3.7.4",
     "@react-spectrum/label": "^3.16.4",
+    "@react-spectrum/overlays": "^5.5.5",
+    "@react-spectrum/picker": "^3.14.3",
     "@react-spectrum/textfield": "^3.11.4",
     "@react-spectrum/utils": "^3.11.5",
+    "@react-spectrum/view": "^3.6.8",
     "@react-stately/color": "^3.5.3",
     "@react-types/color": "3.0.0-beta.23",
     "@react-types/shared": "^3.22.1",
     "@react-types/textfield": "^3.9.1",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria-components": "^1.1.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

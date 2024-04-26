@@ -17,7 +17,7 @@ export type {ColorFieldState} from './useColorFieldState';
 export type {ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions} from './useColorChannelFieldState';
 export type {ColorPickerProps, ColorPickerState} from './useColorPickerState';
 
-export {parseColor} from './Color';
+export {parseColor, getColorChannels} from './Color';
 export {useColorAreaState} from './useColorAreaState';
 export {useColorSliderState} from './useColorSliderState';
 export {useColorWheelState} from './useColorWheelState';
