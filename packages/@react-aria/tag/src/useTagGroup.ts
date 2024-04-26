@@ -68,7 +68,8 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
     ref,
     orientation: 'horizontal',
     direction,
-    disabledKeys: state.disabledKeys
+    disabledKeys: state.disabledKeys,
+    disabledBehavior: state.selectionManager.disabledBehavior
   });
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,

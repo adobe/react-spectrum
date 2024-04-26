@@ -14,7 +14,7 @@
 import {act} from 'react-dom/test-utils';
 import {getDeepActiveElement, getOwnerWindow, getRootNode} from '../';
 import React, {createRef} from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 describe('getRootNode', () => {
   test.each([null, undefined])('returns the document if the argument is %p', (value) => {

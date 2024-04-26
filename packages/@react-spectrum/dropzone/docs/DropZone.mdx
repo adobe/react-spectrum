@@ -41,7 +41,6 @@ category: Drag and drop
 
 ```tsx example
 import Upload from '@spectrum-icons/illustrations/Upload';
-import {Text} from 'react-aria-components';
 
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
@@ -56,9 +55,7 @@ function Example() {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              {isFilled ? 'You dropped something!' : 'Drag and drop your file'}
-            </Text>
+            {isFilled ? 'You dropped something!' : 'Drag and drop your file'}
           </Heading>
         </IllustratedMessage>
       </DropZone>
@@ -121,7 +118,6 @@ A DropZone accepts an [IllustratedMessage](IllustratedMessage.html) as a child w
 
 ```tsx example
 import {FileTrigger} from 'react-aria-components';
-import {Text} from 'react-aria-components';
 
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
@@ -136,9 +132,7 @@ function Example() {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              {isFilled ? 'You dropped something!' : 'Drag and drop here'}
-            </Text>
+            {isFilled ? 'You dropped something!' : 'Drag and drop here'}
           </Heading>
           <Content>
             <FileTrigger
@@ -169,7 +163,6 @@ The following example uses an `onDrop` handler to update the filled status store
 
 ```tsx example
 import File from '@spectrum-icons/illustrations/File';
-import {Text} from 'react-aria-components';
 import {Flex} from '@react-spectrum/layout';
 
 function Example() {
@@ -202,9 +195,7 @@ function Example() {
             <IllustratedMessage>
               <Upload />
               <Heading>
-                <Text slot="label">
-                  Drag and drop here
-                </Text>
+                Drag and drop here
               </Heading>
             </IllustratedMessage>
           )}
@@ -228,8 +219,6 @@ The user is responsible for both managing the filled state of a DropZone and han
 The example below demonstrates one way of styling the filled state.
 
 ```tsx example
-import {Text} from 'react-aria-components';
-
 function Example() {
   let [filledSrc, setFilledSrc] = React.useState(null);
 
@@ -258,9 +247,7 @@ function Example() {
             <IllustratedMessage>
               <Upload />
               <Heading>
-                <Text slot="label">
-                  Drag and drop photos
-                </Text>
+                Drag and drop photos
               </Heading>
             </IllustratedMessage>
           )}
@@ -326,8 +313,6 @@ When a DropZone is in a filled state and has an object dragged over it, a messag
 
 
 ```tsx example
-import {Text} from 'react-aria-components';
-
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
 
@@ -342,9 +327,7 @@ function Example() {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              {isFilled ? 'You dropped something!' : 'Drag and drop here'}
-            </Text>
+            {isFilled ? 'You dropped something!' : 'Drag and drop here'}
           </Heading>
         </IllustratedMessage>
       </DropZone>
@@ -361,7 +344,6 @@ In the below example, the drop zone only supports dropping JPEG images. If a JPE
 
 ```tsx example
 import {FileTrigger} from 'react-aria-components';
-import {Text} from 'react-aria-components';
 
 function Example() {
   let [filledSrc, setFilledSrc] = React.useState(null);
@@ -396,9 +378,7 @@ function Example() {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              {filledSrc ? `${filledSrc.type} ${filledSrc.name}` : 'Drag and drop here'}
-            </Text>
+            {filledSrc ? `${filledSrc.type} ${filledSrc.name}` : 'Drag and drop here'}
           </Heading>
           <Content>
             <FileTrigger

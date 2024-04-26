@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {FieldError, Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -225,6 +225,18 @@ describe('TextField', () => {
 
       await user.tab();
       expect(input).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should render the id attribute only on the input element', async () => {
+      let {getAllByTestId, getByRole} = render(
+        <TestTextField id="name" input={component} />
+      );
+      let outerEl = getAllByTestId('text-field-test');
+      let input = getByRole('textbox');
+
+      expect(outerEl).toHaveLength(1);
+      expect(outerEl[0]).not.toHaveAttribute('id');
+      expect(input).toHaveAttribute('id', 'name');
     });
   });
 });

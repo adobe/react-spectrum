@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Checkbox, Collection, Text, Tree, TreeItem, TreeItemContent} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -25,7 +25,7 @@ let StaticTreeItem = (props) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
           <>
-            {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
+            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
@@ -41,7 +41,7 @@ let StaticTreeItem = (props) => {
 };
 
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
@@ -95,7 +95,7 @@ let DynamicTreeItem = (props) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
           <>
-            {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
+            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
@@ -117,7 +117,7 @@ let DynamicTreeItem = (props) => {
 };
 
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item: any) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         {item.name}
@@ -222,7 +222,8 @@ describe('Tree', () => {
     expect(rowNoChild).toHaveAttribute('data-rac');
 
     let rowWithChildren = rows[1];
-    expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects');
+    // Row has action since it is expandable but not selectable.
+    expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects, row has action');
     expect(rowWithChildren).toHaveAttribute('aria-expanded', 'true');
     expect(rowWithChildren).toHaveAttribute('data-expanded', 'true');
     expect(rowWithChildren).toHaveAttribute('aria-level', '1');
@@ -233,7 +234,7 @@ describe('Tree', () => {
     expect(rowWithChildren).toHaveAttribute('data-rac');
 
     let level2ChildRow = rows[2];
-    expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1');
+    expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1, row has action');
     expect(level2ChildRow).toHaveAttribute('aria-expanded', 'true');
     expect(level2ChildRow).toHaveAttribute('data-expanded', 'true');
     expect(level2ChildRow).toHaveAttribute('aria-level', '2');
@@ -277,6 +278,15 @@ describe('Tree', () => {
     expect(level2ChildRow3).toHaveAttribute('data-rac');
   });
 
+  it('should not label an expandable row as having an action if it supports selection', () => {
+    let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} />);
+
+    let rows = getAllByRole('row');
+    expect(rows[1]).toHaveAttribute('aria-label', 'Projects');
+    expect(rows[1]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
   it('should support dynamic trees', () => {
     let {getByRole, getAllByRole} = render(<DynamicTree />);
     let tree = getByRole('treegrid');
@@ -286,28 +296,28 @@ describe('Tree', () => {
     expect(rows).toHaveLength(20);
 
     // Check the rough structure to make sure dynamic rows are rendering as expected (just checks the expandable rows and their attributes)
-    expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+    expect(rows[0]).toHaveAttribute('aria-label', 'Projects, row has action');
     expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[0]).toHaveAttribute('aria-level', '1');
     expect(rows[0]).toHaveAttribute('aria-posinset', '1');
     expect(rows[0]).toHaveAttribute('aria-setsize', '2');
     expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
 
-    expect(rows[2]).toHaveAttribute('aria-label', 'Project 2');
+    expect(rows[2]).toHaveAttribute('aria-label', 'Project 2, row has action');
     expect(rows[2]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[2]).toHaveAttribute('aria-level', '2');
     expect(rows[2]).toHaveAttribute('aria-posinset', '2');
     expect(rows[2]).toHaveAttribute('aria-setsize', '5');
     expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
 
-    expect(rows[8]).toHaveAttribute('aria-label', 'Project 5');
+    expect(rows[8]).toHaveAttribute('aria-label', 'Project 5, row has action');
     expect(rows[8]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[8]).toHaveAttribute('aria-level', '2');
     expect(rows[8]).toHaveAttribute('aria-posinset', '5');
     expect(rows[8]).toHaveAttribute('aria-setsize', '5');
     expect(rows[8]).toHaveAttribute('data-has-child-rows', 'true');
 
-    expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+    expect(rows[12]).toHaveAttribute('aria-label', 'Reports, row has action');
     expect(rows[12]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[12]).toHaveAttribute('aria-level', '1');
     expect(rows[12]).toHaveAttribute('aria-posinset', '2');
@@ -377,7 +387,10 @@ describe('Tree', () => {
 
   describe('general interactions', () => {
     it('should support hover on rows', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let onHoverStart = jest.fn();
+      let onHoverChange = jest.fn();
+      let onHoverEnd = jest.fn();
+      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'multiple'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
@@ -386,10 +399,14 @@ describe('Tree', () => {
       await user.hover(row);
       expect(row).toHaveAttribute('data-hovered', 'true');
       expect(row).toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(1);
 
       await user.unhover(row);
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverEnd).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(2);
 
       rerender(<StaticTree treeProps={{selectionMode: 'none', onAction: jest.fn()}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
       row = getAllByRole('row')[0];
@@ -406,15 +423,24 @@ describe('Tree', () => {
     });
 
     it('should not update the hover state if the row is not interactive', async () => {
-      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let onHoverStart = jest.fn();
+      let onHoverChange = jest.fn();
+      let onHoverEnd = jest.fn();
+      let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}} />);
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(0);
+      expect(onHoverChange).toHaveBeenCalledTimes(0);
+      expect(onHoverEnd).toHaveBeenCalledTimes(0);
 
       await user.hover(row);
       expect(row).not.toHaveAttribute('data-hovered');
       expect(row).not.toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(0);
+      expect(onHoverChange).toHaveBeenCalledTimes(0);
+      expect(onHoverEnd).toHaveBeenCalledTimes(0);
 
       let expandableRow = getAllByRole('row')[1];
       expect(expandableRow).not.toHaveAttribute('data-hovered');
@@ -423,14 +449,22 @@ describe('Tree', () => {
       await user.hover(expandableRow);
       expect(expandableRow).toHaveAttribute('data-hovered', 'true');
       expect(expandableRow).toHaveClass('hover');
+      expect(onHoverStart).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(1);
+      expect(onHoverEnd).toHaveBeenCalledTimes(0);
 
       await user.unhover(expandableRow);
       expect(expandableRow).not.toHaveAttribute('data-hovered');
       expect(expandableRow).not.toHaveClass('hover');
+      expect(onHoverEnd).toHaveBeenCalledTimes(1);
+      expect(onHoverChange).toHaveBeenCalledTimes(2);
 
       // Test a completely inert expandable row
       // Note the disabledBehavior setting here, by default we make disableKey keys NOT restrict expandablity of the row. Similar pattern to Table
-      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let inertOnHoverStart = jest.fn();
+      let inertOnHoverChange = jest.fn();
+      let inertOnHoverEnd = jest.fn();
+      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: inertOnHoverStart, onHoverChange: inertOnHoverChange, onHoverEnd: inertOnHoverEnd}} />);
 
       expandableRow = getAllByRole('row')[1];
       expect(expandableRow).toHaveAttribute('data-disabled', 'true');
@@ -440,6 +474,9 @@ describe('Tree', () => {
       await user.hover(expandableRow);
       expect(expandableRow).not.toHaveAttribute('data-hovered');
       expect(expandableRow).not.toHaveClass('hover');
+      expect(inertOnHoverStart).toHaveBeenCalledTimes(0);
+      expect(inertOnHoverChange).toHaveBeenCalledTimes(0);
+      expect(inertOnHoverEnd).toHaveBeenCalledTimes(0);
     });
 
     it('should support press on rows', async () => {
@@ -685,6 +722,8 @@ describe('Tree', () => {
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(checkbox);
         await user.keyboard('{ArrowRight}');
+        // TODO: At the moment it doesn't skip the chevron button, we still need to figure out a way to make a button
+        // keyboard skippable
         expect(document.activeElement).toBe(buttons[0]);
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(buttons[1]);
@@ -731,7 +770,7 @@ describe('Tree', () => {
         expect(queryByText('Reports 1ABC')).toBeFalsy();
         await user.keyboard('Reports 1ABC');
         expect(document.activeElement).toBe(rows[12]);
-        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+        expect(rows[12]).toHaveAttribute('aria-label', 'Reports, row has action');
       });
 
       it('should navigate between visible rows when using Arrow Up/Down', async () => {
@@ -751,10 +790,10 @@ describe('Tree', () => {
         expect(rows).toHaveLength(9);
         await user.keyboard('{ArrowDown}');
         expect(document.activeElement).toBe(rows[1]);
-        expect(rows[1]).toHaveAttribute('aria-label', 'Reports');
+        expect(rows[1]).toHaveAttribute('aria-label', 'Reports, row has action');
         await user.keyboard('{ArrowUp}');
         expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+        expect(rows[0]).toHaveAttribute('aria-label', 'Projects, row has action');
       });
 
       it('should navigate between visible rows when using Home/End', async () => {
@@ -776,7 +815,7 @@ describe('Tree', () => {
         await user.keyboard('{Home}');
         await user.keyboard('{End}');
         expect(document.activeElement).toBe(rows[12]);
-        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+        expect(rows[12]).toHaveAttribute('aria-label', 'Reports, row has action');
       });
     });
   });
@@ -884,7 +923,7 @@ describe('Tree', () => {
       });
 
       it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async () => {
-        let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: 'all'}} />);
+        let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])}} />);
         let rows = getAllByRole('row');
         expect(rows).toHaveLength(20);
 

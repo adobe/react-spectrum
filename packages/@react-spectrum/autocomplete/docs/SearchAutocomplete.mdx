@@ -533,3 +533,22 @@ For right-to-left (RTL) languages, this is flipped.
   <Item>Snake</Item>
 </SearchAutocomplete>
 ```
+
+## Testing
+
+The SearchAutocomplete features an overlay that transitions in and out of the page as it is opened and closed. Depending on
+your device configuration, this overlay may render as a tray or a dropdown and the trigger itself may render as a button or a input. Additionally,
+the SearchAutocomplete features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
+Please see the following sections in the testing docs for more information on how to handle these
+behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+[Long press](./testing.html#simulating-user-long-press)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/autocomplete/test/SearchAutocomplete.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

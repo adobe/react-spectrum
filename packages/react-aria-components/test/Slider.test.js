@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
