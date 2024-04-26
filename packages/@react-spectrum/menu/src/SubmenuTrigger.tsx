@@ -75,7 +75,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
   let overlay;
   let {scale} = useProvider();
-  let offset = scale === 'medium' ? 5 : 6; // --spectrum-global-dimension-size-65
+  let offset = scale === 'medium' ? -5 : -6; // --spectrum-global-dimension-size-65
 
   if (isMobile)  {
     delete submenuTriggerProps.onBlur;
