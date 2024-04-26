@@ -170,12 +170,10 @@ export class ToastQueue<T> {
   }
 
   private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
-    let {action, key} = options;
+    let {action} = options;
     let toasts = this.queue.slice(0, this.maxVisibleToasts);
 
-    if (action === 'remove') {
-      this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
-    } else if (action === 'close' && this.hasExitAnimation) {
+    if (action === 'close' && this.hasExitAnimation) {
       // Cause a rerender to happen for exit animation
       this.visibleToasts = this.visibleToasts.map(t => t);
     } else {

@@ -182,9 +182,9 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe('First Toast');
     expect(result.current.visibleToasts[0].animation).toBe('exiting');
+    act(() => {result.current.remove(result.current.visibleToasts[0].key);});
 
     // there should only be one Toast left, the third one
-    act(() => {result.current.remove(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe('Third Toast');
   });
