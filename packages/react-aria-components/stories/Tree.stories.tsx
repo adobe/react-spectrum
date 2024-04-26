@@ -58,7 +58,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
           <>
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <MyCheckbox slot="selection" />
             )}
             <div
@@ -215,7 +215,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
           <>
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <MyCheckbox slot="selection" />
             )}
             <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>

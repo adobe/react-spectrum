@@ -12,6 +12,7 @@
 
 // setup file
 import '@testing-library/jest-dom';
+import { configure } from '@testing-library/react';
 
 // this prints a nice stack like this
 /**
