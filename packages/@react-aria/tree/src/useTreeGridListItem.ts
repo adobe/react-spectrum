@@ -46,7 +46,7 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
   let {node} = props;
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tree');
 
   let expandButtonProps = {
     onPress: () => {
