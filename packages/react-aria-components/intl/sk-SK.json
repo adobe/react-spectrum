@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Vyberte položku",
-  "tableResizer": "Nástroj na zmenu veľkosti"
+  "tableResizer": "Nástroj na zmenu veľkosti",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

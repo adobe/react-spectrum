@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
+import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
 import {ComponentStoryObj, Meta, StoryFn} from '@storybook/react';
 import {Flex, Grid, useLocale, View} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
@@ -114,13 +114,8 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               isDisabled={isDisabled} />
           </Flex>
         )}
-        <Flex direction="column" alignItems="center" gap="size-100" minWidth="size-1200">
-          <div
-            role="img"
-            aria-roledescription="color swatch"
-            aria-label={`${color.toString(colorSpace)}, ${color.getColorName(locale)}`}
-            title={`HEX: ${color.toString('hex')}\nHSL: ${color.toString('hsl')}\nRGB: ${color.toString('rgb')}`}
-            style={{width: '96px', height: '96px', background: color.toString('css')}} />
+        <Flex direction="column" alignItems="start" gap="size-100" minWidth="size-1200">
+          <ColorSwatch color={color} size="L" />
           <ColorField
             label="HEX Color"
             value={color}

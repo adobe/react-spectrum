@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Kleurkiezer",
-  "twoDimensionalSlider": "2D-schuifregelaar"
+  "twoDimensionalSlider": "2D-schuifregelaar",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }

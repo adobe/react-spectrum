@@ -15,7 +15,7 @@ import {OpenTransition} from './OpenTransition';
 import {OverlayProps} from '@react-types/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useState} from 'react';
-import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
+import {Overlay as ReactAriaOverlay, useUNSTABLE_PortalContext} from '@react-aria/overlays';
 
 function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -31,6 +31,10 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
     onExited,
     nodeRef
   } = props;
+
+  let {getContainer} = useUNSTABLE_PortalContext();
+  container = container || getContainer?.();
+
   let [exited, setExited] = useState(!isOpen);
 
   let handleEntered = useCallback(() => {
