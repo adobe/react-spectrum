@@ -23,7 +23,6 @@ import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
-import {useLayoutEffect} from '@react-aria/utils';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -106,15 +105,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       }
     }, 220); // Matches transition duration
   };
-  let [offset, setOffset] = useState(0);
-  useLayoutEffect(() => {
-    if (parentMenuRef.current) {
-      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance');
-      if (offset !== '') {
-        setOffset(-1 * parseInt(offset, 10));
-      }
-    }
-  }, [parentMenuRef]);
 
   if (isMobile) {
     delete submenuTriggerProps.onBlur;
@@ -161,8 +151,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         triggerRef={triggerRef}
         placement="end top"
         containerPadding={0}
-        crossOffset={offset}
-        offset={offset}
         hideArrow
         enableBothDismissButtons>
         <FocusScope restoreFocus>
