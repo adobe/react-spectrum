@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,24 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColorSlider, ColorSliderContext, ColorThumb, Label, SliderOutput, SliderTrack} from '../';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
-import React, {useState} from 'react';
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
-  <Slider {...sliderProps}>
-    <Label>Opacity</Label>
+let TestColorSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
+  <ColorSlider defaultValue="rgb(255, 0, 0)" channel="red" {...sliderProps}>
+    <Label />
     <SliderOutput {...outputProps} />
     <SliderTrack {...trackProps}>
-      <SliderThumb {...thumbProps} />
+      <ColorThumb {...thumbProps} />
     </SliderTrack>
-  </Slider>
+  </ColorSlider>
 );
 
-let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
+let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestColorSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
-describe('Slider', () => {
+describe('ColorSlider', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -36,55 +36,55 @@ describe('Slider', () => {
   it('should render a slider with default class', () => {
     let {getByRole} = renderSlider();
     let group = getByRole('group');
-    expect(group).toHaveAttribute('class', 'react-aria-Slider');
+    expect(group).toHaveAttribute('class', 'react-aria-SliderTrack');
+    expect(group.parentElement).toHaveAttribute('class', 'react-aria-ColorSlider');
     expect(group).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent('Opacity');
-    expect(getByRole('status')).toHaveTextContent('0');
-    expect(group.querySelector('.react-aria-SliderTrack')).toBeInTheDocument();
-    expect(group.querySelector('.react-aria-SliderThumb')).toBeInTheDocument();
+    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent('Red');
+    expect(getByRole('status')).toHaveTextContent('255');
+    expect(group.querySelector('.react-aria-ColorThumb')).toBeInTheDocument();
   });
 
   it('should render a slider with custom class', () => {
     let {getByRole} = renderSlider({className: 'test'});
     let group = getByRole('group');
-    expect(group).toHaveAttribute('class', 'test');
+    expect(group.parentElement).toHaveAttribute('class', 'test');
   });
 
   it('should support DOM props', () => {
     let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'}, {'data-output': 'output'});
-    let group = getByRole('group');
-    expect(group).toHaveAttribute('data-foo', 'bar');
-    expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
-    expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
-    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
+    let slider = getByRole('group').parentElement;
+    expect(slider).toHaveAttribute('data-foo', 'bar');
+    expect(slider.querySelector('.react-aria-ColorThumb')).toHaveAttribute('data-bar', 'foo');
+    expect(slider.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
+    expect(slider.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
   });
 
   it('should support render props', () => {
     let {getByTestId} = render(
-      <Slider orientation="vertical">
+      <ColorSlider orientation="vertical" defaultValue="rgb(255, 0, 0)" channel="red">
         {({orientation}) => (
           <div className={`slider-${orientation}`} data-testid="wrapper">
-            <Label>Opacity</Label>
+            <Label />
             <SliderOutput />
             <SliderTrack>
-              <SliderThumb />
+              <ColorThumb />
             </SliderTrack>
           </div>
         )}
-      </Slider>
+      </ColorSlider>
     );
     expect(getByTestId('wrapper')).toHaveClass('slider-vertical');
   });
 
   it('should support slot', () => {
     let {getByRole} = render(
-      <SliderContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
-        <TestSlider sliderProps={{slot: 'test'}} />
-      </SliderContext.Provider>
+      <ColorSliderContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestColorSlider sliderProps={{slot: 'test'}} />
+      </ColorSliderContext.Provider>
     );
 
     let group = getByRole('group');
-    expect(group).toHaveAttribute('slot', 'test');
+    expect(group.parentElement).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
@@ -165,7 +165,7 @@ describe('Slider', () => {
 
   it('should support disabled state', () => {
     let {getByRole} = renderSlider({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''}, {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`});
-    let group = getByRole('group');
+    let wrapper = getByRole('group').parentElement;
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
 
@@ -173,105 +173,17 @@ describe('Slider', () => {
     expect(thumb).toHaveAttribute('data-disabled', 'true');
     expect(thumb).toHaveClass('disabled');
 
-    expect(group).toHaveAttribute('data-disabled', 'true');
-    expect(group).toHaveClass('disabled');
+    expect(wrapper).toHaveAttribute('data-disabled', 'true');
+    expect(wrapper).toHaveClass('disabled');
   });
 
   it('should support orientation', () => {
     let {getByRole} = renderSlider({orientation: 'vertical', className: ({orientation}) => orientation});
-    let group = getByRole('group');
+    let wrapper = getByRole('group').parentElement;
     let slider = getByRole('slider');
 
-    expect(group).toHaveAttribute('data-orientation', 'vertical');
-    expect(group).toHaveClass('vertical');
+    expect(wrapper).toHaveAttribute('data-orientation', 'vertical');
+    expect(wrapper).toHaveClass('vertical');
     expect(slider).toHaveAttribute('aria-orientation', 'vertical');
-  });
-
-  it('should support multiple thumbs', () => {
-    let {getByRole, getAllByRole} = render(
-      <Slider defaultValue={[30, 60]}>
-        <Label>Test</Label>
-        <SliderOutput>
-          {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-        </SliderOutput>
-        <SliderTrack>
-          {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
-        </SliderTrack>
-      </Slider>
-    );
-
-    let sliders = getAllByRole('slider');
-    expect(sliders).toHaveLength(2);
-    expect(sliders[0]).toHaveValue('30');
-    expect(sliders[1]).toHaveValue('60');
-
-    let output = getByRole('status');
-    expect(output).toHaveTextContent('30 – 60');
-  });
-
-  it('should support multiple thumbs (controlled)', async () => {
-    function SliderClient() {
-      const [value, setValue] = useState([30, 60]);
-      return (<div>
-        <Slider value={value} onChange={setValue}>
-          <Label>Test</Label>
-          <SliderOutput>
-            {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-          </SliderOutput>
-          <SliderTrack>
-            {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} className="thumb" />)}
-          </SliderTrack>
-        </Slider>
-        <button data-testid="reset-button" onClick={() => setValue([0, 100])}>reset</button>
-      </div>);
-    }
-
-    let {getAllByRole, getByTestId} = render(<SliderClient />);
-
-    let sliders = getAllByRole('slider');
-    
-    expect(sliders).toHaveLength(2);
-    expect(sliders[0]).toHaveValue('30');
-    expect(sliders[1]).toHaveValue('60');
-
-    let resetButton = getByTestId('reset-button');
-    await user.click(resetButton);
-    expect(sliders[0]).toHaveValue('0');
-    expect(sliders[1]).toHaveValue('100');
-
-    await user.tab();  // body (because we've clicked the reset button?)
-    await user.tab();
-    expect(document.activeElement).toBe(sliders[0]);
-    
-    await user.keyboard('{ArrowRight}');
-    await user.keyboard('{ArrowRight}');
-    await user.keyboard('{ArrowRight}');
-    expect(sliders[0]).toHaveValue('3');
-    expect(sliders[1]).toHaveValue('100');
-
-    await user.click(resetButton);
-    expect(sliders[0]).toHaveValue('0');
-    expect(sliders[1]).toHaveValue('100');
-
-    await user.tab();  // body
-    await user.tab();  // sliders[0]
-    await user.tab();
-    expect(document.activeElement).toBe(sliders[1]);
-    
-    await user.keyboard('{ArrowLeft}');
-    await user.keyboard('{ArrowLeft}');
-    await user.keyboard('{ArrowLeft}');
-    expect(sliders[0]).toHaveValue('0');
-    expect(sliders[1]).toHaveValue('97');
-  });
-
-  it('should support clicking on the track to move the thumb', async () => {
-    let onChange = jest.fn();
-    let {getByRole} = renderSlider({onChange});
-    let group = getByRole('group');
-    let track = group.querySelector('.react-aria-SliderTrack');
-
-    await user.pointer([{target: track, keys: '[MouseLeft]', coords: {x: 20}}]);
-    expect(onChange).toHaveBeenCalled();
   });
 });

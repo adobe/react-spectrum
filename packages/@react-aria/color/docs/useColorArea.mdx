@@ -113,7 +113,6 @@ function ColorArea(props) {
 
   let {
     colorAreaProps,
-    gradientProps,
     xInputProps,
     yInputProps,
     thumbProps
@@ -130,18 +129,9 @@ function ColorArea(props) {
         width: SIZE,
         height: SIZE,
         borderRadius: BORDER_RADIUS,
+        background: isDisabled ? 'rgb(142, 142, 142)' : colorAreaProps.style.background,
         opacity: isDisabled ? 0.3 : undefined
       }}>
-      <div
-        {...gradientProps}
-        style={{
-        backgroundColor: isDisabled ? 'rgb(142, 142, 142)' : undefined,
-        ...gradientProps.style,
-        borderRadius: BORDER_RADIUS,
-        height: SIZE,
-        width: SIZE,
-      }}
-         />
       <div
         {...thumbProps}
         style={{
@@ -152,7 +142,6 @@ function ColorArea(props) {
           boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
           boxSizing: 'border-box',
           height: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE,
-          transform: 'translate(-50%, -50%)',
           width: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE
         }}>
         <input ref={inputXRef} {...xInputProps} {...focusProps} />

@@ -123,7 +123,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   let {children, orientation = 'horizontal'} = props;
   children = useMemo(() => (
     typeof children === 'function'
-      ? children({orientation})
+      ? children({orientation, defaultChildren: null})
       : children
   ), [children, orientation]);
 

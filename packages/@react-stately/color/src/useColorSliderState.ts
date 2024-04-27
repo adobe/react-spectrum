@@ -21,7 +21,9 @@ export interface ColorSliderState extends SliderState {
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
   setValue(value: string | Color): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
-  getDisplayColor(): Color
+  getDisplayColor(): Color,
+  /** Whether the color slider is currently being dragged. */
+  readonly isDragging: boolean
 }
 
 
@@ -87,6 +89,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       return color.formatChannelValue(channel, locale);
     },
     step,
-    pageSize
+    pageSize,
+    isDragging: sliderState.isThumbDragging(0)
   };
 }

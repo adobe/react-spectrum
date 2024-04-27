@@ -45,7 +45,10 @@ export interface ColorWheelState {
   /** The step value of the hue channel, used when incrementing and decrementing. */
   step: number,
   /** The page step value of the hue channel, used when incrementing and decrementing. */
-  pageStep: number
+  pageStep: number,
+
+  /** Whether the color wheel is disabled. */
+  readonly isDisabled: boolean
 }
 
 const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
@@ -172,6 +175,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     isDragging,
     getDisplayColor() {
       return value.toFormat('hsl').withChannelValue('saturation', 100).withChannelValue('lightness', 50).withChannelValue('alpha', 1);
-    }
+    },
+    isDisabled: props.isDisabled || false
   };
 }

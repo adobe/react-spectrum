@@ -36,6 +36,8 @@ import {SliderProps} from '@react-types/slider';
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
 
+export type ColorSpace = 'rgb' | 'hsl' | 'hsb';
+
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
@@ -57,7 +59,7 @@ export interface Color {
   /** Converts the color to the given color format, and returns a new Color object. */
   toFormat(format: ColorFormat): Color,
   /** Converts the color to a string in the given format. */
-  toString(format: ColorFormat | 'css'): string,
+  toString(format?: ColorFormat | 'css'): string,
   /** Returns a duplicate of the color value. */
   clone(): Color,
   /** Converts the color to hex, and returns an integer representation. */
@@ -82,13 +84,17 @@ export interface Color {
    */
   getChannelName(channel: ColorChannel, locale: string): string,
   /**
+   * Returns the number formatting options for the given channel.
+   */
+  getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions,
+  /**
    * Formats the numeric value for a given channel for display according to the provided locale.
    */
   formatChannelValue(channel: ColorChannel, locale: string): string,
   /**
    * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
    */
-  getColorSpace(): ColorFormat,
+  getColorSpace(): ColorSpace,
   /**
    * Returns the color space axes, xChannel, yChannel, zChannel.
    */
