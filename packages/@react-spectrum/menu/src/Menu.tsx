@@ -79,7 +79,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           hasOpenSubmenu={hasOpenSubmenu}
           isSubmenu={isSubmenu}
           parentMenuTreeState={parentMenuTreeState}
-          rootMenuTriggerState={rootMenuTriggerState}>
+          rootMenuTriggerState={rootMenuTriggerState}
+          menuRef={domRef}>
           <div
             {...menuProps}
             style={mergeProps(styleProps.style, menuProps.style)}
@@ -125,7 +126,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
 }
 
 export function TrayHeaderWrapper(props) {
-  let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown} = props;
+  let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
@@ -157,6 +158,23 @@ export function TrayHeaderWrapper(props) {
       }
     };
   }, []);
+
+  // When opening submenu in tray, focus the first item in the submenu after animation completes
+  // This fixes an issue with iOS VO where the closed submenu was getting focus
+  let focusTimeoutRef = useRef(null);
+  useEffect(() => {
+    if (isMobile && isSubmenu && !hasOpenSubmenu && traySubmenuAnimation === 'spectrum-TraySubmenu-enter') {
+      focusTimeoutRef.current = setTimeout(() => {
+        let firstItem = menuRef.current.querySelector('[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]') as HTMLElement;
+        firstItem?.focus();
+      }, 220);
+    }
+    return () => {
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current);
+      }
+    };
+  }, [hasOpenSubmenu, isMobile, isSubmenu, menuRef, traySubmenuAnimation]);
 
   return (
     <>
