@@ -20,9 +20,6 @@
       /* Bigger handle when focused */
       width: calc(var(--spectrum-colorhandle-size) * 2);
       height: calc(var(--spectrum-colorhandle-size) * 2);
-
-      margin-left: calc(-1 * var(--spectrum-colorhandle-size));
-      margin-top: calc(-1 * var(--spectrum-colorhandle-size));
     }
   }
 
@@ -43,19 +40,14 @@
   }
 }
 
-.spectrum-ColorArea-handle {
+.spectrum-ColorArea-handle.spectrum-ColorArea-handle {
   left: 0;
   top: 0;
+  margin: 0;
 
   &:focus-within {
     z-index: 2;
   }
-}
-
-.spectrum-ColorArea-gradient {
-  width: 100%;
-  height: 100%;
-  border-radius: var(--spectrum-colorarea-border-radius);
 }
 
 .spectrum-ColorArea-slider {

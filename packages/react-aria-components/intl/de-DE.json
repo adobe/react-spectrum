@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "Ablegebereich",
   "selectPlaceholder": "Element wählen",
-  "tableResizer": "Größenanpassung"
+  "tableResizer": "Größenanpassung",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

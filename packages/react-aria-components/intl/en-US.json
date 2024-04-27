@@ -1,5 +1,6 @@
 {
   "selectPlaceholder": "Select an item",
   "tableResizer": "Resizer",
-  "dropzoneLabel": "DropZone"
+  "dropzoneLabel": "DropZone",
+  "colorSwatchPicker": "Color swatches"
 }

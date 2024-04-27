@@ -8,12 +8,7 @@
   box-shadow: inset 0 0 0 var(--spectrum-colorslider-border-size) var(--spectrum-colorslider-border-color);
 
   &:before {
-    /* Add a half-percent to fix diagonal line issue in Chrome on non-retina displays */
-    background-image:
-      linear-gradient(-45deg, transparent 75.5%, var(--spectrum-global-color-static-gray-500) 75.5%),
-      linear-gradient(45deg, transparent 75.5%, var(--spectrum-global-color-static-gray-500) 75.5%),
-      linear-gradient(-45deg, var(--spectrum-global-color-static-gray-500) 25.5%, transparent 25.5%),
-      linear-gradient(45deg, var(--spectrum-global-color-static-gray-500) 25.5%, transparent 25.5%);
+    background: repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 0% 50% / 16px 16px;
   }
 
   &.is-disabled {

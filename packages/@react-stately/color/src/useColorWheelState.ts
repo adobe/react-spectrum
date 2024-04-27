@@ -13,7 +13,7 @@
 import {Color, ColorWheelProps} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export interface ColorWheelState {
   /** The current color value represented by the color wheel. */
@@ -45,7 +45,10 @@ export interface ColorWheelState {
   /** The step value of the hue channel, used when incrementing and decrementing. */
   step: number,
   /** The page step value of the hue channel, used when incrementing and decrementing. */
-  pageStep: number
+  pageStep: number,
+
+  /** Whether the color wheel is disabled. */
+  readonly isDisabled: boolean
 }
 
 const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
@@ -99,7 +102,11 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [value, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let [stateValue, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let value = useMemo(() => {
+    let colorSpace = stateValue.getColorSpace();
+    return colorSpace === 'hsl' || colorSpace === 'hsb' ? stateValue : stateValue.toFormat('hsl');
+  }, [stateValue]);
   let valueRef = useRef(value);
   let setValue = (value: Color) => {
     valueRef.current = value;
@@ -172,6 +179,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     isDragging,
     getDisplayColor() {
       return value.toFormat('hsl').withChannelValue('saturation', 100).withChannelValue('lightness', 50).withChannelValue('alpha', 1);
-    }
+    },
+    isDisabled: props.isDisabled || false
   };
 }

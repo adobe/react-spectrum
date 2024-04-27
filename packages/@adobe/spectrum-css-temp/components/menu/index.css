@@ -50,6 +50,10 @@ governing permissions and limitations under the License.
   max-width: var(--spectrum-menu-max-width);
 }
 
+.spectrum-Submenu-popover {
+  margin: calc(var(--spectrum-global-dimension-size-65) * -1);
+}
+
 .spectrum-Menu {
   /*
     Menu border radius + 1 to match XD designs for submenu offset. No calc use so

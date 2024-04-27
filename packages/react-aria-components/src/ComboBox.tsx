@@ -75,7 +75,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
         isOpen: false,
         isDisabled,
         isInvalid,
-        isRequired
+        isRequired,
+        defaultChildren: null
       })
       : children
   ), [children, isDisabled, isInvalid, isRequired]);
