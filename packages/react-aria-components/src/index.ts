@@ -20,8 +20,10 @@ export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHe
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, CheckboxGroupStateContext} from './Checkbox';
 export {ColorArea, ColorAreaContext, ColorAreaStateContext} from './ColorArea';
 export {ColorField, ColorFieldContext, ColorFieldStateContext} from './ColorField';
+export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from './ColorPicker';
 export {ColorSlider, ColorSliderContext, ColorSliderStateContext} from './ColorSlider';
 export {ColorSwatch, ColorSwatchContext} from './ColorSwatch';
+export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorThumb} from './ColorThumb';
 export {ColorWheel, ColorWheelTrack, ColorWheelContext, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
@@ -69,7 +71,7 @@ export {UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeIte
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
-export {parseColor} from '@react-stately/color';
+export {parseColor, getColorChannels} from '@react-stately/color';
 
 export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
@@ -79,7 +81,9 @@ export type {ColorAreaProps, ColorAreaRenderProps} from './ColorArea';
 export type {ColorFieldProps, ColorFieldRenderProps} from './ColorField';
 export type {ColorSliderProps, ColorSliderRenderProps} from './ColorSlider';
 export type {ColorSwatchProps, ColorSwatchRenderProps} from './ColorSwatch';
+export type {ColorSwatchPickerProps, ColorSwatchPickerRenderProps, ColorSwatchPickerItemProps, ColorSwatchPickerItemRenderProps} from './ColorSwatchPicker';
 export type {ColorThumbProps, ColorThumbRenderProps} from './ColorThumb';
+export type {ColorPickerProps, ColorPickerRenderProps} from './ColorPicker';
 export type {ColorWheelProps, ColorWheelRenderProps, ColorWheelTrackProps, ColorWheelTrackRenderProps} from './ColorWheel';
 export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
@@ -128,4 +132,4 @@ export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
 export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
-export type {Color} from '@react-types/color';
+export type {Color, ColorSpace, ColorFormat} from '@react-types/color';

@@ -28,6 +28,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 category: Color
 keywords: [color area, color picker, aria]
 type: component
+preRelease: beta
 ---
 
 # ColorArea
@@ -133,7 +134,7 @@ If you will use a ColorArea in multiple places in your app, you can wrap all of 
 ```tsx example export=true
 import type {ColorAreaProps} from 'react-aria-components';
 
-function MyColorArea(props: ColorAreaProps) {
+export function MyColorArea(props: ColorAreaProps) {
   return (
     <ColorArea {...props}>
       <ColorThumb />

@@ -14,7 +14,7 @@ import {AriaColorFieldProps} from '@react-types/color';
 import {ColorFieldState} from '@react-stately/color';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {
-  HTMLAttributes,
+  InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
   useCallback,
@@ -30,7 +30,7 @@ export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: HTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the text field's description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the text field's error message element, if any. */

@@ -66,6 +66,7 @@ function ColorSwatch(props: AriaColorSwatchProps) {
     <div 
       {...colorSwatchProps}
       style={{
+        ...colorSwatchProps.style,
         width: 32,
         height: 32,
         borderRadius: 4,
@@ -99,5 +100,5 @@ By default, useColorSwatch includes a localized color description for screen rea
 In the example below, the full accessible name of the color swatch will be "Fire truck red, Background color".
 
 ```tsx example
-<ColorSwatch color="#00f" aria-label="Background color" colorName="Fire truck red" />
+<ColorSwatch color="#f00" aria-label="Background color" colorName="Fire truck red" />
 ```

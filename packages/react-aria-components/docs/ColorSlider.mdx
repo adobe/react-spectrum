@@ -28,6 +28,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 category: Color
 keywords: [color slider, color picker, aria]
 type: component
+preRelease: beta
 ---
 
 # ColorSlider
@@ -184,7 +185,7 @@ interface MyColorSliderProps extends ColorSliderProps {
   label?: string
 }
 
-function MyColorSlider({label, ...props}: MyColorSliderProps) {
+export function MyColorSlider({label, ...props}: MyColorSliderProps) {
   return (
     <ColorSlider {...props}>
       <Label>{label}</Label>

@@ -28,8 +28,9 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Color
-keywords: [color area, color picker, aria]
+keywords: [color field, color picker, aria]
 type: component
+preRelease: beta
 ---
 
 # ColorField
@@ -55,7 +56,7 @@ import {ColorField, Label, Input} from 'react-aria-components';
 ```
 
 <details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
 @import './Button.mdx' layer(button);
@@ -68,7 +69,6 @@ import {ColorField, Label, Input} from 'react-aria-components';
 .react-aria-ColorField {
   display: flex;
   flex-direction: column;
-  width: fit-content;
   color: var(--text-color);
 
   .react-aria-Input {
@@ -79,6 +79,9 @@ import {ColorField, Label, Input} from 'react-aria-components';
     background: var(--field-background);
     font-size: 1.143rem;
     color: var(--field-text-color);
+    width: 100%;
+    max-width: 12ch;
+    box-sizing: border-box;
 
     &[data-focused] {
       outline: 2px solid var(--focus-ring-color);
@@ -94,11 +97,11 @@ import {ColorField, Label, Input} from 'react-aria-components';
 
 The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
 can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
-of a complete color picker rather than a single field for editing a hex value. `ColorField` helps achieve accessible
+of a complete color picker rather than a single field for editing a hex value or individual color channel. `ColorField` helps achieve accessible
 color fields that can be styled as needed.
 
 * **Interactions** – Supports entering a value using a keyboard, incrementing and decrementing with the arrow keys, and adjusting the value with the scroll wheel.
-* **Validation** – Keyboard input is validated as the user types so that only valid hex characters are accepted. Custom client and server-side validation is also supported.
+* **Validation** – Keyboard input is validated as the user types so that only valid characters are accepted. Custom client and server-side validation is also supported.
 * **Accessible** – Follows the [spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) ARIA pattern. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
 ## Anatomy
@@ -191,10 +194,10 @@ interface MyColorFieldProps extends ColorFieldProps {
   errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
-function MyColorField({label, description, errorMessage, ...props}: MyColorFieldProps) {
+export function MyColorField({label, description, errorMessage, ...props}: MyColorFieldProps) {
   return (
     <ColorField {...props}>
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <Input />
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
@@ -239,10 +242,30 @@ function Example() {
 
 ### HTML forms
 
-ColorField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a hex color string.
+ColorField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a hex color string. When a `channel` prop is provided, the value will be submitted as a number instead.
 
 ```tsx example
 <MyColorField label="Color" name="color" />
+```
+
+## Color channel
+
+By default, ColorField allows the user to edit the color as a hex value. When the `colorSpace` and `channel` props are provided, ColorField displays the value for that channel formatted as a number instead. Rendering multiple ColorFields together can allow a user to edit a color.
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('#7f007f'));
+  return (
+    <>
+      <div style={{display: 'flex', gap: 8}}>
+        <MyColorField label="Hue" value={color} onChange={setColor} colorSpace="hsl" channel="hue" />
+        <MyColorField label="Saturation" value={color} onChange={setColor} colorSpace="hsl" channel="saturation" />
+        <MyColorField label="Lightness" value={color} onChange={setColor} colorSpace="hsl" channel="lightness" />
+      </div>
+      <p>Current color value: {color.toString('hex')}</p>
+    </>
+  );
+}
 ```
 
 ## Validation

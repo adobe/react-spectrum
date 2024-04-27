@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ColorField, ColorFieldContext, FieldError, Input, Label, Text} from '../';
+import {ColorField, ColorFieldContext, FieldError, Input, Label, parseColor, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -127,5 +127,22 @@ describe('ColorField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support the channel prop', async function () {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestColorField value="#abc" colorSpace="hsl" channel="hue" name="hue" onChange={onChange} />);
+    let colorField = getByRole('textbox');
+    expect(colorField.value).toBe('210°');
+    expect(colorField.closest('.react-aria-ColorField')).toHaveAttribute('data-channel', 'hue');
+    expect(colorField).not.toHaveAttribute('name');
+    let hiddenInput = document.querySelector('input[name=hue]');
+    expect(hiddenInput.value).toBe('210');
+    expect(hiddenInput).toHaveAttribute('type', 'hidden');
+
+    await user.tab();
+    await user.keyboard('100');
+    await user.tab();
+    expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
   });
 });

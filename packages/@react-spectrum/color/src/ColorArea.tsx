@@ -11,6 +11,7 @@
  */
 
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {ColorAreaContext, useContextProps} from 'react-aria-components';
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
@@ -24,14 +25,15 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  let inputXRef = useRef(null);
+  let inputYRef = useRef(null);
+  let containerRef = useFocusableRef(ref, inputXRef);
+  [props, containerRef] = useContextProps(props, containerRef, ColorAreaContext);
 
   let {isDisabled} = props;
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
-  let inputXRef = useRef(null);
-  let inputYRef = useRef(null);
-  let containerRef = useFocusableRef(ref, inputXRef);
 
   let state = useColorAreaState(props);
 
@@ -69,6 +71,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
+        containerRef={containerRef}
         className={classNames(styles, 'spectrum-ColorArea-handle')}
         {...thumbProps}>
         <div role="presentation">

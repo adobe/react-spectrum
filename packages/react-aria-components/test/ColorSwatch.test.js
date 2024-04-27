@@ -15,7 +15,7 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
 describe('ColorSwatch', () => {
-  it('should render a slider with default class', () => {
+  it('should render a swatch with default class', () => {
     let {getByRole} = render(<ColorSwatch color="#f00" />);
     let img = getByRole('img');
     expect(img).toHaveAttribute('class', 'react-aria-ColorSwatch');
@@ -24,7 +24,7 @@ describe('ColorSwatch', () => {
     expect(img).toHaveStyle({backgroundColor: '#f00'});
   });
 
-  it('should render a slider with custom class', () => {
+  it('should render a swatch with custom class', () => {
     let {getByRole} = render(<ColorSwatch className="test" />);
     let img = getByRole('img');
     expect(img).toHaveAttribute('class', 'test');

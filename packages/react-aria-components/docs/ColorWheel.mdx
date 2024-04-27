@@ -28,6 +28,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 category: Color
 keywords: [color wheel, color picker, aria]
 type: component
+preRelease: beta
 ---
 
 # ColorWheel
@@ -125,7 +126,7 @@ import type {ColorWheelProps} from 'react-aria-components';
 
 interface MyColorWheelProps extends Omit<ColorWheelProps, 'outerRadius' | 'innerRadius'> {}
 
-function MyColorWheel(props: MyColorWheelProps) {
+export function MyColorWheel(props: MyColorWheelProps) {
   return (
     <ColorWheel {...props} outerRadius={100} innerRadius={74}>
       <ColorWheelTrack />
@@ -404,11 +405,9 @@ function HueField() {
     <NumberField
       aria-label={state.value.getChannelName('hue', locale)}
       value={state.value.getChannelValue('hue')}
-      minValue={0}
-      maxValue={360}
       onChange={v => state.setValue(state.value.withChannelValue('hue', v))}
       formatOptions={state.value.getChannelFormatOptions('hue')}>
-      <Input style={{width: '4ch'}} />
+      <Input />
     </NumberField>
   );
 }
@@ -421,6 +420,17 @@ function HueField() {
   {/*- end highlight -*/}
 </ColorWheel>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Input {
+  width: 4ch;
+}
+```
+
+</details>
 
 ### Hooks
 

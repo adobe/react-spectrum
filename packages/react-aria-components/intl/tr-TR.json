@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "Bırakma Bölgesi",
   "selectPlaceholder": "Bir öğe seçin",
-  "tableResizer": "Yeniden boyutlandırıcı"
+  "tableResizer": "Yeniden boyutlandırıcı",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

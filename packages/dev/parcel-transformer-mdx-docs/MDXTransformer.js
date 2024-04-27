@@ -59,8 +59,10 @@ module.exports = new Transformer({
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, _, s) => {
-              if (s.slice(1, -1) !== 'your-component-library') {
+            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, x, s) => {
+              if (meta === 'example' && s[1] === '.') {
+                exampleCode.push(`import ${x} from "extract:${s.slice(1, -1)}.mdx";`);
+              } else if (s.slice(1, -1) !== 'your-component-library') {
                 exampleCode.push(m);
               }
               return '';
@@ -301,6 +303,9 @@ module.exports = new Transformer({
               specifier: yamlData.image,
               specifierType: 'url'
             });
+          }
+          if (yamlData.preRelease) {
+            preRelease = yamlData.preRelease;
           }
         }
 

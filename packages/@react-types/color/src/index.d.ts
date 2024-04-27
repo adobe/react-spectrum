@@ -124,6 +124,16 @@ export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps,
 }
 
 export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
+  /**
+   * The color channel that this field edits. If not provided, 
+   * the color is edited as a hex value.
+   */
+  channel?: ColorChannel,
+  /**
+   * The color space that the color field operates in if a `channel` prop is provided.
+   * If no `channel` is provided, the color field always displays the color as an RGB hex value.
+   */
+  colorSpace?: ColorSpace,
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
@@ -150,6 +160,11 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
 }
 
 export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
+  /** 
+   * The color space that the slider operates in. The `channel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */
@@ -168,6 +183,11 @@ export interface SpectrumColorSliderProps extends AriaColorSliderProps, StylePro
 }
 
 export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
+  /** 
+   * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
   /** Color channel for the horizontal axis. */
   xChannel?: ColorChannel,
   /** Color channel for the vertical axis. */

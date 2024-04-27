@@ -26,6 +26,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 category: Color
 keywords: [color swatch, color picker, aria]
 type: component
+preRelease: beta
 ---
 
 # ColorSwatch
@@ -100,16 +101,12 @@ To help kick-start your project, we offer starter kits that include example impl
 
 If you will use a ColorSwatch in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `ColorSwatch` and all of its children together into a single component which accepts an optional `label` prop, which is passed to the right place. It also shows how to use the `color` [render prop](styling.html#render-props) to add a checkerboard pattern behind partially transparent colors.
+This example wraps `ColorSwatch` and shows how to use the `color` [render prop](styling.html#render-props) to add a checkerboard pattern behind partially transparent colors.
 
 ```tsx example export=true
 import type {ColorSwatchProps} from 'react-aria-components';
 
-interface MyColorSwatchProps extends ColorSwatchProps {
-  label?: string
-}
-
-function MyColorSwatch({label, ...props}: MyColorSwatchProps) {
+export function MyColorSwatch(props: ColorSwatchProps) {
   return (
     <ColorSwatch 
       {...props}
