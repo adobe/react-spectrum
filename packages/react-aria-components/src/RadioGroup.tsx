@@ -14,7 +14,7 @@ import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusR
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {FormValidationBehaviorContext} from './Form';
+import {FormContext} from './Form';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useContext} from 'react';
@@ -114,7 +114,7 @@ export const RadioGroupStateContext = createContext<RadioGroupState | null>(null
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useRadioGroupState({
     ...props,

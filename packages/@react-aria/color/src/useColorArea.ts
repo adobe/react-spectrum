@@ -25,8 +25,6 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 export interface ColorAreaAria {
   /** Props for the color area container element. */
   colorAreaProps: DOMAttributes,
-  /** Props for the color area gradient foreground element. */
-  gradientProps: DOMAttributes,
   /** Props for the thumb element. */
   thumbProps: DOMAttributes,
   /** Props for the visually hidden horizontal range input element. */
@@ -396,14 +394,13 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let {
     colorAreaStyleProps,
-    gradientStyleProps,
     thumbStyleProps
   } = useColorAreaGradient({
     direction,
     state,
     xChannel,
-    zChannel,
-    isDisabled: props.isDisabled
+    yChannel,
+    zChannel
   });
 
   return {
@@ -412,10 +409,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       ...colorAreaInteractions,
       ...colorAreaStyleProps,
       role: 'group'
-    },
-    gradientProps: {
-      ...gradientStyleProps,
-      role: 'presentation'
     },
     thumbProps: {
       ...thumbInteractions,
@@ -433,6 +426,8 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': getAriaValueTextForChannel(xChannel),
       'aria-orientation': 'horizontal',
+      'aria-describedby': props['aria-describedby'],
+      'aria-details': props['aria-details'],
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
       name: xName,
@@ -456,6 +451,8 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': getAriaValueTextForChannel(yChannel),
       'aria-orientation': 'vertical',
+      'aria-describedby': props['aria-describedby'],
+      'aria-details': props['aria-details'],
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
       name: yName,

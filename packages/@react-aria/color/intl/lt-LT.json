@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Spalvų parinkiklis",
-  "twoDimensionalSlider": "2D slankiklis"
+  "twoDimensionalSlider": "2D slankiklis",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }
