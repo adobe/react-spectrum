@@ -815,24 +815,20 @@ function AsyncLoadingExample() {
 
 ## Disabled items
 
-`ListBox` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `id` prop passed to the `ListBoxItem` component, or automatically derived from the values passed
-to the `items` prop. See the [Collections](collections.html) guide for more details.
+A `ListBoxItem` can be disabled with the `isDisabled` prop. Disabled items are not focusable, selectable, or keyboard navigable.
 
 ```tsx example
 <ListBox
-  aria-label="Choose sandwich contents"
-  selectionMode="multiple"
-  /*- begin highlight -*/
-  disabledKeys={['tuna']}
-  /*- end highlight -*/
->
-  <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
-  <ListBoxItem id="tomato">Tomato</ListBoxItem>
-  <ListBoxItem id="cheese">Cheese</ListBoxItem>
-  <ListBoxItem id="tuna">Tuna Salad</ListBoxItem>
-  <ListBoxItem id="egg">Egg Salad</ListBoxItem>
-  <ListBoxItem id="ham">Ham</ListBoxItem>
+  aria-label="Choose sandwich contents with disabled items"
+  selectionMode="multiple">
+  <ListBoxItem>Lettuce</ListBoxItem>
+  <ListBoxItem>Tomato</ListBoxItem>
+  <ListBoxItem>Cheese</ListBoxItem>
+  {/*- begin highlight -*/}
+  <ListBoxItem isDisabled>Tuna Salad</ListBoxItem>
+  {/*- end highlight -*/}
+  <ListBoxItem>Egg Salad</ListBoxItem>
+  <ListBoxItem>Ham</ListBoxItem>
 </ListBox>
 ```
 
@@ -848,6 +844,39 @@ to the `items` prop. See the [Collections](collections.html) guide for more deta
 ```
 
 </details>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `ListBox` level instead of `isDisabled` on individual items. Each key in this list
+corresponds with the `id` prop passed to the `ListBoxItem` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). An item is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+
+  return (
+    <ListBox 
+      aria-label="Animals with disabledKeys"
+      items={options}
+      selectionMode="single"
+      /*- begin highlight -*/
+      disabledKeys={[4, 6]}
+      /*- end highlight -*/
+    >
+      {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
 
 ## Empty state
 

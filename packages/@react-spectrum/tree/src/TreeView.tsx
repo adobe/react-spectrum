@@ -11,7 +11,7 @@
  */
 
 import {AriaTreeGridListProps} from '@react-aria/tree';
-import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeRenderProps, useContextProps} from 'react-aria-components';
+import {ButtonContext, Collection, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeRenderProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, useContextProps} from 'react-aria-components';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -99,9 +99,9 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <UNSTABLE_Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
-      </Tree>
+      </UNSTABLE_Tree>
     </TreeRendererContext.Provider>
   );
 }
@@ -258,13 +258,13 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
 
   return (
     // TODO right now all the tree rows have the various data attributes applied on their dom nodes, should they? Doesn't feel very useful
-    <TreeItem
+    <UNSTABLE_TreeItem
       {...props}
       className={renderProps => treeRow({
         ...renderProps,
         isLink: !!href
       })}>
-      <TreeItemContent>
+      <UNSTABLE_TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
           <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
@@ -300,9 +300,9 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
             <div className={treeRowOutline({isFocusVisible, isSelected})} />
           </div>
         )}
-      </TreeItemContent>
+      </UNSTABLE_TreeItemContent>
       {nestedRows}
-    </TreeItem>
+    </UNSTABLE_TreeItem>
   );
 };
 
