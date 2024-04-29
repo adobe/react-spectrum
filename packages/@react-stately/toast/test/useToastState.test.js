@@ -189,6 +189,31 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts[0].content).toBe('Third Toast');
   });
 
+  it('should add a exit animation to a toast that is moved out of the visible list by a higher priority toast', () => {
+    let {result} = renderHook(() => useToastState({hasExitAnimation: true, maxVisibleToasts: 2}));
+
+    act(() => {result.current.add('First Toast', {priority: 5});});
+    expect(result.current.visibleToasts).toHaveLength(1);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+
+    act(() => {result.current.add('Second Toast', {priority: 1});});
+    expect(result.current.visibleToasts.length).toBe(2);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('entering');
+
+    act(() => {result.current.add('Third Toast', {priority: 10});});
+    expect(result.current.visibleToasts.length).toBe(3);
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('entering');
+    expect(result.current.visibleToasts[2].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[2].animation).toBe('exiting');
+  });
+
   it('should close a toast', () => {
     let {result} = renderHook(() => useToastState());
     act(() => {result.current.add(newValue[0].content, newValue[0].props);});
