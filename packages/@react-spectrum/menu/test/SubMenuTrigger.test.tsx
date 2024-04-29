@@ -86,6 +86,7 @@ describe('Submenu', function () {
     let submenuTrigger1 = menuItems[1];
     expect(submenuTrigger1).toHaveAttribute('aria-haspopup', 'menu');
     expect(submenuTrigger1).toHaveAttribute('aria-expanded', 'false');
+    expect(submenuTrigger1).toHaveAttribute('data-key', 'Lvl 1 Item 2');
 
     await user.pointer({target: submenuTrigger1});
     act(() => {jest.runAllTimers();});
@@ -105,6 +106,7 @@ describe('Submenu', function () {
     expect(within(submenuTrigger2).getByRole('img', {hidden: true})).toBeTruthy();
     expect(submenuTrigger2).toHaveAttribute('aria-haspopup', 'menu');
     expect(submenuTrigger2).toHaveAttribute('aria-expanded', 'false');
+    expect(submenuTrigger2).toHaveAttribute('data-key', 'Lvl 2 Item 3');
     await user.pointer({target: submenuTrigger2});
     act(() => {jest.runAllTimers();});
 
@@ -824,7 +826,8 @@ describe('Submenu', function () {
       expect(menuWrappers[1]).toContainElement(menus[1]);
 
       let submenu1 = menus[0];
-      expect(document.activeElement).toBe(submenu1);
+      let submenu1Items = within(submenu1).getAllByRole('menuitem');
+      expect(document.activeElement).toBe(submenu1Items[0]);
       expect(submenu1).toHaveAttribute('aria-label', submenuTrigger1.textContent);
       let trayDialog = within(tray).getByRole('dialog');
       expect(trayDialog).toBeTruthy();
@@ -833,7 +836,6 @@ describe('Submenu', function () {
       let menuHeader = within(trayDialog).getAllByText(submenuTrigger1.textContent)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('H1');
-      let submenu1Items = within(submenu1).getAllByRole('menuitem');
       let submenuTrigger2 = submenu1Items[2];
       triggerTouch(submenuTrigger2);
       act(() => {jest.runAllTimers();});
@@ -848,7 +850,8 @@ describe('Submenu', function () {
       expect(menuWrappers[2]).toContainElement(menus[2]);
 
       let submenu2 = menus[0];
-      expect(document.activeElement).toBe(submenu2);
+      let submenu2Items = within(submenu2).getAllByRole('menuitem');
+      expect(document.activeElement).toBe(submenu2Items[0]);
       expect(submenu2).toHaveAttribute('aria-label', submenuTrigger2.textContent);
       trayDialog = within(tray).getByRole('dialog');
       backButton = within(trayDialog).getByRole('button');
@@ -894,7 +897,8 @@ describe('Submenu', function () {
       expect(menus).toHaveLength(2);
       menuItems = within(menus[0]).getAllByRole('menuitem');
       expect(menuItems[0]).toHaveTextContent('Lvl 2');
-      expect(document.activeElement).toBe(submenuTrigger2);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(menuItems[0]);
       buttons = within(tray).getAllByRole('button');
       expect(buttons).toHaveLength(3);
       expect(buttons[1]).toHaveAttribute('aria-label', `Return to ${submenuTrigger1.textContent}`);

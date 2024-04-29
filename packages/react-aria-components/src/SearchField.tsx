@@ -15,7 +15,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
-import {FormValidationBehaviorContext} from './Form';
+import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -51,7 +51,7 @@ export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, H
 
 function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();

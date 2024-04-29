@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "בחר פריט",
-  "tableResizer": "שינוי גודל"
+  "tableResizer": "שינוי גודל",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

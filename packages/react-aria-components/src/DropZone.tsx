@@ -13,9 +13,10 @@
 import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, useLabels, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isFocusable} from '@react-aria/focus';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -54,6 +55,7 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {isDisabled} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
+  let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
   let {buttonProps} = useButton(dropButtonProps || {}, buttonRef);
@@ -97,17 +99,24 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         {...mergeProps(dropProps, hoverProps, DOMProps)}
         {...renderProps}
         slot={props.slot || undefined}
-        ref={ref}
+        ref={dropzoneRef}
         onClick={(e) => {
-          let target = e.target as HTMLElement;
-          if (!target.matches('input')) {
-            buttonRef.current?.focus();
+          let target = e.target as HTMLElement | null;
+          while (target && dropzoneRef.current?.contains(target)) {
+            if (isFocusable(target)) {
+              break;
+            } else if (target === dropzoneRef.current) {
+              buttonRef.current?.focus();
+              break;
+            }
+
+            target = target.parentElement;
           }
         }}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-drop-target={isDropTarget || undefined} 
+        data-drop-target={isDropTarget || undefined}
         data-disabled={isDisabled || undefined}>
         <VisuallyHidden>
           <button
