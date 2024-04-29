@@ -18,9 +18,9 @@ import {Popover} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {useLocale} from '@react-aria/i18n';
+import {useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface SubmenuTriggerProps {
   /**
@@ -42,8 +42,8 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     submenuRef: menuRef

@@ -21,8 +21,8 @@ import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
+import {useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -44,9 +44,9 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let popoverRef = useRef(null);
   let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
-  let {submenuTriggerProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, popoverProps} = useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     submenuRef,
