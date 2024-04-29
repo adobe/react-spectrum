@@ -212,6 +212,22 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts[1].animation).toBe('entering');
     expect(result.current.visibleToasts[2].content).toBe('Second Toast');
     expect(result.current.visibleToasts[2].animation).toBe('exiting');
+
+    // Remove shouldn't get rid of the lower priority toast from the queue so that it may return when there is
+    // enough room. The below mimics a remove call that might be called in onAnimationEnd
+    act(() => {result.current.remove(result.current.visibleToasts[2].key);});
+    expect(result.current.visibleToasts.length).toBe(2);
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
+
+    act(() => {result.current.close(result.current.visibleToasts[0].key);});
+    act(() => {result.current.remove(result.current.visibleToasts[0].key);});
+    expect(result.current.visibleToasts.length).toBe(2);
+
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('queued');
   });
 
   it('should close a toast', () => {
