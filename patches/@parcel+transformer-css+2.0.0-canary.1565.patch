@@ -7,7 +7,7 @@ index b8dd9f2..fd3c753 100644
        contents.cssModules.exclude = contents.cssModules.exclude.map(exclude => typeof exclude === 'string' ? (0, _utils().globToRegex)(exclude) : exclude);
      }
 +    if (config.searchPath.endsWith('home.global.css')) {
-+      contents.pseudoClasses = null;
++      contents = {...contents, pseudoClasses: null};
 +    }
      return contents;
    },
