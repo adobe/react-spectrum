@@ -11,7 +11,7 @@
  */
 
 import {clamp, toFixedNumber} from '@react-stately/utils';
-import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
+import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, ColorSpace, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
@@ -34,6 +34,18 @@ export function normalizeColor(v: string | IColor) {
     return parseColor(v);
   } else {
     return v;
+  }
+}
+
+/** Returns a list of color channels for a given color space. */
+export function getColorChannels(colorSpace: ColorSpace) {
+  switch (colorSpace) {
+    case 'rgb':
+      return RGBColor.colorChannels;
+    case 'hsl':
+      return HSLColor.colorChannels;
+    case 'hsb':
+      return HSBColor.colorChannels;
   }
 }
 
@@ -63,6 +75,7 @@ abstract class Color implements IColor {
   abstract toString(format: ColorFormat | 'css'): string;
   abstract clone(): IColor;
   abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
+  abstract getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions;
   abstract formatChannelValue(channel: ColorChannel, locale: string): string;
 
   toHexInt(): number {
@@ -92,7 +105,8 @@ abstract class Color implements IColor {
     return strings.getStringForLocale(channel, locale);
   }
 
-  abstract getColorSpace(): ColorFormat
+  abstract getColorSpace(): ColorSpace;
+
   getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes {
     let {xChannel, yChannel} = xyChannels;
     let xCh = xChannel || this.getColorChannels().find(c => c !== yChannel);
@@ -240,7 +254,7 @@ class RGBColor extends Color {
     return colors.length < 3 ? undefined : new RGBColor(colors[0], colors[1], colors[2], colors[3] ?? 1);
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'hex':
         return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0')).toUpperCase();
@@ -377,29 +391,30 @@ class RGBColor extends Color {
     }
   }
 
-  formatChannelValue(channel: ColorChannel, locale: string) {
-    let options: Intl.NumberFormatOptions;
-    let value = this.getChannelValue(channel);
+  getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions {
     switch (channel) {
       case 'red':
       case 'green':
       case 'blue':
-        options = {style: 'decimal'};
-        break;
+        return {style: 'decimal'};
       case 'alpha':
-        options = {style: 'percent'};
-        break;
+        return {style: 'percent'};
       default:
         throw new Error('Unknown color channel: ' + channel);
     }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options = this.getChannelFormatOptions(channel);
+    let value = this.getChannelValue(channel);
     return new NumberFormatter(locale, options).format(value);
   }
 
-  getColorSpace(): ColorFormat {
+  getColorSpace(): ColorSpace {
     return 'rgb';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return RGBColor.colorChannels;
   }
@@ -424,7 +439,7 @@ class HSBColor extends Color {
     }
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'css':
         return this.toHSL().toString('css');
@@ -512,32 +527,33 @@ class HSBColor extends Color {
     }
   }
 
-  formatChannelValue(channel: ColorChannel, locale: string) {
-    let options: Intl.NumberFormatOptions;
-    let value = this.getChannelValue(channel);
+  getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions {
     switch (channel) {
       case 'hue':
-        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
-        break;
+        return {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
       case 'saturation':
       case 'brightness':
-        options = {style: 'percent'};
-        value /= 100;
-        break;
       case 'alpha':
-        options = {style: 'percent'};
-        break;
+        return {style: 'percent'};
       default:
         throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options = this.getChannelFormatOptions(channel);
+    let value = this.getChannelValue(channel);
+    if (channel === 'saturation' || channel === 'brightness') {
+      value /= 100;
     }
     return new NumberFormatter(locale, options).format(value);
   }
 
-  getColorSpace(): ColorFormat {
+  getColorSpace(): ColorSpace {
     return 'hsb';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSBColor.colorChannels;
   }
@@ -566,7 +582,7 @@ class HSLColor extends Color {
     }
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'hex':
         return this.toRGB().toString('hex');
@@ -652,32 +668,33 @@ class HSLColor extends Color {
     }
   }
 
-  formatChannelValue(channel: ColorChannel, locale: string) {
-    let options: Intl.NumberFormatOptions;
-    let value = this.getChannelValue(channel);
+  getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions {
     switch (channel) {
       case 'hue':
-        options = {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
-        break;
+        return {style: 'unit', unit: 'degree', unitDisplay: 'narrow'};
       case 'saturation':
       case 'lightness':
-        options = {style: 'percent'};
-        value /= 100;
-        break;
       case 'alpha':
-        options = {style: 'percent'};
-        break;
+        return {style: 'percent'};
       default:
         throw new Error('Unknown color channel: ' + channel);
+    }
+  }
+
+  formatChannelValue(channel: ColorChannel, locale: string) {
+    let options = this.getChannelFormatOptions(channel);
+    let value = this.getChannelValue(channel);
+    if (channel === 'saturation' || channel === 'lightness') {
+      value /= 100;
     }
     return new NumberFormatter(locale, options).format(value);
   }
 
-  getColorSpace(): ColorFormat {
+  getColorSpace(): ColorSpace {
     return 'hsl';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSLColor.colorChannels;
   }

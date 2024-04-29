@@ -16,6 +16,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 // Sync with useTooltipTriggerState.ts
@@ -959,6 +960,98 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       expect(queryByRole('tooltip')).toBeNull();
+    });
+  });
+
+  describe('portalContainer', () => {
+    function InfoTooltip(props) {
+      return (
+        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+          <TooltipTrigger>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>
+              <div data-testid="content">hello</div>
+            </Tooltip>
+          </TooltipTrigger>
+        </UNSTABLE_PortalProvider>
+      );
+    }
+
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoTooltip container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+    });
+  });
+
+  describe('portalContainer overwrite', () => {
+    function InfoTooltip(props) {
+      return (
+        <UNSTABLE_PortalProvider getContainer={null}>
+          <TooltipTrigger>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>
+              <div data-testid="content">hello</div>
+            </Tooltip>
+          </TooltipTrigger>
+        </UNSTABLE_PortalProvider>
+      );
+    }
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <InfoTooltip container={container} />
+            <div ref={container} data-testid="custom-container" />
+          </UNSTABLE_PortalProvider>
+        </>
+      );
+    }
+    it('should no longer render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).not.toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
     });
   });
 });

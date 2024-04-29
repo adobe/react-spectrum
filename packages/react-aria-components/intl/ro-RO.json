@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "Zonă de plasare",
   "selectPlaceholder": "Selectați un element",
-  "tableResizer": "Instrument de redimensionare"
+  "tableResizer": "Instrument de redimensionare",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

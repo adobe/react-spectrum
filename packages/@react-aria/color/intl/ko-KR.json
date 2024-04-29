@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "색상 피커",
-  "twoDimensionalSlider": "2D 슬라이더"
+  "twoDimensionalSlider": "2D 슬라이더",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }

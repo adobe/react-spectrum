@@ -373,6 +373,31 @@ describe('DropZone', () => {
 
         expect(dropzone).not.toHaveAttribute('data-drop-target');
       });
+
+      it('should focus the dropzone visually hidden button if click happens on a non-focusable element', async () => {
+        let {getByRole, getByTestId} = render(
+          <DropZone data-testid="dropzone">
+            <div data-testid="div">Test</div>
+          </DropZone>
+        );
+
+        let hiddenButton = getByRole('button');
+        await user.click(getByTestId('div'));
+        expect(document.activeElement).toBe(hiddenButton);
+        expect(getByTestId('dropzone')).toContainElement(document.activeElement);
+      });
+
+      it('when a focusable element in the drop zone is clicked, it should receive focus', async () => {
+        let {getByTestId} = render(
+          <DropZone data-testid="dropzone">
+            <Button data-testid="button">Test</Button>
+          </DropZone>
+        );
+
+        let button = getByTestId('button');
+        await user.click(button);
+        expect(document.activeElement).toBe(button);
+      });
     });
 
     describe('via keyboard', function () {
@@ -526,7 +551,7 @@ describe('DropZone', () => {
           </DropZone>
         </>
       );
-  
+
       let button = getByRole('button');
       await user.tab();
       expect(document.activeElement).not.toBe(button);

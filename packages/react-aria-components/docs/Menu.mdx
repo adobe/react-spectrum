@@ -51,12 +51,12 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 <MenuTrigger>
   <Button aria-label="Menu">☰</Button>
   <Popover>
-    <Menu onAction={alert}>
-      <MenuItem id="open">Open</MenuItem>
-      <MenuItem id="rename">Rename…</MenuItem>
-      <MenuItem id="duplicate">Duplicate</MenuItem>
-      <MenuItem id="share">Share…</MenuItem>
-      <MenuItem id="delete">Delete…</MenuItem>
+    <Menu>
+      <MenuItem onAction={() => alert('open')}>Open</MenuItem>
+      <MenuItem onAction={() => alert('rename')}>Rename…</MenuItem>
+      <MenuItem onAction={() => alert('duplicate')}>Duplicate</MenuItem>
+      <MenuItem onAction={() => alert('share')}>Share…</MenuItem>
+      <MenuItem onAction={() => alert('delete')}>Delete…</MenuItem>
     </Menu>
   </Popover>
 </MenuTrigger>
@@ -228,7 +228,7 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
 function MyItem(props: MenuItemProps) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <MenuItem 
+    <MenuItem
       {...props}
       textValue={textValue}
       className={({isFocused, isSelected, isOpen}) => `my-item ${isFocused ? 'focused' : ''} ${isOpen ? 'open' : ''}`}>
@@ -306,7 +306,7 @@ The examples above show static collections, which can be used when the full list
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
 As seen below, an iterable list of options is passed to the Menu using the `items` prop. Each item accepts an `id` prop, which
-is passed to the `onAction` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+is passed to the `onAction` prop on the `Menu` to identify the selected item. Alternatively, if the item objects contain an `id` property,
 as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
@@ -322,7 +322,7 @@ function Example() {
   ];
 
   return (
-    <MyMenuButton label="Actions" items={items} onAction={alert}>
+    <MyMenuButton label="Actions" items={items} onAction={id => alert(id)}>
       {(item) => <MenuItem>{item.name}</MenuItem>}
     </MyMenuButton>
   );
@@ -445,17 +445,17 @@ Menu supports sections with headings in order to group items. Sections can be us
 ```tsx example
 import {Section, Header} from 'react-aria-components';
 
-<MyMenuButton label="Actions" onAction={alert}>
+<MyMenuButton label="Actions">
   <Section>
     <Header>Styles</Header>
-    <MenuItem id="bold">Bold</MenuItem>
-    <MenuItem id="underline">Underline</MenuItem>
+    <MenuItem>Bold</MenuItem>
+    <MenuItem>Underline</MenuItem>
   </Section>
   <Section>
     <Header>Align</Header>
-    <MenuItem id="left">Left</MenuItem>
-    <MenuItem id="middle">Middle</MenuItem>
-    <MenuItem id="right">Right</MenuItem>
+    <MenuItem>Left</MenuItem>
+    <MenuItem>Middle</MenuItem>
+    <MenuItem>Right</MenuItem>
   </Section>
 </MyMenuButton>
 ```
@@ -537,16 +537,16 @@ Separators may be added between menu items or sections in order to create non-la
 ```tsx example
 import {Separator} from 'react-aria-components';
 
-<MyMenuButton label="Actions" onAction={alert}>
-  <MenuItem id="new">New…</MenuItem>
-  <MenuItem id="open">Open…</MenuItem>
+<MyMenuButton label="Actions">
+  <MenuItem>New…</MenuItem>
+  <MenuItem>Open…</MenuItem>
   <Separator />
-  <MenuItem id="save">Save</MenuItem>
-  <MenuItem id="save-as">Save as…</MenuItem>
-  <MenuItem id="rename">Rename…</MenuItem>
+  <MenuItem>Save</MenuItem>
+  <MenuItem>Save as…</MenuItem>
+  <MenuItem>Rename…</MenuItem>
   <Separator />
-  <MenuItem id="page-setup">Page setup…</MenuItem>
-  <MenuItem id="print">Print…</MenuItem>
+  <MenuItem>Page setup…</MenuItem>
+  <MenuItem>Print…</MenuItem>
 </MyMenuButton>
 ```
 
@@ -628,10 +628,10 @@ By default, MenuTrigger opens by pressing the trigger element or activating it v
 <MenuTrigger trigger="longPress">
   <Button onPress={() => alert('crop')}>Crop</Button>
   <Popover>
-    <Menu onAction={alert}>
-      <MenuItem id="rotate">Rotate</MenuItem>
-      <MenuItem id="slice">Slice</MenuItem>
-      <MenuItem id="clone-stamp">Clone stamp</MenuItem>
+    <Menu>
+      <MenuItem>Rotate</MenuItem>
+      <MenuItem>Slice</MenuItem>
+      <MenuItem>Clone stamp</MenuItem>
     </Menu>
   </Popover>
 </MenuTrigger>
@@ -639,17 +639,15 @@ By default, MenuTrigger opens by pressing the trigger element or activating it v
 
 ## Disabled items
 
-`Menu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `id` prop passed to the `MenuItem` component, or automatically derived from the values passed
-to the `items` prop. See the [Collections](collections.html) guide for more details.
-
-Disabled items are not focusable or keyboard navigable, and do not trigger `onAction` or `onSelectionChange`.
+A `MenuItem` can be disabled with the `isDisabled` prop. Disabled items are not focusable or keyboard navigable, and do not trigger `onAction` or `onSelectionChange`.
 
 ```tsx example
-<MyMenuButton label="Actions" onAction={alert} disabledKeys={['paste']}>
-  <MenuItem id="copy">Copy</MenuItem>
-  <MenuItem id="cut">Cut</MenuItem>
-  <MenuItem id="paste">Paste</MenuItem>
+<MyMenuButton label="Actions">
+  <MenuItem>Copy</MenuItem>
+  <MenuItem>Cut</MenuItem>
+  {/*- begin highlight -*/}
+  <MenuItem isDisabled>Paste</MenuItem>
+  {/*- end highlight -*/}
 </MyMenuButton>
 ```
 
@@ -665,6 +663,36 @@ Disabled items are not focusable or keyboard navigable, and do not trigger `onAc
 ```
 
 </details>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Menu` level instead of `isDisabled` on individual items. Each key in this list
+corresponds with the `id` prop passed to the `MenuItem` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). An item is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let items = [
+    {id: 1, name: 'New'},
+    {id: 2, name: 'Open'},
+    {id: 3, name: 'Close'},
+    {id: 4, name: 'Save'},
+    {id: 5, name: 'Duplicate'},
+    {id: 6, name: 'Rename'},
+    {id: 7, name: 'Move'}
+  ];
+
+  return (
+    <MyMenuButton 
+      label="Actions"
+      items={items}
+      /*- begin highlight -*/
+      disabledKeys={[4, 6]}
+      /*- end highlight -*/
+    >
+      {(item) => <MenuItem>{item.name}</MenuItem>}
+    </MyMenuButton>
+  );
+}
+```
 
 ## Controlled open state
 

@@ -166,9 +166,8 @@ export class ToastQueue<T> {
 
   /** Removes a toast from the visible toasts after an exiting animation. */
   remove(key: string) {
-    let index = this.queue.findIndex(t => t.key === key);
     this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
-    this.updateVisibleToasts(index);
+    this.updateVisibleToasts();
   }
 
   private updateVisibleToasts(oldIndex = -1) {

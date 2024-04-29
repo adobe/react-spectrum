@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ColorSlider} from '../';
+import {ColorSlider, ColorSwatch} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
@@ -130,8 +130,8 @@ function RGBASlider(props) {
           <ColorSlider {...props} value={color} onChange={onChange} channel={'blue'} />
           <ColorSlider {...props} value={color} onChange={onChange} channel={'alpha'} />
         </Flex>
-        <Flex direction="column" alignItems="center" gap="size-100">
-          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+        <Flex direction="column" alignItems="start" gap="size-100">
+          <ColorSwatch color={color} size="L" />
           <Text>{color.toString('hexa')}</Text>
           <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
@@ -157,8 +157,8 @@ function HSLASlider(props) {
           <ColorSlider {...props} value={color} onChange={onChange} channel={'lightness'} />
           <ColorSlider {...props} value={color} onChange={onChange} channel={'alpha'} />
         </Flex>
-        <Flex direction="column" alignItems="center" gap="size-100">
-          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+        <Flex direction="column" alignItems="start" gap="size-100">
+          <ColorSwatch color={color} size="L" />
           <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
@@ -183,8 +183,8 @@ function HSBASlider(props) {
           <ColorSlider {...props} value={color} onChange={onChange} channel={'brightness'} />
           <ColorSlider {...props} value={color} onChange={onChange} channel={'alpha'} />
         </Flex>
-        <Flex direction="column" alignItems="center" gap="size-100">
-          <div style={{width: '100px', height: '100px', background: color.toString('css')}} />
+        <Flex direction="column" alignItems="start" gap="size-100">
+          <ColorSwatch color={color} size="L" />
           <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
