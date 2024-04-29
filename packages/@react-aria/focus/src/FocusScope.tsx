@@ -278,6 +278,10 @@ const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + '
 focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
+export function isFocusable(element: HTMLElement) {
+  return element.matches(FOCUSABLE_ELEMENT_SELECTOR);
+}
+
 function getScopeRoot(scope: Element[]) {
   return scope[0].parentElement!;
 }

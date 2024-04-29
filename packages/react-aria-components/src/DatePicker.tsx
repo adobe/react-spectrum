@@ -18,7 +18,7 @@ import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRange
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
-import {FormValidationBehaviorContext} from './Form';
+import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
@@ -73,7 +73,7 @@ export const DateRangePickerStateContext = createContext<DateRangePickerState | 
 
 function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useDatePickerState({
     ...props,
@@ -139,9 +139,9 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
-          trigger: 'DatePicker', 
-          triggerRef: groupRef, 
-          placement: 'bottom start', 
+          trigger: 'DatePicker',
+          triggerRef: groupRef,
+          placement: 'bottom start',
           style: {'--trigger-width': groupWidth} as React.CSSProperties
         }],
         [DialogContext, dialogProps],
@@ -176,7 +176,7 @@ export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useDateRangePickerState({
     ...props,
@@ -242,8 +242,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
-          trigger: 'DateRangePicker', 
-          triggerRef: groupRef, 
+          trigger: 'DateRangePicker',
+          triggerRef: groupRef,
           placement: 'bottom start',
           style: {'--trigger-width': groupWidth} as React.CSSProperties
         }],

@@ -142,7 +142,7 @@ export class ToastQueue<T> {
       this.queue[i++].animation = 'queued';
     }
 
-    this.updateVisibleToasts({action: 'add', key: toastKey});
+    this.updateVisibleToasts({action: 'add'});
     return toastKey;
   }
 
