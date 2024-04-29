@@ -59,7 +59,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
-  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
+  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.expandedKeysStack[menuLevel + 1]) != null;
   useInteractOutside({
     ref: domRef,
     onInteractOutside: (e) => {
@@ -128,7 +128,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
 export function TrayHeaderWrapper(props) {
   let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
-  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });
