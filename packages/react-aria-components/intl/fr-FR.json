@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Sélectionner un élément",
-  "tableResizer": "Redimensionneur"
+  "tableResizer": "Redimensionneur",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

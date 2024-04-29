@@ -20,7 +20,7 @@ import {
   OverlayArrow,
   Popover
 } from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

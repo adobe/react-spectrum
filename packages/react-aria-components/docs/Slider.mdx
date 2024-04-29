@@ -494,7 +494,7 @@ The `className` and `style` props also accept functions which receive states for
 <SliderThumb className={({isDragging}) => isDragging ? 'bg-gray-700' : 'bg-gray-600'} />
 ```
 
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you implement custom formatting for the slider's current value.
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could implement custom formatting for the slider's current value.
 
 ```jsx
 <SliderOutput>
@@ -550,7 +550,7 @@ All React Aria Components export a corresponding context that can be used to sen
 
 <ContextTable components={['Slider']} docs={docs} />
 
-This example shows a `SliderDescription` component that accepts a slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the slider via the `aria-describedby` attribute passed to the `SwitchContext` provider.
+This example shows a `SliderDescription` component that accepts a slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the slider via the `aria-describedby` attribute passed to the `SliderContext` provider.
 
 ```tsx example
 import {SliderContext} from 'react-aria-components';

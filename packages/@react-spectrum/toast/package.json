@@ -38,6 +38,7 @@
   "dependencies": {
     "@react-aria/focus": "^3.16.2",
     "@react-aria/i18n": "^3.10.2",
+    "@react-aria/overlays": "^3.21.1",
     "@react-aria/toast": "3.0.0-beta.10",
     "@react-aria/utils": "^3.23.2",
     "@react-spectrum/button": "^3.16.2",
@@ -50,7 +51,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "3.0.0-alpha.1",
+    "@react-spectrum/test-utils-internal": "3.0.0-alpha.1",
     "@types/use-sync-external-store": "^0.0.3"
   },
   "peerDependencies": {

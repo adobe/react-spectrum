@@ -16,7 +16,7 @@ import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from 
 import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
-import {FormValidationBehaviorContext} from './Form';
+import {FormContext} from './Form';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {LabelContext} from './Label';
@@ -67,7 +67,7 @@ export const SelectStateContext = createContext<SelectState<unknown> | null>(nul
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {collection, document} = useCollectionDocument();
   let state = useSelectState({

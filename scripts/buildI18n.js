@@ -40,7 +40,7 @@ function build(scope, dist = scope.slice(1)) {
     serialized += '};\n';
 
     fs.writeFileSync(`packages/${dist}/i18n/${lang}.js`,  minifySync(`module.exports = ${serialized}`).code);
-    fs.writeFileSync(`packages/${dist}/i18n/${lang}.mjs`,  minifySync(`export default ${serialized}`).code);
+    fs.writeFileSync(`packages/${dist}/i18n/${lang}.mjs`,  minifySync(`export default ${serialized}`, {module: true}).code);
   }
 
   fs.writeFileSync(`packages/${dist}/i18n/lang.d.ts`, `import type {LocalizedString} from '@internationalized/string';

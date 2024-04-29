@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/transformer-css/lib/CSSTransformer.js b/node_modules/@parcel/transformer-css/lib/CSSTransformer.js
-index 0d59e0d..6a0b83f 100644
+index b8dd9f2..fd3c753 100644
 --- a/node_modules/@parcel/transformer-css/lib/CSSTransformer.js
 +++ b/node_modules/@parcel/transformer-css/lib/CSSTransformer.js
 @@ -88,6 +88,9 @@ var _default = exports.default = new (_plugin().Transformer)({
@@ -7,7 +7,7 @@ index 0d59e0d..6a0b83f 100644
        contents.cssModules.exclude = contents.cssModules.exclude.map(exclude => typeof exclude === 'string' ? (0, _utils().globToRegex)(exclude) : exclude);
      }
 +    if (config.searchPath.endsWith('home.global.css')) {
-+      contents.pseudoClasses = null;
++      contents = {...contents, pseudoClasses: null};
 +    }
      return contents;
    },

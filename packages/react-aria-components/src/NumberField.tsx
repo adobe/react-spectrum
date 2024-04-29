@@ -15,7 +15,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
-import {FormValidationBehaviorContext} from './Form';
+import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {InputDOMProps} from '@react-types/shared';
@@ -48,7 +48,7 @@ export const NumberFieldStateContext = createContext<NumberFieldState | null>(nu
 
 function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
-  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {locale} = useLocale();
   let state = useNumberFieldState({

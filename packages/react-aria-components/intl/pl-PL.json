@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "Strefa upuszczania",
   "selectPlaceholder": "Wybierz element",
-  "tableResizer": "Zmiana rozmiaru"
+  "tableResizer": "Zmiana rozmiaru",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

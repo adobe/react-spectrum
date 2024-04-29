@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Valige üksus",
-  "tableResizer": "Suuruse muutja"
+  "tableResizer": "Suuruse muutja",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }
