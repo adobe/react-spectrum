@@ -190,7 +190,6 @@ function Example() {
   return (
     <Form validationBehavior="aria" onSubmit={(e) => {e.preventDefault()}}>
       <TextField
-        label="Email"
         name="email"
         type="email"
         value={value}
@@ -212,7 +211,7 @@ function Example() {
 
 The `validationBehavior` for a Form can be accessed from within any component inside a given From by using the `FormContext`.
 
-```tsx example
+```tsx
 import {FormContext} from 'react-aria-components';
 
 let {validationBehavior} = useContext(FormContext);
