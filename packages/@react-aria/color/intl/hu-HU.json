@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Színválasztó",
-  "twoDimensionalSlider": "2D-csúszka"
+  "twoDimensionalSlider": "2D-csúszka",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }

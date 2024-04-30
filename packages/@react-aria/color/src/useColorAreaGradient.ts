@@ -10,144 +10,27 @@
  * governing permissions and limitations under the License.
 */
 
+import {Color} from '@react-types/color';
 import {CSSProperties, useMemo} from 'react';
+import {parseColor} from '@react-stately/color';
 
-const generateRGB_R = (orientation, dir: boolean, zValue: number) => {
-  let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
-  let result = {
-    colorAreaStyles: {
-      backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,0),rgb(${zValue},255,0))`
-    },
-    gradientStyles: {
-      backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,255),rgb(${zValue},255,255))`,
-      'WebkitMaskImage': maskImage,
-      maskImage
-    }
-  };
-  return result;
+const hue = (color: Color) => [0, 60, 120, 180, 240, 300, 360].map(hue => color.withChannelValue('hue', hue).toString('css')).join(', ');
+const saturation = (color: Color) => `${color.withChannelValue('saturation', 0)}, transparent`;
+
+const hslChannels = {
+  hue,
+  saturation,
+  lightness: () => 'black, transparent, white'
 };
 
-const generateRGB_G = (orientation, dir: boolean, zValue: number) => {
-  let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
-  let result = {
-    colorAreaStyles: {
-      backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},0),rgb(255,${zValue},0))`
-    },
-    gradientStyles: {
-      backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},255),rgb(255,${zValue},255))`,
-      'WebkitMaskImage': maskImage,
-      maskImage
-    }
-  };
-  return result;
+const hsbChannels = {
+  hue,
+  saturation,
+  brightness: () => 'black, transparent'
 };
-
-const generateRGB_B = (orientation, dir: boolean, zValue: number) => {
-  let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
-  let result = {
-    colorAreaStyles: {
-      backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,0,${zValue}),rgb(255,0,${zValue}))`
-    },
-    gradientStyles: {
-      backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,255,${zValue}),rgb(255,255,${zValue}))`,
-      'WebkitMaskImage': maskImage,
-      maskImage
-    }
-  };
-  return result;
-};
-
-
-const generateHSL_H = (orientation, dir: boolean, zValue: number) => {
-  let result = {
-    colorAreaStyles: {},
-    gradientStyles: {
-      background: [
-        `linear-gradient(to ${orientation[Number(dir)]}, hsla(0,0%,0%,1) 0%, hsla(0,0%,0%,0) 50%, hsla(0,0%,100%,0) 50%, hsla(0,0%,100%,1) 100%)`,
-        `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,50%),hsla(0,0%,50%,0))`,
-        `hsl(${zValue}, 100%, 50%)`
-      ].join(',')
-    }
-  };
-  return result;
-};
-
-const generateHSL_S = (orientation, dir: boolean, alphaValue: number) => {
-  let result = {
-    colorAreaStyles: {},
-    gradientStyles: {
-      background: [
-        `linear-gradient(to ${orientation[Number(!dir)]}, hsla(0,0%,0%,${alphaValue}) 0%, hsla(0,0%,0%,0) 50%, hsla(0,0%,100%,0) 50%, hsla(0,0%,100%,${alphaValue}) 100%)`,
-        `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${alphaValue}),hsla(60,100%,50%,${alphaValue}),hsla(120,100%,50%,${alphaValue}),hsla(180,100%,50%,${alphaValue}),hsla(240,100%,50%,${alphaValue}),hsla(300,100%,50%,${alphaValue}),hsla(359,100%,50%,${alphaValue}))`,
-        'hsl(0, 0%, 50%)'
-      ].join(',')
-    }
-  };
-  return result;
-};
-
-const generateHSL_L = (orientation, dir: boolean, zValue: number) => {
-  let result = {
-    colorAreaStyles: {},
-    gradientStyles: {
-      backgroundImage: [
-        `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${zValue}%),hsla(0,0%,${zValue}%,0))`,
-        `linear-gradient(to ${orientation[Number(dir)]},hsl(0,100%,${zValue}%),hsl(60,100%,${zValue}%),hsl(120,100%,${zValue}%),hsl(180,100%,${zValue}%),hsl(240,100%,${zValue}%),hsl(300,100%,${zValue}%),hsl(360,100%,${zValue}%))`
-      ].join(',')
-    }
-  };
-  return result;
-};
-
-
-const generateHSB_H = (orientation, dir: boolean, zValue: number) => {
-  let result = {
-    colorAreaStyles: {},
-    gradientStyles: {
-      background: [
-        `linear-gradient(to ${orientation[Number(dir)]},hsl(0,0%,0%),hsla(0,0%,0%,0))`,
-        `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,100%),hsla(0,0%,100%,0))`,
-        `hsl(${zValue}, 100%, 50%)`
-      ].join(',')
-    }
-  };
-  return result;
-};
-
-const generateHSB_S = (orientation, dir: boolean, alphaValue: number) => {
-  let result = {
-    colorAreaStyles: {},
-    gradientStyles: {
-      background: [
-        `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${alphaValue}),hsla(0,0%,0%,0))`,
-        `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${alphaValue}),hsla(60,100%,50%,${alphaValue}),hsla(120,100%,50%,${alphaValue}),hsla(180,100%,50%,${alphaValue}),hsla(240,100%,50%,${alphaValue}),hsla(300,100%,50%,${alphaValue}),hsla(359,100%,50%,${alphaValue}))`,
-        `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,0%),hsl(0,0%,100%))`
-      ].join(',')
-    }
-  };
-  return result;
-};
-
-const generateHSB_B = (orientation, dir: boolean, alphaValue: number) => {
-  let result = {
-    colorAreaStyles: {},
-    gradientStyles: {
-      background: [
-        `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,100%,${alphaValue}),hsla(0,0%,100%,0))`,
-        `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${alphaValue}),hsla(60,100%,50%,${alphaValue}),hsla(120,100%,50%,${alphaValue}),hsla(180,100%,50%,${alphaValue}),hsla(240,100%,50%,${alphaValue}),hsla(300,100%,50%,${alphaValue}),hsla(359,100%,50%,${alphaValue}))`,
-        '#000'
-      ].join(',')
-    }
-  };
-  return result;
-};
-
 
 interface Gradients {
   colorAreaStyleProps: {
-    style: CSSProperties
-  },
-  gradientStyleProps: {
     style: CSSProperties
   },
   thumbStyleProps: {
@@ -155,60 +38,61 @@ interface Gradients {
   }
 }
 
-export function useColorAreaGradient({direction, state, zChannel, xChannel, isDisabled}): Gradients {
+export function useColorAreaGradient({direction, state, zChannel, xChannel, yChannel}): Gradients {
   let returnVal = useMemo<Gradients>(() => {
-    let orientation = ['top', direction === 'rtl' ? 'left' : 'right'];
-    let dir = false;
-    let background = {colorAreaStyles: {}, gradientStyles: {}};
+    let end = direction === 'rtl' ? 'left' : 'right';
+    let colorAreaStyles = {};
     let zValue = state.value.getChannelValue(zChannel);
-    let {minValue: zMin, maxValue: zMax} = state.value.getChannelRange(zChannel);
-    let alphaValue = (zValue - zMin) / (zMax - zMin);
-    let isHSL = state.value.getColorSpace() === 'hsl';
-    if (!isDisabled) {
-      switch (zChannel) {
-        case 'red': {
-          dir = xChannel === 'green';
-          background = generateRGB_R(orientation, dir, zValue);
-          break;
+
+    switch (state.value.getColorSpace()) {
+      case 'rgb': {
+        let rgb = parseColor('rgb(0, 0, 0)');
+        colorAreaStyles = {
+          background: [
+            // The screen blend mode multiplies the inverse of each channel, e.g. 1 - (1 - a) * (1 - b).
+            // Create a layer for each channel, with the other channels as 0. After blending, this should
+            // result in the gradients being combined channel by channel.
+            `linear-gradient(to ${end}, ${rgb.withChannelValue(xChannel, 0)}, ${rgb.withChannelValue(xChannel, 255)})`,
+            `linear-gradient(to top, ${rgb.withChannelValue(yChannel, 0)}, ${rgb.withChannelValue(yChannel, 255)})`,
+            rgb.withChannelValue(zChannel, zValue)
+          ].join(','),
+          backgroundBlendMode: 'screen'
+        };
+        break;
+      }
+      case 'hsl': {
+        let channels = state.value.getColorChannels();
+        let value = parseColor('hsl(0, 100%, 50%)').withChannelValue(zChannel, zValue);
+
+        let bg = channels
+          .filter(c => c !== zChannel)
+          .map(c => `linear-gradient(to ${c === xChannel ? end : 'top'}, ${hslChannels[c](value)})`)
+          .reverse();
+        if (zChannel === 'hue') {
+          bg.push(value.toString('css'));
         }
-        case 'green': {
-          dir = xChannel === 'red';
-          background = generateRGB_G(orientation, dir, zValue);
-          break;
+    
+        colorAreaStyles = {
+          background: bg.join(', ')
+        };
+        break;
+      }
+      case 'hsb': {
+        let channels = state.value.getColorChannels();
+        let value = parseColor('hsb(0, 100%, 100%)').withChannelValue(zChannel, zValue);
+
+        let bg = channels
+          .filter(c => c !== zChannel)
+          .map(c => `linear-gradient(to ${c === xChannel ? end : 'top'}, ${hsbChannels[c](value)})`)
+          .reverse();
+        if (zChannel === 'hue') {
+          bg.push(value.toString('css'));
         }
-        case 'blue': {
-          dir = xChannel === 'red';
-          background = generateRGB_B(orientation, dir, zValue);
-          break;
-        }
-        case 'hue': {
-          dir = xChannel !== 'saturation';
-          if (isHSL) {
-            background = generateHSL_H(orientation, dir, zValue);
-          } else {
-            background = generateHSB_H(orientation, dir, zValue);
-          }
-          break;
-        }
-        case 'saturation': {
-          dir = xChannel === 'hue';
-          if (isHSL) {
-            background = generateHSL_S(orientation, dir, alphaValue);
-          } else {
-            background = generateHSB_S(orientation, dir, alphaValue);
-          }
-          break;
-        }
-        case 'brightness': {
-          dir = xChannel === 'hue';
-          background = generateHSB_B(orientation, dir, alphaValue);
-          break;
-        }
-        case 'lightness': {
-          dir = xChannel === 'hue';
-          background = generateHSL_L(orientation, dir, zValue);
-          break;
-        }
+    
+        colorAreaStyles = {
+          background: bg.join(', ')
+        };
+        break;
       }
     }
 
@@ -226,14 +110,7 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, isDi
           position: 'relative',
           touchAction: 'none',
           ...forcedColorAdjustNoneStyle,
-          ...background.colorAreaStyles
-        }
-      },
-      gradientStyleProps: {
-        style: {
-          touchAction: 'none',
-          ...forcedColorAdjustNoneStyle,
-          ...background.gradientStyles
+          ...colorAreaStyles
         }
       },
       thumbStyleProps: {
@@ -241,13 +118,13 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, isDi
           position: 'absolute',
           left: `${x * 100}%`,
           top: `${y * 100}%`,
-          transform: 'translate(0%, 0%)',
+          transform: 'translate(-50%, -50%)',
           touchAction: 'none',
           ...forcedColorAdjustNoneStyle
         }
       }
     };
-  }, [direction, state, zChannel, xChannel, isDisabled]);
+  }, [direction, state, zChannel, xChannel, yChannel]);
 
   return returnVal;
 }

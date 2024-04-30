@@ -33,7 +33,7 @@ describe('Slider', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('should render a button with default class', () => {
+  it('should render a slider with default class', () => {
     let {getByRole} = renderSlider();
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'react-aria-Slider');
@@ -44,7 +44,7 @@ describe('Slider', () => {
     expect(group.querySelector('.react-aria-SliderThumb')).toBeInTheDocument();
   });
 
-  it('should render a button with custom class', () => {
+  it('should render a slider with custom class', () => {
     let {getByRole} = renderSlider({className: 'test'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'test');

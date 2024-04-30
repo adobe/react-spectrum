@@ -46,11 +46,11 @@ export function ContextTable({components, docs}) {
               <TypeLink links={docs.links} type={docs.exports[comp].props} />
             </td>
             <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Ref">
-              <TypeContext.Provider value={docs.links}>
+              {docs.exports[comp].ref ? <TypeContext.Provider value={docs.links}>
                 <code className={`${typographyStyles['spectrum-Code4']}`}>
                   <Type type={docs.exports[comp].ref.typeParameters[0]} />
                 </code>
-              </TypeContext.Provider>
+              </TypeContext.Provider> : '–'}
             </td>
           </tr>
         ))}

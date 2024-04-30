@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Válasszon ki egy elemet",
-  "tableResizer": "Átméretező"
+  "tableResizer": "Átméretező",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Izvēlēties vienumu",
-  "tableResizer": "Izmēra mainītājs"
+  "tableResizer": "Izmēra mainītājs",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

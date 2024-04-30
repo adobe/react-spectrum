@@ -473,7 +473,7 @@ function Nav({currentPageName, pages}) {
                     return (a.order || 0) - (b.order || 0);
                   }
                   return a.title < b.title ? -1 : 1;
-                }).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
+                }).map(p => <SideNavItem key={p.title} {...p} />)}
               </ul>
             </React.Fragment>
           );
