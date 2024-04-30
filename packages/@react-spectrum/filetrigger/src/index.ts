@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export {FileTrigger} from '../../../react-aria-components';
-export type {FileTriggerProps} from '../../../react-aria-components';
+export {FileTrigger} from 'react-aria-components';
+export type {FileTriggerProps} from 'react-aria-components';
