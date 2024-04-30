@@ -230,6 +230,47 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts[1].animation).toBe('queued');
   });
 
+  it('should maintain the toast queue order on close and apply exiting to the closing toast', () => {
+    let {result} = renderHook(() => useToastState({hasExitAnimation: true, maxVisibleToasts: 3}));
+
+    act(() => {result.current.add('First Toast');});
+    expect(result.current.visibleToasts).toHaveLength(1);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+
+    act(() => {result.current.add('Second Toast');});
+    expect(result.current.visibleToasts).toHaveLength(2);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('entering');
+
+    act(() => {result.current.add('Third Toast');});
+    expect(result.current.visibleToasts).toHaveLength(3);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('entering');
+    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[2].animation).toBe('entering');
+
+    act(() => {result.current.close(result.current.visibleToasts[1].key);});
+    expect(result.current.visibleToasts).toHaveLength(3);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('exiting');
+    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[2].animation).toBe('entering');
+
+    act(() => {result.current.remove(result.current.visibleToasts[1].key);});
+    expect(result.current.visibleToasts).toHaveLength(2);
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[1].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[1].animation).toBe('entering');
+  });
+
   it('should close a toast', () => {
     let {result} = renderHook(() => useToastState());
     act(() => {result.current.add(newValue[0].content, newValue[0].props);});
