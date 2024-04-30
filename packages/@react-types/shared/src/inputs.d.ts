@@ -18,7 +18,7 @@ export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
 export type ValidationFunction<T> = (value: T) => ValidationError | true | null | undefined;
 
-export interface Validation<T> {
+export interface Validation<T = unknown> {
   /** Whether user input is required on the input before form submission. */
   isRequired?: boolean,
   /** Whether the input value is invalid. */
