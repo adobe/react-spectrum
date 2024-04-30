@@ -50,7 +50,7 @@ function Example(){
           let filenames = files.map((file) => file.name);
           setFile(filenames);
         }}>
-        <Button>Select a file</Button>
+        <Button variant="accent">Select a file</Button>
       </FileTrigger>
       {file && file}
     </>
@@ -98,7 +98,7 @@ By default, the file trigger will accept any file type. To support only certain 
 
 ```tsx example
 <FileTrigger acceptedFileTypes={['image/png']}>
-  <Button>Select files</Button>
+  <Button variant="primary">Select files</Button>
 </FileTrigger>
 ```
 
@@ -108,7 +108,7 @@ A file trigger can accept multiple files by passsing the `allowsMultiple` proper
 
 ```tsx example
 <FileTrigger allowsMultiple>
-  <Button>Upload your files</Button>
+  <Button variant="primary">Upload your files</Button>
 </FileTrigger>
 ```
 
@@ -133,7 +133,7 @@ function Example () {
             setFiles(fileList);
           }
         }} >
-        <Button>Upload</Button>
+        <Button variant="accent">Upload</Button>
       </FileTrigger>
       {files && <ul>
         {files.map((file, index) => (
@@ -153,7 +153,7 @@ This behavior only works on mobile devices. On desktop devices, it will open the
 
 ```tsx example
 <FileTrigger defaultCamera="environment">
-  <Button>Open Camera</Button>
+  <Button variant="accent">Open Camera</Button>
 </FileTrigger>
 ````
 
