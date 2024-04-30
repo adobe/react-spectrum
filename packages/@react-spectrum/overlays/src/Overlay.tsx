@@ -33,7 +33,9 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   } = props;
 
   let {getContainer} = useUNSTABLE_PortalContext();
-  container = container || getContainer?.();
+  if  (!container && getContainer) {
+    container = getContainer();
+  }
 
   let [exited, setExited] = useState(!isOpen);
 
