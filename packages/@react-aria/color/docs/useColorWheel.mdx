@@ -93,6 +93,7 @@ const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
 function ColorWheel(props) {
+  let {isDisabled} = props;
   let state = useColorWheelState(props);
   let inputRef = React.useRef(null);
   let {trackProps, inputProps, thumbProps} = useColorWheel({
@@ -105,12 +106,18 @@ function ColorWheel(props) {
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...trackProps} />
+      <div
+        {...trackProps}
+        style={{
+          ...trackProps.style,
+          background: isDisabled ? 'rgb(142, 142, 142)' : trackProps.style.background
+        }} />
       <div
         {...thumbProps}
         style={{
           ...thumbProps.style,
-          border: '2px solid white',
+          background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+          border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
           boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
           width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
           height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
