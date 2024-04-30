@@ -76,7 +76,12 @@
     animation: slide-in 300ms;
   }
 
-  &[data-animation=exiting] {
+  &[data-animation=queued] {
+    animation: fade-in 300ms;
+  }
+
+  &[data-animation=exiting],
+  &[data-animation=hiding] {
     animation: fade-out 300ms forwards;
   }
 }
@@ -98,5 +103,15 @@
 
   to {
     opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

@@ -42,7 +42,7 @@ export interface QueuedToast<T> extends ToastOptions {
   /** A timer for the toast, if a timeout was set. */
   timer?: Timer,
   /** The current animation state for the toast. */
-  animation?: 'entering' | 'queued' | 'exiting'
+  animation?: 'new' | 'hidden' | 'entering' | 'queued' | 'visible' | 'hiding' | 'exiting'
 }
 
 export interface ToastState<T> {
@@ -136,13 +136,8 @@ export class ToastQueue<T> {
 
     this.queue.splice(low, 0, toast);
 
-    toast.animation = low < this.maxVisibleToasts ? 'entering' : 'queued';
-    let i = this.maxVisibleToasts;
-    while (i < this.queue.length) {
-      this.queue[i++].animation = 'queued';
-    }
-
-    this.updateVisibleToasts({action: 'add'});
+    toast.animation = 'new';
+    this.updateVisibleToasts();
     return toastKey;
   }
 
@@ -154,38 +149,75 @@ export class ToastQueue<T> {
     let index = this.queue.findIndex(t => t.key === key);
     if (index >= 0) {
       this.queue[index].onClose?.();
-      this.queue.splice(index, 1);
+      if (this.hasExitAnimation) {
+        this.queue[index].animation = 'exiting';
+      } else {
+        this.queue.splice(index, 1);
+      }
     }
 
-    this.updateVisibleToasts({action: 'close', key});
+    this.updateVisibleToasts();
   }
 
   /** Removes a toast from the visible toasts after an exiting animation. */
   remove(key: string) {
-    this.updateVisibleToasts({action: 'remove', key});
+    // this.updateVisibleToasts({action: 'remove', key});
+    let index = this.queue.findIndex(t => t.key === key);
+    if (index >= 0) {
+      if (this.queue[index].animation === 'exiting') {
+        this.queue.splice(index, 1);
+      } else {
+        this.queue[index].animation = 'hidden';
+      }
+    }
+    this.updateVisibleToasts();
   }
 
-  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
-    let {action, key} = options;
-    let toasts = this.queue.slice(0, this.maxVisibleToasts);
-
-    if (action === 'add' && this.hasExitAnimation) {
-      let prevToasts: QueuedToast<T>[] = this.visibleToasts
-        .filter(t => !toasts.some(t2 => t.key === t2.key))
-        .map(t => ({...t, animation: 'exiting'}));
-      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
-    } else if (action === 'close' && this.hasExitAnimation) {
-      // Cause a rerender to happen for exit animation
-      this.visibleToasts = this.visibleToasts.map(t => {
-        if (t.key !== key) {
-          return t;
-        } else {
-          return {...t, animation: 'exiting'};
+  private updateVisibleToasts() {
+    let numVisible = 0;
+    for (let toast of this.queue) {
+      if (numVisible < this.maxVisibleToasts) {
+        switch (toast.animation) {
+          case 'new':
+            toast.animation = 'entering';
+            numVisible++;
+            break;
+          case 'hidden':
+          case 'hiding':
+            toast.animation = 'queued';
+            numVisible++;
+            break;
+          case 'entering':
+          case 'queued':
+          case 'visible':
+            numVisible++;
+            break;
+          case 'exiting':
+            break;
         }
-      });
-    } else {
-      this.visibleToasts = toasts;
+      } else {
+        switch (toast.animation) {
+          case 'new':
+          case 'entering':
+          case 'queued':
+          case 'visible':
+            toast.animation = 'hiding';
+            break;
+          case 'hiding':
+          case 'exiting':
+          case 'hidden':
+            break;
+        }
+      }
     }
+
+    this.visibleToasts = this.queue.filter(toast => 
+      toast.animation === 'entering' ||
+      toast.animation === 'queued' ||
+      toast.animation === 'visible' ||
+      toast.animation === 'exiting' ||
+      toast.animation === 'hiding'
+    );
 
     for (let fn of this.subscriptions) {
       fn();

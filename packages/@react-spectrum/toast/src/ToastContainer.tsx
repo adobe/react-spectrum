@@ -37,7 +37,7 @@ let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
 function getGlobalToastQueue() {
   if (!globalToastQueue) {
     globalToastQueue = new ToastQueue({
-      maxVisibleToasts: Infinity,
+      maxVisibleToasts: 5,
       hasExitAnimation: true
     });
   }

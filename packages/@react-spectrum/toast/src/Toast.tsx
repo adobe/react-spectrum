@@ -109,7 +109,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       }}
       data-animation={animation}
       onAnimationEnd={() => {
-        if (animation === 'exiting') {
+        if (animation === 'exiting' || animation === 'hiding') {
           state.remove(key);
         }
       }}>
