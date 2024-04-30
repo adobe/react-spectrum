@@ -34,7 +34,7 @@ export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from '
 export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
-export {Form} from './Form';
+export {Form, FormContext} from './Form';
 export {GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
