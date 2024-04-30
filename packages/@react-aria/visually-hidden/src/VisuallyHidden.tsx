@@ -51,27 +51,27 @@ export interface VisuallyHiddenAria {
  * but keeps content visible to assistive technology.
  */
 export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHiddenAria {
-  let {
+  const {
     style,
     isFocusable
   } = props;
 
-  let [isFocused, setFocused] = useState(false);
-  let {focusWithinProps} = useFocusWithin({
+  const [isFocused, setFocused] = useState(false);
+  const {focusWithinProps} = useFocusWithin({
     isDisabled: !isFocusable,
     onFocusWithinChange: (val) => setFocused(val)
   });
 
   // If focused, don't hide the element.
-  let combinedStyles = useMemo(() => {
+  const combinedStyles = useMemo(() => {
     if (isFocused) {
       return style;
-    } else if (style) {
-      return {...styles, ...style};
-    } else {
-      return styles;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (style) {
+      return {...styles, ...style};
+    }
+    return styles;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   return {
@@ -88,8 +88,8 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
  */
 export function VisuallyHidden(props: VisuallyHiddenProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
-  let {visuallyHiddenProps} = useVisuallyHidden(props);
+  const {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
+  const {visuallyHiddenProps} = useVisuallyHidden(props);
 
   return (
     <Element {...mergeProps(otherProps, visuallyHiddenProps)}>
