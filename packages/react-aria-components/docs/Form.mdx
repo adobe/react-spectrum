@@ -160,6 +160,63 @@ To provide validation errors, the `validationErrors` prop should be set to an ob
 
 See the [Forms](forms.html) guide to learn more about form validation in React Aria, including client-side validation, and integration with other frameworks and libraries.
 
+### Validation behavior
+
+By default, native HTML form validation is used to display errors and block form submission.
+
+```tsx example
+<Form>
+  <TextField name="email" type="email" isRequired>
+    <Label>Email</Label>
+    <Input />
+    <FieldError />
+  </TextField>
+  <div style={{display: 'flex', gap: 8}}>
+    <Button type="submit">Submit</Button>
+    <Button type="reset">Reset</Button>
+  </div>
+</Form>
+```
+
+To instead use ARIA attributes for form validation, set the validationBehavior prop to "aria". This will not block form submission, and will ensure validation errors are displayed to the user in realtime as the value is edited.
+
+This can be set at the form level to apply to all fields, or at the field level to override the form's behavior for a specific field.
+
+```tsx example
+const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+function Example() {
+  let [value, setValue] = React.useState('');
+  return (
+    <Form validationBehavior="aria" onSubmit={(e) => {e.preventDefault()}}>
+      <TextField
+        name="email"
+        type="email"
+        value={value}
+        onChange={setValue}
+        isRequired
+        isInvalid={value.length > 0 && !EMAIL_REGEX.test(value)}>
+        <Label>Email</Label>
+        <Input />
+        <FieldError />
+      </TextField>
+      <div style={{display: 'flex', gap: 8}}>
+        <Button type="submit">Submit</Button>
+        <Button onPress={() => setValue('')}>Reset</Button>
+      </div>
+    </Form>
+  );
+}
+```
+
+The `validationBehavior` for a Form can be accessed from within any component inside a given From by using the `FormContext`.
+
+```tsx
+import {FormContext} from 'react-aria-components';
+
+let {validationBehavior} = useContext(FormContext);
+```
+
 ### Focus management
 
 By default, after a user submits a form with validation errors, the first invalid field will be focused. You can prevent this by calling `preventDefault` during the `onInvalid` event, and move focus yourself. This example shows how to move focus to an [alert](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role) element at the top of a form.
