@@ -94,7 +94,8 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
         trigger: props.trigger || null,
         placement: 'bottom',
         isEntering: false,
-        isExiting: false
+        isExiting: false,
+        defaultChildren: null
       });
     }
 

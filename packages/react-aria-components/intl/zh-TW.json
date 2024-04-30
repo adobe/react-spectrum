@@ -1,5 +1,8 @@
 {
   "dropzoneLabel": "放置區",
   "selectPlaceholder": "選取項目",
-  "tableResizer": "大小調整器"
+  "tableResizer": "大小調整器",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "colorSwatchPicker": "Color swatches"
 }

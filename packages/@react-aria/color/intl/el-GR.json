@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Επιλογέας χρωμάτων",
-  "twoDimensionalSlider": "Ρυθμιστικό 2D"
+  "twoDimensionalSlider": "Ρυθμιστικό 2D",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }

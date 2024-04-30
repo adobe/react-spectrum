@@ -16,11 +16,9 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
-import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
@@ -132,12 +130,12 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
 }
 
 
-export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
-export const TreeStateContext = createContext<TreeState<any> | null>(null);
+export const UNSTABLE_TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(null);
 
 function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  [props, ref] = useContextProps(props, ref, TreeContext);
+  [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
   let {collection, portal} = useCollection(props);
 
   return (
@@ -248,7 +246,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
           values={[
-            [TreeStateContext, state]
+            [UNSTABLE_TreeStateContext, state]
           ]}>
           {children}
         </Provider>
@@ -263,7 +261,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
  * and selection.
  */
 const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
-export {_Tree as Tree};
+export {_Tree as UNSTABLE_Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
@@ -318,7 +316,7 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
  * A TreeItem represents an individual item in a Tree.
  */
 const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
-export {_TreeItem as TreeItem};
+export {_TreeItem as UNSTABLE_TreeItem};
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
   // Whether the tree item is expanded.
@@ -337,7 +335,7 @@ export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRe
 
 // TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
 // having those
-export function TreeItemContent(props: TreeItemContentProps) {
+export function UNSTABLE_TreeItemContent(props: TreeItemContentProps) {
   let ref = useRef(null);
   let shallow = useShallowRender('content', props, ref);
   if (shallow) {
@@ -348,10 +346,11 @@ export function TreeItemContent(props: TreeItemContentProps) {
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
 function TreeRow<T>({item}: {item: Node<T>}) {
-  let state = useContext(TreeStateContext)!;
+  let state = useContext(UNSTABLE_TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
-  let {rowProps, gridCellProps, ...states} = useTreeGridListItem({node: item}, state, ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+  // TODO: remove this when we support description in tree row
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
   let level = rowProps['aria-level'] || 1;
@@ -399,24 +398,6 @@ function TreeRow<T>({item}: {item: Node<T>}) {
       console.warn('A `textValue` prop is required for <TreeItem> elements in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);
-
-
-  let expandButtonProps = {
-    onPress: () => {
-      if (!states.isDisabled) {
-        state.toggleKey(item.key);
-
-        if (!isFocusVisible) {
-          state.selectionManager.setFocused(true);
-          state.selectionManager.setFocusedKey(item.key);
-        }
-      }
-    },
-    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
-    // TODO: the below actually isn't enough to have keyboard navigation skip over it, we need it to be a span type button but
-    // RAC buttons are always a "button" type element.
-    tabIndex: isAndroid() ? -1 : null
-  };
 
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -468,9 +449,8 @@ function TreeRow<T>({item}: {item: Node<T>}) {
                   selection: checkboxProps
                 }
               }],
-              // TODO: No description slot supported, doesn't exist in design
+              // TODO: support description in the tree row
               // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
-              // TODO: make the button get automatically skipped by keyboard navigation
               [ButtonContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
