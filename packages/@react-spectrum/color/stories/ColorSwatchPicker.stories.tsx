@@ -47,9 +47,9 @@ export const Default = (args) => (
 
 export const ManySwatches = (args) => (
   <ColorSwatchPicker {...args} maxWidth="size-3000">
-    {Array.from(Array(24)).map((_, i) => {
+    {Array.from(Array(24)).map(() => {
       let color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
-      return <ColorSwatch key={color} color={color} />
+      return <ColorSwatch key={color} color={color} />;
     })}
   </ColorSwatchPicker>
 );
