@@ -67,7 +67,6 @@ import {MyColorField} from './ColorField';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import "@react-aria/example-theme";
 @import './Button.mdx' layer(button);
 @import "./ColorArea.mdx" layer(colorarea);
 @import "./ColorSlider.mdx" layer(colorslider);
@@ -81,6 +80,8 @@ import {MyColorField} from './ColorField';
 ```
 
 ```css
+@import "@react-aria/example-theme";
+
 .color-picker {
   background: none;
   border: none;
@@ -90,6 +91,10 @@ import {MyColorField} from './ColorField';
   gap: 8px;
   outline: none;
   border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  color: var(--text-color);
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
@@ -104,6 +109,9 @@ import {MyColorField} from './ColorField';
   flex-direction: column;
   gap: 8px;
   min-width: 192px;
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
 }
 ```
 

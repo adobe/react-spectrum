@@ -67,7 +67,7 @@ export const SelectStateContext = createContext<SelectState<unknown> | null>(nul
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
-  let {validationBehavior: formValidationBehavior} = useContext(FormContext) || {};
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {collection, document} = useCollectionDocument();
   let state = useSelectState({

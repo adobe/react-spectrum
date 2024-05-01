@@ -266,10 +266,9 @@ afterAll(() => {
 
 ### Virtualized components
 
-Many of our collection components are virtualized out of the box and thus rely on DOM node measurement to know how large a item should be and how many items can be rendered at once. By default, virtualization for these
-collection components is turned off by since it is an implementation detail of the component itself and thus doesn't need to be tested by your test suites. However, if you'd like to re-enable virtualization or are running against
-an older version of the library that doesn't have this virtualization turned off by default, then you'll have to mock the `clientHeight` and `clientWidth` getters of the `HTMLElement` prototype to get the items of the virtualized collection
-to render. `scrollHeight` and `scrollWidth` should also be mocked to set the height and width of each item. See below for an example implementation in Jest.
+Many of our collection components are virtualized out of the box and thus rely on DOM node measurement to know how large a item should be and how many items can be rendered at once.
+To properly render virtualized components in a test environment, you'll have to to mock the `clientHeight` and `clientWidth` getters of the `HTMLElement` prototype.
+`scrollHeight` and `scrollWidth` should also be mocked to set the height and width of each item. See below for an example implementation in Jest.
 
 ```tsx
 beforeAll(function () {
