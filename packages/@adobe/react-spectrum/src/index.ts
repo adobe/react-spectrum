@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// Mark as a client only package. This will cause a build time error if you try 
+// Mark as a client only package. This will cause a build time error if you try
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
@@ -39,7 +39,7 @@ export {LabeledValue} from '@react-spectrum/labeledvalue';
 export {Link} from '@react-spectrum/link';
 export {ListBox} from '@react-spectrum/listbox';
 export {ListView} from '@react-spectrum/list';
-export {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+export {ActionMenu, Menu, MenuTrigger, SubmenuTrigger} from '@react-spectrum/menu';
 export {Meter} from '@react-spectrum/meter';
 export {NumberField} from '@react-spectrum/numberfield';
 export {Picker} from '@react-spectrum/picker';
@@ -93,7 +93,7 @@ export type {SpectrumLabeledValueProps} from '@react-spectrum/labeledvalue';
 export type {SpectrumLinkProps} from '@react-spectrum/link';
 export type {SpectrumListBoxProps} from '@react-spectrum/listbox';
 export type {SpectrumListViewProps} from '@react-spectrum/list';
-export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps} from '@react-spectrum/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps, SpectrumSubmenuTriggerProps} from '@react-spectrum/menu';
 export type {SpectrumMeterProps} from '@react-spectrum/meter';
 export type {SpectrumNumberFieldProps} from '@react-spectrum/numberfield';
 export type {SpectrumPickerProps} from '@react-spectrum/picker';
