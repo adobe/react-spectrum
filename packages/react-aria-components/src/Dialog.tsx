@@ -12,7 +12,7 @@
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {HeadingContext} from './Heading';
+import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
