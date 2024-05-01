@@ -53,7 +53,7 @@ export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoi
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {isDisabled} = props;
+  let {isDisabled = false} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
