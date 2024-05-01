@@ -57,6 +57,7 @@
     "@react-spectrum/dialog": "^3.8.9",
     "@react-spectrum/divider": "^3.5.11",
     "@react-spectrum/dnd": "^3.3.8",
+    "@react-spectrum/filetrigger": "^3.0.0",
     "@react-spectrum/form": "^3.7.4",
     "@react-spectrum/icon": "^3.7.11",
     "@react-spectrum/illustratedmessage": "^3.4.11",
