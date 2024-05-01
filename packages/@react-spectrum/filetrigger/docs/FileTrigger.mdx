@@ -58,13 +58,7 @@ function Example(){
 }
 ```
 
-## Features
-
-A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a `Button` to create accessible file inputs that can be style as needed.
-
-* **Customizable** – Works with any pressable React Aria or React Spectrum component, and custom components built with [usePress](usePress.html).
-
-## Anatomy
+## Content
 
 A `FileTrigger` wraps around a pressable child such as a button, and includes a visually hidden input element that allows the user to select files from their device.
 
@@ -77,20 +71,6 @@ import {FileTrigger, Button} from '@adobe/react-spectrum';
 ```
 
 If a visual label is not provided on the pressable child, then an `aria-label` or `aria-labelledby` prop must be passed to identify the file trigger to assistive technology.
-
-### Composed Components
-A `FileTrigger` can use the following components, which may also be used standalone or reused in other components.
-
-<section className={styles.cardGroup} data-size="small">
-
-<ExampleCard
-  url="Button.html"
-  title="Button"
-  description="A button allows a user to perform an action with a mouse, touch, or keyboard.">
-  <Button />
-</ExampleCard>
-
-</section>
 
 ## Accepted file types
 
