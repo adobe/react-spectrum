@@ -61,7 +61,7 @@ export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
 export type {AriaListBoxOptions, AriaListBoxProps, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
 export type {AriaGridListOptions, AriaGridListProps, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/gridlist';
-export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria, SubmenuTriggerAria} from '@react-aria/menu';
+export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria, SubmenuTriggerAria, AriaSubmenuTriggerProps} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
 export type {AriaModalOptions, AriaModalOverlayProps, AriaOverlayProps, AriaPopoverProps, AriaPositionProps, DismissButtonProps, ModalAria, ModalOverlayAria, ModalProviderAria, ModalProviderProps, OverlayAria, OverlayContainerProps, OverlayProps, OverlayTriggerAria, OverlayTriggerProps, PopoverAria, PositionAria, Placement, PlacementAxis, PositionProps} from '@react-aria/overlays';
