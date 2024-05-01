@@ -14,18 +14,20 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
+export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
+
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
-export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, CheckboxGroupStateContext} from './Checkbox';
-export {ColorArea, ColorAreaContext, ColorAreaStateContext} from './ColorArea';
-export {ColorField, ColorFieldContext, ColorFieldStateContext} from './ColorField';
+export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxGroupStateContext} from './Checkbox';
+export {ColorArea, ColorAreaStateContext} from './ColorArea';
+export {ColorField, ColorFieldStateContext} from './ColorField';
 export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from './ColorPicker';
-export {ColorSlider, ColorSliderContext, ColorSliderStateContext} from './ColorSlider';
+export {ColorSlider, ColorSliderStateContext} from './ColorSlider';
 export {ColorSwatch, ColorSwatchContext} from './ColorSwatch';
 export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorThumb} from './ColorThumb';
-export {ColorWheel, ColorWheelTrack, ColorWheelContext, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
+export {ColorWheel, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
 export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedContext} from './utils';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
@@ -38,7 +40,7 @@ export {Form, FormContext} from './Form';
 export {GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
-export {Heading, HeadingContext} from './Heading';
+export {Heading} from './Heading';
 export {Input, InputContext} from './Input';
 export {Section, Collection} from './Collection';
 export {Keyboard, KeyboardContext} from './Keyboard';
