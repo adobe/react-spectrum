@@ -12,13 +12,14 @@
 
 import {AriaColorFieldProps, useColorChannelField, useColorField} from '@react-aria/color';
 import {ColorChannel, ColorSpace} from '@react-types/color';
+import {ColorFieldContext} from './RSPContexts';
 import {ColorFieldState, useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {InputDOMProps, ValidationResult} from '@react-types/shared';
 import {LabelContext} from './Label';
+import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
 import {TextContext} from './Text';
 import {useLocale} from 'react-aria';
@@ -58,7 +59,6 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'pl
   colorSpace?: ColorSpace
 }
 
-export const ColorFieldContext = createContext<ContextValue<ColorFieldProps, HTMLDivElement>>(null);
 export const ColorFieldStateContext = createContext<ColorFieldState | null>(null);
 
 function ColorField(props: ColorFieldProps, ref: ForwardedRef<HTMLDivElement>) {

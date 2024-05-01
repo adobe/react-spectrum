@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, VersionBadge} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './MenuAnatomy.svg';
@@ -718,7 +718,7 @@ function Example() {
 }
 ```
 
-## Submenus <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Submenus
 
 Submenus can be created by wrapping an item and a submenu in a `SubmenuTrigger`. The `SubmenuTrigger` accepts exactly two children: the first child should be the `MenuItem` which triggers opening of the submenu, and second child should be the `Popover` containing the submenu.
 

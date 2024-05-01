@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from './utils';
+import {ContextValue, DOMProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
@@ -25,13 +25,14 @@ export interface FormProps extends SharedFormProps, DOMProps {
   validationBehavior?: 'aria' | 'native'
 }
 
-export const FormContext = createContext<{validationBehavior: FormProps['validationBehavior']} | null>(null);
+export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
 
 function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
+  [props, ref] = useContextProps(props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
     <form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
-      <FormContext.Provider value={{validationBehavior}}>
+      <FormContext.Provider value={{...props, validationBehavior}}>
         <FormValidationContext.Provider value={validationErrors ?? {}}>
           {children}
         </FormValidationContext.Provider>

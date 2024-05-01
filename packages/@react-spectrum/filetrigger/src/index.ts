@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,14 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaProgressBarBaseProps, ProgressBarBaseProps, SpectrumProgressBarBaseProps} from '@react-types/progress';
+/// <reference types="css-module-types" />
 
-export type MeterProps = ProgressBarBaseProps;
-export interface AriaMeterProps extends AriaProgressBarBaseProps {}
-export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
-  /** 
-   * The [visual style](https://spectrum.adobe.com/page/meter/#Options) of the Meter. 
-   * @default 'informative'
-   */
-  variant?: 'informative' | 'positive' | 'warning' | 'critical'
-}
+export {FileTrigger} from 'react-aria-components';
+export type {FileTriggerProps} from 'react-aria-components';
