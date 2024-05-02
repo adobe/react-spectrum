@@ -61,7 +61,7 @@
     "@react-spectrum/filetrigger": "^3.0.0",
     "@react-spectrum/form": "^3.7.5",
     "@react-spectrum/icon": "^3.7.12",
-    "@react-spectrum/illustratedmessage": "^3.4.12",
+    "@react-spectrum/illustratedmessage": "^3.5.0",
     "@react-spectrum/image": "^3.5.0",
     "@react-spectrum/inlinealert": "^3.2.4",
     "@react-spectrum/labeledvalue": "^3.1.13",

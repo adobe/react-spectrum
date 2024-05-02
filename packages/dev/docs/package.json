@@ -14,7 +14,7 @@
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/dialog": "^3.1.0",
     "@react-spectrum/divider": "^3.1.0",
-    "@react-spectrum/illustratedmessage": "^3.1.0",
+    "@react-spectrum/illustratedmessage": "^3.5.0",
     "@react-spectrum/layout": "^3.1.0",
     "@react-spectrum/picker": "^3.1.0",
     "@react-spectrum/provider": "^3.1.0",

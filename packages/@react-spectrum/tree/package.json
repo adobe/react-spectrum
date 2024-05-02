@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/style-macro-s1": "1.0.0-alpha.1"
+    "@react-spectrum/style-macro-s1": "3.0.0-alpha.0"
   },
   "publishConfig": {
     "access": "public"

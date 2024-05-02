@@ -1,5 +1,6 @@
 {
   "name": "@react-spectrum/style-macro-s1",
+  "private": true,
   "version": "3.0.0-alpha.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
