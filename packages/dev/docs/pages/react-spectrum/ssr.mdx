@@ -293,10 +293,10 @@ Media queries and DOM feature detection cannot be performed on the server becaus
 
 [Next.js](https://nextjs.org) is a framework for building websites and web applications with React. It supports both server side rendering as well as static rendering. A small amount of configuration is required to get React Spectrum’s CSS working with Next.js.
 
-Add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js.
+First, install the `glob` package with npm/yarn. Then, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js.
 
 ```tsx
-import glob from 'glob';
+const glob = require('glob');
 
 module.exports = {
   transpilePackages: [
