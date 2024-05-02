@@ -11,13 +11,10 @@
  */
 
 import {Color} from '@react-types/color';
-import {ColorAreaContext} from './ColorArea';
-import {ColorFieldContext} from './ColorField';
+import {ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext} from './RSPContexts';
 import {ColorPickerState, ColorPickerProps as StatelyColorPickerProps, useColorPickerState} from '@react-stately/color';
-import {ColorSliderContext} from './ColorSlider';
 import {ColorSwatchContext} from './ColorSwatch';
 import {ColorSwatchPickerContext} from './ColorSwatchPicker';
-import {ColorWheelContext} from './ColorWheel';
 import {mergeProps} from 'react-aria';
 import {Provider, RenderProps, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
 import React, {createContext} from 'react';

@@ -184,6 +184,7 @@
   },
   "resolutions": {
     "@babel/core": "7.24.3",
+    "@parcel/plugin": "2.0.0-canary.1565",
     "@types/react": "18.2.28",
     "postcss": "8.4.24",
     "postcss-custom-properties": "13.2.0",

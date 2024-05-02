@@ -1,4 +1,5 @@
 import {AriaColorWheelOptions, useColorWheel} from '@react-aria/color';
+import {ColorWheelContext} from './RSPContexts';
 import {ColorWheelState, useColorWheelState} from '@react-stately/color';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
@@ -19,7 +20,6 @@ export interface ColorWheelRenderProps {
 
 export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<ColorWheelRenderProps>, SlotProps {}
 
-export const ColorWheelContext = createContext<ContextValue<Partial<ColorWheelProps>, HTMLDivElement>>(null);
 export const ColorWheelStateContext = createContext<ColorWheelState | null>(null);
 
 function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {

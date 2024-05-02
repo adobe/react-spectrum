@@ -314,6 +314,13 @@ DisabledKeys.story = {
   name: 'disabledKeys'
 };
 
+export const OverflowAndHide = () =>
+  render({overflowMode: 'collapse', buttonLabelBehavior: 'hide', selectionMode: 'multiple'}, dataItems);
+
+OverflowAndHide.story = {
+  name: 'overflowMode: collapse, buttonLabelBehavior: hide'
+};
+
 function render(props, items) {
   return (
     <Flex rowGap="size-300" margin="size-100" width="100%" direction="column">

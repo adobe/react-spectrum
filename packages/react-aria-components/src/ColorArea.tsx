@@ -1,8 +1,9 @@
 import {AriaColorAreaProps} from '@react-types/color';
+import {ColorAreaContext} from './RSPContexts';
 import {ColorAreaState, useColorAreaState} from '@react-stately/color';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
+import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {useColorArea} from '@react-aria/color';
 
@@ -21,7 +22,6 @@ export interface ColorAreaRenderProps {
 export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps {}
 
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
-export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>>(null);
 
 function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorAreaContext);
