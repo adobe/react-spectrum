@@ -92,14 +92,12 @@ get a localized string for the channel name using the `getChannelName` method. I
 to display the current channel value as text. This is formatted using the Color object's `formatChannelValue` method, which
 formats the value according to the channel type and locale settings.
 
-The `<input>` element inside the thumb is used to represent the color slider to assistive technology, and is hidden from view
-using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses the [useFocusRing](useFocusRing.html) hook to
-grow in size when it is keyboard focused (try tabbing to it).
+The visually hidden `<input>` element inside the thumb is used to represent the color slider to assistive technology. 
+The thumb also uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
 import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useLocale} from '@react-aria/i18n';
 import {useFocusRing} from '@react-aria/focus';
 
@@ -107,6 +105,7 @@ const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
 function ColorSlider(props) {
+  let {isDisabled} = props;
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
   let trackRef = React.useRef(null);
@@ -147,24 +146,23 @@ function ColorSlider(props) {
           ...trackProps.style,
           height: TRACK_THICKNESS,
           width: '100%',
-          borderRadius: 4
+          borderRadius: 4,
+          background: isDisabled ? 'rgb(142, 142, 142)' : trackProps.style.background
         }}>
         <div
           {...thumbProps}
           style={{
             ...thumbProps.style,
             top: TRACK_THICKNESS / 2,
-            border: '2px solid white',
+            background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+            border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
             boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
             width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
             height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
             borderRadius: '50%',
-            boxSizing: 'border-box',
-            background: state.getDisplayColor().toString('css')
+            boxSizing: 'border-box'
           }}>
-          <VisuallyHidden>
-            <input ref={inputRef} {...inputProps} {...focusProps} />
-          </VisuallyHidden>
+          <input ref={inputRef} {...inputProps} {...focusProps} />
         </div>
       </div>
     </div>
@@ -224,9 +222,7 @@ function ColorSlider(props) {
             boxSizing: 'border-box',
             background: state.getDisplayColor().toString('css')
           }}>
-          <VisuallyHidden>
-            <input ref={inputRef} {...inputProps} {...focusProps} />
-          </VisuallyHidden>
+          <input ref={inputRef} {...inputProps} {...focusProps} />
         </div>
       </div>
     </div>

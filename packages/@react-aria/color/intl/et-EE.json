@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Värvivalija",
-  "twoDimensionalSlider": "2D-liugur"
+  "twoDimensionalSlider": "2D-liugur",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }

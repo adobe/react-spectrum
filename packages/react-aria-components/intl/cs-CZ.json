@@ -1,5 +1,6 @@
 {
   "dropzoneLabel": "Místo pro přetažení",
   "selectPlaceholder": "Vyberte položku",
-  "tableResizer": "Změna velikosti"
+  "tableResizer": "Změna velikosti",
+  "colorSwatchPicker": "Color swatches"
 }

@@ -29,14 +29,14 @@
 
   &[data-position=top] {
     top: 0;
-    flex-direction: column;
+    flex-direction: column-reverse;
     --slide-from: translateY(-100%);
     --slide-to: translateY(0);
   }
 
   &[data-position=bottom] {
     bottom: 0;
-    flex-direction: column-reverse;
+    flex-direction: column;
     --slide-from: translateY(100%);
     --slide-to: translateY(0);
   }

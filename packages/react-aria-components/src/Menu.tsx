@@ -23,10 +23,10 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
+import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
@@ -176,7 +176,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         rootMenuTriggerState.close();
       }
     },
-    isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
+    isDisabled: isSubmenu || rootMenuTriggerState?.expandedKeysStack.length === 0
   });
 
   let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
@@ -384,9 +384,9 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
   let popoverContext = useSlottedContext(PopoverContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     node: item,
     parentMenuRef,
     submenuRef,

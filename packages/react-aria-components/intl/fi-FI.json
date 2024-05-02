@@ -1,5 +1,6 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Valitse kohde",
-  "tableResizer": "Koon muuttaja"
+  "tableResizer": "Koon muuttaja",
+  "colorSwatchPicker": "Color swatches"
 }
