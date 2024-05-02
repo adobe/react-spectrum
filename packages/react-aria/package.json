@@ -1,6 +1,6 @@
 {
   "name": "react-aria",
-  "version": "3.32.1",
+  "version": "3.33.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -81,8 +81,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.12.10"
   }
 }

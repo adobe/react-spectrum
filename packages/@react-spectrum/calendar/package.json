@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/calendar",
-  "version": "3.4.7",
+  "version": "3.4.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

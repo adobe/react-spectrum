@@ -474,7 +474,7 @@ function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRe
   }
 
   return (
-    <ListBoxtDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
+    <ListBoxDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
   );
 }
 
@@ -483,7 +483,7 @@ interface ListBoxDropIndicatorProps extends DropIndicatorProps {
   isDropTarget: boolean
 }
 
-function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   let {
     dropIndicatorProps,
     isDropTarget,
@@ -509,4 +509,4 @@ function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedR
   );
 }
 
-const ListBoxtDropIndicatorForwardRef = forwardRef(ListBoxtDropIndicator);
+const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);

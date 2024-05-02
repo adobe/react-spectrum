@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/virtualizer",
-  "version": "3.6.8",
+  "version": "3.7.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

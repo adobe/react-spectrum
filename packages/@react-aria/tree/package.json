@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/tree",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,8 +23,11 @@
   },
   "dependencies": {
     "@react-aria/gridlist": "workspace:^",
+    "@react-aria/i18n": "workspace:^",
     "@react-aria/selection": "workspace:^",
+    "@react-aria/utils": "workspace:^",
     "@react-stately/tree": "workspace:^",
+    "@react-types/button": "workspace:^",
     "@react-types/shared": "workspace:^",
     "@swc/helpers": "^0.5.0"
   },

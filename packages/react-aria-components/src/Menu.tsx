@@ -17,16 +17,16 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTrigge
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
+import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
@@ -176,7 +176,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         rootMenuTriggerState.close();
       }
     },
-    isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
+    isDisabled: isSubmenu || rootMenuTriggerState?.expandedKeysStack.length === 0
   });
 
   let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
@@ -284,7 +284,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -320,7 +320,12 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: states.isDisabled,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
+  });
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -379,9 +384,9 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
   let popoverContext = useSlottedContext(PopoverContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     node: item,
     parentMenuRef,
     submenuRef,

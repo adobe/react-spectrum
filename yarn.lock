@@ -84,6 +84,8 @@ __metadata:
     "@react-spectrum/dialog": "workspace:^"
     "@react-spectrum/divider": "workspace:^"
     "@react-spectrum/dnd": "workspace:^"
+    "@react-spectrum/dropzone": "workspace:^"
+    "@react-spectrum/filetrigger": "workspace:^"
     "@react-spectrum/form": "workspace:^"
     "@react-spectrum/icon": "workspace:^"
     "@react-spectrum/illustratedmessage": "workspace:^"
@@ -316,7 +318,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.23.5, @babel/code-frame@npm:^7.24.1, @babel/code-frame@npm:^7.24.2, @babel/code-frame@npm:^7.5.5, @babel/code-frame@npm:^7.8.3":
+"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.23.5, @babel/code-frame@npm:^7.24.2, @babel/code-frame@npm:^7.5.5, @babel/code-frame@npm:^7.8.3":
   version: 7.24.2
   resolution: "@babel/code-frame@npm:7.24.2"
   dependencies:
@@ -370,15 +372,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.12.11, @babel/generator@npm:^7.18.13, @babel/generator@npm:^7.24.1, @babel/generator@npm:^7.7.2":
-  version: 7.24.4
-  resolution: "@babel/generator@npm:7.24.4"
+"@babel/generator@npm:^7.12.11, @babel/generator@npm:^7.18.13, @babel/generator@npm:^7.24.1, @babel/generator@npm:^7.24.5, @babel/generator@npm:^7.7.2":
+  version: 7.24.5
+  resolution: "@babel/generator@npm:7.24.5"
   dependencies:
-    "@babel/types": "npm:^7.24.0"
+    "@babel/types": "npm:^7.24.5"
     "@jridgewell/gen-mapping": "npm:^0.3.5"
     "@jridgewell/trace-mapping": "npm:^0.3.25"
     jsesc: "npm:^2.5.1"
-  checksum: 10c0/67a1b2f7cc985aaaa11b01e8ddd4fffa4f285837bc7a209738eb8203aa34bdafeb8507ed75fd883ddbabd641a036ca0a8d984e760f28ad4a9d60bff29d0a60bb
+  checksum: 10c0/0d64f880150e7dfb92ceff2b4ac865f36aa1e295120920246492ffd0146562dabf79ba8699af1c8833f8a7954818d4d146b7b02f808df4d6024fb99f98b2f78d
   languageName: node
   linkType: hard
 
@@ -604,26 +606,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-split-export-declaration@npm:^7.22.6":
-  version: 7.22.6
-  resolution: "@babel/helper-split-export-declaration@npm:7.22.6"
+"@babel/helper-split-export-declaration@npm:^7.22.6, @babel/helper-split-export-declaration@npm:^7.24.5":
+  version: 7.24.5
+  resolution: "@babel/helper-split-export-declaration@npm:7.24.5"
   dependencies:
-    "@babel/types": "npm:^7.22.5"
-  checksum: 10c0/d83e4b623eaa9622c267d3c83583b72f3aac567dc393dda18e559d79187961cb29ae9c57b2664137fc3d19508370b12ec6a81d28af73a50e0846819cb21c6e44
+    "@babel/types": "npm:^7.24.5"
+  checksum: 10c0/d7a812d67d031a348f3fb0e6263ce2dbe6038f81536ba7fb16db385383bcd6542b71833194303bf6d3d0e4f7b6b584c9c8fae8772122e2ce68fc9bdf07f4135d
   languageName: node
   linkType: hard
 
-"@babel/helper-string-parser@npm:^7.23.4":
+"@babel/helper-string-parser@npm:^7.24.1":
   version: 7.24.1
   resolution: "@babel/helper-string-parser@npm:7.24.1"
   checksum: 10c0/2f9bfcf8d2f9f083785df0501dbab92770111ece2f90d120352fda6dd2a7d47db11b807d111e6f32aa1ba6d763fe2dc6603d153068d672a5d0ad33ca802632b2
   languageName: node
   linkType: hard
 
-"@babel/helper-validator-identifier@npm:^7.22.20":
-  version: 7.22.20
-  resolution: "@babel/helper-validator-identifier@npm:7.22.20"
-  checksum: 10c0/dcad63db345fb110e032de46c3688384b0008a42a4845180ce7cd62b1a9c0507a1bed727c4d1060ed1a03ae57b4d918570259f81724aaac1a5b776056f37504e
+"@babel/helper-validator-identifier@npm:^7.22.20, @babel/helper-validator-identifier@npm:^7.24.5":
+  version: 7.24.5
+  resolution: "@babel/helper-validator-identifier@npm:7.24.5"
+  checksum: 10c0/05f957229d89ce95a137d04e27f7d0680d84ae48b6ad830e399db0779341f7d30290f863a93351b4b3bde2166737f73a286ea42856bb07c8ddaa95600d38645c
   languageName: node
   linkType: hard
 
@@ -686,12 +688,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.24.0, @babel/parser@npm:^7.24.1, @babel/parser@npm:^7.9.0":
-  version: 7.24.4
-  resolution: "@babel/parser@npm:7.24.4"
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.24.0, @babel/parser@npm:^7.24.1, @babel/parser@npm:^7.24.5":
+  version: 7.24.5
+  resolution: "@babel/parser@npm:7.24.5"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 10c0/8381e1efead5069cb7ed2abc3a583f4a86289b2f376c75cecc69f59a8eb36df18274b1886cecf2f97a6a0dff5334b27330f58535be9b3e4e26102cc50e12eac8
+  checksum: 10c0/8333a6ad5328bad34fa0e12bcee147c3345ea9a438c0909e7c68c6cfbea43c464834ffd7eabd1cbc1c62df0a558e22ffade9f5b29440833ba7b33d96a71f88c0
   languageName: node
   linkType: hard
 
@@ -2004,32 +2006,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.12.11, @babel/traverse@npm:^7.13.0, @babel/traverse@npm:^7.24.1, @babel/traverse@npm:^7.7.2, @babel/traverse@npm:^7.9.0":
-  version: 7.24.1
-  resolution: "@babel/traverse@npm:7.24.1"
+"@babel/traverse@npm:^7.12.11, @babel/traverse@npm:^7.13.0, @babel/traverse@npm:^7.24.0, @babel/traverse@npm:^7.24.1, @babel/traverse@npm:^7.7.2":
+  version: 7.24.5
+  resolution: "@babel/traverse@npm:7.24.5"
   dependencies:
-    "@babel/code-frame": "npm:^7.24.1"
-    "@babel/generator": "npm:^7.24.1"
+    "@babel/code-frame": "npm:^7.24.2"
+    "@babel/generator": "npm:^7.24.5"
     "@babel/helper-environment-visitor": "npm:^7.22.20"
     "@babel/helper-function-name": "npm:^7.23.0"
     "@babel/helper-hoist-variables": "npm:^7.22.5"
-    "@babel/helper-split-export-declaration": "npm:^7.22.6"
-    "@babel/parser": "npm:^7.24.1"
-    "@babel/types": "npm:^7.24.0"
+    "@babel/helper-split-export-declaration": "npm:^7.24.5"
+    "@babel/parser": "npm:^7.24.5"
+    "@babel/types": "npm:^7.24.5"
     debug: "npm:^4.3.1"
     globals: "npm:^11.1.0"
-  checksum: 10c0/c087b918f6823776537ba246136c70e7ce0719fc05361ebcbfd16f4e6f2f6f1f8f4f9167f1d9b675f27d12074839605189cc9d689de20b89a85e7c140f23daab
+  checksum: 10c0/3f22534bc2b2ed9208e55ef48af3b32939032b23cb9dc4037447cb108640df70bbb0b9fea86e9c58648949fdc2cb14e89aa79ffa3c62a5dd43459a52fe8c01d1
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.12.11, @babel/types@npm:^7.14.8, @babel/types@npm:^7.15.6, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.19, @babel/types@npm:^7.22.5, @babel/types@npm:^7.23.0, @babel/types@npm:^7.23.4, @babel/types@npm:^7.24.0, @babel/types@npm:^7.3.0, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3, @babel/types@npm:^7.9.0":
-  version: 7.24.0
-  resolution: "@babel/types@npm:7.24.0"
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.12.11, @babel/types@npm:^7.14.8, @babel/types@npm:^7.15.6, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.19, @babel/types@npm:^7.22.5, @babel/types@npm:^7.23.0, @babel/types@npm:^7.23.4, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.5, @babel/types@npm:^7.3.0, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
+  version: 7.24.5
+  resolution: "@babel/types@npm:7.24.5"
   dependencies:
-    "@babel/helper-string-parser": "npm:^7.23.4"
-    "@babel/helper-validator-identifier": "npm:^7.22.20"
+    "@babel/helper-string-parser": "npm:^7.24.1"
+    "@babel/helper-validator-identifier": "npm:^7.24.5"
     to-fast-properties: "npm:^2.0.0"
-  checksum: 10c0/777a0bb5dbe038ca4c905fdafb1cdb6bdd10fe9d63ce13eca0bd91909363cbad554a53dc1f902004b78c1dcbc742056f877f2c99eeedff647333b1fadf51235d
+  checksum: 10c0/e1284eb046c5e0451b80220d1200e2327e0a8544a2fe45bb62c952e5fdef7099c603d2336b17b6eac3cc046b7a69bfbce67fe56e1c0ea48cd37c65cb88638f2a
   languageName: node
   linkType: hard
 
@@ -4549,7 +4551,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/plugin@npm:2.0.0-canary.1565, @parcel/plugin@npm:2.0.0-canary.1565+ae90f088b":
+"@parcel/plugin@npm:2.0.0-canary.1565":
   version: 2.0.0-canary.1565
   resolution: "@parcel/plugin@npm:2.0.0-canary.1565"
   dependencies:
@@ -5282,6 +5284,7 @@ __metadata:
   dependencies:
     "@react-aria/i18n": "workspace:^"
     "@react-aria/interactions": "workspace:^"
+    "@react-aria/numberfield": "workspace:^"
     "@react-aria/slider": "workspace:^"
     "@react-aria/spinbutton": "workspace:^"
     "@react-aria/textfield": "workspace:^"
@@ -5470,7 +5473,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
-    "@babel/cli": "npm:^7.12.10"
     "@internationalized/date": "workspace:^"
     "@internationalized/message": "workspace:^"
     "@internationalized/number": "workspace:^"
@@ -5666,7 +5668,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/parcel-resolver-optimize-locales@workspace:packages/dev/parcel-resolver-optimize-locales"
   dependencies:
-    "@parcel/plugin": "npm:2.0.0-canary.1565"
+    "@parcel/plugin": "npm:^2.12.0"
   languageName: unknown
   linkType: soft
 
@@ -5911,14 +5913,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/test-utils@npm:3.0.0-alpha.1, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
+"@react-aria/test-utils@workspace:^, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@testing-library/react": ^13.0.0
-    "@testing-library/user-event": ^13.0.0
+    "@testing-library/react": ^13.0.0 || ^14.0.0
+    "@testing-library/user-event": ^13.0.0 || ^14.0.0
     jest: ^27.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
   languageName: unknown
@@ -6009,8 +6011,11 @@ __metadata:
   resolution: "@react-aria/tree@workspace:packages/@react-aria/tree"
   dependencies:
     "@react-aria/gridlist": "workspace:^"
+    "@react-aria/i18n": "workspace:^"
     "@react-aria/selection": "workspace:^"
+    "@react-aria/utils": "workspace:^"
     "@react-stately/tree": "workspace:^"
+    "@react-types/button": "workspace:^"
     "@react-types/shared": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -6353,6 +6358,7 @@ __metadata:
     "@react-types/shared": "workspace:^"
     "@spectrum-icons/ui": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
+    react-aria-components: "workspace:^"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
@@ -6369,15 +6375,21 @@ __metadata:
     "@react-aria/i18n": "workspace:^"
     "@react-aria/interactions": "workspace:^"
     "@react-aria/utils": "workspace:^"
+    "@react-spectrum/dialog": "workspace:^"
     "@react-spectrum/form": "workspace:^"
     "@react-spectrum/label": "workspace:^"
+    "@react-spectrum/overlays": "workspace:^"
+    "@react-spectrum/picker": "workspace:^"
+    "@react-spectrum/style-macro-s1": "workspace:^"
     "@react-spectrum/textfield": "workspace:^"
     "@react-spectrum/utils": "workspace:^"
+    "@react-spectrum/view": "workspace:^"
     "@react-stately/color": "workspace:^"
     "@react-types/color": "workspace:^"
     "@react-types/shared": "workspace:^"
     "@react-types/textfield": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
+    react-aria-components: "workspace:^"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
@@ -6578,7 +6590,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/dropzone@workspace:packages/@react-spectrum/dropzone":
+"@react-spectrum/dropzone@workspace:^, @react-spectrum/dropzone@workspace:packages/@react-spectrum/dropzone":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/dropzone@workspace:packages/@react-spectrum/dropzone"
   dependencies:
@@ -6588,6 +6600,19 @@ __metadata:
     "@react-spectrum/test-utils-internal": "workspace:^"
     "@react-spectrum/utils": "workspace:^"
     "@react-types/shared": "workspace:^"
+    "@swc/helpers": "npm:^0.5.0"
+    react-aria-components: "workspace:^"
+  peerDependencies:
+    "@react-spectrum/provider": ^3.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+  languageName: unknown
+  linkType: soft
+
+"@react-spectrum/filetrigger@workspace:^, @react-spectrum/filetrigger@workspace:packages/@react-spectrum/filetrigger":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/filetrigger@workspace:packages/@react-spectrum/filetrigger"
+  dependencies:
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
     react-aria-components: "workspace:^"
   peerDependencies:
@@ -7146,7 +7171,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/style-macro-s1@workspace:packages/@react-spectrum/style-macro-s1":
+"@react-spectrum/style-macro-s1@workspace:^, @react-spectrum/style-macro-s1@workspace:packages/@react-spectrum/style-macro-s1":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/style-macro-s1@workspace:packages/@react-spectrum/style-macro-s1"
   languageName: unknown
@@ -7181,6 +7206,7 @@ __metadata:
     "@react-aria/focus": "workspace:^"
     "@react-aria/i18n": "workspace:^"
     "@react-aria/interactions": "workspace:^"
+    "@react-aria/overlays": "workspace:^"
     "@react-aria/table": "workspace:^"
     "@react-aria/utils": "workspace:^"
     "@react-aria/virtualizer": "workspace:^"
@@ -7267,8 +7293,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/test-utils-internal@workspace:packages/dev/test-utils"
   dependencies:
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/ssr": "workspace:^"
-    "@react-spectrum/test-utils-internal": "workspace:^"
+    "@react-spectrum/test-utils": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
     resolve: "npm:^1.17.0"
   peerDependencies:
@@ -7279,15 +7306,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/test-utils@workspace:packages/@react-spectrum/test-utils":
+"@react-spectrum/test-utils@workspace:^, @react-spectrum/test-utils@workspace:packages/@react-spectrum/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/test-utils@workspace:packages/@react-spectrum/test-utils"
   dependencies:
-    "@react-aria/test-utils": "npm:3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@react-aria/test-utils": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@testing-library/react": ^13.0.0
-    "@testing-library/user-event": ^13.0.0
+    "@testing-library/react": ^13.0.0 || ^14.0.0
+    "@testing-library/user-event": ^13.0.0 || ^14.0.0
     jest: ^27.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
   languageName: unknown
@@ -7390,6 +7418,7 @@ __metadata:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/focus": "workspace:^"
     "@react-aria/i18n": "workspace:^"
+    "@react-aria/overlays": "workspace:^"
     "@react-aria/toast": "workspace:^"
     "@react-aria/utils": "workspace:^"
     "@react-spectrum/button": "workspace:^"
@@ -7437,16 +7466,18 @@ __metadata:
   resolution: "@react-spectrum/tree@workspace:packages/@react-spectrum/tree"
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/focus": "workspace:^"
-    "@react-aria/selection": "workspace:^"
-    "@react-aria/virtualizer": "workspace:^"
+    "@react-aria/button": "workspace:^"
+    "@react-aria/i18n": "workspace:^"
+    "@react-aria/tree": "workspace:^"
+    "@react-aria/utils": "workspace:^"
+    "@react-spectrum/checkbox": "workspace:^"
+    "@react-spectrum/style-macro-s1": "workspace:^"
+    "@react-spectrum/text": "workspace:^"
     "@react-spectrum/utils": "workspace:^"
-    "@react-stately/collections": "workspace:^"
-    "@react-stately/layout": "workspace:^"
-    "@react-stately/tree": "workspace:^"
     "@react-types/shared": "workspace:^"
     "@spectrum-icons/ui": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
+    react-aria-components: "workspace:^"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
@@ -7547,9 +7578,11 @@ __metadata:
     "@internationalized/string": "workspace:^"
     "@react-aria/i18n": "workspace:^"
     "@react-stately/form": "workspace:^"
+    "@react-stately/numberfield": "workspace:^"
     "@react-stately/slider": "workspace:^"
     "@react-stately/utils": "workspace:^"
     "@react-types/color": "workspace:^"
+    "@react-types/shared": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
@@ -27974,9 +28007,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "parcel-transformer-docs@workspace:packages/dev/parcel-transformer-docs"
   dependencies:
-    "@babel/parser": "npm:^7.9.0"
-    "@babel/traverse": "npm:^7.9.0"
-    "@babel/types": "npm:^7.9.0"
+    "@babel/parser": "npm:^7.24.0"
+    "@babel/traverse": "npm:^7.24.0"
+    "@babel/types": "npm:^7.24.0"
     "@parcel/core": "npm:2.0.0-canary.1563"
     "@parcel/fs": "npm:2.0.0-canary.1565"
     "@parcel/plugin": "npm:2.0.0-canary.1565"
@@ -28008,6 +28041,14 @@ __metadata:
     tree-sitter-highlight: "npm:^1.0.1"
     unist-util-flatmap: "npm:^1.0.0"
     unist-util-visit: "npm:^4.0.0"
+  languageName: unknown
+  linkType: soft
+
+"parcel-transformer-mdx-extract@workspace:packages/dev/parcel-transformer-mdx-extract":
+  version: 0.0.0-use.local
+  resolution: "parcel-transformer-mdx-extract@workspace:packages/dev/parcel-transformer-mdx-extract"
+  dependencies:
+    "@parcel/plugin": "npm:2.0.0-canary.1565"
   languageName: unknown
   linkType: soft
 
@@ -29790,15 +29831,18 @@ __metadata:
   dependencies:
     "@internationalized/date": "workspace:^"
     "@internationalized/string": "workspace:^"
+    "@react-aria/color": "workspace:^"
     "@react-aria/focus": "workspace:^"
     "@react-aria/interactions": "workspace:^"
     "@react-aria/menu": "workspace:^"
     "@react-aria/toolbar": "workspace:^"
     "@react-aria/tree": "workspace:^"
     "@react-aria/utils": "workspace:^"
+    "@react-stately/color": "workspace:^"
     "@react-stately/menu": "workspace:^"
     "@react-stately/table": "workspace:^"
     "@react-stately/utils": "workspace:^"
+    "@react-types/color": "workspace:^"
     "@react-types/form": "workspace:^"
     "@react-types/grid": "workspace:^"
     "@react-types/shared": "workspace:^"
@@ -29818,7 +29862,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
-    "@babel/cli": "npm:^7.12.10"
     "@internationalized/string": "workspace:^"
     "@react-aria/breadcrumbs": "workspace:^"
     "@react-aria/button": "workspace:^"
@@ -30145,7 +30188,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
-    "@babel/cli": "npm:^7.12.10"
     "@react-stately/calendar": "workspace:^"
     "@react-stately/checkbox": "workspace:^"
     "@react-stately/collections": "workspace:^"

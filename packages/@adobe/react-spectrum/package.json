@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.34.1",
+  "version": "3.35.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -57,6 +57,8 @@
     "@react-spectrum/dialog": "workspace:^",
     "@react-spectrum/divider": "workspace:^",
     "@react-spectrum/dnd": "workspace:^",
+    "@react-spectrum/dropzone": "workspace:^",
+    "@react-spectrum/filetrigger": "workspace:^",
     "@react-spectrum/form": "workspace:^",
     "@react-spectrum/icon": "workspace:^",
     "@react-spectrum/illustratedmessage": "workspace:^",

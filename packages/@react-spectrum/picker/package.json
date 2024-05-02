@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/picker",
-  "version": "3.14.3",
+  "version": "3.14.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

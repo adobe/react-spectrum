@@ -117,7 +117,7 @@ function Draggable() {
 A DropZone accepts an [IllustratedMessage](IllustratedMessage.html) as a child which is comprised of three areas:  an illustration, a title, and a body. Each of these sections can be populated by providing the following components to the IllustratedMessage as children: a SVG, a [Heading](Heading.html) (title), and a [Content](Content.html) (body). A [FileTrigger](../react-aria/FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device.
 
 ```tsx example
-import {FileTrigger} from 'react-aria-components';
+import {FileTrigger} from '@adobe/react-spectrum';
 
 function Example() {
   let [isFilled, setIsFilled] = React.useState(false);
@@ -343,7 +343,7 @@ A DropZone displays visual feedback to the user when a drag hovers over the drop
 In the below example, the drop zone only supports dropping JPEG images. If a JPEG is dragged over the drop zone, it will be highlighted and the operating system will display a copy cursor. If another type is dragged over the drop zone, then there is no visual feedback, indicating that a drop is not accepted. 
 
 ```tsx example
-import {FileTrigger} from 'react-aria-components';
+import {FileTrigger} from '@adobe/react-spectrum';
 
 function Example() {
   let [filledSrc, setFilledSrc] = React.useState(null);

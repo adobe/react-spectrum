@@ -374,6 +374,19 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('should support the channel prop', async function () {
+    let onChange = jest.fn();
+    let {getByRole} = renderComponent({label: null, value: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
+    let colorField = getByRole('textbox');
+    expect(colorField.value).toBe('210°');
+    expect(colorField).toHaveAttribute('aria-label', 'Hue');
+
+    await user.tab();
+    await user.keyboard('100');
+    await user.tab();
+    expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
+  });
+
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it('supports isRequired', async () => {

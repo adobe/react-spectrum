@@ -52,9 +52,11 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       }
       // these should not be in dependencies, but should be in dev or peer
       // can't change the error message, but the package knows if it even needs it
-      workspace.set('dependencies.@react-spectrum/test-utils');
-      workspace.set('dependencies.react');
-      workspace.set('dependencies.react-dom');
+      if (!workspace.ident.startsWith('@react-spectrum/test-utils-internal')) {
+        workspace.set('dependencies.@react-spectrum/test-utils');
+        workspace.set('dependencies.react');
+        workspace.set('dependencies.react-dom');
+      }
     }
   }
 }
@@ -141,7 +143,7 @@ function enforceWorkspaceDependencies({Yarn}) {
 function enforceCSS({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (!name.startsWith('@react-spectrum/docs') && name.startsWith('@react-spectrum') && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
+    if (!name.startsWith('@react-spectrum/docs') && !name.startsWith('@react-spectrum/test-utils') && name.startsWith('@react-spectrum') && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
       workspace.set('targets', {
         main: {includeNodeModules: ['@adobe/spectrum-css-temp']},
         module: {includeNodeModules: ['@adobe/spectrum-css-temp']}

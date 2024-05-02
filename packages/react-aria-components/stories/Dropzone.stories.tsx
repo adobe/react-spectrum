@@ -147,7 +147,7 @@ const DropzoneWithRenderPropsExample = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+      {({isHovered, isFocused, isFocusVisible, isDropTarget, isDisabled}) => (
         <div>
           <Text slot="label">
             DropzoneArea
@@ -156,6 +156,7 @@ const DropzoneWithRenderPropsExample = (props) => (
           <div>isFocused: {isFocused ? 'true' : 'false'}</div>
           <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
           <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+          <div>isDisabled: {isDisabled ? 'true' : 'false'}</div>
         </div>
       )}
     </DropZone>

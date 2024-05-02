@@ -25,7 +25,7 @@ export default {
   title: 'Meter',
   component: Meter,
   args: {
-    variant: 'positive'
+    variant: 'informative'
   },
   argTypes: {
     value: {
@@ -38,7 +38,7 @@ export default {
     variant: {
       control: {
         type: 'radio',
-        options: ['positive', 'warning', 'critical']
+        options: ['informative', 'positive', 'warning', 'critical']
       }
     },
     size: {

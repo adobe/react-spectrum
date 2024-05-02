@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/table",
-  "version": "3.12.8",
+  "version": "3.12.9",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,6 +40,7 @@
     "@react-aria/focus": "workspace:^",
     "@react-aria/i18n": "workspace:^",
     "@react-aria/interactions": "workspace:^",
+    "@react-aria/overlays": "workspace:^",
     "@react-aria/table": "workspace:^",
     "@react-aria/utils": "workspace:^",
     "@react-aria/virtualizer": "workspace:^",

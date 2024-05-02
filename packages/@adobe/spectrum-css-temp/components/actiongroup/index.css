@@ -53,10 +53,6 @@ governing permissions and limitations under the License.
     &.spectrum-ActionGroup-item--iconOnly {
       padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
     }
-
-    .spectrum-ActionGroup-itemIcon {
-      padding-inline-end: 0;
-    }
   }
 
   &:focus {

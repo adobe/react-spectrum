@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/color",
-  "version": "3.0.0-beta.32",
+  "version": "3.0.0-beta.33",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -41,18 +41,24 @@
     "@react-aria/i18n": "workspace:^",
     "@react-aria/interactions": "workspace:^",
     "@react-aria/utils": "workspace:^",
+    "@react-spectrum/dialog": "workspace:^",
     "@react-spectrum/form": "workspace:^",
     "@react-spectrum/label": "workspace:^",
+    "@react-spectrum/overlays": "workspace:^",
+    "@react-spectrum/picker": "workspace:^",
     "@react-spectrum/textfield": "workspace:^",
     "@react-spectrum/utils": "workspace:^",
+    "@react-spectrum/view": "workspace:^",
     "@react-stately/color": "workspace:^",
     "@react-types/color": "workspace:^",
     "@react-types/shared": "workspace:^",
     "@react-types/textfield": "workspace:^",
-    "@swc/helpers": "^0.5.0"
+    "@swc/helpers": "^0.5.0",
+    "react-aria-components": "workspace:^"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
+    "@react-spectrum/style-macro-s1": "workspace:^"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
