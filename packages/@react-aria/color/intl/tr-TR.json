@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Renk Seçici",
-  "twoDimensionalSlider": "2D sürgü"
+  "twoDimensionalSlider": "2D sürgü",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
 }

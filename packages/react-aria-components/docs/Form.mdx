@@ -160,6 +160,27 @@ To provide validation errors, the `validationErrors` prop should be set to an ob
 
 See the [Forms](forms.html) guide to learn more about form validation in React Aria, including client-side validation, and integration with other frameworks and libraries.
 
+### Validation behavior
+
+By default, native HTML form validation is used to display errors and block form submission. To instead use ARIA attributes for form validation, set the `validationBehavior` prop to "aria". This will not block form submission, and will display validation errors to the user in realtime as the value is edited.
+
+The `validationBehavior` can be set at the form level to apply to all fields, or at the field level to override the form's behavior for a specific field.
+
+```tsx example
+<Form validationBehavior="aria">
+  <TextField
+    name="username"
+    defaultValue="admin"
+    isRequired
+    validate={value => value === 'admin' ? 'Nice try.' : null}>
+    <Label>Username</Label>
+    <Input />
+    <FieldError />
+  </TextField>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
 ### Focus management
 
 By default, after a user submits a form with validation errors, the first invalid field will be focused. You can prevent this by calling `preventDefault` during the `onInvalid` event, and move focus yourself. This example shows how to move focus to an [alert](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role) element at the top of a form.
@@ -260,6 +281,42 @@ A custom `className` can also be specified on any component. This overrides the 
 ```
 
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Form']} docs={docs} />
+
+This example adds a global form submission handler for all forms rendered inside it, which could be used to centralize logic to submit data to an API.
+
+```tsx
+let onSubmit = e => {
+  e.preventDefault();
+  // Submit form data to an API...
+};
+
+<FormContext.Provider value={{onSubmit}}>
+  <Form>
+    {/* ... */}
+  </Form>
+</FormContext.Provider>
+```
+
+`FormContext` can also be used within any component inside a form to access props from the nearest ancestor form. For example, to access the current `validationBehavior`, use the [useSlottedContext](advanced.html#useslottedcontext) hook.
+
+```tsx
+import {FormContext, useSlottedContext} from 'react-aria-components';
+
+function MyFormField() {
+  let {validationBehavior} = useSlottedContext(FormContext);
+  // ...
+}
+
+<Form validationBehavior="aria">
+  <MyFormField />
+</Form>
+```
 
 ### Validation context
 

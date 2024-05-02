@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
@@ -123,13 +123,12 @@ describe('DropZone', () => {
         </Text>
       </DropZone>);
     let text = getByText('Test');
-    let div = getByText('DropZone');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${div.id} ${text.id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
   });
 
   it('should allow custom aria-label', () => {
-    let {getByRole, getByText} = render(
+    let {getByRole} = render(
       <DropZone
         data-testid="foo"
         aria-label="test aria-label">
@@ -138,8 +137,7 @@ describe('DropZone', () => {
         </FileTrigger>
       </DropZone>);
     let button = getByRole('button');
-    let div = getByText('test aria-label');
-    expect(button).toHaveAttribute('aria-labelledby', `${div.id}`);
+    expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
 
   it('should support render props', async () => {
@@ -375,6 +373,31 @@ describe('DropZone', () => {
 
         expect(dropzone).not.toHaveAttribute('data-drop-target');
       });
+
+      it('should focus the dropzone visually hidden button if click happens on a non-focusable element', async () => {
+        let {getByRole, getByTestId} = render(
+          <DropZone data-testid="dropzone">
+            <div data-testid="div">Test</div>
+          </DropZone>
+        );
+
+        let hiddenButton = getByRole('button');
+        await user.click(getByTestId('div'));
+        expect(document.activeElement).toBe(hiddenButton);
+        expect(getByTestId('dropzone')).toContainElement(document.activeElement);
+      });
+
+      it('when a focusable element in the drop zone is clicked, it should receive focus', async () => {
+        let {getByTestId} = render(
+          <DropZone data-testid="dropzone">
+            <Button data-testid="button">Test</Button>
+          </DropZone>
+        );
+
+        let button = getByTestId('button');
+        await user.click(button);
+        expect(document.activeElement).toBe(button);
+      });
     });
 
     describe('via keyboard', function () {
@@ -528,7 +551,7 @@ describe('DropZone', () => {
           </DropZone>
         </>
       );
-  
+
       let button = getByRole('button');
       await user.tab();
       expect(document.activeElement).not.toBe(button);
