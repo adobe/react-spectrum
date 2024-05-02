@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/example-theme",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "source": "src/index.css",

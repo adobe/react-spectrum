@@ -45,7 +45,7 @@ export interface DropZoneRenderProps {
    * Whether the dropzone is disabled.
    * @selector [data-disabled]
    */
-  isDisabled?: boolean
+  isDisabled: boolean
 }
 
 export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
@@ -53,7 +53,7 @@ export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoi
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {isDisabled} = props;
+  let {isDisabled = false} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -83,7 +83,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocused, isFocusVisible, isDropTarget},
+    values: {isHovered, isFocused, isFocusVisible, isDropTarget, isDisabled},
     defaultClassName: 'react-aria-DropZone'
   });
   let DOMProps = filterDOMProps(props);
