@@ -159,8 +159,6 @@ async function generateJS(options, overlayFS) {
   let files = stories[0].files;
 
   let storiesPath = path.join(dir, files);
-  console.log(`process.platform = '${process.platform}'`);
-  console.log(`stories path = '${storiesPath}'`);
   const configImports = configs.map((config, i) => {
     const relativePath = path.relative(__dirname, config);
     return `import * as config_${i} from '${relativePath}';`;
@@ -168,9 +166,7 @@ async function generateJS(options, overlayFS) {
   let szConfigImports = configImports.join('\n');
   if (isMingw()) {
     storiesPath = storiesPath.replace(/\\/g, '/');
-    console.log(`git bash stories path = '${storiesPath}'`);
     szConfigImports = szConfigImports.replace(/\\/g, '/');
-    console.log(`git bash config imports = \n\`${szConfigImports}\n\``);
   }
   let previewScript = `
     import 'regenerator-runtime';
