@@ -211,5 +211,8 @@
       "focusVisible": "focus-ring",
       "hover": "is-hovered"
     }
+  },
+  "dependencies": {
+    "is-mingw": "^2.0.0"
   }
 }

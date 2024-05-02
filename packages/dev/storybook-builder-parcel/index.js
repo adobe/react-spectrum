@@ -3,6 +3,7 @@ const path = require('path');
 const {createProxyMiddleware} = require('http-proxy-middleware');
 const {normalizeStories, loadPreviewOrConfigFile} = require('@storybook/core-common');
 const fs = require('fs');
+const isMingw = require('is-mingw');
 
 exports.start = async function ({options, router}) {
   let parcel = await createParcel(options, true);
@@ -157,6 +158,20 @@ async function generateJS(options, overlayFS) {
   let dir = path.relative(__dirname, path.join(process.cwd(), stories[0].directory));
   let files = stories[0].files;
 
+  let storiesPath = path.join(dir, files);
+  console.log(`process.platform = '${process.platform}'`);
+  console.log(`stories path = '${storiesPath}'`);
+  const configImports = configs.map((config, i) => {
+    const relativePath = path.relative(__dirname, config);
+    return `import * as config_${i} from '${relativePath}';`;
+  });
+  let szConfigImports = configImports.join('\n');
+  if (isMingw()) {
+    storiesPath = storiesPath.replace(/\\/g, '/');
+    console.log(`git bash stories path = '${storiesPath}'`);
+    szConfigImports = szConfigImports.replace(/\\/g, '/');
+    console.log(`git bash config imports = \n\`${szConfigImports}\n\``);
+  }
   let previewScript = `
     import 'regenerator-runtime';
     import {configure} from '@storybook/react';
@@ -168,10 +183,9 @@ async function generateJS(options, overlayFS) {
       addArgsEnhancer
     } from '@storybook/client-api';
     import { logger } from '@storybook/client-logger';
-    import * as stories from '${path.join(dir, files)}';
-    ${configs.map((config, i) => `import * as config_${i} from '${path.relative(__dirname, config)}';`).join('\n')}
+    import * as stories from '${storiesPath}';
+    ${szConfigImports}
     let configs = [${configs.map((_, i) => `config_${i}`)}];
-
     configs.forEach(config => {
       Object.keys(config).forEach((key) => {
         const value = config[key];
