@@ -20,7 +20,7 @@ import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useSlotId, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -59,7 +59,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
-  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
+  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.expandedKeysStack[menuLevel + 1]) != null;
   useInteractOutside({
     ref: domRef,
     onInteractOutside: (e) => {
@@ -70,7 +70,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     isDisabled: isSubmenu || !hasOpenSubmenu
   });
 
-  // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
@@ -80,7 +79,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           hasOpenSubmenu={hasOpenSubmenu}
           isSubmenu={isSubmenu}
           parentMenuTreeState={parentMenuTreeState}
-          rootMenuTriggerState={rootMenuTriggerState}>
+          rootMenuTriggerState={rootMenuTriggerState}
+          menuRef={domRef}>
           <div
             {...menuProps}
             style={mergeProps(styleProps.style, menuProps.style)}
@@ -126,15 +126,55 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
 }
 
 export function TrayHeaderWrapper(props) {
-  let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown} = props;
+  let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
-  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText
   });
   let headingId = useSlotId();
   let isMobile = useIsMobileDevice();
   let {direction} = useLocale();
+
+  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
+  useLayoutEffect(() => {
+    if (!hasOpenSubmenu) {
+      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    }
+  }, [hasOpenSubmenu, isMobile]);
+
+  let timeoutRef = useRef(null);
+  let handleBackButtonPress = () => {
+    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
+    timeoutRef.current = setTimeout(() => {
+      onBackButtonPress();
+    }, 220); // Matches transition duration
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // When opening submenu in tray, focus the first item in the submenu after animation completes
+  // This fixes an issue with iOS VO where the closed submenu was getting focus
+  let focusTimeoutRef = useRef(null);
+  useEffect(() => {
+    if (isMobile && isSubmenu && !hasOpenSubmenu && traySubmenuAnimation === 'spectrum-TraySubmenu-enter') {
+      focusTimeoutRef.current = setTimeout(() => {
+        let firstItem = menuRef.current.querySelector('[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]') as HTMLElement;
+        firstItem?.focus();
+      }, 220);
+    }
+    return () => {
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current);
+      }
+    };
+  }, [hasOpenSubmenu, isMobile, isSubmenu, menuRef, traySubmenuAnimation]);
 
   return (
     <>
@@ -149,17 +189,18 @@ export function TrayHeaderWrapper(props) {
             'spectrum-Menu-wrapper',
             {
               'spectrum-Menu-wrapper--isMobile': isMobile,
-              'is-expanded': hasOpenSubmenu
+              'is-expanded': hasOpenSubmenu,
+              [traySubmenuAnimation]: isMobile
             }
           )
         }>
-        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper')} onKeyDown={wrapperKeyDown}>
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper', {'spectrum-Submenu-wrapper--isMobile': isMobile})} onKeyDown={wrapperKeyDown}>
           {isMobile && isSubmenu && !hasOpenSubmenu && (
             <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
-                onPress={onBackButtonPress}>
+                onPress={handleBackButtonPress}>
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>

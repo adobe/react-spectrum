@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
-import {render, triggerPress} from '@react-spectrum/test-utils';
 import {SlotProvider, useSlotProps} from '../';
 import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
-
+import userEvent from '@testing-library/user-event';
 
 describe('Slots', function () {
   let results = {};
@@ -80,7 +80,8 @@ describe('Slots', function () {
     });
   });
 
-  it('chains functions', function () {
+  it('chains functions', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onPressUser = jest.fn();
     let slots = {
@@ -91,7 +92,7 @@ describe('Slots', function () {
         <Component label="boop" onPress={onPressUser} />
       </SlotProvider>
     );
-    triggerPress(getByRole('button'));
+    await user.click(getByRole('button'));
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onPressUser).toHaveBeenCalledTimes(1);
   });

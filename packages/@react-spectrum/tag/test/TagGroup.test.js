@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, mockImplementation, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, mockImplementation, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
@@ -348,7 +348,7 @@ describe('TagGroup', function () {
     expect(onRemoveSpy).toHaveBeenCalledTimes(0);
   });
 
-  it('should remove tag when remove button is clicked', function () {
+  it('should remove tag when remove button is clicked', async function () {
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup aria-label="tag group" onRemove={onRemoveSpy}>
@@ -360,11 +360,11 @@ describe('TagGroup', function () {
     );
 
     let tags = getAllByRole('row');
-    triggerPress(tags[0]);
+    await user.click(tags[0]);
     expect(onRemoveSpy).not.toHaveBeenCalled();
 
     let removeButton = within(tags[0]).getByRole('button');
-    triggerPress(removeButton);
+    await user.click(removeButton);
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith(new Set(['1']));
   });
@@ -732,7 +732,7 @@ describe('TagGroup', function () {
     expect(tags[1]).toHaveAttribute('data-foo', 'two');
   });
 
-  it('should support links', function () {
+  it('should support links', async function () {
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup aria-label="tag group">
@@ -749,7 +749,7 @@ describe('TagGroup', function () {
     }
 
     let onClick = mockClickDefault();
-    triggerPress(tags[0]);
+    await user.click(tags[0]);
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
     expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');

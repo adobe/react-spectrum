@@ -1,5 +1,6 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Выберите элемент",
-  "tableResizer": "Средство изменения размера"
+  "tableResizer": "Средство изменения размера",
+  "colorSwatchPicker": "Color swatches"
 }

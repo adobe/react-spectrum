@@ -1,5 +1,6 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Επιλέξτε ένα αντικείμενο",
-  "tableResizer": "Αλλαγή μεγέθους"
+  "tableResizer": "Αλλαγή μεγέθους",
+  "colorSwatchPicker": "Color swatches"
 }

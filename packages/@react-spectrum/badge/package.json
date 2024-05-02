@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/badge",
-  "version": "3.1.11",
+  "version": "3.1.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,11 +36,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.23.2",
-    "@react-spectrum/text": "^3.5.3",
-    "@react-spectrum/utils": "^3.11.5",
-    "@react-types/badge": "^3.1.7",
-    "@react-types/shared": "^3.22.1",
+    "@react-aria/utils": "^3.24.0",
+    "@react-spectrum/text": "^3.5.4",
+    "@react-spectrum/utils": "^3.11.6",
+    "@react-types/badge": "^3.1.8",
+    "@react-types/shared": "^3.23.0",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

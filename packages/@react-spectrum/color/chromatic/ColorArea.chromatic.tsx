@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
+import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
 import {Meta, StoryFn} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
@@ -76,12 +76,8 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               isDisabled={isDisabled} />
           )}
         </Flex>
-        <Flex direction="column" alignItems="center" gap="size-100" minWidth="size-1200">
-          <div
-            role="img"
-            aria-label={`color swatch: ${color.toString('rgb')}`}
-            title={`${color.toString('hex')}`}
-            style={{width: '96px', height: '96px', background: color.toString('css')}} />
+        <Flex direction="column" alignItems="start" gap="size-100" minWidth="size-1200">
+          <ColorSwatch color={color} size="L" />
           <ColorField
             label="HEX Color"
             value={color}

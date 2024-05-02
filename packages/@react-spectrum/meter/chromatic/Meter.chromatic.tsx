@@ -22,7 +22,7 @@ const meta: Meta<SpectrumMeterProps> = {
 export default meta;
 
 export const Default = {
-  args: {label: 'Meter label', value: 50, variant: 'positive'}
+  args: {label: 'Meter label', value: 50}
 };
 
 export const SizeS = {
@@ -35,6 +35,10 @@ export const ShowValueLabelFalse = {
 
 export const LabelPositionSide = {
   args: {...Default.args, labelPosition: 'side'}
+};
+
+export const Positive = {
+  args: {...Default.args, variant: 'positive'}
 };
 
 export const Critical = {
