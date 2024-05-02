@@ -821,7 +821,7 @@ describe('useListData', function () {
   });
 
   it('should support filtering items across sections', function () {
-    let {result} = renderHook(() => useListData({initialItems: grouped, getKey, filter, initialFilterText: 'Child 1'}));
+    let {result} = renderHook(() => useListData({initialItems: grouped, getKey, filter, initialFilterText: 'Child 1', filterKey: 'children'}));
 
     expect(result.current.items).toEqual([
       {name: 'One', children: [{name: 'Child 1'}]},
