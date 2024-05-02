@@ -25,7 +25,8 @@ In addition, we have added a suite of new color components including [ColorPicke
 
 The first alpha of TreeView has also been released. This was a highly requested component and includes support for expanding, collapsing, multi-selection, keyboard navigation, and interactive children. Documentation will follow soon, check out our React Spectrum [storybook](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/tree/stories/TreeView.stories.tsx) and React Aria Components [storybook](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/stories/Tree.stories.tsx) source code for examples.
 
-Client-side routing has improved blah blah and collections components in React Aria Components now has support for onAction and isDisabled on the Item for a more convenience when using the static API. /react-aria/routing.html#routerprovider
+We have also improved our integration with [client side routers](/react-aria/routing.html#routerprovider), accepting options to control router-specific behaviors such as scrolling, replacing instead of pushing to the history, base path, etc. For convenience, all collection items in React Aria Components (e.g. `MenuItem`) now also support [`isDisabled`](/react-aria/Menu.html#disabled-items) and [`onAction`](/react-aria/Menu.html#example) props directly, rather than needing to be defined on the root collection.
+
 
 Last but not least, we want to acknowledge all the wonderful contributors who have dedicated their time to improve our libraries. A special thanks to [@ryo-manba](https://github.com/ryo-manba) and [@sookmax](https://github.com/sookmax), who are responsible for multiple bug fixes to Switch, IME support, ListBox, ComboBox, as well as adding new features such as additional state attributes, hover events, and language support. Thank you!!
 
@@ -33,7 +34,7 @@ Last but not least, we want to acknowledge all the wonderful contributors who ha
 - Collections
   - Support `onAction` and `isDisabled` on item elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5874)
   - Add hover events to all collection items - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6255)
-  - Add support for hover events in ListBox Option component - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5777)
+  - Add support for hover events in `ListBox` Option component - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5777)
   - Add `allowsEmptyCollection` property to `ComboBoxProps` - [@wdsjohn](https://github.com/wdsjohn) - [PR](https://github.com/adobe/react-spectrum/pull/5842)
   - Turn off virtualizer when running in test env (RSP) - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5192)
 - Routing
@@ -53,8 +54,6 @@ Last but not least, we want to acknowledge all the wonderful contributors who ha
   - Add conditional drag and drop support - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5641)
   - Add support for `isDisabled` to `useDrag` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6254)
   - Add `isDisabled` to RAC DropZone - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5958)
-- ColorPicker
-  - Add color naming for accessibility - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6180), [PR](https://github.com/adobe/react-spectrum/pull/6210), [PR](https://github.com/adobe/react-spectrum/pull/6238)
 - Menu
   - Add animation to Submenu tray when navigating between levels (RSP) - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5984)
 - Misc
@@ -149,6 +148,7 @@ Last but not least, we want to acknowledge all the wonderful contributors who ha
 
 **Color Components (Beta):**
 
+- Add color naming for accessibility - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6180), [PR](https://github.com/adobe/react-spectrum/pull/6210), [PR](https://github.com/adobe/react-spectrum/pull/6238)
 - Add ColorArea, ColorField, ColorSlider, and ColorWheel to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6199), [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6278)
 - Add ColorSwatch component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6204)
 - Add ColorPicker and ColorSwatchPicker components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6272)
