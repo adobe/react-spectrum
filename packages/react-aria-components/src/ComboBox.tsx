@@ -13,9 +13,10 @@ import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
 import {CollectionDocumentContext, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -74,7 +75,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
         isOpen: false,
         isDisabled,
         isInvalid,
-        isRequired
+        isRequired,
+        defaultChildren: null
       })
       : children
   ), [children, isDisabled, isInvalid, isRequired]);
@@ -113,6 +115,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     formValue = 'text';
   }
 
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
     defaultFilter: props.defaultFilter || contains,
@@ -121,7 +125,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     items: props.items,
     children: undefined,
     collection,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -145,7 +149,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     listBoxRef,
     popoverRef,
     name: formValue === 'text' ? name : undefined,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state);
 
   // Make menu width match input + button

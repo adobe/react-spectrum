@@ -137,7 +137,8 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
       collection,
       collator,
       ref: listBoxRef,
-      disabledKeys: disabledBehavior === 'selection' ? new Set<Key>() : disabledKeys,
+      disabledKeys,
+      disabledBehavior,
       layout,
       orientation,
       direction
@@ -296,7 +297,14 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string,
   /** An accessibility label for this item. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**
@@ -410,7 +418,7 @@ function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRe
   }
 
   return (
-    <ListBoxtDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
+    <ListBoxDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
   );
 }
 
@@ -419,7 +427,7 @@ interface ListBoxDropIndicatorProps extends DropIndicatorProps {
   isDropTarget: boolean
 }
 
-function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   let {
     dropIndicatorProps,
     isDropTarget,
@@ -445,4 +453,4 @@ function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedR
   );
 }
 
-const ListBoxtDropIndicatorForwardRef = forwardRef(ListBoxtDropIndicator);
+const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);

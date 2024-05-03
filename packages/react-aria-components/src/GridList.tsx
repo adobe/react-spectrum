@@ -11,13 +11,13 @@
  */
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './Checkbox';
+import {CheckboxContext} from './RSPContexts';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, useCollection} from './Collection';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
@@ -133,11 +133,12 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate(
+    let keyboardDelegate = new ListKeyboardDelegate({
       collection,
-      selectionManager.disabledBehavior === 'selection' ? new Set() : selectionManager.disabledKeys,
+      disabledKeys: selectionManager.disabledKeys,
+      disabledBehavior: selectionManager.disabledBehavior,
       ref
-    );
+    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
@@ -213,13 +214,20 @@ export {_GridList as GridList};
 
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
-export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps {
+export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** A string representation of the item's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**
@@ -239,7 +247,10 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', <T extends
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: !states.allowsSelection && !states.hasAction,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();

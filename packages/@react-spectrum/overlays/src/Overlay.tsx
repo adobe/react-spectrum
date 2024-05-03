@@ -31,6 +31,7 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
     onExited,
     nodeRef
   } = props;
+
   let [exited, setExited] = useState(!isOpen);
 
   let handleEntered = useCallback(() => {

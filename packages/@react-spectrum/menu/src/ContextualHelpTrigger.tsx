@@ -16,14 +16,13 @@ import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps, Key} from '@react-types/shared';
 import {Popover} from '@react-spectrum/overlays';
-import React, {JSX, ReactElement, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -44,15 +43,22 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let triggerNode = state.collection.getItem(targetKey);
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
-  let {submenuTriggerProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
     type: 'dialog',
     isDisabled: !isUnavailable
   }, submenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
+  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
+  useEffect(() => {
+    if (submenuTriggerState.isOpen) {
+      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    }
+  }, [submenuTriggerState.isOpen]);
   let slots = {};
   if (isUnavailable) {
     slots = {
@@ -66,7 +72,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
           classNames(
             styles,
             {
-              'spectrum-Menu-subdialog': !isMobile
+              'spectrum-Menu-subdialog': !isMobile,
+              [traySubmenuAnimation]: isMobile
             }
           )
         )
@@ -89,20 +96,14 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let overlay;
   let tray;
   let onBackButtonPress = () => {
-    submenuTriggerState.close();
-    if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
-      parentMenuRef.current.focus();
-    }
-  };
-  let [offset, setOffset] = useState(0);
-  useLayoutEffect(() => {
-    if (parentMenuRef.current) {
-      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance');
-      if (offset !== '') {
-        setOffset(-1 * parseInt(offset, 10));
+    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
+    setTimeout(() => {
+      submenuTriggerState.close();
+      if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+        parentMenuRef.current.focus();
       }
-    }
-  }, [parentMenuRef]);
+    }, 220); // Matches transition duration
+  };
 
   if (isMobile) {
     delete submenuTriggerProps.onBlur;
@@ -149,8 +150,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         triggerRef={triggerRef}
         placement="end top"
         containerPadding={0}
-        crossOffset={offset}
-        offset={offset}
         hideArrow
         enableBothDismissButtons>
         <FocusScope restoreFocus>

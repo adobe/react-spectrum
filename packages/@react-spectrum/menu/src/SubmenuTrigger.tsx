@@ -13,14 +13,14 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef, useState} from 'react';
+import React, {ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {useLocale} from '@react-aria/i18n';
+import {useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface SubmenuTriggerProps {
   /**
@@ -40,9 +40,10 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState} = useMenuStateContext();
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
+  let triggerNode = state.collection.getItem(targetKey);
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef: menuRef
   }, submenuTriggerState, triggerRef);
@@ -71,15 +72,6 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   };
 
   let overlay;
-  let [offset, setOffset] = useState(0);
-  useLayoutEffect(() => {
-    if (parentMenuRef.current) {
-      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance');
-      if (offset !== '') {
-        setOffset(-1 * parseInt(offset, 10));
-      }
-    }
-  }, [parentMenuRef]);
 
   if (isMobile)  {
     delete submenuTriggerProps.onBlur;
@@ -101,8 +93,6 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainer}
         containerPadding={0}
-        crossOffset={offset}
-        offset={offset}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
         state={submenuTriggerState}

@@ -10,15 +10,7 @@
 .spectrum-ColorHandle {
   border-color: var(--spectrum-colorhandle-inner-border-color);
   box-shadow: 0 0 0 var(--spectrum-colorhandle-outer-border-size) var(--spectrum-colorhandle-outer-border-color);
-
-  background-color: var(--spectrum-global-color-static-white);
-
-  /* Add a half-percent to fix diagonal line issue in Chrome on non-retina displays */
-  background-image:
-    linear-gradient(-45deg, transparent 75.5%, var(--spectrum-global-color-static-gray-500) 75.5%),
-    linear-gradient(45deg, transparent 75.5%, var(--spectrum-global-color-static-gray-500) 75.5%),
-    linear-gradient(-45deg, var(--spectrum-global-color-static-gray-500) 25.5%, transparent 25.5%),
-    linear-gradient(45deg, var(--spectrum-global-color-static-gray-500) 25.5%, transparent 25.5%);
+  background: repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 50% 50% / 16px 16px;
 
   &.is-disabled {
     border-color: var(--spectrum-colorhandle-inner-border-color-disabled);

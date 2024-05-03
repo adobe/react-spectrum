@@ -620,6 +620,48 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
+Rows may also have a row action specified by directly applying `onAction` on the `Row` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `Table`, both the table's and the row's `onAction` are called.
+
+```tsx example
+<Table aria-label="Table with onAction applied on the rows directly" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Charizard`)}>
+    {/*- end highlight -*/}
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Blastoise`)}>
+    {/*- end highlight -*/}
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Venusaur`)}>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Pikachu`)}>
+    {/*- end highlight -*/}
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
 ### Links
 
 Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
@@ -663,18 +705,80 @@ The `<Row>` component works with frameworks and client side routers like [Next.j
 
 ## Disabled rows
 
-You can disable specific rows by providing an array of keys to `Table` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+A `Row` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
+unless the `disabledBehavior` prop on `Table` is used to change this behavior.
 Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
 
 ```tsx example
-// Using the same table as above
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+<Table aria-label="Table with disabled rows" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
 ```
 
 By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
 
 ```tsx example
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} disabledBehavior="all" />
+<Table 
+  aria-label="Table with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledBehavior="all"
+  /*- end highlight -*/
+>
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    <MyRow isDisabled>
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Table` level instead of `isDisabled` on individual rows.
+This accepts a list of row ids that are disabled. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
 ```
 
 ## Sorting

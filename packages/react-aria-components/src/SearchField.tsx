@@ -12,9 +12,10 @@
 
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -50,17 +51,19 @@ export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, H
 
 function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState({
     ...props,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps, ...validation} = useSearchField({
     ...removeDataAttributes(props),
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state, inputRef);
 
   let renderProps = useRenderProps({

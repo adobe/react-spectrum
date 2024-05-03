@@ -31,7 +31,7 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods', 'importAttributes']
     });
 
     let exports = {};

@@ -1,5 +1,6 @@
 {
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Изберете предмет",
-  "tableResizer": "Преоразмерител"
+  "tableResizer": "Преоразмерител",
+  "colorSwatchPicker": "Color swatches"
 }

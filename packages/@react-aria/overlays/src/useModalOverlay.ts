@@ -11,15 +11,15 @@
  */
 
 import {ariaHideOutside} from './ariaHideOutside';
+import {AriaOverlayProps, useOverlay} from './useOverlay';
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {RefObject, useEffect} from 'react';
-import {useOverlay} from './useOverlay';
 import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
 
-export interface AriaModalOverlayProps {
+export interface AriaModalOverlayProps extends Pick<AriaOverlayProps, 'shouldCloseOnInteractOutside'> {
   /**
    * Whether to close the modal when the user interacts outside it.
    * @default false

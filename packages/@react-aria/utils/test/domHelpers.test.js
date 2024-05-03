@@ -13,7 +13,7 @@
 
 import {getOwnerDocument, getOwnerWindow} from '../';
 import React, {createRef} from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 describe('getOwnerDocument', () => {
   test.each([null, undefined])('returns the document if the argument is %p', (value) => {

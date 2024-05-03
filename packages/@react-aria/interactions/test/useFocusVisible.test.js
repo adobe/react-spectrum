@@ -9,15 +9,25 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
 import {hasSetupGlobalListeners} from '../src/useFocusVisible';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {render as ReactDOMRender} from 'react-dom';
+import {useButton} from '@react-aria/button';
+import {useFocusRing} from '@react-aria/focus';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
   return <div {...props}>example{isFocusVisible && '-focusVisible'}</div>;
+}
+
+function ButtonExample(props) {
+  const ref = React.useRef(null);
+  const {buttonProps} = useButton({}, ref);
+  const {focusProps, isFocusVisible} = useFocusRing();
+
+  return <button {...mergeProps(props, buttonProps, focusProps)} ref={ref}>example{isFocusVisible && '-focusVisible'}</button>;
 }
 
 function toggleBrowserTabs() {
@@ -109,7 +119,7 @@ describe('useFocusVisible', function () {
     });
 
     it('sets up focus listener in a different window', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       await waitFor(() => {
         expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
       });
@@ -173,7 +183,7 @@ describe('useFocusVisible', function () {
     });
 
     it('removes the window object from the hasSetupGlobalListeners object on beforeunload', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       expect(hasSetupGlobalListeners.size).toBe(1);
       expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
       expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
@@ -192,7 +202,7 @@ describe('useFocusVisible', function () {
     });
 
     it('removes the window object from the hasSetupGlobalListeners object if we preemptively tear down', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       expect(hasSetupGlobalListeners.size).toBe(1);
       expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
       expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
@@ -210,7 +220,7 @@ describe('useFocusVisible', function () {
     });
 
     it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       addWindowFocusTracking(iframeRoot);
 
       // Fire focus in iframe
@@ -230,7 +240,7 @@ describe('useFocusVisible', function () {
     });
 
     it('returns negative isFocusVisible result after toggling browser tabs without prior keyboard navigation', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       addWindowFocusTracking(iframeRoot);
 
       // Fire focus in iframe
@@ -248,7 +258,7 @@ describe('useFocusVisible', function () {
     });
 
     it('returns positive isFocusVisible result after toggling browser window after keyboard navigation', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       addWindowFocusTracking(iframeRoot);
 
       // Fire focus in iframe
@@ -267,7 +277,7 @@ describe('useFocusVisible', function () {
     });
 
     it('returns negative isFocusVisible result after toggling browser window without prior keyboard navigation', async function () {
-      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      render(<Example id="iframe-example" />, {container: iframeRoot});
       addWindowFocusTracking(iframeRoot);
 
       // Fire focus in iframe
@@ -283,6 +293,25 @@ describe('useFocusVisible', function () {
       fireEvent.mouseDown(el);
       toggleBrowserWindow();
       expect(el.textContent).toBe('example');
+    });
+
+    it('correctly shifts focus to the iframe when the iframe is focused', async function () {
+      render(<ButtonExample id="iframe-example" />, {container: iframeRoot});
+      addWindowFocusTracking(iframeRoot);
+
+      // Fire focus in iframe
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('button[id="iframe-example"]')).toBeTruthy();
+      });
+
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('button[id="iframe-example"]');
+
+      fireEvent.mouseDown(el);
+      fireEvent.mouseUp(el);
+      fireEvent.keyDown(el, {key: 'Esc'});
+      fireEvent.keyUp(el, {key: 'Esc'});
+
+      expect(el.textContent).toBe('example-focusVisible');
     });
   });
 });
