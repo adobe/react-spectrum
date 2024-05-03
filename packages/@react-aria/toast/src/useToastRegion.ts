@@ -46,27 +46,49 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   let focusedToast = useRef(null);
   useLayoutEffect(() => {
     // If no toast has focus, then don't do anything.
-    if (focusedToast.current === -1) {
+    if (focusedToast.current === -1 || state.visibleToasts.length === 0) {
+      toasts.current = [];
+      prevVisibleToasts.current = state.visibleToasts;
       return;
     }
     toasts.current = [...ref.current.querySelectorAll('[role="alertdialog"]')];
     // If the visible toasts haven't changed, we don't need to do anything.
     if (prevVisibleToasts.current.length === state.visibleToasts.length
       && state.visibleToasts.every((t, i) => t.key === prevVisibleToasts.current[i].key)) {
+      prevVisibleToasts.current = state.visibleToasts;
       return;
     }
     // Get a list of all removed toasts by index.
     let removedToasts = prevVisibleToasts.current
-      .map((t, i) => ({...t, i}))
-      .filter(((t) => !state.visibleToasts.some(t2 => t.key === t2.key)));
+      .map((t, i) => ({
+        ...t,
+        i,
+        isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
+      }));
+    // should be able to do removedToasts.length - findIndex to get the same value
+    let removedToast = removedToasts.findIndex(t => t.i === focusedToast.current);
 
     // If the focused toast was removed, focus the next or previous toast.
-    if (removedToasts.some(t => t.i === focusedToast.current)) {
-      let nextToast = focusedToast.current;
-      if (nextToast >= toasts.current.length) {
-        nextToast = toasts.current.length - 1;
+    if (removedToast > -1) {
+      let i = 0;
+      let nextToast;
+      let prevToast;
+      while (i <= removedToast) {
+        if (!removedToasts[i].isRemoved) {
+          prevToast = i - 1;
+        }
+        i++;
       }
-      if (nextToast !== -1) {
+      while (i < removedToasts.length) {
+        if (!removedToasts[i].isRemoved) {
+          nextToast = i - 1;
+          break;
+        }
+        i++;
+      }
+      if (prevToast >= 0 && prevToast < toasts.current.length) {
+        focusWithoutScrolling(toasts.current[prevToast]);
+      } else if (nextToast >= 0 && nextToast < toasts.current.length) {
         focusWithoutScrolling(toasts.current[nextToast]);
       }
     }

@@ -112,7 +112,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     return (
       <Toaster state={state} {...props}>
         <ol reversed className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
-          {state.visibleToasts.map((toast) => (
+          {state.visibleToasts.slice().reverse().map((toast) => (
             <li
               key={toast.key}
               className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}>
