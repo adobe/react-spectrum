@@ -61,29 +61,6 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [timer, timeout]);
 
-  // When toast unmounts, move focus to the next or previous toast.
-  // There's potentially a small problem here if two toasts next to each other unmount at the same time.
-  // It may be better to track this at the toast container level.
-  // We may also be assuming that other implemenations will have the same focus behavior.
-  // let container = useRef(null);
-  // useLayoutEffect(() => {
-  //   let toast = ref.current;
-  //   container.current = toast.closest('[role="region"]');
-  //   let focusManager = createFocusManager(container);
-  //   return () => {
-  //     if (toast && toast.contains(document.activeElement)) {
-  //       const from = document.activeElement?.closest('[role="alertdialog"]') || document.activeElement;
-  //       const accept = (node:Element) => node.getAttribute('role') === 'alertdialog';
-  //       let nextItemFocused = focusManager.focusNext({from, accept});
-  //       if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
-  //         focusManager.focusPrevious({from, accept});
-  //       }
-  //     }
-  //   };
-  //   // runs only for unmount
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   let titleId = useId();
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
