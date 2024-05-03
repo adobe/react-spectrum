@@ -98,7 +98,7 @@ describe('<HiddenSelect />', () => {
 
     // Simulate user selecting an option
     const option = getByRole('option', {name: 'Item 1'});
-    await userEvent.click(option);
+    await user.click(option);
 
     // Check if the form's onChange event was called
     expect(onChangeSpy).toHaveBeenCalled();
