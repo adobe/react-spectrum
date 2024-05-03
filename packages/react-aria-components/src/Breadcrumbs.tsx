@@ -22,7 +22,9 @@ export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledK
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a breadcrumb is clicked. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /** Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render. */
+  autoFocusCurrent?: boolean
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
@@ -54,14 +56,18 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
       slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Breadcrumbs'}>
-      {[...collection].map((node, i) => (
-        <BreadcrumbItem
-          key={node.key}
-          node={node}
-          isCurrent={i === collection.size - 1}
-          isDisabled={props.isDisabled}
-          onAction={props.onAction} />
-      ))}
+      {[...collection].map((node, i) => {
+        let isCurrent = i === collection.size - 1;
+        return (
+          <BreadcrumbItem
+            key={node.key}
+            node={node}
+            isCurrent={isCurrent}
+            isDisabled={props.isDisabled}
+            onAction={props.onAction}
+            autoFocus={props.autoFocusCurrent && isCurrent} />
+        );
+      })}
     </ol>
   );
 }
@@ -93,15 +99,17 @@ interface BreadcrumbItemProps {
   node: Node<object>,
   isCurrent: boolean,
   isDisabled?: boolean,
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  autoFocus?: boolean
 }
 
-function BreadcrumbItem({node, isCurrent, isDisabled, onAction}: BreadcrumbItemProps) {
+function BreadcrumbItem({node, isCurrent, isDisabled, onAction, autoFocus}: BreadcrumbItemProps) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent,
-    onPress: () => onAction?.(node.key)
+    onPress: () => onAction?.(node.key),
+    autoFocus: autoFocus
   };
 
   return (
