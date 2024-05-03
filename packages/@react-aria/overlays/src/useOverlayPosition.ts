@@ -145,8 +145,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Always reset the overlay's previous max height if not defined by the user so that we can compensate for
     // RAC collections populating after a second render and properly set a correct max height + positioning when it populates.
+    let overlay = (overlayRef.current as HTMLElement);
     if (!maxHeight && overlayRef.current) {
-      (overlayRef.current as HTMLElement).style.maxHeight = 'none';
+      overlay.style.top = '0px';
+      overlay.style.bottom = '';
+      overlay.style.maxHeight = (window.visualViewport?.height ?? window.innerHeight) + 'px';
     }
 
     let position = calculatePosition({
@@ -166,8 +169,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
-    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
-    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
+    overlay.style.top = '';
+    overlay.style.bottom = '';
+    Object.keys(position.position).forEach(key => overlay.style[key] = position.position[key] + 'px');
+    overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
