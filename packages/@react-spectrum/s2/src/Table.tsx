@@ -16,20 +16,119 @@ import {
   Table as AriaTable,
   TableHeader as AriaTableHeader,
   Button,
-  Cell,
+  Cell as AriaCell,
   Collection,
   ColumnProps,
   RowProps,
   TableHeaderProps,
-  TableProps,
-  useTableOptions
+  TableProps as RACTableProps,
+  TableBody as AriaTableBody,
+  TableBodyProps as RACTableBodyProps,
+  useTableOptions,
+  TableRenderProps,
+  CellProps,
+  CellRenderProps,
+  TableBodyRenderProps,
+  RowRenderProps
 } from 'react-aria-components';
-
 import {Checkbox} from './Checkbox';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, useContext} from 'react';
 
+// TODO: things that are in the design for s2
+// Density: spacious/compact/regular (for rows and columns)
+// Curved corners for table
+// Blue line at edge for row focus?
+// All kinds of row content: avatars, links, statuslight, Date, etc
+// empty state
+// Quiet vs standard (quiet not curved)
+// column dividers
+// summary row
+
+// TODO: things to support
+// HCM
+
+
+// TODO: questions
+// has highlight selection changed in the design? Does it exist?
+
+
+// TODO: audit the props and get omit stuff we don't want from the RAC props
+
+
+// TODO: figure out what table styles we actually need
+const table = style<TableRenderProps>({
+  userSelect: 'none',
+  minHeight: 0,
+  minWidth: 0,
+  borderSpacing: 0
+}, getAllowedOverrides());
+
+// TODO will need spectrum props that get propagated down like isQuiet, maybe just grab from spectrum props? For now just add these
+// TODO: prop descriptions
+interface TableStyleProps {
+  isQuiet?: boolean,
+  density?: 'compact' | 'spacious' | 'regular',
+  overflowMode?: 'wrap' | 'truncate',
+  selectionStyle?: 'checkbox' | 'highlight'
+}
+
+export interface TableProps extends Omit<RACTableProps, 'style'>, StyleProps, TableStyleProps {
+}
+
+let InternalTableContext = createContext<TableStyleProps>({});
 
 export function Table(props: TableProps) {
-  return <AriaTable {...props} />;
+  let {
+    UNSAFE_style,
+    UNSAFE_className,
+    isQuiet = false,
+    density = 'regular',
+    overflowMode = 'truncate',
+    selectionStyle = 'checkbox',
+    ...otherProps
+  } = props;
+  return (
+    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle}}>
+      <AriaTable
+        style={UNSAFE_style}
+        className={renderProps => (UNSAFE_className || '') + table({
+          ...renderProps
+        }, props.styles)}
+        {...otherProps} />
+    </InternalTableContext.Provider>
+  );
+}
+
+// TODO: will need focus styles for when it is focused due to empty state
+// styles for root drop target
+const tablebody = style<TableBodyRenderProps & TableStyleProps>({
+  backgroundColor: {
+    default: 'gray-25',
+    isQuiet: 'transparent'
+  },
+  // TODO: what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
+  // Right now it is also getting cut off by the row
+  boxShadow: '[0 0 0 1px black]',
+  borderRadius: '[7px]'
+});
+
+
+// TODO: get rid of depenedencies from the props?
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style'> {}
+
+export function TableBody<T extends object>(props: TableBodyProps<T>) {
+  let tableVisualOptions = useContext(InternalTableContext);
+
+  return (
+    <AriaTableBody
+      className={renderProps => tablebody({
+        ...renderProps,
+        ...tableVisualOptions
+      })}
+      {...props} />
+  );
 }
 
 export function Column(props: ColumnProps) {
@@ -70,26 +169,124 @@ export function TableHeader<T extends object>(
   );
 }
 
+// TODO: might need this to communicate stuff to the cells within
+// let InternalRowContext = createContext<{isQuiet?: boolean}>({});
+
+// TODO: figure out these colors for quiet vs not quiet. Figma shows gray-25 for non quiet but that matches background?
+// is keyboard focus on a non selected row supposed to only show a focus ring withou any changes to the background?
+// Bit confusing since some of the non-quiet tables are on a  248,248,248 background and thus have 255,255,255 background color
+// but then the cell background color show 248,248,248 as their back ground color
+// Also ask if the Figma can be updated to reflect the actual token values, I'm not seeing them for the most part it feels
+
+// TODO: will also need to curve the first and last row, how to do this?
+// ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
+const row = style<RowRenderProps & TableStyleProps>({
+  // ...focusRing(),
+  boxSizing: 'border-box',
+  // borderRadius: 'control-sm',
+  backgroundColor: {
+    default: 'gray-25',
+    isHovered: 'gray-100',
+    isPressed: 'gray-200',
+    isSelected: {
+      // TODO: these need to be updated
+      default: 'informative-200',
+      isFocusVisible: 'informative-300',
+      isHovered: 'informative-300',
+      isPressed: 'informative-300'
+    },
+    isQuiet: {
+      default: 'transparent'
+    }
+  },
+  // TODO: will need to handle overflow mode wrap
+  height: {
+    default: 40,
+    density: {
+      spacious: 48,
+      compact: 32
+    }
+  }
+});
+
 export function Row<T extends object>(
   {id, columns, children, ...otherProps}: RowProps<T>
 ) {
-  let {selectionBehavior, allowsDragging} = useTableOptions();
+  let {selectionBehavior, allowsDragging, selectionMode} = useTableOptions();
+  let tableVisualOptions = useContext(InternalTableContext);
 
   return (
-    <AriaRow id={id} {...otherProps}>
+    <AriaRow
+      id={id}
+      className={renderProps => row({
+        ...renderProps,
+        ...tableVisualOptions
+      })}
+      {...otherProps}>
       {allowsDragging && (
         <Cell>
           <Button slot="drag">≡</Button>
         </Cell>
       )}
-      {selectionBehavior === 'toggle' && (
-        <Cell>
+      {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+        <CheckboxCell>
           <Checkbox slot="selection" />
-        </Cell>
+        </CheckboxCell>
       )}
       <Collection items={columns}>
         {children}
       </Collection>
     </AriaRow>
+  );
+}
+
+// TODO: handle focus ring style, will need to be rounded
+const cell = style<CellRenderProps & TableStyleProps>({
+  paddingX: 16,
+  // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
+  // when they probably should
+  paddingTop: {
+    default: '[10px]',
+    density: {
+      spacious: '[15px]',
+      compact: '[6px]'
+    }
+  },
+  paddingBottom: {
+    default: '[13px]',
+    density: {
+      spacious: '[16px]',
+      compact: '[9px]'
+    }
+  },
+  // TODO: matches design, but would like to get rid of the hard coded lineHeight
+  fontSize: 'control',
+  lineHeight: '[17px]'
+});
+
+export function Cell(props: CellProps) {
+  let tableVisualOptions = useContext(InternalTableContext);
+  return (
+    <AriaCell
+      className={renderProps => cell({
+        ...renderProps,
+        ...tableVisualOptions
+      })}
+      {...props} />
+  );
+}
+
+const checkboxstyle = style({
+  paddingX: 16,
+  paddingY: centerPadding()
+});
+
+function CheckboxCell(props: CellProps) {
+  // TODO: will need to handle disabling this
+  // let tableVisualOptions = useContext(InternalTableContext);
+  return (
+    <AriaCell
+      className={checkboxstyle}
+      {...props} />
   );
 }

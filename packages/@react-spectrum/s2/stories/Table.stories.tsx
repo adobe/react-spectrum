@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Cell, TableBody} from 'react-aria-components';
-import {Column, Row, Table, TableHeader} from '../src/Table';
+import {Column, Row, Table, TableHeader, Cell, TableBody} from '../src/Table';
 
 import type {Meta} from '@storybook/react';
 
@@ -19,10 +18,14 @@ const meta: Meta<typeof Table> = {
   component: Table,
   parameters: {
     layout: 'centered'
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;
+
+// TODO: i assume the api for S2 Table would involve the users
+// not needing to pass TableHeader and TableBody?
 
 export const Example = (args: any) => (
   <Table aria-label="Files" {...args}>
@@ -56,3 +59,14 @@ Example.args = {
   onCellAction: null,
   selectionMode: 'multiple'
 };
+
+
+// TODO: stories to add
+// DnD
+// highlight selection
+// resizing
+// disabled rows
+// sorting
+// empty state
+// densitiy
+// many items
