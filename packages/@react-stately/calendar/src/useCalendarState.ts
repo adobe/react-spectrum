@@ -291,7 +291,9 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       }
     },
     selectFocusedDate() {
-      setValue(focusedDate);
+      if (!(isDateUnavailable && isDateUnavailable(focusedDate))) {
+        setValue(focusedDate);
+      }
     },
     selectDate(date) {
       setValue(date);

@@ -342,4 +342,12 @@ describe('Calendar', () => {
     expect(cell).not.toHaveAttribute('data-selected');
     expect(cell).not.toHaveClass('selected');
   });
+
+  it('should not modify selection when trying to select an unavailable date by keyboard', async () => {
+    let calendar = renderCalendar({isDateUnavailable: d => d.day === 15});
+    let day16 = calendar.getByText('16');
+    fireEvent.click(day16);
+    await user.keyboard('[ArrowLeft][Enter]');
+    expect(calendar.getByLabelText(/selected/)).toBe(day16);
+  });
 });
