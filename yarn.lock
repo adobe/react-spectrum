@@ -14039,6 +14039,11 @@ is-map@^2.0.2:
   resolved "https://registry.yarnpkg.com/is-map/-/is-map-2.0.2.tgz#00922db8c9bf73e81b7a335827bc2a43f2b91127"
   integrity sha512-cOZFQQozTha1f4MxLFzlgKYPTyj26picdZTx82hbc/Xf4K/tZOOXSCkMvU4pKioRXGDLJRn0GM7Upe7kR721yg==
 
+is-mingw@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/is-mingw/-/is-mingw-2.0.0.tgz#cb746977396808b49da0f9dc707a734328bd3be3"
+  integrity sha512-9aI87IfnhMF59hLfg+ZZzuR72+Rybw4VPDz7dOCw2jJpS+nIqhhC0y1/O05Bc4JnxJBHMmlNluzbnzNKKcs54A==
+
 is-negated-glob@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-negated-glob/-/is-negated-glob-1.0.0.tgz#6910bca5da8c95e784b5751b976cf5a10fee36d2"
