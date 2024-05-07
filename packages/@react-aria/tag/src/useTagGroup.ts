@@ -105,7 +105,7 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
       role: state.collection.size ? 'grid' : null,
       'aria-atomic': false,
       'aria-relevant': 'additions',
-      'aria-live': isFocusWithin ? 'polite' : 'off',
+      'aria-live': 'polite',
       ...focusWithinProps,
       ...fieldProps
     }),
