@@ -87,15 +87,18 @@ export function Table(props: TableProps) {
     density = 'regular',
     overflowMode = 'truncate',
     selectionStyle = 'checkbox',
+    styles,
     ...otherProps
   } = props;
+
   return (
     <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle}}>
       <AriaTable
         style={UNSAFE_style}
         className={renderProps => (UNSAFE_className || '') + table({
           ...renderProps
-        }, props.styles)}
+        }, styles)}
+        selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
         {...otherProps} />
     </InternalTableContext.Provider>
   );
@@ -108,9 +111,10 @@ const tablebody = style<TableBodyRenderProps & TableStyleProps>({
     default: 'gray-25',
     isQuiet: 'transparent'
   },
-  // TODO: what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
-  // Right now it is also getting cut off by the row
-  boxShadow: '[0 0 0 1px black]',
+  outlineColor: 'gray-200',
+  outlineWidth: 1,
+  outlineStyle: 'solid',
+  // TODO: closest one is default which is 8px
   borderRadius: '[7px]'
 });
 
@@ -159,7 +163,9 @@ export function TableHeader<T extends object>(
       {allowsDragging && <AriaColumn />}
       {selectionBehavior === 'toggle' && (
         <AriaColumn>
-          {selectionMode === 'multiple' && <Checkbox slot="selection" />}
+          {selectionMode === 'multiple' &&
+            <Checkbox slot="selection" />
+          }
         </AriaColumn>
       )}
       <Collection items={columns}>
@@ -183,7 +189,6 @@ export function TableHeader<T extends object>(
 const row = style<RowRenderProps & TableStyleProps>({
   // ...focusRing(),
   boxSizing: 'border-box',
-  // borderRadius: 'control-sm',
   backgroundColor: {
     default: 'gray-25',
     isHovered: 'gray-100',
@@ -207,6 +212,14 @@ const row = style<RowRenderProps & TableStyleProps>({
       compact: 32
     }
   }
+  // TODO: This is an alternative to having the tablebody + cells render an outline
+  //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
+  // Right now it is also getting cut off by the row, will need to curve first and last cell of the row but only if it is flush?
+  // See if I can stop the overflow
+  // boxShadow: '[0 0 0 1px black]',
+  // borderRadius: '[7px]',
+  // TODO: update row focus ring, right now it is the native outline
+  // outlineStyle: 'none'
 });
 
 export function Row<T extends object>(
@@ -242,6 +255,7 @@ export function Row<T extends object>(
 
 // TODO: handle focus ring style, will need to be rounded
 const cell = style<CellRenderProps & TableStyleProps>({
+  // ...focusRing(),
   paddingX: 16,
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
   // when they probably should
@@ -259,9 +273,24 @@ const cell = style<CellRenderProps & TableStyleProps>({
       compact: '[9px]'
     }
   },
-  // TODO: matches design, but would like to get rid of the hard coded lineHeight
   fontSize: 'control',
-  lineHeight: '[17px]'
+  // TODO: will also need to make the first and last curved? Save this for later when we do virtualization?
+  borderColor: 'gray-300',
+  borderBottomWidth: 1,
+  borderTopWidth: 0,
+  borderXWidth: 0,
+  borderStyle: 'solid',
+  // TODO: make table cell focus ring. It needs to flush with the bottom border outline, the default blue focus indicator alias, border radius 2px
+  // the closest I can do when follwing the same approach as the current outline styling is with outline-offset: -3px, outline width 2px but this leaves some
+  // extra space on top. Also I can't set a border radius since it would affect the cell. Perhaps use a psudoelement
+  // outlineStyle: 'none'
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineOffset: '[-3px]',
+  outlineWidth: 2,
+  outlineColor: 'focus-ring'
 });
 
 export function Cell(props: CellProps) {
@@ -276,9 +305,15 @@ export function Cell(props: CellProps) {
   );
 }
 
-const checkboxstyle = style({
+// TODO: make common style for both cells
+const checkboxCellStyle = style({
   paddingX: 16,
-  paddingY: centerPadding()
+  paddingY: centerPadding(),
+  borderColor: 'gray-300',
+  borderBottomWidth: 1,
+  borderTopWidth: 0,
+  borderXWidth: 0,
+  borderStyle: 'solid'
 });
 
 function CheckboxCell(props: CellProps) {
@@ -286,7 +321,7 @@ function CheckboxCell(props: CellProps) {
   // let tableVisualOptions = useContext(InternalTableContext);
   return (
     <AriaCell
-      className={checkboxstyle}
+      className={checkboxCellStyle}
       {...props} />
   );
 }
