@@ -12,12 +12,18 @@
 
 
 import {act, render} from '@react-spectrum/test-utils-internal';
-import {createShadowRoot} from '@react-spectrum/test-utils/src/shadowDOM';
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '@react-aria/utils';
 import ReactDOM from 'react-dom';
 import {setInteractionModality} from '@react-aria/interactions';
+
+function createShadowRoot() {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  const shadowRoot = div.attachShadow({mode: 'open'});
+  return {shadowHost: div, shadowRoot};
+}
 
 jest.mock('@react-aria/utils', () => {
   let original = jest.requireActual('@react-aria/utils');
