@@ -230,7 +230,7 @@ a.spectrum-ActionButton {
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
 
-  .spectrum-ActionGroup-itemIcon {
+  .spectrum-ActionGroup-itemIcon.spectrum-ActionGroup-itemIcon {
     padding-inline-end: 0;
   }
 }

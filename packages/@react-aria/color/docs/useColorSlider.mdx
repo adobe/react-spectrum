@@ -105,6 +105,7 @@ const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
 function ColorSlider(props) {
+  let {isDisabled} = props;
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
   let trackRef = React.useRef(null);
@@ -145,20 +146,21 @@ function ColorSlider(props) {
           ...trackProps.style,
           height: TRACK_THICKNESS,
           width: '100%',
-          borderRadius: 4
+          borderRadius: 4,
+          background: isDisabled ? 'rgb(142, 142, 142)' : trackProps.style.background
         }}>
         <div
           {...thumbProps}
           style={{
             ...thumbProps.style,
             top: TRACK_THICKNESS / 2,
-            border: '2px solid white',
+            background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+            border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
             boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
             width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
             height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
             borderRadius: '50%',
-            boxSizing: 'border-box',
-            background: state.getDisplayColor().toString('css')
+            boxSizing: 'border-box'
           }}>
           <input ref={inputRef} {...inputProps} {...focusProps} />
         </div>

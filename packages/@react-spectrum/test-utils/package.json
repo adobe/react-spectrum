@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/test-utils",
-  "version": "3.0.0-alpha.1",
+  "version": "1.0.0-alpha.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,12 +24,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/test-utils": "3.0.0-alpha.1",
+    "@react-aria/test-utils": "1.0.0-alpha.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.0.0",
+    "@testing-library/react": "^13.0.0 || ^14.0.0",
+    "@testing-library/user-event": "^13.0.0 || ^14.0.0",
     "jest": "^27.0.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },

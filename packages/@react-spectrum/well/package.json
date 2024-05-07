@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/well",
-  "version": "3.4.11",
+  "version": "3.4.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,10 +36,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.23.2",
-    "@react-spectrum/utils": "^3.11.5",
-    "@react-types/shared": "^3.22.1",
-    "@react-types/well": "^3.3.7",
+    "@react-aria/utils": "^3.24.0",
+    "@react-spectrum/utils": "^3.11.6",
+    "@react-types/shared": "^3.23.0",
+    "@react-types/well": "^3.3.8",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
