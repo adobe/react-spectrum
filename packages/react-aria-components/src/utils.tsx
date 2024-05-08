@@ -136,9 +136,9 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
       className: computedClassName ?? defaultClassName,
       style: (computedStyle || defaultStyle) ? {...defaultStyle, ...computedStyle} : undefined,
       children: computedChildren ?? defaultChildren,
-      'data-rac': ''
+      'data-rac': props['data-rac'] === undefined ? '' : props['data-rac']
     };
-  }, [className, style, children, defaultClassName, defaultChildren, defaultStyle, values]);
+  }, [className, style, children, defaultClassName, defaultStyle, defaultChildren, props, values]);
 }
 
 /**

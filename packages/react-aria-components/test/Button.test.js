@@ -39,6 +39,12 @@ describe('Button', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support removing data-rac attribute', () => {
+    let {getByRole} = render(<Button data-rac={null}>Test</Button>);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-rac');
+  });
+
   it('should support form props', () => {
     let {getByRole} = render(<form id="foo"><Button form="foo" formMethod="post">Test</Button></form>);
     let button = getByRole('button');
