@@ -93,7 +93,8 @@ interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, Aria
   values: T,
   defaultChildren?: ReactNode,
   defaultClassName?: string,
-  defaultStyle?: CSSProperties
+  defaultStyle?: CSSProperties,
+  'data-rac'?: string
 }
 
 export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
@@ -104,7 +105,8 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     defaultClassName = undefined,
     defaultChildren = undefined,
     defaultStyle,
-    values
+    values,
+    'data-rac': dataRAC
   } = props;
 
   return useMemo(() => {
@@ -136,9 +138,9 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
       className: computedClassName ?? defaultClassName,
       style: (computedStyle || defaultStyle) ? {...defaultStyle, ...computedStyle} : undefined,
       children: computedChildren ?? defaultChildren,
-      'data-rac': props['data-rac'] === undefined ? '' : props['data-rac']
+      'data-rac': dataRAC === undefined ? '' : dataRAC
     };
-  }, [className, style, children, defaultClassName, defaultStyle, defaultChildren, props, values]);
+  }, [className, style, children, defaultClassName, defaultStyle, defaultChildren, dataRAC, values]);
 }
 
 /**
