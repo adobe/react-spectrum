@@ -590,7 +590,10 @@ function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef
 const _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
 export {_TableBody as TableBody};
 
-export interface RowRenderProps extends ItemRenderProps {}
+export interface RowRenderProps extends ItemRenderProps {
+  /** Whether the row's children have keyboard focus. */
+  isFocusVisibleWithin: boolean
+}
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the row. */
@@ -1017,6 +1020,10 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection && !states.hasAction,
     onHoverStart: item.props.onHoverStart,
@@ -1068,7 +1075,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       isDragging,
-      isDropTarget: dropIndicator?.isDropTarget
+      isDropTarget: dropIndicator?.isDropTarget,
+      isFocusVisibleWithin
     }
   });
 
@@ -1097,7 +1105,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         </tr>
       )}
       <tr
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
         {...renderProps}
         ref={ref}
         data-disabled={states.isDisabled || undefined}
@@ -1108,7 +1116,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}
-        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+        data-focus-visible-within={isFocusVisibleWithin || undefined}>
         <Provider
           values={[
             [CheckboxContext, {

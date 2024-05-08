@@ -769,6 +769,25 @@ describe('Table', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should support data-focus-visible-within', async () => {
+    let {getAllByRole} = renderTable();
+    let items = getAllByRole('row');
+    expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
+    await user.keyboard('{ArrowRight}');
+
+    let cell = within(items[1]).getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell);
+    expect(cell).toHaveAttribute('data-focus-visible', 'true');
+    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
+
+    await user.keyboard('{ArrowDown}');
+    expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
