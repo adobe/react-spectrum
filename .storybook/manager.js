@@ -1,6 +1,8 @@
-import addons from '@storybook/addons';
+import {addons} from '@storybook/manager-api';
 
 addons.setConfig({
-  showRoots: false,
-  enableShortcuts: false
+  enableShortcuts: false,
+  sidebar: {
+    showRoots: false,
+  }
 });

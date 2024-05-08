@@ -25,7 +25,7 @@ import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useRef, useState} from 'react';
-import {TranslateListBox} from './../chromatic/ListBoxLanguages.chromatic';
+import {TranslateListBox} from './../chromatic/ListBoxLanguages.stories';
 import {useAsyncList, useTreeData} from '@react-stately/data';
 
 let iconMap = {
