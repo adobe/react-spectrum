@@ -62,7 +62,8 @@ const table = style<TableRenderProps>({
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
-  borderSpacing: 0
+  borderSpacing: 0,
+  fontFamily: 'sans'
 }, getAllowedOverrides());
 
 // TODO will need spectrum props that get propagated down like isQuiet, maybe just grab from spectrum props? For now just add these
@@ -112,10 +113,19 @@ const tablebody = style<TableBodyRenderProps & TableStyleProps>({
     isQuiet: 'transparent'
   },
   outlineColor: 'gray-200',
-  outlineWidth: 1,
-  outlineStyle: 'solid',
-  // TODO: closest one is default which is 8px
-  borderRadius: '[7px]'
+  outlineWidth: {
+    default: 1,
+    isQuiet: 0
+  },
+  outlineStyle: {
+    default: 'solid',
+    isQuiet: 'none'
+  },
+  // TODO: closest one is "default" which is 8px
+  borderRadius: {
+    default: '[7px]',
+    isQuiet: '[0px]'
+  }
 });
 
 
@@ -135,9 +145,37 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   );
 }
 
+const cellFocusRing = {
+  // TODO: make table cell focus ring. It needs to be flush with the bottom border outline, the default blue focus indicator alias, border radius 2px
+  // the closest I can do when follwing the same approach as the current outline styling is with outline-offset: -3px, outline width 2px but this leaves some
+  // extra space on top. Also I can't set a border radius since it would affect the cell. Perhaps use a psudoelement
+  // TODO: what should the focus ring for the column look like? flush with the top row's outline?
+  // Additionally, the cell specific styles in the design show that the focus ring sits on top of the 1px gray row bottom border (same with the blue left hand indicator)
+  // but the table playground design example shows that the blue selection box takes over .5px of that border?
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineOffset: '[-3px]',
+  outlineWidth: 2,
+  outlineColor: 'focus-ring'
+} as const;
+
+const columnStyles = style({
+  paddingX: 16,
+  // TODO: would be nice to not have to hard code these
+  paddingTop: '[7px]',
+  paddingBottom: '[8px]',
+  height: '[25px]', // 40 - padding, would be nice if I could set the style on the table header row itself,
+  textAlign: 'start',
+  color: 'gray-800',
+  ...cellFocusRing,
+  borderRadius: '[2px]'
+});
+
 export function Column(props: ColumnProps) {
   return (
-    <AriaColumn {...props}>
+    <AriaColumn {...props} className={columnStyles}>
       {({allowsSorting, sortDirection}) => (
         <>
           {props.children}
@@ -152,19 +190,32 @@ export function Column(props: ColumnProps) {
   );
 }
 
+const selectAllCheckbox = style({
+  marginX: 16,
+  marginY: centerPadding()
+});
+
+const selectAllCheckboxColumn = style({
+  padding: 0,
+  height: 40,
+  ...cellFocusRing,
+  borderRadius: '[2px]'
+});
+
 export function TableHeader<T extends object>(
   {columns, children}: TableHeaderProps<T>
 ) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
+    // TODO: double check if nested columns work with this implementation
     <AriaTableHeader>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <AriaColumn />}
       {selectionBehavior === 'toggle' && (
-        <AriaColumn>
+        <AriaColumn className={selectAllCheckboxColumn}>
           {selectionMode === 'multiple' &&
-            <Checkbox slot="selection" />
+            <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
           }
         </AriaColumn>
       )}
@@ -194,7 +245,8 @@ const row = style<RowRenderProps & TableStyleProps>({
     isHovered: 'gray-100',
     isPressed: 'gray-200',
     isSelected: {
-      // TODO: these need to be updated
+      // TODO: these need to be updated, the figma has this as informative/default but that color doesn't seem to match with the actual light blue?
+      // The below are my best guess but look odd in dark mode
       default: 'informative-200',
       isFocusVisible: 'informative-300',
       isHovered: 'informative-300',
@@ -212,6 +264,8 @@ const row = style<RowRenderProps & TableStyleProps>({
       compact: 32
     }
   }
+  // TODO Disabled styles
+
   // TODO: This is an alternative to having the tablebody + cells render an outline
   //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
   // Right now it is also getting cut off by the row, will need to curve first and last cell of the row but only if it is flush?
@@ -243,7 +297,7 @@ export function Row<T extends object>(
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         <CheckboxCell>
-          <Checkbox slot="selection" />
+          <Checkbox isEmphasized slot="selection" />
         </CheckboxCell>
       )}
       <Collection items={columns}>
@@ -253,9 +307,16 @@ export function Row<T extends object>(
   );
 }
 
-// TODO: handle focus ring style, will need to be rounded
+const commonCellStyles = {
+  borderColor: 'gray-300',
+  borderBottomWidth: 1,
+  borderTopWidth: 0,
+  borderXWidth: 0,
+  borderStyle: 'solid'
+} as const;
+
 const cell = style<CellRenderProps & TableStyleProps>({
-  // ...focusRing(),
+  ...commonCellStyles,
   paddingX: 16,
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
   // when they probably should
@@ -280,17 +341,10 @@ const cell = style<CellRenderProps & TableStyleProps>({
   borderTopWidth: 0,
   borderXWidth: 0,
   borderStyle: 'solid',
-  // TODO: make table cell focus ring. It needs to flush with the bottom border outline, the default blue focus indicator alias, border radius 2px
-  // the closest I can do when follwing the same approach as the current outline styling is with outline-offset: -3px, outline width 2px but this leaves some
-  // extra space on top. Also I can't set a border radius since it would affect the cell. Perhaps use a psudoelement
-  // outlineStyle: 'none'
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineOffset: '[-3px]',
-  outlineWidth: 2,
-  outlineColor: 'focus-ring'
+  color: 'gray-800',
+  ...cellFocusRing
+  // TODO the focus ring isn't rounded because applying a border radius will break the gray bottom border provided by the cell
+  // Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
 });
 
 export function Cell(props: CellProps) {
@@ -307,13 +361,9 @@ export function Cell(props: CellProps) {
 
 // TODO: make common style for both cells
 const checkboxCellStyle = style({
+  ...commonCellStyles,
   paddingX: 16,
-  paddingY: centerPadding(),
-  borderColor: 'gray-300',
-  borderBottomWidth: 1,
-  borderTopWidth: 0,
-  borderXWidth: 0,
-  borderStyle: 'solid'
+  paddingY: centerPadding()
 });
 
 function CheckboxCell(props: CellProps) {
