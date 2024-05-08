@@ -35,17 +35,17 @@ export const Example = (args: any) => (
       <Column>Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="1">
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
       </Row>
-      <Row>
+      <Row id="2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
       </Row>
-      <Row>
+      <Row id="3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
@@ -58,6 +58,14 @@ Example.args = {
   onRowAction: null,
   onCellAction: null,
   selectionMode: 'multiple'
+};
+
+export const DisabledRows = {
+  render: Example,
+  args: {
+    ...Example.args,
+    disabledKeys: ['2']
+  }
 };
 
 

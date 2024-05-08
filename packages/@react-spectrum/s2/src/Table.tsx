@@ -260,6 +260,8 @@ const row = style<RowRenderProps & TableStyleProps>({
   boxSizing: 'border-box',
   backgroundColor: {
     default: 'gray-25',
+    // TODO: don't forget to change this to isFocusVisibleWithin so that it applies when the cell in the row is keyboard focused
+    isFocusVisible: 'gray-100',
     isHovered: 'gray-100',
     isPressed: 'gray-200',
     isSelected: {
@@ -271,7 +273,17 @@ const row = style<RowRenderProps & TableStyleProps>({
       isPressed: 'informative-300'
     },
     isQuiet: {
-      default: 'transparent'
+      // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
+      default: 'transparent',
+      isFocusVisible: 'gray-100',
+      isHovered: 'gray-100',
+      isPressed: 'gray-200',
+      isSelected: {
+        default: 'informative-200',
+        isFocusVisible: 'informative-300',
+        isHovered: 'informative-300',
+        isPressed: 'informative-300'
+      }
     }
   },
   // TODO: will need to handle overflow mode wrap
