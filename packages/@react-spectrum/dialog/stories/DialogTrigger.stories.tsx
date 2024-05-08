@@ -26,7 +26,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {TranslateDialog} from './../chromatic/DialogLanguages.chromatic';
+import {TranslateDialog} from './../chromatic/DialogLanguages.stories';
 
 export default {
   title: 'DialogTrigger',

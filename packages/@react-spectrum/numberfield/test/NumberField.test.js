@@ -652,7 +652,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly will return the same number from onChange as is displayed', async () => {
-    let {textField} = renderNumberField({key: 'foo', onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
+    let {textField} = renderNumberField({id: 'foo', onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');

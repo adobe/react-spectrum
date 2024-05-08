@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
-import {composeStories} from '@storybook/testing-react';
+import {composeStories} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
