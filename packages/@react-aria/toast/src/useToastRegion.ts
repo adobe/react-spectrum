@@ -75,7 +75,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       let prevToast;
       while (i <= removedToast) {
         if (!removedToasts[i].isRemoved) {
-          prevToast = i - 1;
+          prevToast = i;
         }
         i++;
       }
@@ -86,6 +86,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         }
         i++;
       }
+
       if (prevToast >= 0 && prevToast < toasts.current.length) {
         focusWithoutScrolling(toasts.current[prevToast]);
       } else if (nextToast >= 0 && nextToast < toasts.current.length) {
