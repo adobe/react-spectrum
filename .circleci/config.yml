@@ -412,6 +412,21 @@ jobs:
           paths:
             - '*/storybook-17/'
 
+  storybook-canary:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build storybook-canary
+          command: make storybook-canary
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-canary/'
+
   docs:
     executor: rsp-xlarge
     steps:
@@ -588,6 +603,9 @@ workflows:
       - storybook-17:
           requires:
             - install-17
+      - storybook-canary:
+          requires:
+            - install-canary
       - docs:
           requires:
             - install
@@ -610,6 +628,7 @@ workflows:
             - storybook
             - storybook-16
             - storybook-17
+            - storybook-canary
             - docs
       - deploy-verdaccio:
           requires:

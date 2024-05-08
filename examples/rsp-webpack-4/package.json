@@ -23,10 +23,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.0",
-    "@babel/cli": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/core": "^7.24.3",
+    "@babel/cli": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
+    "@babel/preset-react": "^7.24.3",
     "webpack": "4.46.0",
     "webpack-cli": "3.1.1",
     "webpack-dev-server": "3.1.8",
