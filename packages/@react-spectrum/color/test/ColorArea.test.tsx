@@ -11,7 +11,7 @@
  */
 
 import {ColorArea} from '../';
-import {composeStories} from '@storybook/testing-react';
+import {composeStories} from '@storybook/react';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {parseColor} from '@react-stately/color';
