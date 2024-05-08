@@ -27964,6 +27964,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
+    "@babel/cli": "npm:^7.24.1"
     "@internationalized/string": "workspace:^"
     "@react-aria/breadcrumbs": "workspace:^"
     "@react-aria/button": "workspace:^"
@@ -28297,6 +28298,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
+    "@babel/cli": "npm:^7.24.1"
     "@react-stately/calendar": "workspace:^"
     "@react-stately/checkbox": "workspace:^"
     "@react-stately/collections": "workspace:^"
