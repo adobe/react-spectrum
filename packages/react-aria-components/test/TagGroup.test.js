@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
 import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -328,6 +328,26 @@ describe('TagGroup', () => {
 
           document.removeEventListener('click', onClick);
         }
+      });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <TagGroup selectionMode="none">
+              <Label>Tags</Label>
+              <TagList>
+                <Tag href="/foo" routerOptions={{foo: 'bar'}}>One</Tag>
+              </TagList>
+            </TagGroup>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
     });
   });
