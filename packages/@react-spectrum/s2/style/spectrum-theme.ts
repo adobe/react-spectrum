@@ -453,7 +453,11 @@ export const style = createTheme({
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color')
+      pasteboard: weirdColorToken('background-pasteboard-color'),
+      'focus-ring': {
+        default: colorToken('focus-indicator-color'),
+        forcedColors: 'Highlight'
+      }
     }),
     borderColor: createColorProperty({
       ...color,

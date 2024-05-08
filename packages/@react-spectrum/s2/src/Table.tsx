@@ -145,39 +145,51 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   );
 }
 
-const cellFocusRing = {
-  // TODO: make table cell focus ring. It needs to be flush with the bottom border outline, the default blue focus indicator alias, border radius 2px
-  // the closest I can do when follwing the same approach as the current outline styling is with outline-offset: -3px, outline width 2px but this leaves some
-  // extra space on top. Also I can't set a border radius since it would affect the cell. Perhaps use a psudoelement
-  // TODO: what should the focus ring for the column look like? flush with the top row's outline?
-  // Additionally, the cell specific styles in the design show that the focus ring sits on top of the 1px gray row bottom border (same with the blue left hand indicator)
-  // but the table playground design example shows that the blue selection box takes over .5px of that border?
+// TODO: what should the focus ring for the column look like? flush with the top row's outline? Right now it overlaps the body's border. I think I'll add some padding to the bottom to account for this
+// Additionally, the cell specific styles in the design show that the focus ring sits on top of the 1px gray row bottom border (same with the blue left hand indicator)
+// but the table playground design example shows that the blue selection box takes over .5px of that border?
+// TODO: The border radius on this focus ring doesn't match with the 7px border radius of the table body, meaning it won't be flush when the user is keyboard focused on
+// a cell at the end of the table. Clarify with Spectrum design
+const cellFocus = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  right: 0,
+  left: 0,
+  zIndex: 1,
   outlineStyle: {
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineOffset: '[-3px]',
+  outlineOffset: '[-2px]', // Maybe can use space?
   outlineWidth: 2,
-  outlineColor: 'focus-ring'
-} as const;
+  outlineColor: 'focus-ring',
+  borderRadius: '[2px]'
+});
+
+function CellFocusRing(props: {isFocusVisible: boolean}) {
+  let {isFocusVisible} = props;
+  return <span className={cellFocus({isFocusVisible})} />;
+}
 
 const columnStyles = style({
   paddingX: 16,
   // TODO: would be nice to not have to hard code these
   paddingTop: '[7px]',
   paddingBottom: '[8px]',
-  height: '[25px]', // 40 - padding, would be nice if I could set the style on the table header row itself,
   textAlign: 'start',
   color: 'gray-800',
-  ...cellFocusRing,
-  borderRadius: '[2px]'
+  outlineStyle: 'none',
+  position: 'relative',
+  fontSize: 'control'
 });
 
 export function Column(props: ColumnProps) {
   return (
     <AriaColumn {...props} className={columnStyles}>
-      {({allowsSorting, sortDirection}) => (
+      {({allowsSorting, sortDirection, isFocusVisible}) => (
         <>
+          <CellFocusRing isFocusVisible={isFocusVisible} />
           {props.children}
           {allowsSorting && (
             <span aria-hidden="true" className="sort-indicator">
@@ -197,9 +209,10 @@ const selectAllCheckbox = style({
 
 const selectAllCheckboxColumn = style({
   padding: 0,
-  height: 40,
-  ...cellFocusRing,
-  borderRadius: '[2px]'
+  height: 32,
+  borderRadius: '[2px]',
+  outlineStyle: 'none',
+  position: 'relative'
 });
 
 export function TableHeader<T extends object>(
@@ -214,9 +227,14 @@ export function TableHeader<T extends object>(
       {allowsDragging && <AriaColumn />}
       {selectionBehavior === 'toggle' && (
         <AriaColumn className={selectAllCheckboxColumn}>
-          {selectionMode === 'multiple' &&
-            <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
-          }
+          {({isFocusVisible}) => (
+            <>
+              <CellFocusRing isFocusVisible={isFocusVisible} />
+              {selectionMode === 'multiple' &&
+                <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
+              }
+            </>
+          )}
         </AriaColumn>
       )}
       <Collection items={columns}>
@@ -238,7 +256,7 @@ export function TableHeader<T extends object>(
 // TODO: will also need to curve the first and last row, how to do this?
 // ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
 const row = style<RowRenderProps & TableStyleProps>({
-  // ...focusRing(),
+  position: 'relative',
   boxSizing: 'border-box',
   backgroundColor: {
     default: 'gray-25',
@@ -264,6 +282,7 @@ const row = style<RowRenderProps & TableStyleProps>({
       compact: 32
     }
   }
+  // outlineStyle: 'none'
   // TODO Disabled styles
 
   // TODO: This is an alternative to having the tablebody + cells render an outline
@@ -272,9 +291,20 @@ const row = style<RowRenderProps & TableStyleProps>({
   // See if I can stop the overflow
   // boxShadow: '[0 0 0 1px black]',
   // borderRadius: '[7px]',
-  // TODO: update row focus ring, right now it is the native outline
-  // outlineStyle: 'none'
 });
+
+// TODO: bring this back when I add renderProps support to table
+// const rowFocus = style({
+//   display: 'inline-block',
+//   position: 'absolute',
+//   width: 4,
+//   height: 'full',
+//   insetStart: 0,
+//   top: 0,
+//   marginEnd: '[-4px]',
+//   zIndex: 4,
+//   backgroundColor: 'focus-ring'
+// });
 
 export function Row<T extends object>(
   {id, columns, children, ...otherProps}: RowProps<T>
@@ -292,11 +322,15 @@ export function Row<T extends object>(
       {...otherProps}>
       {allowsDragging && (
         <Cell>
+          {/* TODO: will need to support renderProps function for TableRow so that I can render the span only when the row is focused and isFocusVisible */}
+          {/* <span className={rowFocus} /> */}
           <Button slot="drag">≡</Button>
         </Cell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         <CheckboxCell>
+          {/* TODO: uncomment when I add renderProps support for TableRow */}
+          {/* {!allowsDragging && <span className={rowFocus} />} */}
           <Checkbox isEmphasized slot="selection" />
         </CheckboxCell>
       )}
@@ -312,7 +346,8 @@ const commonCellStyles = {
   borderBottomWidth: 1,
   borderTopWidth: 0,
   borderXWidth: 0,
-  borderStyle: 'solid'
+  borderStyle: 'solid',
+  position: 'relative'
 } as const;
 
 const cell = style<CellRenderProps & TableStyleProps>({
@@ -342,12 +377,13 @@ const cell = style<CellRenderProps & TableStyleProps>({
   borderXWidth: 0,
   borderStyle: 'solid',
   color: 'gray-800',
-  ...cellFocusRing
+  outlineStyle: 'none'
   // TODO the focus ring isn't rounded because applying a border radius will break the gray bottom border provided by the cell
   // Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
 });
 
 export function Cell(props: CellProps) {
+  let {children, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   return (
     <AriaCell
@@ -355,11 +391,17 @@ export function Cell(props: CellProps) {
         ...renderProps,
         ...tableVisualOptions
       })}
-      {...props} />
+      {...otherProps}>
+      {({isFocusVisible}) => (
+        <>
+          <CellFocusRing isFocusVisible={isFocusVisible} />
+          {children}
+        </>
+      )}
+    </AriaCell>
   );
 }
 
-// TODO: make common style for both cells
 const checkboxCellStyle = style({
   ...commonCellStyles,
   paddingX: 16,
