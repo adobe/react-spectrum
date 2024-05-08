@@ -15,7 +15,7 @@ import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuIte
 import {BaseCollection, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {HeaderContext} from './Header';
 import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';

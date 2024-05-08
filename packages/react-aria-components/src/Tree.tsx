@@ -282,7 +282,7 @@ export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRe
 // TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
 // having those
 export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
-  let values = useContext(TreeItemContentContext);
+  let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
     values
@@ -375,7 +375,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     children: item => {
       switch (item.type) {
         case 'content': {
-          return item.render(item);
+          return item.render!(item);
         }
         // Skip item since we don't render the nested rows as children of the parent row, the flattened collection
         // will render them each as siblings instead

@@ -914,7 +914,7 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
 
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: Node<T>) => JSX.Element) {
+export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => JSX.Element) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let isShallow = useContext(ShallowRenderContext);
@@ -926,7 +926,7 @@ export function createLeafComponent<T extends object, P extends object, E extend
     }
 
     return useSSRCollectionNode(type, props, ref, 'children' in props ? props.children : null, null, node => (
-      <CollectionRendererContext.Provider value={defaultCollectionRenderer}>
+      <CollectionRendererContext.Provider value={useDefaultCollectionRenderer}>
         <Component node={node} />
       </CollectionRendererContext.Provider>
     ));
@@ -948,7 +948,7 @@ export function createBranchComponent<T extends object, P extends {children?: an
 }
 
 export type CollectionRenderer = <T extends object>(collection: ICollection<Node<T>>, parent?: Node<T>) => ReactNode;
-const defaultCollectionRenderer: CollectionRenderer = (collection, parent) => {
+const useDefaultCollectionRenderer: CollectionRenderer = (collection, parent) => {
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
     children(child) {
@@ -957,4 +957,4 @@ const defaultCollectionRenderer: CollectionRenderer = (collection, parent) => {
   });
 };
 
-export const CollectionRendererContext = createContext<CollectionRenderer>(defaultCollectionRenderer);
+export const CollectionRendererContext = createContext<CollectionRenderer>(useDefaultCollectionRenderer);

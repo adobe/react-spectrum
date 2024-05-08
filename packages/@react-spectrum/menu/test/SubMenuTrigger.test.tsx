@@ -828,7 +828,7 @@ describe('Submenu', function () {
       let submenu1 = menus[0];
       let submenu1Items = within(submenu1).getAllByRole('menuitem');
       expect(document.activeElement).toBe(submenu1Items[0]);
-      expect(submenu1).toHaveAttribute('aria-label', submenuTrigger1.textContent);
+      expect(submenu1).toHaveAttribute('aria-labelledby', submenuTrigger1.id);
       let trayDialog = within(tray).getByRole('dialog');
       expect(trayDialog).toBeTruthy();
       let backButton = within(trayDialog).getByRole('button');
@@ -852,7 +852,7 @@ describe('Submenu', function () {
       let submenu2 = menus[0];
       let submenu2Items = within(submenu2).getAllByRole('menuitem');
       expect(document.activeElement).toBe(submenu2Items[0]);
-      expect(submenu2).toHaveAttribute('aria-label', submenuTrigger2.textContent);
+      expect(submenu2).toHaveAttribute('aria-labelledby', submenuTrigger2.id);
       trayDialog = within(tray).getByRole('dialog');
       backButton = within(trayDialog).getByRole('button');
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger2.textContent}`);
