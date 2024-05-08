@@ -310,7 +310,7 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
 /**
  * A ListBoxItem represents an individual option in a ListBox.
  */
-export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', <T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;

@@ -102,12 +102,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let children = renderer(state.collection, item);
 
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
   let popoverContext = useSlottedContext(PopoverContext)!;
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
     delay: props.delay
@@ -116,7 +116,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   return (
     <Provider
       values={[
-        [MenuItemContext, {...submenuTriggerProps, ref: itemRef}],
+        [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
         [MenuContext, submenuProps],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
@@ -283,7 +283,7 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent('item', <T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
@@ -292,10 +292,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', <T extends obj
 
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    isDisabled: states.isDisabled,
-    onHoverStart: item.props.onHoverStart,
-    onHoverChange: item.props.onHoverChange,
-    onHoverEnd: item.props.onHoverEnd
+    isDisabled: states.isDisabled
   });
   let renderProps = useRenderProps({
     ...props,

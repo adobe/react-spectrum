@@ -11,12 +11,12 @@
  */
 
 import {ContextValue, useContextProps} from './utils';
-import {createShallowComponent} from './Collection';
+import {createLeafComponent} from './Collection';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
-export const Header = /*#__PURE__*/ createShallowComponent('header', (props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) => {
+export const Header = /*#__PURE__*/ createLeafComponent('header', function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);
   return (
     <header className="react-aria-Header" {...props} ref={ref}>

@@ -912,40 +912,49 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
   return <>{useCollectionChildren(props)}</>;
 }
 
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => JSX.Element) {
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: Node<T>) => JSX.Element) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
-  return (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
-    return useSSRCollectionNode(type, props, ref, 'children' in props ? props.children : null, null, node => <Component node={node} />) ?? <></>;
+  let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
+    let isShallow = useContext(ShallowRenderContext);
+    if (!isShallow) {
+      if (render.length >= 3) {
+        throw new Error(render.name + ' cannot be rendered outside a collection.');
+      }
+      return render(props, ref);
+    }
+
+    return useSSRCollectionNode(type, props, ref, 'children' in props ? props.children : null, null, node => (
+      <CollectionRendererContext.Provider value={defaultCollectionRenderer}>
+        <Component node={node} />
+      </CollectionRendererContext.Provider>
+    ));
   });
+  // @ts-ignore
+  Result.displayName = render.name;
+  return Result;
 }
 
 export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => JSX.Element, useChildren: (props: P) => ReactNode = useCollectionChildren) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
-  return (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
+  let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);
     return useSSRCollectionNode(type, props, ref, null, children, node => <Component node={node} />) ?? <></>;
   });
-}
-
-export function createShallowComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => JSX.Element) {
-  let Component = ({node}) => render(node.props, node.props.ref);
-  return (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
-    let isShallow = useContext(ShallowRenderContext);
-    if (isShallow) {
-      return useSSRCollectionNode(type, props, ref, null, null, node => <Component node={node} />) ?? <></>;
-    }
-
-    return render(props, ref);
-  });
+  // @ts-ignore
+  Result.displayName = render.name;
+  return Result;
 }
 
 export type CollectionRenderer = <T extends object>(collection: ICollection<Node<T>>, parent?: Node<T>) => ReactNode;
-
-export const CollectionRendererContext = createContext<CollectionRenderer>((collection, parent) => {
+const defaultCollectionRenderer: CollectionRenderer = (collection, parent) => {
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
     children(child) {
       return child.render!(child);
     }
   });
-});
+};
+
+export const CollectionRendererContext = createContext<CollectionRenderer>(defaultCollectionRenderer);

@@ -375,7 +375,6 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   });
 
   let isListDraggable = !!(hasDragHooks && !dragState?.isDisabled);
-  let isListDroppable = !!(hasDropHooks && !dropState?.isDisabled);
 
   let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
   let ctx = useMemo(() => ({
@@ -842,7 +841,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let bodyRows = renderer(collection, collection.body);
 
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
-  let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
+  let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
   let renderValues = {
@@ -884,7 +883,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
 
 export interface RowRenderProps extends ItemRenderProps {}
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the row. */
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
@@ -896,7 +895,14 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   /** Values that should invalidate the cell cache when using dynamic collections. */
   dependencies?: any[],
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the row is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the row. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**
@@ -918,7 +924,10 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     );
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction
+      isDisabled: !states.allowsSelection && !states.hasAction,
+      onHoverStart: props.onHoverStart,
+      onHoverChange: props.onHoverChange,
+      onHoverEnd: props.onHoverEnd
     });
   
     let {checkboxProps} = useTableSelectionCheckbox(

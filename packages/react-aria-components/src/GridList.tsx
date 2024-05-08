@@ -233,7 +233,7 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
 /**
  * A GridListItem represents an individual item in a GridList.
  */
-export const GridListItem = /*#__PURE__*/ createLeafComponent('item', <T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);

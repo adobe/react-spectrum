@@ -62,7 +62,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, node, delay = 200} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
