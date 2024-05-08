@@ -20,7 +20,7 @@ import {
   within
 } from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
-import {composeStories} from '@storybook/testing-react';
+import {composeStories} from '@storybook/react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
