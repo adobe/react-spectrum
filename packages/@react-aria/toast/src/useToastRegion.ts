@@ -75,7 +75,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       let prevToast;
       while (i <= removedToast) {
         if (!removedToasts[i].isRemoved) {
-          prevToast = i;
+          prevToast = Math.max(0, i - 1);
         }
         i++;
       }
