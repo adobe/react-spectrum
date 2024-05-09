@@ -35,6 +35,7 @@ import {Checkbox} from './Checkbox';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, useContext} from 'react';
+import {ProgressCircle} from './ProgressCircle';
 
 // TODO: things that are in the design for s2
 // Curved corners for table
@@ -62,7 +63,7 @@ const table = style<TableRenderProps>({
   minWidth: 0,
   borderSpacing: 0,
   fontFamily: 'sans'
-}, getAllowedOverrides());
+}, getAllowedOverrides({height: true}));
 
 // TODO will need spectrum props that get propagated down like isQuiet, maybe just grab from spectrum props? For now just add these
 // TODO: prop descriptions
@@ -70,7 +71,8 @@ interface TableStyleProps {
   isQuiet?: boolean,
   density?: 'compact' | 'spacious' | 'regular',
   overflowMode?: 'wrap' | 'truncate',
-  selectionStyle?: 'checkbox' | 'highlight'
+  selectionStyle?: 'checkbox' | 'highlight',
+  isLoading?: boolean
 }
 
 export interface TableProps extends Omit<RACTableProps, 'style'>, StyleProps, TableStyleProps {
@@ -87,11 +89,12 @@ export function Table(props: TableProps) {
     overflowMode = 'truncate',
     selectionStyle = 'checkbox',
     styles,
+    isLoading,
     ...otherProps
   } = props;
 
   return (
-    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle}}>
+    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading}}>
       <AriaTable
         style={UNSAFE_style}
         className={renderProps => (UNSAFE_className || '') + table({
@@ -103,9 +106,10 @@ export function Table(props: TableProps) {
   );
 }
 
+
 // TODO: will need focus styles for when it is focused due to empty state
 // styles for root drop target
-const tablebody = style<TableBodyRenderProps & TableStyleProps>({
+const tableBody = style<TableBodyRenderProps & TableStyleProps>({
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent'
@@ -126,20 +130,50 @@ const tablebody = style<TableBodyRenderProps & TableStyleProps>({
   }
 });
 
+// TODO: I can apply a fixed height/width to simulate the desired padding around the element but ideally the table
+// would have a set width/height
+const centeredWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: 'full'
+});
 
 // TODO: get rid of depenedencies from the props?
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style'> {}
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
+  let {items, renderEmptyState} = props;
   let tableVisualOptions = useContext(InternalTableContext);
+  let emptyRender;
+
+  if (items && [...items].length === 0 && tableVisualOptions.isLoading) {
+    emptyRender = () => (
+      <div className={centeredWrapper}>
+        <ProgressCircle
+          isIndeterminate
+          // TODO: needs intl translation
+          aria-label="loading" />
+      </div>
+    );
+  } else if (renderEmptyState != null) {
+    emptyRender = (props: TableBodyRenderProps) => (
+      <div className={centeredWrapper}>
+        {/* @ts-ignore TODO figure out why it is complaining tahat this is possibly undefined */}
+        {renderEmptyState(props)}
+      </div>
+    );
+  }
 
   return (
     <AriaTableBody
-      className={renderProps => tablebody({
+      className={renderProps => tableBody({
         ...renderProps,
         ...tableVisualOptions
       })}
-      {...props} />
+      {...props}
+      renderEmptyState={emptyRender} />
   );
 }
 

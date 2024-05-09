@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Column, Row, Table, TableHeader, Cell, TableBody} from '../src/Table';
 import {Content, Heading, IllustratedMessage, Illustration, Link} from '../src';
 import type {Meta} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -111,7 +112,7 @@ function renderEmptyState() {
 }
 
 const EmptyStateTable = (args: any) => (
-  <Table aria-label="Empty state" {...args}>
+  <Table aria-label="Empty state" {...args} styles={style({height: '[400px]', width: '[400px]'})}>
     <TableHeader columns={columns}>
       {(column) => (
         <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
@@ -177,7 +178,6 @@ export const LoadingStateWithItems = {
 };
 
 // TODO: stories to add
-// loading state
 // show divider
 // sorting
 // DnD
