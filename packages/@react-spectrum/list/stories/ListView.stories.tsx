@@ -517,3 +517,23 @@ function Demo(props) {
     </ListView>
   );
 }
+
+const manyItems = [];
+for (let i = 0; i < 100; i++) {manyItems.push({key: i, name: `item ${i}`});}
+
+export const DisplayNone: ListViewStory = {
+  render: (args) => (
+    <div style={{display: 'none'}}>
+      <ListView aria-label="Dynamic items" items={manyItems} width="300px" height="200px" {...args}>
+        {(item: any) => (
+          <Item key={item.key} textValue={item.name}>
+            <Text>
+              {item.name}
+            </Text>
+          </Item>
+          )}
+      </ListView>
+    </div>
+  ),
+  name: 'display: none with many items'
+};
