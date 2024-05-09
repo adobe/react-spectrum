@@ -1,5 +1,5 @@
 import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
+import {BaseCollection, CollectionChildren, CollectionContext, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
@@ -523,9 +523,6 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(state.collection, item);
-
   return (
     <tr {...rowProps} ref={ref}>
       <Provider
@@ -536,7 +533,7 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
             }
           }]
         ]}>
-        {children}
+        <CollectionChildren collection={state.collection} parent={item} />
       </Provider>
     </tr>
   );
@@ -837,8 +834,6 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
 export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
   let state = useContext(TableStateContext)!;
   let collection = state.collection;
-  let renderer = useContext(CollectionRendererContext);
-  let bodyRows = renderer(collection, collection.body);
 
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
@@ -875,7 +870,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       ref={ref}
       data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
-      {bodyRows}
+      <CollectionChildren collection={collection} parent={collection.body} />
       {emptyState}
     </tbody>
   );
@@ -976,10 +971,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         isDropTarget: dropIndicator?.isDropTarget
       }
     });
-  
-    let renderer = useContext(CollectionRendererContext);
-    let cells = renderer(state.collection, item);
-  
+    
     return (
       <>
         {dragAndDropHooks?.useDropIndicator &&
@@ -1025,7 +1017,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                 }
               }]
             ]}>
-            {cells}
+            <CollectionChildren collection={state.collection} parent={item} />
           </Provider>
         </tr>
         {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&

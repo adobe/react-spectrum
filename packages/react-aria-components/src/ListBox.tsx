@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {CollectionDocumentContext, CollectionPortal, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
+import {CollectionChildren, CollectionDocumentContext, CollectionPortal, CollectionProps, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
@@ -151,9 +151,6 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
     keyboardDelegate
   }, state, listBoxRef);
 
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(collection);
-
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
@@ -253,7 +250,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {render: ListBoxSection}]
           ]}>
-          {children}
+          <CollectionChildren collection={collection} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -262,16 +259,13 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
   );
 }
 
-function ListBoxSection<T>(section: Node<T>, props: SectionProps<T>, ref: ForwardedRef<HTMLElement>) {
+function ListBoxSection<T extends object>(section: Node<T>, props: SectionProps<T>, ref: ForwardedRef<HTMLElement>) {
   let state = useContext(ListStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
     heading,
     'aria-label': props['aria-label'] ?? undefined
   });
-
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(state.collection, section);
 
   return (
     <section
@@ -281,7 +275,7 @@ function ListBoxSection<T>(section: Node<T>, props: SectionProps<T>, ref: Forwar
       style={props?.style}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
-        {children}
+        <CollectionChildren collection={state.collection} parent={section} />
       </HeaderContext.Provider>
     </section>
   );

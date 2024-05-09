@@ -13,7 +13,7 @@ import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicat
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, useCollection} from './Collection';
+import {CollectionChildren, CollectionProps, createLeafComponent, ItemRenderProps, useCollection} from './Collection';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -88,9 +88,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   });
 
   let {gridProps} = useGridList(props, state, ref);
-
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(collection);
 
   let selectionManager = state.selectionManager;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -196,7 +193,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
-          {children}
+          <CollectionChildren collection={collection} />
         </Provider>
         {emptyState}
         {dragPreview}

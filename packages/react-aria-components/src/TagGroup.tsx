@@ -12,7 +12,7 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, useCollectionDocument, useCollectionPortal} from './Collection';
+import {CollectionChildren, CollectionDocumentContext, CollectionProps, createLeafComponent, ItemRenderProps, useCollectionDocument, useCollectionPortal} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
@@ -133,9 +133,6 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
   delete gridProps.items;
   delete gridProps.renderEmptyState;
 
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(state.collection);
-
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
     isEmpty: state.collection.size === 0,
@@ -158,7 +155,9 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState(renderValues) : children}
+      {state.collection.size === 0 && props.renderEmptyState 
+        ? props.renderEmptyState(renderValues) 
+        : <CollectionChildren collection={state.collection} />}
     </div>
   );
 }

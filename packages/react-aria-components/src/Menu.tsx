@@ -12,7 +12,7 @@
 
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {BaseCollection, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
+import {BaseCollection, CollectionChildren, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -98,9 +98,6 @@ const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElemen
  */
 export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigger', (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let state = useContext(MenuStateContext)!;
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(state.collection, item);
-
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
@@ -128,7 +125,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           ...popoverProps
         }]
       ]}>
-      {children}
+      <CollectionChildren collection={state.collection} parent={item} />
       {props.children[1]}
     </Provider>
   );
@@ -165,9 +162,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {menuProps} = useMenu(props, state, ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContext = useContext(PopoverContext)!;
-
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(collection);
 
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
   useInteractOutside({
@@ -209,7 +203,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null]
           ]}>
-          {children}
+          <CollectionChildren collection={collection} />
         </Provider>
       </div>
       <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
@@ -223,16 +217,13 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
-function MenuSection<T>(section: Node<T>, props: SectionProps<T>, ref: ForwardedRef<HTMLElement>) {
+function MenuSection<T extends object>(section: Node<T>, props: SectionProps<T>, ref: ForwardedRef<HTMLElement>) {
   let state = useContext(MenuStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
     'aria-label': section['aria-label'] ?? undefined
   });
-
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(state.collection, section);
 
   return (
     <section
@@ -242,7 +233,7 @@ function MenuSection<T>(section: Node<T>, props: SectionProps<T>, ref: Forwarded
       style={section.props?.style}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
-        {children}
+        <CollectionChildren collection={state.collection} parent={section} />
       </HeaderContext.Provider>
     </section>
   );

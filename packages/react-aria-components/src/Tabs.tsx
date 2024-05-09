@@ -13,7 +13,7 @@
 import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, Node, TabListState, useTabListState} from 'react-stately';
-import {CollectionDocumentContext, CollectionPortal, CollectionProps, CollectionRendererContext, createLeafComponent, useCollectionDocument} from './Collection';
+import {CollectionChildren, CollectionDocumentContext, CollectionPortal, CollectionProps, createLeafComponent, useCollectionDocument} from './Collection';
 import {ContextValue, createHideableComponent, forwardRefType, Hidden, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, RefObject, useContext, useMemo} from 'react';
@@ -230,9 +230,6 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
-  let renderer = useContext(CollectionRendererContext);
-  let children = renderer(state.collection);
-
   return (
     <div
       {...DOMProps}
@@ -240,7 +237,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
       ref={objectRef}
       {...renderProps}
       data-orientation={orientation || undefined}>
-      {children}
+      <CollectionChildren collection={state.collection} />
     </div>
   );
 }

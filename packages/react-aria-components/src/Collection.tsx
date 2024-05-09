@@ -958,3 +958,13 @@ const useDefaultCollectionRenderer: CollectionRenderer = (collection, parent) =>
 };
 
 export const CollectionRendererContext = createContext<CollectionRenderer>(useDefaultCollectionRenderer);
+
+export interface CollectionChildrenProps {
+  collection: ICollection<Node<object>>,
+  parent?: Node<object>
+}
+
+export function CollectionChildren(props: CollectionChildrenProps) {
+  let renderer = useContext(CollectionRendererContext);
+  return renderer(props.collection, props.parent);
+}
