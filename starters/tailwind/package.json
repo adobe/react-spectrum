@@ -26,12 +26,13 @@
   "dependencies": {
     "lucide-react": "^0.292.0",
     "postcss": "^8.4.31",
-    "react-aria-components": "^1.0.0-rc.0",
+    "react-aria-components": "latest",
     "tailwind-variants": "^0.1.18",
     "tailwindcss": "^3.4.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "resolutions": {
+    "@types/mime": "3.0.4",
     "jackspeak": "2.1.1"
   }
 }

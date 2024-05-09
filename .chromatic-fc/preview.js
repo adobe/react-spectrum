@@ -12,10 +12,11 @@ configureActions({
 
 export const parameters = {
   options: {
-    storySort: (a, b) =>
-      a[1].kind === b[1].kind
+    storySort: (a, b) => {
+      return a.title === b.title
         ? 0
-        : a[1].id.localeCompare(b[1].id, undefined, {numeric: true})
+        : a.id.localeCompare(b.id, undefined, { numeric: true });
+    }
   },
   a11y: {},
   layout: 'fullscreen',

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, waitFor} from '@react-spectrum/test-utils';
+import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useFocus} from '../';
 

@@ -20,23 +20,23 @@
   display: flex;
   pointer-events: none;
   outline: none;
+  margin-block-end: 8px;
 
   .spectrum-Toast {
-    position: absolute;
-    margin: 16px;
+    margin: 8px;
     pointer-events: all;
   }
 
   &[data-position=top] {
     top: 0;
-    flex-direction: column;
+    flex-direction: column-reverse;
     --slide-from: translateY(-100%);
     --slide-to: translateY(0);
   }
 
   &[data-position=bottom] {
     bottom: 0;
-    flex-direction: column-reverse;
+    flex-direction: column;
     --slide-from: translateY(100%);
     --slide-to: translateY(0);
   }

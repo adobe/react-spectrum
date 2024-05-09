@@ -348,9 +348,24 @@ describe('CalendarDate conversion', function () {
         expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(2020, 9, 2));
       });
 
+      it('persian to gregorian for months greater than 6', function () {
+        let date = new CalendarDate(new PersianCalendar(), 1403, 12, 1);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(2025, 2, 19));
+      });
+
       it('gregorian to persian', function () {
         let date = new CalendarDate(2020, 9, 2);
         expect(toCalendar(date, new PersianCalendar())).toEqual(new CalendarDate(new PersianCalendar(), 1399, 6, 12));
+      });
+
+      it('gregorian to persian for months lower than 6', function () {
+        let date = new CalendarDate(2025, 3, 21);
+        expect(toCalendar(date, new PersianCalendar())).toEqual(new CalendarDate(new PersianCalendar(), 1404, 1, 1));
+      });
+
+      it('persian to gregorian in leap years', function () {
+        let date = new CalendarDate(new PersianCalendar(), 1403, 12, 30);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(2025, 3, 20));
       });
     });
 

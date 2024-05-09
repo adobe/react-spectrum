@@ -22,7 +22,9 @@ export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledK
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a breadcrumb is clicked. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /** Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render. */
+  autoFocusCurrent?: boolean
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
@@ -80,14 +82,15 @@ export interface BreadcrumbProps extends StyleProps {
 /**
  * A Breadcrumb represents an individual item in a `<Breadcrumbs>` list.
  */
-export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', (props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) => {
+export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let isCurrent = node.nextKey == null;
-  let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;
+  let {isDisabled, onAction, autoFocusCurrent} = useSlottedContext(BreadcrumbsContext)!;
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent,
-    onPress: () => onAction?.(node.key)
+    onPress: () => onAction?.(node.key),
+    autoFocus: isCurrent && autoFocusCurrent
   };
 
   return (

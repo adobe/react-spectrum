@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {FieldError, Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -110,6 +110,30 @@ describe('TextField', () => {
       expect(input).not.toHaveClass('focus');
     });
 
+    it('should support read-only state', async () => {
+      let {getByRole, rerender} = render(
+        <TestTextField input={component} />
+      );
+
+      let input = getByRole('textbox');
+
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-readonly');
+      rerender(<TestTextField input={component} isReadOnly />);
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-readonly');
+    });
+
+    it('should support required state', async () => {
+      let {getByRole, rerender} = render(
+        <TestTextField input={component} />
+      );
+
+      let input = getByRole('textbox');
+
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-required');
+      rerender(<TestTextField input={component} isRequired />);
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-required');
+    });
+
     it('should render data- attributes only on the outer element', () => {
       let {getAllByTestId} = render(<TestTextField input={component} />);
       let outerEl = getAllByTestId('text-field-test');
@@ -152,6 +176,24 @@ describe('TextField', () => {
       expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-invalid');
     });
 
+    it('should not render the field error div if no error is provided and isInvalid is true', async () => {
+      let Component = component;
+      let {getByRole} = render(
+        <form data-testid="form">
+          <TextField isRequired isInvalid>
+            <Label>Test</Label>
+            <Component />
+            <FieldError />
+          </TextField>
+        </form>
+      );
+
+      let input = getByRole('textbox');
+      expect(input).toHaveAttribute('aria-invalid');
+      expect(input).toHaveAttribute('data-invalid');
+      expect(input).not.toHaveAttribute('aria-describedby');
+    });
+
     it('supports customizing validation errors', async () => {
       let Component = component;
       let {getByRole, getByTestId} = render(
@@ -183,6 +225,18 @@ describe('TextField', () => {
 
       await user.tab();
       expect(input).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should render the id attribute only on the input element', async () => {
+      let {getAllByTestId, getByRole} = render(
+        <TestTextField id="name" input={component} />
+      );
+      let outerEl = getAllByTestId('text-field-test');
+      let input = getByRole('textbox');
+
+      expect(outerEl).toHaveLength(1);
+      expect(outerEl[0]).not.toHaveAttribute('id');
+      expect(input).toHaveAttribute('id', 'name');
     });
   });
 });

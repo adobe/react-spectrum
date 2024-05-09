@@ -17,23 +17,23 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTrigge
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {HeaderContext} from './Header';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
-import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
-  children?: ReactNode
+  children: ReactNode
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
@@ -102,12 +102,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let children = renderer(state.collection, item);
 
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
   let popoverContext = useSlottedContext(PopoverContext)!;
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
     delay: props.delay
@@ -116,7 +116,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   return (
     <Provider
       values={[
-        [MenuItemContext, {...submenuTriggerProps, ref: itemRef}],
+        [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
         [MenuContext, submenuProps],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
@@ -177,8 +177,18 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         rootMenuTriggerState.close();
       }
     },
-    isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
+    isDisabled: isSubmenu || rootMenuTriggerState?.expandedKeysStack.length === 0
   });
+
+  let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
+  let [leftOffset, setLeftOffset] = useState({left: 0});
+  useEffect(() => {
+    if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
+      prevPopoverContainer.current = popoverContainer;
+      let {left} = popoverContainer.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
+  }, [leftOffset, popoverContainer]);
 
   return (
     <FocusScope>
@@ -202,7 +212,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           {children}
         </Provider>
       </div>
-      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0}} />
+      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
     </FocusScope>
   );
 }
@@ -253,7 +263,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -261,7 +271,11 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string,
   /** An accessibility label for this item. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the item is selected. */
+  onAction?: () => void
 }
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
@@ -269,7 +283,7 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
 /**
  * A MenuItem represents an individual action in a Menu.
  */
-export const MenuItem = /*#__PURE__*/ createLeafComponent('item', <T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuItem<T extends object>(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
@@ -277,7 +291,9 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', <T extends obj
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({...props, id, key: item.key}, state, ref);
 
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: states.isDisabled
+  });
   let renderProps = useRenderProps({
     ...props,
     id: undefined,

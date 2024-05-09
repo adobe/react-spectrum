@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
@@ -130,6 +130,18 @@ describe('useComboBox', function () {
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(toggleSpy).toHaveBeenCalledTimes(2);
     expect(toggleSpy).toHaveBeenLastCalledWith(null, 'manual');
+  });
+
+  it('should call onBlur when no button provided and you leave the field', function () {
+    let onBlurMock = jest.fn();
+    let initialProps = {...props, buttonRef: {current: null}, onBlur: onBlurMock};
+    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps});
+    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps});
+    let {inputProps} = result.current;
+
+    inputProps.onBlur(event({relatedTarget: null}));
+
+    expect(onBlurMock).toHaveBeenCalledTimes(1);
   });
 
   it.each`

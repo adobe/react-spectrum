@@ -20,6 +20,7 @@ export {useCollator} from './useCollator';
 export {useFilter} from './useFilter';
 
 export type {FormatMessage} from './useMessageFormatter';
+export type {LocalizedStringFormatter} from '@internationalized/string';
 export type {I18nProviderProps} from './context';
 export type {Locale} from './useDefaultLocale';
 export type {LocalizedStrings} from '@internationalized/message';

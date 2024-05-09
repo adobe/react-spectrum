@@ -15,7 +15,7 @@ import {ButtonContext} from './Button';
 import {CollectionDocumentContext, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, useCollectionDocument, useCollectionPortal} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
@@ -177,14 +177,16 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
   allowsRemoving: boolean
 }
 
-export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
+export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, HoverEvents {
   /** A unique id for the tag. */
   id?: Key,
   /**
    * A string representation of the tags's contents, used for accessibility.
    * Required if children is not a plain text string.
    */
-  textValue?: string
+  textValue?: string,
+  /** Whether the tag is disabled. */
+  isDisabled?: boolean
 }
 
 /**
@@ -197,7 +199,10 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection
+    isDisabled: !states.allowsSelection,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
   let renderProps = useRenderProps({
