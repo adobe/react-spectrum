@@ -15,6 +15,8 @@ import {Column, Row, Table, TableHeader, Cell, TableBody} from '../src/Table';
 import {Content, Heading, IllustratedMessage, Illustration, Link} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useState} from 'react';
+import {SortDescriptor} from 'react-aria-components';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -92,7 +94,6 @@ const DynamicTable = (args: any) => (
   </Table>
 );
 
-
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -123,6 +124,60 @@ const EmptyStateTable = (args: any) => (
     </TableBody>
   </Table>
 );
+
+
+let sortcolumns = [
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Height', id: 'height'},
+  {name: 'Weight', id: 'weight'}
+];
+
+let sortitems = [
+  {id: 1, name: 'A', height: '1', weight: '3'},
+  {id: 2, name: 'B', height: '2', weight: '1'},
+  {id: 3, name: 'C', height: '3', weight: '4'},
+  {id: 4, name: 'D', height: '4', weight: '2'}
+];
+
+const SortableTable = (args: any) => {
+  let [items, setItems] = useState(sortitems);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      // @ts-ignore todo double check later
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
+  return (
+    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange}>
+      <TableHeader columns={sortcolumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader} allowsSorting>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={sortcolumns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
 
 export const Example = {
   render: StaticTable,
@@ -176,6 +231,12 @@ export const LoadingStateWithItems = {
   },
   name: 'loading state, has items'
 };
+
+export const Sorting = {
+  render: SortableTable,
+  name: 'sortable'
+};
+
 
 // TODO: stories to add
 // show divider

@@ -36,6 +36,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, useContext} from 'react';
 import {ProgressCircle} from './ProgressCircle';
+// import {} from '../ui-icons/Arro'
 
 // TODO: things that are in the design for s2
 // Curved corners for table
@@ -67,6 +68,7 @@ const table = style<TableRenderProps>({
 
 // TODO will need spectrum props that get propagated down like isQuiet, maybe just grab from spectrum props? For now just add these
 // TODO: prop descriptions
+// TODO: rename this since it isn't just style props now
 interface TableStyleProps {
   isQuiet?: boolean,
   density?: 'compact' | 'spacious' | 'regular',
@@ -78,7 +80,8 @@ interface TableStyleProps {
 export interface TableProps extends Omit<RACTableProps, 'style'>, StyleProps, TableStyleProps {
 }
 
-let InternalTableContext = createContext<TableStyleProps>({});
+// TODO: figure out type for this
+let InternalTableContext = createContext<TableProps>({});
 
 export function Table(props: TableProps) {
   let {
@@ -90,17 +93,19 @@ export function Table(props: TableProps) {
     selectionStyle = 'checkbox',
     styles,
     isLoading,
+    sortDescriptor,
     ...otherProps
   } = props;
 
   return (
-    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading}}>
+    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading, sortDescriptor}}>
       <AriaTable
         style={UNSAFE_style}
         className={renderProps => (UNSAFE_className || '') + table({
           ...renderProps
         }, styles)}
         selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+        sortDescriptor={sortDescriptor}
         {...otherProps} />
     </InternalTableContext.Provider>
   );
@@ -213,18 +218,31 @@ const columnStyles = style({
   color: 'gray-800',
   outlineStyle: 'none',
   position: 'relative',
-  fontSize: 'control'
+  fontSize: 'control',
+  cursor: {
+    allowsSorting: 'pointer'
+  }
+});
+
+const sort = style({
+  visibility: {
+    default: 'hidden',
+    isVisible: 'visible'
+  }
 });
 
 export function Column(props: ColumnProps) {
+  let {sortDescriptor} = useContext(InternalTableContext);
+
   return (
-    <AriaColumn {...props} className={columnStyles}>
+    <AriaColumn {...props} className={renderProps => columnStyles(renderProps)}>
       {({allowsSorting, sortDirection, isFocusVisible}) => (
         <>
           <CellFocusRing isFocusVisible={isFocusVisible} />
           {props.children}
           {allowsSorting && (
-            <span aria-hidden="true" className="sort-indicator">
+            <span aria-hidden="true" className={sort({isVisible: props.id === sortDescriptor?.column})}>
+              {/* TODO: figure out where to source the icons */}
               {sortDirection === 'ascending' ? '▲' : '▼'}
             </span>
           )}
