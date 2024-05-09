@@ -37,12 +37,10 @@ import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' wit
 import {createContext, useContext} from 'react';
 
 // TODO: things that are in the design for s2
-// Density: spacious/compact/regular (for rows and columns)
 // Curved corners for table
 // Blue line at edge for row focus?
 // All kinds of row content: avatars, links, statuslight, Date, etc
 // empty state
-// Quiet vs standard (quiet not curved)
 // column dividers
 // summary row
 
@@ -145,7 +143,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   );
 }
 
-// TODO: what should the focus ring for the column look like? flush with the top row's outline? Right now it overlaps the body's border. I think I'll add some padding to the bottom to account for this
+// TODO: what should the focus ring for the column look like? flush with the top row's outline? Right now it overlaps the body's border.
 // Additionally, the cell specific styles in the design show that the focus ring sits on top of the 1px gray row bottom border (same with the blue left hand indicator)
 // but the table playground design example shows that the blue selection box takes over .5px of that border?
 // TODO: The border radius on this focus ring doesn't match with the 7px border radius of the table body, meaning it won't be flush when the user is keyboard focused on
@@ -295,7 +293,6 @@ const row = style<RowRenderProps & TableStyleProps>({
     }
   }
   // outlineStyle: 'none'
-  // TODO Disabled styles
 
   // TODO: This is an alternative to having the tablebody + cells render an outline
   //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
@@ -390,8 +387,7 @@ const cell = style<CellRenderProps & TableStyleProps>({
   borderStyle: 'solid',
   color: 'gray-800',
   outlineStyle: 'none'
-  // TODO the focus ring isn't rounded because applying a border radius will break the gray bottom border provided by the cell
-  // Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
+  // TODO Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
 });
 
 export function Cell(props: CellProps) {
@@ -421,8 +417,6 @@ const checkboxCellStyle = style({
 });
 
 function CheckboxCell(props: CellProps) {
-  // TODO: will need to handle disabling this
-  // let tableVisualOptions = useContext(InternalTableContext);
   return (
     <AriaCell
       className={checkboxCellStyle}
