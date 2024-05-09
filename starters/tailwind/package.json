@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@babel/preset-react": "^7.24.3",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",
