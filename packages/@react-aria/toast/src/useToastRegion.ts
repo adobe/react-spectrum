@@ -65,15 +65,15 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         i,
         isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
       }));
-    // should be able to do removedToasts.length - findIndex to get the same value
-    let removedToast = removedToasts.findIndex(t => t.i === focusedToast.current);
+
+    let removedToastIndex = removedToasts.findIndex(t => t.i === focusedToast.current);
 
     // If the focused toast was removed, focus the next or previous toast.
-    if (removedToast > -1) {
+    if (removedToastIndex > -1) {
       let i = 0;
       let nextToast;
       let prevToast;
-      while (i <= removedToast) {
+      while (i <= removedToastIndex) {
         if (!removedToasts[i].isRemoved) {
           prevToast = Math.max(0, i - 1);
         }
@@ -85,6 +85,11 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
           break;
         }
         i++;
+      }
+
+      // in the case where it's one toast at a time, both will be undefined, but we know the index must be 0
+      if (prevToast === undefined && nextToast === undefined) {
+        prevToast = 0;
       }
 
       if (prevToast >= 0 && prevToast < toasts.current.length) {
@@ -109,9 +114,22 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     }
   });
 
-  // When the region unmounts, restore focus to the last element that had focus
-  // before the user moved focus into the region. FocusScope restore focus doesn't
-  // update whenever the focus moves in, it only happens once, so we correct it.
+  // When the number of visible toasts becomes 0 or the region unmounts,
+  // restore focus to the last element that had focus before the user moved focus
+  // into the region. FocusScope restore focus doesn't update whenever the focus
+  // moves in, it only happens once, so we correct it.
+  // Because we're in a hook, we can't control if the user unmounts or not.
+  useEffect(() => {
+    if (state.visibleToasts.length === 0 && lastFocused.current && document.body.contains(lastFocused.current)) {
+      if (getInteractionModality() === 'pointer') {
+        focusWithoutScrolling(lastFocused.current);
+      } else {
+        lastFocused.current.focus();
+      }
+      lastFocused.current = null;
+    }
+  }, [ref, state.visibleToasts.length]);
+
   useEffect(() => {
     return () => {
       if (lastFocused.current && document.body.contains(lastFocused.current)) {
@@ -120,6 +138,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         } else {
           lastFocused.current.focus();
         }
+        lastFocused.current = null;
       }
     };
   }, [ref]);

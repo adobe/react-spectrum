@@ -257,12 +257,11 @@ describe('Toast Provider and Container', function () {
 
     let toast = getByRole('alertdialog');
     let closeButton = within(toast).getByRole('button');
-    act(() => closeButton.focus());
 
     await user.click(closeButton);
     fireAnimationEnd(toast);
     expect(queryByRole('alertdialog')).toBeNull();
-    expect(document.activeElement).toBe(button);
+    expect(button).toHaveFocus();
   });
 
   it('should move focus to remaining toast when a toast exits and there are more', async () => {
