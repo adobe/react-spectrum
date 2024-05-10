@@ -288,6 +288,29 @@ describe('Toast Provider and Container', function () {
     expect(document.activeElement).toBe(button);
   });
 
+  it('should move focus from the last toast to remaining toast when a the last toast is closed', async () => {
+    let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let button = getByRole('button');
+
+    await user.click(button);
+    await user.click(button);
+
+    let toast = getAllByRole('alertdialog')[1];
+    let closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toast);
+
+    toast = getByRole('alertdialog');
+    expect(document.activeElement).toBe(toast);
+
+    closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toast);
+
+    expect(queryByRole('alertdialog')).toBeNull();
+    expect(document.activeElement).toBe(button);
+  });
+
   it('should support programmatically closing toasts', async () => {
     function ToastToggle() {
       let [close, setClose] = useState(null);
