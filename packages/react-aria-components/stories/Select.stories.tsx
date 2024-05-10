@@ -11,7 +11,7 @@
  */
 
 import {
-  Button, DEFAULT_SLOT,
+  Button,
   Label,
   ListBox,
   OverlayArrow,

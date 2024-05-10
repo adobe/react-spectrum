@@ -204,7 +204,9 @@ export interface SelectValueRenderProps<T> {
   /** The object value of the currently selected item. */
   selectedItem: T | null,
   /** The textValue of the currently selected item. */
-  selectedText: string | null
+  selectedText: string | null,
+  /** The rendered value of the currently selected item. */
+  selectedChildren: ReactNode
 }
 
 export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
