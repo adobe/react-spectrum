@@ -519,12 +519,18 @@ function Demo(props) {
 }
 
 const manyItems = [];
-for (let i = 0; i < 100; i++) {manyItems.push({key: i, name: `item ${i}`});}
+for (let i = 0; i < 500; i++) {manyItems.push({key: i, name: `item ${i}`});}
 
-export const DisplayNone: ListViewStory = {
-  render: (args) => (
-    <div style={{display: 'none'}}>
-      <ListView aria-label="Dynamic items" items={manyItems} width="300px" height="200px" {...args}>
+function DisplayNoneComponent(args) {
+  const [isDisplay, setIsDisplay] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => setIsDisplay(true), 10000);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  return (
+    <div style={!isDisplay ? {display: 'none'} : null}>
+      <ListView aria-label="Many items" items={manyItems} width="300px" height="200px" {...args}>
         {(item: any) => (
           <Item key={item.key} textValue={item.name}>
             <Text>
@@ -534,6 +540,10 @@ export const DisplayNone: ListViewStory = {
           )}
       </ListView>
     </div>
-  ),
+  );
+}
+
+export const DisplayNone: ListViewStory = {
+  render: (args) => <DisplayNoneComponent {...args} />,
   name: 'display: none with many items'
 };

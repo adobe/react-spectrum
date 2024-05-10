@@ -205,8 +205,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
       let layoutNode = this.buildChild(node, 0, y);
       y = layoutNode.layoutInfo.rect.maxY;
-      this.validRect.height && nodes.push(layoutNode);
-
+      nodes.push(layoutNode);
       if (node.type === 'item' && y > this.validRect.maxY) {
         y += (this.collection.size - (nodes.length + skipped)) * rowHeight;
         break;
@@ -383,6 +382,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   }
 
   updateItemSize(key: Key, size: Size) {
+    if (size.height === 0) {return false;}
     let layoutInfo = this.layoutInfos.get(key);
     // If no layoutInfo, item has been deleted/removed.
     if (!layoutInfo) {
