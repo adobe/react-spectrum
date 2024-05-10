@@ -191,7 +191,6 @@ const cellFocus = style({
   bottom: 0,
   right: 0,
   left: 0,
-  zIndex: 1,
   outlineStyle: {
     default: 'none',
     isFocusVisible: 'solid'
@@ -283,7 +282,9 @@ export function TableHeader<T extends object>(
         <AriaColumn className={selectAllCheckboxColumn}>
           {({isFocusVisible}) => (
             <>
-              <CellFocusRing isFocusVisible={isFocusVisible} />
+              {selectionMode === 'single' &&
+                <CellFocusRing isFocusVisible={isFocusVisible} />
+              }
               {selectionMode === 'multiple' &&
                 <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
               }
