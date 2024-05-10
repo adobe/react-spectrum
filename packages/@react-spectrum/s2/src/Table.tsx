@@ -11,14 +11,12 @@
  */
 
 import {
-  Column as AriaColumn,
-  Row as AriaRow,
-  Table as AriaTable,
-  TableHeader as AriaTableHeader,
   Button,
   Cell as AriaCell,
   Collection,
-  ColumnProps,
+  Column as AriaColumn,
+  ColumnProps as RACColumnProps,
+  Row as AriaRow,
   RowProps,
   TableHeaderProps,
   TableProps as RACTableProps,
@@ -230,6 +228,12 @@ const sort = style({
     isVisible: 'visible'
   }
 });
+
+export interface ColumnProps extends RACColumnProps {
+  // TODO: I can't get this information from the cell, may need modifications to RAC Table to propagate the Column's props to
+  // the cells related to it?
+  showDivider?: boolean
+}
 
 export function Column(props: ColumnProps) {
   let {sortDescriptor} = useContext(InternalTableContext);
