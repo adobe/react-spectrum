@@ -126,6 +126,10 @@ html {
   justify-self: end;
 }
 
+.select .selected-description {
+  display: none;
+}
+
 .popover[data-trigger=SubmenuTrigger][data-placement="right"] {
   margin-left: -8px;
 }

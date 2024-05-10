@@ -10,7 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, ListBox, OverlayArrow, Popover, Select, SelectValue} from 'react-aria-components';
+import {
+  Button, DEFAULT_SLOT,
+  Label,
+  ListBox,
+  OverlayArrow,
+  Popover,
+  Provider,
+  Select,
+  SelectValue,
+  Text, TextContext
+} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -77,6 +87,43 @@ export const SelectManyItems = () => (
       </OverlayArrow>
       <ListBox items={manyItems} className={styles.menu}>
         {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+      </ListBox>
+    </Popover>
+  </Select>
+);
+
+export const SelectComplexItemsExample = () => (
+  <Select className={styles.select} data-testid="select-example" id="select-example-id">
+    <Label style={{display: 'block'}}>Test</Label>
+    <Button>
+      <SelectValue>
+        {(value) => {
+          return value.isPlaceholder ? 'Select an option...' : (
+            <Provider
+              values={[
+                [TextContext, {
+                  slots: {
+                    label: {className: styles['selected-title']},
+                    description: {className: styles['selected-description']}
+                  }
+                }]
+              ]}>
+              {value.selectedChildren}
+            </Provider>
+          );
+        }}
+      </SelectValue>
+      <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+    </Button>
+    <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
+      <ListBox className={styles.menu}>
+        <MyListBoxItem textValue="Foo by Dre"><Text slot="label">Foo</Text><Text slot="description">by Dre</Text></MyListBoxItem>
+        <MyListBoxItem textValue="Bar by Tiffany's"><Text slot="label">Bar</Text><Text slot="description">by Tiffany's</Text></MyListBoxItem>
+        <MyListBoxItem textValue="Baz by Mark Jacob"><Text slot="label">Baz</Text><Text slot="description">by Mark Jacob</Text></MyListBoxItem>
+        <MyListBoxItem textValue="Google by don't be evil" href="http://google.com"><Text slot="label">Google</Text><Text slot="description">by don't be evil</Text></MyListBoxItem>
       </ListBox>
     </Popover>
   </Select>

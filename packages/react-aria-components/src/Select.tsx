@@ -243,7 +243,8 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     values: {
       selectedItem: state.selectedItem?.value as T ?? null,
       selectedText: state.selectedItem?.textValue ?? null,
-      isPlaceholder: !selectedItem
+      isPlaceholder: !selectedItem,
+      selectedChildren: rendered
     }
   });
 
