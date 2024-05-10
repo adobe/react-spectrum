@@ -15,13 +15,13 @@ export interface ColorPickerState {
 
 export function useColorPickerState(props: ColorPickerProps): ColorPickerState {
   let value = useColor(props.value);
-  let defaultValue = useColor(props.defaultValue || '#0000')!;
+  let defaultValue = useColor(props.defaultValue || '#000000')!;
   let [color, setColor] = useControlledState(value || undefined, defaultValue, props.onChange);
   
   return {
     color,
     setColor(color) {
-      setColor(color || parseColor('#0000'));
+      setColor(color || parseColor('#000000'));
     }
   };
 }
