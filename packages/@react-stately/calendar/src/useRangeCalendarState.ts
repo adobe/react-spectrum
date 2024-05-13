@@ -42,7 +42,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
  */
 export function useRangeCalendarState<T extends DateValue = DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
-  let [value, setValue] = useControlledState<RangeValue<T>>(
+  let [value, setValue] = useControlledState<RangeValue<T> | null, RangeValue<T>>(
     valueProp!,
     defaultValue || null!,
     onChange
@@ -193,7 +193,7 @@ function makeRange(start: DateValue, end: DateValue): RangeValue<CalendarDate>|n
   return {start: toCalendarDate(start), end: toCalendarDate(end)};
 }
 
-function convertValue(newValue: CalendarDate, oldValue: DateValue): DateValue {
+function convertValue(newValue: CalendarDate, oldValue?: DateValue): DateValue {
   // The display calendar should not have any effect on the emitted value.
   // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
   newValue = toCalendar(newValue, oldValue?.calendar || new GregorianCalendar());
