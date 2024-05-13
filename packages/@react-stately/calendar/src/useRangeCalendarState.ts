@@ -60,7 +60,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   }
 
   // Available range must be stored in a ref so we have access to the updated version immediately in `isInvalid`.
-  let availableRangeRef = useRef<Partial<RangeValue<DateValue>>|null>(null);
+  let availableRangeRef = useRef<Partial<RangeValue<DateValue>> | null>(null);
   let [availableRange, setAvailableRange] = useState<Partial<RangeValue<DateValue>>|null>(null);
   let min = useMemo(() => maxDate(minValue, availableRange?.start), [minValue, availableRange]);
   let max = useMemo(() => minDate(maxValue, availableRange?.end), [maxValue, availableRange]);
@@ -98,7 +98,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     setLastVisibleRange(calendar.visibleRange);
   }
 
-  let setAnchorDate = (date: CalendarDate|null) => {
+  let setAnchorDate = (date: CalendarDate | null) => {
     if (date) {
       setAnchorDateState(date);
       updateAvailableRange(date);
@@ -181,7 +181,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   };
 }
 
-function makeRange(start: DateValue, end: DateValue): RangeValue<CalendarDate>|null {
+function makeRange(start: DateValue, end: DateValue): RangeValue<CalendarDate> | null {
   if (!start || !end) {
     return null;
   }
@@ -206,7 +206,7 @@ function convertValue(newValue: CalendarDate, oldValue?: DateValue): DateValue {
   return newValue;
 }
 
-function nextUnavailableDate(anchorDate: CalendarDate, state: CalendarState, dir: number) {
+function nextUnavailableDate(anchorDate: CalendarDate, state: CalendarState, dir: number): CalendarDate | undefined {
   let nextDate = anchorDate.add({days: dir});
   while (
     (dir < 0 ? nextDate.compare(state.visibleRange.start) >= 0 : nextDate.compare(state.visibleRange.end) <= 0) &&
