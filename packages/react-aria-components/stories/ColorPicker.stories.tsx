@@ -24,8 +24,16 @@ export default {
   title: 'React Aria Components'
 };
 
+type AllColorSpaces = ColorSpace | 'hex';
+
 export const ColorPickerExample = (args) => {
-  let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
+  let [format, setFormat] = useState<AllColorSpaces>('hex');
+  let resolvedFormat: ColorSpace;
+  if (format === 'hex') {
+    resolvedFormat = 'rgb';
+  } else {
+    resolvedFormat = format;
+  }
   return (
     <ColorPicker {...args} defaultValue="rgb(255, 0, 0)">
       <ColorPickerTrigger>
@@ -42,14 +50,14 @@ export const ColorPickerExample = (args) => {
           </select>
         </label>
         <div style={{display: 'flex', gap: 4, width: 192}}>
-          {format === 'hex' 
+          {format === 'hex'
             ? (
               <ColorField style={{display: 'flex', flexDirection: 'column'}}>
                 <Label>Hex</Label>
                 <Input />
               </ColorField>
             ) : getColorChannels(format).map(channel => (
-              <ColorField key={channel} colorSpace={format === 'hex' ? 'rgb' : format} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+              <ColorField key={channel} colorSpace={resolvedFormat} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
                 <Label />
                 <Input style={{width: '100%', boxSizing: 'border-box'}} />
               </ColorField>
