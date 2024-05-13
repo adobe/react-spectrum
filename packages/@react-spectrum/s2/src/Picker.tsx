@@ -5,23 +5,49 @@ import {
   ListBox,
   ListBoxProps,
   ListBoxItem,
+  Section as AriaSection,
   ListBoxItemProps,
-  Popover,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
-  SelectValue
+  SelectValue,
+  PopoverProps as AriaPopoverProps,
+  Provider,
+  SectionProps
 } from 'react-aria-components';
 import ChevronIcon from '../ui-icons/Chevron';
 import {StyleProps, centerPadding, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {
+  FieldErrorIcon,
   FieldLabel,
   HelpText
 } from './Field';
+import {SpectrumLabelableProps, HelpTextProps, FocusableRef} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
-import React, {useContext, useRef} from 'react';
-import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
+import React, {ReactNode, createContext, forwardRef, useContext, useRef} from 'react';
+import {Popover} from './Popover';
+import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
+import CheckmarkIcon from '../ui-icons/Checkmark';
+import {
+  checkmark,
+  menu,
+  menuitem,
+  description,
+  icon,
+  label,
+  section,
+  sectionHeader,
+  sectionHeading,
+  Divider,
+  iconCenterWrapper
+} from './Menu';
+import {IconContext} from './Icon';
+import {centerBaseline} from './CenterBaseline';
+import {forwardRefType} from './types';
+import {useFocusableRef} from '@react-spectrum/utils';
+import {Placement} from 'react-aria';
+
 
 export interface PickerStyleProps {
   /**
@@ -34,26 +60,33 @@ export interface PickerStyleProps {
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>, PickerStyleProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps, Pick<ListBoxProps<T>, 'items'> {
-  children: React.ReactNode | ((item: T) => React.ReactNode)
+export interface PickerProps<T extends object> extends
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
+  PickerStyleProps,
+  StyleProps,
+  Omit<SpectrumLabelableProps, 'contextualHelp'>,
+  HelpTextProps,
+  Pick<ListBoxProps<T>, 'items'>,
+  Pick<AriaPopoverProps, 'shouldFlip'> {
+    /** The contents of the collection. */
+    children: ReactNode | ((item: T) => ReactNode),
+    /**
+     * Direction the menu will render relative to the Picker.
+     *
+     * @default "bottom"
+     */
+    direction?: 'bottom' | 'top',
+    /**
+     * Alignment of the menu relative to the input target.
+     *
+     * @default "start"
+     */
+    align?: 'start' | 'end',
+    /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+    menuWidth?: number
 }
 
-interface PickerSelectProps extends PickerStyleProps, AriaSelectRenderProps {}
-
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
-
-const selectWrapper = style<PickerSelectProps & SpectrumLabelableProps & {isInForm?: boolean}>({
-  ...field(),
-  width: {
-    default: 208,
-    size: {
-      S: 176,
-      L: 224,
-      XL: 240
-    },
-    isQuiet: 'fit'
-  }
-}, getAllowedOverrides());
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
@@ -62,6 +95,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isFocusVisible: 'solid',
     isQuiet: 'none'
   },
+  position: 'relative',
   gridArea: 'input',
   fontFamily: 'sans',
   fontSize: 'control',
@@ -92,6 +126,15 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
+  },
+  width: {
+    default: 208,
+    size: {
+      S: 176,
+      L: 224,
+      XL: 240
+    },
+    isQuiet: 'fit'
   }
 });
 
@@ -108,12 +151,27 @@ const quietFocusLine = style({
   }
 });
 
+const invalidBorder = style<ButtonRenderProps>({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0,
+  pointerEvents: 'none',
+  borderRadius: 'control',
+  borderStyle: 'solid',
+  borderWidth: 2,
+  borderColor: 'negative',
+  transition: 'default'
+});
+
 const valueStyles = style({
   flexGrow: 1,
   truncate: true
 });
 
 const iconStyles = style({
+  flexShrink: 0,
   rotate: 90,
   '--iconPrimary': {
     type: 'fill',
@@ -121,17 +179,22 @@ const iconStyles = style({
   }
 });
 
-export function Picker<T extends object>(props: PickerProps<T>) {
-  let ref = useRef(null);
+let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
+
+function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
+    direction = 'bottom',
+    align = 'start',
+    shouldFlip = true,
+    menuWidth,
     label,
-    description,
+    description: descriptionMessage,
     errorMessage,
     children,
     items,
-    isInvalid,
     isQuiet,
     size = 'M',
     labelPosition = 'top',
@@ -139,64 +202,174 @@ export function Picker<T extends object>(props: PickerProps<T>) {
     necessityIndicator,
     UNSAFE_className = '',
     UNSAFE_style,
+    placeholder = 'Select an option...',
     ...pickerProps
   } = props;
+
+  // Better way to encode this into a style? need to account for flipping
+  let menuOffset: number;
+  if (size === 'S') {
+    menuOffset = 6;
+  } else if (size === 'M') {
+    menuOffset = 6;
+  } else if (size === 'L') {
+    menuOffset = 7;
+  } else {
+    menuOffset = 8;
+  }
 
   return (
     <AriaSelect
       {...pickerProps}
+      placeholder={placeholder}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + selectWrapper({
-        ...renderProps,
+      className={UNSAFE_className + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
-        isQuiet: isQuiet,
         labelPosition,
-        size: size
+        size
       }, props.styles)}>
-      {({isDisabled, isFocusVisible}) => (
+      {({isDisabled, isFocusVisible, isOpen, isInvalid, isRequired}) => (
         <>
-          <FieldLabel
-            isDisabled={isDisabled}
-            isRequired={props.isRequired}
-            size={size}
-            labelPosition={labelPosition}
-            labelAlign={labelAlign}
-            necessityIndicator={necessityIndicator}>
-            {label}
-          </FieldLabel>
-          <Button
-            ref={ref}
-            style={pressScale(ref)}
-            className={renderProps => inputButton({
-              ...renderProps,
-              isQuiet: isQuiet,
-              size: size
-            })}>
-            <SelectValue
-              className={valueStyles} />
-            <ChevronIcon
+          <InternalPickerContext.Provider value={{size}}>
+            <FieldLabel
+              isDisabled={isDisabled}
+              isRequired={isRequired}
               size={size}
-              className={iconStyles} />
-            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-          </Button>
-          <HelpText
-            size={size}
-            isDisabled={isDisabled}
-            isInvalid={isInvalid}
-            description={description}>
-            {errorMessage}
-          </HelpText>
-          <Popover>
-            <ListBox items={items}>
-              {children}
-            </ListBox>
-          </Popover>
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}>
+              {label}
+            </FieldLabel>
+            <Button
+              ref={domRef}
+              style={renderProps => pressScale(domRef)(renderProps)}
+              className={renderProps => inputButton({
+                ...renderProps,
+                isQuiet: isQuiet,
+                size: size,
+                isOpen
+              })}>
+              {renderProps => (<>
+                <SelectValue className={valueStyles} />
+                {isInvalid && (
+                  <FieldErrorIcon isDisabled={isDisabled} />
+                )}
+                <ChevronIcon
+                  size={size}
+                  className={iconStyles} />
+                {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+                {isInvalid && !isDisabled &&
+                  <div className={invalidBorder({...renderProps, isHovered: renderProps.isHovered || isOpen})} />
+                }
+              </>)}
+            </Button>
+            <HelpText
+              size={size}
+              isDisabled={isDisabled}
+              isInvalid={isInvalid}
+              description={descriptionMessage}>
+              {errorMessage}
+            </HelpText>
+            <Popover
+              hideArrow
+              offset={menuOffset}
+              placement={`${direction} ${align}` as Placement}
+              shouldFlip={shouldFlip}
+              UNSAFE_style={{
+                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+              }}
+              styles={style({
+                marginStart: {
+                  isQuiet: -12
+                },
+                minWidth: {
+                  default: '[var(--trigger-width)]',
+                  isQuiet: 192
+                },
+                width: '[var(--trigger-width)]'
+              })(props)}>
+              <Provider
+                values={[
+                  [HeaderContext, {className: sectionHeader({size})}],
+                  [HeadingContext, {className: sectionHeading}],
+                  [TextContext, {
+                    slots: {
+                      'description': {className: description({size})}
+                    }
+                  }]
+                ]}>
+                <ListBox
+                  items={items}
+                  className={menu({size})}>
+                  {children}
+                </ListBox>
+              </Provider>
+            </Popover>
+          </InternalPickerContext.Provider>
         </>
       )}
     </AriaSelect>
   );
 }
 
-export function PickerItem(props: ListBoxItemProps) {
-  return <ListBoxItem {...props} />;
+/**
+ * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
+export {_Picker as Picker};
+
+interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+  children: ReactNode
+}
+
+export function PickerItem(props: PickerItemProps) {
+  let ref = useRef(null);
+  let isLink = props.href != null;
+  let {size} = useContext(InternalPickerContext);
+  return (
+    <ListBoxItem
+      {...props}
+      ref={ref}
+      textValue={props.textValue || (typeof props.children === 'string' ? props.children as string : undefined)}
+      style={pressScale(ref, props.UNSAFE_style)}
+      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, size, isLink}, props.styles)}>
+      {(renderProps) => {
+        let {children} = props;
+        return (
+          <>
+            <Provider
+              values={[
+                [IconContext, {
+                  slots: {
+                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
+                  }
+                }],
+                [TextContext, {
+                  slots: {
+                    label: {className: label},
+                    description: {className: description({size})}
+                  }
+                }]
+              ]}>
+              {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+            </Provider>
+          </>
+        );
+      }}
+    </ListBoxItem>
+  );
+}
+
+export function PickerSection<T extends object>(props: SectionProps<T>) {
+  return (
+    <>
+      <AriaSection
+        {...props}
+        className={section}>
+        {props.children}
+      </AriaSection>
+      <Divider />
+    </>
+  );
 }

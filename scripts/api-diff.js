@@ -77,6 +77,7 @@ for (let name in v3API.exports) {
         v3Rendered = '🔴 `' + v3Rendered + '`';
         rainbowRendered = '🟢 `' + rainbowRendered + '`';
       } else {
+        // eslint-disable-next-line max-depth
         if (skipSame) {
           continue;
         }
@@ -94,7 +95,7 @@ for (let name in v3API.exports) {
       v3Rendered = '`' + v3Rendered + '`';
       rainbowRendered = '`' + rainbowRendered + '`';
     }
-    
+
     res += `| ${prop} | ${rainbowRendered || '–'} | ${v3Rendered || '–'} | |\n`;
   }
 

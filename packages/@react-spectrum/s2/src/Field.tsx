@@ -167,9 +167,10 @@ const fieldGroupStyles = style({
   }
 });
 
-export function FieldGroup(props: FieldGroupProps) {
+function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Group
+      ref={ref}
       {...props}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
@@ -192,6 +193,9 @@ export function FieldGroup(props: FieldGroupProps) {
   );
 }
 
+let _FieldGroup = forwardRef(FieldGroup);
+export {_FieldGroup as FieldGroup};
+
 export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
 
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
@@ -208,9 +212,11 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         fontFamily: '[inherit]',
         fontSize: '[inherit]',
         flexGrow: 1,
+        flexShrink: 1,
         minWidth: 0,
         outlineStyle: 'none',
-        borderStyle: 'none'
+        borderStyle: 'none',
+        truncate: true
       }), styles)} />
   );
 }
@@ -295,7 +301,10 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}) {
               flexShrink: 0,
               '--iconPrimary': {
                 type: 'fill',
-                value: 'negative'
+                value: {
+                  default: 'negative',
+                  forcedColors: 'ButtonText'
+                }
               }
             })}),
           styles: style({

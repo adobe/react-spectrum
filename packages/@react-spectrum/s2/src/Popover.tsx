@@ -7,13 +7,16 @@ import {
 } from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {StyleProps, getAllowedOverrides, colorScheme} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {MutableRefObject, forwardRef, useCallback, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {ColorSchemeContext} from './Provider';
+import {StyleString} from '../style/types' with {type: 'macro'};
+import {mergeStyles} from '../style/runtime';
 
-export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | 'className' | 'style'>, StyleProps {
+export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition'> {
+  styles?: StyleString,
   /**
    * Whether a popover's arrow should be hidden.
    *
@@ -209,7 +212,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       {...props}
       ref={popoverRef}
       style={UNSAFE_style}
-      className={(renderProps) => UNSAFE_className + popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme}, styles)}>
+      className={(renderProps) => UNSAFE_className + mergeStyles(popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme}), styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (

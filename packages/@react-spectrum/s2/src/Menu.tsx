@@ -7,7 +7,6 @@ import {
   MenuTriggerProps as AriaMenuTriggerProps,
   Separator,
   Provider,
-  composeRenderProps,
   Section as AriaSection,
   SectionProps,
   SubmenuTrigger as AriaSubmenuTrigger,
@@ -68,15 +67,15 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-let menu = style({
+export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
   gridTemplateColumns: {
     size: {
-      S: [edgeToText(24), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(48)]
+      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
+      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
+      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
+      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
     }
   },
   boxSizing: 'border-box',
@@ -88,7 +87,7 @@ let menu = style({
   fontSize: 'control'
 });
 
-let section = style({
+export let section = style({
   gridColumnStart: 1,
   gridColumnEnd: -1,
   alignItems: 'center',
@@ -100,7 +99,7 @@ let section = style({
   gridTemplateColumns: 'subgrid'
 });
 
-let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
+export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   color: 'gray-800',
   gridColumnStart: 2,
   gridColumnEnd: -2,
@@ -109,12 +108,12 @@ let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   paddingY: centerPadding()
 });
 
-let sectionHeading = style({
+export let sectionHeading = style({
   fontWeight: 'bold',
   margin: 0
 });
 
-let menuitem = style({
+export let menuitem = style({
   ...focusRing(),
   boxSizing: 'border-box',
   borderRadius: 'control',
@@ -167,7 +166,7 @@ let menuitem = style({
   transition: 'default'
 }, getAllowedOverrides());
 
-let checkmark = style({
+export let checkmark = style({
   visibility: {
     default: 'hidden',
     isSelected: 'visible'
@@ -176,7 +175,10 @@ let checkmark = style({
   color: 'accent',
   '--iconPrimary': {
     type: 'fill',
-    value: 'currentColor'
+    value: {
+      default: 'currentColor',
+      forcedColors: 'Highlight'
+    }
   },
   marginEnd: 'text-to-control',
   aspectRatio: 'square'
@@ -187,7 +189,7 @@ let checkbox = style({
   marginEnd: 'text-to-control'
 });
 
-let icon = style({
+export let icon = style({
   size: fontRelative(20),
   // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
   // reminder, size of WF is applied via font size
@@ -198,7 +200,7 @@ let icon = style({
   }
 });
 
-let iconCenterWrapper = style({
+export let iconCenterWrapper = style({
   gridArea: 'icon'
 });
 
@@ -221,14 +223,14 @@ let image = style({
   objectFit: 'contain'
 });
 
-let label = style({
+export let label = style({
   gridArea: 'label',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding'
 });
 
-let description = style({
+export let description = style({
   gridArea: 'description',
   fontFamily: 'sans',
   fontSize: {
@@ -347,7 +349,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
 let _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
-function Divider(props: SeparatorProps) {
+export function Divider(props: SeparatorProps) {
   return (
     <Separator
       {...props}
@@ -403,7 +405,8 @@ export function MenuItem(props: MenuItemProps) {
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink}, props.styles)}>
-      {composeRenderProps(props.children, (children, renderProps) => {
+      {(renderProps) => {
+        let {children} = props;
         let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
         return (
           <>
@@ -437,7 +440,7 @@ export function MenuItem(props: MenuItemProps) {
             </Provider>
           </>
         );
-      })}
+      }}
     </AriaMenuItem>
   );
 }

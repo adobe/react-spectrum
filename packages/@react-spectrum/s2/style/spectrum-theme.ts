@@ -712,7 +712,7 @@ export const style = createTheme({
     mixBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity', 'plus-darker', 'plus-lighter'] as const,
     opacity: createArbitraryProperty((value: number) => ({opacity: value})),
 
-    outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double'] as const,
+    outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'inset'] as const,
     outlineOffset: borderWidth,
     outlineWidth: borderWidth,
 
