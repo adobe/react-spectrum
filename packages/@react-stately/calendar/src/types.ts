@@ -103,7 +103,7 @@ export interface CalendarState extends CalendarStateBase {
   /** The currently selected date. */
   readonly value: CalendarDate | null,
   /** Sets the currently selected date. */
-  setValue(value: CalendarDate): void
+  setValue(value: CalendarDate | null): void
 }
 
 export interface RangeCalendarState extends CalendarStateBase {

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain, getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
-import {getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
@@ -65,6 +65,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     shouldSelectOnPressUp
   } = props;
 
+  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
   let {onAction, linkBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
@@ -94,7 +95,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       onAction = () => state.toggleKey(node.key);
     }
 
-    let isExpanded = hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined;
+    let isExpanded = hasChildRows ? state.expandedKeys.has(node.key) : undefined;
     treeGridRowProps = {
       'aria-expanded': isExpanded,
       'aria-level': node.level + 1,
@@ -111,7 +112,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onAction ? () => onAction(node.key) : undefined,
+    onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
     focus,
     linkBehavior
   });
@@ -125,11 +126,11 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     walker.currentNode = document.activeElement;
 
     if ('expandedKeys' in state && document.activeElement === ref.current) {
-      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
         state.toggleKey(node.key);
         e.stopPropagation();
         return;
-      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys.has(node.key)) {
         state.toggleKey(node.key);
         e.stopPropagation();
         return;
@@ -226,10 +227,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
+  // TODO: re-add when we get translations and fix this for iOS VO
+  // let rowAnnouncement;
+  // if (onAction) {
+  //   rowAnnouncement = stringFormatter.format('hasActionAnnouncement');
+  // } else if (hasLink) {
+  //   rowAnnouncement = stringFormatter.format('hasLinkAnnouncement', {
+  //     link: node.props.href
+  //   });
+  // }
+
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
+    // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,

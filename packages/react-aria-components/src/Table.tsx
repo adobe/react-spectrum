@@ -2,7 +2,7 @@ import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/sh
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './Checkbox';
+import {CheckboxContext} from './RSPContexts';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
@@ -306,18 +306,18 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
 
   let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
-  let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
-  let dragHooksProvided = useRef(isListDraggable);
-  let dropHooksProvided = useRef(isListDroppable);
+  let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
+  let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
+  let dragHooksProvided = useRef(hasDragHooks);
+  let dropHooksProvided = useRef(hasDropHooks);
   useEffect(() => {
-    if (dragHooksProvided.current !== isListDraggable) {
+    if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-    if (dropHooksProvided.current !== isListDroppable) {
+    if (dropHooksProvided.current !== hasDropHooks) {
       console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-  }, [isListDraggable, isListDroppable]);
+  }, [hasDragHooks, hasDropHooks]);
 
   let dragState: DraggableCollectionState | undefined = undefined;
   let dropState: DroppableCollectionState | undefined = undefined;
@@ -326,7 +326,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
-  if (isListDraggable && dragAndDropHooks) {
+  if (hasDragHooks && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
@@ -340,17 +340,18 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       : null;
   }
 
-  if (isListDroppable && dragAndDropHooks) {
+  if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate(
+    let keyboardDelegate = new ListKeyboardDelegate({
       collection,
-      selectionManager.disabledBehavior === 'selection' ? new Set() : selectionManager.disabledKeys,
+      disabledKeys: selectionManager.disabledKeys,
+      disabledBehavior: selectionManager.disabledBehavior,
       ref
-    );
+    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
@@ -373,13 +374,16 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     }
   });
 
+  let isListDraggable = !!(hasDragHooks && !dragState?.isDisabled);
+  let isListDroppable = !!(hasDropHooks && !dropState?.isDisabled);
+
   let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
   let ctx = useMemo(() => ({
     selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
     selectionMode,
     disallowEmptySelection,
-    allowsDragging: isListDraggable
-  }), [selectionBehavior, selectionMode, disallowEmptySelection, isListDraggable]);
+    allowsDragging: hasDragHooks
+  }), [selectionBehavior, selectionMode, disallowEmptySelection, hasDragHooks]);
 
   let style = renderProps.style;
   let tableContainerContext = useContext(ResizableTableContainerContext);
@@ -588,7 +592,7 @@ export {_TableBody as TableBody};
 
 export interface RowRenderProps extends ItemRenderProps {}
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the row. */
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
@@ -600,7 +604,14 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   /** Values that should invalidate the cell cache when using dynamic collections. */
   dependencies?: any[],
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the row is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the row. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
@@ -1007,7 +1018,10 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: !states.allowsSelection && !states.hasAction,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
   let {checkboxProps} = useTableSelectionCheckbox(

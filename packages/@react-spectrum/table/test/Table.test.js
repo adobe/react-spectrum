@@ -11,13 +11,13 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {composeStories} from '@storybook/testing-react';
+import {composeStories} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -4824,7 +4824,7 @@ export let tableTests = () => {
                 <Column>Baz</Column>
               </TableHeader>
               <TableBody>
-                <Row href="/one">
+                <Row href="/one" routerOptions={{foo: 'bar'}}>
                   <Cell>Foo 1</Cell>
                   <Cell>Bar 1</Cell>
                   <Cell>Baz 1</Cell>
@@ -4841,7 +4841,7 @@ export let tableTests = () => {
 
         let items = getAllByRole('row').slice(1);
         await trigger(items[0]);
-        expect(navigate).toHaveBeenCalledWith('/one');
+        expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
 
         navigate.mockReset();
         let onClick = mockClickDefault();

@@ -397,3 +397,15 @@ Use the `disabledKeys` prop to specify which item keys to disable in the ListBox
   </Section>
 </ListBox>
 ```
+
+## Testing
+
+The ListBox features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
+Please see the following sections in the testing docs for more information on how to handle these behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/listbox/test/ListBox.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

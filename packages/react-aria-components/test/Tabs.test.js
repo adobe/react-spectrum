@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
@@ -180,6 +180,28 @@ describe('Tabs', () => {
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
     expect(tab).toHaveClass('disabled');
+  });
+
+  it('should support isDisabled prop on tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" isDisabled>B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
   });
 
   it('should support selected state', async () => {

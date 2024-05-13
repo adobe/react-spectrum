@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -124,6 +124,50 @@ describe('Menu', () => {
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
     expect(sectionRef.current).toBeInstanceOf(HTMLElement);
     expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
+  it('should support hover', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderMenu({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let item = getAllByRole('menuitem')[0];
+
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+
+    await user.hover(item);
+    expect(item).toHaveAttribute('data-hovered', 'true');
+    expect(item).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(item);
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not show hover state when item is not interactive', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderMenu({disabledKeys: ['cat', 'dog', 'kangaroo']}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let item = getAllByRole('menuitem')[0];
+
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
+
+    await user.hover(item);
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support slots', () => {
@@ -269,6 +313,37 @@ describe('Menu', () => {
 
     expect(menuitem).toHaveAttribute('aria-disabled', 'true');
     expect(menuitem).toHaveClass('disabled');
+  });
+
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <Menu aria-label="Test">
+        <MenuItem id="cat">Cat</MenuItem>
+        <MenuItem id="dog" isDisabled>Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+    let items = getAllByRole('menuitem');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Menu aria-label="Test">
+        <MenuItem id="cat" onAction={onAction}>Cat</MenuItem>
+        <MenuItem id="dog">Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+    let items = getAllByRole('menuitem');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
   });
 
   it('should support menu trigger', async () => {

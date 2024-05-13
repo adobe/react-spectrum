@@ -1,5 +1,6 @@
 {
   "dropzoneLabel": "Zona di rilascio",
   "selectPlaceholder": "Seleziona un elemento",
-  "tableResizer": "Ridimensionamento"
+  "tableResizer": "Ridimensionamento",
+  "colorSwatchPicker": "Color swatches"
 }

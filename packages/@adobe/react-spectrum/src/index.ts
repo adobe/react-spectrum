@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// Mark as a client only package. This will cause a build time error if you try 
+// Mark as a client only package. This will cause a build time error if you try
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
@@ -28,6 +28,8 @@ export {ContextualHelp} from '@react-spectrum/contextualhelp';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 export {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 export {Divider} from '@react-spectrum/divider';
+export {DropZone} from '@react-spectrum/dropzone';
+export {FileTrigger} from '@react-spectrum/filetrigger';
 export {Form} from '@react-spectrum/form';
 export {Icon} from '@react-spectrum/icon';
 export {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -38,7 +40,7 @@ export {LabeledValue} from '@react-spectrum/labeledvalue';
 export {Link} from '@react-spectrum/link';
 export {ListBox} from '@react-spectrum/listbox';
 export {ListView} from '@react-spectrum/list';
-export {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+export {ActionMenu, ContextualHelpTrigger, Menu, MenuTrigger, SubmenuTrigger} from '@react-spectrum/menu';
 export {Meter} from '@react-spectrum/meter';
 export {NumberField} from '@react-spectrum/numberfield';
 export {Picker} from '@react-spectrum/picker';
@@ -81,6 +83,8 @@ export type {SpectrumContextualHelpProps} from '@react-spectrum/contextualhelp';
 export type {DialogContainerValue, SpectrumAlertDialogProps, SpectrumDialogContainerProps, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-spectrum/dialog';
 export type {SpectrumDateFieldProps, SpectrumDatePickerProps, SpectrumDateRangePickerProps, SpectrumTimeFieldProps} from '@react-spectrum/datepicker';
 export type {SpectrumDividerProps} from '@react-spectrum/divider';
+export type {SpectrumDropZoneProps} from '@react-spectrum/dropzone';
+export type {FileTriggerProps} from '@react-spectrum/filetrigger';
 export type {SpectrumFormProps} from '@react-spectrum/form';
 export type {IconProps, IllustrationProps} from '@react-spectrum/icon';
 export type {SpectrumIllustratedMessageProps} from '@react-spectrum/illustratedmessage';
@@ -91,7 +95,7 @@ export type {SpectrumLabeledValueProps} from '@react-spectrum/labeledvalue';
 export type {SpectrumLinkProps} from '@react-spectrum/link';
 export type {SpectrumListBoxProps} from '@react-spectrum/listbox';
 export type {SpectrumListViewProps} from '@react-spectrum/list';
-export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps} from '@react-spectrum/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps, SpectrumSubmenuTriggerProps} from '@react-spectrum/menu';
 export type {SpectrumMeterProps} from '@react-spectrum/meter';
 export type {SpectrumNumberFieldProps} from '@react-spectrum/numberfield';
 export type {SpectrumPickerProps} from '@react-spectrum/picker';
@@ -115,4 +119,4 @@ export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
-export type {Key, Selection, ItemProps, SectionProps} from '@react-types/shared';
+export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';

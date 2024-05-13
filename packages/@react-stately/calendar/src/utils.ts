@@ -118,7 +118,7 @@ export function constrainValue(date: CalendarDate, minValue?: DateValue, maxValu
   return date;
 }
 
-export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable?: (date: CalendarDate) => boolean): CalendarDate | undefined {
+export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable?: (date: CalendarDate) => boolean): CalendarDate | null {
   if (!isDateUnavailable) {
     return date;
   }
@@ -130,4 +130,5 @@ export function previousAvailableDate(date: CalendarDate, minValue: DateValue, i
   if (date.compare(minValue) >= 0) {
     return date;
   }
+  return null;
 }

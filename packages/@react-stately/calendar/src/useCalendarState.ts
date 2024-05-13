@@ -33,10 +33,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-// how to actually solve this?
-type Something = DateValue | null
-
-export interface CalendarStateOptions<T extends Something = Something> extends CalendarProps<T> {
+export interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**
@@ -58,7 +55,7 @@ export interface CalendarStateOptions<T extends Something = Something> extends C
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export function useCalendarState<T extends Something = Something>(props: CalendarStateOptions<T>): CalendarState {
+export function useCalendarState<T extends DateValue = DateValue>(props: CalendarStateOptions<T>): CalendarState {
   let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
@@ -73,7 +70,7 @@ export function useCalendarState<T extends Something = Something>(props: Calenda
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
-  let [value, setControlledValue] = useControlledState<Something, MappedDateValue<T>>(props.value, props.defaultValue ?? null, props.onChange);
+  let [value, setControlledValue] = useControlledState<DateValue | null, MappedDateValue<T>>(props.value!, props.defaultValue ?? null!, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let timeZone = useMemo(() => value && 'timeZone' in value ? value.timeZone : resolvedOptions.timeZone, [value, resolvedOptions.timeZone]);
   let focusedCalendarDate = useMemo(() => (
@@ -138,11 +135,15 @@ export function useCalendarState<T extends Something = Something>(props: Calenda
     setFocusedDate(date);
   }
 
-  function setValue(newValue: CalendarDate) {
-    let localValue: CalendarDate | undefined = newValue;
+  function setValue(newValue: CalendarDate | null) {
     if (!props.isDisabled && !props.isReadOnly) {
-      localValue = constrainValue(newValue, minValue, maxValue);
-      localValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
+      let localValue = newValue;
+      if (localValue === null) {
+        setControlledValue(null);
+        return;
+      }
+      localValue = constrainValue(localValue, minValue, maxValue);
+      localValue = previousAvailableDate(localValue, startDate, isDateUnavailable);
       if (!localValue) {
         return;
       }

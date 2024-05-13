@@ -75,6 +75,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let {
     value,
     defaultValue,
+    colorSpace,
     xChannel,
     yChannel,
     onChange,
@@ -85,7 +86,8 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [color, setColorState] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
+  let [colorValue, setColorState] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
+  let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
   let valueRef = useRef(color);
   let setColor = (color: Color) => {
     valueRef.current = color;

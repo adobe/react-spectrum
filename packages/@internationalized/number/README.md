@@ -36,7 +36,7 @@ parser.isValidPartialNumber('10 x'); // -> false
 import {NumberParser} from '@internationalized/number';
 
 let parser = new NumberParser('en-US', {style: 'decimal'});
-parser.getNumberingSystem('١٢') // -> 'arab'
+parser.getNumberingSystem('١٢') // -> 'arabic'
 ```
 
 ## NumberFormatter

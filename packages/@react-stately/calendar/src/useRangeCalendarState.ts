@@ -48,7 +48,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     onChange
   );
 
-  let [anchorDate, setAnchorDateState] = useState<CalendarDate|null>(null);
+  let [anchorDate, setAnchorDateState] = useState<CalendarDate | null>(null);
   let alignment: 'center' | 'start' = 'center';
   if (value && value.start && value.end) {
     let start = alignCenter(toCalendarDate(value.start), visibleDuration, locale, minValue, maxValue);

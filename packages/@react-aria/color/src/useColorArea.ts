@@ -25,8 +25,6 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 export interface ColorAreaAria {
   /** Props for the color area container element. */
   colorAreaProps: DOMAttributes,
-  /** Props for the color area gradient foreground element. */
-  gradientProps: DOMAttributes,
   /** Props for the thumb element. */
   thumbProps: DOMAttributes,
   /** Props for the visually hidden horizontal range input element. */
@@ -79,6 +77,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   });
 
   let [valueChangedViaKeyboard, setValueChangedViaKeyboard] = useState(false);
+  let [valueChangedViaInputChangeEvent, setValueChangedViaInputChangeEvent] = useState(false);
   let {xChannel, yChannel, zChannel} = state.channels;
   let xChannelStep = state.xChannelStep;
   let yChannelStep = state.yChannelStep;
@@ -183,6 +182,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     onFocusWithinChange: (focusWithin:boolean) => {
       if (!focusWithin) {
         setValueChangedViaKeyboard(false);
+        setValueChangedViaInputChangeEvent(false);
       }
     }
   });
@@ -336,19 +336,32 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   });
 
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const {target} = e;
+    setValueChangedViaInputChangeEvent(true);
+    if (target === inputXRef.current) {
+      state.setXValue(parseFloat(target.value));
+    } else if (target === inputYRef.current) {
+      state.setYValue(parseFloat(target.value));
+    }
+  };
+
   let isMobile = isIOS() || isAndroid();
 
-  function getAriaValueTextForChannel(channel:ColorChannel) {
-    return (
-      valueChangedViaKeyboard ?
-      stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+  let value = state.getDisplayColor();
+  const getAriaValueTextForChannel = useCallback((channel:ColorChannel) => {
+    const isAfterInput = valueChangedViaInputChangeEvent || valueChangedViaKeyboard;
+    return `${
+      isAfterInput ?
+      stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel, locale), value: value.formatChannelValue(channel, locale)})
       :
       [
-        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}),
-        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: state.value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)})
+        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel, locale), value: value.formatChannelValue(channel, locale)}),
+        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)}),
+        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(zChannel, locale), value: value.formatChannelValue(zChannel, locale)})
       ].join(', ')
-    );
-  }
+    }, ${value.getColorName(locale)}`;
+  }, [locale, value, stringFormatter, valueChangedViaInputChangeEvent, valueChangedViaKeyboard, xChannel, yChannel, zChannel]);
 
   let colorPickerLabel = stringFormatter.format('colorPicker');
 
@@ -381,14 +394,13 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let {
     colorAreaStyleProps,
-    gradientStyleProps,
     thumbStyleProps
   } = useColorAreaGradient({
     direction,
     state,
     xChannel,
-    zChannel,
-    isDisabled: props.isDisabled
+    yChannel,
+    zChannel
   });
 
   return {
@@ -397,10 +409,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       ...colorAreaInteractions,
       ...colorAreaStyleProps,
       role: 'group'
-    },
-    gradientProps: {
-      ...gradientStyleProps,
-      role: 'presentation'
     },
     thumbProps: {
       ...thumbInteractions,
@@ -417,6 +425,9 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': getAriaValueTextForChannel(xChannel),
+      'aria-orientation': 'horizontal',
+      'aria-describedby': props['aria-describedby'],
+      'aria-details': props['aria-details'],
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
       name: xName,
@@ -427,9 +438,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
       */
       'aria-hidden': (isMobile || !focusedInput || focusedInput === 'x' || valueChangedViaKeyboard ? undefined : 'true'),
-      onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setXValue(parseFloat(e.target.value));
-      }
+      onChange
     },
     yInputProps: {
       ...yInputLabellingProps,
@@ -442,6 +451,8 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': getAriaValueTextForChannel(yChannel),
       'aria-orientation': 'vertical',
+      'aria-describedby': props['aria-describedby'],
+      'aria-details': props['aria-details'],
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
       name: yName,
@@ -452,9 +463,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
       */
       'aria-hidden': (isMobile || focusedInput === 'y' || valueChangedViaKeyboard ? undefined : 'true'),
-      onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setYValue(parseFloat(e.target.value));
-      }
+      onChange
     }
   };
 }
