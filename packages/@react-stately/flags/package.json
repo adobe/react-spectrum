@@ -21,9 +21,6 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "dependencies": {
-    "@swc/helpers": "^0.4.14"
-  },
   "publishConfig": {
     "access": "public"
   }
