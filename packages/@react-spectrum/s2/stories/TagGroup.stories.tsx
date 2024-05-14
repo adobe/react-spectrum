@@ -1,4 +1,4 @@
-import {Tag, TagGroup, Text, Link} from '../src';
+import {Tag, TagGroup, Text, Link, Avatar, Image} from '../src';
 import {action} from '@storybook/addon-actions';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import type {Meta} from '@storybook/react';
@@ -37,13 +37,21 @@ export let Example = {
         <Tag>Mint</Tag>
         <Tag>Strawberry</Tag>
         <Tag>Vanilla</Tag>
+        <Tag>
+          A very long long long long long long tag that hopefully goes on for a long long time
+        </Tag>
       </TagGroup>
     );
   },
   args: {
-    label: 'Ice cream flavor'
+    label: 'Ice cream flavor',
+    errorMessage: 'You must love ice cream',
+    description: 'Pick a flavor'
   }
 };
+
+const SRC_URL_1 =
+  'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 
 export let Disabled = {
   render: (args: any) => {
@@ -55,8 +63,27 @@ export let Disabled = {
       <TagGroup {...args} disabledKeys={new Set(['mint', 'vanilla'])}>
         <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
         <Tag id="mint">Mint</Tag>
-        <Tag id="strawberry">Strawberry</Tag>
+        <Tag id="strawberry">
+          <Avatar alt="default adobe" src={SRC_URL_1} />
+          <Text>
+            Strawberry
+          </Text>
+        </Tag>
         <Tag id="vanilla">Vanilla</Tag>
+        <Tag id="coffee">
+          <Image
+            src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
+            alt="Shiba Inu with glasses" />
+          <Text>
+            Coffee    
+          </Text>
+        </Tag>
+        <Tag>
+          <NewIcon />
+          <Text>
+            A very long long long long long long tag that hopefully goes on for a long long time
+          </Text>
+        </Tag>
       </TagGroup>
     );
   },

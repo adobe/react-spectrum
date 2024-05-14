@@ -10,27 +10,28 @@ import {
   Provider
 } from 'react-aria-components';
 import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {FieldLabel, HelpText} from './Field';
+import {FieldLabel} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
+import {SpectrumLabelableProps, DOMRef, HelpTextProps} from '@react-types/shared';
 import {ClearButton} from './ClearButton';
 import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
-import {Text} from './Content';
+import {Text, ImageContext} from './Content';
 import {IconContext} from './Icon';
-import {centerBaseline} from './CenterBaseline';
+import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {forwardRefType} from './types';
+import {AvatarContext} from './Avatar';
+import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
 
 // Get types from RSP and extend those?
-
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
   /** The children of the tag. */
   children?: ReactNode
 }
 
-export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator' | 'contextualHelp'>, StyleProps {
+export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator' | 'contextualHelp'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
   /** A description for the tag group. */
   description?: ReactNode,
   /**
@@ -42,10 +43,35 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   /** Whether the tags are displayed in an emphasized style. */
   isEmphasized?: boolean,
   /** Provides content to display when there are no items in the tag group. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  /** Whether the tags are displayed in a error state. */
+  isInvalid?: boolean,
+  /** An error message for the field. */
+  errorMessage?: ReactNode
 }
 
 const TagGroupContext = createContext<TagGroupProps<any>>({});
+
+const helpTextStyles = style({
+  gridArea: 'helptext',
+  display: 'flex',
+  alignItems: 'baseline',
+  lineHeight: 'ui',
+  gap: 'text-to-visual',
+  fontFamily: 'sans',
+  fontSize: 'control',
+  color: {
+    default: 'neutral-subdued',
+    isInvalid: 'negative'
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  },
+  contain: 'inline-size',
+  paddingTop: '--field-gap',
+  cursor: 'text'
+});
 
 function TagGroup<T extends object>(
   {
@@ -57,6 +83,8 @@ function TagGroup<T extends object>(
     children,
     renderEmptyState,
     isEmphasized,
+    isInvalid,
+    errorMessage,
     UNSAFE_className = '',
     UNSAFE_style,
     ...props
@@ -67,6 +95,29 @@ function TagGroup<T extends object>(
   props = useFormProps(props);
   let {size = 'M'} = props;
   let domRef = useDOMRef(ref);
+
+  let helpText = undefined; 
+  if (!isInvalid && description) {
+    helpText =  (
+      <Text
+        slot="description"
+        className={helpTextStyles({size: props.size || 'M'})}>
+        {description}
+      </Text>
+    );
+  } else if (isInvalid) {
+    helpText = (
+      <div
+        className={helpTextStyles({size: props.size || 'M', isInvalid})}>
+        <CenterBaseline>
+          <AlertIcon />
+        </CenterBaseline>
+        <Text slot="errorMessage">
+          {errorMessage}
+        </Text>
+      </div>
+    );
+  }
 
   // TODO collapse behavior, need a custom collection render so we can limit the number of children
   // but this isn't possible yet
@@ -108,6 +159,7 @@ function TagGroup<T extends object>(
                   default: -4, // use negative number when theme TS is ready
                   isEmpty: 0
                 },
+                display: 'flex',
                 fontFamily: 'sans'
               })({isEmpty})}>
               {children}
@@ -115,9 +167,7 @@ function TagGroup<T extends object>(
           </Provider>
         </FormContext.Provider>
       </div>
-      <HelpText
-        size={size}
-        description={description} />
+      {helpText}
     </AriaTagGroup>
   );
 }
@@ -136,11 +186,21 @@ const tagStyles = style({
   fontSize: 'control',
   height: 'control',
   transition: 'default',
+  minWidth: 'control',
+  maxWidth: '[calc(self(height) * 7)]',
   backgroundColor: {
     default: 'gray-100',
+    isHovered: {
+      default: 'gray-200'
+    },
+    isFocusVisible: {
+      default: 'gray-200'
+    },
     isSelected: {
       default: 'neutral',
-      isEmphasized: 'accent'
+      isEmphasized: {
+        default: 'accent'
+      }
     },
     isDisabled: 'disabled',
     forcedColors: {
@@ -191,6 +251,7 @@ const tagStyles = style({
 export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   let {size = 'M', isEmphasized} = useContext(TagGroupContext);
+
   let ref = useRef(null);
   let isLink = props.href != null;
   return (
@@ -205,6 +266,7 @@ export function Tag({children, ...props}: TagProps) {
           <div
             className={style({
               display: 'flex',
+              minWidth: 0,
               alignItems: 'center',
               gap: 'text-to-visual',
               forcedColorAdjust: 'none',
@@ -212,10 +274,16 @@ export function Tag({children, ...props}: TagProps) {
             })}>
             <Provider
               values={[
-                [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+                [TextContext, {className: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', className: style({order: 0})}),
                   styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+                }],
+                [AvatarContext, {
+                  styles: style({size: fontRelative(20), flexShrink: 0, order: 0})
+                }],
+                [ImageContext, {
+                  className: style({size: fontRelative(20), flexShrink: 0, order: 0, aspectRatio: 'square', objectFit: 'contain'})
                 }]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}

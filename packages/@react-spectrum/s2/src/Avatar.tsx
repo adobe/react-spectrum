@@ -1,9 +1,10 @@
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {DOMRef, DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef} from 'react';
+import {StylesPropWithHeight, StyleProps, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {ContextValue, useContextProps} from 'react-aria-components';
 
 export interface AvatarProps extends StyleProps, DOMProps {
   /** Text description of the avatar. */
@@ -12,13 +13,26 @@ export interface AvatarProps extends StyleProps, DOMProps {
   src?: string
 }
 
+export interface AvatarContextProps extends UnsafeStyles, DOMProps {
+  /** Text description of the avatar. */
+  alt?: string,
+  /** The image URL for the avatar. */
+  src?: string,
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight
+}
+
 const imageStyles = style({
   borderRadius: 'full',
   size: 20,
   disableTapHighlight: true
 }, getAllowedOverrides({height: true}));
 
+export const AvatarContext = createContext<ContextValue<AvatarContextProps, HTMLImageElement>>({});
+
 function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, AvatarContext);
   let {
     alt = '',
     src,
@@ -26,7 +40,6 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
     UNSAFE_className = '',
     ...otherProps
   } = props;
-  let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
 
   return (
