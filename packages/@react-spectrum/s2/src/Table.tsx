@@ -27,14 +27,18 @@ import {
   CellProps,
   CellRenderProps,
   TableBodyRenderProps,
-  RowRenderProps
+  RowRenderProps,
+  Provider
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, useContext} from 'react';
 import {ProgressCircle} from './ProgressCircle';
-// import {} from '../ui-icons/Arro'
+import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
+import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
+import {IconContext} from './Icon';
+
 
 // TODO: things that are in the design for s2
 // Curved corners for table
@@ -225,7 +229,9 @@ const sort = style({
   visibility: {
     default: 'hidden',
     isVisible: 'visible'
-  }
+  },
+  verticalAlign: 'baseline',
+  paddingStart: 'text-to-visual'
 });
 
 export interface ColumnProps extends RACColumnProps {
@@ -242,12 +248,25 @@ export function Column(props: ColumnProps) {
       {({allowsSorting, sortDirection, isFocusVisible}) => (
         <>
           <CellFocusRing isFocusVisible={isFocusVisible} />
+          {/* TODO How to place the sort icon in front of the text like it shows in the designs?
+            Since we need to reserve room for the icon to prevent header shifting, placing it in front of the text will offset the text with the
+            row value  */}
           {props.children}
           {allowsSorting && (
-            <span aria-hidden="true" className={sort({isVisible: props.id === sortDescriptor?.column})}>
-              {/* TODO: figure out where to source the icons */}
-              {sortDirection === 'ascending' ? '▲' : '▼'}
-            </span>
+            <Provider
+              values={[
+                // TODO: fix vertical centering. Could center it with a margin-top if the table header was a display inline-flex instead of a table cell but that messes up the columns lining up with the row cell content
+                [IconContext, {
+                  styles: style({
+                    height: 16,
+                    width: 16
+                  })
+                }]
+              ]}>
+              <span aria-hidden="true" className={sort({isVisible: props.id === sortDescriptor?.column})}>
+                {sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />}
+              </span>
+            </Provider>
           )}
         </>
       )}
@@ -372,6 +391,14 @@ const row = style<RowRenderProps & TableStyleProps>({
 //   backgroundColor: 'focus-ring'
 // });
 
+const dragButton = style({
+  // TODO: placeholder for now until design for drag button is added, just testing isFocusVisible
+  color: {
+    isFocusVisible: '[red]'
+  }
+});
+
+// TODO: How to style the drop indicators? We can't target them without using the selectors
 export function Row<T extends object>(
   {id, columns, children, ...otherProps}: RowProps<T>
 ) {
@@ -387,11 +414,14 @@ export function Row<T extends object>(
       })}
       {...otherProps}>
       {allowsDragging && (
-        <Cell>
-          {/* TODO: will need to support renderProps function for TableRow so that I can render the span only when the row is focused and isFocusVisible */}
-          {/* <span className={rowFocus} /> */}
-          <Button slot="drag">≡</Button>
-        </Cell>
+        <DragButtonCell>
+          {({isFocusVisible}) => (
+            // {/* TODO: will need to support renderProps function for TableRow so that I can render the span only when the row is focused and isFocusVisible */}
+            // {/* <span className={rowFocus} /> */}
+            // TODO isFocusVisible doesn't work here because table cell doesn't consider the cell focused if something within it is focused
+            <Button className={dragButton({isFocusVisible})} slot="drag">≡</Button>
+          )}
+        </DragButtonCell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         <CheckboxCell>
@@ -477,6 +507,21 @@ function CheckboxCell(props: CellProps) {
   return (
     <AriaCell
       className={checkboxCellStyle}
+      {...props} />
+  );
+}
+
+// TODO: placehold styles until we confirm the design
+const dragButtonCell = style({
+  ...commonCellStyles,
+  paddingX: 4,
+  paddingY: centerPadding()
+});
+
+function DragButtonCell(props: CellProps) {
+  return (
+    <AriaCell
+      className={dragButtonCell}
       {...props} />
   );
 }

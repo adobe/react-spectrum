@@ -16,7 +16,8 @@ import {Content, Heading, IllustratedMessage, Illustration, Link} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useState} from 'react';
-import {SortDescriptor} from 'react-aria-components';
+import {SortDescriptor, useDragAndDrop} from 'react-aria-components';
+import {useListData} from '@react-stately/data';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -179,6 +180,45 @@ const SortableTable = (args: any) => {
   );
 };
 
+const ReorderableTable = (args: any) => {
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': list.getItem(key).foo
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <Table aria-label="reorderable table" {...args} dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={sortcolumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
 export const Example = {
   render: StaticTable,
   args: {
@@ -237,6 +277,10 @@ export const Sorting = {
   name: 'sortable'
 };
 
+export const ReorderDnD = {
+  render: ReorderableTable,
+  name: 'reorderable table'
+};
 
 // TODO: stories to add
 // show divider
