@@ -34,7 +34,7 @@ import {
   menuitem,
   description,
   icon,
-  label,
+  label as labelStyles,
   section,
   sectionHeader,
   sectionHeading,
@@ -46,6 +46,7 @@ import {centerBaseline} from './CenterBaseline';
 import {forwardRefType} from './types';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {Placement} from 'react-aria';
+import {raw} from '../style/style-macro' with {type: 'macro'};
 
 
 export interface PickerStyleProps {
@@ -162,7 +163,9 @@ const invalidBorder = style({
 
 const valueStyles = style({
   flexGrow: 1,
-  truncate: true
+  truncate: true,
+  display: 'flex',
+  alignItems: 'center'
 });
 
 const iconStyles = style({
@@ -242,18 +245,49 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 size: size,
                 isOpen
               })}>
-              <>
-                <SelectValue className={valueStyles} />
-                {isInvalid && (
-                  <FieldErrorIcon isDisabled={isDisabled} />
-                )}
-                <ChevronIcon
-                  size={size}
-                  className={iconStyles} />
-                {isInvalid && !isDisabled &&
-                  <div className={invalidBorder} />
-                }
-              </>
+              {(renderProps) => (
+                <>
+                  <SelectValue className={valueStyles + ' ' + raw('&> * {@layer a {display: none;}}')}>
+                    {({defaultChildren}) => {
+                      return (
+                        <Provider
+                          values={[
+                            [IconContext, {
+                              slots: {
+                                icon: {
+                                  render: centerBaseline({slot: 'icon', className: iconCenterWrapper}),
+                                  styles: icon
+                                }
+                              }
+                            }],
+                            [TextContext, {
+                              slots: {
+                                description: {},
+                                label: {className: style({
+                                  display: 'block',
+                                  flexGrow: 1,
+                                  truncate: true
+                                })}
+                              }
+                            }]
+                          ]}>
+                          {defaultChildren}
+                        </Provider>
+                      );
+                    }}
+                  </SelectValue>
+                  {isInvalid && (
+                    <FieldErrorIcon isDisabled={isDisabled} />
+                  )}
+                  <ChevronIcon
+                    size={size}
+                    className={iconStyles} />
+                  {isInvalid && !isDisabled &&
+                    // @ts-ignore known limitation detecting functions from the theme
+                    <div className={invalidBorder({...renderProps, size})} />
+                  }
+                </>
+              )}
             </Button>
             <HelpText
               size={size}
@@ -280,8 +314,14 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 values={[
                   [HeaderContext, {className: sectionHeader({size})}],
                   [HeadingContext, {className: sectionHeading}],
+                  [IconContext, {
+                    slots: {
+                      icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
+                    }
+                  }],
                   [TextContext, {
                     slots: {
+                      label: {className: labelStyles},
                       'description': {className: description({size})}
                     }
                   }]
@@ -325,23 +365,8 @@ export function PickerItem(props: PickerItemProps) {
         let {children} = props;
         return (
           <>
-            <Provider
-              values={[
-                [IconContext, {
-                  slots: {
-                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
-                  }
-                }],
-                [TextContext, {
-                  slots: {
-                    label: {className: label},
-                    description: {className: description({size})}
-                  }
-                }]
-              ]}>
-              {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
-              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-            </Provider>
+            {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+            {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
           </>
         );
       }}

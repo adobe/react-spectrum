@@ -190,6 +190,7 @@ let checkbox = style({
 });
 
 export let icon = style({
+  display: 'block',
   size: fontRelative(20),
   // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
   // reminder, size of WF is applied via font size
