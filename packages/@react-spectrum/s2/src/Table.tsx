@@ -95,19 +95,17 @@ export function Table(props: TableProps) {
     selectionStyle = 'checkbox',
     styles,
     isLoading,
-    sortDescriptor,
     ...otherProps
   } = props;
 
   return (
-    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading, sortDescriptor}}>
+    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading}}>
       <AriaTable
         style={UNSAFE_style}
         className={renderProps => (UNSAFE_className || '') + table({
           ...renderProps
         }, styles)}
         selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-        sortDescriptor={sortDescriptor}
         {...otherProps} />
     </InternalTableContext.Provider>
   );
@@ -249,7 +247,7 @@ export interface ColumnProps extends RACColumnProps {
 }
 
 export function Column(props: ColumnProps) {
-  let {sortDescriptor, isQuiet} = useContext(InternalTableContext);
+  let {isQuiet} = useContext(InternalTableContext);
 
   return (
     <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet})}>
@@ -258,7 +256,7 @@ export function Column(props: ColumnProps) {
           <CellFocusRing isFocusVisible={isFocusVisible} />
           {/* TODO How to place the sort icon in front of the text like it shows in the designs?
             Since we need to reserve room for the icon to prevent header shifting, placing it in front of the text will offset the text with the
-            row value  */}
+            row value. Additionally, if we don't reserve room for the icon, then the width of the table column changes, causing a shift in layout  */}
           {props.children}
           {allowsSorting && (
             <Provider
@@ -271,7 +269,7 @@ export function Column(props: ColumnProps) {
                   })
                 }]
               ]}>
-              <span aria-hidden="true" className={sort({isVisible: props.id === sortDescriptor?.column})}>
+              <span aria-hidden="true" className={sort({isVisible: sortDirection != null})}>
                 {sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />}
               </span>
             </Provider>
@@ -440,12 +438,9 @@ export function Row<T extends object>(
       {...otherProps}>
       {allowsDragging && (
         <DragButtonCell>
-          {({isFocusVisible}) => (
-            // {/* TODO: will need to support renderProps function for TableRow so that I can render the span only when the row is focused and isFocusVisible */}
-            // {/* <span className={rowFocus} /> */}
-            // TODO isFocusVisible doesn't work here because table cell doesn't consider the cell focused if something within it is focused
-            <Button className={dragButton({isFocusVisible})} slot="drag">≡</Button>
-          )}
+          {/* TODO: will need to support renderProps function for TableRow so that I can render the span only when the row is focused and isFocusVisible */}
+          {/* <span className={rowFocus} /> */}
+          <Button className={({isFocusVisible}) => dragButton({isFocusVisible})} slot="drag">≡</Button>
         </DragButtonCell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (

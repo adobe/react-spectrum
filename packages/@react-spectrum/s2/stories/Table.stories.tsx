@@ -205,7 +205,7 @@ const ReorderableTable = (args: any) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <TableBody items={items}>
+      <TableBody items={list.items}>
         {item => (
           <Row id={item.id} columns={columns}>
             {(column) => {
