@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Pressable} from '../';
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 describe('Pressable', function () {
-
-  it('should apply press events to child element', function () {
+  it('should apply press events to child element', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let {getByRole} = render(
       <Pressable onPress={onPress}>
@@ -25,14 +26,13 @@ describe('Pressable', function () {
     );
 
     let button = getByRole('button');
-    fireEvent.mouseDown(button);
-    fireEvent.mouseUp(button);
-    fireEvent.click(button);
+    await user.click(button);
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('should should merge with existing props, not overwrite', function () {
+  it('should should merge with existing props, not overwrite', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onClick = jest.fn();
     let {getByRole} = render(
@@ -42,9 +42,7 @@ describe('Pressable', function () {
     );
 
     let button = getByRole('button');
-    fireEvent.mouseDown(button);
-    fireEvent.mouseUp(button);
-    fireEvent.click(button);
+    await user.click(button);
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);

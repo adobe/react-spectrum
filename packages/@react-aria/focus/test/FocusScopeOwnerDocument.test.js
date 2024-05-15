@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,9 +30,11 @@ describe('FocusScope', function () {
     return null;
   };
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
+  });
 
+  beforeEach(async () => {
     // Iframe setup
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);

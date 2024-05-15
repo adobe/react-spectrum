@@ -205,7 +205,7 @@ function processJS(sourceFilename, code, usedClasses) {
       if (path.node.name.name === 'className') {
         // Remove className prop from RAC components (not DOM elements).
         // Otherwise, track used classes so we can remove unused ones from the CSS.
-        if (/^[A-Z]/.test(path.parent.name.name)) {
+        if (/^[A-Z]/.test(path.parent.name.name) && !/color-picker/.test(path.node.value?.value)) {
           path.remove();
         } else if (t.isStringLiteral(path.node.value)) {
           for (let c of path.node.value.value.split(/\s+/)) {

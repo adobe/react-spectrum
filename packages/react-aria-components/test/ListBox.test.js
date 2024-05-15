@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {
   Button, Dialog,
   DialogTrigger,
@@ -322,15 +322,24 @@ describe('ListBox', () => {
   });
 
   it('should not show hover state when item is not interactive', async () => {
-    let {getAllByRole} = renderListbox({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderListbox({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverEnd, onHoverChange});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
 
     await user.hover(option);
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {

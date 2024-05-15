@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
@@ -96,12 +96,12 @@ describe('SearchWithin', function () {
     expect(onChange).toBeCalledTimes(11);
   });
 
-  it('can open menu and get onChange', function () {
+  it('can open menu and get onChange', async function () {
     let onOpenChange = jest.fn();
     let {getByRole} = renderSearchWithin({}, {}, {onOpenChange});
 
     let picker = getByRole('button');
-    triggerPress(picker);
+    await user.click(picker);
 
     let listbox = getByRole('listbox');
     expect(listbox).toBeVisible();
@@ -109,14 +109,14 @@ describe('SearchWithin', function () {
     expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 
-  it('searchfield and picker are labelled correctly', function () {
+  it('searchfield and picker are labelled correctly', async function () {
     let {getByRole, getAllByText, getByText} = renderSearchWithin();
 
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
     let hiddenLabel = getByText('Search within');
-    triggerPress(picker);
+    await user.click(picker);
 
     let listbox = getByRole('listbox');
     let label = getAllByText('Test')[0];
@@ -151,7 +151,7 @@ describe('SearchWithin', function () {
     expect(picker).toHaveFocus();
   });
 
-  it('slot props override props provided to children', function () {
+  it('slot props override props provided to children', async function () {
     let {getByRole, getAllByText, getByText} = renderSearchWithin(
       {isDisabled: true, isRequired: false, label: 'Test1'},
       {isDisabled: false, isRequired: true, label: 'Test2', isQuiet: true},
@@ -162,7 +162,7 @@ describe('SearchWithin', function () {
     let picker = getByRole('button');
     let group = getByRole('group');
     let hiddenLabel = getByText('Search within');
-    triggerPress(picker);
+    await user.click(picker);
     let label = getAllByText('Test1')[0];
 
     expect(searchfield).toHaveAttribute('disabled');
