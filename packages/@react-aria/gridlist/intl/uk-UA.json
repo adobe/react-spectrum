@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "рядок містить дію",
+  "hasLinkAnnouncement": "рядок містить посилання: {link}"
 }
