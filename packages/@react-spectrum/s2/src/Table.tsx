@@ -397,17 +397,23 @@ const row = style<RowRenderProps & S2TableProps>({
   },
   // TODO will get rid of outlineStyle in general but keeping it for non forced colors until I figure out a good way to render the row's
   // focus ring
-  outlineStyle: {
-    forcedColors: 'none'
-  },
+  outlineStyle: 'none',
   // TODO: rough implementation for now, ideally this would just be the row outline or something.
   // will need to update the color to actually be a HCM style (Highlight)
   // TODO: for the overlapping issues, can do the same thing I did for ListView where I did 4 inset box shadows, one for each side
   // (here maybe just need to have one for sides)
+  // TODO: I've replaced it with box shadow but still have the issue with the box shadow between two rows combining to make it thicker than
+  // the lines on the side. Ideally, the box shadow could go on a element within the row and be absolutely positioned + offset via inset-block-start so that
+  // it would overlap with other borders/box shadows and solve the problem of adjacent rows but to do that I would need to be able to know
+  // if a row was next to a selected row or not
+  // Also the current way will need proper colors and HCM colors
   boxShadow: {
+    default: '[inset 0 -1px 0 0 gray]',
+    isSelected: '[inset 0 0 0 2px blue]',
     forcedColors: {
-      isSelected: '[inset 0 0 0 1px black]',
-      isFocusVisible: '[inset 0 0 0 2px black]'
+      default: '[inset 0 -1px 0 0 black]',
+      isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
+      isFocusVisible: '[inset 0 0 0 2px black, inset 0 -3px 0 0 black]'
     }
   },
   forcedColorAdjust: 'none'
@@ -475,10 +481,7 @@ export function Row<T extends object>(
 }
 
 const commonCellStyles = {
-  borderColor: {
-    default: 'gray-300',
-    forcedColors: 'ButtonBorder'
-  },
+  borderColor: 'transparent',
   // TODO: will also need to make the first and last curved? Save this for later when we do virtualization?
   // TODO Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
   borderBottomWidth: 1,
