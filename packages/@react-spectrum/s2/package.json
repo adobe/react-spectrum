@@ -46,12 +46,14 @@
     "style-module": {
       "source": "style/spectrum-theme.ts",
       "isLibrary": true,
-      "outputFormat": "esmodule"
+      "outputFormat": "esmodule",
+      "context": "node"
     },
     "style-main": {
       "source": "style/spectrum-theme.ts",
       "isLibrary": true,
-      "outputFormat": "commonjs"
+      "outputFormat": "commonjs",
+      "context": "node"
     },
     "style-types": {
       "source": "style/spectrum-theme.ts"

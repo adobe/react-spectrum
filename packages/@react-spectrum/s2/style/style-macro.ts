@@ -95,6 +95,15 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
   let dependencies = new Set<string>();
   let hasConditions = false;
   return function style(this: MacroContext | void, style, allowedOverrides?: readonly string[]) {
+    // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+    // We also check if this is globalThis, which happens in non-strict mode bundles.
+    // Also allow style to be called as a normal function in tests.
+    // @ts-ignore
+    // eslint-disable-next-line
+    if (this == null || this === globalThis && process.env.NODE_ENV !== 'test') {
+      throw new Error('The style macro must be imported with {type: "macro"}.');
+    }
+
     // Generate rules for each property.
     let rules = new Map<string, Rule[]>();
     let values =  new Map();
