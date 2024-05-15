@@ -28,12 +28,6 @@ type AllColorSpaces = ColorSpace | 'hex';
 
 export const ColorPickerExample = (args) => {
   let [format, setFormat] = useState<AllColorSpaces>('hex');
-  let resolvedFormat: ColorSpace;
-  if (format === 'hex') {
-    resolvedFormat = 'rgb';
-  } else {
-    resolvedFormat = format;
-  }
   return (
     <ColorPicker {...args} defaultValue="rgb(255, 0, 0)">
       <ColorPickerTrigger>
@@ -57,7 +51,7 @@ export const ColorPickerExample = (args) => {
                 <Input />
               </ColorField>
             ) : getColorChannels(format).map(channel => (
-              <ColorField key={channel} colorSpace={resolvedFormat} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+              <ColorField key={channel} colorSpace={format} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
                 <Label />
                 <Input style={{width: '100%', boxSizing: 'border-box'}} />
               </ColorField>

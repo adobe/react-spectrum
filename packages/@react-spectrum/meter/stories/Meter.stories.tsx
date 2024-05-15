@@ -20,7 +20,7 @@ type MeterStory = ComponentStoryObj<typeof Meter>;
 const formatOptions = {
   style: 'currency',
   currency: 'JPY'
-} as NumberFormatOptions;
+} satisfies NumberFormatOptions;
 
 export default {
   title: 'Meter',

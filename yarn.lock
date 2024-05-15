@@ -22384,10 +22384,10 @@ typescript-strict-plugin@^2.0.0:
     ora "^5.4.1"
     yargs "^16.2.0"
 
-typescript@^5.5.0-dev.20240512:
-  version "5.5.0-dev.20240512"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.0-dev.20240512.tgz#0125f77789f1f9cc0d1f3111523cf19ca9713e9a"
-  integrity sha512-qaBthiey39OUkoC0p3r83WKUG4KEvgTJg968MxJ548G6lYhpsFhp1Qryxrf32BonZwzfVi46Ltb9maSHVceLMg==
+typescript@^5.5.0-dev.20240514:
+  version "5.5.0-dev.20240514"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.0-dev.20240514.tgz#e5af4601760955c53fe5eb42298419862f01a262"
+  integrity sha512-NccALPZlTF/kDNV2Q071Or2T5CcoAHodWjsKseA4LZKfdqufQzebaQlPuZatC8AgHY2cnQJBcKMCHNFWW9ubpA==
 
 ua-parser-js@0.7.17:
   version "0.7.17"

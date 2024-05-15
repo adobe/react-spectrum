@@ -19,12 +19,6 @@ export interface SpectrumColorEditorProps {
 
 function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement>) {
   let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
-  let resolvedFormat: ColorSpace;
-  if (format === 'hex') {
-    resolvedFormat = 'rgb';
-  } else {
-    resolvedFormat = format;
-  }
   let domRef = useDOMRef(ref);
   let formatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/color');
 
@@ -53,7 +47,7 @@ function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement
         {format === 'hex'
           ? <ColorField isQuiet width="size-1000" aria-label={formatter.format('hex')} />
           : getColorChannels(format).map(channel => (
-            <ColorField key={channel} colorSpace={resolvedFormat} channel={channel} isQuiet width="size-400" flex UNSAFE_style={{'--spectrum-textfield-min-width': 0} as CSSProperties} />
+            <ColorField key={channel} colorSpace={format} channel={channel} isQuiet width="size-400" flex UNSAFE_style={{'--spectrum-textfield-min-width': 0} as CSSProperties} />
           ))}
         {!props.hideAlphaChannel &&
           <ColorField channel="alpha" isQuiet width="size-400" flex UNSAFE_style={{'--spectrum-textfield-min-width': 0} as CSSProperties} />}
