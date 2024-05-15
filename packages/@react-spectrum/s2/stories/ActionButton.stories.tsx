@@ -3,6 +3,7 @@ import {ActionButton, Text} from '../src';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import {StaticColorDecorator} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import './unsafe.css';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -156,6 +157,22 @@ export const Fonts: Story = {
           <ActionButton {...args}><NewIcon /><Text>{messages['zh-TW'].cut}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['zh-TW'].paste}</Text></ActionButton>
         </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const UnsafeClassName: Story = {
+  render: (args) => {
+    return (
+      <div className={style({display: 'flex', gap: 8, justifyContent: 'center', overflow: 'auto'})}>
+        <ActionButton {...args} UNSAFE_className="unsafe1">Global unsafe does not apply</ActionButton>
+        <ActionButton {...args} UNSAFE_className="unsafe2">@layer UNSAFE_overrides works</ActionButton>
       </div>
     );
   },

@@ -25,9 +25,11 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer a, b, c;
+      ".\\.:not(#a#b) { all: revert-layer }
 
-      @layer b {
+      @layer _.a, _.b, _.c, UNSAFE_overrides;
+
+      @layer _.b {
         .y-13alit4b {
           &:first-child {
             margin-top: 0.25rem;
@@ -35,7 +37,7 @@ describe('style-macro', () => {
         }
       }
 
-      @layer c.e {
+      @layer _.c.e {
         @media (min-width: 1024px) {
           .y-13alit4ec {
             &:first-child {
@@ -47,6 +49,6 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" y-13alit4b y-13alit4ec"');
+    expect(js).toMatchInlineSnapshot('" . y-13alit4b y-13alit4ec"');
   });
 });

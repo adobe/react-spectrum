@@ -154,8 +154,14 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
     dependencies.clear();
 
+    // Prevent all global styles from leaking into this element.
+    // The :not(#a#b) raises the specificity of the selector by 2 ids,
+    // which can never occur on a real element, and will win over other
+    // selectors such as class and element selectors.
+    let css = '.\\.:not(#a#b) { all: revert-layer }\n\n';
+
     // Declare layers for each priority ahead of time so the order is always correct.
-    let css = '@layer ';
+    css += '@layer ';
     let first = true;
     for (let i = 0; i <= usedPriorities; i++) {
       if (first) {
@@ -163,15 +169,15 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       } else {
         css += ', ';
       }
-      css += generateName(i, true);
+      css += layerName(generateName(i, true));
     }
-    css += ';\n\n';
+    css += ', UNSAFE_overrides;\n\n';
 
     // If allowed overrides are provided, generate code to match the input override string and include only allowed classes.
     // Also generate a variable for each overridable property that overlaps with the style definition. If those are defined,
     // the defaults from the style definition are omitted.
     let allowedOverridesSet = new Set<string>();
-    let js = 'let rules = "";\n';
+    let js = 'let rules = " .";\n';
     if (allowedOverrides?.length) {
       for (let property of allowedOverrides) {
         if (themePropertyMap.has(property as string)) {
@@ -198,7 +204,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
     // Generate JS and CSS for each rule.
     let isStatic = !(hasConditions || allowedOverrides);
-    let className = '';
+    let className = ' .';
     let rulesByLayer = new Map<string, string[]>();
     for (let [property, propertyRules] of rules) {
       if (isStatic) {
@@ -221,7 +227,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
 
     for (let [layer, rules] of rulesByLayer) {
-      css += `@layer ${layer} {\n`;
+      css += `@layer ${layerName(layer)} {\n`;
       css += rules.join('\n\n');
       css += '}\n\n';
     }
@@ -481,6 +487,12 @@ function hash(v: string) {
   return hash;
 }
 
+function layerName(name: string) {
+  // All of our layers should be sub-layers of a single parent layer, so that
+  // the unsafe overrides layer always comes after.
+  return `_.${name}`;
+}
+
 function printRule(rule: Rule, rulesByLayer: Map<string, string[]>, preludes: string[] = [], layer = 'a') {
   if (rule.prelude) {
     preludes.push(rule.prelude);
@@ -554,8 +566,10 @@ function getStaticClassName(rules: Rule[]): string {
 
 export function raw(this: MacroContext | void, css: string) {
   let className = generateArbitraryValueSelector(css, true);
-  css = `.${className} {
+  css = `@layer _.a {
+  .${className} {
   ${css}
+  }
 }`;
   if (typeof this?.addAsset === 'function') {
     this.addAsset({
