@@ -31,7 +31,9 @@ export function I18nProvider(props: I18nProviderProps) {
   let defaultLocale = useDefaultLocale();
 
   let value: Locale = React.useMemo(() => {
-    if (!locale) return defaultLocale;
+    if (!locale) {
+      return defaultLocale;
+    }
 
     return {
       locale,
