@@ -769,8 +769,8 @@ describe('Table', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
-  it('should support data-focus-visible-within for rows and cell', async () => {
-    let {getAllByRole} = renderTable({tableProps: {selectionMode: 'multiple'}});
+  it('should support data-focus-visible-within', async () => {
+    let {getAllByRole} = renderTable();
     let items = getAllByRole('row');
     expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
 
@@ -779,18 +779,9 @@ describe('Table', () => {
     expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
     await user.keyboard('{ArrowRight}');
 
-    let checkboxCell = within(items[1]).getAllByRole('gridcell')[0];
-    let checkbox = within(items[1]).getByRole('checkbox');
-    expect(document.activeElement).toBe(checkbox);
-    expect(checkboxCell).not.toHaveAttribute('data-focus-visible', 'true');
-    expect(checkboxCell).toHaveAttribute('data-focus-visible-within', 'true');
-    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
-    await user.keyboard('{ArrowRight}');
-
-    let tableCell = within(items[1]).getAllByRole('rowheader')[0];
-    expect(document.activeElement).toBe(tableCell);
-    expect(tableCell).toHaveAttribute('data-focus-visible', 'true');
-    expect(tableCell).toHaveAttribute('data-focus-visible-within', 'true');
+    let cell = within(items[1]).getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell);
+    expect(cell).toHaveAttribute('data-focus-visible', 'true');
     expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
 
     await user.keyboard('{ArrowDown}');

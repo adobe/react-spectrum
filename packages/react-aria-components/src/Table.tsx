@@ -661,9 +661,7 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
-  /** Whether the cell's children have keyboard focus. */
-  isFocusVisibleWithin: boolean
+  isHovered: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -1022,8 +1020,6 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  // TODO: would we also want to to check isFocusWithin as well?
-  // TODO: Should isFocusVisible be (isFocusVisible || isFocusVisibleWithin) or should they exist as separate states
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -1165,10 +1161,6 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     shouldSelectOnPressUp: !!dragState
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
   let {hoverProps, isHovered} = useHover({});
 
   let props: CellProps = cell.props;
@@ -1180,20 +1172,18 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered,
-      isFocusVisibleWithin
+      isHovered
     }
   });
 
   return (
     <td
-      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps, focusWithinProps)}
+      {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}
-      data-focus-visible-within={isFocusVisibleWithin || undefined}>
+      data-pressed={isPressed || undefined}>
       {renderProps.children}
     </td>
   );
