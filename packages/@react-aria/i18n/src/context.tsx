@@ -37,7 +37,7 @@ export function I18nProvider(props: I18nProviderProps) {
       locale,
       direction: isRTL(locale) ? 'rtl' : 'ltr'
     };
-  }, [locale);
+  }, [defaultLocale, locale]);
 
   return (
     <I18nContext.Provider value={value}>
