@@ -79,7 +79,7 @@ interface TableStyleProps {
   isLoading?: boolean
 }
 
-export interface TableProps extends Omit<RACTableProps, 'style'>, StyleProps, TableStyleProps {
+export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior'>, StyleProps, TableStyleProps {
 }
 
 // TODO: figure out type for this
@@ -126,10 +126,7 @@ const tableBody = style<TableBodyRenderProps & TableStyleProps>({
     default: 1,
     isQuiet: 0
   },
-  outlineStyle: {
-    default: 'solid',
-    isQuiet: 'none'
-  },
+  outlineStyle: 'solid',
   // TODO: closest one is "default" which is 8px
   borderRadius: {
     default: '[7px]',
@@ -223,6 +220,17 @@ const columnStyles = style({
   cursor: {
     allowsSorting: 'pointer'
   }
+  // TODO: right now in quiet, we are missing the top horizontal line separator between the columns and the first row
+  // I could add this via border but that would introduce a shift in positioning and unfortunately can't use a negative margin on a th element
+  // borderColor: 'gray-200',
+  // borderXWidth: 0,
+  // borderTopWidth: 0,
+  // borderBottomWidth: {
+  //   isQuiet: 1
+  // },
+  // borderStyle: {
+  //   isQuiet: 'solid'
+  // }
 });
 
 const sort = style({
@@ -241,10 +249,10 @@ export interface ColumnProps extends RACColumnProps {
 }
 
 export function Column(props: ColumnProps) {
-  let {sortDescriptor} = useContext(InternalTableContext);
+  let {sortDescriptor, isQuiet} = useContext(InternalTableContext);
 
   return (
-    <AriaColumn {...props} className={renderProps => columnStyles(renderProps)}>
+    <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet})}>
       {({allowsSorting, sortDirection, isFocusVisible}) => (
         <>
           <CellFocusRing isFocusVisible={isFocusVisible} />
@@ -358,6 +366,9 @@ const row = style<RowRenderProps & TableStyleProps>({
         isHovered: 'informative-300',
         isPressed: 'informative-300'
       }
+    },
+    forcedColors: {
+      default: 'transparent'
     }
   },
   // TODO: will need to handle overflow mode wrap
@@ -367,9 +378,23 @@ const row = style<RowRenderProps & TableStyleProps>({
       spacious: 48,
       compact: 32
     }
-  }
-  // outlineStyle: 'none'
-
+  },
+  // TODO will get rid of outlineStyle in general but keeping it for non forced colors until I figure out a good way to render the row's
+  // focus ring
+  outlineStyle: {
+    forcedColors: 'none'
+  },
+  // TODO: rough implementation for now, ideally this would just be the row outline or something.
+  // will need to update the color to actually be a HCM style (Highlight)
+  // TODO: for the overlapping issues, can do the same thing I did for ListView where I did 4 inset box shadows, one for each side
+  // (here maybe just need to have one for sides)
+  boxShadow: {
+    forcedColors: {
+      isSelected: '[inset 0 0 0 1px black]',
+      isFocusVisible: '[inset 0 0 0 2px black]'
+    }
+  },
+  forcedColorAdjust: 'none'
   // TODO: This is an alternative to having the tablebody + cells render an outline
   //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
   // Right now it is also getting cut off by the row, will need to curve first and last cell of the row but only if it is flush?
@@ -438,12 +463,21 @@ export function Row<T extends object>(
 }
 
 const commonCellStyles = {
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
+  // TODO: will also need to make the first and last curved? Save this for later when we do virtualization?
+  // TODO Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
   borderBottomWidth: 1,
   borderTopWidth: 0,
   borderXWidth: 0,
   borderStyle: 'solid',
-  position: 'relative'
+  position: 'relative',
+  color: {
+    default: 'gray-800',
+    forcedColors: 'ButtonText'
+  }
 } as const;
 
 const cell = style<CellRenderProps & TableStyleProps>({
@@ -466,15 +500,7 @@ const cell = style<CellRenderProps & TableStyleProps>({
     }
   },
   fontSize: 'control',
-  // TODO: will also need to make the first and last curved? Save this for later when we do virtualization?
-  borderColor: 'gray-300',
-  borderBottomWidth: 1,
-  borderTopWidth: 0,
-  borderXWidth: 0,
-  borderStyle: 'solid',
-  color: 'gray-800',
   outlineStyle: 'none'
-  // TODO Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
 });
 
 export function Cell(props: CellProps) {
