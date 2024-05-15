@@ -24,10 +24,8 @@ export default {
   title: 'React Aria Components'
 };
 
-type AllColorSpaces = ColorSpace | 'hex';
-
 export const ColorPickerExample = (args) => {
-  let [format, setFormat] = useState<AllColorSpaces>('hex');
+  let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
   return (
     <ColorPicker {...args} defaultValue="rgb(255, 0, 0)">
       <ColorPickerTrigger>
