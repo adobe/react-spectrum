@@ -1,4 +1,4 @@
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   Button,
   ButtonRenderProps,
@@ -16,7 +16,7 @@ import {
   SectionProps
 } from 'react-aria-components';
 import ChevronIcon from '../ui-icons/Chevron';
-import {StyleProps, centerPadding, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -31,7 +31,6 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {
   checkmark,
-  menu,
   menuitem,
   description,
   icon,
@@ -55,9 +54,7 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /** Whether the picker should be displayed with a quiet style. */
-  isQuiet?: boolean
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export interface PickerProps<T extends object> extends
@@ -92,8 +89,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
   outlineStyle: {/* The focus ring shows up after menu close if default and isFocusVisible from focusRing() aren't added to this definition. */
     default: 'none',
-    isFocusVisible: 'solid',
-    isQuiet: 'none'
+    isFocusVisible: 'solid'
   },
   position: 'relative',
   gridArea: 'input',
@@ -107,21 +103,15 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   height: 'control',
   transition: 'default',
   columnGap: {
-    default: 'text-to-control',
-    isQuiet: 'text-to-visual'
+    default: 'text-to-control'
   },
   paddingX: {
-    default: 'edge-to-text',
-    isQuiet: 0
-  },
-  paddingBottom: {
-    isQuiet: centerPadding()
+    default: 'edge-to-text'
   },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
-    isDisabled: 'disabled',
-    isQuiet: 'transparent'
+    isDisabled: 'disabled'
   },
   color: {
     default: 'neutral',
@@ -133,25 +123,30 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
       S: 176,
       L: 224,
       XL: 240
-    },
-    isQuiet: 'fit'
+    }
   }
 });
 
-const quietFocusLine = style({
-  width: 'full',
-  // Use pixels since we are emulating a border.
-  height: '[2px]',
-  position: 'absolute',
-  bottom: 0,
-  borderRadius: 'full',
-  backgroundColor: {
-    default: 'blue-800',
-    forcedColors: 'Highlight'
-  }
+export let menu = style({
+  outlineStyle: 'none',
+  display: 'grid',
+  gridTemplateColumns: {
+    size: {
+      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
+      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
+      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
+      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+    }
+  },
+  boxSizing: 'border-box',
+  maxHeight: '[inherit]',
+  overflow: 'auto',
+  padding: 8,
+  fontFamily: 'sans',
+  fontSize: 'control'
 });
 
-const invalidBorder = style<ButtonRenderProps>({
+const invalidBorder = style({
   position: 'absolute',
   top: 0,
   left: 0,
@@ -195,7 +190,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     errorMessage,
     children,
     items,
-    isQuiet,
     size = 'M',
     labelPosition = 'top',
     labelAlign = 'start',
@@ -228,7 +222,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
         labelPosition,
         size
       }, props.styles)}>
-      {({isDisabled, isFocusVisible, isOpen, isInvalid, isRequired}) => (
+      {({isDisabled, isOpen, isInvalid, isRequired}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
@@ -245,11 +239,10 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               style={renderProps => pressScale(domRef)(renderProps)}
               className={renderProps => inputButton({
                 ...renderProps,
-                isQuiet: isQuiet,
                 size: size,
                 isOpen
               })}>
-              {renderProps => (<>
+              <>
                 <SelectValue className={valueStyles} />
                 {isInvalid && (
                   <FieldErrorIcon isDisabled={isDisabled} />
@@ -257,11 +250,10 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 <ChevronIcon
                   size={size}
                   className={iconStyles} />
-                {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
                 {isInvalid && !isDisabled &&
-                  <div className={invalidBorder({...renderProps, isHovered: renderProps.isHovered || isOpen})} />
+                  <div className={invalidBorder} />
                 }
-              </>)}
+              </>
             </Button>
             <HelpText
               size={size}
@@ -276,18 +268,14 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               UNSAFE_style={{
-                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                width: menuWidth ? `${menuWidth}px` : undefined
               }}
               styles={style({
-                marginStart: {
-                  isQuiet: -12
-                },
                 minWidth: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: 192
+                  default: '[var(--trigger-width)]'
                 },
                 width: '[var(--trigger-width)]'
-              })(props)}>
+              })}>
               <Provider
                 values={[
                   [HeaderContext, {className: sectionHeader({size})}],

@@ -275,7 +275,7 @@ let descriptor = style({
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
-let InternalMenuTriggerContext = createContext<MenuTriggerProps>({});
+let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'>>({});
 
 function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);

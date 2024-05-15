@@ -20,7 +20,6 @@ import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type:
 import {pressScale} from './pressScale';
 import {
   checkmark,
-  menu,
   menuitem,
   description,
   icon,
@@ -31,6 +30,7 @@ import {
   Divider,
   iconCenterWrapper
 } from './Menu';
+import {menu} from './Picker';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {centerBaseline} from './CenterBaseline';
@@ -81,6 +81,7 @@ export interface ComboBoxProps<T extends object> extends
 
 const inputButton = style({
   display: 'flex',
+  outlineStyle: 'none',
   textAlign: 'center',
   borderStyle: 'none',
   borderRadius: 'control-sm',
