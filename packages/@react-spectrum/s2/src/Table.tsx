@@ -28,7 +28,8 @@ import {
   CellRenderProps,
   TableBodyRenderProps,
   RowRenderProps,
-  Provider
+  Provider,
+  Key
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -38,28 +39,23 @@ import {ProgressCircle} from './ProgressCircle';
 import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
 import {IconContext} from './Icon';
+import {ColumnSize} from '@react-types/table';
 
+// TODO: things that still need to be handled
+// styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
 
-// TODO: things that are in the design for s2
-// Curved corners for table
-// Blue line at edge for row focus?
-// All kinds of row content: avatars, links, statuslight, Date, etc
-// empty state
-// column dividers
-// summary row
+// Blue line at edge for row focus (needs more info from rac, namely when a row is focus visible but we don't have render prosp)
+// loading more when items already exist (needs ability to append extra row with progress circle)
+// column dividers (needs more info from rac so cells know if its parent column has showDivider)
+// drop indicators in DnD + drag button styling (needs more info from rac aka ability to style the drop indicators directly and designs)
 
-// TODO: things to support
-// HCM
+// resizing (deferred till virtualization)
+// overflow wrap (deferred till virtualization)
+// table scrolling/height/width (deferred till virtualization)
+// summary row (to discuss, is this a separate row? What accessibility goes into this)
 
+// nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
 
-// TODO: questions
-// has highlight selection changed in the design? Does it exist?
-
-
-// TODO: audit the props and get omit stuff we don't want from the RAC props
-
-
-// TODO: figure out what table styles we actually need
 const table = style<TableRenderProps>({
   userSelect: 'none',
   minHeight: 0,
@@ -68,21 +64,50 @@ const table = style<TableRenderProps>({
   fontFamily: 'sans'
 }, getAllowedOverrides({height: true}));
 
-// TODO will need spectrum props that get propagated down like isQuiet, maybe just grab from spectrum props? For now just add these
-// TODO: prop descriptions
-// TODO: rename this since it isn't just style props now
-interface TableStyleProps {
+interface S2TableProps {
+  /** Whether the Table should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
   density?: 'compact' | 'spacious' | 'regular',
+  /**
+   * Sets the overflow behavior for the cell contents.
+   * @default 'truncate'
+   */
   overflowMode?: 'wrap' | 'truncate',
+  /** How selection should be displayed. */
   selectionStyle?: 'checkbox' | 'highlight',
-  isLoading?: boolean
+  /** Whether the items are currently loading. */
+  isLoading?: boolean,
+
+  // TODO: the below are copied from Spectrum Table props.
+  // TODO: will we contine with onAction or rename to onRowAction like it is in RAC?
+  /** Handler that is called when a user performs an action on a row. */
+  onAction?: (key: Key) => void,
+  // TODO: the below will depend on how we handle resizing in S2. In RAC these went on the ResizableTableContainer wrapper instead
+  /**
+   * Handler that is called when a user starts a column resize.
+   */
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
+   */
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior'>, StyleProps, TableStyleProps {
+// TODO: audit the props and get omit stuff we don't want from the RAC props
+export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
-// TODO: figure out type for this
 let InternalTableContext = createContext<TableProps>({});
 
 export function Table(props: TableProps) {
@@ -111,10 +136,9 @@ export function Table(props: TableProps) {
   );
 }
 
-
 // TODO: will need focus styles for when it is focused due to empty state
 // styles for root drop target
-const tableBody = style<TableBodyRenderProps & TableStyleProps>({
+const tableBody = style<TableBodyRenderProps & S2TableProps>({
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent'
@@ -132,8 +156,6 @@ const tableBody = style<TableBodyRenderProps & TableStyleProps>({
   }
 });
 
-// TODO: I can apply a fixed height/width to simulate the desired padding around the element but ideally the table
-// would have a set width/height
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -142,8 +164,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-// TODO: get rid of depenedencies from the props?
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style'> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let {items, renderEmptyState} = props;
@@ -241,8 +262,6 @@ const sort = style({
 });
 
 export interface ColumnProps extends RACColumnProps {
-  // TODO: I can't get this information from the cell, may need modifications to RAC Table to propagate the Column's props to
-  // the cells related to it?
   showDivider?: boolean
 }
 
@@ -299,7 +318,6 @@ export function TableHeader<T extends object>(
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
-    // TODO: double check if nested columns work with this implementation
     <AriaTableHeader>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <AriaColumn />}
@@ -335,7 +353,7 @@ export function TableHeader<T extends object>(
 
 // TODO: will also need to curve the first and last row, how to do this?
 // ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
-const row = style<RowRenderProps & TableStyleProps>({
+const row = style<RowRenderProps & S2TableProps>({
   position: 'relative',
   boxSizing: 'border-box',
   backgroundColor: {
@@ -415,7 +433,6 @@ const row = style<RowRenderProps & TableStyleProps>({
 // });
 
 const dragButton = style({
-  // TODO: placeholder for now until design for drag button is added, just testing isFocusVisible
   color: {
     isFocusVisible: '[red]'
   }
@@ -475,7 +492,7 @@ const commonCellStyles = {
   }
 } as const;
 
-const cell = style<CellRenderProps & TableStyleProps>({
+const cell = style<CellRenderProps & S2TableProps>({
   ...commonCellStyles,
   paddingX: 16,
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
@@ -532,7 +549,7 @@ function CheckboxCell(props: CellProps) {
   );
 }
 
-// TODO: placehold styles until we confirm the design
+// TODO: placeholder styles until we confirm the design
 const dragButtonCell = style({
   ...commonCellStyles,
   paddingX: 4,

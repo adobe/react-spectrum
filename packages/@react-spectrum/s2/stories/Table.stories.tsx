@@ -244,13 +244,12 @@ export const Dynamic = {
   }
 };
 
-// TODO: we don't have access to the table cell that wraps the empty state here so can't apply the desired
-// padding...
 export const EmptyState = {
   render: EmptyStateTable
 };
 
-// TODO: As it is right now, a empty table that is in a loading state will render the empty state always
+// TODO: As it is right now, a empty table that is in a loading state will render the empty state always.
+// The user need to manually swap out what they provide to renderEmptyState, alternating between the ProgressCircle and the empty state svg (maybe that is fine)
 // Do we need an api for the user to provide renderLoading state?
 export const LoadingStateNoItems = {
   render: EmptyStateTable,
@@ -284,8 +283,6 @@ export const ReorderDnD = {
 
 // TODO: stories to add
 // show divider
-// sorting
-// DnD
 // overflow: wrap
 
 // TODO: The below I will work on perhaps after virtualization is done
