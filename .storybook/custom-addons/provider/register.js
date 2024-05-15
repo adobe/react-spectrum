@@ -1,5 +1,6 @@
-import addons, { types } from '@storybook/addons';
-import {getQueryParams} from '@storybook/client-api';
+
+import {addons, types} from '@storybook/manager-api';
+import {getQueryParams} from '@storybook/preview-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
