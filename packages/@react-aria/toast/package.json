@@ -25,6 +25,7 @@
     "@react-aria/i18n": "^3.11.0",
     "@react-aria/interactions": "^3.21.2",
     "@react-aria/landmark": "3.0.0-beta.11",
+    "@react-aria/live-announcer": "^3.3.3",
     "@react-aria/utils": "^3.24.0",
     "@react-stately/toast": "3.0.0-beta.3",
     "@react-types/button": "^3.9.3",

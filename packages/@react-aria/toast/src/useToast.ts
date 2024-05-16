@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {RefObject, useEffect} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -41,7 +42,6 @@ export interface ToastAria {
  * Provides the behavior and accessibility implementation for a toast component.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
   let {
     key,
@@ -61,13 +61,23 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [timer, timeout]);
 
+  let isMounted = useRef(false);
+  useEffect(() => {
+    let title = ref.current.querySelector(`#${CSS.escape(titleId)}`);
+    if (title && !isMounted.current) {
+      console.log('title.textContent', title.textContent);
+      announce(title.textContent, 'assertive');
+      isMounted.current = true;
+    }
+  }, []);
+
   let titleId = useId();
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
   return {
     toastProps: {
-      role: 'alertdialog',
+      role: 'presentation',
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
@@ -77,7 +87,6 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
       tabIndex: 0
     },
     contentProps: {
-      role: 'alert',
       'aria-atomic': 'true'
     },
     titleProps: {
