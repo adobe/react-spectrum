@@ -45,12 +45,17 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | left | – | 🔴 `Responsive<DimensionValue>` | |
 | right | – | 🔴 `Responsive<DimensionValue>` | |
 | isHidden | – | 🔴 `Responsive<boolean>` | |
+## Badge
 
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
+| variant | 🟢 `'accent' \| 'blue' \| 'brown' \| 'celery' \| 'charteuse' \| 'cinnamon' \| 'cyan' \| 'fuchsia' \| 'gray' \| 'green' \| 'indigo' \| 'informative' \| 'magenta' \| 'negative' \| 'neutral' \| 'notice' \| 'orange' \| 'pink' \| 'positive' \| 'purple' \| 'red' \| 'seafoam' \| 'silver' \| 'turquoise' \| 'yellow'` | 🔴 `'fuchsia' \| 'indigo' \| 'info' \| 'magenta' \| 'negative' \| 'neutral' \| 'positive' \| 'purple' \| 'seafoam' \| 'yellow'` | |
 ## Button
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
-| form | 🟢 `string` | – | | 
+| form | 🟢 `string` | – | |
 | formAction | 🟢 `string` | – | |
 | formEncType | 🟢 `string` | – | |
 | formMethod | 🟢 `string` | – | |
@@ -116,6 +121,20 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | slot | 🟢 `null \| string` | – | |
 | contextualHelp | – | 🔴 `ReactNode` | Not yet implemented in S2. |
 | showErrorIcon | – | 🔴 `boolean` | Removed for accessibility reasons. |
+## ComboBox
+
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| menuWidth | 🟢 `number` | 🔴 `DimensionValue` | This accepts pixel values in S2. |
+| isInvalid | 🟢 `boolean` | – | |
+| slot | 🟢 `null \| string` | – | |
+| size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
+| isQuiet | – | 🔴 `boolean` | Not supported in S2 design. |
+| loadingState | – | 🔴 `LoadingState` | Not yet implemented in S2. |
+| placeholder | – | 🔴 `string` | Removed for accessibility reasons. |
+| validationState | – | 🔴 `ValidationState` | Use `isInvalid` instead. |
+| contextualHelp | – | 🔴 `ReactNode` | Not yet implemented in S2. |
+| onLoadMore | – | 🔴 `() => any` | Not yet implemented in S2. |
 ## Dialog
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
@@ -191,6 +210,18 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
 | closeOnSelect | – | 🔴 `boolean` | Not yet implemented in S2. |
 | trigger | – | 🔴 `MenuTriggerType` | Not yet implemented in S2. |
+## Picker
+
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| menuWidth | 🟢 `number` | 🔴 `DimensionValue` | This accepts pixel values in S2. |
+| slot | 🟢 `null \| string` | – | |
+| size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
+| isQuiet | – | 🔴 `boolean` | Not supported in S2 design. |
+| validationState | – | 🔴 `ValidationState` | Use `isInvalid` instead. |
+| isLoading | – | 🔴 `boolean` | Not yet implemented in S2. |
+| onLoadMore | – | 🔴 `() => any` | Not yet implemented in S2. |
+| contextualHelp | – | 🔴 `ReactNode` | Not yet implemented in S2. |
 ## ProgressBar
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
@@ -210,6 +241,7 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
+| inputRef | 🟢 `MutableRefObject<HTMLInputElement>` | – | |
 | slot | 🟢 `null \| string` | – | |
 ## RadioGroup
 
@@ -236,6 +268,7 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
+| variant | 🟢 `'brown' \| 'celery' \| 'chartreuse' \| 'cinnamon' \| 'cyan' \| 'fuchsia' \| 'indigo' \| 'informative' \| 'magenta' \| 'negative' \| 'neutral' \| 'notice' \| 'pink' \| 'positive' \| 'purple' \| 'seafoam' \| 'silver' \| 'turquoise' \| 'yellow'` | 🔴 `'celery' \| 'chartreuse' \| 'fuchsia' \| 'indigo' \| 'info' \| 'magenta' \| 'negative' \| 'neutral' \| 'notice' \| 'positive' \| 'purple' \| 'seafoam' \| 'yellow'` | |
 | size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
 | isDisabled | – | 🔴 `boolean` | Not supported in S2 design. |
 ## Switch
@@ -257,14 +290,12 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | disallowEmptySelection | 🟢 `boolean` | – | |
 | selectedKeys | 🟢 `'all' \| Iterable<Key>` | – | |
 | defaultSelectedKeys | 🟢 `'all' \| Iterable<Key>` | – | |
-| onSelectionChange | 🟢 `(Selection) => any` | – | |
+| onSelectionChange | 🟢 `(Selection) => void` | – | |
 | slot | 🟢 `null \| string` | – | |
 | actionLabel | – | 🔴 `string` | Not yet implemented in S2.|
 | onAction | – | 🔴 `() => void` | Not yet implemented in S2. |
 | maxRows | – | 🔴 `number` | Not yet implemented in S2. |
-| errorMessage | – | 🔴 `ReactNode` | Not yet implemented in S2. |
 | contextualHelp | – | 🔴 `ReactNode` | Not yet implemented in S2. |
-| isInvalid | – | 🔴 `boolean` | Not yet implemented in S2. |
 | validationState | – | 🔴 `ValidationState` | Use `isInvalid` instead. |
 ## TextArea
 
@@ -297,12 +328,13 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | variant | – | 🔴 `'info' \| 'negative' \| 'neutral' \| 'positive'` | Not supported in S2 design. |
 | placement | – | 🔴 `'bottom' \| 'end' \| 'left' \| 'right' \| 'start' \| 'top'` | Use TooltipTrigger's `placement` instead |
 | showIcon | – | 🔴 `boolean` | Not supported in S2 design. |
+| isOpen | – | 🔴 `boolean` | Should be passed to TooltipTrigger instead. |
+| id | – | 🔴 `string` | |
 ## TooltipTrigger
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
 | placement | 🟢 `'bottom' \| 'end' \| 'left' \| 'right' \| 'start' \| 'top'` | 🔴 `'bottom' \| 'bottom left' \| 'bottom right' \| 'bottom start' \| 'bottom end' \| 'top' \| 'top left' \| 'top right' \| 'top start' \| 'top end' \| 'left' \| 'left top' \| 'left bottom' \| 'start' \| 'start top' \| 'start bottom' \| 'right' \| 'right top' \| 'right bottom' \| 'end' \| 'end top' \| 'end bottom'` | |
-
 
 ## Item
 

@@ -9,11 +9,13 @@ function merge(api) {
   Object.assign(v3API.links, api.links);
 }
 
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/badge/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/button/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/avatar/dist/api.json'));
 // merge(require('../react-spectrum/dist/branch-api/@react-spectrum/breadcrumbs/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/buttongroup/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/checkbox/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/combobox/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/dialog/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/divider/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/dropzone/dist/api.json'));
@@ -22,6 +24,8 @@ merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/illustratedm
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/inlinealert/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/link/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/menu/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/meter/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/picker/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/progress/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/provider/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/radio/dist/api.json'));
@@ -49,7 +53,7 @@ for (let name in v3API.exports) {
     continue;
   }
 
-  res += `# ${name}\n\n`;
+  res += `## ${name}\n\n`;
   res += '| Prop | Spectrum 2 | RSP v3 | Comments |\n';
   res += '|------|------------|--------|----------|\n';
 
@@ -67,6 +71,9 @@ for (let name in v3API.exports) {
     continue;
   }
   for (let prop in rainbowProps.properties) {
+    if (skipStyleProps && prop === 'styles') {
+      continue;
+    }
     let v3Value = v3Props.properties[prop]?.value;
     let v3Rendered = v3Value ? processType(v3Value).replace(/\n/g, '<br>') : '';
     let rainbowValue = rainbowProps.properties[prop]?.value;

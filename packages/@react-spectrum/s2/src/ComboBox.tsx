@@ -52,9 +52,8 @@ export interface ComboboxStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
-
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className'>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection'>,
   ComboboxStyleProps,
   StyleProps,
   Omit<SpectrumLabelableProps, 'contextualHelp'>,
