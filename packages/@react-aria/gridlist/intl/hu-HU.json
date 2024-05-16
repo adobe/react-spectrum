@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "a sorban művelet található",
+  "hasLinkAnnouncement": "a sorban link található: {link}"
 }
