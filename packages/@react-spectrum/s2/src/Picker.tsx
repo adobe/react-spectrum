@@ -346,7 +346,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
 let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
-interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
 }
 
@@ -374,7 +374,8 @@ export function PickerItem(props: PickerItemProps) {
   );
 }
 
-export function PickerSection<T extends object>(props: SectionProps<T>) {
+export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
+export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
   return (
     <>
       <AriaSection

@@ -186,6 +186,16 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | variant | 🟢 `'primary' \| 'secondary'` | 🔴 `'overBackground' \| 'primary' \| 'secondary'` | Use `staticColor` to replace `overBackground`. |
 | staticColor | 🟢 `'black' \| 'white'` | – | |
 | isStandalone | 🟢 `boolean` | – | |
+## Meter
+
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| slot | 🟢 `null \| string` | – | |
+| variant | 🟢 `'informative' \| 'negative' \| 'notice' \| 'positive'` | 🔴 `'critical' \| 'informative' \| 'positive' \| 'warning'` | |
+| size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | 🔴 `'L' \| 'S'` | |
+| staticColor | 🟢 `'black' \| 'white'` | – | |
+| labelPosition | – | 🔴 `LabelPosition` | Not yet implemented in S2. |
+| showValueLabel | – | 🔴 `boolean` | Removed for accessibility reasons. |
 ## MenuTrigger
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
