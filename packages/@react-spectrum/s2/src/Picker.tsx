@@ -247,7 +247,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               })}>
               {(renderProps) => (
                 <>
-                  <SelectValue className={valueStyles + ' ' + raw('&> * {@layer a {display: none;}}')}>
+                  <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
                     {({defaultChildren}) => {
                       return (
                         <Provider

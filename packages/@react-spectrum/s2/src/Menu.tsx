@@ -202,6 +202,7 @@ export let icon = style({
 });
 
 export let iconCenterWrapper = style({
+  display: 'flex',
   gridArea: 'icon'
 });
 
