@@ -68,6 +68,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   return {
     toastProps: {
       role: 'alertdialog',
+      'aria-modal': 'false',
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,

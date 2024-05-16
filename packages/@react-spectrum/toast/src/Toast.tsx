@@ -77,6 +77,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let iconLabel = variant && variant !== 'neutral' ? stringFormatter.format(variant) : null;
   let Icon = ICONS[variant];
   let {isFocusVisible, focusProps} = useFocusRing();
+  let [isAnimating, setIsAnimating] = React.useState(false);
 
   const handleAction = () => {
     if (onAction) {
@@ -109,12 +110,21 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
         zIndex: props.toast.priority
       }}
       data-animation={animation}
+      onAnimationStart={() => {
+        if (animation === 'entering') {
+          setIsAnimating(true);
+        }
+      }}
       onAnimationEnd={() => {
         if (animation === 'exiting') {
+          setIsAnimating(false);
           state.remove(key);
         }
       }}>
-      <div {...contentProps} className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}>
+      <div
+        {...contentProps}
+        className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}
+        style={{visibility: isAnimating ? 'visible' : 'hidden'}}>
         {Icon &&
           <Icon
             aria-label={iconLabel}

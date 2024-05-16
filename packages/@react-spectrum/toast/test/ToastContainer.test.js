@@ -74,11 +74,11 @@ describe('Toast Provider and Container', function () {
     expect(region).toHaveAttribute('aria-label', '1 notification.');
 
     let toast = getByRole('alertdialog');
-    let alert = within(toast).getByRole('alert');
+    let alert = within(toast).getByRole('alert', {hidden: true});
     expect(toast).toBeVisible();
-    expect(alert).toBeVisible();
+    expect(alert).toBeInTheDocument();
 
-    button = within(toast).getByRole('button');
+    button = within(toast).getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('aria-label', 'Close');
     await user.click(button);
 
@@ -108,8 +108,8 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
-    let alert = within(toast).getByRole('alert');
-    let icon = within(alert).getByRole('img');
+    let alert = within(toast).getByRole('alert', {hidden: true});
+    let icon = within(alert).getByRole('img', {hidden: true});
     expect(icon).toHaveAttribute('aria-label', 'Success');
     let title = within(alert).getByText('Toast is default');
     expect(toast).toHaveAttribute('aria-labelledby', `${title.id}`);
@@ -193,11 +193,11 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
-    let alert = within(toast).getByRole('alert');
+    let alert = within(toast).getByRole('alert', {hidden: true});
     expect(toast).toBeVisible();
-    expect(alert).toBeVisible();
+    expect(alert).toBeInTheDocument();
 
-    let buttons = within(toast).getAllByRole('button');
+    let buttons = within(toast).getAllByRole('button', {hidden: true});
     expect(buttons[0]).toHaveTextContent('Action');
     await user.click(buttons[0]);
 
@@ -216,11 +216,11 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
-    let alert = within(toast).getByRole('alert');
+    let alert = within(toast).getByRole('alert', {hidden: true});
     expect(toast).toBeVisible();
-    expect(alert).toBeVisible();
+    expect(alert).toBeInTheDocument();
 
-    let buttons = within(toast).getAllByRole('button');
+    let buttons = within(toast).getAllByRole('button', {hidden: true});
     expect(buttons[0]).toHaveTextContent('Action');
     await user.click(buttons[0]);
 
@@ -337,9 +337,9 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
-    let alert = within(toast).getByRole('alert');
+    let alert = within(toast).getByRole('alert', {hidden: true});
     expect(toast).toBeVisible();
-    expect(alert).toBeVisible();
+    expect(alert).toBeInTheDocument();
 
     await user.click(button);
     fireAnimationEnd(toast);
@@ -361,7 +361,7 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
-    expect(getAllByRole('alert')).toHaveLength(1);
+    expect(getAllByRole('alert', {hidden: true})).toHaveLength(1);
 
     rerender(
       <Provider theme={defaultTheme}>
@@ -372,7 +372,7 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
-    expect(getAllByRole('alert')).toHaveLength(1);
+    expect(getAllByRole('alert', {hidden: true})).toHaveLength(1);
 
     rerender(
       <Provider theme={defaultTheme}>
@@ -383,7 +383,7 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
-    expect(getAllByRole('alert')).toHaveLength(1);
+    expect(getAllByRole('alert', {hidden: true})).toHaveLength(1);
 
     rerender(
       <Provider theme={defaultTheme}>
@@ -395,7 +395,7 @@ describe('Toast Provider and Container', function () {
 
     act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
-    expect(getAllByRole('alert')).toHaveLength(1);
+    expect(getAllByRole('alert', {hidden: true})).toHaveLength(1);
   });
 
   it('should support custom toast events', async () => {
