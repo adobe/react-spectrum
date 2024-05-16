@@ -143,7 +143,7 @@ const tableBody = style<TableBodyRenderProps & S2TableProps>({
     default: 'gray-25',
     isQuiet: 'transparent'
   },
-  outlineColor: 'gray-200',
+  outlineColor: 'gray-300',
   outlineWidth: {
     default: 1,
     isQuiet: 0
@@ -151,8 +151,8 @@ const tableBody = style<TableBodyRenderProps & S2TableProps>({
   outlineStyle: 'solid',
   // TODO: closest one is "default" which is 8px
   borderRadius: {
-    default: '[7px]',
-    isQuiet: '[0px]'
+    default: 'default',
+    isQuiet: 'none'
   }
 });
 
@@ -218,7 +218,7 @@ const cellFocus = style({
   outlineOffset: '[-2px]', // Maybe can use space?
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: '[2px]'
+  borderRadius: 'sm'
 });
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
@@ -227,12 +227,17 @@ function CellFocusRing(props: {isFocusVisible: boolean}) {
 }
 
 const columnStyles = style({
+  color: {
+    default: 'gray-800', // neutral-content-color-default
+    isHovered: 'gray-900', // neutral-content-color-hover
+    isPressed: 'gray-900', // neutral-content-color-down
+    isFocusVisible: 'gray-900' // neutral-content-color-key-focus
+  },
   paddingX: 16,
   // TODO: would be nice to not have to hard code these
-  paddingTop: '[7px]',
-  paddingBottom: '[8px]',
+  paddingTop: '[7px]', // table-column-header-row-top-to-text-medium
+  paddingBottom: '[8px]', // table-column-header-row-top-to-text-medium
   textAlign: 'start',
-  color: 'gray-800',
   outlineStyle: 'none',
   position: 'relative',
   fontSize: 'control',
@@ -300,13 +305,13 @@ export function Column(props: ColumnProps) {
 }
 
 const selectAllCheckbox = style({
-  marginX: 16,
+  marginX: 16, // table-edge-to-content
   marginY: centerPadding()
 });
 
 const selectAllCheckboxColumn = style({
   padding: 0,
-  height: 32,
+  height: 32, // table-row-height-medium-compact
   borderRadius: '[2px]',
   outlineStyle: 'none',
   position: 'relative'
@@ -359,12 +364,15 @@ const row = style<RowRenderProps & S2TableProps>({
   backgroundColor: {
     default: 'gray-25',
     // TODO: don't forget to change this to isFocusVisibleWithin so that it applies when the cell in the row is keyboard focused
-    isFocusVisible: 'gray-100',
-    isHovered: 'gray-100',
-    isPressed: 'gray-200',
+    isFocusVisible: 'gray-900/7', // table-row-hover-color
+    isHovered: 'gray-900/7', // table-row-hover-color
+    isPressed: 'gray-900/10', // table-row-hover-color
     isSelected: {
-      // TODO: these need to be updated, the figma has this as informative/default but that color doesn't seem to match with the actual light blue?
-      // The below are my best guess but look odd in dark mode
+      // TODO: need to support opacity for lightDark
+      // default: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /10
+      // isFocusVisible: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
+      // isHovered: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
+      // isPressed: lightDark('informative-900', 'informative-700') // table-selected-row-background-color, todo needs opacity /15
       default: 'informative-200',
       isFocusVisible: 'informative-300',
       isHovered: 'informative-300',
@@ -373,10 +381,15 @@ const row = style<RowRenderProps & S2TableProps>({
     isQuiet: {
       // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
       default: 'transparent',
-      isFocusVisible: 'gray-100',
-      isHovered: 'gray-100',
-      isPressed: 'gray-200',
+      isFocusVisible: 'gray-900/7', // table-row-hover-color
+      isHovered: 'gray-900/7', // table-row-hover-color
+      isPressed: 'gray-900/10', // table-row-hover-color
       isSelected: {
+        // TODO: need to support opacity for lightDark
+        // default: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /10
+        // isFocusVisible: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
+        // isHovered: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
+        // isPressed: lightDark('informative-900', 'informative-700') // table-selected-row-background-color, todo needs opacity /15
         default: 'informative-200',
         isFocusVisible: 'informative-300',
         isHovered: 'informative-300',
@@ -389,10 +402,10 @@ const row = style<RowRenderProps & S2TableProps>({
   },
   // TODO: will need to handle overflow mode wrap
   height: {
-    default: 40,
+    default: 40, // table-row-height-medium-regular
     density: {
-      spacious: 48,
-      compact: 32
+      spacious: 48, // table-row-height-medium-spacious
+      compact: 32 // table-row-height-medium-compact
     }
   },
   // TODO will get rid of outlineStyle in general but keeping it for non forced colors until I figure out a good way to render the row's
@@ -497,21 +510,27 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps>({
   ...commonCellStyles,
-  paddingX: 16,
+  color: {
+    default: 'gray-800', // neutral-content-color-default
+    isHovered: 'gray-900', // neutral-content-color-hover
+    isPressed: 'gray-900', // neutral-content-color-down
+    isFocusVisible: 'gray-900' // neutral-content-color-key-focus
+  },
+  paddingX: 16, // table-edge-to-content
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
   // when they probably should
   paddingTop: {
-    default: '[10px]',
+    default: '[11px]', // table-row-top-to-text-medium-regular
     density: {
-      spacious: '[15px]',
-      compact: '[6px]'
+      spacious: '[15px]', // table-row-top-to-text-medium-spacious
+      compact: '[6px]' // table-row-top-to-text-medium-compact
     }
   },
   paddingBottom: {
-    default: '[13px]',
+    default: '[12px]', // table-row-bottom-to-text-medium-spacious
     density: {
-      spacious: '[16px]',
-      compact: '[9px]'
+      spacious: '[16px]', // table-row-bottom-to-text-medium-spacious
+      compact: '[9px]' // table-row-bottom-to-text-medium-compact
     }
   },
   fontSize: 'control',
@@ -540,7 +559,7 @@ export function Cell(props: CellProps) {
 
 const checkboxCellStyle = style({
   ...commonCellStyles,
-  paddingX: 16,
+  paddingX: 16, // table-edge-to-content
   paddingY: centerPadding()
 });
 
