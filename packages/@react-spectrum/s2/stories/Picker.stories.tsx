@@ -14,8 +14,8 @@ const meta: Meta<typeof Picker> = {
       url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?type=design&node-id=739-1453&mode=design&t=rZcwwKQ0qsEp7G8L-0'
     }
   },
-  decorators: [StaticColorDecorator]
-  // TODO:  tags: ['autodocs']
+  decorators: [StaticColorDecorator],
+  tags: ['autodocs']
 };
 
 export default meta;
