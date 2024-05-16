@@ -1,6 +1,6 @@
 {
   "name": "@react/experimental-s2",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Spectrum 2 UI components in React",
   "repository": {
     "type": "git",
