@@ -103,4 +103,17 @@ describe('Breadcrumbs', () => {
     let item = getByRole('listitem');
     expect(breadcrumbRef.current).toBe(item);
   });
+
+  it('should support autoFocusCurrent', () => {
+    let {getAllByRole} = render(
+      <Breadcrumbs autoFocusCurrent>
+        <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+        <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
+        <Breadcrumb><Link href="/react-aria">useBreadcrumbs</Link></Breadcrumb>
+      </Breadcrumbs>
+    );
+
+    let links = getAllByRole('link');
+    expect(links[2]).toHaveFocus();
+  });
 });

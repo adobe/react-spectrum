@@ -40,9 +40,18 @@ export const TooltipExample = () => (
 );
 
 export const TooltipArrowBoundaryOffsetExample = {
+  args: {
+    topLeft: 25,
+    topRight: 25,
+    leftTop: 15,
+    leftBottom: 15,
+    rightTop: 15,
+    rightBottom: 15,
+    bottomLeft: 25,
+    bottomRight: 25
+  },
   argTypes: {
     topLeft: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -50,7 +59,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     topRight: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -58,7 +66,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     leftTop: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -66,7 +73,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     leftBotton: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -74,7 +80,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     rightTop: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -82,7 +87,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     rightBottom: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -90,7 +94,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     bottomLeft: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -98,7 +101,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     bottomRight: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -106,7 +108,7 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     }
   },
-  render: ({topLeft, topRight, leftTop, leftBotton, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
+  render: ({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex'}}>
@@ -191,7 +193,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 placement="left bottom"
                 shouldFlip={false}
                 offset={7}
-                arrowBoundaryOffset={leftBotton}
+                arrowBoundaryOffset={leftBottom}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',

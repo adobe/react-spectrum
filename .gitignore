@@ -13,3 +13,5 @@ npm-debug.log
 public
 storybook-static
 test-reports.xml
+packages/dev/storybook-builder-parcel/iframe.html
+packages/dev/storybook-builder-parcel/preview.js
