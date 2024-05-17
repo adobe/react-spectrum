@@ -325,7 +325,11 @@ export function TableHeader<T extends object>(
   return (
     <AriaTableHeader>
       {/* Add extra columns for drag and drop and selection. */}
-      {allowsDragging && <AriaColumn />}
+      {allowsDragging && (
+        <AriaColumn className={selectAllCheckboxColumn}>
+          {({isFocusVisible}) => <CellFocusRing isFocusVisible={isFocusVisible} />}
+        </AriaColumn>
+      )}
       {selectionBehavior === 'toggle' && (
         <AriaColumn className={selectAllCheckboxColumn}>
           {({isFocusVisible}) => (
@@ -347,20 +351,91 @@ export function TableHeader<T extends object>(
   );
 }
 
-// TODO: might need this to communicate stuff to the cells within
-// let InternalRowContext = createContext<{isQuiet?: boolean}>({});
+const commonCellStyles = {
+  borderColor: 'transparent',
+  // TODO: will also need to make the first and last curved? Save this for later when we do virtualization?
+  // TODO Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
+  borderBottomWidth: 1,
+  borderTopWidth: 0,
+  borderXWidth: 0,
+  borderStyle: 'solid',
+  position: 'relative',
+  color: {
+    default: 'gray-800',
+    forcedColors: 'ButtonText'
+  },
+  outlineStyle: 'none',
+  paddingX: 16 // table-edge-to-content
+} as const;
 
-// TODO: figure out these colors for quiet vs not quiet. Figma shows gray-25 for non quiet but that matches background?
-// is keyboard focus on a non selected row supposed to only show a focus ring withou any changes to the background?
-// Bit confusing since some of the non-quiet tables are on a  248,248,248 background and thus have 255,255,255 background color
-// but then the cell background color show 248,248,248 as their back ground color
-// Also ask if the Figma can be updated to reflect the actual token values, I'm not seeing them for the most part it feels
+const cell = style<CellRenderProps & S2TableProps>({
+  ...commonCellStyles,
+  color: {
+    default: 'gray-800', // neutral-content-color-default
+    isHovered: 'gray-900', // neutral-content-color-hover
+    isPressed: 'gray-900', // neutral-content-color-down
+    isFocusVisible: 'gray-900' // neutral-content-color-key-focus
+  },
+  // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
+  // when they probably should
+  paddingTop: {
+    default: '[11px]', // table-row-top-to-text-medium-regular
+    density: {
+      spacious: '[15px]', // table-row-top-to-text-medium-spacious
+      compact: '[6px]' // table-row-top-to-text-medium-compact
+    }
+  },
+  paddingBottom: {
+    default: '[12px]', // table-row-bottom-to-text-medium-spacious
+    density: {
+      spacious: '[16px]', // table-row-bottom-to-text-medium-spacious
+      compact: '[9px]' // table-row-bottom-to-text-medium-compact
+    }
+  },
+  fontSize: 'control'
+});
+
+const checkboxCellStyle = style({
+  ...commonCellStyles,
+  paddingY: centerPadding()
+});
+
+// TODO: placeholder styles until we confirm the design
+const dragButtonCellStyle = style({
+  ...commonCellStyles,
+  paddingX: 4,
+  paddingY: centerPadding()
+});
+
+export function Cell(props: CellProps) {
+  let {children, ...otherProps} = props;
+  let tableVisualOptions = useContext(InternalTableContext);
+  return (
+    <AriaCell
+      className={renderProps => cell({
+        ...renderProps,
+        ...tableVisualOptions
+      })}
+      {...otherProps}>
+      {({isFocusVisible}) => (
+        <>
+          <CellFocusRing isFocusVisible={isFocusVisible} />
+          {children}
+        </>
+      )}
+    </AriaCell>
+  );
+}
 
 // TODO: will also need to curve the first and last row, how to do this?
 // ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
 const row = style<RowRenderProps & S2TableProps>({
   position: 'relative',
   boxSizing: 'border-box',
+  backgroundImage: {
+    // TODO: will need the proper blue from tokens
+    isFocusVisible: 'linear-gradient(to right, blue 0 4px, transparent 4px)'
+  },
   backgroundColor: {
     default: 'gray-25',
     // TODO: don't forget to change this to isFocusVisibleWithin so that it applies when the cell in the row is keyboard focused
@@ -414,6 +489,8 @@ const row = style<RowRenderProps & S2TableProps>({
   // Also the current way will need proper colors and HCM colors
   boxShadow: {
     default: '[inset 0 -1px 0 0 gray]',
+    // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
+    // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
     isSelected: '[inset 0 0 0 2px blue]',
     forcedColors: {
       default: '[inset 0 -1px 0 0 black]',
@@ -429,19 +506,6 @@ const row = style<RowRenderProps & S2TableProps>({
   // boxShadow: '[0 0 0 1px black]',
   // borderRadius: '[7px]',
 });
-
-// TODO: bring this back when I add renderProps support to table
-// const rowFocus = style({
-//   display: 'inline-block',
-//   position: 'absolute',
-//   width: 4,
-//   height: 'full',
-//   insetStart: 0,
-//   top: 0,
-//   marginEnd: '[-4px]',
-//   zIndex: 4,
-//   backgroundColor: 'focus-ring'
-// });
 
 const dragButton = style({
   color: {
@@ -465,115 +529,18 @@ export function Row<T extends object>(
       })}
       {...otherProps}>
       {allowsDragging && (
-        <DragButtonCell>
-          {/* TODO: will need to support renderProps function for TableRow so that I can render the span only when the row is focused and isFocusVisible */}
-          {/* <span className={rowFocus} /> */}
+        <Cell className={dragButtonCellStyle}>
           <Button className={({isFocusVisible}) => dragButton({isFocusVisible})} slot="drag">≡</Button>
-        </DragButtonCell>
+        </Cell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-        <CheckboxCell>
-          {/* TODO: uncomment when I add renderProps support for TableRow */}
-          {/* {!allowsDragging && <span className={rowFocus} />} */}
+        <Cell className={checkboxCellStyle}>
           <Checkbox isEmphasized slot="selection" />
-        </CheckboxCell>
+        </Cell>
       )}
       <Collection items={columns}>
         {children}
       </Collection>
     </AriaRow>
-  );
-}
-
-const commonCellStyles = {
-  borderColor: 'transparent',
-  // TODO: will also need to make the first and last curved? Save this for later when we do virtualization?
-  // TODO Alternative approach is to perhaps have the row render the gray bottom via box shadow maybe
-  borderBottomWidth: 1,
-  borderTopWidth: 0,
-  borderXWidth: 0,
-  borderStyle: 'solid',
-  position: 'relative',
-  color: {
-    default: 'gray-800',
-    forcedColors: 'ButtonText'
-  }
-} as const;
-
-const cell = style<CellRenderProps & S2TableProps>({
-  ...commonCellStyles,
-  color: {
-    default: 'gray-800', // neutral-content-color-default
-    isHovered: 'gray-900', // neutral-content-color-hover
-    isPressed: 'gray-900', // neutral-content-color-down
-    isFocusVisible: 'gray-900' // neutral-content-color-key-focus
-  },
-  paddingX: 16, // table-edge-to-content
-  // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
-  // when they probably should
-  paddingTop: {
-    default: '[11px]', // table-row-top-to-text-medium-regular
-    density: {
-      spacious: '[15px]', // table-row-top-to-text-medium-spacious
-      compact: '[6px]' // table-row-top-to-text-medium-compact
-    }
-  },
-  paddingBottom: {
-    default: '[12px]', // table-row-bottom-to-text-medium-spacious
-    density: {
-      spacious: '[16px]', // table-row-bottom-to-text-medium-spacious
-      compact: '[9px]' // table-row-bottom-to-text-medium-compact
-    }
-  },
-  fontSize: 'control',
-  outlineStyle: 'none'
-});
-
-export function Cell(props: CellProps) {
-  let {children, ...otherProps} = props;
-  let tableVisualOptions = useContext(InternalTableContext);
-  return (
-    <AriaCell
-      className={renderProps => cell({
-        ...renderProps,
-        ...tableVisualOptions
-      })}
-      {...otherProps}>
-      {({isFocusVisible}) => (
-        <>
-          <CellFocusRing isFocusVisible={isFocusVisible} />
-          {children}
-        </>
-      )}
-    </AriaCell>
-  );
-}
-
-const checkboxCellStyle = style({
-  ...commonCellStyles,
-  paddingX: 16, // table-edge-to-content
-  paddingY: centerPadding()
-});
-
-function CheckboxCell(props: CellProps) {
-  return (
-    <AriaCell
-      className={checkboxCellStyle}
-      {...props} />
-  );
-}
-
-// TODO: placeholder styles until we confirm the design
-const dragButtonCell = style({
-  ...commonCellStyles,
-  paddingX: 4,
-  paddingY: centerPadding()
-});
-
-function DragButtonCell(props: CellProps) {
-  return (
-    <AriaCell
-      className={dragButtonCell}
-      {...props} />
   );
 }
