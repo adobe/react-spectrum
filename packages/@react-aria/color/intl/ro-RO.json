@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Selector de culori",
+  "colorSwatch": "specimen de culoare",
+  "transparent": "transparent",
   "twoDimensionalSlider": "Glisor 2D"
 }

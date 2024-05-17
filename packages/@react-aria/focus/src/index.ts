@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {FocusScope, useFocusManager, getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope} from './FocusScope';
+export {FocusScope, useFocusManager, getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope, isFocusable} from './FocusScope';
 export {FocusRing} from './FocusRing';
 export {FocusableProvider, useFocusable} from './useFocusable';
 export {useFocusRing} from './useFocusRing';

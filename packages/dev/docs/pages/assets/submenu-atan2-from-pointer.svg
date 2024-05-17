@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 651 315">
+  <defs>
+    <filter id="rectangle-12" x="68.36" y="46.592" width="47.253" height="256" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="rectangle-12-2" x="238.36" y="46.592" width="47.253" height="256" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-2"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="rectangle-12-3" x="408.36" y="46.592" width="47.253" height="256" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-3"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur-3"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="rectangle-12-4" x="578.36" y="46.592" width="47.253" height="256" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur-4"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur-4"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clip-atan2_5">
+      <rect width="637" height="312"/>
+    </clipPath>
+  </defs>
+  <g id="atan2_5" data-name="atan2 – 5" clip-path="url(#clip-atan2_5)">
+    <rect width="637" height="312" fill="var(--anatomy-gray-100)"/>
+    <text id="Θtop" transform="translate(213.5 27)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe-Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">top</tspan></text>
+    <text id="Θbottom" transform="translate(370.5 27)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe-Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">bottom</tspan></text>
+    <text id="Θpointer" transform="translate(541.5 27)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe-Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">pointer</tspan></text>
+    <g id="Group_8" data-name="Group 8" transform="translate(-0.113)">
+      <line id="Line_14" data-name="Line 14" x1="55.887" y1="211" transform="translate(19.613 84.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <g transform="matrix(1, 0, 0, 1, 0.11, 0)" filter="url(#rectangle-12)">
+        <g id="rectangle-12-5" data-name="rectangle-12" transform="translate(74.36 51.59)" fill="var(--anatomy-gray-50)">
+          <path d="M 33.95658493041992 243.25 L 1.296345710754395 243.25 C 1.071592211723328 242.6676330566406 0.7499960660934448 240.8514556884766 0.7499960660934448 238 L 0.7499960660934448 6 C 0.7499960660934448 3.148538827896118 1.071592211723328 1.332363724708557 1.296345710754395 0.75 L 33.95658493041992 0.75 C 34.18133926391602 1.332363724708557 34.50293350219727 3.148538827896118 34.50293350219727 6 L 34.50293350219727 238 C 34.50293350219727 240.8514556884766 34.18133926391602 242.6676330566406 33.95658493041992 243.25 Z" stroke="none"/>
+          <path d="M 1.864009857177734 1.5 C 1.696052551269531 2.267196655273438 1.499996185302734 3.781875610351562 1.499996185302734 6 L 1.499996185302734 238 C 1.499996185302734 240.2181243896484 1.696052551269531 241.7328033447266 1.864021301269531 242.5 L 33.38890838623047 242.5 C 33.55687713623047 241.7328033447266 33.75293350219727 240.2181243896484 33.75293350219727 238 L 33.75293350219727 6 C 33.75293350219727 3.781875610351562 33.55687713623047 2.267196655273438 33.38891983032227 1.5 L 1.864009857177734 1.5 M 0.9884033203125 0 L 34.2645263671875 0 C 34.81040191650391 0 35.25293350219727 2.686279296875 35.25293350219727 6 L 35.25293350219727 238 C 35.25293350219727 241.3136901855469 34.81040191650391 244 34.2645263671875 244 L 0.9884033203125 244 C 0.4425277709960938 244 -3.814697265625e-06 241.3136901855469 -3.814697265625e-06 238 L -3.814697265625e-06 6 C -3.814697265625e-06 2.686279296875 0.4425277709960938 0 0.9884033203125 0 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+        </g>
+      </g>
+      <path id="Cursor_2" data-name="Cursor 2" d="M-1026.242-375.374l-2.558,2.474v-11.2l8.2,8.2h-3.694l2.265,5.4-1.845.774Z" transform="translate(1066.473 474.561)" fill="var(--anatomy-gray-800)"/>
+      <path id="Cursor_1" data-name="Cursor 1" d="M-1011.242-363.473-1013.8-361v-11.2l8.2,8.2h-3.694l2.265,5.4-1.844.774Z" transform="translate(1031.673 444.292)" fill="var(--anatomy-gray-500)"/>
+      <line id="Line_15" data-name="Line 15" x1="54.887" y2="17" transform="translate(19.613 53.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <line id="Line_23" data-name="Line 23" x1="54.887" y2="17" transform="translate(189.613 53.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <line id="Line_24" data-name="Line 24" x1="55.887" y1="211" transform="translate(360.613 84.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+    </g>
+    <g id="Group_7" data-name="Group 7" transform="translate(-0.113)">
+      <path id="Path_35592" data-name="Path 35592" d="M57,0H2.926" transform="translate(187.5 72.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <g transform="matrix(1, 0, 0, 1, 0.11, 0)" filter="url(#rectangle-12-2)">
+        <g id="rectangle-12-6" data-name="rectangle-12" transform="translate(244.36 51.59)" fill="var(--anatomy-gray-50)">
+          <path d="M 33.95658493041992 243.25 L 1.296345710754395 243.25 C 1.071592211723328 242.6676330566406 0.7499960660934448 240.8514556884766 0.7499960660934448 238 L 0.7499960660934448 6 C 0.7499960660934448 3.148538827896118 1.071592211723328 1.332363724708557 1.296345710754395 0.75 L 33.95658493041992 0.75 C 34.18133926391602 1.332363724708557 34.50293350219727 3.148538827896118 34.50293350219727 6 L 34.50293350219727 238 C 34.50293350219727 240.8514556884766 34.18133926391602 242.6676330566406 33.95658493041992 243.25 Z" stroke="none"/>
+          <path d="M 1.864009857177734 1.5 C 1.696052551269531 2.267196655273438 1.499996185302734 3.781875610351562 1.499996185302734 6 L 1.499996185302734 238 C 1.499996185302734 240.2181243896484 1.696052551269531 241.7328033447266 1.864021301269531 242.5 L 33.38890838623047 242.5 C 33.55687713623047 241.7328033447266 33.75293350219727 240.2181243896484 33.75293350219727 238 L 33.75293350219727 6 C 33.75293350219727 3.781875610351562 33.55687713623047 2.267196655273438 33.38891983032227 1.5 L 1.864009857177734 1.5 M 0.9884033203125 0 L 34.2645263671875 0 C 34.81040191650391 0 35.25293350219727 2.686279296875 35.25293350219727 6 L 35.25293350219727 238 C 35.25293350219727 241.3136901855469 34.81040191650391 244 34.2645263671875 244 L 0.9884033203125 244 C 0.4425277709960938 244 -3.814697265625e-06 241.3136901855469 -3.814697265625e-06 238 L -3.814697265625e-06 6 C -3.814697265625e-06 2.686279296875 0.4425277709960938 0 0.9884033203125 0 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+        </g>
+      </g>
+      <path id="Cursor_2-2" data-name="Cursor 2" d="M-1026.242-375.374l-2.558,2.474v-11.2l8.2,8.2h-3.694l2.265,5.4-1.845.774Z" transform="translate(1236.474 474.561)" fill="var(--anatomy-gray-800)"/>
+      <path id="Cursor_1-2" data-name="Cursor 1" d="M-1011.242-363.473-1013.8-361v-11.2l8.2,8.2h-3.694l2.265,5.4-1.844.774Z" transform="translate(1201.673 444.292)" fill="var(--anatomy-gray-500)"/>
+      <path id="Path_35591" data-name="Path 35591" d="M57,0" transform="translate(187.5 53.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <path id="Path_35593" data-name="Path 35593" d="M57,0H2.926" transform="translate(357.5 72.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <path id="Path_35594" data-name="Path 35594" d="M57,0H2.926" transform="translate(357.5 72.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+    </g>
+    <g id="Group_6" data-name="Group 6" transform="translate(9.887)">
+      <g transform="matrix(1, 0, 0, 1, -9.89, 0)" filter="url(#rectangle-12-3)">
+        <g id="rectangle-12-7" data-name="rectangle-12" transform="translate(414.36 51.59)" fill="var(--anatomy-gray-50)">
+          <path d="M 33.95658493041992 243.25 L 1.296345710754395 243.25 C 1.071592211723328 242.6676330566406 0.7499960660934448 240.8514556884766 0.7499960660934448 238 L 0.7499960660934448 6 C 0.7499960660934448 3.148538827896118 1.071592211723328 1.332363724708557 1.296345710754395 0.75 L 33.95658493041992 0.75 C 34.18133926391602 1.332363724708557 34.50293350219727 3.148538827896118 34.50293350219727 6 L 34.50293350219727 238 C 34.50293350219727 240.8514556884766 34.18133926391602 242.6676330566406 33.95658493041992 243.25 Z" stroke="none"/>
+          <path d="M 1.864009857177734 1.5 C 1.696052551269531 2.267196655273438 1.499996185302734 3.781875610351562 1.499996185302734 6 L 1.499996185302734 238 C 1.499996185302734 240.2181243896484 1.696052551269531 241.7328033447266 1.864021301269531 242.5 L 33.38890838623047 242.5 C 33.55687713623047 241.7328033447266 33.75293350219727 240.2181243896484 33.75293350219727 238 L 33.75293350219727 6 C 33.75293350219727 3.781875610351562 33.55687713623047 2.267196655273438 33.38891983032227 1.5 L 1.864009857177734 1.5 M 0.9884033203125 0 L 34.2645263671875 0 C 34.81040191650391 0 35.25293350219727 2.686279296875 35.25293350219727 6 L 35.25293350219727 238 C 35.25293350219727 241.3136901855469 34.81040191650391 244 34.2645263671875 244 L 0.9884033203125 244 C 0.4425277709960938 244 -3.814697265625e-06 241.3136901855469 -3.814697265625e-06 238 L -3.814697265625e-06 6 C -3.814697265625e-06 2.686279296875 0.4425277709960938 0 0.9884033203125 0 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+        </g>
+      </g>
+      <path id="Cursor_2-3" data-name="Cursor 2" d="M-1026.242-375.374l-2.558,2.474v-11.2l8.2,8.2h-3.694l2.265,5.4-1.845.774Z" transform="translate(1396.474 474.561)" fill="var(--anatomy-gray-800)"/>
+      <path id="Cursor_1-3" data-name="Cursor 1" d="M-1011.242-363.473-1013.8-361v-11.2l8.2,8.2h-3.694l2.265,5.4-1.844.774Z" transform="translate(1361.673 444.292)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Group_5" data-name="Group 5" transform="translate(9.887)">
+      <line id="Line_20" data-name="Line 20" x1="10" y1="9" transform="translate(525.613 80.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <g transform="matrix(1, 0, 0, 1, -9.89, 0)" filter="url(#rectangle-12-4)">
+        <g id="rectangle-12-8" data-name="rectangle-12" transform="translate(584.36 51.59)" fill="var(--anatomy-gray-50)">
+          <path d="M 33.95658493041992 243.25 L 1.296345710754395 243.25 C 1.071592211723328 242.6676330566406 0.7499960660934448 240.8514556884766 0.7499960660934448 238 L 0.7499960660934448 6 C 0.7499960660934448 3.148538827896118 1.071592211723328 1.332363724708557 1.296345710754395 0.75 L 33.95658493041992 0.75 C 34.18133926391602 1.332363724708557 34.50293350219727 3.148538827896118 34.50293350219727 6 L 34.50293350219727 238 C 34.50293350219727 240.8514556884766 34.18133926391602 242.6676330566406 33.95658493041992 243.25 Z" stroke="none"/>
+          <path d="M 1.864009857177734 1.5 C 1.696052551269531 2.267196655273438 1.499996185302734 3.781875610351562 1.499996185302734 6 L 1.499996185302734 238 C 1.499996185302734 240.2181243896484 1.696052551269531 241.7328033447266 1.864021301269531 242.5 L 33.38890838623047 242.5 C 33.55687713623047 241.7328033447266 33.75293350219727 240.2181243896484 33.75293350219727 238 L 33.75293350219727 6 C 33.75293350219727 3.781875610351562 33.55687713623047 2.267196655273438 33.38891983032227 1.5 L 1.864009857177734 1.5 M 0.9884033203125 0 L 34.2645263671875 0 C 34.81040191650391 0 35.25293350219727 2.686279296875 35.25293350219727 6 L 35.25293350219727 238 C 35.25293350219727 241.3136901855469 34.81040191650391 244 34.2645263671875 244 L 0.9884033203125 244 C 0.4425277709960938 244 -3.814697265625e-06 241.3136901855469 -3.814697265625e-06 238 L -3.814697265625e-06 6 C -3.814697265625e-06 2.686279296875 0.4425277709960938 0 0.9884033203125 0 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+        </g>
+      </g>
+      <path id="Cursor_2-4" data-name="Cursor 2" d="M-1026.242-375.374l-2.558,2.474v-11.2l8.2,8.2h-3.694l2.265,5.4-1.845.774Z" transform="translate(1566.474 474.561)" fill="var(--anatomy-gray-800)"/>
+      <path id="Cursor_1-4" data-name="Cursor 1" d="M-1011.242-363.473-1013.8-361v-11.2l8.2,8.2h-3.694l2.265,5.4-1.844.774Z" transform="translate(1531.673 444.292)" fill="var(--anatomy-gray-500)"/>
+      <line id="Line_21" data-name="Line 21" x1="19.113" transform="translate(519.5 71.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+      <line id="Line_22" data-name="Line 22" y1="15" transform="translate(537.613 71.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="2" stroke-dasharray="4"/>
+    </g>
+  </g>
+</svg>

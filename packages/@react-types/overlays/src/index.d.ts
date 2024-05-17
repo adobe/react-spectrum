@@ -72,7 +72,7 @@ export interface OverlayProps {
   onExit?: () => void,
   onExiting?: () => void,
   onExited?: () => void,
-  nodeRef: MutableRefObject<HTMLElement>,
+  nodeRef: MutableRefObject<HTMLElement | null>,
   disableFocusManagement?: boolean
 }
 

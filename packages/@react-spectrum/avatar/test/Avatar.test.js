@@ -1,6 +1,6 @@
 import {Avatar} from '../';
 import React from 'react';
-import {render, screen} from '@react-spectrum/test-utils';
+import {render, screen} from '@react-spectrum/test-utils-internal';
 
 describe('Avatar', () => {
   it('renders an avatar image', () => {

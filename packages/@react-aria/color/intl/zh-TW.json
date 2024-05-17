@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}，{channelLabel}",
   "colorNameAndValue": "{name}：{value}",
   "colorPicker": "檢色器",
+  "colorSwatch": "色票",
+  "transparent": "透明",
   "twoDimensionalSlider": "2D 滑桿"
 }
