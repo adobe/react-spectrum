@@ -32,7 +32,7 @@ import {
   Key
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, useContext} from 'react';
 import {ProgressCircle} from './ProgressCircle';
@@ -369,14 +369,10 @@ const row = style<RowRenderProps & S2TableProps>({
     isPressed: 'gray-900/10', // table-row-hover-color
     isSelected: {
       // TODO: need to support opacity for lightDark
-      // default: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /10
-      // isFocusVisible: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
-      // isHovered: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
-      // isPressed: lightDark('informative-900', 'informative-700') // table-selected-row-background-color, todo needs opacity /15
-      default: 'informative-200',
-      isFocusVisible: 'informative-300',
-      isHovered: 'informative-300',
-      isPressed: 'informative-300'
+      default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, todo needs opacity /10
+      isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
+      isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
+      isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, todo needs opacity /15
     },
     isQuiet: {
       // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
@@ -385,15 +381,11 @@ const row = style<RowRenderProps & S2TableProps>({
       isHovered: 'gray-900/7', // table-row-hover-color
       isPressed: 'gray-900/10', // table-row-hover-color
       isSelected: {
-        // TODO: need to support opacity for lightDark
-        // default: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /10
-        // isFocusVisible: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
-        // isHovered: lightDark('informative-900', 'informative-700'), // table-selected-row-background-color, todo needs opacity /15
-        // isPressed: lightDark('informative-900', 'informative-700') // table-selected-row-background-color, todo needs opacity /15
-        default: 'informative-200',
-        isFocusVisible: 'informative-300',
-        isHovered: 'informative-300',
-        isPressed: 'informative-300'
+      // TODO: need to support opacity for lightDark
+        default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, todo needs opacity /10
+        isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
+        isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
+        isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, todo needs opacity /15
       }
     },
     forcedColors: {
