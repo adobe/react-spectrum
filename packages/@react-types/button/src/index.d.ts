@@ -38,7 +38,7 @@ export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
 }
 
 export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaButtonElementTypeProps<T> {
-  /** A URL to link to if elementType="a". */
+  /** A URL to link to if as={Link}. */
   href?: string,
   /** The target window for the link. */
   target?: string,
