@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "يحتوي الصف على إجراء",
+  "hasLinkAnnouncement": "يحتوي الصف على رابط: {link}"
 }
