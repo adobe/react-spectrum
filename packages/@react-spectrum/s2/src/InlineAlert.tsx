@@ -80,35 +80,35 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
       informative: {
         fillStyle: {
           border: 'gray-25',
-          subtleFill: 'informative-200',
+          subtleFill: 'informative-subtle',
           boldFill: 'informative'
         }
       },
       positive: {
         fillStyle: {
           border: 'gray-25',
-          subtleFill: 'positive-200',
+          subtleFill: 'positive-subtle',
           boldFill: 'positive'
         }
       },
       notice: {
         fillStyle: {
           border: 'gray-25',
-          subtleFill: 'notice-200',
+          subtleFill: 'notice-subtle',
           boldFill: 'notice'
         }
       },
       negative: {
         fillStyle: {
           border: 'gray-25',
-          subtleFill: 'negative-200',
+          subtleFill: 'negative-subtle',
           boldFill: 'negative'
         }
       },
       neutral: {
         fillStyle: {
           border: 'gray-25',
-          subtleFill: 'gray-100',
+          subtleFill: 'neutral-subtle',
           boldFill: 'neutral-subdued'
         }
       }

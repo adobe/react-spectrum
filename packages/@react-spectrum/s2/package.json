@@ -104,7 +104,7 @@
     "api-diff": "npm pkg set apiCheck=dist/api.json && npm pkg set targets.apiCheck.context=browser && parcel build --target apiCheck --config .parcelrc-api && node scripts/api-diff.js --skip-style-props --skip-same && npm pkg delete apiCheck && npm pkg delete targets.apiCheck"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.18",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.34",
     "@parcel/bundler-library": "2.11.1-canary.3165",
     "@parcel/config-default": "2.0.0-canary.1542",
     "@parcel/macros": "2.12.1-canary.3165",

@@ -387,6 +387,7 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
         isPressed: weirdColorToken('neutral-subdued-background-color-down')
       },
+      'neutral-subtle': colorToken('neutral-subtle-background-color-default'),
       negative: {
         default: weirdColorToken('negative-background-color-default'),
         isHovered: weirdColorToken('negative-background-color-hover'),
@@ -399,19 +400,24 @@ export const style = createTheme({
         isFocusVisible: colorToken('negative-subdued-background-color-key-focus'),
         isPressed: colorToken('negative-subdued-background-color-down')
       },
+      // Sort of weird to have both subdued and subtle that map to the same color...
+      'negative-subtle': colorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
         isHovered: weirdColorToken('informative-background-color-hover'),
         isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
         isPressed: weirdColorToken('informative-background-color-down')
       },
+      'informative-subtle': colorToken('informative-subtle-background-color-default'),
       positive: {
         default: weirdColorToken('positive-background-color-default'),
         isHovered: weirdColorToken('positive-background-color-hover'),
         isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
         isPressed: weirdColorToken('positive-background-color-down')
       },
+      'positive-subtle': colorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
+      'notice-subtle': colorToken('notice-subtle-background-color-default'),
       gray: weirdColorToken('gray-background-color-default'),
       red: weirdColorToken('red-background-color-default'),
       orange: weirdColorToken('orange-background-color-default'),
@@ -685,13 +691,13 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
-      emphasized: '0px 1px 6px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36))',
-      elevated: '0px 2px 8px light-dark(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.48))',
+      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
+      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
       none: 'none'
     },
     filter: {
-      emphasized: 'drop-shadow(0px 1px 6px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36)))',
-      elevated: 'drop-shadow(0px 2px 8px light-dark(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.48)))',
+      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
+      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
       none: 'none'
     },
     borderTopStartRadius: createMappedProperty(value => ({borderStartStartRadius: value}), radius),
