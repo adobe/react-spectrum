@@ -111,7 +111,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       }}
       data-animation={animation}
       onAnimationStart={() => {
-        if (animation === 'entering' || animation === null) {
+        if (animation === 'entering') {
           setIsEntered(true);
         }
       }}
@@ -123,7 +123,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       <div
         {...contentProps}
         className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}
-        style={{visibility: isEntered ? 'visible' : 'hidden'}}>
+        style={{visibility: isEntered || animation === null ? 'visible' : 'hidden'}}>
         {Icon &&
           <Icon
             aria-label={iconLabel}

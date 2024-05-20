@@ -391,10 +391,6 @@ describe('Toast Provider and Container', function () {
     );
 
     act(() => jest.advanceTimersByTime(100));
-    toast = getByRole('alertdialog');
-    alert = within(toast).getByRole('alert', {hidden: true});
-    fireAnimationStart(alert);
-    fireAnimationEnd(alert);
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -406,10 +402,6 @@ describe('Toast Provider and Container', function () {
     );
 
     act(() => jest.advanceTimersByTime(100));
-    toast = getByRole('alertdialog');
-    alert = within(toast).getByRole('alert', {hidden: true});
-    fireAnimationStart(alert);
-    fireAnimationEnd(alert);
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
