@@ -186,7 +186,11 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(root);
+        if (root instanceof HTMLElement) { // For React 16 and 17
+          unmount(shadowRoot);
+        } else { // For React 18
+          unmount(root);
+        }
       });
       document.body.removeChild(shadowHost);
     });
@@ -216,7 +220,11 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(root);
+        if (root instanceof HTMLElement) { // For React 16 and 17
+          unmount(shadowRoot);
+        } else { // For React 18
+          unmount(root);
+        }
       });
       document.body.removeChild(shadowHost);
     });
@@ -253,7 +261,11 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(root);
+        if (root instanceof HTMLElement) { // For React 16 and 17
+          unmount(shadowRoot);
+        } else { // For React 18
+          unmount(root);
+        }
       });
       document.body.removeChild(shadowHost);
     });
@@ -290,7 +302,11 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(root);
+        if (root instanceof HTMLElement) { // For React 16 and 17
+          unmount(shadowRoot);
+        } else { // For React 18
+          unmount(root);
+        }
       });
       document.body.removeChild(shadowHost);
     });

@@ -1669,7 +1669,11 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(shadowRoot.host);
     act(() => {
-      unmount(root);
+      if (root instanceof HTMLElement) { // For React 16 and 17
+        unmount(shadowRoot);
+      } else { // For React 18
+        unmount(root);
+      }
     });
   });
 
@@ -1699,7 +1703,11 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(parentShadowRoot.host);
     act(() => {
-      unmount(root);
+      if (root instanceof HTMLElement) { // For React 16 and 17
+        unmount(childShadowRoot);
+      } else { // For React 18
+        unmount(root);
+      }
     });
   });
 
@@ -1748,7 +1756,12 @@ describe('FocusScope with Shadow DOM', function () {
 
     act(() => {
       jest.runAllTimers();
-      unmount(root);
+
+      if (root instanceof HTMLElement) { // For React 16 and 17
+        unmount(shadowRoot);
+      } else { // For React 18
+        unmount(root);
+      }
     });
 
     expect(document.activeElement).toBe(externalInput);
@@ -1797,7 +1810,11 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(shadowHost);
     act(() => {
-      unmount(root);
+      if (root instanceof HTMLElement) { // For React 16 and 17
+        unmount(shadowRoot);
+      } else { // For React 18
+        unmount(root);
+      }
     });
   });
 });

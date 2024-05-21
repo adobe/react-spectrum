@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 let reactDomRenderer, unmount;
 
@@ -11,10 +12,14 @@ if (React.version.startsWith('16') || React.version.startsWith('17')) {
   reactDomRenderer = (element, container) => {
     const root = ReactDOMClient.createRoot(container);
     root.render(element);
-    return root; // Returning root is necessary to manage the lifecycle
+    return root; // Returning root for lifecycle management
   };
-  unmount = (root) => {
-    root.unmount();
+  unmount = (rootOrContainer) => {
+    if (rootOrContainer instanceof HTMLElement) {
+      ReactDOM.unmountComponentAtNode(rootOrContainer);
+    } else {
+      rootOrContainer.unmount(); // Assuming rootOrContainer is a root object
+    }
   };
 }
 

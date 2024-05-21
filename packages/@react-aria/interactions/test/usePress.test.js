@@ -3338,7 +3338,13 @@ describe('usePress', function () {
     afterEach(() => {
       act(() => {jest.runAllTimers();});
       document.body.removeChild(cleanupShadowRoot.host);
-      act(() => {unmount(root);});
+      act(() => {
+        if (root instanceof HTMLElement) { // For React 16 and 17
+          unmount(cleanupShadowRoot);
+        } else { // For React 18
+          unmount(root);
+        }
+      });
     });
 
     it('should fire press events based on pointer events', function () {

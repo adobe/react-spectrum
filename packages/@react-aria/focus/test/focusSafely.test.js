@@ -92,7 +92,13 @@ describe('focusSafely', () => {
       const button = shadowRoot.querySelector('button');
 
       requestAnimationFrame(() => {
-        act(() => {unmount(root);});
+        act(() => {
+          if (root instanceof HTMLElement) { // For React 16 and 17
+            unmount(shadowRoot);
+          } else { // For React 18
+            unmount(root);
+          }
+        });
         document.body.removeChild(shadowHost);
       });
       expect(button).toBeTruthy();
@@ -127,7 +133,13 @@ describe('focusSafely', () => {
 
       expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
 
-      act(() => {unmount(root);});
+      act(() => {
+        if (root instanceof HTMLElement) { // For React 16 and 17
+          unmount(shadowRoot);
+        } else { // For React 18
+          unmount(root);
+        }
+      });
       shadowRoot.host.remove();
     });
   });
