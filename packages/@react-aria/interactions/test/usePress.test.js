@@ -12,11 +12,12 @@
 
 import {act, createShadowRoot, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
+import {createRoot} from 'react-dom/client';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import ReactDOM, {render as ReactDOMRender} from 'react-dom';
+import {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
@@ -3304,7 +3305,7 @@ describe('usePress', function () {
 
   describe('FocusScope with Shadow DOM', function () {
     installPointerEvent();
-    let cleanupShadowRoot;
+    let cleanupShadowRoot, root;
     let events = [];
     let addEvent = (e) => events.push(e);
 
@@ -3323,8 +3324,12 @@ describe('usePress', function () {
           {...extraProps} />
       );
 
-      // Use ReactDOM to render directly into the shadow root
-      ReactDOM.render(<ExampleComponent />, shadowRoot);
+      // Using createRoot to mount the component
+      root = createRoot(shadowRoot);
+
+      act(() => {
+        root.render(<ExampleComponent />);
+      });
 
       return shadowRoot;
     }
@@ -3336,7 +3341,7 @@ describe('usePress', function () {
     afterEach(() => {
       act(() => {jest.runAllTimers();});
       document.body.removeChild(cleanupShadowRoot.host);
-      ReactDOM.unmountComponentAtNode(cleanupShadowRoot);
+      act(() => {root.unmount();});
     });
 
     it('should fire press events based on pointer events', function () {

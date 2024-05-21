@@ -11,8 +11,8 @@
  */
 
 import {act, createShadowRoot, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {createRoot} from 'react-dom/client';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {useFocus} from '../';
 
 function Example(props) {
@@ -166,7 +166,12 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
-      ReactDOM.render(<ExampleComponent />, shadowRoot);
+      // Using createRoot to mount the component
+      const root = createRoot(shadowRoot);
+
+      act(() => {
+        root.render(<ExampleComponent />);
+      });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
@@ -182,7 +187,9 @@ describe('useFocus', function () {
       ]);
 
       // Cleanup
-      ReactDOM.unmountComponentAtNode(shadowRoot);
+      act(() => {
+        root.unmount();
+      });
       document.body.removeChild(shadowHost);
     });
 
@@ -197,7 +204,13 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
-      ReactDOM.render(<ExampleComponent />, shadowRoot);
+      // Using createRoot to mount the component
+      const root = createRoot(shadowRoot);
+
+      act(() => {
+        root.render(<ExampleComponent />);
+      });
+
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
       act(() => {el.focus();});
@@ -206,7 +219,9 @@ describe('useFocus', function () {
       expect(events).toEqual([]);
 
       // Cleanup
-      ReactDOM.unmountComponentAtNode(shadowRoot);
+      act(() => {
+        root.unmount();
+      });
       document.body.removeChild(shadowHost);
     });
 
@@ -225,7 +240,13 @@ describe('useFocus', function () {
         </div>
       );
 
-      ReactDOM.render(<WrapperComponent />, shadowRoot);
+      // Using createRoot to mount the component
+      const root = createRoot(shadowRoot);
+
+      act(() => {
+        root.render(<WrapperComponent />);
+      });
+
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
       act(() => {el.focus();});
@@ -237,7 +258,9 @@ describe('useFocus', function () {
       expect(onWrapperBlur).not.toHaveBeenCalled();
 
       // Cleanup
-      ReactDOM.unmountComponentAtNode(shadowRoot);
+      act(() => {
+        root.unmount();
+      });
       document.body.removeChild(shadowHost);
     });
 
@@ -256,7 +279,13 @@ describe('useFocus', function () {
         </div>
       );
 
-      ReactDOM.render(<WrapperComponent />, shadowRoot);
+      // Using createRoot to mount the component
+      const root = createRoot(shadowRoot);
+
+      act(() => {
+        root.render(<WrapperComponent />);
+      });
+
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
       act(() => {el.focus();});
@@ -268,7 +297,9 @@ describe('useFocus', function () {
       expect(onWrapperBlur).toHaveBeenCalledTimes(1);
 
       // Cleanup
-      ReactDOM.unmountComponentAtNode(shadowRoot);
+      act(() => {
+        root.unmount();
+      });
       document.body.removeChild(shadowHost);
     });
   });

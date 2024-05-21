@@ -11,6 +11,7 @@
  */
 
 import {act, createShadowRoot, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {createRoot} from 'react-dom/client';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
@@ -1640,8 +1641,12 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
-    // Use ReactDOM to render directly into the shadow root
-    ReactDOM.render(<FocusableComponent />, shadowRoot);
+    // Using createRoot to mount the component
+    const root = createRoot(shadowRoot);
+
+    act(() => {
+      root.render(<FocusableComponent />);
+    });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     const input2 = shadowRoot.querySelector('[data-testid="input2"]');
@@ -1665,7 +1670,9 @@ describe('FocusScope with Shadow DOM', function () {
 
     // Cleanup
     document.body.removeChild(shadowRoot.host);
-    ReactDOM.unmountComponentAtNode(shadowRoot);
+    act(() => {
+      root.unmount();
+    });
   });
 
   it('should manage focus within nested shadow DOMs', async function () {
@@ -1674,13 +1681,15 @@ describe('FocusScope with Shadow DOM', function () {
     parentShadowRoot.appendChild(nestedDiv);
     const childShadowRoot = nestedDiv.attachShadow({mode: 'open'});
 
-    // Use ReactDOM to render into the nested shadow DOM
-    ReactDOM.render((
-      <FocusScope contain>
+    // Using createRoot to mount the component
+    const root = createRoot(childShadowRoot);
+
+    act(() => {
+      root.render(<FocusScope contain>
         <input data-testid="input1" />
         <input data-testid="input2" />
-      </FocusScope>
-    ), childShadowRoot);
+      </FocusScope>);
+    });
 
     const input1 = childShadowRoot.querySelector('[data-testid=input1]');
     const input2 = childShadowRoot.querySelector('[data-testid=input2]');
@@ -1693,8 +1702,9 @@ describe('FocusScope with Shadow DOM', function () {
 
     // Cleanup
     document.body.removeChild(parentShadowRoot.host);
-    ReactDOM.unmountComponentAtNode(childShadowRoot);
-    ReactDOM.unmountComponentAtNode(parentShadowRoot);
+    act(() => {
+      root.unmount();
+    });
   });
 
   /**
@@ -1727,7 +1737,12 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
-    ReactDOM.render(<FocusableComponent />, shadowRoot);
+    // Using createRoot to mount the component
+    const root = createRoot(shadowRoot);
+
+    act(() => {
+      root.render(<FocusableComponent />);
+    });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     act(() => { input1.focus(); });
@@ -1737,8 +1752,10 @@ describe('FocusScope with Shadow DOM', function () {
     act(() => { externalInput.focus(); });
     expect(document.activeElement).toBe(externalInput);
 
-    ReactDOM.unmountComponentAtNode(shadowRoot);
-    act(() => { jest.runAllTimers(); });
+    act(() => {
+      jest.runAllTimers();
+      root.unmount();
+    });
 
     expect(document.activeElement).toBe(externalInput);
   });
@@ -1758,7 +1775,11 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
-    ReactDOM.render(<FocusableComponent />, shadowRoot);
+    const root = createRoot(shadowRoot);
+
+    act(() => {
+      root.render(<FocusableComponent />);
+    });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     const input2 = shadowRoot.querySelector('[data-testid="input2"]');
@@ -1782,7 +1803,9 @@ describe('FocusScope with Shadow DOM', function () {
 
     // Cleanup
     document.body.removeChild(shadowHost);
-    ReactDOM.unmountComponentAtNode(shadowRoot);
+    act(() => {
+      root.unmount();
+    });
   });
 });
 
