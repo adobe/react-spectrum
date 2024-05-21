@@ -67,15 +67,10 @@ describe('useSearchField hook', () => {
         onSubmit.mockClear();
       });
 
-      it('preventDefault is not called for Escape', () => {
+      it('preventDefault and stopPropagation are not called for Escape', () => {
         let {inputProps} = renderSearchHook({});
         inputProps.onKeyDown(event('Escape'));
         expect(preventDefault).toHaveBeenCalledTimes(0);
-      });
-
-      it('stopPropagation is not called for Escape', () => {
-        let {inputProps} = renderSearchHook({});
-        inputProps.onKeyDown(event('Escape'));
         expect(stopPropagation).toHaveBeenCalledTimes(0);
       });
 
