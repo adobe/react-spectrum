@@ -12,10 +12,10 @@
 
 
 import {act, render} from '@react-spectrum/test-utils-internal';
-import {createRoot} from 'react-dom/client';
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '@react-aria/utils';
+import {reactDomRenderer, unmount} from '@react-spectrum/test-utils-internal/src/reactCompat';
 import {setInteractionModality} from '@react-aria/interactions';
 
 function createShadowRoot() {
@@ -84,18 +84,15 @@ describe('focusSafely', () => {
 
       const Example = () => <button>Button</button>;
 
-      const root = createRoot(shadowRoot);
-
+      let root;
       act(() => {
-        root.render(<Example />);
+        root = reactDomRenderer(<Example />, shadowRoot);
       });
 
       const button = shadowRoot.querySelector('button');
 
       requestAnimationFrame(() => {
-        act(() => {
-          root.unmount();
-        });
+        act(() => {unmount(root);});
         document.body.removeChild(shadowHost);
       });
       expect(button).toBeTruthy();
@@ -113,11 +110,10 @@ describe('focusSafely', () => {
       setInteractionModality('virtual');
 
       const Example = () => <button>Button</button>;
-      // Using createRoot to mount the component
-      const root = createRoot(shadowRoot);
 
+      let root;
       act(() => {
-        root.render(<Example />);
+        root = reactDomRenderer(<Example />, shadowRoot);
       });
 
       const button = shadowRoot.querySelector('button');
@@ -131,10 +127,7 @@ describe('focusSafely', () => {
 
       expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
 
-      // Cleanup using the new API
-      act(() => {
-        root.unmount();
-      });
+      act(() => {unmount(root);});
       shadowRoot.host.remove();
     });
   });
