@@ -1147,6 +1147,60 @@ Now you can use `MyCustomLabel` within a `Select`, in place of the builtin React
 </Select>
 ```
 
+### Custom select value
+
+Select passes the rendered children of the selected item in the render props of the `SelectValue`. You can use this to wrap a context and pass information to the `ListBoxItem` so it renders correctly.
+
+```tsx example
+import {createContext, useContext} from 'react';
+let CustomContext = createContext({isInMenu: true});
+
+let Description = (props) => {
+  let {isInMenu} = useContext(CustomContext);
+  return isInMenu ? <><span>Found in: </span>{props.children}</> : null;
+}
+
+let CustomItem = (props) => {
+  return (
+    <CustomContext.Provider
+      value={{isInMenu: true}}>
+      <ListBoxItem textValue={props.textValue}>
+        {props.children}
+      </ListBoxItem>
+    </CustomContext.Provider>
+  );
+}
+
+<Select>
+  <Label>Favorite Animal</Label>
+  <Button>
+    {/*- begin highlight -*/}
+    <SelectValue>
+      {({defaultChildren}) => {
+        return (
+          <CustomContext.Provider
+            value={{isInMenu: false}}>
+            {defaultChildren}
+          </CustomContext.Provider>
+        );
+      }}
+    </SelectValue>
+    {/*- end highlight -*/}
+    <span aria-hidden="true">▼</span>
+  </Button>
+  <Popover>
+    <ListBox>
+      <CustomItem textValue='aardvark'>Aardvark<Description> Texas</Description></CustomItem>
+      <CustomItem textValue='cat'>Cat<Description> Home</Description></CustomItem>
+      <CustomItem textValue='dog'>Dog<Description> Home</Description></CustomItem>
+      <CustomItem textValue='kangaroo'>Kangaroo<Description> Australia</Description></CustomItem>
+      <CustomItem textValue='panda'>Panda<Description> China</Description></CustomItem>
+      <CustomItem textValue='snake'>Snake<Description> In your boot</Description></CustomItem>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
 ### State
 
 Select provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SelectState} /> object to its children via `SelectStateContext`. This can be used to access and manipulate the select's state.
