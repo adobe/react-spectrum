@@ -357,6 +357,8 @@ export const ResizingTable = {
   }
 };
 
+// TODO make controlled resizing story without sorting
+
 // TODO: stories to add
 // show divider
 // overflow: wrap

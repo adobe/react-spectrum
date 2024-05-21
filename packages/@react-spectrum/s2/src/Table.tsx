@@ -41,6 +41,7 @@ import React, {createContext, ReactNode, useContext} from 'react';
 import {ProgressCircle} from './ProgressCircle';
 import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
+import Chevron from '../ui-icons/Chevron';
 import {IconContext} from './Icon';
 import {ColumnSize} from '@react-types/table';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
@@ -263,17 +264,25 @@ const columnStyles = style({
     isPressed: 'gray-900', // neutral-content-color-down
     isFocusVisible: 'gray-900' // neutral-content-color-key-focus
   },
-  paddingX: 16,
+  paddingX: {
+    default: 16,
+    isColumResizable: 0
+  },
   // TODO: would be nice to not have to hard code these
-  paddingTop: '[7px]', // table-column-header-row-top-to-text-medium
-  paddingBottom: '[8px]', // table-column-header-row-top-to-text-medium
+  paddingTop: {
+    default: '[7px]',  // table-column-header-row-top-to-text-medium
+    isColumResizable: 0
+  },
+  paddingBottom: {
+    default: '[8px]', // table-column-header-row-top-to-text-medium
+    isColumResizable: 0
+  },
   textAlign: 'start',
   outlineStyle: 'none',
   position: 'relative',
   fontSize: 'control',
-  cursor: {
-    allowsSorting: 'pointer'
-  }
+  fontFamily: 'sans',
+  fontWeight: 'bold'
   // TODO: right now in quiet, we are missing the top horizontal line separator between the columns and the first row
   // I could add this via border but that would introduce a shift in positioning and unfortunately can't use a negative margin on a th element
   // borderColor: 'gray-200',
@@ -287,15 +296,6 @@ const columnStyles = style({
   // }
 });
 
-const sort = style({
-  visibility: {
-    default: 'hidden',
-    isVisible: 'visible'
-  },
-  verticalAlign: 'baseline',
-  paddingStart: 'text-to-visual'
-});
-
 export interface ColumnProps extends RACColumnProps {
   showDivider?: boolean,
   isResizable?: boolean,
@@ -305,15 +305,17 @@ export interface ColumnProps extends RACColumnProps {
 export function Column(props: ColumnProps) {
   let {isQuiet, columnsResizable} = useContext(InternalTableContext);
   let {isResizable, children} = props;
+  let isColumResizable = columnsResizable && isResizable;
 
   return (
-    <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet})}>
-      {({allowsSorting, sortDirection, isFocusVisible, sort, startResize}) => (
+    <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
+      {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
+          {/* TODO: needs isFocusVisibleWithin? But what if focus is on the resizer? */}
           <CellFocusRing isFocusVisible={isFocusVisible} />
           {columnsResizable && isResizable ?
             (
-              <ResizableColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize}>
+              <ResizableColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} isHovered={isHovered}>
                 {children}
               </ResizableColumnContents>
             ) : (
@@ -335,15 +337,15 @@ function ColumnContents(props: ColumnContentProps) {
   let {allowsSorting, sortDirection, children} = props;
 
   return (
-    <>
+    <div className={style({display: 'flex', alignItems: 'center'})}>
       {allowsSorting && (
         <Provider
           values={[
-            // TODO: fix vertical centering. Could center it with a margin-top if the table header was a display inline-flex instead of a table cell but that messes up the columns lining up with the row cell content
             [IconContext, {
               styles: style({
                 height: 16,
-                width: 16
+                width: 16,
+                marginEnd: 8
               })
             }]
           ]}>
@@ -356,38 +358,118 @@ function ColumnContents(props: ColumnContentProps) {
         Since we need to reserve room for the icon to prevent header shifting, placing it in front of the text will offset the text with the
         row value. Additionally, if we don't reserve room for the icon, then the width of the table column changes, causing a shift in layout  */}
       {children}
-    </>
+    </div>
   );
 }
-interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize'> {
+
+const resizableMenuButtonWrapper = style({
+  width: 'full',
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  // TODO: same styles from columnStyles, consolidate later
+  paddingX: 16,
+  paddingTop: '[7px]', // table-column-header-row-top-to-text-medium
+  paddingBottom: '[8px]', // table-column-header-row-top-to-text-medium
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  fontSize: 'control',
+  fontFamily: 'sans',
+  fontWeight: 'bold',
+  // TODO: Same styles from cellFocus, consolidate later
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineOffset: '[-2px]', // Maybe can use space?
+  outlineWidth: 2,
+  outlineColor: 'focus-ring',
+  borderRadius: 'sm'
+});
+
+const resizerHandleContainer = style({
+  width: 12,
+  height: 'full',
+  position: 'absolute',
+  top: 0,
+  right: '[-6px]',
+  // TODO: cursor should change if at limits
+  cursor: 'ew-resize',
+  zIndex: 1000
+});
+
+const resizerHandle = style({
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: 'gray-300',
+    isFocusVisible: 'focus-ring',
+    isResizing: 'focus-ring'
+  },
+  height: 'full',
+  width: '[2px]',
+  position: 'absolute',
+  left: '[6px]'
+});
+
+const sortIcon = style({
+  height: 16,
+  width: 16,
+  marginEnd: 'text-to-visual',
+  minWidth: 16
+});
+
+const columnHeaderText = style({
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  minWidth: 0,
+  overflow: 'hidden',
+  flexGrow: 0,
+  flexShrink: 1,
+  flexBasis: 'auto'
+});
+
+const chevronIcon = style({
+  rotate: 90,
+  marginStart: 'text-to-visual',
+  minWidth: 16
+});
+
+interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'> {
   children: ReactNode
 }
 
+// TODOS for resizing still
+// clicking on the overlay options dont trigger them for some reason
+// Esc doesn't work in the menu
+// keyboard skip the drag handle
+// show all resizer handles on hover (need info from header row)
+// need a blue line rendered for the column down (need info in the cells of the column's resizing state)
+
 function ResizableColumnContents(props: ResizableColumnContentProps) {
-  let {allowsSorting, sortDirection, sort, startResize, children} = props;
+  let {allowsSorting, sortDirection, sort, startResize, children, isHovered} = props;
 
   return (
-    <div className={style({display: 'flex', alignItems: 'center'})}>
-      {allowsSorting && (
-        <Provider
-          values={[
-            // TODO: fix vertical centering. Could center it with a margin-top if the table header was a display inline-flex instead of a table cell but that messes up the columns lining up with the row cell content
-            [IconContext, {
-              styles: style({
-                height: 16,
-                width: 16
-              })
-            }]
-          ]}>
-          {sortDirection != null && (
-            sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />
-          )}
-        </Provider>
-      )}
+    <>
       <MenuTrigger>
-        {/* TODO: style the button so it looks just like a table header */}
-        <Button>{children}</Button>
-        <Popover>
+        <Button className={(renderProps) => resizableMenuButtonWrapper(renderProps)}>
+          {allowsSorting && (
+            <Provider
+              values={[
+                [IconContext, {
+                  styles: sortIcon
+                }]
+              ]}>
+              {sortDirection != null && (
+                sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />
+              )}
+            </Provider>
+          )}
+          <div className={columnHeaderText}>
+            {children}
+          </div>
+          <Chevron size="M" className={chevronIcon} />
+        </Button>
+        <Popover hideArrow>
           <Menu
             onAction={(action) => {
               if (action === 'sortAscending') {
@@ -404,9 +486,10 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
           </Menu>
         </Popover>
       </MenuTrigger>
-      {/* TODO: style the resizer, grab from v3. Remember to make it not appear unless hovered or keyboard focused */}
-      <ColumnResizer />
-    </div>
+      <ColumnResizer className={resizerHandleContainer}>
+        {({isFocusVisible, isResizing, isFocused}) => <div className={resizerHandle({isFocusVisible, isHovered, isResizing, isFocused})} />}
+      </ColumnResizer>
+    </>
   );
 }
 
