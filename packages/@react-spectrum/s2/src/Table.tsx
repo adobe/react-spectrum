@@ -29,17 +29,22 @@ import {
   TableBodyRenderProps,
   RowRenderProps,
   Provider,
-  Key
+  Key,
+  ResizableTableContainer,
+  ColumnResizer,
+  ColumnRenderProps
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, useContext} from 'react';
+import React, {createContext, ReactNode, useContext} from 'react';
 import {ProgressCircle} from './ProgressCircle';
 import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
 import {IconContext} from './Icon';
 import {ColumnSize} from '@react-types/table';
+import {Menu, MenuItem, MenuTrigger} from './Menu';
+import {Popover} from './Popover';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -55,14 +60,6 @@ import {ColumnSize} from '@react-types/table';
 // summary row (to discuss, is this a separate row? What accessibility goes into this)
 
 // nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
-
-const table = style<TableRenderProps>({
-  userSelect: 'none',
-  minHeight: 0,
-  minWidth: 0,
-  borderSpacing: 0,
-  fontFamily: 'sans'
-}, getAllowedOverrides({height: true}));
 
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
@@ -108,7 +105,21 @@ interface S2TableProps {
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
-let InternalTableContext = createContext<TableProps>({});
+let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean}>({});
+
+const tableWrapper = style({
+  overflow: 'auto',
+  width: '[300px]'
+});
+
+const table = style<TableRenderProps>({
+  userSelect: 'none',
+  minHeight: 0,
+  minWidth: 0,
+  borderSpacing: 0,
+  fontFamily: 'sans'
+}, getAllowedOverrides({height: true}));
+
 
 export function Table(props: TableProps) {
   let {
@@ -120,11 +131,15 @@ export function Table(props: TableProps) {
     selectionStyle = 'checkbox',
     styles,
     isLoading,
+    onResize,
+    onResizeEnd,
+    onResizeStart,
     ...otherProps
   } = props;
 
-  return (
-    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading}}>
+  let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
+  let baseTable = (
+    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading, columnsResizable}}>
       <AriaTable
         style={UNSAFE_style}
         className={renderProps => (UNSAFE_className || '') + table({
@@ -134,6 +149,21 @@ export function Table(props: TableProps) {
         {...otherProps} />
     </InternalTableContext.Provider>
   );
+
+  if (columnsResizable) {
+    baseTable = (
+      // TODO: should the styles the user provides go right on this container instead of on the Table itself? Is there anyway we could split these out?
+      // Right now I've just hard coded the width
+      // TODO: also the current styling cuts off the table body border/outline. Even with additional padding to compensate for this, the rest of the body is still
+      // out of view since the container itself is the scrollable region instead of the body itself. Not sure how to actually style it so that we get the
+      // body outline visible at all times (can't make the container have the outline since that goes around the columns too)
+      <ResizableTableContainer onResize={onResize} onResizeEnd={onResizeEnd} onResizeStart={onResizeStart} className={tableWrapper}>
+        {baseTable}
+      </ResizableTableContainer>
+    );
+  }
+
+  return baseTable;
 }
 
 // TODO: will need focus styles for when it is focused due to empty state
@@ -267,40 +297,116 @@ const sort = style({
 });
 
 export interface ColumnProps extends RACColumnProps {
-  showDivider?: boolean
+  showDivider?: boolean,
+  isResizable?: boolean,
+  children?: ReactNode
 }
 
 export function Column(props: ColumnProps) {
-  let {isQuiet} = useContext(InternalTableContext);
+  let {isQuiet, columnsResizable} = useContext(InternalTableContext);
+  let {isResizable, children} = props;
 
   return (
     <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet})}>
-      {({allowsSorting, sortDirection, isFocusVisible}) => (
+      {({allowsSorting, sortDirection, isFocusVisible, sort, startResize}) => (
         <>
           <CellFocusRing isFocusVisible={isFocusVisible} />
-          {/* TODO How to place the sort icon in front of the text like it shows in the designs?
-            Since we need to reserve room for the icon to prevent header shifting, placing it in front of the text will offset the text with the
-            row value. Additionally, if we don't reserve room for the icon, then the width of the table column changes, causing a shift in layout  */}
-          {props.children}
-          {allowsSorting && (
-            <Provider
-              values={[
-                // TODO: fix vertical centering. Could center it with a margin-top if the table header was a display inline-flex instead of a table cell but that messes up the columns lining up with the row cell content
-                [IconContext, {
-                  styles: style({
-                    height: 16,
-                    width: 16
-                  })
-                }]
-              ]}>
-              <span aria-hidden="true" className={sort({isVisible: sortDirection != null})}>
-                {sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />}
-              </span>
-            </Provider>
-          )}
+          {columnsResizable && isResizable ?
+            (
+              <ResizableColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize}>
+                {children}
+              </ResizableColumnContents>
+            ) : (
+              <ColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection}>
+                {children}
+              </ColumnContents>
+            )
+          }
         </>
       )}
     </AriaColumn>
+  );
+}
+
+// TODO combine the ColumnContents and the ResizableColumnContents further so they share the same sort stuff
+interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
+
+function ColumnContents(props: ColumnContentProps) {
+  let {allowsSorting, sortDirection, children} = props;
+
+  return (
+    <>
+      {allowsSorting && (
+        <Provider
+          values={[
+            // TODO: fix vertical centering. Could center it with a margin-top if the table header was a display inline-flex instead of a table cell but that messes up the columns lining up with the row cell content
+            [IconContext, {
+              styles: style({
+                height: 16,
+                width: 16
+              })
+            }]
+          ]}>
+          {sortDirection != null && (
+            sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />
+          )}
+        </Provider>
+      )}
+      {/* TODO How to place the sort icon in front of the text like it shows in the designs?
+        Since we need to reserve room for the icon to prevent header shifting, placing it in front of the text will offset the text with the
+        row value. Additionally, if we don't reserve room for the icon, then the width of the table column changes, causing a shift in layout  */}
+      {children}
+    </>
+  );
+}
+interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize'> {
+  children: ReactNode
+}
+
+function ResizableColumnContents(props: ResizableColumnContentProps) {
+  let {allowsSorting, sortDirection, sort, startResize, children} = props;
+
+  return (
+    <div className={style({display: 'flex', alignItems: 'center'})}>
+      {allowsSorting && (
+        <Provider
+          values={[
+            // TODO: fix vertical centering. Could center it with a margin-top if the table header was a display inline-flex instead of a table cell but that messes up the columns lining up with the row cell content
+            [IconContext, {
+              styles: style({
+                height: 16,
+                width: 16
+              })
+            }]
+          ]}>
+          {sortDirection != null && (
+            sortDirection === 'ascending' ? <SortUpArrow /> : <SortDownArrow />
+          )}
+        </Provider>
+      )}
+      <MenuTrigger>
+        {/* TODO: style the button so it looks just like a table header */}
+        <Button>{children}</Button>
+        <Popover>
+          <Menu
+            onAction={(action) => {
+              if (action === 'sortAscending') {
+                sort('ascending');
+              } else if (action === 'sortDescending') {
+                sort('descending');
+              } else if (action === 'resize') {
+                startResize();
+              }
+            }}>
+            <MenuItem id="sortAscending">Sort Ascending</MenuItem>
+            <MenuItem id="sortDescending">Sort Descending</MenuItem>
+            <MenuItem id="resize">Resize</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+      {/* TODO: style the resizer, grab from v3. Remember to make it not appear unless hovered or keyboard focused */}
+      <ColumnResizer />
+    </div>
   );
 }
 

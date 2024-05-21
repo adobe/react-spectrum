@@ -24,7 +24,24 @@ const meta: Meta<typeof Table> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    onResize: {
+      table: {
+        disable: true
+      }
+    },
+    onResizeStart: {
+      table: {
+        disable: true
+      }
+    },
+    onResizeEnd: {
+      table: {
+        disable: true
+      }
+    }
+  }
 };
 
 export default meta;
@@ -219,12 +236,61 @@ const ReorderableTable = (args: any) => {
   );
 };
 
+let sortResizeColumns = [
+  {name: 'Name', id: 'name', isRowHeader: true, isResizable: true},
+  {name: 'Height', id: 'height'},
+  {name: 'Weight', id: 'weight', isResizable: true}
+];
+
+const SortableResizableTable = (args: any) => {
+  let [items, setItems] = useState(sortitems);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      // @ts-ignore todo double check later
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
+  return (
+    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange}>
+      <TableHeader columns={sortResizeColumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={sortcolumns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
 export const Example = {
   render: StaticTable,
   args: {
     onRowAction: null,
     onCellAction: null,
-    selectionMode: 'multiple'
+    selectionMode: 'multiple',
+    onResize: null,
+    onResizeStart: null,
+    onResizeEnd: null
   }
 };
 
@@ -272,13 +338,23 @@ export const LoadingStateWithItems = {
 };
 
 export const Sorting = {
+  ...Example,
   render: SortableTable,
   name: 'sortable'
 };
 
 export const ReorderDnD = {
+  ...Example,
   render: ReorderableTable,
   name: 'reorderable table'
+};
+
+export const ResizingTable = {
+  render: SortableResizableTable,
+  args: {
+    onResize: action('resize')
+    // TODO: add rest of resize stuff
+  }
 };
 
 // TODO: stories to add
