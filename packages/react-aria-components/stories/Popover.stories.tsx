@@ -43,16 +43,25 @@ export const PopoverExample = () => (
               Submit
             </Button>
           </form>
-        )}
+          )}
       </Dialog>
     </Popover>
   </DialogTrigger>
-);
+  );
 
 export const PopoverArrowBoundaryOffsetExample = {
+  args: {
+    topLeft: 25,
+    topRight: 25,
+    leftTop: 15,
+    leftBottom: 15,
+    rightTop: 15,
+    rightBottom: 15,
+    bottomLeft: 25,
+    bottomRight: 25
+  },
   argTypes: {
     topLeft: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -60,7 +69,6 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     },
     topRight: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -68,15 +76,13 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     },
     leftTop: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
         max: 100
       }
     },
-    leftBotton: {
-      defaultValue: 15,
+    leftBottom: {
       control: {
         type: 'range',
         min: -100,
@@ -84,7 +90,6 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     },
     rightTop: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -92,7 +97,6 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     },
     rightBottom: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -100,7 +104,6 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     },
     bottomLeft: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -108,7 +111,6 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     },
     bottomRight: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -116,7 +118,7 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     }
   },
-  render: ({topLeft, topRight, leftTop, leftBotton, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
+  render: ({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex'}}>
@@ -206,7 +208,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Popover
                 placement="left bottom"
                 shouldFlip={false}
-                arrowBoundaryOffset={leftBotton}
+                arrowBoundaryOffset={leftBottom}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',

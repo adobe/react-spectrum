@@ -10,11 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Content, Header} from '@react-spectrum/view';
+import {Dialog, DialogContainer, useDialogContainer} from '../src';
 import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from '../stories/DialogContainerExamples';
+import {Divider} from '@react-spectrum/divider';
+import {Heading, Text} from '@react-spectrum/text';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import userEvent from '@testing-library/user-event';
 
 describe('DialogContainer', function () {
   beforeAll(() => {
@@ -25,7 +33,8 @@ describe('DialogContainer', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  it('should open and close a dialog based on controlled state', function () {
+  it('should open and close a dialog based on controlled state', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample />
@@ -35,7 +44,7 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(queryByRole('dialog')).toBeNull();
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
@@ -43,13 +52,14 @@ describe('DialogContainer', function () {
 
     button = within(dialog).getByText('Confirm');
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
   });
 
-  it('should support closing a dialog via the Escape key', function () {
+  it('should support closing a dialog via the Escape key', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample />
@@ -59,7 +69,7 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(queryByRole('dialog')).toBeNull();
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
@@ -72,7 +82,8 @@ describe('DialogContainer', function () {
     expect(queryByRole('dialog')).toBeNull();
   });
 
-  it('should not close a dialog via the Escape key if isKeyboardDismissDisabled', function () {
+  it('should not close a dialog via the Escape key if isKeyboardDismissDisabled', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample isKeyboardDismissDisabled />
@@ -82,7 +93,7 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(queryByRole('dialog')).toBeNull();
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
@@ -95,7 +106,8 @@ describe('DialogContainer', function () {
     expect(getByRole('dialog')).toBeVisible();
   });
 
-  it('should not close when clicking outside the dialog by default', function () {
+  it('should not close when clicking outside the dialog by default', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample />
@@ -105,18 +117,19 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(queryByRole('dialog')).toBeNull();
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
 
-    triggerPress(document.body);
+    await user.click(document.body);
     act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
   });
 
-  it('should close when clicking outside the dialog when isDismissible', function () {
+  it('should close when clicking outside the dialog when isDismissible', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <DialogContainerExample isDismissable />
@@ -126,18 +139,19 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(queryByRole('dialog')).toBeNull();
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
 
-    triggerPress(document.body);
+    await user.click(document.body);
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
   });
 
-  it('should not close the dialog when a trigger unmounts', function () {
+  it('should not close the dialog when a trigger unmounts', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <MenuExample />
@@ -147,7 +161,7 @@ describe('DialogContainer', function () {
     let button = getByRole('button');
     expect(queryByRole('dialog')).toBeNull();
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
@@ -155,7 +169,7 @@ describe('DialogContainer', function () {
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
 
-    triggerPress(menuitem);
+    await user.click(menuitem);
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('menu')).toBeNull();
@@ -164,14 +178,15 @@ describe('DialogContainer', function () {
     let dialog = getByRole('dialog');
     button = within(dialog).getByText('Confirm');
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
   });
 
-  it('should be able to have dialogs open dialogs and still restore focus', function () {
+  it('should be able to have dialogs open dialogs and still restore focus', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole} = render(
       <Provider theme={theme}>
         <NestedDialogContainerExample />
@@ -179,19 +194,19 @@ describe('DialogContainer', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
     act(() => {jest.runAllTimers();});
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getAllByRole('menuitem')[0];
 
-    triggerPress(menuitem);
+    await user.click(menuitem);
     act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     let confirmButton = within(dialog).getByText('Do that');
 
-    triggerPress(confirmButton);
+    await user.click(confirmButton);
     act(() => {jest.runAllTimers();});
 
     dialog = getByRole('dialog');
@@ -201,10 +216,65 @@ describe('DialogContainer', function () {
 
     let closeButton = getByRole('button', {name: 'Dismiss'});
 
-    triggerPress(closeButton);
+    await user.click(closeButton);
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(document.activeElement).toBe(button);
+  });
+
+  describe('portalContainer', () => {
+    let user;
+    beforeAll(() => {
+      user = userEvent.setup({delay: null, pointerMap});
+      jest.useFakeTimers();
+    });
+    function ExampleDialog(props) {
+      let container = useDialogContainer();
+
+      return (
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Header>The Header</Header>
+          <Divider />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+          {!props.isDismissable &&
+            <ButtonGroup>
+              <Button variant="secondary" onPress={container.dismiss}>Cancel</Button>
+              <Button variant="cta" onPress={container.dismiss}>Confirm</Button>
+            </ButtonGroup>
+          }
+        </Dialog>
+      );
+    }
+    function App(props) {
+      let container = useRef(null);
+      let [isOpen, setOpen] = useState(false);
+
+      return (
+        <Provider theme={theme}>
+          <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <DialogContainer onDismiss={() => setOpen(false)} {...props}>
+              {isOpen &&
+                <ExampleDialog {...props} />
+              }
+            </DialogContainer>
+          </UNSTABLE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
+        </Provider>
+      );
+    }
+
+    it('should render the dialog in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
   });
 });

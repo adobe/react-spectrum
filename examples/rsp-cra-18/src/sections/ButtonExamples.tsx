@@ -1,3 +1,4 @@
+/* eslint-disable react/style-prop-object */
 import { ActionButton, Button, Divider, Flex, LogicButton, ToggleButton} from '@adobe/react-spectrum';
 
 export default function ButtonExamples() {

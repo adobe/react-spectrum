@@ -17,6 +17,7 @@ import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, use
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
@@ -263,6 +264,15 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     forcedColorAdjust: 'none'
   };
 
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      opacity: '0.0001',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none'
+    }
+  });
+
   return {
     trackProps: {
       ...trackInteractions,
@@ -297,9 +307,9 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       ...thumbInteractions,
       style: {
         position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
+        left: outerRadius + x,
+        top: outerRadius + y,
+        transform: 'translate(-50%, -50%)',
         touchAction: 'none',
         ...forcedColorAdjustNoneStyle
       }
@@ -311,13 +321,17 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         min: String(minValue),
         max: String(maxValue),
         step: String(step),
-        'aria-valuetext': state.value.formatChannelValue('hue', locale),
+        'aria-valuetext': `${state.value.formatChannelValue('hue', locale)}, ${state.value.getHueName(locale)}`,
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
         name,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
-        }
+        },
+        style: visuallyHiddenProps.style,
+        'aria-errormessage': props['aria-errormessage'],
+        'aria-describedby': props['aria-describedby'],
+        'aria-details': props['aria-details']
       }
     )
   };

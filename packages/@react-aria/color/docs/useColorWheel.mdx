@@ -80,14 +80,12 @@ to assistive technologies.
 
 This example shows how to build a simple color wheel with a draggable thumb to adjust the hue value of a color. Styling for
 the track background and positioning of the thumb are provided by `useColorWheel` in the returned `style` prop for each element.
-The `<input>` element inside the thumb is used to represent the color wheel to assistive technology, and is hidden from view
-using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses the [useFocusRing](useFocusRing.html) hook to
-grow in size when it is keyboard focused (try tabbing to it).
+The visually hidden `<input>` element inside the thumb is used to represent the color wheel to assistive technology. The thumb also 
+uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
 import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';
 
 const RADIUS = 100;
@@ -95,6 +93,7 @@ const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
 function ColorWheel(props) {
+  let {isDisabled} = props;
   let state = useColorWheelState(props);
   let inputRef = React.useRef(null);
   let {trackProps, inputProps, thumbProps} = useColorWheel({
@@ -107,21 +106,25 @@ function ColorWheel(props) {
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...trackProps} />
+      <div
+        {...trackProps}
+        style={{
+          ...trackProps.style,
+          background: isDisabled ? 'rgb(142, 142, 142)' : trackProps.style.background
+        }} />
       <div
         {...thumbProps}
         style={{
           ...thumbProps.style,
-          border: '2px solid white',
+          background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+          border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
           boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
           width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
           height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
           borderRadius: '50%',
           boxSizing: 'border-box'
         }}>
-        <VisuallyHidden>
-          <input {...inputProps} {...focusProps} ref={inputRef} />
-        </VisuallyHidden>
+        <input {...inputProps} {...focusProps} ref={inputRef} />
       </div>
     </div>
   );
