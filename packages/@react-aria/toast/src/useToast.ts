@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/s
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {RefObject, useEffect} from 'react';
+import React, {RefObject, useEffect} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -61,6 +61,13 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [timer, timeout]);
 
+  let [isEntered, setIsEntered] = React.useState(false);
+  useEffect(() => {
+    if (animation === 'entering') {
+      setIsEntered(true);
+    }
+  }, [animation]);
+
   let titleId = useId();
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
@@ -79,7 +86,10 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     contentProps: {
       role: 'alert',
-      'aria-atomic': 'true'
+      'aria-atomic': 'true',
+      style: {
+        visibility: isEntered || animation === null ? 'visible' : 'hidden'
+      }
     },
     titleProps: {
       id: titleId
