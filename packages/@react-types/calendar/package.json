@@ -1,6 +1,6 @@
 {
   "name": "@react-types/calendar",
-  "version": "3.4.5",
+  "version": "3.4.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.5.3",
-    "@react-types/shared": "^3.23.0"
+    "@internationalized/date": "^3.5.4",
+    "@react-types/shared": "^3.23.1"
   },
   "publishConfig": {
     "access": "public"
