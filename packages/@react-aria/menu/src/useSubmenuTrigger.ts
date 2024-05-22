@@ -13,7 +13,7 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
-import {FocusableElement, FocusStrategy, KeyboardEvent, PressEvent} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
@@ -21,6 +21,11 @@ import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
 export interface AriaSubmenuTriggerProps {
+  /**
+   * An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item.
+   * @deprecated
+   */
+  node?: Node<unknown>,
   /** Whether the submenu trigger is disabled. */
   isDisabled?: boolean,
   /** The type of the contents that the submenu trigger opens. */
