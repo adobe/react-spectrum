@@ -35,8 +35,69 @@ TextAreaExample.args = {
   label: 'Comment'
 };
 
-export const CustomWidth = (args: any) => <TextField {...args} styles={style({width: 208})} />;
+export const CustomWidth = (args: any) => <TextField {...args} styles={style({width: 384})} />;
 
 CustomWidth.args = {
   label: 'Name'
+};
+CustomWidth.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const SmallWidth = (args: any) => <TextField {...args} styles={style({width: 48})} />;
+
+SmallWidth.args = {
+  label: 'Name'
+};
+SmallWidth.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const UNSAFEWidth = (args: any) => <TextField {...args} UNSAFE_style={{width: 384}} />;
+
+UNSAFEWidth.args = {
+  label: 'Name'
+};
+UNSAFEWidth.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const InForm = (args: any) => (
+  <Form>
+    <TextField {...args} />
+    <Button type="submit" variant="primary">Submit</Button>
+  </Form>
+);
+
+InForm.args = {
+  ...Example.args,
+  isRequired: true
+};
+InForm.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const FormCustomWidth = (args: any) => (
+  <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
+    <TextField {...args} />
+    <Button type="submit" variant="primary">Submit</Button>
+  </Form>
+);
+
+FormCustomWidth.args = {
+  ...Example.args,
+  isRequired: true
+};
+FormCustomWidth.parameters = {
+  docs: {
+    disable: true
+  }
 };

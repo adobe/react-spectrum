@@ -100,7 +100,6 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
     }
   }));
 
-
   return (
     <AriaTextField
       {...textFieldProps}

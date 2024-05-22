@@ -4,6 +4,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {StaticColorDecorator} from './utils';
 import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Picker> = {
   component: Picker,
@@ -21,19 +22,18 @@ const meta: Meta<typeof Picker> = {
 export default meta;
 type Story = StoryObj<typeof Picker>;
 
-export const Example: Story = {
-  render: (args) => (
-    <Picker {...args}>
-      <PickerItem>Chocolate</PickerItem>
-      <PickerItem>Mint</PickerItem>
-      <PickerItem>Strawberry</PickerItem>
-      <PickerItem>Vanilla</PickerItem>
-      <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
-    </Picker>
-  ),
-  args: {
-    label: 'Ice cream flavor'
-  }
+export const Example = (args: any) => (
+  <Picker {...args}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Mint</PickerItem>
+    <PickerItem>Strawberry</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+    <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+  </Picker>
+);
+
+Example.args = {
+  label: 'Ice cream flavor'
 };
 
 export const Sections: Story = {
@@ -120,4 +120,12 @@ export const Validation = (args: any) => (
 Validation.args = {
   ...Dynamic.args,
   isRequired: true
+};
+
+export const CustomWidth = (args: any) => <Example {...args} styles={style({width: 384})} />;
+CustomWidth.args = Example.args;
+CustomWidth.parameters = {
+  docs: {
+    disable: true
+  }
 };

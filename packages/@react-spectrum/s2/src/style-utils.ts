@@ -71,6 +71,29 @@ export const field = () => ({
   disableTapHighlight: true
 } as const);
 
+export const fieldInput = () => ({
+  gridArea: 'input',
+  minWidth: 'control',
+  contain: {
+    // Only apply size containment if contain-intrinsic-width is supported.
+    // In older browsers, this will fall back to the default browser intrinsic width.
+    '@supports (contain-intrinsic-width: 1px)': 'inline-size'
+  },
+  '--defaultWidth': {
+    type: 'width',
+    value: {
+      default: 208,
+      size: {
+        S: 192,
+        L: 224,
+        XL: 240
+      }
+    }
+  },
+  // contain-intrinsic-width only includes the width of children, not the padding or borders.
+  containIntrinsicWidth: '[calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))]'
+} as const);
+
 export const colorScheme = () => ({
   colorScheme: {
     colorScheme: {

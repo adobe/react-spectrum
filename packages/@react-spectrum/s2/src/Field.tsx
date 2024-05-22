@@ -1,6 +1,6 @@
 import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, Provider} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, UnsafeStyles, focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, UnsafeStyles, fieldInput, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/Asterisk';
 import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
 import {IconContext} from './Icon';
@@ -122,19 +122,10 @@ interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'chil
 
 const fieldGroupStyles = style({
   ...focusRing(),
-  gridArea: 'input',
+  ...fieldInput(),
   display: 'flex',
   alignItems: 'center',
   height: 'control',
-  // TODO: this should actually stretch to fill the parent Field if that has a width defined.
-  width: {
-    default: 208,
-    size: {
-      S: 192,
-      L: 224,
-      XL: 240
-    }
-  },
   boxSizing: 'border-box',
   paddingX: 'edge-to-text',
   fontFamily: 'sans',
@@ -214,6 +205,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         flexGrow: 1,
         flexShrink: 1,
         minWidth: 0,
+        width: 'full',
         outlineStyle: 'none',
         borderStyle: 'none',
         truncate: true

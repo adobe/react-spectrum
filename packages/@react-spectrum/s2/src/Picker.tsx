@@ -16,7 +16,7 @@ import {
   SectionProps
 } from 'react-aria-components';
 import ChevronIcon from '../ui-icons/Chevron';
-import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, fieldInput, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -88,12 +88,8 @@ interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
-  outlineStyle: {/* The focus ring shows up after menu close if default and isFocusVisible from focusRing() aren't added to this definition. */
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
+  ...fieldInput(),
   position: 'relative',
-  gridArea: 'input',
   fontFamily: 'sans',
   fontSize: 'control',
   display: 'flex',
@@ -103,12 +99,8 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   alignItems: 'center',
   height: 'control',
   transition: 'default',
-  columnGap: {
-    default: 'text-to-control'
-  },
-  paddingX: {
-    default: 'edge-to-text'
-  },
+  columnGap: 'text-to-control',
+  paddingX: 'edge-to-text',
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
@@ -117,14 +109,6 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
-  },
-  width: {
-    default: 208,
-    size: {
-      S: 176,
-      L: 224,
-      XL: 240
-    }
   }
 });
 

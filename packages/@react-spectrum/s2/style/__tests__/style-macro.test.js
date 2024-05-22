@@ -30,7 +30,7 @@ describe('style-macro', () => {
       @layer _.a, _.b, _.c, UNSAFE_overrides;
 
       @layer _.b {
-        .y-13alit4b {
+        .A-13alit4b {
           &:first-child {
             margin-top: 0.25rem;
           }
@@ -39,7 +39,7 @@ describe('style-macro', () => {
 
       @layer _.c.e {
         @media (min-width: 1024px) {
-          .y-13alit4ec {
+          .A-13alit4ec {
             &:first-child {
               margin-top: 0.5rem;
             }
@@ -49,6 +49,68 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" . y-13alit4b y-13alit4ec"');
+    expect(js).toMatchInlineSnapshot('" . A-13alit4b A-13alit4ec"');
+  });
+
+  it('should support self references', () => {
+    let {css} = testStyle({
+      borderWidth: 2,
+      paddingX: 'edge-to-text',
+      width: '[calc(200px - self(borderStartWidth) - self(paddingStart))]'
+    });
+
+    expect(css).toMatchInlineSnapshot(`
+      ".\\.:not(#a#b) { all: revert-layer }
+
+      @layer _.a, _.b, UNSAFE_overrides;
+
+      @layer _.a {
+        .uc {
+          border-top-width: 2px;
+        }
+
+
+        .vc {
+          border-bottom-width: 2px;
+        }
+
+
+        .s-375toy {
+          border-inline-start-width: var(--s);
+        }
+
+
+        .tc {
+          border-inline-end-width: 2px;
+        }
+
+
+        .C-375tnm {
+          padding-inline-start: var(--C);
+        }
+
+
+        .DH {
+          padding-inline-end: calc(var(--k, var(--o)) * 3 / 8);
+        }
+
+
+        .l-4s570k {
+          width: calc(200px - var(--s) - var(--C));
+        }
+
+
+        .-_375toy_s-c {
+          --s: 2px;
+        }
+
+
+        .-_375tnm_C-H {
+          --C: calc(var(--k, var(--o)) * 3 / 8);
+        }
+      }
+
+      "
+    `);
   });
 });
