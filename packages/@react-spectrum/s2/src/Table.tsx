@@ -45,21 +45,18 @@ import Chevron from '../ui-icons/Chevron';
 import {IconContext} from './Icon';
 import {ColumnSize} from '@react-types/table';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
-import {Popover} from './Popover';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
 
-// Blue line at edge for row focus (needs more info from rac, namely when a row is focus visible but we don't have render prosp)
 // loading more when items already exist (needs ability to append extra row with progress circle)
 // column dividers (needs more info from rac so cells know if its parent column has showDivider)
-// drop indicators in DnD + drag button styling (needs more info from rac aka ability to style the drop indicators directly and designs)
+// drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
-// resizing (deferred till virtualization)
+// resizing (roughly implemented, but will probably change a bit with virtualization. Right now with wrapping)
 // overflow wrap (deferred till virtualization)
-// table scrolling/height/width (deferred till virtualization)
+// table scrolling/height/width (deferred till virtualization. Kinda works with the resizerable table container)
 // summary row (to discuss, is this a separate row? What accessibility goes into this)
-
 // nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
 
 interface S2TableProps {
@@ -180,7 +177,6 @@ const tableBody = style<TableBodyRenderProps & S2TableProps>({
     isQuiet: 0
   },
   outlineStyle: 'solid',
-  // TODO: closest one is "default" which is 8px
   borderRadius: {
     default: 'default',
     isQuiet: 'none'
@@ -311,7 +307,8 @@ export function Column(props: ColumnProps) {
     <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
-          {/* TODO: needs isFocusVisibleWithin? But what if focus is on the resizer? */}
+          {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
+          (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
           <CellFocusRing isFocusVisible={isFocusVisible} />
           {columnsResizable && isResizable ?
             (
@@ -356,7 +353,8 @@ function ColumnContents(props: ColumnContentProps) {
       )}
       {/* TODO How to place the sort icon in front of the text like it shows in the designs?
         Since we need to reserve room for the icon to prevent header shifting, placing it in front of the text will offset the text with the
-        row value. Additionally, if we don't reserve room for the icon, then the width of the table column changes, causing a shift in layout  */}
+        row value. Additionally, if we don't reserve room for the icon, then the width of the table column changes, causing a shift in layout
+        Should I just have the ResizeableTableWrapper always on?  */}
       {children}
     </div>
   );
@@ -393,9 +391,25 @@ const resizerHandleContainer = style({
   position: 'absolute',
   top: 0,
   right: '[-6px]',
-  // TODO: cursor should change if at limits
-  cursor: 'ew-resize',
+  cursor: {
+    default: 'none',
+    resizableDirection: {
+      'left': 'e-resize',
+      'right': 'w-resize',
+      'both': 'ew-resize'
+    }
+  },
+  // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
   zIndex: 1000
+  // TODO: seems to have problems moving focus to the resizer if we conditionally hide it. For now just skip over it in keyboard navigation with the data-attribute
+  // Will need to update rac for this first
+  // display: {
+  //   default: 'none',
+  //   isHovered: 'block',
+  //   isFocusVisible: 'block',
+  //   isResiziing: 'block',
+  //   isFocused: 'block'
+  // }
 });
 
 const resizerHandle = style({
@@ -421,7 +435,8 @@ const sortIcon = style({
 const columnHeaderText = style({
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
-  minWidth: 0,
+  // Make it so the text doesn't completely disappear when column is resized to smallest width + both sort and chevron icon is rendered
+  minWidth: 8,
   overflow: 'hidden',
   flexGrow: 0,
   flexShrink: 1,
@@ -439,11 +454,9 @@ interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSor
 }
 
 // TODOS for resizing still
-// clicking on the overlay options dont trigger them for some reason
-// Esc doesn't work in the menu
-// keyboard skip the drag handle
-// show all resizer handles on hover (need info from header row)
-// need a blue line rendered for the column down (need info in the cells of the column's resizing state)
+// show all resizer handles on hover (need info from header row, but it doesn't have renderProp function support)
+// need a blue line rendered for the column all the way down the body (need info in the cells of the column's resizing state)
+// add nubbin (maybe do this later when resizing designs are added)
 
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered} = props;
@@ -469,26 +482,27 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
           </div>
           <Chevron size="M" className={chevronIcon} />
         </Button>
-        <Popover hideArrow>
-          <Menu
-            onAction={(action) => {
-              if (action === 'sortAscending') {
-                sort('ascending');
-              } else if (action === 'sortDescending') {
-                sort('descending');
-              } else if (action === 'resize') {
-                startResize();
-              }
-            }}>
-            <MenuItem id="sortAscending">Sort Ascending</MenuItem>
-            <MenuItem id="sortDescending">Sort Descending</MenuItem>
-            <MenuItem id="resize">Resize</MenuItem>
-          </Menu>
-        </Popover>
+        <Menu
+          onAction={(action) => {
+            if (action === 'sortAscending') {
+              sort('ascending');
+            } else if (action === 'sortDescending') {
+              sort('descending');
+            } else if (action === 'resize') {
+              startResize();
+            }
+          }}>
+          <MenuItem id="sortAscending">Sort Ascending</MenuItem>
+          <MenuItem id="sortDescending">Sort Descending</MenuItem>
+          <MenuItem id="resize">Resize</MenuItem>
+        </Menu>
       </MenuTrigger>
-      <ColumnResizer className={resizerHandleContainer}>
-        {({isFocusVisible, isResizing, isFocused}) => <div className={resizerHandle({isFocusVisible, isHovered, isResizing, isFocused})} />}
-      </ColumnResizer>
+      {/* TODO: Placeholder wrapper for keyboard navigation skipping resizer since ColumnResizer doesn't support data attributes yet */}
+      <div data-react-aria-prevent-focus="true">
+        <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection}) => resizerHandleContainer({resizableDirection})}>
+          {({isFocusVisible, isResizing, isFocused}) => <div className={resizerHandle({isFocusVisible, isHovered, isResizing, isFocused})} />}
+        </ColumnResizer>
+      </div>
     </>
   );
 }
@@ -501,7 +515,7 @@ const selectAllCheckbox = style({
 const selectAllCheckboxColumn = style({
   padding: 0,
   height: 32, // table-row-height-medium-compact
-  borderRadius: '[2px]',
+  borderRadius: 'sm',
   outlineStyle: 'none',
   position: 'relative'
 });
@@ -702,7 +716,6 @@ const dragButton = style({
   }
 });
 
-// TODO: How to style the drop indicators? We can't target them without using the selectors
 export function Row<T extends object>(
   {id, columns, children, ...otherProps}: RowProps<T>
 ) {
