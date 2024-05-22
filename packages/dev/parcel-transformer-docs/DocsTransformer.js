@@ -662,8 +662,7 @@ module.exports = new Transformer({
     function isCollectionComponent(path) {
       return path.isCallExpression() && t.isIdentifier(path.node.callee) && (
         path.node.callee.name === 'createLeafComponent' ||
-        path.node.callee.name === 'createBranchComponent' ||
-        path.node.callee.name === 'createShallowComponent'
+        path.node.callee.name === 'createBranchComponent'
       );
     }
 
