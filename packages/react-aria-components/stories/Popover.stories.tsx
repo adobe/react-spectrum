@@ -11,7 +11,7 @@
  */
 
 import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 export default {
   title: 'React Aria Components'
@@ -48,6 +48,79 @@ export const PopoverExample = () => (
     </Popover>
   </DialogTrigger>
   );
+
+
+const COUNTDOWN = 5000;
+
+function PopoverTriggerObserver() {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [countdown, setCountdown] = useState(COUNTDOWN);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const intervalId = setInterval(() => {
+        setCountdown(countdown - 1000);
+      }, 1000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [countdown]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (buttonRef.current) {
+        buttonRef.current.style.width = '200px';
+        buttonRef.current.style.height = '50px';
+      }
+    }, COUNTDOWN + 1000);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  return (
+    <div style={{marginBottom: 100, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <div>
+        <p>The trigger button below will change size in <strong>{Math.floor(countdown / 1000)}s</strong></p>
+      </div>
+      <DialogTrigger defaultOpen>
+        <Button ref={buttonRef}>Open popover</Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 30,
+            zIndex: 5
+          }}>
+          <Dialog>
+            {({close}) => (
+              <form style={{display: 'flex', flexDirection: 'column'}}>
+                <Heading slot="title">Sign up</Heading>
+                <label>
+                  First Name: <input placeholder="John" />
+                </label>
+                <label>
+                  Last Name: <input placeholder="Smith" />
+                </label>
+                <Button onPress={close} style={{marginTop: 10}}>
+                  Submit
+                </Button>
+              </form>
+              )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+
+export const PopoverTriggerObserverExample = {
+  render: PopoverTriggerObserver
+};
 
 export const PopoverArrowBoundaryOffsetExample = {
   args: {
