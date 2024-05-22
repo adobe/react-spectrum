@@ -892,14 +892,14 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
 }
 
 interface SectionContextValue {
-  render: (section: Node<any>, props: SectionProps<any>, ref: ForwardedRef<HTMLElement>) => ReactElement
+  render: (props: SectionProps<any>, ref: ForwardedRef<HTMLElement>, section: Node<any>) => ReactElement
 }
 
 export const SectionContext = createContext<SectionContextValue | null>(null);
 
 export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
   let {render} = useContext(SectionContext)!;
-  return render(section, props, ref);
+  return render(props, ref, section);
 });
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);

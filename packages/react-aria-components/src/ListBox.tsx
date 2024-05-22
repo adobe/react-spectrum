@@ -259,7 +259,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
   );
 }
 
-function ListBoxSection<T extends object>(section: Node<T>, props: SectionProps<T>, ref: ForwardedRef<HTMLElement>) {
+function ListBoxSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
   let state = useContext(ListStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({

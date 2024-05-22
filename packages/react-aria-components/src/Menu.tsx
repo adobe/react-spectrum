@@ -217,7 +217,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
-function MenuSection<T extends object>(section: Node<T>, props: SectionProps<T>, ref: ForwardedRef<HTMLElement>) {
+function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
   let state = useContext(MenuStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
