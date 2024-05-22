@@ -559,9 +559,9 @@ export const style = createTheme({
       '--translateY': value,
       translate: 'var(--translateX, 0) var(--translateY, 0)'
     }), translate),
-    rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => ({rotate: typeof value === 'number' ? `${value}deg` : value})),
-    scale: createArbitraryProperty((value: number) => ({scale: value})),
-    transform: createArbitraryProperty((value: string) => ({transform: value})),
+    rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`, property) => ({[property]: typeof value === 'number' ? `${value}deg` : value})),
+    scale: createArbitraryProperty<number>(),
+    transform: createArbitraryProperty<string>(),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
     insetStart: createRenamedProperty('insetInlineStart', inset),
     insetEnd: createRenamedProperty('insetInlineEnd', inset),
@@ -708,7 +708,7 @@ export const style = createTheme({
     borderBottomEndRadius: createRenamedProperty('borderEndEndRadius', radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
-    backgroundImage: createArbitraryProperty((value: string, property) => ({[property]: value})),
+    backgroundImage: createArbitraryProperty<string>(),
     // TODO: do we need separate x and y properties?
     backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
@@ -718,10 +718,10 @@ export const style = createTheme({
     backgroundOrigin: ['border-box', 'padding-box', 'content-box'] as const,
     backgroundBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'] as const,
     mixBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity', 'plus-darker', 'plus-lighter'] as const,
-    opacity: createArbitraryProperty((value: number) => ({opacity: value})),
+    opacity: createArbitraryProperty<number>(),
 
     outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'inset'] as const,
-    outlineOffset: borderWidth,
+    outlineOffset: createArbitraryProperty<number>((v, property) => ({[property]: `${v}px`})),
     outlineWidth: borderWidth,
 
     transition: createRenamedProperty('transitionProperty', transitionProperty),
@@ -733,7 +733,7 @@ export const style = createTheme({
     animationDelay: durationProperty,
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
-    animationIterationCount: createArbitraryProperty((value: string) => ({animationIterationCount: value})),
+    animationIterationCount: createArbitraryProperty<string>(),
     animationTimingFunction: timingFunction,
 
     // layout
@@ -746,12 +746,12 @@ export const style = createTheme({
     justifySelf: ['auto', 'start', 'end', 'center', 'stretch'] as const,
     flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'] as const,
     flexWrap: ['wrap', 'wrap-reverse', 'nowrap'] as const,
-    flexShrink: createArbitraryProperty((value: CSS.Property.FlexShrink, property) => ({[property]: value})),
-    flexGrow: createArbitraryProperty((value: CSS.Property.FlexGrow, property) => ({[property]: value})),
-    gridColumnStart: createArbitraryProperty((value: CSS.Property.GridColumnStart, property) => ({[property]: value})),
-    gridColumnEnd: createArbitraryProperty((value: CSS.Property.GridColumnEnd, property) => ({[property]: value})),
-    gridRowStart: createArbitraryProperty((value: CSS.Property.GridRowStart, property) => ({[property]: value})),
-    gridRowEnd: createArbitraryProperty((value: CSS.Property.GridRowEnd, property) => ({[property]: value})),
+    flexShrink: createArbitraryProperty<CSS.Property.FlexShrink>(),
+    flexGrow: createArbitraryProperty<CSS.Property.FlexGrow>(),
+    gridColumnStart: createArbitraryProperty<CSS.Property.GridColumnStart>(),
+    gridColumnEnd: createArbitraryProperty<CSS.Property.GridColumnEnd>(),
+    gridRowStart: createArbitraryProperty<CSS.Property.GridRowStart>(),
+    gridRowEnd: createArbitraryProperty<CSS.Property.GridRowEnd>(),
     gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'] as const,
     gridAutoRows: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
     gridAutoColumns: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
@@ -802,7 +802,7 @@ export const style = createTheme({
     overscrollBehaviorX: ['auto', 'contain', 'none'] as const,
     overscrollBehaviorY: ['auto', 'contain', 'none'] as const,
     scrollBehavior: ['auto', 'smooth'] as const,
-    order: createArbitraryProperty((value: number) => ({order: value})),
+    order: createArbitraryProperty<number>(),
 
     pointerEvents: ['none', 'auto'] as const,
     touchAction: ['auto', 'none', 'pan-x', 'pan-y', 'manipulation', 'pinch-zoom'] as const,
@@ -819,7 +819,7 @@ export const style = createTheme({
     objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'] as const,
     objectPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     willChange: ['auto', 'scroll-position', 'contents', 'transform'] as const,
-    zIndex: createArbitraryProperty((value: number) => ({zIndex: value})),
+    zIndex: createArbitraryProperty<number>(),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     disableTapHighlight: createArbitraryProperty((_value: true) => ({
       '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
@@ -847,7 +847,7 @@ export const style = createTheme({
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
     translate: ['translateX', 'translateY'] as const,
-    inset: ['top', 'bottom', 'left', 'right'] as const,
+    inset: ['top', 'bottom', 'insetStart', 'insetEnd'] as const,
     insetX: ['insetStart', 'insetEnd'] as const,
     insetY: ['top', 'bottom'] as const,
     placeItems: ['alignItems', 'justifyItems'] as const,
@@ -855,6 +855,8 @@ export const style = createTheme({
     placeSelf: ['alignSelf', 'justifySelf'] as const,
     gap: ['rowGap', 'columnGap'] as const,
     size: ['width', 'height'] as const,
+    minSize: ['minWidth', 'minHeight'] as const,
+    maxSize: ['maxWidth', 'maxHeight'] as const,
     overflow: ['overflowX', 'overflowY'] as const,
     overscrollBehavior: ['overscrollBehaviorX', 'overscrollBehaviorY'] as const,
     gridArea: ['gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd'] as const,

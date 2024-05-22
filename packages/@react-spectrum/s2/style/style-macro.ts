@@ -1,6 +1,7 @@
 import type {Value, CSSValue, CSSProperties, PropertyFunction, PropertyValueMap, Theme, Condition, StyleFunction, StyleValue, ThemeProperties, PropertyValueDefinition, CustomValue} from './types';
 
-export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties): PropertyFunction<T> {
+let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
+export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
   return (value, property) => {
     let selector = Array.isArray(value) ? generateArbitraryValueSelector(value.map(v => String(v)).join('')) : generateArbitraryValueSelector(String(value));
     return {default: [fn(value, property), selector]};

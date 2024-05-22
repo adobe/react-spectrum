@@ -155,7 +155,8 @@ let popover = style({
     isExiting: 'in'
   },
   transition: '[opacity, transform]',
-  willChange: '[opacity, transform]'
+  willChange: '[opacity, transform]',
+  isolation: 'isolate'
 }, getAllowedOverrides());
 // TODO: animations and real Popover Arrow
 
@@ -211,7 +212,11 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     <AriaPopover
       {...props}
       ref={popoverRef}
-      style={UNSAFE_style}
+      style={{
+        ...UNSAFE_style,
+        // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+        zIndex: undefined
+      }}
       className={(renderProps) => UNSAFE_className + mergeStyles(popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme}), styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
