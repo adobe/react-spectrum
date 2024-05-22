@@ -166,8 +166,9 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
+      let root;
       act(() => {
-        reactDomRenderer(<ExampleComponent />, shadowRoot);
+        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -185,7 +186,10 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(shadowHost);
+        unmount({
+          container: shadowHost,
+          root
+        });
       });
       document.body.removeChild(shadowHost);
     });
@@ -201,8 +205,9 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
+      let root;
       act(() => {
-        reactDomRenderer(<ExampleComponent />, shadowRoot);
+        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -214,7 +219,10 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(shadowHost);
+        unmount({
+          container: shadowHost,
+          root
+        });
       });
       document.body.removeChild(shadowHost);
     });
@@ -234,8 +242,9 @@ describe('useFocus', function () {
         </div>
       );
 
+      let root;
       act(() => {
-        reactDomRenderer(<WrapperComponent />, shadowRoot);
+        root = reactDomRenderer(<WrapperComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -250,7 +259,10 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(shadowHost);
+        unmount({
+          container: shadowHost,
+          root
+        });
       });
       document.body.removeChild(shadowHost);
     });
@@ -270,8 +282,9 @@ describe('useFocus', function () {
         </div>
       );
 
+      let root;
       act(() => {
-        reactDomRenderer(<WrapperComponent />, shadowRoot);
+        root = reactDomRenderer(<WrapperComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -286,7 +299,10 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        unmount(shadowHost);
+        unmount({
+          container: shadowHost,
+          root
+        });
       });
       document.body.removeChild(shadowHost);
     });

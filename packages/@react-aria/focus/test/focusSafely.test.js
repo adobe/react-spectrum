@@ -84,15 +84,16 @@ describe('focusSafely', () => {
 
       const Example = () => <button>Button</button>;
 
+      let root;
       act(() => {
-        reactDomRenderer(<Example />, shadowRoot);
+        root = reactDomRenderer(<Example />, shadowRoot);
       });
 
       const button = shadowRoot.querySelector('button');
 
       requestAnimationFrame(() => {
         act(() => {
-          unmount(shadowHost);
+          unmount({container: shadowHost, root});
         });
         document.body.removeChild(shadowHost);
       });
@@ -112,8 +113,9 @@ describe('focusSafely', () => {
 
       const Example = () => <button>Button</button>;
 
+      let root;
       act(() => {
-        reactDomRenderer(<Example />, shadowRoot);
+        root = reactDomRenderer(<Example />, shadowRoot);
       });
 
       const button = shadowRoot.querySelector('button');
@@ -128,7 +130,7 @@ describe('focusSafely', () => {
       expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
 
       act(() => {
-        unmount(shadowHost);
+        unmount({container: shadowHost, root});
       });
       shadowRoot.host.remove();
     });

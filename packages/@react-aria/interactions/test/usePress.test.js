@@ -3305,7 +3305,7 @@ describe('usePress', function () {
 
   describe('FocusScope with Shadow DOM', function () {
     installPointerEvent();
-    let cleanupShadowRoot, cleanupShadowHost;
+    let cleanupShadowRoot, cleanupShadowHost, root;
     let events = [];
     let addEvent = (e) => events.push(e);
 
@@ -3326,7 +3326,7 @@ describe('usePress', function () {
       );
 
       act(() => {
-        reactDomRenderer(<ExampleComponent />, shadowRoot);
+        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
       });
 
       return shadowRoot;
@@ -3340,7 +3340,10 @@ describe('usePress', function () {
       act(() => {jest.runAllTimers();});
       document.body.removeChild(cleanupShadowRoot.host);
       act(() => {
-        unmount(cleanupShadowHost);
+        unmount({
+          container: cleanupShadowHost,
+          root
+        });
       });
     });
 

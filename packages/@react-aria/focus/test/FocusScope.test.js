@@ -1641,8 +1641,9 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
+    let root;
     act(() => {
-      reactDomRenderer(<FocusableComponent />, shadowRoot);
+      root  = reactDomRenderer(<FocusableComponent />, shadowRoot);
     });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
@@ -1668,7 +1669,10 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(shadowRoot.host);
     act(() => {
-      unmount(shadowHost);
+      unmount({
+        container: shadowHost,
+        root
+      });
     });
   });
 
@@ -1678,8 +1682,9 @@ describe('FocusScope with Shadow DOM', function () {
     parentShadowRoot.appendChild(nestedDiv);
     const childShadowRoot = nestedDiv.attachShadow({mode: 'open'});
 
+    let root;
     act(() => {
-      reactDomRenderer(<FocusScope contain>
+      root = reactDomRenderer(<FocusScope contain>
         <input data-testid="input1" />
         <input data-testid="input2" />
       </FocusScope>, childShadowRoot);
@@ -1697,7 +1702,10 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(parentShadowRoot.host);
     act(() => {
-      unmount(shadowHost);
+      unmount({
+        container: shadowHost,
+        root
+      });
     });
   });
 
@@ -1731,8 +1739,9 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
+    let root;
     act(() => {
-      reactDomRenderer(<FocusableComponent />, shadowRoot);
+      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
     });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
@@ -1746,7 +1755,10 @@ describe('FocusScope with Shadow DOM', function () {
     act(() => {
       jest.runAllTimers();
 
-      unmount(shadowHost);
+      unmount({
+        container: shadowHost,
+        root
+      });
     });
 
     expect(document.activeElement).toBe(externalInput);
@@ -1767,8 +1779,9 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
+    let root;
     act(() => {
-      reactDomRenderer(<FocusableComponent />, shadowRoot);
+      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
     });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
@@ -1794,7 +1807,10 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(shadowHost);
     act(() => {
-      unmount(shadowHost);
+      unmount({
+        container: shadowHost,
+        root
+      });
     });
   });
 });
