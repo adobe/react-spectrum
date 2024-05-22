@@ -22,9 +22,7 @@ export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledK
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a breadcrumb is clicked. */
-  onAction?: (key: Key) => void,
-  /** Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render. */
-  autoFocusCurrent?: boolean
+  onAction?: (key: Key) => void
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
@@ -86,8 +84,7 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Bre
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent,
-    onPress: () => onAction?.(node.key),
-    autoFocus: isCurrent && autoFocusCurrent
+    onPress: () => onAction?.(node.key)
   };
 
   return (

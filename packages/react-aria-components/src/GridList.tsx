@@ -256,6 +256,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
     state
   );
 
+  let buttonProps = state.selectionManager.disabledBehavior === 'all' && states.isDisabled ? {isDisabled: true} : {};
+
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
     draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
@@ -339,7 +341,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
               }],
               [ButtonContext, {
                 slots: {
-                  [DEFAULT_SLOT]: {},
+                  [DEFAULT_SLOT]: buttonProps,
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,
