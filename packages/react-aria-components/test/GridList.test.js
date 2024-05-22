@@ -231,12 +231,13 @@ describe('GridList', () => {
     let {getAllByRole} = render(
       <GridList aria-label="Test">
         <GridListItem id="cat">Cat</GridListItem>
-        <GridListItem id="dog" isDisabled>Dog</GridListItem>
+        <GridListItem id="dog" textValue="Dog" isDisabled>Dog <Button aria-label="Info">ⓘ</Button></GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
     let items = getAllByRole('row');
     expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+    expect(within(items[1]).getByRole('button')).toBeDisabled();
 
     await user.tab();
     expect(document.activeElement).toBe(items[0]);
