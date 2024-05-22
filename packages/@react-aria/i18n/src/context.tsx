@@ -30,10 +30,16 @@ export function I18nProvider(props: I18nProviderProps) {
   let {locale, children} = props;
   let defaultLocale = useDefaultLocale();
 
-  let value: Locale = locale ? {
-    locale,
-    direction: isRTL(locale) ? 'rtl' : 'ltr'
-  } : defaultLocale;
+  let value: Locale = React.useMemo(() => {
+    if (!locale) {
+      return defaultLocale;
+    }
+
+    return {
+      locale,
+      direction: isRTL(locale) ? 'rtl' : 'ltr'
+    };
+  }, [defaultLocale, locale]);
 
   return (
     <I18nContext.Provider value={value}>
