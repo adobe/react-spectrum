@@ -80,7 +80,7 @@ export interface BreadcrumbProps extends StyleProps {
 export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let isCurrent = node.nextKey == null;
-  let {isDisabled, onAction, autoFocusCurrent} = useSlottedContext(BreadcrumbsContext)!;
+  let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent,
