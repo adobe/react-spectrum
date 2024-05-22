@@ -275,6 +275,8 @@ function GridListRow({item}) {
     state
   );
 
+  let buttonProps = state.selectionManager.disabledBehavior === 'all' && states.isDisabled ? {isDisabled: true} : {};
+
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
     draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
@@ -359,7 +361,7 @@ function GridListRow({item}) {
               }],
               [ButtonContext, {
                 slots: {
-                  [DEFAULT_SLOT]: {},
+                  [DEFAULT_SLOT]: buttonProps,
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,
