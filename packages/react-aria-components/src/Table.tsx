@@ -988,6 +988,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     <div
       ref={objectRef}
       role="presentation"
+      {...filterDOMProps(props as any)}
       {...renderProps}
       {...mergeProps(resizerProps, {onPointerDown}, hoverProps)}
       data-hovered={isHovered || undefined}

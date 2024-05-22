@@ -27,7 +27,7 @@ function MyColumn(props) {
             {sortDirection === 'ascending' ? '▲' : '▼'}
           </span>
         )}
-        {props.allowsResizing && <ColumnResizer />}
+        {props.allowsResizing && <ColumnResizer data-testid="resizer" />}
       </>)}
     </Column>
   );
@@ -1022,6 +1022,12 @@ describe('Table', () => {
         </ResizableTableContainer>
       );
     }
+
+    it('Column resizer accepts data attributes', () => {
+      let {getAllByTestId} = render(<ControlledResizableTable />);
+      let resizers = getAllByTestId('resizer');
+      expect(resizers).toHaveLength(5);
+    });
   });
 
   it('should support overriding table style', () => {
