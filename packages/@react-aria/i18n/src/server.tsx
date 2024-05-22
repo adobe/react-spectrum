@@ -19,7 +19,8 @@ type PackageLocalizedStrings = {
 
 interface PackageLocalizationProviderProps {
   locale: string,
-  strings: PackageLocalizedStrings
+  strings: PackageLocalizedStrings,
+  nonce?: string
 }
 
 /**
@@ -32,8 +33,10 @@ export function PackageLocalizationProvider(props: PackageLocalizationProviderPr
     return null;
   }
 
-  let {locale, strings} = props;
-  return <script dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}} />;
+  let {nonce, locale, strings} = props;
+  // suppressHydrationWarning is necessary because the browser
+  // remove the nonce parameter from the DOM before hydration
+  return <script nonce={typeof window === 'undefined' ? nonce : ''} suppressHydrationWarning dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}} />;
 }
 
 /**
