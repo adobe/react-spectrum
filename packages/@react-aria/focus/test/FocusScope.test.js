@@ -1632,7 +1632,7 @@ describe('FocusScope with Shadow DOM', function () {
   });
 
   it('should contain focus within the shadow DOM scope', async function () {
-    const {shadowRoot} = createShadowRoot();
+    const {shadowRoot, shadowHost} = createShadowRoot();
     const FocusableComponent = () => (
       <FocusScope contain>
         <input data-testid="input1" />
@@ -1641,9 +1641,8 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
-    let root;
     act(() => {
-      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
+      reactDomRenderer(<FocusableComponent />, shadowRoot);
     });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
@@ -1669,23 +1668,18 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(shadowRoot.host);
     act(() => {
-      if (root instanceof HTMLElement) { // For React 16 and 17
-        unmount(shadowRoot);
-      } else { // For React 18
-        unmount(root);
-      }
+      unmount(shadowHost);
     });
   });
 
   it('should manage focus within nested shadow DOMs', async function () {
-    const {shadowRoot: parentShadowRoot} = createShadowRoot();
+    const {shadowRoot: parentShadowRoot, shadowHost} = createShadowRoot();
     const nestedDiv = document.createElement('div');
     parentShadowRoot.appendChild(nestedDiv);
     const childShadowRoot = nestedDiv.attachShadow({mode: 'open'});
 
-    let root;
     act(() => {
-      root = reactDomRenderer(<FocusScope contain>
+      reactDomRenderer(<FocusScope contain>
         <input data-testid="input1" />
         <input data-testid="input2" />
       </FocusScope>, childShadowRoot);
@@ -1703,11 +1697,7 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(parentShadowRoot.host);
     act(() => {
-      if (root instanceof HTMLElement) { // For React 16 and 17
-        unmount(childShadowRoot);
-      } else { // For React 18
-        unmount(root);
-      }
+      unmount(shadowHost);
     });
   });
 
@@ -1741,9 +1731,8 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
-    let root;
     act(() => {
-      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
+      reactDomRenderer(<FocusableComponent />, shadowRoot);
     });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
@@ -1757,11 +1746,7 @@ describe('FocusScope with Shadow DOM', function () {
     act(() => {
       jest.runAllTimers();
 
-      if (root instanceof HTMLElement) { // For React 16 and 17
-        unmount(shadowRoot);
-      } else { // For React 18
-        unmount(root);
-      }
+      unmount(shadowHost);
     });
 
     expect(document.activeElement).toBe(externalInput);
@@ -1782,9 +1767,8 @@ describe('FocusScope with Shadow DOM', function () {
       </FocusScope>
     );
 
-    let root;
     act(() => {
-      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
+      reactDomRenderer(<FocusableComponent />, shadowRoot);
     });
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
@@ -1810,11 +1794,7 @@ describe('FocusScope with Shadow DOM', function () {
     // Cleanup
     document.body.removeChild(shadowHost);
     act(() => {
-      if (root instanceof HTMLElement) { // For React 16 and 17
-        unmount(shadowRoot);
-      } else { // For React 18
-        unmount(root);
-      }
+      unmount(shadowHost);
     });
   });
 });

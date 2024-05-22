@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 let reactDomRenderer, unmount;
 
@@ -15,11 +14,7 @@ if (React.version.startsWith('16') || React.version.startsWith('17')) {
     return root; // Returning root for lifecycle management
   };
   unmount = (rootOrContainer) => {
-    if (rootOrContainer instanceof HTMLElement) {
-      ReactDOM.unmountComponentAtNode(rootOrContainer);
-    } else {
-      rootOrContainer.unmount(); // Assuming rootOrContainer is a root object
-    }
+    rootOrContainer.unmount();
   };
 }
 

@@ -166,9 +166,8 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
-      let root;
       act(() => {
-        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
+        reactDomRenderer(<ExampleComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -186,11 +185,7 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        if (root instanceof HTMLElement) { // For React 16 and 17
-          unmount(shadowRoot);
-        } else { // For React 18
-          unmount(root);
-        }
+        unmount(shadowHost);
       });
       document.body.removeChild(shadowHost);
     });
@@ -206,9 +201,8 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
-      let root;
       act(() => {
-        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
+        reactDomRenderer(<ExampleComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -220,11 +214,7 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        if (root instanceof HTMLElement) { // For React 16 and 17
-          unmount(shadowRoot);
-        } else { // For React 18
-          unmount(root);
-        }
+        unmount(shadowHost);
       });
       document.body.removeChild(shadowHost);
     });
@@ -244,9 +234,8 @@ describe('useFocus', function () {
         </div>
       );
 
-      let root;
       act(() => {
-        root = reactDomRenderer(<WrapperComponent />, shadowRoot);
+        reactDomRenderer(<WrapperComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -261,11 +250,7 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        if (root instanceof HTMLElement) { // For React 16 and 17
-          unmount(shadowRoot);
-        } else { // For React 18
-          unmount(root);
-        }
+        unmount(shadowHost);
       });
       document.body.removeChild(shadowHost);
     });
@@ -285,9 +270,8 @@ describe('useFocus', function () {
         </div>
       );
 
-      let root;
       act(() => {
-        root = reactDomRenderer(<WrapperComponent />, shadowRoot);
+        reactDomRenderer(<WrapperComponent />, shadowRoot);
       });
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
@@ -302,11 +286,7 @@ describe('useFocus', function () {
 
       // Cleanup
       act(() => {
-        if (root instanceof HTMLElement) { // For React 16 and 17
-          unmount(shadowRoot);
-        } else { // For React 18
-          unmount(root);
-        }
+        unmount(shadowHost);
       });
       document.body.removeChild(shadowHost);
     });

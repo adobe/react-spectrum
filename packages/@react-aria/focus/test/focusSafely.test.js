@@ -84,20 +84,15 @@ describe('focusSafely', () => {
 
       const Example = () => <button>Button</button>;
 
-      let root;
       act(() => {
-        root = reactDomRenderer(<Example />, shadowRoot);
+        reactDomRenderer(<Example />, shadowRoot);
       });
 
       const button = shadowRoot.querySelector('button');
 
       requestAnimationFrame(() => {
         act(() => {
-          if (root instanceof HTMLElement) { // For React 16 and 17
-            unmount(shadowRoot);
-          } else { // For React 18
-            unmount(root);
-          }
+          unmount(shadowHost);
         });
         document.body.removeChild(shadowHost);
       });
@@ -112,14 +107,13 @@ describe('focusSafely', () => {
     });
 
     it("should focus on the element if it's connected within shadow DOM", async function () {
-      const {shadowRoot} = createShadowRoot();
+      const {shadowRoot, shadowHost} = createShadowRoot();
       setInteractionModality('virtual');
 
       const Example = () => <button>Button</button>;
 
-      let root;
       act(() => {
-        root = reactDomRenderer(<Example />, shadowRoot);
+        reactDomRenderer(<Example />, shadowRoot);
       });
 
       const button = shadowRoot.querySelector('button');
@@ -134,11 +128,7 @@ describe('focusSafely', () => {
       expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
 
       act(() => {
-        if (root instanceof HTMLElement) { // For React 16 and 17
-          unmount(shadowRoot);
-        } else { // For React 18
-          unmount(root);
-        }
+        unmount(shadowHost);
       });
       shadowRoot.host.remove();
     });
