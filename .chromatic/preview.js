@@ -7,7 +7,7 @@ import {withChromaticProvider} from './custom-addons/chromatic';
 // decorator order matters, the last one will be the outer most
 
 configureActions({
-  depth: 10
+  depth: 2
 });
 
 export const parameters = {
