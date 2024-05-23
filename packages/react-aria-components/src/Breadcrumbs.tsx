@@ -9,11 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps, useFocusRing, useHover} from 'react-aria';
+import {AriaBreadcrumbsProps} from 'react-aria';
 import {Collection, Node} from 'react-stately';
 import {CollectionProps, useCollection, useSSRCollectionNode} from './Collection';
 import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject} from 'react';
@@ -103,26 +103,20 @@ function BreadcrumbItem({node, isCurrent, isDisabled, onAction}: BreadcrumbItemP
     isDisabled: isDisabled || isCurrent,
     onPress: () => onAction?.(node.key)
   };
-  
-  let {focusProps, isFocused, isFocusVisible} = useFocusRing(node.props);
-  let {hoverProps, isHovered} = useHover(node.props);
+
   let renderProps = useRenderProps({
     ...node.props,
     children: node.rendered,
-    values: {isHovered, isFocused, isFocusVisible, isDisabled: isDisabled || isCurrent, isCurrent},
+    values: {isDisabled: isDisabled || isCurrent, isCurrent},
     defaultClassName: 'react-aria-Breadcrumb'
   });
 
   return (
     <li
       {...filterDOMProps(node.props)}
-      {...mergeProps(focusProps, hoverProps)}
       {...renderProps}
       ref={node.props.ref}
       data-disabled={isDisabled || isCurrent || undefined}
-      data-hovered={isHovered || undefined}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
       data-current={isCurrent || undefined}>
       <LinkContext.Provider value={linkProps}>
         {renderProps.children}
