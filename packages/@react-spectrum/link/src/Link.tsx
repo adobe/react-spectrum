@@ -20,6 +20,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';
 
+let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.') || React.version.startsWith('18.');
 /**
  * Links allow users to navigate to a different location.
  * They can be presented inline inside a paragraph or as standalone text.
@@ -66,14 +67,12 @@ export function Link(props: SpectrumLinkProps) {
     // Backward compatibility.
     let wrappedChild = getWrappedElement(children);
     let mergedRef: MutableRefObject<any> | ForwardedRef<any> = ref;
-    // @ts-ignore React 19
-    if (wrappedChild?.props?.ref) {
-      // @ts-ignore
-      mergedRef = mergeRefs(ref, wrappedChild.props.ref);
-    // @ts-ignore React < 19
-    } else if (wrappedChild?.ref) {
+    if (isOldReact) {
       // @ts-ignore
       mergedRef = mergeRefs(ref, wrappedChild.ref);
+    } else {
+      // @ts-ignore
+      mergedRef = mergeRefs(ref, wrappedChild.props.ref);
     }
     link = React.cloneElement(wrappedChild, {
       ...mergeProps(wrappedChild.props, domProps),
