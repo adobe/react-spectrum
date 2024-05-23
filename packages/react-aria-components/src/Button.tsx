@@ -88,7 +88,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /** The value associated with the button's name when it's submitted with the form data. */
   value?: string,
   /**
-   * Whether to disable events immediately and display a `pendingRender` after a `pendingDelay`.
+   * Whether to disable events immediately and display a `renderPendingState` after a `pendingDelay`.
    */
   isPending?: boolean,
   /**
@@ -99,7 +99,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /**
    * What to render as children while pending state is true.
    */
-  pendingRender?: ReactNode
+  renderPendingState?: ReactNode
 }
 
 interface ButtonContextValue extends ButtonProps {
@@ -125,7 +125,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   });
 
   let formatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
-  let {isPending, pendingDelay = 1000, pendingRender} = ctx;
+  let {isPending, pendingDelay = 1000, renderPendingState} = ctx;
   // an aria label will block children and their labels from being read, this is undesirable for pending state
   let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
   let spinnerId = useId();
@@ -185,7 +185,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
           aria-hidden="true"
           style={{visibility: isPendingVisible ? 'visible' : 'hidden'}}
           className={'react-aria-ButtonPending'}>
-          {pendingRender}
+          {renderPendingState}
         </div>
       )}
       {isPending &&
