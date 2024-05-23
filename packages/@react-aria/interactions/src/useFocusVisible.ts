@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
+import {getOwnerWindow, getRootNode, isMac, isVirtualClick} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -123,7 +123,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   }
 
   const windowObject = getOwnerWindow(element);
-  const documentObject = getOwnerDocument(element);
+  const documentObject = getRootNode(element);
 
   // Programmatic focus() calls shouldn't affect the current input modality.
   // However, we need to detect other cases when a focus event occurs without
@@ -135,9 +135,9 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
   };
 
-  documentObject.addEventListener('keydown', handleKeyboardEvent, true);
-  documentObject.addEventListener('keyup', handleKeyboardEvent, true);
-  documentObject.addEventListener('click', handleClickEvent, true);
+  documentObject.addEventListener('keydown', handleKeyboardEvent as EventListener, true);
+  documentObject.addEventListener('keyup', handleKeyboardEvent as EventListener, true);
+  documentObject.addEventListener('click', handleClickEvent as EventListener, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -145,13 +145,13 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   windowObject.addEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject.addEventListener('pointerdown', handlePointerEvent, true);
-    documentObject.addEventListener('pointermove', handlePointerEvent, true);
-    documentObject.addEventListener('pointerup', handlePointerEvent, true);
+    documentObject.addEventListener('pointerdown', handlePointerEvent as EventListener, true);
+    documentObject.addEventListener('pointermove', handlePointerEvent as EventListener, true);
+    documentObject.addEventListener('pointerup', handlePointerEvent as EventListener, true);
   } else {
-    documentObject.addEventListener('mousedown', handlePointerEvent, true);
-    documentObject.addEventListener('mousemove', handlePointerEvent, true);
-    documentObject.addEventListener('mouseup', handlePointerEvent, true);
+    documentObject.addEventListener('mousedown', handlePointerEvent as EventListener, true);
+    documentObject.addEventListener('mousemove', handlePointerEvent as EventListener, true);
+    documentObject.addEventListener('mouseup', handlePointerEvent as EventListener, true);
   }
 
   // Add unmount handler
@@ -164,7 +164,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
 
 const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   const windowObject = getOwnerWindow(element);
-  const documentObject = getOwnerDocument(element);
+  const documentObject = getRootNode(element);
   if (loadListener) {
     documentObject.removeEventListener('DOMContentLoaded', loadListener);
   }
@@ -173,20 +173,21 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   }
   windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
 
-  documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
-  documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
-  documentObject.removeEventListener('click', handleClickEvent, true);
+  documentObject.removeEventListener('keydown', handleKeyboardEvent as EventListener, true);
+  documentObject.removeEventListener('keyup', handleKeyboardEvent as EventListener, true);
+  documentObject.removeEventListener('click', handleClickEvent as EventListener, true);
+
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
-    documentObject.removeEventListener('pointermove', handlePointerEvent, true);
-    documentObject.removeEventListener('pointerup', handlePointerEvent, true);
+    documentObject.removeEventListener('pointerdown', handlePointerEvent as EventListener, true);
+    documentObject.removeEventListener('pointermove', handlePointerEvent as EventListener, true);
+    documentObject.removeEventListener('pointerup', handlePointerEvent as EventListener, true);
   } else {
-    documentObject.removeEventListener('mousedown', handlePointerEvent, true);
-    documentObject.removeEventListener('mousemove', handlePointerEvent, true);
-    documentObject.removeEventListener('mouseup', handlePointerEvent, true);
+    documentObject.removeEventListener('mousedown', handlePointerEvent as EventListener, true);
+    documentObject.removeEventListener('mousemove', handlePointerEvent as EventListener, true);
+    documentObject.removeEventListener('mouseup', handlePointerEvent as EventListener, true);
   }
 
   hasSetupGlobalListeners.delete(windowObject);
@@ -210,15 +211,17 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
  * @returns A function to remove the event listeners and cleanup the state.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
-  const documentObject = getOwnerDocument(element);
+  const rootNode = getRootNode(element);
   let loadListener;
-  if (documentObject.readyState !== 'loading') {
+
+   // Shadow root doesn't have a readyState, so we can assume it's ready in case of there is a shadow root.
+  if (rootNode instanceof ShadowRoot || (rootNode.readyState !== 'loading')) {
     setupGlobalFocusEvents(element);
   } else {
     loadListener = () => {
       setupGlobalFocusEvents(element);
     };
-    documentObject.addEventListener('DOMContentLoaded', loadListener);
+    rootNode.addEventListener('DOMContentLoaded', loadListener);
   }
 
   return () => tearDownWindowFocusTracking(element, loadListener);

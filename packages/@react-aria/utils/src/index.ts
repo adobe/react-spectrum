@@ -11,7 +11,7 @@
  */
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
-export {getOwnerDocument, getOwnerWindow} from './domHelpers';
+export {getOwnerDocument, getOwnerWindow, getRootNode, getRootBody, getDeepActiveElement} from './domHelpers';
 export {mergeProps} from './mergeProps';
 export {mergeRefs} from './mergeRefs';
 export {filterDOMProps} from './filterDOMProps';

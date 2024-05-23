@@ -15,7 +15,15 @@ import {act, render} from '@react-spectrum/test-utils-internal';
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '@react-aria/utils';
+import {reactDomRenderer, unmount} from '@react-spectrum/test-utils-internal/src/reactCompat';
 import {setInteractionModality} from '@react-aria/interactions';
+
+function createShadowRoot() {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  const shadowRoot = div.attachShadow({mode: 'open'});
+  return {shadowHost: div, shadowRoot};
+}
 
 jest.mock('@react-aria/utils', () => {
   let original = jest.requireActual('@react-aria/utils');
@@ -65,5 +73,66 @@ describe('focusSafely', () => {
     });
 
     expect(ReactAriaUtils.focusWithoutScrolling).toBeCalledTimes(1);
+  });
+
+  describe('focusSafely with Shadow DOM', function () {
+    const focusWithoutScrollingSpy = jest.spyOn(ReactAriaUtils, 'focusWithoutScrolling').mockImplementation(() => {});
+
+    it("should not focus on the element if it's no longer connected within shadow DOM", async function () {
+      const {shadowRoot, shadowHost} = createShadowRoot();
+      setInteractionModality('virtual');
+
+      const Example = () => <button>Button</button>;
+
+      let root;
+      act(() => {
+        root = reactDomRenderer(<Example />, shadowRoot);
+      });
+
+      const button = shadowRoot.querySelector('button');
+
+      requestAnimationFrame(() => {
+        act(() => {
+          unmount({container: shadowHost, root});
+        });
+        document.body.removeChild(shadowHost);
+      });
+      expect(button).toBeTruthy();
+      focusSafely(button);
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(focusWithoutScrollingSpy).toBeCalledTimes(0);
+    });
+
+    it("should focus on the element if it's connected within shadow DOM", async function () {
+      const {shadowRoot, shadowHost} = createShadowRoot();
+      setInteractionModality('virtual');
+
+      const Example = () => <button>Button</button>;
+
+      let root;
+      act(() => {
+        root = reactDomRenderer(<Example />, shadowRoot);
+      });
+
+      const button = shadowRoot.querySelector('button');
+
+      expect(button).toBeTruthy();
+      focusSafely(button);
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
+
+      act(() => {
+        unmount({container: shadowHost, root});
+      });
+      shadowRoot.host.remove();
+    });
   });
 });
