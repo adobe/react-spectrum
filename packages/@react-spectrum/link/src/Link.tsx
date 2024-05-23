@@ -13,7 +13,7 @@
 import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {JSX, useRef} from 'react';
+import React, {ForwardedRef, JSX, MutableRefObject, useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -65,10 +65,20 @@ export function Link(props: SpectrumLinkProps) {
   } else {
     // Backward compatibility.
     let wrappedChild = getWrappedElement(children);
+    let mergedRef: MutableRefObject<any> | ForwardedRef<any> = ref;
+    // @ts-ignore React 19
+    if (wrappedChild?.props?.ref) {
+      // @ts-ignore
+      mergedRef = mergeRefs(ref, wrappedChild.props.ref);
+    // @ts-ignore React < 19
+    } else if (wrappedChild?.ref) {
+      // @ts-ignore
+      mergedRef = mergeRefs(ref, wrappedChild.ref);
+    }
     link = React.cloneElement(wrappedChild, {
       ...mergeProps(wrappedChild.props, domProps),
       // @ts-ignore https://github.com/facebook/react/issues/8873
-      ref: wrappedChild.ref ? mergeRefs(ref, wrappedChild.ref) : ref
+      ref: mergedRef
     });
   }
 
