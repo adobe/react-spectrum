@@ -566,6 +566,12 @@ workflows:
       - test-17:
           requires:
             - install-17
+      - test-19:
+          requires:
+            - install-19
+      - test-ssr-19:
+          requires:
+            - install-19
       - test-esm:
           requires:
             - install
