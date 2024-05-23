@@ -189,16 +189,22 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     }
   }, [leftOffset, popoverContainer]);
 
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-Menu',
+    className: props.className,
+    style: props.style,
+    values: {}
+  });
+
   return (
     <FocusScope>
       <div
         {...filterDOMProps(props)}
         {...menuProps}
+        {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        onScroll={props.onScroll}
-        style={props.style}
-        className={props.className ?? 'react-aria-Menu'}>
+        onScroll={props.onScroll}>
         <Provider
           values={[
             [MenuStateContext, state],
