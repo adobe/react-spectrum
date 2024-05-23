@@ -88,7 +88,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-global-color-gray-700);
 }
 
-.spectrum-Submenu-popover {
+.spectrum-Submenu-popover.spectrum-Submenu-popover  {
   filter: unset;
   -webkit-filter: unset;
   transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out,

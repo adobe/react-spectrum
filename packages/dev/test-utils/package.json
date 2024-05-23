@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.0.0",
-    "@react-spectrum/test-utils": "3.0.0-alpha.1",
+    "@react-spectrum/test-utils": "1.0.0-alpha.1",
     "@swc/helpers": "^0.5.0",
     "resolve": "^1.17.0"
   },

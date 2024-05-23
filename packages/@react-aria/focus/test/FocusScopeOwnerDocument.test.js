@@ -30,9 +30,11 @@ describe('FocusScope', function () {
     return null;
   };
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
+  });
 
+  beforeEach(async () => {
     // Iframe setup
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);

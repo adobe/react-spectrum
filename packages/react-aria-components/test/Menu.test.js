@@ -116,7 +116,7 @@ describe('Menu', () => {
     let itemRef = React.createRef();
     render(
       <Menu aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <Section ref={sectionRef} aria-label="Felines">
           <MenuItem ref={itemRef}>Cat</MenuItem>
         </Section>
       </Menu>
@@ -124,6 +124,51 @@ describe('Menu', () => {
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
     expect(sectionRef.current).toBeInstanceOf(HTMLElement);
     expect(itemRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toHaveAttribute('aria-label', 'Felines');
+  });
+
+  it('should support hover', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderMenu({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let item = getAllByRole('menuitem')[0];
+
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+
+    await user.hover(item);
+    expect(item).toHaveAttribute('data-hovered', 'true');
+    expect(item).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(item);
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not show hover state when item is not interactive', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderMenu({disabledKeys: ['cat', 'dog', 'kangaroo']}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let item = getAllByRole('menuitem')[0];
+
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
+
+    await user.hover(item);
+    expect(item).not.toHaveAttribute('data-hovered');
+    expect(item).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support slots', () => {

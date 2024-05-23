@@ -33,7 +33,7 @@ describe('Slider', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('should render a button with default class', () => {
+  it('should render a slider with default class', () => {
     let {getByRole} = renderSlider();
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'react-aria-Slider');
@@ -44,7 +44,7 @@ describe('Slider', () => {
     expect(group.querySelector('.react-aria-SliderThumb')).toBeInTheDocument();
   });
 
-  it('should render a button with custom class', () => {
+  it('should render a slider with custom class', () => {
     let {getByRole} = renderSlider({className: 'test'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'test');
@@ -274,4 +274,22 @@ describe('Slider', () => {
     await user.pointer([{target: track, keys: '[MouseLeft]', coords: {x: 20}}]);
     expect(onChange).toHaveBeenCalled();
   });
+});
+
+it('should support input ref', () => {
+  let inputRef = React.createRef();
+
+  let {getByRole} = render(
+    <Slider>
+      <Label>Test</Label>
+      <SliderOutput />
+      <SliderTrack>
+        <SliderThumb inputRef={inputRef} />
+      </SliderTrack>
+    </Slider>
+  );
+
+  let group = getByRole('group');
+  let thumbInput = group.querySelector('input');
+  expect(inputRef.current).toBe(thumbInput);
 });
