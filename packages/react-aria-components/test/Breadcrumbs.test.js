@@ -103,4 +103,20 @@ describe('Breadcrumbs', () => {
     let item = getByRole('listitem');
     expect(breadcrumbRef.current).toBe(item);
   });
+
+  it('should support render props', () => {
+    let items = [
+      {id: 1, name: 'Item 1'},
+      {id: 2, name: 'Item 2'},
+      {id: 3, name: 'Item 3'}
+    ];
+
+    let {getAllByRole} = render(
+      <Breadcrumbs items={items}>
+        {(item) => <Breadcrumb>{({isCurrent}) => isCurrent ? 'Current' : item.name}</Breadcrumb>}
+      </Breadcrumbs>
+    );
+
+    expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Current']);
+  });
 });
