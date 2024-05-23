@@ -129,7 +129,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   // an aria label will block children and their labels from being read, this is undesirable for pending state
   let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
   let spinnerId = useId();
-  let buttonId = useId();
+  let buttonId = useId(buttonProps.id);
   let containerId = useId();
 
   useEffect(() => {
@@ -163,6 +163,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
+      id={buttonId}
       ref={ref}
       aria-label={isPending ? isPendingAriaLiveLabel : buttonProps['aria-label']}
       aria-labelledby={isPending ? isPendingAriaLiveLabelledby : buttonProps['aria-labelledby']}
@@ -173,7 +174,12 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      <div style={{display: 'contents', visibility: isPendingVisible ? 'hidden' : 'visible'}} id={containerId} aria-atomic>{renderProps.children}</div>
+      <div
+        style={{display: 'contents', visibility: isPendingVisible ? 'hidden' : 'visible'}}
+        id={containerId}
+        aria-atomic>
+        {renderProps.children}
+      </div>
       {isPending && (
         <div
           aria-hidden="true"
