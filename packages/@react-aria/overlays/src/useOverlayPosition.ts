@@ -192,6 +192,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     onResize: updatePosition
   });
 
+  // Update position when the target changes size (might need to flip).
+  useResizeObserver({
+    ref: targetRef,
+    onResize: updatePosition
+  });
+
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
