@@ -32,7 +32,11 @@ import {
   Key,
   ResizableTableContainer,
   ColumnResizer,
-  ColumnRenderProps
+  ColumnRenderProps,
+  useDragAndDrop as useAriaDragAndDrop,
+  DragAndDropOptions as AriaDragAndDropOptions,
+  DropIndicator,
+  DropTarget
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -48,9 +52,10 @@ import {Menu, MenuItem, MenuTrigger} from './Menu';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
+// adding the types to the various style macros
 
 // loading more when items already exist (needs ability to append extra row with progress circle)
-// column dividers (needs more info from rac so cells know if its parent column has showDivider)
+// column dividers and text align (needs more info from rac so cells know if its parent column has showDivider)
 // drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
 // resizing (roughly implemented, but will probably change a bit with virtualization. Right now with wrapping)
@@ -422,7 +427,7 @@ const resizerHandle = style({
   height: 'full',
   width: '[2px]',
   position: 'absolute',
-  left: '[6px]'
+  left: '[5px]'
 });
 
 const sortIcon = style({
@@ -449,6 +454,14 @@ const chevronIcon = style({
   minWidth: 16
 });
 
+const nubbin = style({
+  position: 'absolute',
+  top: 0,
+  left: '[-2px]',
+  width: 16,
+  height: 16
+});
+
 interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'> {
   children: ReactNode
 }
@@ -456,7 +469,20 @@ interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSor
 // TODOS for resizing still
 // show all resizer handles on hover (need info from header row, but it doesn't have renderProp function support)
 // need a blue line rendered for the column all the way down the body (need info in the cells of the column's resizing state)
-// add nubbin (maybe do this later when resizing designs are added)
+
+// TODO: placeholder, just copied over from v3. Will need to be adjusted to having the same kind of fill that the s2 icons use
+function Nubbin() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+      <g fill="var(--spectrum-global-color-blue-600)" stroke="var(--spectrum-global-color-blue-600)" strokeWidth="2">
+        <circle cx="8" cy="8" r="8" stroke="none" />
+        <circle cx="8" cy="8" r="7" fill="none" />
+      </g>
+      <path d="M-2106-7380.263v5l2.5-2.551Z" transform="translate(2116 7385.763)" fill="#fff" stroke="#fff" strokeLinejoin="round" strokeWidth="2" />
+      <path d="M-2106-7380.263v5l2.5-2.551Z" transform="translate(-2100 -7369.763) rotate(180)" fill="#fff" stroke="#fff" strokeLinejoin="round" strokeWidth="2" />
+    </svg>
+  );
+}
 
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered} = props;
@@ -500,7 +526,12 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
       {/* TODO: Placeholder wrapper for keyboard navigation skipping resizer since ColumnResizer doesn't support data attributes yet */}
       <div data-react-aria-prevent-focus="true">
         <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection}) => resizerHandleContainer({resizableDirection})}>
-          {({isFocusVisible, isResizing, isFocused}) => <div className={resizerHandle({isFocusVisible, isHovered, isResizing, isFocused})} />}
+          {({isFocusVisible, isResizing}) => (
+            <>
+              <div className={resizerHandle({isFocusVisible, isHovered, isResizing})} />
+              {isFocusVisible && isResizing && <div className={nubbin}><Nubbin /></div>}
+            </>
+        )}
         </ColumnResizer>
       </div>
     </>
@@ -710,10 +741,25 @@ const row = style<RowRenderProps & S2TableProps>({
   // borderRadius: '[7px]',
 });
 
+// TODO: temp styles, roughly mimics v3
 const dragButton = style({
-  color: {
-    isFocusVisible: '[red]'
-  }
+  width: '[13px]',
+  height: '[20px]',
+  padding: 0,
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineOffset: '[-2px]', // Maybe can use space?
+  outlineWidth: 2,
+  outlineColor: 'focus-ring',
+  borderRadius: 'sm'
 });
 
 export function Row<T extends object>(
@@ -732,6 +778,7 @@ export function Row<T extends object>(
       {...otherProps}>
       {allowsDragging && (
         <Cell className={dragButtonCellStyle}>
+          {/* TODO: listgripper is from react-spectrum-ui? what do? */}
           <Button className={({isFocusVisible}) => dragButton({isFocusVisible})} slot="drag">≡</Button>
         </Cell>
       )}
@@ -745,4 +792,91 @@ export function Row<T extends object>(
       </Collection>
     </AriaRow>
   );
+}
+
+
+let rowDropIndicator = style({
+  // borderBottomWidth: 2,
+  // borderColor: {
+  //   default: 'transparent',
+  //   isDropTarget: 'focus-ring'
+  // },
+  // borderStyle: 'solid',
+  // forcedColorAdjust: 'none',
+  // width: 240,
+  // position: 'absolute',
+  // TODO: Follow the same strategy as in the RAC docs for table, this way has the width automatically determined. With
+  // absolute positioning it isn't as easy unless we get the caluclated width from somewhere (save for virtualization)
+  outlineWidth: 1,
+  outlineColor: 'focus-ring',
+  outlineStyle: {
+    default: 'none',
+    isDropTarget: 'solid'
+  },
+  transform: 'translateZ(0)',
+  position: 'relative',
+  zIndex: 1000
+});
+
+// TODO: will need to get the row height and other table styling props for the drag preview, but this hook is external to the table...
+// The below is just temporary, will need to update to match v3 more closely if need be (at least adding the stacking effect)
+// Will wait for designs first
+let dragRowPreview = style({
+  height: 40,
+  width: 144,
+  boxShadow: '[inset 0 0 0 2px blue]',
+  borderRadius: 'default',
+  paddingStart: 16, // table-edge-to-content
+  paddingEnd: 8,
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: 'gray-25'
+});
+
+let dragCellPreview = style({
+  paddingTop: '[11px]', // table-row-top-to-text-medium-regular,
+  paddingBottom: '[12px]', // table-row-bottom-to-text-medium-spacious
+  // TODO: fontSize control doesn't work here for some reason
+  fontSize: '[14px]',
+  fontFamily: 'sans'
+});
+
+let dragBadge = style({
+  display: 'flex',
+  backgroundColor: 'focus-ring',
+  color: 'gray-25',
+  paddingY: 0,
+  paddingX: 8,
+  borderRadius: 'sm',
+  marginY: 'auto',
+  fontSize: '[14px]',
+  fontFamily: 'sans'
+});
+
+interface DragandDropOptions extends Omit<AriaDragAndDropOptions, 'renderDropIndicator'> {}
+
+// TODO:
+// root drop indicator
+
+// TODO: the prop names and api here differ a bit from v3 (e.g. renderDragPreview(items) vs renderPreview(key, draggedKey))
+// will need to vet the differences
+export function useDragAndDrop(options: DragandDropOptions) {
+  let renderDropIndicator = (target: DropTarget) => {
+    return (
+      <DropIndicator
+        target={target}
+        className={({isDropTarget}) => rowDropIndicator({isDropTarget})} />
+    );
+  };
+  let renderDragPreview = (items: any) => {
+    return (
+      <div className={dragRowPreview}>
+        <div className={dragCellPreview}>
+          {items[0]['text/plain']}
+        </div>
+        <span className={dragBadge}>{items.length}</span>
+      </div>
+    );
+  };
+  return useAriaDragAndDrop({renderDragPreview, ...options, renderDropIndicator});
 }

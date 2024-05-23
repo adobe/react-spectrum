@@ -11,12 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Column, Row, Table, TableHeader, Cell, TableBody} from '../src/Table';
+import {Column, Row, Table, TableHeader, Cell, TableBody, useDragAndDrop} from '../src/Table';
 import {Content, Heading, IllustratedMessage, Illustration, Link} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useState} from 'react';
-import {SortDescriptor, useDragAndDrop} from 'react-aria-components';
+import {SortDescriptor} from 'react-aria-components';
 import {useListData} from '@react-stately/data';
 
 const meta: Meta<typeof Table> = {
@@ -201,6 +201,7 @@ const ReorderableTable = (args: any) => {
   let list = useListData({
     initialItems: items
   });
+
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({
