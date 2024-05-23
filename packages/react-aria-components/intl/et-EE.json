@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Värvinäidised",
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Valige üksus",
-  "tableResizer": "Suuruse muutja"
+  "tableResizer": "Suuruse muutja",
+  "pending": "ootel"
 }

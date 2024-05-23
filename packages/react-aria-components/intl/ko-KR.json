@@ -2,5 +2,6 @@
   "colorSwatchPicker": "색상 견본",
   "dropzoneLabel": "드롭 영역",
   "selectPlaceholder": "항목 선택",
-  "tableResizer": "크기 조정기"
+  "tableResizer": "크기 조정기",
+  "pending": "보류 중"
 }

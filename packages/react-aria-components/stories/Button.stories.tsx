@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Button} from 'react-aria-components';
-import React from 'react';
+import React, {useState} from 'react';
 
 export default {
   title: 'React Aria Components'
@@ -22,3 +23,53 @@ export const ButtonExample = () => {
     <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
   );
 };
+
+export const PendingButton = {
+  render: (args) => <PendingButtonExample {...args} />,
+  args: {
+    children: 'Press me',
+    className: ({defaultClassName}) => `${defaultClassName} pending-button`
+  }
+};
+
+export const PendingButtonComplexChildren = {
+  render: (args) => <PendingButtonExample {...args} />,
+  args: {
+    children: (
+      <div style={{display: 'flex', gap: '5px'}}>
+        <span>
+          <svg aria-label="circle" height="10" width="10" xmlns="http://www.w3.org/2000/svg">
+            <circle r="5" cx="5" cy="5" fill="red" />
+          </svg>
+        </span>
+        <span>
+          circle dot dot
+        </span>
+      </div>
+    ),
+    className: ({defaultClassName}) => `${defaultClassName} pending-button`
+  }
+};
+
+let timerValue = 5000;
+function PendingButtonExample(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('pressed')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}
+      pendingRender={'pending'}>
+      {props.children}
+    </Button>
+  );
+}

@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Campioni di colore",
   "dropzoneLabel": "Zona di rilascio",
   "selectPlaceholder": "Seleziona un elemento",
-  "tableResizer": "Ridimensionamento"
+  "tableResizer": "Ridimensionamento",
+  "pending": "in sospeso"
 }
