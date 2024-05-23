@@ -56,7 +56,12 @@ export interface ButtonRenderProps {
    * Whether the button is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * If the button is currently in the `isPending` state after the `pendingDelay`.
+   * @selector [data-pending-visible]
+   */
+  isPendingVisible: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
@@ -83,7 +88,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /** The value associated with the button's name when it's submitted with the form data. */
   value?: string,
   /**
-   * Whether to disable events immediately and display a loading spinner after a `pendingDelay`.
+   * Whether to disable events immediately and display a `pendingRender` after a `pendingDelay`.
    */
   isPending?: boolean,
   /**
@@ -91,6 +96,9 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    * @default 1000
    */
   pendingDelay?: number,
+  /**
+   * What to render as children while pending state is true.
+   */
   pendingRender?: ReactNode
 }
 
@@ -109,10 +117,10 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
-  let [isProgressVisible, setIsProgressVisible] = useState(false);
+  let [isPendingVisible, setIsPendingVisible] = useState(false);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isProgressVisible},
+    values: {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isPendingVisible},
     defaultClassName: 'react-aria-Button'
   });
 
@@ -130,11 +138,11 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     if (isPending) {
       // Start timer when isPending is set to true.
       timeout = setTimeout(() => {
-        setIsProgressVisible(true);
+        setIsPendingVisible(true);
       }, pendingDelay);
     } else {
       // Exit loading state when isPending is set to false. */
-      setIsProgressVisible(false);
+      setIsPendingVisible(false);
     }
     return () => {
       // Clean up on unmount or when user removes isPending prop before entering loading state.
@@ -165,11 +173,11 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      <div style={{display: 'contents', visibility: isProgressVisible ? 'hidden' : 'visible'}} id={containerId} aria-atomic>{renderProps.children}</div>
+      <div style={{display: 'contents', visibility: isPendingVisible ? 'hidden' : 'visible'}} id={containerId} aria-atomic>{renderProps.children}</div>
       {isPending && (
         <div
           aria-hidden="true"
-          style={{visibility: isProgressVisible ? 'visible' : 'hidden'}}
+          style={{visibility: isPendingVisible ? 'visible' : 'hidden'}}
           className={'react-aria-ButtonPending'}>
           {pendingRender}
         </div>
@@ -177,7 +185,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {isPending &&
         <>
           <div aria-live={isFocused ? ariaLive : 'off'}>
-            {isProgressVisible &&
+            {isPendingVisible &&
               <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
             }
           </div>

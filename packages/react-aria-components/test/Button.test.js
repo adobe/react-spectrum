@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonContext} from '../';
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button, ButtonContext} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
