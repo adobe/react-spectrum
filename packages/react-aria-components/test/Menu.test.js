@@ -116,7 +116,7 @@ describe('Menu', () => {
     let itemRef = React.createRef();
     render(
       <Menu aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <Section ref={sectionRef} aria-label="Felines">
           <MenuItem ref={itemRef}>Cat</MenuItem>
         </Section>
       </Menu>
@@ -124,6 +124,7 @@ describe('Menu', () => {
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
     expect(sectionRef.current).toBeInstanceOf(HTMLElement);
     expect(itemRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toHaveAttribute('aria-label', 'Felines');
   });
 
   it('should support hover', async () => {
