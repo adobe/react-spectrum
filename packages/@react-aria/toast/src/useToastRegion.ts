@@ -58,29 +58,29 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       prevVisibleToasts.current = state.visibleToasts;
       return;
     }
-    // Get a list of all removed toasts by index.
-    let removedToasts = prevVisibleToasts.current
+    // Get a list of all toasts by index and add info if they are removed.
+    let allToasts = prevVisibleToasts.current
       .map((t, i) => ({
         ...t,
         i,
         isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
       }));
 
-    let removedToastIndex = removedToasts.findIndex(t => t.i === focusedToast.current);
+    let removedFocusedToastIndex = allToasts.findIndex(t => t.i === focusedToast.current);
 
     // If the focused toast was removed, focus the next or previous toast.
-    if (removedToastIndex > -1) {
+    if (removedFocusedToastIndex > -1) {
       let i = 0;
       let nextToast;
       let prevToast;
-      while (i <= removedToastIndex) {
-        if (!removedToasts[i].isRemoved) {
+      while (i <= removedFocusedToastIndex) {
+        if (!allToasts[i].isRemoved) {
           prevToast = Math.max(0, i - 1);
         }
         i++;
       }
-      while (i < removedToasts.length) {
-        if (!removedToasts[i].isRemoved) {
+      while (i < allToasts.length) {
+        if (!allToasts[i].isRemoved) {
           nextToast = i - 1;
           break;
         }
@@ -92,6 +92,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         prevToast = 0;
       }
 
+      // prioritize going to newer toasts
       if (prevToast >= 0 && prevToast < toasts.current.length) {
         focusWithoutScrolling(toasts.current[prevToast]);
       } else if (nextToast >= 0 && nextToast < toasts.current.length) {
