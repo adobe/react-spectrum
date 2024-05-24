@@ -229,7 +229,7 @@ function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
-    'aria-label': section['aria-label'] ?? undefined
+    'aria-label': section.props['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
