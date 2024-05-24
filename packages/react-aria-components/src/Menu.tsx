@@ -222,7 +222,7 @@ function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
-    'aria-label': section['aria-label'] ?? undefined
+    'aria-label': section.props['aria-label'] ?? undefined
   });
 
   return (
