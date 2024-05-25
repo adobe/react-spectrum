@@ -17,20 +17,17 @@ import {Virtualizer} from './Virtualizer';
 let KEY = 0;
 
 /**
- * [CollectionView]{@link CollectionView} creates instances of the [ReusableView]{@link ReusableView} class to
- * represent views currently being displayed. ReusableViews manage a DOM node, handle
- * applying {@link LayoutInfo} objects to the view, and render content
- * as needed. Subclasses must implement the {@link render} method at a
- * minimum. Other methods can be overridden to customize behavior.
+ * [Virtualizer]{@link Virtualizer} creates instances of the [ReusableView]{@link ReusableView} class to
+ * represent views currently being displayed.
  */
 export class ReusableView<T extends object, V> {
-  /** The CollectionVirtualizer this view is a part of. */
+  /** The Virtualizer this view is a part of. */
   virtualizer: Virtualizer<T, V, unknown>;
 
   /** The LayoutInfo this view is currently representing. */
   layoutInfo: LayoutInfo | null;
 
-  /** The content currently being displayed by this view, set by the collection view. */
+  /** The content currently being displayed by this view, set by the virtualizer. */
   content: T;
 
   rendered: V;
@@ -38,9 +35,16 @@ export class ReusableView<T extends object, V> {
   viewType: string;
   key: Key;
 
+  parent: ReusableView<T, V> | null;
+  children: Set<ReusableView<T, V>>;
+  reusableViews: Record<string, ReusableView<T, V>[]>;
+
   constructor(virtualizer: Virtualizer<T, V, unknown>) {
     this.virtualizer = virtualizer;
     this.key = ++KEY;
+    this.parent = null;
+    this.children = new Set();
+    this.reusableViews = {};
   }
 
   /**
@@ -50,5 +54,22 @@ export class ReusableView<T extends object, V> {
     this.content = null;
     this.rendered = null;
     this.layoutInfo = null;
+  }
+
+  getReusableView(reuseType: string) {
+    let reusable = this.reusableViews[reuseType];
+    let view = reusable?.length > 0
+      ? reusable.pop()
+      : new ReusableView<T, V>(this.virtualizer);
+
+    view.viewType = reuseType;
+    view.parent = this;
+    return view;
+  }
+
+  reuseChild(child: ReusableView<T, V>) {
+    child.prepareForReuse();
+    this.reusableViews[child.viewType] ||= [];
+    this.reusableViews[child.viewType].push(child);
   }
 }

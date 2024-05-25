@@ -11,7 +11,7 @@
  */
 
 import {ColumnSize, TableCollection} from '@react-types/table';
-import {DropTarget, Key, Node} from '@react-types/shared';
+import {DropTarget, Key} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
@@ -51,7 +51,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
   }
 
-  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>): boolean {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext): boolean {
     // If columns changed, clear layout cache.
     return super.shouldInvalidateEverything(invalidationContext) || (
       !this.lastCollection ||
@@ -102,10 +102,10 @@ export class TableLayout<T> extends ListLayout<T> {
     let map = new Map(Array.from(this.uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
     map.set(key, width);
     this.uncontrolledWidths = map;
-    // relayoutNow still uses setState, should happen at the same time the parent
+    // invalidate still uses setState, should happen at the same time the parent
     // component's state is processed as a result of props.onColumnResize
     if (this.uncontrolledWidths.size > 0) {
-      this.virtualizer.relayoutNow({sizeChanged: true});
+      this.virtualizer.invalidate({sizeChanged: true});
     }
     return newSizes;
   }
@@ -471,6 +471,7 @@ export class TableLayout<T> extends ListLayout<T> {
           let idx = persistedRowIndices[persistIndex++];
           if (idx < node.children.length) {
             res.push(node.children[idx].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
         }
         break;
@@ -568,18 +569,6 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let indices of this.persistedIndices.values()) {
       indices.sort((a, b) => a - b);
     }
-  }
-
-  getInitialLayoutInfo(layoutInfo: LayoutInfo) {
-    let res = super.getInitialLayoutInfo(layoutInfo);
-    res.transform = null;
-    return res;
-  }
-
-  getFinalLayoutInfo(layoutInfo: LayoutInfo) {
-    let res = super.getFinalLayoutInfo(layoutInfo);
-    res.transform = null;
-    return res;
   }
 
   // Checks if Chrome version is 105 or greater
