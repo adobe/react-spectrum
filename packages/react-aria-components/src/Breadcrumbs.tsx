@@ -12,7 +12,7 @@
 import {AriaBreadcrumbsProps} from 'react-aria';
 import {Collection, Node} from 'react-stately';
 import {CollectionChildren, CollectionProps, createLeafComponent, useCollection} from './Collection';
-import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {LinkContext} from './Link';
@@ -87,14 +87,22 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Bre
     onPress: () => onAction?.(node.key)
   };
 
+  let renderProps = useRenderProps({
+    ...node.props,
+    children: node.rendered,
+    values: {isDisabled: isDisabled || isCurrent, isCurrent},
+    defaultClassName: 'react-aria-Breadcrumb'
+  });
+
   return (
     <li
       {...filterDOMProps(props as any)}
+      {...renderProps}
       ref={ref}
-      style={props.style}
-      className={props.className ?? 'react-aria-Breadcrumb'}>
+      data-disabled={isDisabled || isCurrent || undefined}
+      data-current={isCurrent || undefined}>
       <LinkContext.Provider value={linkProps}>
-        {node.rendered}
+        {renderProps.children}
       </LinkContext.Provider>
     </li>
   );
