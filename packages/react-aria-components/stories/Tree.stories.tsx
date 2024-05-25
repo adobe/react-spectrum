@@ -197,7 +197,8 @@ let rows = [
 ];
 
 interface DynamicTreeItemProps extends TreeItemProps<object> {
-  children: ReactNode
+  children: ReactNode,
+  childItems?: Iterable<object>
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {

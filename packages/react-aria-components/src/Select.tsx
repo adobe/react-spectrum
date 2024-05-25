@@ -218,7 +218,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
   let selectedItem = state.selectedKey != null
     ? state.collection.getItem(state.selectedKey)
     : null;
-  let rendered = selectedItem?.rendered;
+  let rendered = selectedItem?.props.children;
   if (typeof rendered === 'function') {
     // If the selected item has a function as a child, we need to call it to render to React.JSX.
     let fn = rendered as (s: ItemRenderProps) => ReactNode;
