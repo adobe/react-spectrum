@@ -141,7 +141,7 @@ describe('Color', function () {
       expect(color.toString('hsla')).toBe('hsla(320, 100%, 0%, 0)');
     });
 
-    it('should keep 360 as hue value', function () {
+    it('should allow 360 as a hue value', function () {
       let color = parseColor('hsl(360, 100%, 50%)');
       expect(color.getChannelValue('hue')).toBe(360);
       expect(color.toString('hsl')).toBe('hsl(360, 100%, 50%)');
@@ -187,7 +187,7 @@ describe('Color', function () {
       expect(color.toString('hsba')).toBe('hsba(320, 100%, 0%, 0)');
     });
 
-    it('should keep 360 as hue value', function () {
+    it('should allow 360 as a hue value', function () {
       let color = parseColor('hsb(360, 100%, 50%)');
       expect(color.getChannelValue('hue')).toBe(360);
       expect(color.toString('hsb')).toBe('hsb(360, 100%, 50%)');
