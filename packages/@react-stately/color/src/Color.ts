@@ -49,6 +49,17 @@ export function getColorChannels(colorSpace: ColorSpace) {
   }
 }
 
+/**
+ * Returns the hue value normalized to the range of 0 to 360.
+ */
+export function normalizeHue(hue: number) {
+  if (hue === 360) {
+    return hue;
+  }
+
+  return ((hue % 360) + 360) % 360;
+}
+
 // Lightness threshold between orange and brown.
 const ORANGE_LIGHTNESS_THRESHOLD = 0.68;
 // Lightness threshold between pure yellow and "yellow green".
@@ -145,7 +156,7 @@ abstract class Color implements IColor {
     } else if (c >= 0.15) {
       chroma = 'vibrant';
     }
-    
+
     if (l < 0.3) {
       lightness = 'very dark';
     } else if (l < MAX_DARK_LIGHTNESS) {
@@ -435,7 +446,7 @@ class HSBColor extends Color {
     let m: RegExpMatchArray | void;
     if ((m = value.match(HSB_REGEX))) {
       const [h, s, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
-      return new HSBColor(mod(h, 360), clamp(s, 0, 100), clamp(b, 0, 100), clamp(a ?? 1, 0, 1));
+      return new HSBColor(normalizeHue(h), clamp(s, 0, 100), clamp(b, 0, 100), clamp(a ?? 1, 0, 1));
     }
   }
 
@@ -565,10 +576,6 @@ class HSBColor extends Color {
 // - hsla(X, X%, X%, X)
 const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
-function mod(n, m) {
-  return ((n % m) + m) % m;
-}
-
 class HSLColor extends Color {
   constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
     super();
@@ -578,7 +585,7 @@ class HSLColor extends Color {
     let m: RegExpMatchArray | void;
     if ((m = value.match(HSL_REGEX))) {
       const [h, s, l, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
-      return new HSLColor(mod(h, 360), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
+      return new HSLColor(normalizeHue(h), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
     }
   }
 
