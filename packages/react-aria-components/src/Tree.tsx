@@ -11,17 +11,17 @@
  */
 
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
-import {BaseCollection, CollectionChildren, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionChildren, CollectionContext, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover} from 'react-aria';
+import {getLastItem} from '@react-stately/collections';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
   private keyMap: Map<Key, NodeValue<T>> = new Map();
@@ -117,6 +117,33 @@ export interface TreeRenderProps {
   state: TreeState<unknown>
 }
 
+// So far two approaches that come to mind:
+// 1. Have the user provide loadingKeys and renderLoadingElement (name TBD). We can use the keys and the collection within to track when/where to render the extra loading elements
+// things to consider/do: the parent will need to have an updated set size for the additional row? Right now we don't do this in RSP for TableView and ListView
+// 2. Have the user provide a separate collection element for their load more spinner. We would then just render that as is? Might looks something like this:
+// const DynamicTreeItem = (props: DynamicTreeItemProps) => {
+//   let {childItems} = props;
+//   return (
+//     <UNSTABLE_TreeItem>
+//       <UNSTABLE_TreeItemContent>
+//         {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
+//          {... cells and buttons}
+//       </UNSTABLE_TreeItemContent>
+//       // the nested rows below
+//       <Collection items={childItems}>
+//         {(item: any) => (
+//           <>
+//             <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
+//               {item.name}
+//             </DynamicTreeItem>
+//           </>
+//         )}
+//       </Collection>
+//     </UNSTABLE_TreeItem>
+//     {loadingKeys.contain(props.id) && this is last child row of said parent && <Loader>{...what ever the user wants to render here}</Loader>}
+//   );
+// };
+
 export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
   /** How multiple selection should behave in the tree. */
   selectionBehavior?: SelectionBehavior,
@@ -126,7 +153,12 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
    * Whether `disabledKeys` applies to all interactions, or only selection.
    * @default 'selection'
    */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior,
+  // TODO update api and description if this is the api we want to go with. Should body be a symbol so it is guarenteed unique?
+  /**
+   * The rows that are loading in the tree. Provide 'body' if the top level is loading more items
+   */
+  loadingKeys?: Set<Key | 'body'>
 }
 
 
@@ -310,6 +342,7 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(UNSTABLE_TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
+
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
@@ -383,7 +416,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
           throw new Error('Unsupported element type in TreeRow: ' + item.type);
       }
     }
-  });  
+  });
 
   return (
     <>
@@ -427,6 +460,46 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
             ]}>
             {children}
           </Provider>
+        </div>
+      </div>
+    </>
+  );
+});
+
+
+// TOOD: decide what props this would need if any
+// TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
+export const UNSTABLE_TreeLoader = createLeafComponent('item', function TreeLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(UNSTABLE_TreeStateContext)!;
+  // TODO: might be able to still leverage the hook for the row information, but for now just manaully calc
+  // let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
+  // let level = rowProps['aria-level'] || 1;
+  let rowProps = {
+    'aria-level': item.level + 1,
+    'aria-posinset': item.index + 1,
+    'aria-setsize': item.level > 0 ?
+      (getLastItem(state.collection.getChildren(item?.parentKey))).index + 1 :
+      [...state.collection].filter(row => row.level === 0).at(-1).index + 1
+  };
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-TreeLoader'
+    // TODO: what loader render props do we need
+  });
+
+  return (
+    <>
+      <div
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any), rowProps)}
+        {...renderProps}
+        data-level={item.level + 1}>
+        <div role="gridcell" aria-colindex={1}>
+          {renderProps.children}
         </div>
       </div>
     </>
