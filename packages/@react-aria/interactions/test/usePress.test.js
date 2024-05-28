@@ -3303,7 +3303,7 @@ describe('usePress', function () {
     });
   });
 
-  describe('FocusScope with Shadow DOM', function () {
+  describe('usePress with Shadow DOM', function () {
     installPointerEvent();
     let cleanupShadowRoot, cleanupShadowHost, root;
     let events = [];
