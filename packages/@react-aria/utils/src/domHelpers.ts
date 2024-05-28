@@ -52,7 +52,7 @@ export const getRootBody = (root: Document | ShadowRoot): HTMLElement => {
 export const getDeepActiveElement = () => {
   let activeElement = document.activeElement;
   while (activeElement?.shadowRoot && activeElement.shadowRoot?.activeElement) {
-    activeElement = activeElement?.shadowRoot?.activeElement;
+    activeElement = activeElement.shadowRoot.activeElement;
   }
   return activeElement;
 };
