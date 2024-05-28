@@ -11,7 +11,7 @@
  */
 
 import {Color, ColorWheelProps} from '@react-types/color';
-import {normalizeColor, normalizeHue, parseColor} from './Color';
+import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
@@ -55,6 +55,10 @@ const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
 
 function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step;
+}
+
+function mod(n: number, m: number) {
+  return ((n % m) + m) % m;
 }
 
 function roundDown(v: number) {
@@ -120,7 +124,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       // Make sure you can always get back to 0.
       v = 0;
     }
-    v = roundToStep(normalizeHue(v), step);
+    v = roundToStep(mod(v, 360), step);
     if (hue !== v) {
       let color = value.withChannelValue('hue', v);
       setValue(color);
@@ -150,7 +154,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         // Make sure you can always get back to 0.
         newValue = minValueX;
       }
-      setHue(roundToStep(normalizeHue(newValue), s));
+      setHue(roundToStep(mod(newValue, 360), s));
     },
     decrement(stepSize = 1) {
       let s = Math.max(stepSize, step);
@@ -159,7 +163,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         // |(previous step) - 0| < step size
         setHue(roundDown(360 / s) * s);
       } else {
-        setHue(roundToStep(normalizeHue(hue - s), s));
+        setHue(roundToStep(mod(hue - s, 360), s));
       }
     },
     setDragging(isDragging) {
