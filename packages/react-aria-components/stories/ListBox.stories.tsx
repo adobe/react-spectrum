@@ -11,11 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Collection, CollectionRenderer, CollectionRendererContext} from '../src/Collection';
 import {Header, ListBox, ListBoxItem, ListBoxProps, Section, Separator, Text, useDragAndDrop} from 'react-aria-components';
+import {ListLayout} from '@react-stately/layout';
 import {MyListBoxItem} from './utils';
-import React from 'react';
+import React, {useContext, useMemo} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
+import {Virtualizer, VirtualizerContext} from '@react-aria/virtualizer';
 
 export default {
   title: 'React Aria Components'
@@ -224,4 +227,76 @@ ListBoxGrid.story = {
       }
     }
   }
+};
+
+export function VirtualizedListBox() {
+  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  for (let s = 0; s < 10; s++) {
+    let items: {id: string, name: string}[] = [];
+    for (let i = 0; i < 100; i++) {
+      items.push({id: `item_${s}_${i}`, name: `Item ${i}`});
+    }
+    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+  }
+  return (
+    <VirtualizedCollection>
+      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
+        {section => (
+          <Section className={styles.group}>
+            <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
+            <Collection items={section.children}>
+              {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+            </Collection>
+          </Section>
+        )}
+      </ListBox>
+    </VirtualizedCollection>
+  );
+}
+
+function VirtualizedCollection({children}) {
+  return (
+    <CollectionRendererContext.Provider value={VirtualizedCollectionRenderer}>
+      {children}
+    </CollectionRendererContext.Provider>
+  );
+}
+
+const VirtualizedCollectionRenderer: CollectionRenderer = (collection, parent) => {
+  if (parent) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    let virtualizer = useContext(VirtualizerContext)!;
+    return virtualizer.virtualizer.getChildren(parent.key);
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let layout = useMemo(() => {
+    return new ListLayout({
+      estimatedRowHeight: 32,
+      estimatedHeadingHeight: 26,
+      padding: 4,
+      loaderHeight: 40,
+      placeholderHeight: 32
+      // collator
+    });
+  }, []);
+
+  return (
+    <Virtualizer
+      sizeToFit="height"
+      scrollDirection="vertical"
+      layout={layout}
+      style={{height: 'inherit'}}
+      collection={collection}
+      shouldUseVirtualFocus>
+      {(type, item) => {
+        switch (type) {
+          case 'placeholder':
+            return null;
+          default:
+            return item.render!(item);
+        }
+      }}
+    </Virtualizer>
+  );
 };
