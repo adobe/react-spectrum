@@ -291,7 +291,8 @@ export const Example = {
     selectionMode: 'multiple',
     onResize: null,
     onResizeStart: null,
-    onResizeEnd: null
+    onResizeEnd: null,
+    dragAndDropHooks: null
   }
 };
 

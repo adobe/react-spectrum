@@ -53,6 +53,8 @@ import {Menu, MenuItem, MenuTrigger} from './Menu';
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
 // adding the types to the various style macros
+// Add a complex table example with buttons and various icons,links,
+// Hide header support
 
 // loading more when items already exist (needs ability to append extra row with progress circle)
 // column dividers and text align (needs more info from rac so cells know if its parent column has showDivider)
@@ -63,7 +65,7 @@ import {Menu, MenuItem, MenuTrigger} from './Menu';
 // table scrolling/height/width (deferred till virtualization. Kinda works with the resizerable table container)
 // summary row (to discuss, is this a separate row? What accessibility goes into this)
 // nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
-
+// Expandable rows support, will need to add this to RAC table
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
   isQuiet?: boolean,
@@ -124,6 +126,61 @@ const table = style<TableRenderProps>({
 }, getAllowedOverrides({height: true}));
 
 
+// TODO: will need to get the row height and other table styling props for the drag preview, but this hook is external to the table...
+// Perhaps we move it to Table and set to our default one dragAndDropHooks.DragPreview
+// The below is just temporary, will need to update to match v3 more closely if need be (at least adding the stacking effect)
+// Will wait for designs first
+let dragRowPreview = style({
+  height: {
+    default: 40,
+    density: {
+      spacious: 48,
+      compact: 32
+    }
+  },
+  width: 144,
+  boxShadow: '[inset 0 0 0 2px blue]',
+  borderRadius: 'default',
+  paddingStart: 16, // table-edge-to-content
+  paddingEnd: 8,
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: 'gray-25'
+});
+
+// TODO: same style as from cell, combine later
+let dragCellPreview = style({
+  paddingTop: {
+    default: '[11px]', // table-row-top-to-text-medium-regular
+    density: {
+      spacious: '[15px]', // table-row-top-to-text-medium-spacious
+      compact: '[6px]' // table-row-top-to-text-medium-compact
+    }
+  },
+  paddingBottom: {
+    default: '[12px]', // table-row-bottom-to-text-medium-spacious
+    density: {
+      spacious: '[16px]', // table-row-bottom-to-text-medium-spacious
+      compact: '[9px]' // table-row-bottom-to-text-medium-compact
+    }
+  },
+  // TODO: fontSize control doesn't work here for some reason
+  fontSize: '[14px]',
+  fontFamily: 'sans'
+});
+
+let dragBadge = style({
+  display: 'flex',
+  backgroundColor: 'focus-ring',
+  color: 'gray-25',
+  paddingY: 0,
+  paddingX: 8,
+  borderRadius: 'sm',
+  marginY: 'auto',
+  fontSize: '[14px]',
+  fontFamily: 'sans'
+});
+
 export function Table(props: TableProps) {
   let {
     UNSAFE_style,
@@ -137,8 +194,23 @@ export function Table(props: TableProps) {
     onResize,
     onResizeEnd,
     onResizeStart,
+    dragAndDropHooks,
     ...otherProps
   } = props;
+
+  let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
+  if (dragAndDropHooks && isTableDraggable && !dragAndDropHooks?.renderDragPreview) {
+    dragAndDropHooks.renderDragPreview = (items) => {
+      return (
+        <div className={dragRowPreview({density})}>
+          <div className={dragCellPreview({density})}>
+            {items[0]['text/plain']}
+          </div>
+          <span className={dragBadge}>{items.length}</span>
+        </div>
+      );
+    };
+  }
 
   let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
   let baseTable = (
@@ -149,6 +221,7 @@ export function Table(props: TableProps) {
           ...renderProps
         }, styles)}
         selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+        dragAndDropHooks={dragAndDropHooks}
         {...otherProps} />
     </InternalTableContext.Provider>
   );
@@ -677,11 +750,10 @@ const row = style<RowRenderProps & S2TableProps>({
     isHovered: 'gray-900/7', // table-row-hover-color
     isPressed: 'gray-900/10', // table-row-hover-color
     isSelected: {
-      // TODO: need to support opacity for lightDark
-      default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, todo needs opacity /10
-      isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
-      isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
-      isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, todo needs opacity /15
+      default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
+      isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+      isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+      isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
     },
     isQuiet: {
       // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
@@ -690,11 +762,10 @@ const row = style<RowRenderProps & S2TableProps>({
       isHovered: 'gray-900/7', // table-row-hover-color
       isPressed: 'gray-900/10', // table-row-hover-color
       isSelected: {
-      // TODO: need to support opacity for lightDark
-        default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, todo needs opacity /10
-        isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
-        isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, todo needs opacity /15
-        isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, todo needs opacity /15
+        default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
+        isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+        isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+        isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
       }
     },
     forcedColors: {
@@ -709,8 +780,6 @@ const row = style<RowRenderProps & S2TableProps>({
       compact: 32 // table-row-height-medium-compact
     }
   },
-  // TODO will get rid of outlineStyle in general but keeping it for non forced colors until I figure out a good way to render the row's
-  // focus ring
   outlineStyle: 'none',
   // TODO: rough implementation for now, ideally this would just be the row outline or something.
   // will need to update the color to actually be a HCM style (Highlight)
@@ -818,45 +887,11 @@ let rowDropIndicator = style({
   zIndex: 1000
 });
 
-// TODO: will need to get the row height and other table styling props for the drag preview, but this hook is external to the table...
-// The below is just temporary, will need to update to match v3 more closely if need be (at least adding the stacking effect)
-// Will wait for designs first
-let dragRowPreview = style({
-  height: 40,
-  width: 144,
-  boxShadow: '[inset 0 0 0 2px blue]',
-  borderRadius: 'default',
-  paddingStart: 16, // table-edge-to-content
-  paddingEnd: 8,
-  display: 'flex',
-  justifyContent: 'space-between',
-  backgroundColor: 'gray-25'
-});
-
-let dragCellPreview = style({
-  paddingTop: '[11px]', // table-row-top-to-text-medium-regular,
-  paddingBottom: '[12px]', // table-row-bottom-to-text-medium-spacious
-  // TODO: fontSize control doesn't work here for some reason
-  fontSize: '[14px]',
-  fontFamily: 'sans'
-});
-
-let dragBadge = style({
-  display: 'flex',
-  backgroundColor: 'focus-ring',
-  color: 'gray-25',
-  paddingY: 0,
-  paddingX: 8,
-  borderRadius: 'sm',
-  marginY: 'auto',
-  fontSize: '[14px]',
-  fontFamily: 'sans'
-});
-
 interface DragandDropOptions extends Omit<AriaDragAndDropOptions, 'renderDropIndicator'> {}
 
 // TODO:
 // root drop indicator
+// on row drop indicator
 
 // TODO: the prop names and api here differ a bit from v3 (e.g. renderDragPreview(items) vs renderPreview(key, draggedKey))
 // will need to vet the differences
@@ -868,15 +903,6 @@ export function useDragAndDrop(options: DragandDropOptions) {
         className={({isDropTarget}) => rowDropIndicator({isDropTarget})} />
     );
   };
-  let renderDragPreview = (items: any) => {
-    return (
-      <div className={dragRowPreview}>
-        <div className={dragCellPreview}>
-          {items[0]['text/plain']}
-        </div>
-        <span className={dragBadge}>{items.length}</span>
-      </div>
-    );
-  };
-  return useAriaDragAndDrop({renderDragPreview, ...options, renderDropIndicator});
+
+  return useAriaDragAndDrop({...options, renderDropIndicator});
 }
