@@ -205,7 +205,6 @@ interface DynamicTreeItemProps extends TreeItemProps<object> {
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   let {childItems} = props;
-  console.log('props', props)
   return (
     <>
       <UNSTABLE_TreeItem

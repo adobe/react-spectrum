@@ -143,6 +143,8 @@ export interface TreeRenderProps {
 //     {loadingKeys.contain(props.id) && this is last child row of said parent && <Loader>{...what ever the user wants to render here}</Loader>}
 //   );
 // };
+// TODO can't do #2 for since it will sometimes render the loader between a row and its nested children. This specifically happens when said row is the last row of its isLoading parent
+// see stash stash@{0}: WIP on load_more_rac: 2d2e8b6a4 rough approach for having user provide loading element to rac collection element
 
 export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
   /** How multiple selection should behave in the tree. */
@@ -153,12 +155,7 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
    * Whether `disabledKeys` applies to all interactions, or only selection.
    * @default 'selection'
    */
-  disabledBehavior?: DisabledBehavior,
-  // TODO update api and description if this is the api we want to go with. Should body be a symbol so it is guarenteed unique?
-  /**
-   * The rows that are loading in the tree. Provide 'body' if the top level is loading more items
-   */
-  loadingKeys?: Set<Key | 'body'>
+  disabledBehavior?: DisabledBehavior
 }
 
 

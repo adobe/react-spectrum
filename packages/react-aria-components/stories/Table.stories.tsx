@@ -11,12 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Checkbox, CheckboxProps, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
+import { UNSTABLE_TableLoader } from '../src/Table';
 
 export default {
   title: 'React Aria Components'
@@ -172,7 +173,7 @@ export const TableExample = () => {
   );
 };
 
-export const TableDynamicExample = () => {
+export const TableDynamicExample = (args) => {
   let columns = [
     {name: 'Name', id: 'name', isRowHeader: true},
     {name: 'Type', id: 'type'},
@@ -193,7 +194,7 @@ export const TableDynamicExample = () => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <TableBody items={rows}>
+      <MyTableBody rows={rows} columns={columns} isLoading={args.isLoading}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -201,10 +202,55 @@ export const TableDynamicExample = () => {
             }}
           </Row>
         )}
-      </TableBody>
+      </MyTableBody>
+      {/* <TableBody items={rows}>
+        {(item) => (
+          <>
+            <Row columns={columns}>
+              {(column) => {
+                return <Cell>{item[column.id]}</Cell>;
+              }}
+            </Row>
+            {item.id === 4 && <UNSTABLE_TableLoader>gawegwaeg</UNSTABLE_TableLoader>}
+          </>
+        )}
+      </TableBody> */}
     </Table>
   );
 };
+
+// TODO: the below is the only way to append a extra row it seems, if we try to wrap <Row> in a <> instead and add a sibling row, it causes the collection to break
+// by messing up how columns are generated (updateColumns seems to get confused and thinks that the newly added row is the children of the header)
+// Also the extra row's contents seems to have to be rendered in a static fashion, adding the cell to the extra row via a render func breaks the collection in the same way as
+// above
+function MyTableBody(props) {
+  let {rows, children, isLoading} = props;
+  return (
+    <TableBody>
+      <Collection items={rows}>
+        {children}
+      </Collection>
+      {isLoading && (
+        <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>
+        // <Row>
+        //   <Cell>gaweg</Cell>
+        //   <Cell>gaweg</Cell>
+        //   <Cell>gaweg</Cell>
+        // </Row>
+        // <Row columns={columns}>
+        //   {(column) => {
+        //     return <Cell>test</Cell>;
+        //   }}
+        // </Row>
+      )}
+    </TableBody>
+  );
+}
+
+TableDynamicExample.args = {
+  isLoading: false
+};
+
 
 const MyColumn = (props: ColumnProps) => {
   return (
@@ -352,7 +398,7 @@ export const DndTableExample = (props: DndTableExampleProps) => {
         {id: '5', type: 'folder', name: 'Utilities'},
         {id: '6', type: 'file', name: 'Adobe AfterEffects'}
         ]}
-        aria-label="First Table" 
+        aria-label="First Table"
         isDisabled={props.isDisabledFirstTable} />
       <DndTable
         initialItems={[
@@ -363,7 +409,7 @@ export const DndTableExample = (props: DndTableExampleProps) => {
         {id: '11', type: 'file', name: 'Adobe Lightroom'},
         {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
         ]}
-        aria-label="Second Table" 
+        aria-label="Second Table"
         isDisabled={props.isDisabledSecondTable} />
     </div>
   );

@@ -28,6 +28,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     this.columnsDirty ||= node.type === 'column';
     if (node.type === 'tableheader') {
+      // console.log('do we make it here?', node)
       this.head = node;
     }
 
@@ -56,6 +57,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
             node.index = this.columns.length;
+            // console.log('pushing to columns')
             this.columns.push(node);
 
             if (node.props.isRowHeader) {
@@ -70,6 +72,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     };
 
     for (let node of this.getChildren(this.head.key)) {
+      // debugger
+      // console.log('first node of the this.head', node)
       visit(node);
     }
 
@@ -397,7 +401,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       width: 'fit-content'
     };
   }
-
+  // console.log('collection', collection)
   return (
     <>
       <TableOptionsContext.Provider value={ctx}>
@@ -980,7 +984,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         isFocusVisibleWithin
       }
     });
-
+    // console.log('row', item)
     return (
       <>
         {dragAndDropHooks?.useDropIndicator &&
@@ -1219,3 +1223,31 @@ function RootDropIndicator() {
     </tr>
   );
 }
+
+// TOOD: decide what props this would need if any
+// TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
+export const UNSTABLE_TableLoader = createLeafComponent('item', function TreeLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-TableLoader'
+    // TODO: what loader render props do we need
+  });
+
+  // TODO: add aria attributes when we add virtualizer
+  return (
+    <>
+      <tr
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any))}
+        {...renderProps}
+        data-rac>
+        <td role="rowheader" aria-colspan={3}>
+          {renderProps.children}
+        </td>
+      </tr>
+    </>
+  );
+});
