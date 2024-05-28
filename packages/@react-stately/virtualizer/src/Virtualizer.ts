@@ -89,6 +89,7 @@ export class Virtualizer<T extends object, V, W> {
   private _visibleViews: Map<Key, ReusableView<T, V>>;
   private _renderedContent: WeakMap<T, V>;
   private _children: Set<ReusableView<T, V>>;
+  private _viewsByParentKey: Map<Key | null, ReusableView<T, V>[]>;
   private _invalidationContext: InvalidationContext<T, V> | null;
   private _overscanManager: OverscanManager;
   private _persistedKeys: Set<Key>;
@@ -837,20 +838,25 @@ export class Virtualizer<T extends object, V, W> {
     // by referencing a parentKey. Just before rendering the visible views, we rebuild this hierarchy
     // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
     // method to build the final tree.
-    let viewsByParentKey = new Map([[null, []]]);
+    this._viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
-      if (view.layoutInfo?.parentKey != null && !viewsByParentKey.has(view.layoutInfo.parentKey)) {
-        viewsByParentKey.set(view.layoutInfo.parentKey, []);
+      if (view.layoutInfo?.parentKey != null && !this._viewsByParentKey.has(view.layoutInfo.parentKey)) {
+        this._viewsByParentKey.set(view.layoutInfo.parentKey, []);
       }
 
-      viewsByParentKey.get(view.layoutInfo?.parentKey)?.push(view);
-      if (!viewsByParentKey.has(view.layoutInfo?.key)) {
-        viewsByParentKey.set(view.layoutInfo?.key, []);
+      this._viewsByParentKey.get(view.layoutInfo?.parentKey)?.push(view);
+      if (!this._viewsByParentKey.has(view.layoutInfo?.key)) {
+        this._viewsByParentKey.set(view.layoutInfo?.key, []);
       }
     }
 
+    let children = this.getChildren(null);
+    this.delegate.setVisibleViews(children);
+  }
+
+  getChildren(key: Key) {
     let buildTree = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]): W[] => views.map(view => {
-      let children = viewsByParentKey.get(view.layoutInfo.key);
+      let children = this._viewsByParentKey.get(view.layoutInfo.key);
       return this.delegate.renderWrapper(
         parent,
         view,
@@ -859,8 +865,8 @@ export class Virtualizer<T extends object, V, W> {
       );
     });
 
-    let children = buildTree(null, viewsByParentKey.get(null));
-    this.delegate.setVisibleViews(children);
+    let parent = this._visibleViews.get(key)!;
+    return buildTree(parent, this._viewsByParentKey.get(key));
   }
 
   private _applyLayoutInfo(view: ReusableView<T, V>, layoutInfo: LayoutInfo) {
