@@ -497,7 +497,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
         }
       }, [])
     });
-  
+
     let {rowGroupProps} = useTableRowGroup();
     return (
       <thead
@@ -792,6 +792,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     <div
       ref={objectRef}
       role="presentation"
+      {...filterDOMProps(props as any)}
       {...renderProps}
       {...mergeProps(resizerProps, {onPointerDown}, hoverProps)}
       data-hovered={isHovered || undefined}
@@ -876,7 +877,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   );
 });
 
-export interface RowRenderProps extends ItemRenderProps {}
+export interface RowRenderProps extends ItemRenderProps {
+  /** Whether the row's children have keyboard focus. */
+  isFocusVisibleWithin: boolean
+}
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the row. */
@@ -918,23 +922,27 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       ref
     );
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+    let {
+      isFocusVisible: isFocusVisibleWithin,
+      focusProps: focusWithinProps
+    } = useFocusRing({within: true});
     let {hoverProps, isHovered} = useHover({
       isDisabled: !states.allowsSelection && !states.hasAction,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd
     });
-  
+
     let {checkboxProps} = useTableSelectionCheckbox(
       {key: item.key},
       state
     );
-  
+
     let draggableItem: DraggableItemResult | undefined = undefined;
     if (dragState && dragAndDropHooks) {
       draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
     }
-  
+
     let dropIndicator: DropIndicatorAria | undefined = undefined;
     let dropIndicatorRef = useRef<HTMLDivElement>(null);
     let {visuallyHiddenProps} = useVisuallyHidden();
@@ -943,7 +951,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         target: {type: 'item', key: item.key, dropPosition: 'on'}
       }, dropState, dropIndicatorRef);
     }
-  
+
     let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
     let dragButtonRef = useRef<HTMLButtonElement>(null);
     useEffect(() => {
@@ -952,7 +960,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       }
     // eslint-disable-next-line
     }, []);
-  
+
     let isDragging = dragState && dragState.isDragging(item.key);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {children: _, ...restProps} = props;
@@ -968,10 +976,11 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         selectionMode: state.selectionManager.selectionMode,
         selectionBehavior: state.selectionManager.selectionBehavior,
         isDragging,
-        isDropTarget: dropIndicator?.isDropTarget
+        isDropTarget: dropIndicator?.isDropTarget,
+        isFocusVisibleWithin
       }
     });
-    
+
     return (
       <>
         {dragAndDropHooks?.useDropIndicator &&
@@ -985,7 +994,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           </tr>
         )}
         <tr
-          {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
+          {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           {...renderProps}
           ref={ref}
           data-disabled={states.isDisabled || undefined}
@@ -996,7 +1005,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           data-pressed={states.isPressed || undefined}
           data-dragging={isDragging || undefined}
           data-drop-target={dropIndicator?.isDropTarget || undefined}
-          data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+          data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+          data-focus-visible-within={isFocusVisibleWithin || undefined}>
           <Provider
             values={[
               [CheckboxContext, {
