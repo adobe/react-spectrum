@@ -88,10 +88,6 @@ export function useVirtualizerState<T extends object, V, W, O = any>(opts: Virtu
 
   let contentSize = virtualizer.contentSize;
 
-  useLayoutEffect(() => {
-    virtualizer.afterRender();
-  });
-
   let startScrolling = useCallback(() => {
     setScrolling(true);
   }, []);

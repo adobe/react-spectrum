@@ -1375,7 +1375,7 @@ function TableCellWrapper({layoutInfo, virtualizer, parent, children}) {
       virtualizer={virtualizer}
       parent={parent?.layoutInfo}
       className={
-        classNames(
+        useMemo(() => classNames(
           styles,
           'spectrum-Table-cellWrapper',
           classNames(
@@ -1385,7 +1385,7 @@ function TableCellWrapper({layoutInfo, virtualizer, parent, children}) {
               'react-spectrum-Table-cellWrapper--dropTarget': isDropTarget || isRootDroptarget
             }
           )
-        )
+        ), [layoutInfo.estimatedSize, isDropTarget, isRootDroptarget])
       }>
       {children}
     </VirtualizerItem>

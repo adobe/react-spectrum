@@ -1260,7 +1260,7 @@ describe('CardView', function () {
     let cards = tree.getAllByRole('gridcell');
     expect(cards).toBeTruthy();
     let grid = tree.getByRole('grid');
-    await user.click(cards[cards.length - 1]);
+    await user.click(cards[4]);
     act(() => {
       jest.runAllTimers();
     });

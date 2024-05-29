@@ -219,8 +219,13 @@ export class Virtualizer<T extends object, V, W> {
       }
     }
 
+    // The remaining views in `removed` were not reused to render new items.
+    // They should be removed from the DOM. We also clear the reusable view queue
+    // here since there's no point holding onto views that have been removed.
+    // Doing so hurts performance in the future when reusing elements due to FIFO order.
     for (let view of removed) {
       view.parent.children.delete(view);
+      view.parent.reusableViews.clear();
     }
 
     // Reordering DOM nodes is costly, so we defer this until scrolling stops.
@@ -311,10 +316,6 @@ export class Virtualizer<T extends object, V, W> {
     }
 
     return this.getChildren(null);
-  }
-
-  afterRender() {
-    this._overscanManager.collectMetrics();
   }
 
   getChildren(key: Key | null): W[] {

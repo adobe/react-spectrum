@@ -4193,7 +4193,7 @@ export let tableTests = () => {
       let scrollView = body.parentNode.parentNode;
 
       let rows = within(body).getAllByRole('row');
-      expect(rows).toHaveLength(25); // each row is 41px tall. table is 1000px tall. 25 rows fit.
+      expect(rows).toHaveLength(34); // each row is 41px tall. table is 1000px tall. 25 rows fit. + 1/3 overscan
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);

@@ -404,6 +404,14 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   getVisibleLayoutInfos(rect: Rect) {
+    // Adjust rect to keep number of visible rows consistent.
+    // (only if height > 1 for getDropTargetFromPoint)
+    if (rect.height > 1) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1; // +1 for border
+      rect.y = Math.floor(rect.y / rowHeight) * rowHeight;
+      rect.height = Math.ceil(rect.height / rowHeight) * rowHeight;
+    }
+
     // If layout hasn't yet been done for the requested rect, union the
     // new rect with the existing valid rect, and recompute.
     if (!this.validRect.containsRect(rect) && this.lastCollection) {
@@ -522,7 +530,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let mid = (low + high) >> 1;
       let item = items[mid];
 
-      if ((axis === 'x' && item.layoutInfo.rect.maxX < point.x) || (axis === 'y' && item.layoutInfo.rect.maxY < point.y)) {
+      if ((axis === 'x' && item.layoutInfo.rect.maxX <= point.x) || (axis === 'y' && item.layoutInfo.rect.maxY <= point.y)) {
         low = mid + 1;
       } else if ((axis === 'x' && item.layoutInfo.rect.x > point.x) || (axis === 'y' && item.layoutInfo.rect.y > point.y)) {
         high = mid - 1;

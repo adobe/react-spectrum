@@ -37,14 +37,14 @@ export class ReusableView<T extends object, V> {
 
   parent: ReusableView<T, V> | null;
   children: Set<ReusableView<T, V>>;
-  reusableViews: Record<string, ReusableView<T, V>[]>;
+  reusableViews: Map<string, ReusableView<T, V>[]>;
 
   constructor(virtualizer: Virtualizer<T, V, unknown>) {
     this.virtualizer = virtualizer;
     this.key = ++KEY;
     this.parent = null;
     this.children = new Set();
-    this.reusableViews = {};
+    this.reusableViews = new Map();
   }
 
   /**
@@ -57,9 +57,13 @@ export class ReusableView<T extends object, V> {
   }
 
   getReusableView(reuseType: string) {
-    let reusable = this.reusableViews[reuseType];
+    // Reusable view queue should be FIFO so that DOM order remains consistent during scrolling.
+    // For example, cells within a row should remain in the same order even if the row changes contents.
+    // The cells within a row are removed from their parent in order. If the row is reused, the cells
+    // should be reused in the new row in the same order they were before.
+    let reusable = this.reusableViews.get(reuseType);
     let view = reusable?.length > 0
-      ? reusable.pop()
+      ? reusable.shift()
       : new ReusableView<T, V>(this.virtualizer);
 
     view.viewType = reuseType;
@@ -69,7 +73,11 @@ export class ReusableView<T extends object, V> {
 
   reuseChild(child: ReusableView<T, V>) {
     child.prepareForReuse();
-    this.reusableViews[child.viewType] ||= [];
-    this.reusableViews[child.viewType].push(child);
+    let reusable = this.reusableViews.get(child.viewType);
+    if (!reusable) {
+      reusable = [];
+      this.reusableViews.set(child.viewType, reusable);
+    }
+    reusable.push(child);
   }
 }
