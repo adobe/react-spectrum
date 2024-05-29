@@ -883,7 +883,17 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
 
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean,
+  /**
+   * Whether the row is the first row of the table.
+   * @selector [data-is-first-row]
+   */
+  isFirstRow: boolean,
+  /**
+   * Whether the row is the last row of the table.
+   * @selector [data-is-last-row]
+   */
+  isLastRow: boolean
 }
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
@@ -965,6 +975,10 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     // eslint-disable-next-line
     }, []);
 
+    // TODO: still feels quite specific, perhaps we should include some other way for users to look this up/look up the row index/get access to the collection?
+    let isFirstRow = item.prevKey == null;
+    let isLastRow = item.nextKey == null;
+
     let isDragging = dragState && dragState.isDragging(item.key);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {children: _, ...restProps} = props;
@@ -981,10 +995,12 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         selectionBehavior: state.selectionManager.selectionBehavior,
         isDragging,
         isDropTarget: dropIndicator?.isDropTarget,
-        isFocusVisibleWithin
+        isFocusVisibleWithin,
+        isFirstRow,
+        isLastRow
       }
     });
-    // console.log('row', item)
+
     return (
       <>
         {dragAndDropHooks?.useDropIndicator &&
@@ -1001,6 +1017,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           {...renderProps}
           ref={ref}
+          data-is-first-row={isFirstRow || undefined}
+          data-is-last-row={isLastRow || undefined}
           data-disabled={states.isDisabled || undefined}
           data-selected={states.isSelected || undefined}
           data-hovered={isHovered || undefined}
@@ -1079,7 +1097,17 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean,
+  /**
+   * Whether the cell is the first cell of its row.
+   * @selector [data-is-first-cell]
+   */
+  isFirstCell: boolean,
+  /**
+   * Whether the row is the last cell of its row.
+   * @selector [data-is-last-cell]
+   */
+  isLastCell: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -1107,6 +1135,9 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
 
+  // TODO: still feels quite specific, perhaps we should include some other way for users to look this up/look up the row index/get access to the collection?
+  let isFirstCell = cell.prevKey == null;
+  let isLastCell = cell.nextKey == null;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -1115,7 +1146,9 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      isFirstCell,
+      isLastCell
     }
   });
 
@@ -1124,6 +1157,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-is-first-cell={isFirstCell || undefined}
+      data-is-last-cell={isLastCell || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
@@ -1226,7 +1261,7 @@ function RootDropIndicator() {
 
 // TOOD: decide what props this would need if any
 // TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
-export const UNSTABLE_TableLoader = createLeafComponent('item', function TreeLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let renderProps = useRenderProps({
     ...props,
     id: undefined,

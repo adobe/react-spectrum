@@ -327,7 +327,7 @@ export const EmptyTree = (args: TreeProps<unknown>) => (
 // set         let rendered = cache.get(item); to be just let rendered
 export function LoadingStory(args) {
   return (
-    <UNSTABLE_Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <UNSTABLE_Tree {...args} isLoading={args.isLoading} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <DynamicTreeItem isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
           {item.name}

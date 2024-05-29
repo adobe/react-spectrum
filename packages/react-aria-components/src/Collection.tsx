@@ -567,6 +567,8 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   addNode(element: ElementNode<T>) {
+    // console.log('adding node', element);
+    // debugger
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
       collection.addNode(element.node);
@@ -600,6 +602,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection() {
+    // console.log('updating collection')
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.isConnected) {
         element.updateNode();
