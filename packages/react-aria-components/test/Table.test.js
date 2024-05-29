@@ -1197,4 +1197,59 @@ describe('Table', () => {
       });
     });
   });
+
+  describe('error state', function () {
+    let consoleWarnSpy = jest.fn();
+    let consoleWarn = console.warn;
+    let consoleError = console.error;
+    beforeEach(() => {
+      console.warn = consoleWarnSpy;
+      console.error = jest.fn();
+    });
+
+    afterEach(() => {
+      console.warn = consoleWarn;
+      console.error = consoleError;
+      jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('should throw a warning if the rows are rendered staticly but the cells are rendered dynamically', () => {
+      function StaticRowDynamicCell() {
+        let columns = [
+          {name: 'Name', id: 'name', isRowHeader: true},
+          {name: 'Type', id: 'type'},
+          {name: 'Date Modified', id: 'date'}
+        ];
+
+        return (
+          <Table aria-label="Files">
+            <TableHeader columns={columns}>
+              {(column) => (
+                <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+              )}
+            </TableHeader>
+            <TableBody>
+              <Row columns={columns}>
+                {() => {
+                  return <Cell>filler</Cell>;
+                }}
+              </Row>
+              <Row columns={columns}>
+                {() => {
+                  return <Cell>filler</Cell>;
+                }}
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      }
+
+      expect(() => render(<StaticRowDynamicCell />)).toThrow();
+      expect(consoleWarnSpy).toHaveBeenCalledWith('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    });
+  });
 });

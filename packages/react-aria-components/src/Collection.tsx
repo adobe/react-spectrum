@@ -567,8 +567,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   addNode(element: ElementNode<T>) {
-    // console.log('adding node', element);
-    // debugger
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
       collection.addNode(element.node);
@@ -602,7 +600,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection() {
-    // console.log('updating collection')
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.isConnected) {
         element.updateNode();
@@ -912,7 +909,14 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   props.dependencies = (ctx?.dependencies || []).concat(props.dependencies);
-  return <>{useCollectionChildren(props)}</>;
+
+  return (
+    // TODO: operates off the assumption that dependencies set on a higher level Collection should propagate down
+    // Makes it simpler for someone to setup nested Tree loaders (only need to set dependency at top level Collection instead of remembering to propagate it to every instance of Collection)
+    <CollectionContext.Provider value={{dependencies: props.dependencies}}>
+      {useCollectionChildren(props)}
+    </CollectionContext.Provider>
+  );
 }
 
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;

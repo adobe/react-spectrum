@@ -11,7 +11,7 @@
  */
 
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
-import {BaseCollection, CollectionChildren, CollectionContext, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren} from './Collection';
+import {BaseCollection, CollectionChildren, CollectionContext, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
@@ -166,10 +166,12 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
   let {collection, portal} = useCollection(props);
-
+  let dependencies = useMemo(() => ({dependencies: props.dependencies}), [props.dependencies]);
   return (
     <>
-      {portal}
+      <CollectionContext.Provider value={dependencies}>
+        {portal}
+      </CollectionContext.Provider>
       <TreeInner props={props} collection={collection} treeRef={ref} />
     </>
   );
@@ -471,12 +473,20 @@ export const UNSTABLE_TreeLoader = createLeafComponent('item', function TreeLoad
   // TODO: might be able to still leverage the hook for the row information, but for now just manaully calc
   // let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   // let level = rowProps['aria-level'] || 1;
+
+  let setSize = 0;
+  if (item?.level) {
+    if (item.level > 0) {
+      setSize = (getLastItem(state.collection.getChildren(item.parentKey)))?.index + 1;
+    } else if (item.level === 0) {
+      setSize = [...state.collection].filter(row => row?.level === 0).at(-1)?.index + 1;
+    }
+  }
+
   let rowProps = {
-    'aria-level': item.level + 1,
-    'aria-posinset': item.index + 1,
-    'aria-setsize': item.level > 0 ?
-      (getLastItem(state.collection.getChildren(item?.parentKey))).index + 1 :
-      [...state.collection].filter(row => row.level === 0).at(-1).index + 1
+    'aria-level': item && item.level ? item.level + 1 : 1,
+    'aria-posinset': item && item.index ? item?.index + 1 : 1,
+    'aria-setsize': setSize
   };
 
   let renderProps = useRenderProps({

@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Key, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode} from 'react';
@@ -200,11 +200,12 @@ let rows = [
 interface DynamicTreeItemProps extends TreeItemProps<object> {
   children: ReactNode,
   childItems?: Iterable<object>,
-  isLoading?: boolean
+  isLoading?: boolean,
+  renderLoader?: (id: Key | undefined) => boolean
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
-  let {childItems} = props;
+  let {childItems, renderLoader} = props;
   return (
     <>
       <UNSTABLE_TreeItem
@@ -241,7 +242,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         </UNSTABLE_TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
-            <DynamicTreeItem isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
+            <DynamicTreeItem renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
               {item.name}
             </DynamicTreeItem>
           )}
@@ -251,7 +252,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         theoretically this would look like (loadingKeys.includes(parentKey) && props.id === last key of parent) &&....
         both the parentKey of a given item as well as checking if the current tree item is the last item of said parent would need to be done by the user outside of this tree item?
       */}
-      {props.isLoading && (props.id === 'reports' || props.id === 'project-2C') && <UNSTABLE_TreeLoader>placeholder loader</UNSTABLE_TreeLoader>}
+      {props.isLoading && renderLoader?.(props.id) && <UNSTABLE_TreeLoader>placeholder loader</UNSTABLE_TreeLoader>}
     </>
   );
 };
@@ -321,15 +322,34 @@ export const EmptyTree = (args: TreeProps<unknown>) => (
     )}
   </UNSTABLE_Tree>
 );
-
-// TODO: right now the cache isn't invalidated, tried to add a dependency array to UNSTABLE_TreeItem but no luck
-// If you want to see the story change in response to the isLoading control changing, then you can go into collection.tsx and
-// set         let rendered = cache.get(item); to be just let rendered
-export function LoadingStory(args) {
+function LoadingStoryDepOnCollection(args) {
   return (
-    <UNSTABLE_Tree {...args} isLoading={args.isLoading} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <UNSTABLE_Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <Collection items={rows} dependencies={[args.isLoading]}>
+        {(item) => (
+          <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+            {item.name}
+          </DynamicTreeItem>
+        )}
+      </Collection>
+      {args.isLoading && <UNSTABLE_TreeLoader>root loading</UNSTABLE_TreeLoader>}
+    </UNSTABLE_Tree>
+  );
+}
+
+export const LoadingStoryDepOnCollectionStory = {
+  render: LoadingStoryDepOnCollection,
+  args: {
+    isLoading: false
+  },
+  name: 'Loading, static root loader and dynamic rows'
+};
+
+function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
+  return (
+    <UNSTABLE_Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItem isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
           {item.name}
         </DynamicTreeItem>
       )}
@@ -337,9 +357,12 @@ export function LoadingStory(args) {
   );
 }
 
-LoadingStory.story = {
-  ...LoadingStory.story,
+export const LoadingStoryDepOnTopStory = {
+  render: LoadingStoryDepOnTop,
   args: {
     isLoading: false
-  }
+  },
+  name: 'Loading, dynamic rows, root loader rendered dynamically as well'
 };
+
+// TODO: add story that replaces the chevron with a loading spinner instead since that might be a use case

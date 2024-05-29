@@ -28,7 +28,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     this.columnsDirty ||= node.type === 'column';
     if (node.type === 'tableheader') {
-      // console.log('do we make it here?', node)
       this.head = node;
     }
 
@@ -57,7 +56,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
             node.index = this.columns.length;
-            // console.log('pushing to columns')
             this.columns.push(node);
 
             if (node.props.isRowHeader) {
@@ -72,8 +70,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     };
 
     for (let node of this.getChildren(this.head.key)) {
-      // debugger
-      // console.log('first node of the this.head', node)
       visit(node);
     }
 
@@ -401,7 +397,6 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       width: 'fit-content'
     };
   }
-  // console.log('collection', collection)
   return (
     <>
       <TableOptionsContext.Provider value={ctx}>
@@ -1059,6 +1054,10 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     );
   },
   props => {
+    if (props.id == null && typeof props.children === 'function') {
+      console.warn('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    }
+
     let dependencies = [props.value].concat(props.dependencies);
     let children = useCollectionChildren({
       dependencies,
@@ -1262,6 +1261,7 @@ function RootDropIndicator() {
 // TOOD: decide what props this would need if any
 // TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
 export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+  let state = useContext(TableStateContext)!;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -1279,7 +1279,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLo
         {...mergeProps(filterDOMProps(props as any))}
         {...renderProps}
         data-rac>
-        <td role="rowheader" aria-colspan={3}>
+        <td role="rowheader" aria-colspan={state.collection.columns.length}>
           {renderProps.children}
         </td>
       </tr>

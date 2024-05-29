@@ -16,8 +16,8 @@ import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
+import {UNSTABLE_TableLoader} from '../src/Table';
 import {useListData} from 'react-stately';
-import { UNSTABLE_TableLoader } from '../src/Table';
 
 export default {
   title: 'React Aria Components'
@@ -173,20 +173,20 @@ export const TableExample = () => {
   );
 };
 
-export const TableDynamicExample = (args) => {
-  let columns = [
-    {name: 'Name', id: 'name', isRowHeader: true},
-    {name: 'Type', id: 'type'},
-    {name: 'Date Modified', id: 'date'}
-  ];
+let columns = [
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
+];
 
-  let rows = [
-    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-    {id: 4, name: 'log.txt', date: '1/18/20167', type: 'Text Document'}
-  ];
+let rows = [
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {id: 4, name: 'log.txt', date: '1/18/20167', type: 'Text Document'}
+];
 
+export const TableDynamicExample = () => {
   return (
     <Table aria-label="Files">
       <TableHeader columns={columns}>
@@ -194,7 +194,7 @@ export const TableDynamicExample = (args) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <MyTableBody rows={rows} columns={columns} isLoading={args.isLoading}>
+      <TableBody items={rows}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -202,53 +202,9 @@ export const TableDynamicExample = (args) => {
             }}
           </Row>
         )}
-      </MyTableBody>
-      {/* <TableBody items={rows}>
-        {(item) => (
-          <>
-            <Row columns={columns}>
-              {(column) => {
-                return <Cell>{item[column.id]}</Cell>;
-              }}
-            </Row>
-            {item.id === 4 && <UNSTABLE_TableLoader>gawegwaeg</UNSTABLE_TableLoader>}
-          </>
-        )}
-      </TableBody> */}
+      </TableBody>
     </Table>
   );
-};
-
-// TODO: the below is the only way to append a extra row it seems, if we try to wrap <Row> in a <> instead and add a sibling row, it causes the collection to break
-// by messing up how columns are generated (updateColumns seems to get confused and thinks that the newly added row is the children of the header)
-// Also the extra row's contents seems to have to be rendered in a static fashion, adding the cell to the extra row via a render func breaks the collection in the same way as
-// above
-function MyTableBody(props) {
-  let {rows, children, isLoading} = props;
-  return (
-    <TableBody>
-      <Collection items={rows}>
-        {children}
-      </Collection>
-      {isLoading && (
-        <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>
-        // <Row>
-        //   <Cell>gaweg</Cell>
-        //   <Cell>gaweg</Cell>
-        //   <Cell>gaweg</Cell>
-        // </Row>
-        // <Row columns={columns}>
-        //   {(column) => {
-        //     return <Cell>test</Cell>;
-        //   }}
-        // </Row>
-      )}
-    </TableBody>
-  );
-}
-
-TableDynamicExample.args = {
-  isLoading: false
 };
 
 
@@ -437,4 +393,89 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
       )}
     </Checkbox>
   );
+};
+
+// TODO: note that there exists a problem if you combine dynamic cell rendering with static rows relying on automatic id generation, the collection will mess up due the id scoping being required
+// This happened below when I added a fragment wrapper to the table and didn't forward the id to the row in the wrapper
+// Will add warning for this and add a test
+const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <MyTableBody rows={rows} columns={columns} isLoading={args.isLoading}>
+        {(item) => (
+          <Row columns={columns}>
+            {(column) => {
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </MyTableBody>
+    </Table>
+  );
+};
+
+function MyTableBody(props) {
+  let {rows, children, isLoading} = props;
+  return (
+    <TableBody>
+      <Collection items={rows}>
+        {children}
+      </Collection>
+      {isLoading && (
+        <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>
+      )}
+    </TableBody>
+  );
+}
+
+export const TableLoadingBodyWrapperStory = {
+  render: TableLoadingBodyWrapper,
+  args: {
+    isLoading: false
+  },
+  name: 'Table loading, table body wrapper with collection'
+};
+
+const TableLoadingRowRenderWrapper = (args: {isLoading: boolean}) => {
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows} dependencies={[args.isLoading]}>
+        {(item) => (
+          <MyRow columns={columns} isLoading={item.id === 4 && args.isLoading}>
+            {(column) => {
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </MyRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+function MyRow(props) {
+  return (
+    <>
+      {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
+      <Row {...props} />
+      {props.isLoading && <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>}
+    </>
+  );
+}
+
+export const TableLoadingRowRenderWrapperStory = {
+  render: TableLoadingRowRenderWrapper,
+  args: {
+    isLoading: false
+  },
+  name: 'Table loading, row renderer wrapper and dep array'
 };
