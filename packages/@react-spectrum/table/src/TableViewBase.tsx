@@ -292,6 +292,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
           key={reusableView.key}
           layoutInfo={reusableView.layoutInfo}
           parent={parent?.layoutInfo}
+          // Override the default role="rowgroup" with role="presentation",
+          // in favor or adding role="rowgroup" to the ScrollView with
+          // ref={bodyRef} in the TableVirtualizer below.
           role="presentation">
           {renderChildren(children)}
         </TableRowGroup>
@@ -635,12 +638,10 @@ function TableVirtualizer(props) {
                 )
               )
             }
-            /*
-              Firefox and Chrome make generic elements using CSS overflow 'scroll' or 'auto' tabbable,
-              including them within the accessibility tree, which breaks the table structure in Firefox.
-              Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
-              here and role="presentation" on the table body content fixes the table structure.
-            */
+            //  Firefox and Chrome make generic elements using CSS overflow 'scroll' or 'auto' tabbable,
+            //  including them within the accessibility tree, which breaks the table structure in Firefox.
+            //  Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
+            //  here and role="presentation" on the table body content fixes the table structure.
             role="rowgroup"
             tabIndex={isVirtualDragging ? null : -1}
             style={{
