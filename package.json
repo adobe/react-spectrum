@@ -220,7 +220,8 @@
     "@parcel/rust": "2.12.1-dev.3224",
     "@parcel/types": "2.0.0-dev.1601",
     "@parcel/utils": "2.0.0-dev.1601",
-    "@parcel/workers": "2.0.0-dev.1601"
+    "@parcel/workers": "2.0.0-dev.1601",
+    "aria-query": "5.3.0"
   },
   "@parcel/transformer-css": {
     "cssModules": {
