@@ -22,7 +22,20 @@ import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactElement,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type JSX,
+} from 'react';
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -136,7 +149,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
   collection: BaseCollection<T>,
-  menuRef: RefObject<HTMLDivElement>
+  menuRef: RefObject<HTMLDivElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
@@ -221,7 +234,7 @@ export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
   section: Node<T>,
-  parentMenuRef: RefObject<HTMLDivElement>
+  parentMenuRef: RefObject<HTMLDivElement | null>
 }
 
 function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps}: MenuSectionProps<T>) {
@@ -375,7 +388,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 interface MenuItemTriggerInnerProps<T> {
   item: Node<T>,
   popover: ReactElement,
-  parentMenuRef: RefObject<HTMLDivElement>,
+  parentMenuRef: RefObject<HTMLDivElement | null>,
   delay?: number
 }
 

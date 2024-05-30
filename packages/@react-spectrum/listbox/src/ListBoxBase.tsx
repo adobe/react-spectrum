@@ -76,7 +76,7 @@ export function useListBoxLayout<T>(state: ListState<T>, isLoading: boolean): Li
 }
 
 /** @private */
-function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
+function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement | null>) {
   let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0, onScroll} = props;
   let {listBoxProps} = useListBox({
     ...props,
@@ -115,7 +115,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   };
 
   return (
-    <ListBoxContext.Provider value={state}>
+    (<ListBoxContext.Provider value={state}>
       <FocusScope>
         <Virtualizer
           {...styleProps}
@@ -153,13 +153,13 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
               return (
                 // aria-selected isn't needed here since this option is not selectable.
                 // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+                (<div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
                   <ProgressCircle
                     isIndeterminate
                     size="S"
                     aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')}
                     UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
-                </div>
+                </div>)
               );
             } else if (type === 'placeholder') {
               let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
@@ -179,11 +179,11 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           }}
         </Virtualizer>
       </FocusScope>
-    </ListBoxContext.Provider>
+    </ListBoxContext.Provider>)
   );
 }
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 export {_ListBoxBase as ListBoxBase};

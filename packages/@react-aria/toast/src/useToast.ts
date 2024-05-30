@@ -39,7 +39,7 @@ export interface ToastAria {
  * Provides the behavior and accessibility implementation for a toast component.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
+export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement | null>): ToastAria {
   let {
     key,
     timer,

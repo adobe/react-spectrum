@@ -31,7 +31,7 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | '
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   loadingIndicator?: ReactElement,
   isLoading?: boolean,
   disableFocusRing?: boolean

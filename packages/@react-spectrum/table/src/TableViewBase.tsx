@@ -201,8 +201,8 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let [, setIsResizing] = useState(false);
 
   let domRef = useDOMRef(ref);
-  let headerRef = useRef<HTMLDivElement>();
-  let bodyRef = useRef<HTMLDivElement>();
+  let headerRef = useRef<HTMLDivElement>(undefined);
+  let bodyRef = useRef<HTMLDivElement>(undefined);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
 
   let density = props.density || 'regular';
@@ -970,7 +970,7 @@ function ResizableTableColumnHeader(props) {
 }
 
 function TableSelectAllCell({column}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
@@ -1017,7 +1017,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableDragHeaderCell({column}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -1092,7 +1092,7 @@ export function useTableRowContext() {
 }
 
 function TableRow({item, children, hasActions, isTableDraggable, isTableDroppable, ...otherProps}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {state, layout, dragAndDropHooks, dragState, dropState} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
@@ -1136,7 +1136,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let droppableItem: DroppableItemResult;
   let isDropTarget: boolean;
   let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef();
+  let dropIndicatorRef = useRef(undefined);
   if (isTableDroppable) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
@@ -1144,7 +1144,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
     dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
-  let dragButtonRef = React.useRef();
+  let dragButtonRef = React.useRef(undefined);
   let {buttonProps: dragButtonProps} = useButton({
     ...draggableItem?.dragButtonProps,
     elementType: 'div'
@@ -1222,7 +1222,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
 function TableHeaderRow({item, children, style, ...props}) {
   let {state, headerMenuOpen} = useTableContext();
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
   let {hoverProps} = useHover({...props, isDisabled: headerMenuOpen});
 
@@ -1234,7 +1234,7 @@ function TableHeaderRow({item, children, style, ...props}) {
 }
 
 function TableDragCell({cell}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {state, isTableDraggable} = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1269,7 +1269,7 @@ function TableDragCell({cell}) {
 }
 
 function TableCheckboxCell({cell}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {state} = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1314,7 +1314,7 @@ function TableCell({cell}) {
   let {scale} = useProvider();
   let {state} = useTableContext();
   let isExpandableTable = 'expandedKeys' in state;
-  let ref = useRef();
+  let ref = useRef(undefined);
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1382,7 +1382,7 @@ function ExpandableRowChevron({cell}) {
    // TODO: move some/all of the chevron button setup into a separate hook?
   let {direction} = useLocale();
   let {state} = useTableContext();
-  let expandButtonRef = useRef();
+  let expandButtonRef = useRef(undefined);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let isExpanded;
 

@@ -39,7 +39,7 @@ interface VirtualizerProps<T extends object, V> extends Omit<HTMLAttributes<HTML
   autoFocus?: boolean
 }
 
-function Virtualizer<T extends object, V extends ReactNode>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
+function Virtualizer<T extends object, V extends ReactNode>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement | null>) {
   let {
     children: renderView,
     renderWrapper,
@@ -63,7 +63,7 @@ function Virtualizer<T extends object, V extends ReactNode>(props: VirtualizerPr
     ...otherProps
   } = props;
 
-  let fallbackRef = useRef<HTMLDivElement>();
+  let fallbackRef = useRef<HTMLDivElement>(undefined);
   ref = ref || fallbackRef;
 
   let state = useVirtualizerState({
@@ -105,7 +105,7 @@ interface VirtualizerOptions {
   onLoadMore?: () => void
 }
 
-export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
+export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement | null>) {
   let {focusedKey, scrollToItem, shouldUseVirtualFocus, isLoading, onLoadMore} = props;
   let {virtualizer} = state;
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
@@ -237,7 +237,7 @@ export function useVirtualizer<T extends object, V extends ReactNode, W>(props: 
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Virtualizer = React.forwardRef(Virtualizer) as <T extends object, V>(props: VirtualizerProps<T, V> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+const _Virtualizer = React.forwardRef(Virtualizer) as <T extends object, V>(props: VirtualizerProps<T, V> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 export {_Virtualizer as Virtualizer};
 
 function defaultRenderWrapper<T extends object, V extends ReactNode>(

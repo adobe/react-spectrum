@@ -102,7 +102,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 interface ComboBoxInnerProps<T extends object> {
   props: ComboBoxProps<T>,
   collection: Collection<Node<T>>,
-  comboBoxRef: RefObject<HTMLDivElement>
+  comboBoxRef: RefObject<HTMLDivElement | null>
 }
 
 function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {

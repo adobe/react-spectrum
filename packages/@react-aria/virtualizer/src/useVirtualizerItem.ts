@@ -22,7 +22,7 @@ interface IVirtualizer {
 export interface VirtualizerItemOptions {
   layoutInfo: LayoutInfo,
   virtualizer: IVirtualizer,
-  ref: RefObject<HTMLElement>
+  ref: RefObject<HTMLElement | null>
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions) {

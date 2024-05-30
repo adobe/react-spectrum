@@ -92,7 +92,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
  * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
  * `RefObject<HTMLTextAreaElement>`.
  */
-type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T] | null>;
 
 export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends ValidationResult {
   /** Props for the input element. */

@@ -37,7 +37,7 @@ export interface ToggleAria {
 /**
  * Handles interactions for toggle elements, e.g. Checkboxes and Switches.
  */
-export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement>): ToggleAria {
+export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement | null>): ToggleAria {
   let {
     isDisabled = false,
     isReadOnly = false,

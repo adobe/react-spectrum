@@ -46,7 +46,7 @@ export interface AriaTagProps<T> {
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): TagAria {
+export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): TagAria {
   let {item} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
   let buttonId = useId();

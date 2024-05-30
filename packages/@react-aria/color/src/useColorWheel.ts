@@ -39,7 +39,7 @@ export interface ColorWheelAria {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
+export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement | null>): ColorWheelAria {
   let {
     isDisabled,
     innerRadius,

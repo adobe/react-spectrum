@@ -144,7 +144,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
 interface TabsInnerProps {
   props: TabsProps,
   collection: Collection<Node<any>>,
-  tabsRef: RefObject<HTMLDivElement>
+  tabsRef: RefObject<HTMLDivElement | null>
 }
 
 function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {

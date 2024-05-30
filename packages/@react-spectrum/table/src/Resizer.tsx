@@ -35,7 +35,7 @@ function getCursor(svg: string, fallback: string) {
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<HTMLDivElement | null>,
   onResizeStart: (widths: Map<Key, ColumnSize>) => void,
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void
@@ -47,7 +47,7 @@ const CURSORS = {
   e: getCursor(eCursor, 'e-resize')
 };
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
+function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | null>) {
   let {column, showResizer} = props;
   let {isEmpty, layout, onFocusedResizer} = useTableContext();
   // Virtualizer re-renders, but these components are all cached

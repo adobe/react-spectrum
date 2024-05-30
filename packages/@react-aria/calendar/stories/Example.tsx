@@ -82,7 +82,7 @@ function CalendarGrid({state, visibleDuration, offset = {}}: {state: CalendarSta
 }
 
 function Cell(props) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {cellProps, buttonProps} = useCalendarCell(props, props.state, ref);
 
   let dateFormatter = useDateFormatter({

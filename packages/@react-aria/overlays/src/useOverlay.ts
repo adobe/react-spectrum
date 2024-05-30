@@ -53,14 +53,14 @@ export interface OverlayAria {
   underlayProps: DOMAttributes
 }
 
-const visibleOverlays: RefObject<Element>[] = [];
+const visibleOverlays: RefObject<Element | null>[] = [];
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
  * Hides the overlay when the user interacts outside it, when the Escape key is pressed,
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
-export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): OverlayAria {
+export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | null>): OverlayAria {
   let {
     onClose,
     shouldCloseOnBlur,

@@ -40,7 +40,7 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
 
 let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.');
 
-function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
+function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement | null>) {
   let {
     contentSize,
     onVisibleRectChange,
@@ -53,7 +53,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  let defaultRef = useRef();
+  let defaultRef = useRef(undefined);
   ref = ref || defaultRef;
   let state = useRef({
     scrollTop: 0,
@@ -154,7 +154,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   useLayoutEffect(() => {
     updateSize();
   }, [updateSize]);
-  let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>();
+  let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>(undefined);
   let onResize = () => {
     if (isOldReact) {
       raf.current ??= requestAnimationFrame(() => {

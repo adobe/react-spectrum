@@ -41,7 +41,7 @@ export interface TreeGridListAria {
  * @param state - State for the treegrid, as returned by `useTreeState`.
  * @param ref - The ref attached to the treegrid element.
  */
-export function useTreeGridList<T>(props: AriaTreeGridListOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): TreeGridListAria {
+export function useTreeGridList<T>(props: AriaTreeGridListOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement | null>): TreeGridListAria {
   let {gridProps} = useGridList(props, state, ref);
   gridProps.role = 'treegrid';
 

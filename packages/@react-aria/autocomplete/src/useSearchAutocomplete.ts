@@ -37,11 +37,11 @@ export interface SearchAutocompleteAria<T> extends ValidationResult {
 
 export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocompleteProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
+  popoverRef: RefObject<HTMLDivElement | null>,
   /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
+  listBoxRef: RefObject<HTMLElement | null>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }

@@ -20,7 +20,7 @@ import {RefObject, useEffect} from 'react';
 export const onCloseMap: WeakMap<Element, () => void> = new WeakMap();
 
 interface CloseOnScrollOptions {
-  triggerRef: RefObject<Element>,
+  triggerRef: RefObject<Element | null>,
   isOpen?: boolean,
   onClose?: () => void
 }
