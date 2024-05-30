@@ -104,7 +104,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
-    "@types/react": "npm:types-react@19.0.0-rc.0",
+    "@types/react": "^18.2.28",
     "@types/storybook__react": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
@@ -164,9 +164,9 @@
     "postcss-import": "^15.1.0",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
-    "react": "^19.0.0-rc-6f23540c7d-20240528",
+    "react": "^18.2.0",
     "react-axe": "^3.0.2",
-    "react-dom": "^19.0.0-rc-6f23540c7d-20240528",
+    "react-dom": "^18.2.0",
     "react-frame-component": "^5.0.0",
     "react-test-renderer": "^16.9.0",
     "recast": "^0.20",
@@ -196,7 +196,7 @@
     "@babel/runtime": "7.24.4",
     "@babel/preset-env": "7.24.4",
     "@babel/types": "7.24.0",
-    "@types/react": "npm:types-react@19.0.0-rc.0",
+    "@types/react": "18.2.28",
     "postcss": "8.4.24",
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",
@@ -220,8 +220,7 @@
     "@parcel/rust": "2.12.1-dev.3224",
     "@parcel/types": "2.0.0-dev.1601",
     "@parcel/utils": "2.0.0-dev.1601",
-    "@parcel/workers": "2.0.0-dev.1601",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
+    "@parcel/workers": "2.0.0-dev.1601"
   },
   "@parcel/transformer-css": {
     "cssModules": {
