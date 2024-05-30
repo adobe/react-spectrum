@@ -202,7 +202,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   };
 
   return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
+    <div role="presentation" {...otherProps} style={style} ref={ref} onScroll={onScroll}>
       <div role="presentation" style={innerStyle}>
         {children}
       </div>
