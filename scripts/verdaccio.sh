@@ -18,8 +18,8 @@ function cleanup {
   then
     lsof -ti tcp:4000 | xargs kill
     # Clean up generated dists if run locally
-    shopt -s globstar extglob
-    rm -rf packages/**/dist
+    # shopt -s globstar extglob
+    # rm -rf packages/**/dist
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
     if [ "$commit_to_revert" != "HEAD" ];
     then
