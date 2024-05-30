@@ -16,6 +16,7 @@ import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import InfoCircle from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
+import NoticeSquare from '../s2wf-icons/assets/svg/S2_Icon_Notice_20_N.svg';
 import {ReactNode, forwardRef, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -113,6 +114,17 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
         }
       }
     }
+  },
+  color: {
+    default: 'gray-900',
+    fillStyle: {
+      boldFill: {
+        default: 'white',
+        variant: {
+          notice: 'black'
+        }
+      }
+    }
   }
 }, getAllowedOverrides());
 
@@ -160,62 +172,27 @@ const grid = style({
   gridTemplateAreas: [
     'heading icon',
     'content content'
-  ],
-  color: {
-    fillStyle: {
-      border: 'gray-900',
-      subtleFill: 'gray-900',
-      boldFill: {
-        default: 'white',
-        variant: {
-          notice: 'black'
-        }
-      }
-    }
-  }
+  ]
 });
 
 let ICONS = {
   informative: InfoCircle,
   positive: CheckmarkCircle,
-  notice: AlertTriangle,
+  notice: NoticeSquare,
   negative: AlertTriangle,
   neutral: undefined
 };
 
 const heading = style<InlineStylesProps>({
   marginTop: 0,
-  color: { // if i remove this, it throws an error that heading isn't a function, yet not calling it a ts error
-    fillStyle: {
-      border: 'gray-900',
-      subtleFill: 'gray-900',
-      boldFill: {
-        default: 'white',
-        variant: {
-          notice: 'black'
-        }
-      }
-    }
-  },
   gridArea: 'heading',
   fontSize: 'ui',
-  lineHeight: 'ui'
+  lineHeight: 'ui',
+  color: '[inherit]'
 });
 
 const content = style<InlineStylesProps>({
   gridArea: 'content',
-  color: {
-    fillStyle: {
-      border: 'gray-800',
-      subtleFill: 'gray-800',
-      boldFill: {
-        default: 'white',
-        variant: {
-          notice: 'black'
-        }
-      }
-    }
-  },
   fontSize: 'body-sm',
   lineHeight: 'body'
 });
@@ -261,11 +238,13 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
         isFocusVisible
       }, props.styles)}>
       <div
-        className={grid(props)}>
+        className={grid}>
         <Provider
           values={[
-            [HeadingContext, {className: heading({variant, fillStyle})}],
-            [ContentContext, {className: content({variant, fillStyle})}],
+            // @ts-ignore
+            [HeadingContext, {className: heading}],
+            // @ts-ignore
+            [ContentContext, {className: content}],
             [IconContext, {styles: icon({variant, fillStyle})}]
           ]}>
           {Icon && <Icon aria-label={iconAlt} />}
