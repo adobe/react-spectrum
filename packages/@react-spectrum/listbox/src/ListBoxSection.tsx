@@ -46,7 +46,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
 
   return (
     <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
+      {headerLayoutInfo && <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
         {item.key !== state.collection.getFirstKey() &&
           <div
             role="presentation"
@@ -67,7 +67,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
             {item.rendered}
           </div>
         }
-      </div>
+      </div>}
       <div
         {...groupProps}
         style={layoutInfoToStyle(layoutInfo, direction)}
