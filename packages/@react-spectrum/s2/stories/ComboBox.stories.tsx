@@ -6,11 +6,7 @@ import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20
 const meta: Meta<typeof ComboBox> = {
   component: ComboBox,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?type=design&node-id=739-1453&mode=design&t=rZcwwKQ0qsEp7G8L-0'
-    }
+    layout: 'centered'
   },
   tags: ['autodocs']
 };

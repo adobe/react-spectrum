@@ -8,11 +8,7 @@ import './unsafe.css';
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=707-2774&t=iiwXqxruSpzhT0fe-0'
-    }
+    layout: 'centered'
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs']

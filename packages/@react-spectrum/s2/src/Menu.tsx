@@ -30,7 +30,7 @@ import {DOMRef} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
 import {divider} from './Divider';
 import {forwardRefType} from './types';
-// viewbox on LinkOut is super weird just because i copied the icon from figma...
+// viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 
 export interface MenuTriggerProps extends AriaMenuTriggerProps {

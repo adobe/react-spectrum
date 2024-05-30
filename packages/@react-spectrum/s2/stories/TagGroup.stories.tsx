@@ -6,11 +6,7 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof TagGroup> = {
   component: TagGroup,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=715%3A2687'
-    }
+    layout: 'centered'
   },
   args: {
     onRemove: undefined,
@@ -75,7 +71,7 @@ export let Disabled = {
             src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
             alt="Shiba Inu with glasses" />
           <Text>
-            Coffee    
+            Coffee
           </Text>
         </Tag>
         <Tag>

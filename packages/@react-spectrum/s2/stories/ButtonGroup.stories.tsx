@@ -30,11 +30,5 @@ export const Example: Story = {
     );
     return buttons;
   },
-  decorators: [(Story) => <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto'}}><Story /></div>],
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=13663%3A7115'
-    }
-  }
+  decorators: [(Story) => <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto'}}><Story /></div>]
 };

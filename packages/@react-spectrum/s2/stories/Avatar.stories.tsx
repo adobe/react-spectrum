@@ -6,11 +6,7 @@ const meta: Meta<typeof Avatar> = {
   component: Avatar,
   argTypes: {},
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=19100%3A180'
-    }
+    layout: 'centered'
   },
   tags: ['autodocs']
 };

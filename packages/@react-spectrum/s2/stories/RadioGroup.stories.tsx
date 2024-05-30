@@ -5,11 +5,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof RadioGroup> = {
   component: RadioGroup,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=164%3A16723'
-    }
+    layout: 'centered'
   },
   tags: ['autodocs']
 };

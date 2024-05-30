@@ -5,11 +5,7 @@ import Cloud from '../spectrum-illustrations/Cloud.svg';
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=20032%3A601&mode=dev'
-    }
+    layout: 'centered'
   },
   tags: ['autodocs']
 };

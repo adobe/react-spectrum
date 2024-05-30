@@ -9,11 +9,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof Picker> = {
   component: Picker,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?type=design&node-id=739-1453&mode=design&t=rZcwwKQ0qsEp7G8L-0'
-    }
+    layout: 'centered'
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs']

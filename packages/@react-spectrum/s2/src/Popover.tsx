@@ -97,7 +97,7 @@ let popover = style({
   },
   width: {
     size: {
-      // Copied from Figma, not sure if correct.
+      // Copied from designs, not sure if correct.
       S: '[21rem]',
       M: '[26rem]',
       L: '[36rem]'
@@ -206,7 +206,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     }
   }, [locale, direction, domRef]);
 
-  // TODO: this still isn't the final popover 'tip', copying various ones out of the Figma files yields different results
+  // TODO: this still isn't the final popover 'tip', copying various ones out of the designs files yields different results
   // containerPadding not working as expected
   return (
     <AriaPopover

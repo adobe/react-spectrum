@@ -8,11 +8,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=4955%3A40'
-    }
+    layout: 'centered'
   },
   tags: ['autodocs']
 };

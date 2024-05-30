@@ -10,7 +10,7 @@ import {ColorSchemeContext} from './Provider';
 interface ModalProps extends ModalOverlayProps {
   /**
    * The size of the Modal.
-   * 
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
@@ -93,7 +93,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           },
           width: {
             size: {
-              // Copied from Figma, not sure if correct.
+              // Copied from designs, not sure if correct.
               S: '[21rem]',
               M: '[26rem]',
               L: '[36rem]',

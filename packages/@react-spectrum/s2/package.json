@@ -111,7 +111,6 @@
     "@parcel/packager-ts": "2.0.0-canary.1542",
     "@parcel/transformer-svg-react": "2.12.1-canary.3165",
     "@parcel/transformer-typescript-types": "2.0.0-canary.1542",
-    "@storybook/addon-designs": "^7.0.5",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",

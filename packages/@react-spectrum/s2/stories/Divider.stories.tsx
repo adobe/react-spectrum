@@ -42,12 +42,6 @@ export const Example = {
       <Divider {...args} />
       <p>Some text</p>
     </section>
-  ),
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=13642%3A359'
-    }
-  }
+  )
 };
 

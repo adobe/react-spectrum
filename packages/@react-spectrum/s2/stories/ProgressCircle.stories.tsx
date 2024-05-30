@@ -5,11 +5,7 @@ import {StaticColorDecorator} from './utils';
 const meta: Meta<typeof ProgressCircle> = {
   component: ProgressCircle,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=13120%3A401&mode=dev'
-    }
+    layout: 'centered'
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs']

@@ -31,12 +31,6 @@ export const Example: Story = {
       </div>
     );
   },
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=707-2774&t=iiwXqxruSpzhT0fe-0'
-    }
-  },
   args: {
     href: 'https://react-spectrum.adobe.com/',
     target: '_blank'

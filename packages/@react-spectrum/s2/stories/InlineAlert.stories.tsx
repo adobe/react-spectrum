@@ -1,15 +1,11 @@
-import {InlineAlert, Button, Heading, Content} from '../src'; 
+import {InlineAlert, Button, Heading, Content} from '../src';
 import type {Meta} from '@storybook/react';
 import {useState} from 'react';
 
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,
   parameters: {
-    layout: 'centered',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=2696%3A5096&mode=dev'
-    }
+    layout: 'centered'
   },
   tags: ['autodocs']
 };

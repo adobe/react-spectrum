@@ -111,9 +111,9 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
   },
   alignSelf: 'center',
   color: {
-    // TODO: ask design about what the color should be. Says gray-800 in the figma file, neutral in token spec, but different neutral in dropzone spec
+    // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
     default: 'gray-800',
-    isInDropZone: 'gray-500', // neutral doesn't seem to match the color in figma, opted for gray-500 instead
+    isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
     isDropTarget: 'accent'
   }
 });
