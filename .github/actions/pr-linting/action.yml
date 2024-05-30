@@ -1,0 +1,5 @@
+name: 'Check PR title'
+description: 'Check if PR title meets the proper formatting'
+runs:
+  using: 'node16'
+  main: 'index.js'
