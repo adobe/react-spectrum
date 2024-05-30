@@ -26,6 +26,7 @@ import React, {
   createContext,
   ForwardedRef,
   forwardRef,
+  type JSX,
   ReactElement,
   ReactNode,
   RefObject,
@@ -34,7 +35,6 @@ import React, {
   useEffect,
   useRef,
   useState,
-  type JSX,
 } from 'react';
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
@@ -107,9 +107,9 @@ export interface SubmenuTriggerProps {
  *
  * @version alpha
  */
-export function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+export const SubmenuTrigger = React.forwardRef(function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   return useSSRCollectionNode('submenutrigger', props, ref, props.children, props.children[0]);
-}
+});
 
 function SubmenuTriggerInner(props) {
   let {item, parentMenuRef} = props;

@@ -276,7 +276,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     initialFilterText = ''
   } = options;
 
-  let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
+  let [data, dispatch] = useReducer<AsyncListState<T, C>, [Action<T, C>]>(reducer, {
     state: 'idle',
     error: null,
     items: [],
