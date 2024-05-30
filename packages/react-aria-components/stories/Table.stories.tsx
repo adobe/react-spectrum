@@ -480,6 +480,9 @@ export const TableLoadingRowRenderWrapperStory = {
   name: 'Table loading, row renderer wrapper and dep array'
 };
 
+
+// TODO: when writing the docs, prefer this pattern in the docs, establish renderEmptyState as something distinct from empty + loading
+// (aka users should use empty state for if their table is empty and not loading, but should render the TableLoader for empty + loading and for has items + loading)
 const RenderEmptyState = (args: {isLoading: boolean}) => {
   return (
     <Table aria-label="Files">

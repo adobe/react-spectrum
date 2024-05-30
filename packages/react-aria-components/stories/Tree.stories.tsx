@@ -338,7 +338,7 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
     aria-label="test empty static tree"
     renderEmptyState={() => <span>Nothing in tree</span>}>
     <Collection items={[]} dependencies={[args.isLoading]}>
-      {(item) => (
+      {(item: any) => (
         <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
           {item.name}
         </DynamicTreeItem>
@@ -437,7 +437,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
                 <MyCheckbox slot="selection" />
               )}
               <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
-                {hasChildRows && <ExpandButton isLoading={isLoading && renderLoader(props.id)} isExpanded={isExpanded} />}
+                {hasChildRows && <ExpandButton isLoading={isLoading && renderLoader && renderLoader(props.id)} isExpanded={isExpanded} />}
                 <Text>{props.children}</Text>
                 <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
                 <MenuTrigger>

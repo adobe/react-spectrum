@@ -469,17 +469,20 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
 // TOOD: decide what props this would need if any
 // TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
 export const UNSTABLE_TreeLoader = createLeafComponent('item', function TreeLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  let state = useContext(UNSTABLE_TreeStateContext)!;
+  let state = useContext(UNSTABLE_TreeStateContext);
   // TODO: might be able to still leverage the hook for the row information, but for now just manaully calc
   // let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   // let level = rowProps['aria-level'] || 1;
 
   let setSize = 0;
-  if (item?.level) {
+  if (item?.level && state != null) {
     if (item.level > 0) {
-      setSize = (getLastItem(state.collection.getChildren(item.parentKey)))?.index + 1;
+      let tableChildren = item?.parentKey && state.collection.getChildren && state.collection.getChildren?.(item.parentKey);
+      let lastItem = tableChildren ? getLastItem(tableChildren) : null;
+      setSize = lastItem && lastItem.index ? lastItem.index + 1 : 1;
     } else if (item.level === 0) {
-      setSize = [...state.collection].filter(row => row?.level === 0).at(-1)?.index + 1;
+      // TODO figure out why lint is yelling about this
+      setSize = state?.collection ? [...state.collection].filter(row => row?.level === 0).at(-1)?.index + 1 : 1;
     }
   }
 
