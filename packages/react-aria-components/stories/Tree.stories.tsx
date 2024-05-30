@@ -308,13 +308,13 @@ interface ItemType {
   childItems: Iterable<object>,
   name: string
 }
-export const EmptyTree = (args: TreeProps<unknown>) => (
+const EmptyTree = (args: {isLoading: boolean}) => (
   <UNSTABLE_Tree
     {...args}
     className={styles.tree}
-    aria-label="test dynamic tree"
+    aria-label="test empty tree dynamic"
     items={[]}
-    renderEmptyState={() => <span>Nothing in tree</span>}>
+    renderEmptyState={() => args.isLoading ? <span>Nothing in tree</span> : <span>root loading</span>}>
     {(item: ItemType) => (
       <DynamicTreeItem childItems={item?.childItems} textValue={item?.name}>
         {item?.name}
@@ -322,6 +322,40 @@ export const EmptyTree = (args: TreeProps<unknown>) => (
     )}
   </UNSTABLE_Tree>
 );
+
+export const EmptyTreeStory = {
+  render: EmptyTree,
+  args: {
+    isLoading: false
+  },
+  name: 'Empty/Loading Tree rendered with renderEmptyState'
+};
+
+const EmptyTreeStatic = (args: {isLoading: boolean}) => (
+  <UNSTABLE_Tree
+    {...args}
+    className={styles.tree}
+    aria-label="test empty static tree"
+    renderEmptyState={() => <span>Nothing in tree</span>}>
+    <Collection items={[]} dependencies={[args.isLoading]}>
+      {(item) => (
+        <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
+        </DynamicTreeItem>
+      )}
+    </Collection>
+    {args.isLoading && <UNSTABLE_TreeLoader>root loading</UNSTABLE_TreeLoader>}
+  </UNSTABLE_Tree>
+);
+
+export const EmptyTreeStaticStory = {
+  render: EmptyTreeStatic,
+  args: {
+    isLoading: false
+  },
+  name: 'Empty/Loading Tree rendered with TreeLoader collection element'
+};
+
 function LoadingStoryDepOnCollection(args) {
   return (
     <UNSTABLE_Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
@@ -366,3 +400,88 @@ export const LoadingStoryDepOnTopStory = {
 };
 
 // TODO: add story that replaces the chevron with a loading spinner instead since that might be a use case
+
+function ExpandButton(props) {
+  let {isLoading, isExpanded} = props;
+  let contents;
+  if (!isLoading) {
+    contents = isExpanded ? '⏷' : '⏵';
+  } else {
+    contents = '↻';
+  }
+
+  return (
+    <Button slot="chevron">
+      {contents}
+    </Button>
+  );
+}
+
+const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
+  let {childItems, renderLoader, isLoading} = props;
+
+  return (
+    <>
+      <UNSTABLE_TreeItem
+        {...props}
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <UNSTABLE_TreeItemContent>
+          {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
+            <>
+              {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+                <MyCheckbox slot="selection" />
+              )}
+              <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
+                {hasChildRows && <ExpandButton isLoading={isLoading && renderLoader(props.id)} isExpanded={isExpanded} />}
+                <Text>{props.children}</Text>
+                <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
+                <MenuTrigger>
+                  <Button aria-label="Menu">☰</Button>
+                  <Popover>
+                    <Menu className={styles.menu} onAction={action('menu action')}>
+                      <MyMenuItem>Foo</MyMenuItem>
+                      <MyMenuItem>Bar</MyMenuItem>
+                      <MyMenuItem>Baz</MyMenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              </div>
+            </>
+          )}
+        </UNSTABLE_TreeItemContent>
+        <Collection items={childItems}>
+          {(item: any) => (
+            <DynamicTreeItemWithButtonLoader renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
+              {item.name}
+            </DynamicTreeItemWithButtonLoader>
+          )}
+        </Collection>
+      </UNSTABLE_TreeItem>
+    </>
+  );
+};
+
+function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean}) {
+  return (
+    <UNSTABLE_Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      {(item) => (
+        <DynamicTreeItemWithButtonLoader renderLoader={(id) => (id === 'project-2' || id === 'project-5')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
+        </DynamicTreeItemWithButtonLoader>
+      )}
+    </UNSTABLE_Tree>
+  );
+}
+
+export const ButtonLoadingIndicatorStory = {
+  render: ButtonLoadingIndicator,
+  args: {
+    isLoading: false
+  },
+  name: 'Loading, dynamic rows, spinner renders in button'
+};

@@ -406,7 +406,7 @@ const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <MyTableBody rows={rows} columns={columns} isLoading={args.isLoading}>
+      <MyTableBody rows={rows} isLoading={args.isLoading}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -420,9 +420,9 @@ const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
 };
 
 function MyTableBody(props) {
-  let {rows, children, isLoading} = props;
+  let {rows, children, isLoading, ...otherProps} = props;
   return (
-    <TableBody>
+    <TableBody {...otherProps}>
       <Collection items={rows}>
         {children}
       </Collection>
@@ -478,4 +478,38 @@ export const TableLoadingRowRenderWrapperStory = {
     isLoading: false
   },
   name: 'Table loading, row renderer wrapper and dep array'
+};
+
+const RenderEmptyState = (args: {isLoading: boolean}) => {
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody renderEmptyState={() => 'No results found.'}>
+        <Collection items={[]}>
+          {(item) => (
+            <Row columns={columns}>
+              {(column) => {
+                return <Cell>{item[column.id]}</Cell>;
+              }}
+            </Row>
+          )}
+        </Collection>
+        {args.isLoading && (
+          <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const RenderEmptyStateStory  = {
+  render: RenderEmptyState,
+  args: {
+    isLoading: false
+  },
+  name: 'Empty/Loading Table rendered with TableLoader collection element'
 };
