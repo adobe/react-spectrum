@@ -30,7 +30,7 @@ describe('Card', function () {
     let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Default.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let images = getAllByRole('img');
+    let images = getAllByRole('presentation');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
@@ -63,7 +63,7 @@ describe('Card', function () {
     let {getByRole, getAllByRole, getByLabelText} = render(<Card {...Quiet.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let images = getAllByRole('img');
+    let images = getAllByRole('presentation');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
