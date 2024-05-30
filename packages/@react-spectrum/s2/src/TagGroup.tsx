@@ -142,6 +142,7 @@ function TagGroup<T extends object>(
           gridArea: 'input',
           display: 'flex',
           flexWrap: 'wrap',
+          minWidth: 'full',
           // TODO: what should this gap be?
           gap: 16
         })}>
@@ -160,6 +161,8 @@ function TagGroup<T extends object>(
                   isEmpty: 0
                 },
                 display: 'flex',
+                minWidth: 'full',
+                flexWrap: 'wrap',
                 fontFamily: 'sans'
               })({isEmpty})}>
               {children}
@@ -186,8 +189,8 @@ const tagStyles = style({
   fontSize: 'control',
   height: 'control',
   transition: 'default',
-  minWidth: 'control',
-  maxWidth: '[calc(self(height) * 7)]',
+  minWidth: 0,
+  // maxWidth: '[calc(self(height) * 7)]', // s2 designs show a max width on tags but we pushed back on this in v3
   backgroundColor: {
     default: 'gray-100',
     isHovered: {

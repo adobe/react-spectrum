@@ -2,6 +2,7 @@ import {Tag, TagGroup, Text, Link, Avatar, Image} from '../src';
 import {action} from '@storybook/addon-actions';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import type {Meta} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof TagGroup> = {
   component: TagGroup,
@@ -33,9 +34,6 @@ export let Example = {
         <Tag>Mint</Tag>
         <Tag>Strawberry</Tag>
         <Tag>Vanilla</Tag>
-        <Tag>
-          A very long long long long long long tag that hopefully goes on for a long long time
-        </Tag>
       </TagGroup>
     );
   },
@@ -56,7 +54,7 @@ export let Disabled = {
     }
 
     return (
-      <TagGroup {...args} disabledKeys={new Set(['mint', 'vanilla'])}>
+      <TagGroup {...args} disabledKeys={new Set(['mint', 'vanilla'])} styles={style({width: 320})}>
         <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
         <Tag id="mint">Mint</Tag>
         <Tag id="strawberry">
