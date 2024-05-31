@@ -1223,6 +1223,16 @@ function RootDropIndicator() {
   );
 }
 
+export interface TableLoaderRenderProps {
+  /**
+   * Whether the item is currently hovered with a mouse.
+   * @selector [data-table-empty]
+   */
+  isTableEmpty: boolean
+}
+
+export interface TableLoaderProps extends RenderProps<TableLoaderRenderProps> {}
+
 // TOOD: decide what props this would need if any
 // TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
 // Will need to somehow get this treated differently from a standard row since it breaks some behavior when the table is empty but loading
@@ -1251,6 +1261,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLo
         ref={ref}
         {...mergeProps(filterDOMProps(props as any))}
         {...renderProps}
+        data-table-empty={state.collection.size <= 1}
         data-rac>
         <td role="rowheader" colSpan={numColumns} aria-colspan={numColumns}>
           {renderProps.children}
