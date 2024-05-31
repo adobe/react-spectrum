@@ -280,16 +280,16 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let emptyRender;
   let renderer = children;
   let loader = (
-    // TODO: will need colspan as well, maybe can have it automatically applied in RAC
     <UNSTABLE_TableLoader>
-      <div className={centeredWrapper}>
-        <ProgressCircle
-          isIndeterminate
-          // TODO: needs intl translation
-          // TODO: also needs to have a better way of knowing if there are actually items or not, will need to add that to the TableLoader
-          // render props perhaps
-          aria-label={items && [...items].length > 0 ? 'loading more' : 'loading'} />
-      </div>
+      {/* @ts-ignore need to update type in RAC */}
+      {({isTableEmpty}) => (
+        <div className={centeredWrapper}>
+          <ProgressCircle
+            isIndeterminate
+            // TODO: needs intl translation
+            aria-label={isTableEmpty ? 'loading' : 'loading more'} />
+        </div>
+      )}
     </UNSTABLE_TableLoader>
   );
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
@@ -331,8 +331,6 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
       renderEmptyState={emptyRender}
       dependencies={[tableVisualOptions.isLoading]}>
       {renderer}
-      {/* {renderer}
-      {tableVisualOptions.isLoading && <UNSTABLE_TableLoader />} */}
     </AriaTableBody>
   );
 }
