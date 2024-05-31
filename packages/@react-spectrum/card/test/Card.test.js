@@ -32,7 +32,7 @@ describe('Card', function () {
     let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Default.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let images = getAllByRole('presentation');
+    let images = getAllByRole(isOldReact ? 'img' : 'presentation');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
