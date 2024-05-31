@@ -24,6 +24,8 @@ import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css'
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
+let isOldReact = parseInt(React.version, 10) < 18;
+
 let {falsyItems} = stories;
 let {FalsyIds} = composeStories(stories);
 
@@ -175,7 +177,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('presentation');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -206,7 +208,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('presentation');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -235,7 +237,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('presentation');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('long description', {exact: false})).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();

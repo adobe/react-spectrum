@@ -21,6 +21,8 @@ import userEvent from '@testing-library/user-event';
 let {Default, DefaultPreviewAlt, NoDescription} = composeStories(defaultStories);
 let {Quiet} = composeStories(quietStories);
 
+let isOldReact = parseInt(React.version, 10) < 18;
+
 describe('Card', function () {
   let user;
   beforeAll(() => {
@@ -63,7 +65,7 @@ describe('Card', function () {
     let {getByRole, getAllByRole, getByLabelText} = render(<Card {...Quiet.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let images = getAllByRole('presentation');
+    let images = getAllByRole(isOldReact ? 'img' : 'presentation');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
