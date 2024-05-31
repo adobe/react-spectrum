@@ -31,7 +31,7 @@ let columns = [
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  let tableUtil;
+  let testUtilUser = new User();
 
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
@@ -58,10 +58,6 @@ describe('Table ', function () {
     );
   };
 
-  beforeAll(function () {
-    tableUtil = new User().table;
-  });
-
   describe.each`
     interactionType
     ${'mouse'}
@@ -78,6 +74,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
+      let tableUtil = testUtilUser.createTester('TableTester');
       tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
@@ -108,6 +105,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
+      let tableUtil = testUtilUser.createTester('TableTester');
       tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
@@ -149,6 +147,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
+      let tableUtil = testUtilUser.createTester('TableTester');
       tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
       await tableUtil.toggleRowSelection({index: 2});
@@ -179,6 +178,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
+      let tableUtil = testUtilUser.createTester('TableTester');
       tableUtil.setInteractionType(interactionType);
       tableUtil.setTable(screen.getByTestId('test'));
 

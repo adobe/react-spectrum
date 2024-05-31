@@ -142,6 +142,7 @@ function pointerEvent(type, opts) {
 export let tableTests = () => {
   let offsetWidth, offsetHeight;
   let user;
+  let testUtilUser = new User();
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
@@ -2390,7 +2391,7 @@ export let tableTests = () => {
 
     describe('select all', function () {
       it('should support selecting all via the checkbox', async function () {
-        let tableUtil = new User().table;
+        let tableUtil = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
         tableUtil.setInteractionType('keyboard');
@@ -2839,7 +2840,7 @@ export let tableTests = () => {
       describe('needs PointerEvent defined', () => {
         installPointerEvent();
         it('should support long press to enter selection mode on touch', async function () {
-          let tableUtil = new User().table;
+          let tableUtil = testUtilUser.createTester('TableTester');
           tableUtil.setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
@@ -2979,7 +2980,7 @@ export let tableTests = () => {
       describe('needs pointerEvents', function () {
         installPointerEvent();
         it('should toggle selection with touch', async function () {
-          let tableUtil = new User().table;
+          let tableUtil = testUtilUser.createTester('TableTester');
           tableUtil.setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
@@ -2998,7 +2999,7 @@ export let tableTests = () => {
         });
 
         it('should support single tap to perform onAction with touch', async function () {
-          let tableUtil = new User().table;
+          let tableUtil = testUtilUser.createTester('TableTester');
           tableUtil.setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
@@ -3013,7 +3014,7 @@ export let tableTests = () => {
       });
 
       it('should support double click to perform onAction with mouse', async function () {
-        let tableUtil = new User().table;
+        let tableUtil = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
@@ -3131,7 +3132,7 @@ export let tableTests = () => {
         describe('still needs pointer events install', function () {
           installPointerEvent();
           it('should support long press to enter selection mode on touch', async function () {
-            let tableUtil = new User().table;
+            let tableUtil = testUtilUser.createTester('TableTester');
             tableUtil.setInteractionType('touch');
             let onSelectionChange = jest.fn();
             let onAction = jest.fn();
@@ -4325,7 +4326,7 @@ export let tableTests = () => {
     });
 
     it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
-      let tableUtil = new User().table;
+      let tableUtil = testUtilUser.createTester('TableTester');
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
       tableUtil.setInteractionType('keyboard');
