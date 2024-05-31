@@ -483,13 +483,18 @@ export const TableLoadingRowRenderWrapperStory = {
 
 // TODO: when writing the docs, prefer this pattern in the docs, establish renderEmptyState as something distinct from empty + loading
 // (aka users should use empty state for if their table is empty and not loading, but should render the TableLoader for empty + loading and for has items + loading)
+// TODO: there is buggy behavior here, try keyboard naving the table when isLoading. Ideally everything should be disabled
 const RenderEmptyState = (args: {isLoading: boolean}) => {
   return (
-    <Table aria-label="Files">
+    <Table aria-label="Files" selectionMode="multiple">
       <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Collection items={columns}>
+          {(column) => (
+
+            <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+          )}
+        </Collection>
       </TableHeader>
       <TableBody renderEmptyState={() => 'No results found.'}>
         <Collection items={[]}>

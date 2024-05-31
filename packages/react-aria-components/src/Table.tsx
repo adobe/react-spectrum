@@ -1225,13 +1225,21 @@ function RootDropIndicator() {
 
 // TOOD: decide what props this would need if any
 // TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
+// Will need to somehow get this treated differently from a standard row since it breaks some behavior when the table is empty but loading
+// Since this is considered a item (and thus a row), the table thinks it isn't empty and allows the user to tab to the column headers and the select all check box
+// isn't disabled. Then if the user tries to keyboard navigate, stuff crashes.
 export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
+  let numColumns = state.collection.columns.length;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
     children: item.rendered,
-    defaultClassName: 'react-aria-TableLoader'
+    defaultClassName: 'react-aria-TableLoader',
+    values: {
+      // TODO: change this if we change the type from item to something else and thus make state.collection.size === 0
+      isTableEmpty: state.collection.size <= 1
+    }
     // TODO: what loader render props do we need
   });
 
@@ -1244,7 +1252,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLo
         {...mergeProps(filterDOMProps(props as any))}
         {...renderProps}
         data-rac>
-        <td role="rowheader" aria-colspan={state.collection.columns.length}>
+        <td role="rowheader" colSpan={numColumns} aria-colspan={numColumns}>
           {renderProps.children}
         </td>
       </tr>

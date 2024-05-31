@@ -64,6 +64,8 @@ export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectA
     checkboxProps: {
       'aria-label': stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
+      // TODO: if the user provides a UNSTABLE_TableLoader, collection size doesn't === 0...
+      // Perhaps I should try and change the type of the TableLoader to loader and modify the level manually?
       isDisabled: selectionMode !== 'multiple' || state.collection.size === 0,
       isIndeterminate: !isEmpty && !isSelectAll,
       onChange: () => state.selectionManager.toggleSelectAll()
