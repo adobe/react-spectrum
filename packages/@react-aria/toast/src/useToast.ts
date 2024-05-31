@@ -63,7 +63,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
 
   let [isEntered, setIsEntered] = React.useState(false);
   useEffect(() => {
-    if (animation === 'entering') {
+    if (animation === 'entering' || animation === 'queued') {
       setIsEntered(true);
     }
   }, [animation]);
@@ -88,7 +88,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
       role: 'alert',
       'aria-atomic': 'true',
       style: {
-        visibility: isEntered || animation === null || animation === 'queued' ? 'visible' : 'hidden'
+        visibility: isEntered || animation === null ? 'visible' : 'hidden'
       }
     },
     titleProps: {
