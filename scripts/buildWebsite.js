@@ -62,7 +62,7 @@ async function build() {
       'packages/dev/*',
       'packages/@adobe/spectrum-css-temp'
     ],
-    packageManager: 'yarn@4.1.1',
+    packageManager: 'yarn@4.2.2',
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
         .filter(([name]) =>

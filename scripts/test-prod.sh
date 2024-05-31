@@ -14,14 +14,21 @@ yarn parcel build packages/@adobe/react-spectrum/ packages/@react-{spectrum,aria
 yarn verdaccio --listen $port &>${output}&
 
 # Login as test user
-yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
+yarn config set npmPublishRegistry $registry
+yarn config set npmRegistryServer $registry
+yarn config set npmAlwaysAuth true
+yarn config set npmAuthIdent abc
+yarn config set npmAuthToken blah
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn lerna version minor --force-publish --allow-branch `git branch --show-current` --no-push --yes
+yarn workspaces foreach --all --no-private version minor --deferred
+yarn version apply --all
+# set the npm registry because that will set it at a higher level, making local testing easier
+npm set registry $registry
 commit_to_revert="HEAD~1"
 
-# Publish packages to verdaccio
-yarn lerna publish from-package --registry $registry --yes
+# Publish packages anonymously to verdaccio
+yarn workspaces foreach --all --no-private -pt npm publish
 
 npm set registry $registry
 
