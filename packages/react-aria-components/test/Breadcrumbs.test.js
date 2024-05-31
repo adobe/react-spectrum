@@ -104,16 +104,19 @@ describe('Breadcrumbs', () => {
     expect(breadcrumbRef.current).toBe(item);
   });
 
-  it('should support autoFocusCurrent', () => {
+  it('should support render props', () => {
+    let items = [
+      {id: 1, name: 'Item 1'},
+      {id: 2, name: 'Item 2'},
+      {id: 3, name: 'Item 3'}
+    ];
+
     let {getAllByRole} = render(
-      <Breadcrumbs autoFocusCurrent>
-        <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
-        <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
-        <Breadcrumb><Link href="/react-aria">useBreadcrumbs</Link></Breadcrumb>
+      <Breadcrumbs items={items}>
+        {(item) => <Breadcrumb>{({isCurrent}) => isCurrent ? 'Current' : item.name}</Breadcrumb>}
       </Breadcrumbs>
     );
 
-    let links = getAllByRole('link');
-    expect(links[2]).toHaveFocus();
+    expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Current']);
   });
 });

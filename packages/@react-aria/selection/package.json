@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/selection",
-  "version": "3.18.0",
+  "version": "3.18.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

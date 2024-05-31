@@ -12,14 +12,14 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, CollectionProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
+import {CollectionChildren, CollectionDocumentContext, CollectionProps, createLeafComponent, ItemRenderProps, useCollectionDocument, useCollectionPortal} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -133,18 +133,6 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
   delete gridProps.items;
   delete gridProps.renderEmptyState;
 
-  let children = useCachedChildren({
-    items: state.collection,
-    children: (item: Node<T>) => {
-      switch (item.type) {
-        case 'item':
-          return <TagItem item={item} />;
-        default:
-          throw new Error('Unsupported node type in TagList: ' + item.type);
-      }
-    }
-  });
-
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
     isEmpty: state.collection.size === 0,
@@ -167,7 +155,9 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState(renderValues) : children}
+      {state.collection.size === 0 && props.renderEmptyState 
+        ? props.renderEmptyState(renderValues) 
+        : <CollectionChildren collection={state.collection} />}
     </div>
   );
 }
@@ -198,19 +188,12 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
   isDisabled?: boolean
 }
 
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
-  return useSSRCollectionNode('item', props, ref, props.children);
-}
-
 /**
  * A Tag is an individual item within a TagList.
  */
-const _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
-export {_Tag as Tag};
-
-function TagItem({item}) {
+export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
@@ -221,7 +204,6 @@ function TagItem({item}) {
     onHoverEnd: item.props.onHoverEnd
   });
 
-  let props: TagProps = item.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -269,4 +251,4 @@ function TagItem({item}) {
       </div>
     </div>
   );
-}
+});

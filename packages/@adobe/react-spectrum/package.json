@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.35.0",
+  "version": "3.35.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -103,8 +103,5 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.12.10"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@react-types/list",
-  "version": "3.2.16",
+  "version": "3.2.17",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",

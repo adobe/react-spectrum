@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/table",
-  "version": "3.12.9",
+  "version": "3.12.10",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

@@ -97,7 +97,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           item={reusableView.content}
           layoutInfo={reusableView.layoutInfo}
           virtualizer={reusableView.virtualizer}
-          headerLayoutInfo={children.find(c => c.viewType === 'header').layoutInfo}>
+          headerLayoutInfo={children.find(c => c.viewType === 'header')?.layoutInfo}>
           {renderChildren(children.filter(c => c.viewType === 'item'))}
         </ListBoxSection>
       );

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/switch",
-  "version": "3.5.4",
+  "version": "3.5.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

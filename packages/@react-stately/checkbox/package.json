@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/checkbox",
-  "version": "3.6.4",
+  "version": "3.6.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
