@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "yarn@4.2.2",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
