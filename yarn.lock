@@ -63,6 +63,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
   dependencies:
+    "@babel/cli": "npm:^7.12.10"
     "@internationalized/string": "workspace:^"
     "@react-aria/i18n": "workspace:^"
     "@react-aria/ssr": "workspace:^"
@@ -301,14 +302,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/cli@npm:^7.24.1":
-  version: 7.24.1
-  resolution: "@babel/cli@npm:7.24.1"
+"@babel/cli@npm:^7.12.10, @babel/cli@npm:^7.24.1":
+  version: 7.24.6
+  resolution: "@babel/cli@npm:7.24.6"
   dependencies:
     "@jridgewell/trace-mapping": "npm:^0.3.25"
     "@nicolo-ribaudo/chokidar-2": "npm:2.1.8-no-fsevents.3"
     chokidar: "npm:^3.4.0"
-    commander: "npm:^4.0.1"
+    commander: "npm:^6.2.0"
     convert-source-map: "npm:^2.0.0"
     fs-readdir-recursive: "npm:^1.1.0"
     glob: "npm:^7.2.0"
@@ -324,7 +325,7 @@ __metadata:
   bin:
     babel: ./bin/babel.js
     babel-external-helpers: ./bin/babel-external-helpers.js
-  checksum: 10c0/44c069fe331a624936bbe157c352674733aacd88379b2e6d7bd82775210fb7480faa547702051d52eb6eff3d7a52c768f53f775524ea691a91b9e5343e4626bc
+  checksum: 10c0/0abf37d0987cab589098fbdb2894f7486d2d430e99803dc2c9bf655a74d2cef73a0d62f9385142183469a6ed3c847355746da22de1abfe5ec32dad17bad1b1c1
   languageName: node
   linkType: hard
 
@@ -14500,7 +14501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^6.2.1":
+"commander@npm:^6.2.0, commander@npm:^6.2.1":
   version: 6.2.1
   resolution: "commander@npm:6.2.1"
   checksum: 10c0/85748abd9d18c8bc88febed58b98f66b7c591d9b5017cad459565761d7b29ca13b7783ea2ee5ce84bf235897333706c4ce29adf1ce15c8252780e7000e2ce9ea
@@ -28456,6 +28457,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
+    "@babel/cli": "npm:^7.24.1"
     "@internationalized/string": "workspace:^"
     "@react-aria/breadcrumbs": "workspace:^"
     "@react-aria/button": "workspace:^"
@@ -28789,6 +28791,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
+    "@babel/cli": "npm:^7.24.1"
     "@react-stately/calendar": "workspace:^"
     "@react-stately/checkbox": "workspace:^"
     "@react-stately/collections": "workspace:^"
