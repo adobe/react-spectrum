@@ -22,9 +22,9 @@ interface CalendarStateBase {
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
   /** The minimum allowed date that a user may select. */
-  readonly minValue?: DateValue,
+  readonly minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
-  readonly maxValue?: DateValue,
+  readonly maxValue?: DateValue | null,
   /** The time zone of the dates currently being displayed. */
   readonly timeZone: string,
   /**

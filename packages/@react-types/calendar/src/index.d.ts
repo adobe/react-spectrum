@@ -23,9 +23,9 @@ type MappedDateValue<T> =
 
 export interface CalendarPropsBase {
   /** The minimum allowed date that a user may select. */
-  minValue?: DateValue,
+  minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
-  maxValue?: DateValue,
+  maxValue?: DateValue | null,
   /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
   isDateUnavailable?: (date: DateValue) => boolean,
   /**
