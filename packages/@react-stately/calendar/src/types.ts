@@ -31,7 +31,7 @@ interface CalendarStateBase {
    * The current validation state of the selected value.
    * @deprecated Use `isValueInvalid` instead.
    */
-  readonly validationState?: ValidationState,
+  readonly validationState: ValidationState | null,
   /** Whether the calendar is invalid. */
   readonly isValueInvalid: boolean,
   /** The currently focused date. */

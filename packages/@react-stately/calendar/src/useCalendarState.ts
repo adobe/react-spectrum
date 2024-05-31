@@ -173,7 +173,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     return isInvalid(calendarDateValue, minValue, maxValue);
   }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
   let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || isUnavailable;
-  let validationState: ValidationState | undefined = isValueInvalid ? 'invalid' : undefined;
+  let validationState: ValidationState | null = isValueInvalid ? 'invalid' : null;
 
   let pageDuration = useMemo(() => {
     if (pageBehavior === 'visible') {
