@@ -12,7 +12,7 @@
 
 import {ReactNode} from 'react';
 
-export type ValidationState = 'valid' | 'invalid' | null;
+export type ValidationState = 'valid' | 'invalid';
 
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;

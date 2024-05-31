@@ -150,7 +150,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
   }, [isDateUnavailable, value, anchorDate, minValue, maxValue]);
 
   let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || isInvalidSelection;
-  let validationState: ValidationState = isValueInvalid ? 'invalid' : null;
+  let validationState: ValidationState | undefined = isValueInvalid ? 'invalid' : undefined;
 
   return {
     ...calendar,
