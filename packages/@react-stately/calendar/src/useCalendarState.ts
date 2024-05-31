@@ -33,7 +33,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
+export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**

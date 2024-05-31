@@ -56,13 +56,13 @@ export function alignStart(date: CalendarDate, duration: DateDuration, locale: s
 export function alignEnd(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue, maxValue?: DateValue) {
   let d = {...duration};
   // subtract 1 from the smallest unit
-  if (duration.days && d.days) {
+  if (d.days) {
     d.days--;
-  } else if (duration.weeks && d.weeks) {
+  } else if (d.weeks) {
     d.weeks--;
-  } else if (duration.months && d.months) {
+  } else if (d.months) {
     d.months--;
-  } else if (duration.years && d.years) {
+  } else if (d.years) {
     d.years--;
   }
 
