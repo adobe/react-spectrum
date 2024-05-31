@@ -36,12 +36,13 @@ import {
   useDragAndDrop as useAriaDragAndDrop,
   DragAndDropOptions as AriaDragAndDropOptions,
   DropIndicator,
-  DropTarget
+  DropTarget,
+  UNSTABLE_TableLoader
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, ReactNode, useContext} from 'react';
+import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 import {ProgressCircle} from './ProgressCircle';
 import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
@@ -213,8 +214,10 @@ export function Table(props: TableProps) {
   }
 
   let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
+  let context = useMemo(() => ({isQuiet, density, overflowMode, selectionStyle, isLoading, columnsResizable}), [isQuiet, density, overflowMode, selectionStyle, isLoading, columnsResizable]);
+  // TODO: memo the values provided to the context
   let baseTable = (
-    <InternalTableContext.Provider value={{isQuiet, density, overflowMode, selectionStyle, isLoading, columnsResizable}}>
+    <InternalTableContext.Provider value={context}>
       <AriaTable
         style={UNSAFE_style}
         className={renderProps => (UNSAFE_className || '') + table({
@@ -272,22 +275,44 @@ const centeredWrapper = style({
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
-  let {items, renderEmptyState} = props;
+  let {items, renderEmptyState, children} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   let emptyRender;
-
-  // TODO: replace the isLoading progress circle being passed to renderEmptyState in favor of using the TableLoader element
-  // from RAC when that lands
-  if (items && [...items].length === 0 && tableVisualOptions.isLoading) {
-    emptyRender = () => (
+  let renderer = children;
+  let loader = (
+    // TODO: will need colspan as well, maybe can have it automatically applied in RAC
+    <UNSTABLE_TableLoader>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           // TODO: needs intl translation
-          aria-label="loading" />
+          // TODO: also needs to have a better way of knowing if there are actually items or not, will need to add that to the TableLoader
+          // render props perhaps
+          aria-label={items && [...items].length > 0 ? 'loading more' : 'loading'} />
       </div>
+    </UNSTABLE_TableLoader>
+  );
+  // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
+  // the loader. Otherwise it is a static renderer and thus we can simply add the table loader after
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items}>
+          {children}
+        </Collection>
+        {tableVisualOptions.isLoading && loader}
+      </>
     );
-  } else if (renderEmptyState != null) {
+  } else {
+    renderer = (
+      <>
+        {children}
+        {tableVisualOptions.isLoading && loader}
+      </>
+    );
+  }
+
+  if (renderEmptyState != null) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
         {/* @ts-ignore TODO figure out why it is complaining tahat this is possibly undefined */}
@@ -303,7 +328,12 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
         ...tableVisualOptions
       })}
       {...props}
-      renderEmptyState={emptyRender} />
+      renderEmptyState={emptyRender}
+      dependencies={[tableVisualOptions.isLoading]}>
+      {renderer}
+      {/* {renderer}
+      {tableVisualOptions.isLoading && <UNSTABLE_TableLoader />} */}
+    </AriaTableBody>
   );
 }
 

@@ -316,9 +316,6 @@ export const EmptyState = {
   render: EmptyStateTable
 };
 
-// TODO: As it is right now, a empty table that is in a loading state will render the empty state always.
-// The user need to manually swap out what they provide to renderEmptyState, alternating between the ProgressCircle and the empty state svg (maybe that is fine)
-// Do we need an api for the user to provide renderLoading state?
 export const LoadingStateNoItems = {
   render: EmptyStateTable,
   args: {
@@ -328,8 +325,6 @@ export const LoadingStateNoItems = {
   name: 'loading state, no items'
 };
 
-// TODO: similar to above, do we need to provide the user with a way to pass in what they'd want their
-// load more spinner to look like? We need to be able to wrap it in a row and append it to the end of their items
 export const LoadingStateWithItems = {
   render: DynamicTable,
   args: {
@@ -337,6 +332,15 @@ export const LoadingStateWithItems = {
     isLoading: true
   },
   name: 'loading state, has items'
+};
+
+export const LoadingStateWithItemsStatic = {
+  render: StaticTable,
+  args: {
+    ...Example.args,
+    isLoading: true
+  },
+  name: 'loading state, static items'
 };
 
 export const Sorting = {
