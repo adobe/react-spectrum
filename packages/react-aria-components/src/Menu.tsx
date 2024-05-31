@@ -230,13 +230,18 @@ function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef
     heading,
     'aria-label': section.props['aria-label'] ?? undefined
   });
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-Section',
+    className: section.props?.className,
+    style: section.props?.style,
+    values: {}
+  });
 
   return (
     <section
       {...filterDOMProps(props as any)}
       {...groupProps}
-      className={section.props?.className || 'react-aria-Section'}
-      style={section.props?.style}
+      {...renderProps}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
         <CollectionChildren collection={state.collection} parent={section} />

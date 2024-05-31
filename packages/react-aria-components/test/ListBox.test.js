@@ -67,6 +67,32 @@ describe('ListBox', () => {
     jest.restoreAllMocks();
   });
 
+  it('should have the base set of aria and data attributes', () => {
+    let {getByRole, getAllByRole} = render(
+      <ListBox aria-label="Animals">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        <Section>
+          <Header>Fish</Header>
+          <ListBoxItem id="salmon">Salmon</ListBoxItem>
+          <ListBoxItem id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem id="cod">Cod</ListBoxItem>
+        </Section>
+      </ListBox>
+    );
+    let menu = getByRole('listbox');
+    expect(menu).toHaveAttribute('data-rac');
+
+    for (let group of getAllByRole('group')) {
+      expect(group).toHaveAttribute('data-rac');
+    }
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-rac');
+    }
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderListbox();
     let listbox = getByRole('listbox');

@@ -61,9 +61,25 @@ describe('Menu', () => {
   });
 
   it('should have the base set of aria and data attributes', () => {
-    let {getByRole, getAllByRole} = renderMenu();
+    let {getByRole, getAllByRole} = render(
+      <Menu aria-label="Animals">
+        <MenuItem id="cat">Cat</MenuItem>
+        <MenuItem id="dog">Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+        <Section>
+          <Header>Fish</Header>
+          <MenuItem id="salmon">Salmon</MenuItem>
+          <MenuItem id="tuna">Tuna</MenuItem>
+          <MenuItem id="cod">Cod</MenuItem>
+        </Section>
+      </Menu>
+    );
     let menu = getByRole('menu');
     expect(menu).toHaveAttribute('data-rac');
+
+    for (let group of getAllByRole('group')) {
+      expect(group).toHaveAttribute('data-rac');
+    }
 
     for (let menuitem of getAllByRole('menuitem')) {
       expect(menuitem).toHaveAttribute('data-rac');
