@@ -183,7 +183,7 @@
     "tailwindcss": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
-    "typescript": "^5.5.0-beta",
+    "typescript": "^5.5.0-dev.20240530",
     "typescript-strict-plugin": "^2.0.0",
     "verdaccio": "^5.13.0",
     "walk-object": "^4.0.0",
