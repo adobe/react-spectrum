@@ -46,6 +46,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let {isOpen, open, close} = useOverlayTriggerState(props);
   let id = useMemo(() => `${++tooltipId}`, []);
   let closeTimeout = useRef<ReturnType<typeof setTimeout>>();
+  let closeCallback = useRef<() => void>(close);
 
   let ensureTooltipEntry = () => {
     tooltips[id] = hideTooltip;
@@ -81,11 +82,11 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
     if (immediate || closeDelay <= 0) {
       clearTimeout(closeTimeout.current);
       closeTimeout.current = null;
-      close();
+      closeCallback.current();
     } else if (!closeTimeout.current) {
       closeTimeout.current = setTimeout(() => {
         closeTimeout.current = null;
-        close();
+        closeCallback.current();
       }, closeDelay);
     }
 
@@ -118,6 +119,10 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
       showTooltip();
     }
   };
+
+  useEffect(() => {
+    closeCallback.current = close;
+  }, [close]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {

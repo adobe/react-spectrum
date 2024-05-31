@@ -100,6 +100,7 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
  */
 export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
   let {
+    id,
     key,
     closeOnSelect,
     isVirtualized,
@@ -160,6 +161,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   let ariaProps = {
+    id,
     'aria-disabled': isDisabled || undefined,
     role,
     'aria-label': props['aria-label'],
