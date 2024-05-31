@@ -276,6 +276,8 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let tableVisualOptions = useContext(InternalTableContext);
   let emptyRender;
 
+  // TODO: replace the isLoading progress circle being passed to renderEmptyState in favor of using the TableLoader element
+  // from RAC when that lands
   if (items && [...items].length === 0 && tableVisualOptions.isLoading) {
     emptyRender = () => (
       <div className={centeredWrapper}>
@@ -596,7 +598,6 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
           <MenuItem id="resize">Resize</MenuItem>
         </Menu>
       </MenuTrigger>
-      {/* TODO: Placeholder wrapper for keyboard navigation skipping resizer since ColumnResizer doesn't support data attributes yet */}
       <div data-react-aria-prevent-focus="true">
         <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection}) => resizerHandleContainer({resizableDirection})}>
           {({isFocusVisible, isResizing}) => (
@@ -734,6 +735,11 @@ export function Cell(props: CellProps) {
   );
 }
 
+
+// TODO: for the borders between the tables, try doing 4 box shadows, one for each side. For the top and bottom box shadows, make them thicker
+// in such a way that they overlap with the next/prev row, then just make it so the z-index of the selected one is higher so that it appears above the other
+// border
+
 // TODO: will also need to curve the first and last row, how to do this?
 // ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
 const row = style<RowRenderProps & S2TableProps>({
@@ -745,25 +751,24 @@ const row = style<RowRenderProps & S2TableProps>({
   },
   backgroundColor: {
     default: 'gray-25',
-    // TODO: don't forget to change this to isFocusVisibleWithin so that it applies when the cell in the row is keyboard focused
-    isFocusVisible: 'gray-900/7', // table-row-hover-color
+    isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
     isHovered: 'gray-900/7', // table-row-hover-color
     isPressed: 'gray-900/10', // table-row-hover-color
     isSelected: {
       default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
-      isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+      isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
       isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
       isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
     },
     isQuiet: {
       // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
       default: 'transparent',
-      isFocusVisible: 'gray-900/7', // table-row-hover-color
+      isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
       isHovered: 'gray-900/7', // table-row-hover-color
       isPressed: 'gray-900/10', // table-row-hover-color
       isSelected: {
         default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
-        isFocusVisible: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+        isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
         isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
         isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
       }
