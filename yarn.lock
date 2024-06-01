@@ -6551,6 +6551,7 @@ __metadata:
     "@react-spectrum/layout": "workspace:^"
     "@react-spectrum/picker": "workspace:^"
     "@react-spectrum/provider": "workspace:^"
+    "@react-spectrum/test-utils": "workspace:^"
     "@react-spectrum/text": "workspace:^"
     "@react-spectrum/theme-default": "workspace:^"
     "@react-spectrum/view": "workspace:^"
