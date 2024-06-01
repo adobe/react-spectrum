@@ -137,6 +137,8 @@ async function build() {
       }
     }
   }
+  // Add test-utils to the dependencies because it doesn't have a docs dir, but is used in other docs pages
+  pkg.dependencies['@react-spectrum/test-utils'] = 'latest';
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
