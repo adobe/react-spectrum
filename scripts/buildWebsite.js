@@ -85,7 +85,6 @@ async function build() {
         )
     ),
     dependencies: {
-      '@react-spectrum/test-utils': 'workspace:^',
       '@adobe/react-spectrum': 'latest',
       '@react-aria/example-theme': 'latest',
       'react-aria': 'latest',
