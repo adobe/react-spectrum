@@ -328,7 +328,7 @@ describe('Calendar', () => {
     let grid = getByRole('application');
     expect(grid).toHaveAttribute('class', 'grid');
 
-    let cell = within(grid).getAllByRole('button')[7];
+    let cell = within(grid).getAllByRole('button')[8];
     expect(cell).toBeInTheDocument();
 
     await user.click(cell);
