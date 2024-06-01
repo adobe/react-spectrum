@@ -151,7 +151,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-junit": "^15.0.0",
     "jest-matchmedia-mock": "^1.1.0",
-    "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
     "lucide-react": "^0.294.0",
     "md5": "^2.2.1",

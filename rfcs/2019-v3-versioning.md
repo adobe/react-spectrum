@@ -50,6 +50,7 @@ This would also make spectrum-css upgrades easier. Since components are released
 ### Monorepo
 
 Each of these packages would be maintained in a monorepo using [Lerna](http://lernajs.io). This has been successfully used by many open source projects such as Babel, Parcel, and others. The folder structure would look like the following. The files in the `react-spectrum` monolith package would just be there to re-export the underlying individual package. For example, `Button.js`  would contain `export * from` `'``@react-spectrum/button`.
+**UPDATE** using builtin yarn support now
 
     packages
     ├── button
