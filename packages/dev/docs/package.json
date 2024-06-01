@@ -21,6 +21,7 @@
     "@react-spectrum/text": "workspace:^",
     "@react-spectrum/theme-default": "workspace:^",
     "@react-spectrum/view": "workspace:^",
+    "@react-spectrum/test-utils": "workspace:^",
     "@spectrum-icons/illustrations": "workspace:^",
     "@spectrum-icons/ui": "workspace:^",
     "@spectrum-icons/workflow": "workspace:^",
