@@ -49,7 +49,12 @@ let yarn1Lines = yarn1Lock.split('\n');
 for (let line of yarn1Lines) {
   if (line.startsWith('"')) {
     let name = line.match(/"(@?.*?)@.*"/)[1];
-    let version = yarn1Lines[i+1].match(/version "(.*)"/)[1];
+    let version
+    try {
+      version = yarn1Lines[i+1].match(/version "(.*)"/)[1];
+    } catch (e) {
+      version = yarn1Lines[i+2].match(/version "(.*)"/)[1];
+    }
     if (yarn1Entries[name]) {
       yarn1Entries[name].push(version);
     } else {
