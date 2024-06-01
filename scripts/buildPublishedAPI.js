@@ -17,7 +17,6 @@ const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
 let yargs = require('yargs');
-const replace = require('replace-in-file');
 
 
 let argv = yargs

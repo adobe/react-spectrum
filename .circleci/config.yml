@@ -62,11 +62,6 @@ jobs:
             fi
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build
           command: |
             yarn --immutable
@@ -87,11 +82,6 @@ jobs:
             if [ $NPM_PASSWORD ]; then
               cp .circleci/.npmrc .npmrc
             fi
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: build
@@ -116,11 +106,6 @@ jobs:
             fi
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build
           command: |
             yarn install --immutable && yarn install-17
@@ -143,11 +128,6 @@ jobs:
             fi
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build
           command: |
             yarn install --immutable && yarn install-canary
@@ -164,11 +144,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: test ssr
           command: yarn test:ssr
 
@@ -180,11 +155,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run: mkdir ~/junit
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: test
@@ -210,11 +180,6 @@ jobs:
           key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: test ssr
           command: |
             yarn test:ssr
@@ -226,11 +191,6 @@ jobs:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: test ssr
           command: |
             yarn test:ssr
@@ -240,11 +200,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: test ssr
@@ -259,11 +214,6 @@ jobs:
           key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run: mkdir ~/junit
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: test
@@ -290,11 +240,6 @@ jobs:
       - run: mkdir ~/junit
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: test
           command: |
             shopt -s globstar
@@ -319,11 +264,6 @@ jobs:
       - run: mkdir ~/junit
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: test
           command: |
             shopt -s globstar
@@ -345,11 +285,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: test
           command: |
             make build
@@ -363,11 +298,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: lint
           command: yarn lint
 
@@ -376,11 +306,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: build branch apis
@@ -398,11 +323,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build fork-point apis
           command: |
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
@@ -417,11 +337,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - attach_workspace:
           at: /tmp/dist
@@ -445,11 +360,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: check-examples
           command: make check-examples
 
@@ -458,11 +368,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: build storybook
@@ -480,11 +385,6 @@ jobs:
           key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build storybook-16
           command: make storybook-16
 
@@ -498,11 +398,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: build storybook-17
@@ -535,11 +430,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build docs
           command: make website
 
@@ -555,11 +445,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Yarn version
-          command: |
-            yarn -v
-
-      - run:
           name: build docs
           command: make website-production
 
@@ -573,11 +458,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Yarn version
-          command: |
-            yarn -v
 
       - run:
           name: run verdaccio
@@ -727,6 +607,9 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
+          filters:
+            branches:
+              only: main
           requires:
             - install
       - deploy:

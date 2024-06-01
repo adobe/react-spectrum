@@ -330,9 +330,6 @@ export const Example = () => (
     'ImportSpecifier|ImportDefaultSpecifier'(specifier) {
       let binding = specifier.scope.getBinding(specifier.node.local.name);
       if (binding?.referencePaths.length === 0 || (skipImports && specifier.node.local.name === name)) {
-        if (specifier.node.local.name === 'Meta') {
-          console.log('Removing unused import ', specifier.parentPath.parentPath.scope.getBinding('Meta'));
-        }
         specifier.remove();
       }
     },

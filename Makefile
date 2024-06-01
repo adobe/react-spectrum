@@ -97,7 +97,7 @@ publish: build
 
 publish-nightly: build
 	yarn version:nightly
-	yarn publish:nightly
+	yarn release
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
