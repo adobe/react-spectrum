@@ -63,7 +63,9 @@ interface EventBase {
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean,
-  altKey: boolean
+  altKey: boolean,
+  clientX: number,
+  clientY: number
 }
 
 export interface PressResult {
@@ -94,6 +96,8 @@ class PressEvent implements IPressEvent {
   ctrlKey: boolean;
   metaKey: boolean;
   altKey: boolean;
+  x: number;
+  y: number;
   #shouldStopPropagation = true;
 
   constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase) {
@@ -104,6 +108,8 @@ class PressEvent implements IPressEvent {
     this.metaKey = originalEvent.metaKey;
     this.ctrlKey = originalEvent.ctrlKey;
     this.altKey = originalEvent.altKey;
+    this.x = originalEvent.clientX;
+    this.y = originalEvent.clientY;
   }
 
   continuePropagation() {
@@ -267,7 +273,7 @@ export function usePress(props: PressHookProps): PressResult {
           if (!state.isPressed && !e.repeat) {
             state.target = e.currentTarget;
             state.isPressed = true;
-            shouldStopPropagation = triggerPressStart(e, 'keyboard');
+            shouldStopPropagation = triggerPressStart(initEventCoordinates(e), 'keyboard');
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred. Make it capturing so that it will trigger
@@ -275,7 +281,7 @@ export function usePress(props: PressHookProps): PressResult {
             let originalTarget = e.currentTarget;
             let pressUp = (e) => {
               if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && originalTarget.contains(e.target as Element) && state.target) {
-                triggerPressUp(createEvent(state.target, e), 'keyboard');
+                triggerPressUp(createEvent(state.target, initEventCoordinates(e)), 'keyboard');
               }
             };
 
@@ -341,7 +347,8 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let target = e.target as Element;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
+        console.log(e);
+        triggerPressEnd(createEvent(state.target, initEventCoordinates(e)), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
@@ -628,7 +635,7 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection(state.target);
         }
 
-        let shouldStopPropagation = triggerPressStart(e, state.pointerType);
+        let shouldStopPropagation = triggerPressStart(initEventCoordinates(e), state.pointerType);
         if (shouldStopPropagation) {
           e.stopPropagation();
         }
@@ -651,12 +658,12 @@ export function usePress(props: PressHookProps): PressResult {
         if (touch && isOverTarget(touch, e.currentTarget)) {
           if (!state.isOverTarget && state.pointerType != null) {
             state.isOverTarget = true;
-            shouldStopPropagation = triggerPressStart(e, state.pointerType);
+            shouldStopPropagation = triggerPressStart(initEventCoordinates(e), state.pointerType);
           }
         } else if (state.isOverTarget && state.pointerType != null) {
           state.isOverTarget = false;
-          shouldStopPropagation = triggerPressEnd(e, state.pointerType, false);
-          cancelOnPointerExit(e);
+          shouldStopPropagation = triggerPressEnd(initEventCoordinates(e), state.pointerType, false);
+          cancelOnPointerExit(initEventCoordinates(e));
         }
 
         if (shouldStopPropagation) {
@@ -677,10 +684,10 @@ export function usePress(props: PressHookProps): PressResult {
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
         let shouldStopPropagation = true;
         if (touch && isOverTarget(touch, e.currentTarget) && state.pointerType != null) {
-          triggerPressUp(e, state.pointerType);
-          shouldStopPropagation = triggerPressEnd(e, state.pointerType);
+          triggerPressUp(initEventCoordinates(e), state.pointerType);
+          shouldStopPropagation = triggerPressEnd(initEventCoordinates(e), state.pointerType);
         } else if (state.isOverTarget && state.pointerType != null) {
-          shouldStopPropagation = triggerPressEnd(e, state.pointerType, false);
+          shouldStopPropagation = triggerPressEnd(initEventCoordinates(e), state.pointerType, false);
         }
 
         if (shouldStopPropagation) {
@@ -704,7 +711,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         e.stopPropagation();
         if (state.isPressed) {
-          cancel(e);
+          cancel(initEventCoordinates(e));
         }
       };
 
@@ -715,7 +722,9 @@ export function usePress(props: PressHookProps): PressResult {
             shiftKey: false,
             ctrlKey: false,
             metaKey: false,
-            altKey: false
+            altKey: false,
+            clientX: 0,
+            clientY: 0
           });
         }
       };
@@ -808,7 +817,9 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey,
-    altKey: e.altKey
+    altKey: e.altKey,
+    clientX: e.clientX,
+    clientY: e.clientY
   };
 }
 
@@ -906,4 +917,17 @@ function isValidInputKey(target: HTMLInputElement, key: string) {
   return target.type === 'checkbox' || target.type === 'radio'
     ? key === ' '
     : nonTextInputTypes.has(target.type);
+}
+
+function initEventCoordinates(originalEvent: Omit<EventBase, 'clientX' | 'clientY'>):EventBase {
+  const currentTarget = originalEvent.currentTarget;
+  let x = 0;
+  let y = 0;
+
+  if (currentTarget instanceof HTMLElement) {
+    const rect = currentTarget.getBoundingClientRect();
+    x = rect.left + rect.width / 2;
+    y = rect.top + rect.height / 2;
+  }
+  return Object.assign(originalEvent, {clientX: x, clientY: y});
 }
