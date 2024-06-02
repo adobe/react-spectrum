@@ -819,5 +819,12 @@ function isValidInputKey(target: HTMLInputElement, key: string) {
 }
 
 function initEventCoordinates(originalEvent: Omit<EventBase, 'clientX' | 'clientY'>):EventBase {
-  return Object.assign(originalEvent, {clientX: 0, clientY: 0});
+  let x: number = 0;
+  let y: number = 0;
+  if (originalEvent.currentTarget instanceof Element) {
+    const rect: DOMRect = originalEvent.currentTarget.getBoundingClientRect();
+    x = rect.left + rect.width / 2;
+    y = rect.top + rect.height / 2;
+  }
+  return Object.assign(originalEvent, {clientX: x, clientY: y});
 }
