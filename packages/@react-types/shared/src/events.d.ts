@@ -45,6 +45,10 @@ export interface PressEvent {
   metaKey: boolean,
   /** Whether the alt keyboard modifier was held during the press event. */
   altKey: boolean,
+  /** X position relative to the target. */
+  x: number,
+  /** Y position relative to the target. */
+  y: number,
   /**
    * By default, press events stop propagation to parent elements.
    * In cases where a handler decides not to handle a specific event,
@@ -64,7 +68,11 @@ export interface HoverEvent {
   /** The pointer type that triggered the hover event. */
   pointerType: 'mouse' | 'pen',
   /** The target element of the hover event. */
-  target: HTMLElement
+  target: HTMLElement,
+  /** X position relative to the target. */
+  x: number,
+  /** Y position relative to the target. */
+  y: number
 }
 
 export interface KeyboardEvents {
