@@ -293,6 +293,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   };
 
   // Store the scroll position so we can restore it later.
+  /// TODO: should this happen all the time??
   let scrollPos = useRef({top: 0, left: 0});
   useEvent(scrollRef, 'scroll', isVirtualized ? null : () => {
     scrollPos.current = {
@@ -342,7 +343,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       scrollRef.current.scrollLeft = scrollPos.current.left;
     }
 
-    if (!isVirtualized && manager.focusedKey != null) {
+    if (manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (element) {
@@ -400,17 +401,21 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // If not virtualized, scroll the focused element into view when the focusedKey changes.
-  // When virtualized, Virtualizer handles this internally.
+  // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    let modality = getInteractionModality();
-    if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
-      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
-      if (element && (modality === 'keyboard' || autoFocusRef.current)) {
-        if (!isVirtualized) {
-          scrollIntoView(scrollRef.current, element);
-        }
+    if (manager.isFocused && manager.focusedKey != null && manager.focusedKey !== lastFocusedKey.current && scrollRef?.current) {
+      let modality = getInteractionModality();
+      let element = ref.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
+      if (!element) {
+        // If item element wasn't found, return early (don't update autoFocusRef and lastFocusedKey).
+        // The collection may initially be empty (e.g. virtualizer), so wait until the element exists.
+        return;
+      }
+
+      if (modality === 'keyboard' || autoFocusRef.current) {
+        scrollIntoView(scrollRef.current, element);
+
         // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
         if (modality !== 'virtual') {
           scrollIntoViewport(element, {containingElement: ref.current});
@@ -425,7 +430,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     lastFocusedKey.current = manager.focusedKey;
     autoFocusRef.current = false;
-  }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
+  });
+
+  // Intercept FocusScope restoration since virtualized collections can reuse DOM nodes.
+  useEvent(ref, 'react-aria-focus-scope-restore', e => {
+    e.preventDefault();
+    manager.setFocused(true);
+  });
 
   let handlers = {
     onKeyDown,
