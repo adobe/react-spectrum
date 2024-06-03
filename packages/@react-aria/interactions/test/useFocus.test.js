@@ -12,7 +12,7 @@
 
 import {act, createShadowRoot, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {reactDomRenderer, unmount} from '@react-spectrum/test-utils-internal/src/reactCompat';
+import ReactDOM from 'react-dom';
 import {useFocus} from '../';
 
 function Example(props) {
@@ -159,24 +159,19 @@ describe('useFocus', function () {
     it('handles focus events', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const events = [];
-      const ExampleComponent = () => (
+      const ExampleComponent = () => ReactDOM.createPortal(
         <Example
           onFocus={(e) => events.push({type: 'focus', target: e.target})}
           onBlur={(e) => events.push({type: 'blur', target: e.target})}
-          onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
-      );
+          onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />, shadowRoot);
 
-      let root;
-      act(() => {
-        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
-      });
+      const {unmount} = render(<ExampleComponent />);
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
       act(() => {el.focus();});
       act(() => {el.blur();});
 
-      // Assertions similar to your original test, but ensure you're checking for events triggered within the shadow DOM
       expect(events).toEqual([
         {type: 'focus', target: el},
         {type: 'focuschange', isFocused: true},
@@ -185,45 +180,31 @@ describe('useFocus', function () {
       ]);
 
       // Cleanup
-      act(() => {
-        unmount({
-          container: shadowHost,
-          root
-        });
-      });
+      unmount();
       document.body.removeChild(shadowHost);
     });
 
     it('does not handle focus events if disabled', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const events = [];
-      const ExampleComponent = () => (
+      const ExampleComponent = () => ReactDOM.createPortal(
         <Example
           isDisabled
           onFocus={(e) => events.push({type: 'focus', target: e.target})}
           onBlur={(e) => events.push({type: 'blur', target: e.target})}
-          onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
+          onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />, shadowRoot
       );
 
-      let root;
-      act(() => {
-        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
-      });
+      const {unmount} = render(<ExampleComponent />);
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
-
       act(() => {el.focus();});
       act(() => {el.blur();});
 
       expect(events).toEqual([]);
 
       // Cleanup
-      act(() => {
-        unmount({
-          container: shadowHost,
-          root
-        });
-      });
+      unmount();
       document.body.removeChild(shadowHost);
     });
 
@@ -234,21 +215,15 @@ describe('useFocus', function () {
       const onInnerFocus = jest.fn(e => e.stopPropagation());
       const onInnerBlur = jest.fn(e => e.stopPropagation());
 
-      const WrapperComponent = () => (
+      const WrapperComponent = () => ReactDOM.createPortal(
         <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-          <Example
-            onFocus={onInnerFocus}
-            onBlur={onInnerBlur} />
-        </div>
+          <Example onFocus={onInnerFocus} onBlur={onInnerBlur} />
+        </div>, shadowRoot
       );
 
-      let root;
-      act(() => {
-        root = reactDomRenderer(<WrapperComponent />, shadowRoot);
-      });
+      const {unmount} = render(<WrapperComponent />);
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
-
       act(() => {el.focus();});
       act(() => {el.blur();});
 
@@ -258,12 +233,7 @@ describe('useFocus', function () {
       expect(onWrapperBlur).not.toHaveBeenCalled();
 
       // Cleanup
-      act(() => {
-        unmount({
-          container: shadowHost,
-          root
-        });
-      });
+      unmount();
       document.body.removeChild(shadowHost);
     });
 
@@ -274,21 +244,15 @@ describe('useFocus', function () {
       const onInnerFocus = jest.fn();
       const onInnerBlur = jest.fn();
 
-      const WrapperComponent = () => (
+      const WrapperComponent = () => ReactDOM.createPortal(
         <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-          <Example
-            onFocus={onInnerFocus}
-            onBlur={onInnerBlur} />
-        </div>
+          <Example onFocus={onInnerFocus} onBlur={onInnerBlur} />
+        </div>, shadowRoot
       );
 
-      let root;
-      act(() => {
-        root = reactDomRenderer(<WrapperComponent />, shadowRoot);
-      });
+      const {unmount} = render(<WrapperComponent />);
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
-
       act(() => {el.focus();});
       act(() => {el.blur();});
 
@@ -298,12 +262,7 @@ describe('useFocus', function () {
       expect(onWrapperBlur).toHaveBeenCalledTimes(1);
 
       // Cleanup
-      act(() => {
-        unmount({
-          container: shadowHost,
-          root
-        });
-      });
+      unmount();
       document.body.removeChild(shadowHost);
     });
   });

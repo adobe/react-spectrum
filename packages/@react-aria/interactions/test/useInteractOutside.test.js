@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from 'react-dom/test-utils';
 import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useRef} from 'react';
 import ReactDOM, {render as ReactDOMRender} from 'react-dom';
@@ -572,19 +573,19 @@ describe('useInteractOutside shadow DOM extended tests', function () {
   }
 
   it('correctly identifies interaction with dynamically added external elements', function () {
+    jest.useFakeTimers();
     const onInteractOutside = jest.fn();
     const {cleanup} = createShadowRootAndRender(
       <App onInteractOutside={onInteractOutside} includeDynamicElement />
     );
 
-    // Wait for dynamic element to be added
-    setTimeout(() => {
-      const dynamicEl = document.getElementById('dynamic-outside');
-      fireEvent.mouseDown(dynamicEl);
-      fireEvent.mouseUp(dynamicEl);
+    act(() => {jest.runAllTimers();});
 
-      expect(onInteractOutside).toHaveBeenCalledTimes(1);
-    }, 0);
+    const dynamicEl = document.getElementById('dynamic-outside');
+    fireEvent.mouseDown(dynamicEl);
+    fireEvent.mouseUp(dynamicEl);
+
+    expect(onInteractOutside).toHaveBeenCalledTimes(1);
 
     cleanup();
   });

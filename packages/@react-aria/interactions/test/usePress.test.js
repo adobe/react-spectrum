@@ -13,6 +13,7 @@
 import {act, createShadowRoot, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {getDeepActiveElement} from '@react-aria/utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -3305,24 +3306,25 @@ describe('usePress', function () {
 
   describe('usePress with Shadow DOM', function () {
     installPointerEvent();
-    let cleanupShadowRoot, cleanupShadowHost, root;
+    let cleanupShadowHost, root;
     let events = [];
     let addEvent = (e) => events.push(e);
 
-    function setupShadowDOMTest(extraProps = {}) {
+    function setupShadowDOMTest(extraProps = {}, isDraggable = false) {
       const {shadowRoot, shadowHost} = createShadowRoot();
-      cleanupShadowRoot = shadowRoot;
       cleanupShadowHost = shadowHost;
       events = [];
       addEvent = (e) => events.push(e);
       const ExampleComponent = () => (
-        <Example
-          onPressStart={addEvent}
-          onPressEnd={addEvent}
-          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent}
-          onPressUp={addEvent}
-          {...extraProps} />
+        <div draggable={isDraggable}>
+          <Example
+            onPressStart={addEvent}
+            onPressEnd={addEvent}
+            onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+            onPress={addEvent}
+            onPressUp={addEvent}
+            {...extraProps} />
+        </div>
       );
 
       act(() => {
@@ -3338,7 +3340,6 @@ describe('usePress', function () {
 
     afterEach(() => {
       act(() => {jest.runAllTimers();});
-      document.body.removeChild(cleanupShadowRoot.host);
       act(() => {
         unmount({
           container: cleanupShadowHost,
@@ -3703,12 +3704,15 @@ describe('usePress', function () {
     });
 
     it('should not focus the target on click if preventFocusOnPress is true', function () {
-      const shadowRoot = setupShadowDOMTest();
-
+      const shadowRoot = setupShadowDOMTest({preventFocusOnPress: true});
       const el = shadowRoot.getElementById('testElement');
+
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      expect(document.activeElement).not.toBe(el);
+      const deepActiveElement = getDeepActiveElement();
+
+      expect(deepActiveElement).not.toBe(el);
+      expect(deepActiveElement).not.toBe(shadowRoot);
     });
 
     it('should focus the target on click by default', function () {
@@ -3732,7 +3736,7 @@ describe('usePress', function () {
     });
 
     it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
-      const shadowRoot = setupShadowDOMTest();
+      const shadowRoot = setupShadowDOMTest({}, true);
 
       const el = shadowRoot.getElementById('testElement');
       let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
