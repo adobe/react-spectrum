@@ -15,7 +15,7 @@ import {Default as ChromaticDefault} from '../chromatic/Breadcrumbs.stories';
 
 export default {
   title: 'Breadcrumbs',
-  component: Breadcrumbs,
+  component: Breadcrumbs
 };
 
 export const Default = {
