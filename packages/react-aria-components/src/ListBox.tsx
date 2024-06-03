@@ -266,13 +266,18 @@ function ListBoxSection<T extends object>(props: SectionProps<T>, ref: Forwarded
     heading,
     'aria-label': props['aria-label'] ?? undefined
   });
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-Section',
+    className: props.className,
+    style: props.style,
+    values: {}
+  });
 
   return (
     <section
       {...filterDOMProps(props as any)}
       {...groupProps}
-      className={props?.className || 'react-aria-Section'}
-      style={props?.style}
+      {...renderProps}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
         <CollectionChildren collection={state.collection} parent={section} />
