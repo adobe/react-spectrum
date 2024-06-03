@@ -347,7 +347,6 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let target = e.target as Element;
-        console.log(e);
         triggerPressEnd(createEvent(state.target, initEventCoordinates(e)), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
