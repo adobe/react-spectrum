@@ -101,9 +101,6 @@ for (let key of keys) {
     continue;
   }
   if (v4 && !v1) {
-    if (key === 'zwitch') {
-      console.log('v4 found zwitch', v4, v1);
-    }
     newPackages.push(`"${key}": "${v4[0]}",`);
     continue;
   } else {

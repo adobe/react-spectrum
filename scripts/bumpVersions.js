@@ -50,11 +50,13 @@ let monopackages = new Set([
 
 class VersionManager {
   constructor() {
+    let workspaceLookup = {};
     // Get dependency tree from yarn workspaces
     this.workspacePackages = exec('yarn workspaces list --json -v').toString().split('\n')
       .map(line => {
         try {
           let result = JSON.parse(line);
+          workspaceLookup[result.location] = result.name;
           return result;
         } catch (e) {
           // ignore empty lines
@@ -63,6 +65,7 @@ class VersionManager {
       .filter(Boolean)
       .reduce((acc, item) => {
         acc[item.name] = item;
+        acc[item.name].workspaceDependencies = item.workspaceDependencies.map(dep => workspaceLookup[dep]);
         return acc;
       }, {});
     this.existingPackages = new Set();
