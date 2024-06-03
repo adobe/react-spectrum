@@ -64,20 +64,26 @@ describe('Toast Provider and Container', function () {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
+    expect(queryByRole('alertdialog')).toBeNull();
     expect(queryByRole('alert')).toBeNull();
     await user.click(button);
 
-    let region = getByRole('region');
-    expect(region).toHaveAttribute('aria-label', 'Notifications');
+    act(() => jest.advanceTimersByTime(100));
 
-    let alert = getByRole('alert');
+    let region = getByRole('region');
+    expect(region).toHaveAttribute('aria-label', '1 notification.');
+
+    let toast = getByRole('alertdialog');
+    let alert = within(toast).getByRole('alert');
+    expect(toast).toBeVisible();
     expect(alert).toBeVisible();
 
-    button = within(alert).getByRole('button');
+    button = within(toast).getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Close');
     await user.click(button);
 
     fireAnimationEnd(alert);
+    expect(queryByRole('alertdialog')).toBeNull();
     expect(queryByRole('alert')).toBeNull();
   });
 
@@ -100,9 +106,13 @@ describe('Toast Provider and Container', function () {
     let button = getByRole('button');
     await user.click(button);
 
-    let alert = getByRole('alert');
+    act(() => jest.advanceTimersByTime(100));
+    let toast = getByRole('alertdialog');
+    let alert = within(toast).getByRole('alert');
     let icon = within(alert).getByRole('img');
     expect(icon).toHaveAttribute('aria-label', 'Success');
+    let title = within(alert).getByText('Toast is default');
+    expect(toast).toHaveAttribute('aria-labelledby', `${title.id}`);
   });
 
   it('removes a toast via timeout', async () => {
@@ -111,7 +121,7 @@ describe('Toast Provider and Container', function () {
 
     await user.click(button);
 
-    let toast = getByRole('alert');
+    let toast = getByRole('alertdialog');
     expect(toast).toBeVisible();
 
     act(() => jest.advanceTimersByTime(1000));
@@ -121,7 +131,7 @@ describe('Toast Provider and Container', function () {
     expect(toast).toHaveAttribute('data-animation', 'exiting');
 
     fireAnimationEnd(toast);
-    expect(queryByRole('alert')).toBeNull();
+    expect(queryByRole('alertdialog')).toBeNull();
   });
 
   it('pauses timers when hovering', async () => {
@@ -130,7 +140,7 @@ describe('Toast Provider and Container', function () {
 
     await user.click(button);
 
-    let toast = getByRole('alert');
+    let toast = getByRole('alertdialog');
     expect(toast).toBeVisible();
 
     act(() => jest.advanceTimersByTime(1000));
@@ -145,7 +155,7 @@ describe('Toast Provider and Container', function () {
     expect(toast).toHaveAttribute('data-animation', 'exiting');
 
     fireAnimationEnd(toast);
-    expect(queryByRole('alert')).toBeNull();
+    expect(queryByRole('alertdialog')).toBeNull();
   });
 
   it('pauses timers when focusing', async () => {
@@ -154,7 +164,7 @@ describe('Toast Provider and Container', function () {
 
     await user.click(button);
 
-    let toast = getByRole('alert');
+    let toast = getByRole('alertdialog');
     expect(toast).toBeVisible();
 
     act(() => jest.advanceTimersByTime(1000));
@@ -169,7 +179,7 @@ describe('Toast Provider and Container', function () {
     expect(toast).toHaveAttribute('data-animation', 'exiting');
 
     fireAnimationEnd(toast);
-    expect(queryByRole('alert')).toBeNull();
+    expect(queryByRole('alertdialog')).toBeNull();
   });
 
   it('renders a toast with an action', async () => {
@@ -178,13 +188,16 @@ describe('Toast Provider and Container', function () {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} />);
     let button = getByRole('button');
 
-    expect(queryByRole('alert')).toBeNull();
+    expect(queryByRole('alertdialog')).toBeNull();
     await user.click(button);
 
-    let alert = getByRole('alert');
+    act(() => jest.advanceTimersByTime(100));
+    let toast = getByRole('alertdialog');
+    let alert = within(toast).getByRole('alert');
+    expect(toast).toBeVisible();
     expect(alert).toBeVisible();
 
-    let buttons = within(alert).getAllByRole('button');
+    let buttons = within(toast).getAllByRole('button');
     expect(buttons[0]).toHaveTextContent('Action');
     await user.click(buttons[0]);
 
@@ -198,22 +211,25 @@ describe('Toast Provider and Container', function () {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} shouldCloseOnAction />);
     let button = getByRole('button');
 
-    expect(queryByRole('alert')).toBeNull();
+    expect(queryByRole('alertdialog')).toBeNull();
     await user.click(button);
 
-    let alert = getByRole('alert');
+    act(() => jest.advanceTimersByTime(100));
+    let toast = getByRole('alertdialog');
+    let alert = within(toast).getByRole('alert');
+    expect(toast).toBeVisible();
     expect(alert).toBeVisible();
 
-    let buttons = within(alert).getAllByRole('button');
+    let buttons = within(toast).getAllByRole('button');
     expect(buttons[0]).toHaveTextContent('Action');
     await user.click(buttons[0]);
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    expect(alert).toHaveAttribute('data-animation', 'exiting');
-    fireAnimationEnd(alert);
-    expect(queryByRole('alert')).toBeNull();
+    expect(toast).toHaveAttribute('data-animation', 'exiting');
+    fireAnimationEnd(toast);
+    expect(queryByRole('alertdialog')).toBeNull();
   });
 
   it('can focus toast region using F6', async () => {
@@ -222,7 +238,7 @@ describe('Toast Provider and Container', function () {
 
     await user.click(button);
 
-    let toast = getByRole('alert');
+    let toast = getByRole('alertdialog');
     expect(toast).toBeVisible();
 
     expect(document.activeElement).toBe(button);
@@ -239,36 +255,58 @@ describe('Toast Provider and Container', function () {
 
     await user.click(button);
 
-    let toast = getByRole('alert');
+    let toast = getByRole('alertdialog');
     let closeButton = within(toast).getByRole('button');
-    act(() => closeButton.focus());
 
     await user.click(closeButton);
     fireAnimationEnd(toast);
-    expect(queryByRole('alert')).toBeNull();
-    expect(document.activeElement).toBe(button);
+    expect(queryByRole('alertdialog')).toBeNull();
+    expect(button).toHaveFocus();
   });
 
-  it('should move focus to container when a toast exits and there are more', async () => {
+  it('should move focus to remaining toast when a toast exits and there are more', async () => {
     let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
     await user.click(button);
     await user.click(button);
 
-    let toast = getAllByRole('alert')[0];
+    let toast = getAllByRole('alertdialog')[0];
     let closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
     fireAnimationEnd(toast);
 
-    expect(document.activeElement).toBe(getByRole('region'));
+    toast = getByRole('alertdialog');
+    expect(document.activeElement).toBe(toast);
 
-    toast = getByRole('alert');
     closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
     fireAnimationEnd(toast);
 
-    expect(queryByRole('alert')).toBeNull();
+    expect(queryByRole('alertdialog')).toBeNull();
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('should move focus from the last toast to remaining toast when a the last toast is closed', async () => {
+    let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let button = getByRole('button');
+
+    await user.click(button);
+    await user.click(button);
+
+    let toast = getAllByRole('alertdialog')[1];
+    let closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toast);
+
+    toast = getByRole('alertdialog');
+    expect(document.activeElement).toBe(toast);
+
+    closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toast);
+
+    expect(queryByRole('alertdialog')).toBeNull();
     expect(document.activeElement).toBe(button);
   });
 
@@ -297,11 +335,15 @@ describe('Toast Provider and Container', function () {
 
     await user.click(button);
 
-    let toast = getByRole('alert');
+    act(() => jest.advanceTimersByTime(100));
+    let toast = getByRole('alertdialog');
+    let alert = within(toast).getByRole('alert');
     expect(toast).toBeVisible();
+    expect(alert).toBeVisible();
 
     await user.click(button);
     fireAnimationEnd(toast);
+    expect(queryByRole('alertdialog')).toBeNull();
     expect(queryByRole('alert')).toBeNull();
   });
 
@@ -317,6 +359,7 @@ describe('Toast Provider and Container', function () {
     let button = getByRole('button');
     await user.click(button);
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -327,6 +370,7 @@ describe('Toast Provider and Container', function () {
       </Provider>
     );
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -337,6 +381,7 @@ describe('Toast Provider and Container', function () {
       </Provider>
     );
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -348,6 +393,7 @@ describe('Toast Provider and Container', function () {
       </Provider>
     );
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
   });
