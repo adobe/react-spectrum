@@ -55,7 +55,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
               'spectrum-Menu-divider'
             )} />
         }
-        {item.rendered &&
+        {item.rendered && item.rendered !== true &&
           <div
             {...headingProps}
             className={
