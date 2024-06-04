@@ -395,6 +395,18 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
+const MyTableLoader = () => {
+  return (
+    <UNSTABLE_TableLoader>
+      {({isTableEmpty}) => (
+        <span>
+          {isTableEmpty ? 'Loading spinner' : 'Load more spinner'}
+        </span>
+      )}
+    </UNSTABLE_TableLoader>
+  );
+};
+
 // TODO: note that there exists a problem if you combine dynamic cell rendering with static rows relying on automatic id generation, the collection will mess up due the id scoping being required
 // This happened below when I added a fragment wrapper to the table and didn't forward the id to the row in the wrapper
 // Will add warning for this and add a test
@@ -426,9 +438,7 @@ function MyTableBody(props) {
       <Collection items={rows}>
         {children}
       </Collection>
-      {isLoading && (
-        <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>
-      )}
+      {isLoading && <MyTableLoader />}
     </TableBody>
   );
 }
@@ -467,7 +477,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.isLoading && <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>}
+      {props.isLoading && <MyTableLoader />}
     </>
   );
 }
@@ -506,9 +516,7 @@ const RenderEmptyState = (args: {isLoading: boolean}) => {
             </Row>
           )}
         </Collection>
-        {args.isLoading && (
-          <UNSTABLE_TableLoader>Placeholder loader</UNSTABLE_TableLoader>
-        )}
+        {args.isLoading && <MyTableLoader />}
       </TableBody>
     </Table>
   );

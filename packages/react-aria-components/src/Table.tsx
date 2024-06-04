@@ -93,7 +93,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   get size() {
-    return [...this.getChildren(this.body.key)].length;
+    return [...this.getChildren(this.body.key)].filter(item => item.type !== 'loader').length;
   }
 
   getFirstKey() {
@@ -852,7 +852,8 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   });
 
   let emptyState;
-  if (collection.size === 0 && props.renderEmptyState && state) {
+  let isTableEmpty = collection.size === 0 && collection.rows.filter(row => row.type === 'loader').length === 0;
+  if (isTableEmpty && props.renderEmptyState && state) {
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
@@ -1225,7 +1226,7 @@ function RootDropIndicator() {
 
 export interface TableLoaderRenderProps {
   /**
-   * Whether the item is currently hovered with a mouse.
+   * Whether the table is currently empty.
    * @selector [data-table-empty]
    */
   isTableEmpty: boolean
@@ -1233,12 +1234,7 @@ export interface TableLoaderRenderProps {
 
 export interface TableLoaderProps extends RenderProps<TableLoaderRenderProps> {}
 
-// TOOD: decide what props this would need if any
-// TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
-// Will need to somehow get this treated differently from a standard row since it breaks some behavior when the table is empty but loading
-// Since this is considered a item (and thus a row), the table thinks it isn't empty and allows the user to tab to the column headers and the select all check box
-// isn't disabled. Then if the user tries to keyboard navigate, stuff crashes.
-export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let numColumns = state.collection.columns.length;
   let renderProps = useRenderProps({
@@ -1247,13 +1243,12 @@ export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLo
     children: item.rendered,
     defaultClassName: 'react-aria-TableLoader',
     values: {
-      // TODO: change this if we change the type from item to something else and thus make state.collection.size === 0
-      isTableEmpty: state.collection.size <= 1
+      isTableEmpty: state.collection.size === 0
     }
-    // TODO: what loader render props do we need
   });
 
   // TODO: add aria attributes when we add virtualizer
+  // Note that the level, etc may need to be adjusted since this isn't a "item" and thus doesn't get the same level calulation handling
   return (
     <>
       <tr
@@ -1261,7 +1256,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('item', function TableLo
         ref={ref}
         {...mergeProps(filterDOMProps(props as any))}
         {...renderProps}
-        data-table-empty={state.collection.size <= 1}
+        data-table-empty={state.collection.size === 0}
         data-rac>
         <td role="rowheader" colSpan={numColumns} aria-colspan={numColumns}>
           {renderProps.children}
