@@ -101,6 +101,7 @@ class PressEvent implements IPressEvent {
   #shouldStopPropagation = true;
 
   constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase) {
+    const rect = (originalEvent.currentTarget as Element).getBoundingClientRect();
     this.type = type;
     this.pointerType = pointerType;
     this.target = originalEvent.currentTarget as Element;
@@ -108,8 +109,8 @@ class PressEvent implements IPressEvent {
     this.metaKey = originalEvent.metaKey;
     this.ctrlKey = originalEvent.ctrlKey;
     this.altKey = originalEvent.altKey;
-    this.x = originalEvent.clientX;
-    this.y = originalEvent.clientY;
+    this.x = originalEvent.clientX - rect.left;
+    this.y = originalEvent.clientY - rect.top;
   }
 
   continuePropagation() {
