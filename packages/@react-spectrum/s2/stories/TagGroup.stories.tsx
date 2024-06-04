@@ -72,12 +72,6 @@ export let Disabled = {
             Coffee
           </Text>
         </Tag>
-        <Tag>
-          <NewIcon />
-          <Text>
-            A very long long long long long long tag that hopefully goes on for a long long time
-          </Text>
-        </Tag>
       </TagGroup>
     );
   },

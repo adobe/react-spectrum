@@ -27,24 +27,3 @@ export const Example: Story = {
     label: 'Favorite sports'
   }
 };
-
-export const CheckboxGroupOverridesIsEmphasized: Story = {
-  render(args) {
-    return (
-      <CheckboxGroup {...args}>
-        <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
-        <Checkbox value="baseball">Baseball</Checkbox>
-        <Checkbox value="basketball">Basketball</Checkbox>
-      </CheckboxGroup>
-    );
-  },
-  parameters: {
-    docs: {
-      disable: true
-    }
-  },
-  args: {
-    label: 'Favorite sports'
-  }
-};
-
