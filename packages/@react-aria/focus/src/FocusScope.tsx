@@ -65,6 +65,7 @@ interface IFocusContext {
 }
 
 const FocusContext = React.createContext<IFocusContext | null>(null);
+const RESTORE_FOCUS_EVENT = 'react-aria-focus-scope-restore';
 
 let activeScope: ScopeRef = null;
 
@@ -117,12 +118,21 @@ export function FocusScope(props: FocusScopeProps) {
     // Find all rendered nodes between the sentinels and add them to the scope.
     let node = startRef.current?.nextSibling!;
     let nodes: Element[] = [];
+    let stopPropagation = e => e.stopPropagation();
     while (node && node !== endRef.current) {
       nodes.push(node as Element);
+      // Stop custom restore focus event from propagating to parent focus scopes.
+      node.addEventListener(RESTORE_FOCUS_EVENT, stopPropagation);
       node = node.nextSibling as Element;
     }
 
     scopeRef.current = nodes;
+
+    return () => {
+      for (let node of nodes) {
+        node.removeEventListener(RESTORE_FOCUS_EVENT, stopPropagation);
+      }
+    };
   }, [children]);
 
   useActiveScopeTracker(scopeRef, restoreFocus, contain);
@@ -470,7 +480,7 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   }
 }
 
-function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
+function getFirstInScope(scope: Element[], tabbable = true) {
   let sentinel = scope[0].previousElementSibling!;
   let scopeRoot = getScopeRoot(scope);
   let walker = getFocusableTreeWalker(scopeRoot, {tabbable}, scope);
@@ -485,7 +495,11 @@ function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
     nextNode = walker.nextNode();
   }
 
-  focusElement(nextNode as FocusableElement);
+  return nextNode as FocusableElement;
+}
+
+function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
+  focusElement(getFirstInScope(scope, tabbable));
 }
 
 function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus?: boolean) {
@@ -692,7 +706,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.nodeToRestore && treeNode.nodeToRestore.isConnected) {
-                focusElement(treeNode.nodeToRestore);
+                restoreFocusToElement(treeNode.nodeToRestore);
                 return;
               }
               treeNode = treeNode.parent;
@@ -703,7 +717,8 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
             treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.scopeRef && treeNode.scopeRef.current && focusScopeTree.getTreeNode(treeNode.scopeRef)) {
-                focusFirstInScope(treeNode.scopeRef.current, true);
+                let node = getFirstInScope(treeNode.scopeRef.current, true);
+                restoreFocusToElement(node);
                 return;
               }
               treeNode = treeNode.parent;
@@ -713,6 +728,15 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
       }
     };
   }, [scopeRef, restoreFocus]);
+}
+
+function restoreFocusToElement(node: FocusableElement) {
+  // Dispatch a custom event that parent elements can intercept to customize focus restoration.
+  // For example, virtualized collection components reuse DOM elements, so the original element
+  // might still exist in the DOM but representing a different item.
+  if (node.dispatchEvent(new CustomEvent(RESTORE_FOCUS_EVENT, {bubbles: true, cancelable: true}))) {
+    focusElement(node);
+  }
 }
 
 /**

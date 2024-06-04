@@ -12,6 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria/utils/src/scrollIntoView');
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
@@ -20,6 +21,7 @@ import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
+import {scrollIntoView} from '@react-aria/utils';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -1434,7 +1436,6 @@ describe('ListView', function () {
         jest.runAllTimers();
       });
       await user.tab();
-      expect(grid.scrollTop).toBe(0);
 
       let rows = tree.getAllByRole('row');
       let rowWrappers = rows.map(item => item.parentElement);
@@ -1446,16 +1447,28 @@ describe('ListView', function () {
 
       // scroll us down far enough that item 0 isn't in the view
       moveFocus('ArrowDown');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 1'));
+      grid.scrollTop = 40;
+      fireEvent.scroll(grid);
       moveFocus('ArrowDown');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 2'));
+      grid.scrollTop = 80;
+      fireEvent.scroll(grid);
       moveFocus('ArrowDown');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 3'));
-      expect(grid.scrollTop).toBe(100);
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 3'));
+      grid.scrollTop = 120;
+      fireEvent.scroll(grid);
 
       moveFocus('ArrowUp');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 2'));
+      grid.scrollTop = 80;
+      fireEvent.scroll(grid);
       moveFocus('ArrowUp');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 1'));
+      grid.scrollTop = 40;
+      fireEvent.scroll(grid);
       moveFocus('ArrowUp');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 0'));
-      expect(grid.scrollTop).toBe(0);
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 0'));
     });
 
     it('should scroll to a row when it is focused', function () {
@@ -1485,12 +1498,10 @@ describe('ListView', function () {
       act(() => {
         jest.runAllTimers();
       });
-      expect(grid.scrollTop).toBe(0);
 
       focusRow(tree, 'Item 1');
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
-
-      expect(grid.scrollTop).toBe(20);
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, document.activeElement);
     });
 
     it('should scroll to a row when it is focused off screen', function () {
@@ -1512,21 +1523,18 @@ describe('ListView', function () {
       let row = getRow(tree, 'Item 0');
       act(() => row.focus());
       expect(document.activeElement).toBe(row);
-      expect(body.scrollTop).toBe(0);
 
       // When scrolling the focused item out of view, focus should remain on the item
-      body.scrollTop = 1000;
       fireEvent.scroll(body);
 
-      expect(body.scrollTop).toBe(1000);
       expect(document.activeElement).toBe(row);
       // item isn't reused by virutalizer
       expect(tree.queryByText('Item 0')).toBe(row.firstElementChild.firstElementChild.firstElementChild);
 
       // Moving focus should scroll the new focused item into view
       moveFocus('ArrowDown');
-      expect(body.scrollTop).toBe(0);
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
+      expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
     });
   });
 
