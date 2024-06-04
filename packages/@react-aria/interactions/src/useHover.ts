@@ -117,8 +117,8 @@ export function useHover(props: HoverProps): HoverResult {
           type: 'hoverstart',
           target,
           pointerType,
-          x: event.clientX,
-          y: event.clientY
+          x: event.clientX - target.getBoundingClientRect().left,
+          y: event.clientY - target.getBoundingClientRect().top
         });
       }
 
@@ -144,8 +144,8 @@ export function useHover(props: HoverProps): HoverResult {
           type: 'hoverend',
           target,
           pointerType,
-          x: event.clientX,
-          y: event.clientY
+          x: event.clientX - target.getBoundingClientRect().left,
+          y: event.clientY - target.getBoundingClientRect().top
         });
       }
 
