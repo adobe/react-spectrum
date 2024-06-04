@@ -335,13 +335,13 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (itemRect && itemRect.maxY < pageY) {
       let nextKey = this.getKeyBelow(key);
-      itemRect = this.getItemRect(nextKey);
-
-      // Guard against case where maxY of the last key is barely less than pageY due to rounding
-      // and thus it attempts to set key to null
-      if (nextKey != null) {
-        key = nextKey;
+      // If nextKey is undefined, we've reached the last row already
+      if (nextKey == null) {
+        break;
       }
+
+      itemRect = this.getItemRect(nextKey);
+      key = nextKey;
     }
 
     return key;

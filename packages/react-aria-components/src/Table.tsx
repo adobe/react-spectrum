@@ -102,7 +102,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   getLastKey() {
     let rows = [...this.getChildren(this.body.key)];
-    return rows[rows.length - 1]?.key;
+    let lastRow = rows[rows.length - 1];
+    return (lastRow?.type === 'loader' ? lastRow.prevKey : lastRow?.key) as Key;
   }
 
   getKeyAfter(key: Key) {
@@ -111,7 +112,10 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       return node.nextKey ?? null;
     }
 
-    return super.getKeyAfter(key);
+    // TODO: may need to update this logic to skip over loader and pass the key of the row after the loader if any,
+    // implement when expandable rows + loaders becomes a thing in RAC
+    let nextKey = super.getKeyAfter(key);
+    return nextKey != null && this.getItem(nextKey)?.type !== 'loader' ? nextKey : null;
   }
 
   getKeyBefore(key: Key) {
@@ -121,6 +125,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     let k = super.getKeyBefore(key);
+    // TODO: will need to intentionally skip "loader" items most likely, implement when expandable rows with
+    // loaders become a thing becomes a thing in RAC
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
@@ -812,6 +818,7 @@ const _ColumnResizer = forwardRef(ColumnResizer);
 export {_ColumnResizer as ColumnResizer};
 
 export interface TableBodyRenderProps {
+  // TODO: I wonder if this should also be true if the table only has the loading row. I figure we should keep loading and empty state as separate states
   /**
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
@@ -838,10 +845,11 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+  let isTableEmpty = collection.size === 0 && collection.rows.filter(row => row.type === 'loader').length === 0;
 
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: collection.size === 0
+    isEmpty: isTableEmpty
   };
   let renderProps = useRenderProps({
     ...props,
@@ -852,7 +860,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   });
 
   let emptyState;
-  let isTableEmpty = collection.size === 0 && collection.rows.filter(row => row.type === 'loader').length === 0;
+
   if (isTableEmpty && props.renderEmptyState && state) {
     emptyState = (
       <tr role="row">
@@ -869,7 +877,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
       ref={ref}
-      data-empty={collection.size === 0 || undefined}>
+      data-empty={isTableEmpty || undefined}>
       {isDroppable && <RootDropIndicator />}
       <CollectionChildren collection={collection} parent={collection.body} />
       {emptyState}
@@ -1256,9 +1264,8 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
         ref={ref}
         {...mergeProps(filterDOMProps(props as any))}
         {...renderProps}
-        data-table-empty={state.collection.size === 0}
-        data-rac>
-        <td role="rowheader" colSpan={numColumns} aria-colspan={numColumns}>
+        data-table-empty={state.collection.size === 0}>
+        <td role="rowheader" colSpan={numColumns}>
           {renderProps.children}
         </td>
       </tr>

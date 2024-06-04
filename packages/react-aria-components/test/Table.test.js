@@ -12,10 +12,17 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
+import {composeStories} from '@storybook/react';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
+import * as stories from '../stories/Table.stories';
 import userEvent from '@testing-library/user-event';
+
+let {
+  RenderEmptyStateStory: EmptyLoadingTable,
+  TableLoadingBodyWrapperStory: LoadingMoreTable
+} = composeStories(stories);
 
 function MyColumn(props) {
   return (
@@ -1198,7 +1205,7 @@ describe('Table', () => {
     });
   });
 
-  describe('error state', function () {
+  describe('error state', () => {
     let consoleWarnSpy = jest.fn();
     let consoleWarn = console.warn;
     let consoleError = console.error;
@@ -1250,6 +1257,139 @@ describe('Table', () => {
 
       expect(() => render(<StaticRowDynamicCell />)).toThrow();
       expect(consoleWarnSpy).toHaveBeenCalledWith('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    });
+  });
+
+  describe('load more', () => {
+    let offsetHeight, scrollHeight;
+    beforeAll(function () {
+      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+        if (this.getAttribute('role') === 'grid') {
+          return 200;
+        }
+
+        return 40;
+      });
+    });
+
+    afterAll(function () {
+      offsetHeight.mockReset();
+      scrollHeight.mockReset();
+    });
+
+    it('should render the load more element with the expected attributes', () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoading />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(6);
+      let loader = rows[5];
+      expect(loader).toHaveAttribute('data-table-empty', 'false');
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      let cell = within(loader).getByRole('rowheader');
+      expect(cell).toHaveAttribute('colspan', '3');
+    });
+
+    it('should not focus the load more row when using ArrowDown', async () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[3]);
+    });
+
+    it('should not focus the load more row when using End', async () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[3]);
+    });
+
+    it('should not focus the load more row when using PageDown', async () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[3]);
+
+      // Check that the same when cell is focused
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[2]).getByRole('rowheader'));
+      await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(within(rows[4]).getByRole('rowheader'));
+    });
+
+    it('should disable the select all checkbox and column focusablity when the table is empty and loading', async () => {
+      let {getByRole, getAllByRole} = render(<EmptyLoadingTable isLoading />);
+
+      let table = getByRole('grid');
+      await user.tab();
+      expect(document.activeElement).toBe(table);
+      let column = getAllByRole('columnheader')[0];
+      expect(within(column).getByRole('checkbox', {hidden: true})).toBeDisabled();
+    });
+
+    it('should provide isTableEmpty via render props', () => {
+      let {getAllByRole} = render(<EmptyLoadingTable isLoading />);
+      let rows = getAllByRole('row');
+      let loader = rows[1];
+      expect(loader).toHaveTextContent('Loading spinner');
+      expect(getAllByRole('row')[1]).toHaveAttribute('data-table-empty', 'true');
+    });
+
+    it('should not render renderEmpty state and the loader at the same time', () => {
+      let {getAllByRole, rerender} = render(<EmptyLoadingTable isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[1];
+      let body = getAllByRole('rowgroup')[1];
+
+      expect(rows).toHaveLength(2);
+      expect(body).not.toHaveAttribute('data-empty');
+      expect(loader).toHaveTextContent('Loading spinner');
+
+      rerender(<EmptyLoadingTable />);
+
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(body).toHaveAttribute('data-empty', 'true');
+      expect(rows[1]).toHaveTextContent('No results');
     });
   });
 });
