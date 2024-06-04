@@ -44,7 +44,7 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * via the left/right arrow keys or the tab key.
    * @default 'arrow'
    */
-  navigationBehavior?: 'arrow' | 'tab'
+  keyboardNavigationBehavior?: 'arrow' | 'tab'
 }
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
@@ -88,7 +88,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     keyboardDelegate,
     onAction,
     linkBehavior = 'action',
-    navigationBehavior = 'arrow'
+    keyboardNavigationBehavior = 'arrow'
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -108,7 +108,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, navigationBehavior});
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,

@@ -65,7 +65,7 @@ GridListExample.story = {
       control: 'radio',
       options: ['stack', 'grid']
     },
-    navigationBehavior: {
+    keyboardNavigationBehavior: {
       control: 'radio',
       options: ['arrow', 'tab']
     }

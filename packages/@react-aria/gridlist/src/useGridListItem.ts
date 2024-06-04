@@ -67,7 +67,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, navigationBehavior} = listMap.get(state);
+  let {onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -139,7 +139,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     switch (e.key) {
       case 'ArrowLeft': {
-        if (navigationBehavior === 'arrow') {
+        if (keyboardNavigationBehavior === 'arrow') {
           // Find the next focusable element within the row.
           let focusable = direction === 'rtl'
             ? walker.nextNode() as FocusableElement
@@ -170,7 +170,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         break;
       }
       case 'ArrowRight': {
-        if (navigationBehavior === 'arrow') {
+        if (keyboardNavigationBehavior === 'arrow') {
           let focusable = direction === 'rtl'
             ? walker.previousNode() as FocusableElement
             : walker.nextNode() as FocusableElement;
@@ -212,7 +212,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         }
         break;
       case 'Tab': {
-        if (navigationBehavior === 'tab') {
+        if (keyboardNavigationBehavior === 'tab') {
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
           let walker = getFocusableTreeWalker(ref.current, {tabbable: true});

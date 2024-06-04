@@ -90,7 +90,7 @@ interface GridListInnerProps<T extends object> {
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  let {dragAndDropHooks, navigationBehavior = 'arrow', layout = 'stack'} = props;
+  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let state = useListState({
     ...props,
     collection,
@@ -115,7 +115,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     ...props,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
-    navigationBehavior: layout === 'grid' ? 'tab' : navigationBehavior
+    keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior
   }, state, ref);
 
   let selectionManager = state.selectionManager;
