@@ -48,10 +48,6 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/react-stately',
-      'packages/react-aria',
-      'packages/react-aria-components',
-      'packages/tailwindcss-react-aria-components',
       'packages/*/*'
     ],
     devDependencies: Object.fromEntries(
@@ -85,10 +81,6 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/react-stately',
-      'packages/react-aria',
-      'packages/react-aria-components',
-      'packages/tailwindcss-react-aria-components',
       'packages/*/*'
     ],
     devDependencies: Object.fromEntries(
@@ -182,6 +174,9 @@ async function build() {
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');
   for (let p of packages) {
+    if (p === 'react-stately' || p === 'react-aria' || p === 'react-aria-components' || p === 'tailwindcss-react-aria-components') {
+      continue;
+    }
     if (!p.includes('spectrum-css') && !p.includes('example-theme') && fs.existsSync(path.join(dir, 'node_modules', p))) {
       fs.moveSync(path.join(dir, 'node_modules', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
       fs.removeSync(path.join(dir, 'packages', path.dirname(p), 'dist'));
