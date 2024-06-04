@@ -64,6 +64,10 @@ GridListExample.story = {
     layout: {
       control: 'radio',
       options: ['stack', 'grid']
+    },
+    navigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
     }
   }
 };
