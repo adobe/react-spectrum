@@ -11,7 +11,7 @@
  */
 
 import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
-import {AsyncLoadable, DOMRef, Key, LoadingState, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AsyncLoadable, DOMRef, Key, LoadingState, Node, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
@@ -26,7 +26,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {JSX, ReactElement, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -70,7 +70,8 @@ interface ListViewContextValue<T> {
   isListDraggable: boolean,
   isListDroppable: boolean,
   layout: ListLayout<T>,
-  loadingState: LoadingState
+  loadingState: LoadingState,
+  renderEmptyState?: () => JSX.Element
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -118,6 +119,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     overflowMode = 'truncate',
     onAction,
     dragAndDropHooks,
+    renderEmptyState,
     ...otherProps
   } = props;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -139,7 +141,6 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let {collection, selectionManager} = state;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/list');
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
@@ -186,9 +187,6 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     onAction
   }, state, domRef);
 
-  // Sync loading state into the layout.
-  layout.isLoading = isLoading;
-
   let focusedKey = selectionManager.focusedKey;
   if (dropState?.target?.type === 'item') {
     focusedKey = dropState.target.key;
@@ -209,7 +207,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragAndDropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragAndDropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState, renderEmptyState}}>
       <FocusScope>
         <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
           <Virtualizer
@@ -242,51 +240,17 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
               )
             }
             layout={layout}
-            collection={collection}
-            transitionDuration={isLoading ? 160 : 220}>
-            {(type, item) => {
+            layoutOptions={useMemo(() => ({isLoading}), [isLoading])}
+            collection={collection}>
+            {useCallback((type, item) => {
               if (type === 'item') {
-                return (
-                  <>
-                    {isListDroppable && collection.getKeyBefore(item.key) == null &&
-                      <RootDropIndicator key="root" />
-                    }
-                    {isListDroppable &&
-                      <InsertionIndicator
-                        key={`${item.key}-before`}
-                        target={{key: item.key, type: 'item', dropPosition: 'before'}} />
-                    }
-                    <ListViewItem item={item} isEmphasized hasActions={!!onAction} />
-                    {isListDroppable &&
-                      <InsertionIndicator
-                        key={`${item.key}-after`}
-                        target={{key: item.key, type: 'item', dropPosition: 'after'}}
-                        isPresentationOnly={collection.getKeyAfter(item.key) != null} />
-                    }
-                  </>
-                );
+                return <Item item={item} />;
               } else if (type === 'loader') {
-                return (
-                  <CenteredWrapper>
-                    <ProgressCircle
-                      isIndeterminate
-                      aria-label={collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
-                  </CenteredWrapper>
-                );
+                return <LoadingView />;
               } else if (type === 'placeholder') {
-                let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
-                if (emptyState == null) {
-                  return null;
-                }
-
-                return (
-                  <CenteredWrapper>
-                    {emptyState}
-                  </CenteredWrapper>
-                );
+                return <EmptyState />;
               }
-
-            }}
+            }, [])}
           </Virtualizer>
         </FocusRing>
       </FocusScope>
@@ -304,6 +268,55 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
         </DragPreview>
       }
     </ListViewContext.Provider>
+  );
+}
+
+function Item({item}: {item: Node<unknown>}) {
+  let {isListDroppable, state, onAction} = useContext(ListViewContext);
+  return (
+    <>
+      {isListDroppable && state.collection.getKeyBefore(item.key) == null &&
+        <RootDropIndicator key="root" />
+      }
+      {isListDroppable &&
+        <InsertionIndicator
+          key={`${item.key}-before`}
+          target={{key: item.key, type: 'item', dropPosition: 'before'}} />
+      }
+      <ListViewItem item={item} isEmphasized hasActions={!!onAction} />
+      {isListDroppable &&
+        <InsertionIndicator
+          key={`${item.key}-after`}
+          target={{key: item.key, type: 'item', dropPosition: 'after'}}
+          isPresentationOnly={state.collection.getKeyAfter(item.key) != null} />
+      }
+    </>
+  );
+}
+
+function LoadingView() {
+  let {state} = useContext(ListViewContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/list');
+  return (
+    <CenteredWrapper>
+      <ProgressCircle
+        isIndeterminate
+        aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
+    </CenteredWrapper>
+  );
+}
+
+function EmptyState() {
+  let {renderEmptyState} = useContext(ListViewContext);
+  let emptyState = renderEmptyState ? renderEmptyState() : null;
+  if (emptyState == null) {
+    return null;
+  }
+
+  return (
+    <CenteredWrapper>
+      {emptyState}
+    </CenteredWrapper>
   );
 }
 

@@ -394,7 +394,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   let popoverRef = useRef<HTMLDivElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let layout = useListBoxLayout(state, isLoading);
+  let layout = useListBoxLayout(state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete<T>(

@@ -304,7 +304,7 @@ describe('Calendar', () => {
     };
 
     let {getByRole} = render(
-      <Calendar aria-label="Appointment date" className="grid">
+      <Calendar aria-label="Appointment date" className="grid" defaultValue={new CalendarDate(2020, 3, 3)}>
         <header>
           <Button slot="previous">◀</Button>
           <Heading />
