@@ -1370,7 +1370,7 @@ describe('Table', () => {
       let rows = getAllByRole('row');
       let loader = rows[1];
       expect(loader).toHaveTextContent('Loading spinner');
-      expect(getAllByRole('row')[1]).toHaveAttribute('data-table-empty', 'true');
+      expect(loader).toHaveAttribute('data-table-empty', 'true');
     });
 
     it('should not render renderEmpty state and the loader at the same time', () => {

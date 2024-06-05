@@ -142,22 +142,16 @@ TreeExampleStatic.story = {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
+      control: 'radio',
+      options: ['toggle', 'replace']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   },
   parameters: {
@@ -196,6 +190,26 @@ let rows = [
     {id: 'reports-2', name: 'Reports 2'}
   ]}
 ];
+
+const MyTreeLoader = () => {
+  return (
+    <UNSTABLE_TreeLoader>
+      {({isTreeEmpty, level}) => {
+        let message = `Level ${level} loading spinner`;
+        if (isTreeEmpty) {
+          message = 'Root level loading spinner';
+        } else if (level === 1) {
+          message = 'Load more spinner';
+        }
+        return (
+          <span style={{marginInlineStart: `${(level > 1 ? 25 : 0) + (level - 1) * 15}px`}}>
+            {message}
+          </span>
+        );
+      }}
+    </UNSTABLE_TreeLoader>
+  );
+};
 
 interface DynamicTreeItemProps extends TreeItemProps<object> {
   children: ReactNode,
@@ -252,7 +266,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         theoretically this would look like (loadingKeys.includes(parentKey) && props.id === last key of parent) &&....
         both the parentKey of a given item as well as checking if the current tree item is the last item of said parent would need to be done by the user outside of this tree item?
       */}
-      {props.isLoading && renderLoader?.(props.id) && <UNSTABLE_TreeLoader>placeholder loader</UNSTABLE_TreeLoader>}
+      {props.isLoading && renderLoader?.(props.id) && <MyTreeLoader /> }
     </>
   );
 };
@@ -304,33 +318,6 @@ WithLinks.story = {
   }
 };
 
-interface ItemType {
-  childItems: Iterable<object>,
-  name: string
-}
-const EmptyTree = (args: {isLoading: boolean}) => (
-  <UNSTABLE_Tree
-    {...args}
-    className={styles.tree}
-    aria-label="test empty tree dynamic"
-    items={[]}
-    renderEmptyState={() => args.isLoading ? <span>Nothing in tree</span> : <span>root loading</span>}>
-    {(item: ItemType) => (
-      <DynamicTreeItem childItems={item?.childItems} textValue={item?.name}>
-        {item?.name}
-      </DynamicTreeItem>
-    )}
-  </UNSTABLE_Tree>
-);
-
-export const EmptyTreeStory = {
-  render: EmptyTree,
-  args: {
-    isLoading: false
-  },
-  name: 'Empty/Loading Tree rendered with renderEmptyState'
-};
-
 const EmptyTreeStatic = (args: {isLoading: boolean}) => (
   <UNSTABLE_Tree
     {...args}
@@ -344,7 +331,7 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
         </DynamicTreeItem>
       )}
     </Collection>
-    {args.isLoading && <UNSTABLE_TreeLoader>root loading</UNSTABLE_TreeLoader>}
+    {args.isLoading && <MyTreeLoader />}
   </UNSTABLE_Tree>
 );
 
@@ -366,7 +353,7 @@ function LoadingStoryDepOnCollection(args) {
           </DynamicTreeItem>
         )}
       </Collection>
-      {args.isLoading && <UNSTABLE_TreeLoader>root loading</UNSTABLE_TreeLoader>}
+      {args.isLoading && <MyTreeLoader />}
     </UNSTABLE_Tree>
   );
 }
@@ -398,8 +385,6 @@ export const LoadingStoryDepOnTopStory = {
   },
   name: 'Loading, dynamic rows, root loader rendered dynamically as well'
 };
-
-// TODO: add story that replaces the chevron with a loading spinner instead since that might be a use case
 
 function ExpandButton(props) {
   let {isLoading, isExpanded} = props;

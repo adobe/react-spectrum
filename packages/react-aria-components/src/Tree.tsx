@@ -214,11 +214,14 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     disabledBehavior
   });
 
+  // TODO: is this strange? Maybe should have a separate getter from the flattened collection for the original collection size
+  // Definitely a bit confusing that there are two collections and that I'm using the original one to check if the tree is empty
+  let isTreeEmpty = collection.size === 0;
   let {gridProps} = useTreeGridList(props, state, ref);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
-    isEmpty: state.collection.size === 0,
+    isEmpty: isTreeEmpty,
     isFocused,
     isFocusVisible,
     state
@@ -233,7 +236,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
-  if (state.collection.size === 0 && props.renderEmptyState) {
+
+  if (isTreeEmpty && props.renderEmptyState) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {isEmpty, ...values} = renderValues;
     let content = props.renderEmptyState({...values});
@@ -261,7 +265,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
-        data-empty={state.collection.size === 0 || undefined}
+        data-empty={collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
@@ -409,6 +413,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
         }
         // Skip item since we don't render the nested rows as children of the parent row, the flattened collection
         // will render them each as siblings instead
+        case 'loader':
         case 'item':
           return <></>;
         default:
@@ -465,10 +470,22 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
   );
 });
 
+export interface TreeLoaderRenderProps {
+  /**
+   * Whether the tree is currently empty.
+   * @selector [data-tree-empty]
+   */
+  isTreeEmpty: boolean,
+  /**
+   * What level the tree item has within the tree.
+   * @selector [data-level]
+   */
+  level: number
+}
 
-// TOOD: decide what props this would need if any
-// TODO: this needs the type of 'item' to get the proper level value calculated by Collection. Providing any other type means our level is off by one for any loaders that would appear deeper than root level
-export const UNSTABLE_TreeLoader = createLeafComponent('item', function TreeLoader<T extends object>(props: any,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export interface TreeLoaderProps extends RenderProps<TreeLoaderRenderProps> {}
+
+export const UNSTABLE_TreeLoader = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(UNSTABLE_TreeStateContext);
   // TODO: might be able to still leverage the hook for the row information, but for now just manaully calc
   // let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
@@ -496,8 +513,12 @@ export const UNSTABLE_TreeLoader = createLeafComponent('item', function TreeLoad
     ...props,
     id: undefined,
     children: item.rendered,
-    defaultClassName: 'react-aria-TreeLoader'
-    // TODO: what loader render props do we need
+    defaultClassName: 'react-aria-TreeLoader',
+    values: {
+      // If the loader is being rendered and there is only one item in the collection, it must be the loader and not an actual row
+      isTreeEmpty: state?.collection.size <= 1,
+      level: item.level + 1
+    }
   });
 
   return (
@@ -507,6 +528,7 @@ export const UNSTABLE_TreeLoader = createLeafComponent('item', function TreeLoad
         ref={ref}
         {...mergeProps(filterDOMProps(props as any), rowProps)}
         {...renderProps}
+        data-tree-empty={state?.collection.size <= 1}
         data-level={item.level + 1}>
         <div role="gridcell" aria-colindex={1}>
           {renderProps.children}
@@ -542,7 +564,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   let flattenedRows: Node<T>[] = [];
 
   let visitNode = (node: Node<T>) => {
-    if (node.type === 'item') {
+    if (node.type === 'item' || node.type === 'loader') {
       let parentKey = node?.parentKey;
       let clone = {...node};
       if (parentKey != null) {
@@ -552,6 +574,13 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         if (hasContentNode) {
           clone.index = node?.index != null ? node?.index - 1 : 0;
         }
+
+        // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibiling rows
+        // (Collection only incrementing the level if it is a "item" type node).
+        if (node.type === 'loader') {
+          clone.level = node.level + 1;
+        }
+
         keyMap.set(clone.key, clone as NodeValue<T>);
       } else {
         keyMap.set(node.key, node as NodeValue<T>);
