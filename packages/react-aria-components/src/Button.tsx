@@ -99,7 +99,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /**
    * What to render as children while pending state is true.
    */
-  renderPendingState?: ReactNode
+  renderPendingState?: (props: ButtonRenderProps) => ReactNode
 }
 
 interface ButtonContextValue extends ButtonProps {
@@ -118,9 +118,10 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
   let [isPendingVisible, setIsPendingVisible] = useState(false);
+  let renderValues = {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isPendingVisible};
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isPendingVisible},
+    values: renderValues,
     defaultClassName: 'react-aria-Button'
   });
 
@@ -180,15 +181,15 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
         aria-atomic>
         {renderProps.children}
       </div>
-      {isPending && (
+      {isPending && renderPendingState && (
         <div
           aria-hidden="true"
           style={{visibility: isPendingVisible ? 'visible' : 'hidden'}}
           className={'react-aria-ButtonPending'}>
-          {renderPendingState}
+          {renderPendingState(renderValues)}
         </div>
       )}
-      {isPending &&
+      {isPending && renderPendingState &&
         <>
           <div aria-live={isFocused ? ariaLive : 'off'}>
             {isPendingVisible &&
