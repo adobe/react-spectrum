@@ -36,32 +36,32 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/color": "workspace:^",
-    "@react-aria/focus": "workspace:^",
-    "@react-aria/i18n": "workspace:^",
-    "@react-aria/interactions": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-spectrum/dialog": "workspace:^",
-    "@react-spectrum/form": "workspace:^",
-    "@react-spectrum/label": "workspace:^",
-    "@react-spectrum/overlays": "workspace:^",
-    "@react-spectrum/picker": "workspace:^",
-    "@react-spectrum/textfield": "workspace:^",
-    "@react-spectrum/utils": "workspace:^",
-    "@react-spectrum/view": "workspace:^",
-    "@react-stately/color": "workspace:^",
-    "@react-types/color": "workspace:^",
-    "@react-types/shared": "workspace:^",
-    "@react-types/textfield": "workspace:^",
+    "@react-aria/color": "3.0.0-beta.33",
+    "@react-aria/focus": "^3.17.1",
+    "@react-aria/i18n": "^3.11.1",
+    "@react-aria/interactions": "^3.21.3",
+    "@react-aria/utils": "^3.24.1",
+    "@react-spectrum/dialog": "^3.8.11",
+    "@react-spectrum/form": "^3.7.6",
+    "@react-spectrum/label": "^3.16.6",
+    "@react-spectrum/overlays": "^5.6.1",
+    "@react-spectrum/picker": "^3.14.5",
+    "@react-spectrum/textfield": "^3.12.1",
+    "@react-spectrum/utils": "^3.11.7",
+    "@react-spectrum/view": "^3.6.10",
+    "@react-stately/color": "^3.6.1",
+    "@react-types/color": "3.0.0-beta.25",
+    "@react-types/shared": "^3.23.1",
+    "@react-types/textfield": "^3.9.3",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "workspace:^"
+    "react-aria-components": "^1.2.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/style-macro-s1": "workspace:^"
+    "@react-spectrum/style-macro-s1": "3.0.0-alpha.0"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
+    "@react-spectrum/provider": "^3.9.7",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },

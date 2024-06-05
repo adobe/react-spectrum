@@ -22,14 +22,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/combobox": "workspace:^",
-    "@react-aria/listbox": "workspace:^",
-    "@react-aria/searchfield": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-stately/combobox": "workspace:^",
-    "@react-types/autocomplete": "workspace:^",
-    "@react-types/button": "workspace:^",
-    "@react-types/shared": "workspace:^",
+    "@react-aria/combobox": "^3.9.1",
+    "@react-aria/listbox": "^3.12.1",
+    "@react-aria/searchfield": "^3.7.5",
+    "@react-aria/utils": "^3.24.1",
+    "@react-stately/combobox": "^3.8.4",
+    "@react-types/autocomplete": "3.0.0-alpha.22",
+    "@react-types/button": "^3.9.4",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

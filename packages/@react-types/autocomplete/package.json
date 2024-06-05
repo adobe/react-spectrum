@@ -9,9 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/combobox": "workspace:^",
-    "@react-types/searchfield": "workspace:^",
-    "@react-types/shared": "workspace:^"
+    "@react-types/combobox": "^3.11.1",
+    "@react-types/searchfield": "^3.5.5",
+    "@react-types/shared": "^3.23.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"

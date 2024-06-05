@@ -22,8 +22,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/overlays": "workspace:^",
-    "@react-types/tooltip": "workspace:^",
+    "@react-stately/overlays": "^3.6.7",
+    "@react-types/tooltip": "^3.4.9",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

@@ -22,8 +22,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/utils": "workspace:^",
-    "@react-types/searchfield": "workspace:^",
+    "@react-stately/utils": "^3.10.1",
+    "@react-types/searchfield": "^3.5.5",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

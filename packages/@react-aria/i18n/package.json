@@ -47,13 +47,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "workspace:^",
-    "@internationalized/message": "workspace:^",
-    "@internationalized/number": "workspace:^",
-    "@internationalized/string": "workspace:^",
-    "@react-aria/ssr": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-types/shared": "workspace:^",
+    "@internationalized/date": "^3.5.4",
+    "@internationalized/message": "^3.1.4",
+    "@internationalized/number": "^3.5.3",
+    "@internationalized/string": "^3.2.3",
+    "@react-aria/ssr": "^3.9.4",
+    "@react-aria/utils": "^3.24.1",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

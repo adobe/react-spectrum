@@ -20,8 +20,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/ssr": "workspace:^",
-    "@react-spectrum/test-utils": "workspace:^",
+    "@react-aria/ssr": "^3.9.4",
+    "@react-spectrum/test-utils": "1.0.0-alpha.1",
     "@swc/helpers": "^0.5.0",
     "resolve": "^1.17.0"
   },

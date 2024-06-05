@@ -23,15 +23,15 @@
   },
   "dependencies": {
     "@adobe/spectrum-css-ccx-workflow-icons": "1.0.2",
-    "@react-spectrum/icon": "workspace:^",
+    "@react-spectrum/icon": "^3.7.13",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
-    "@spectrum-icons/build-tools": "workspace:^",
+    "@spectrum-icons/build-tools": "3.0.0-alpha.1",
     "fs-extra": "^10.0.0"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
+    "@react-spectrum/provider": "^3.9.7",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "publishConfig": {

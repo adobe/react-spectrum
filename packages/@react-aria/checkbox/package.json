@@ -22,16 +22,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/form": "workspace:^",
-    "@react-aria/interactions": "workspace:^",
-    "@react-aria/label": "workspace:^",
-    "@react-aria/toggle": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-stately/checkbox": "workspace:^",
-    "@react-stately/form": "workspace:^",
-    "@react-stately/toggle": "workspace:^",
-    "@react-types/checkbox": "workspace:^",
-    "@react-types/shared": "workspace:^",
+    "@react-aria/form": "^3.0.5",
+    "@react-aria/interactions": "^3.21.3",
+    "@react-aria/label": "^3.7.8",
+    "@react-aria/toggle": "^3.10.4",
+    "@react-aria/utils": "^3.24.1",
+    "@react-stately/checkbox": "^3.6.5",
+    "@react-stately/form": "^3.0.3",
+    "@react-stately/toggle": "^3.7.4",
+    "@react-types/checkbox": "^3.8.1",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

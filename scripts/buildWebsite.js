@@ -24,28 +24,6 @@ build().catch(err => {
   process.exit(1);
 });
 
-// Changes dependencies in the workspace from 'workspace:^' to
-// a range which can actually be installed from npm/verdaccio.
-function moveWorkspaceToPeer(dir, pkgPath) {
-  let devPkg = JSON.parse(fs.readFileSync(path.join(dir, pkgPath), 'utf8'));
-  if (!devPkg.dependencies) {
-    return;
-  }
-  if (!devPkg.peerDependencies) {
-    devPkg.peerDependencies = {};
-  }
-  Object.entries(devPkg.dependencies).forEach(([name, version]) => {
-    if (version === 'workspace:^' && name === '@spectrum-icons/workflow') {
-      devPkg.peerDependencies[name] = '^4.0.0';
-      delete devPkg.dependencies[name];
-    } else if (version === 'workspace:^') {
-      devPkg.peerDependencies[name] = '^3.0.0';
-      delete devPkg.dependencies[name];
-    }
-  });
-  fs.writeFileSync(path.join(dir, pkgPath), JSON.stringify(devPkg, false, 2));
-}
-
 async function build() {
   let publicUrlFlag = process.argv[2] ? `--public-url ${process.argv[2]}` : '';
   // Create a temp directory to build the site in
@@ -163,11 +141,6 @@ async function build() {
     if (m && !semver.gt(devPkg.version, m[1])) {
       fs.removeSync(path.join(dir, file));
     }
-  }
-
-  // remove all references to workspace:^ dependencies in dev package.json
-  for (let file of glob.sync('packages/dev/**/package.json', {cwd: dir})) {
-    moveWorkspaceToPeer(dir, file);
   }
 
   // Only copy babel and parcel patches over

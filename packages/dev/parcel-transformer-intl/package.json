@@ -7,7 +7,7 @@
     "parcel": "2.0.0-dev.1599"
   },
   "dependencies": {
-    "@internationalized/string-compiler": "workspace:^",
+    "@internationalized/string-compiler": "^3.0.0",
     "@parcel/plugin": "2.0.0-dev.1601"
   }
 }

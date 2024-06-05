@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/provider": "workspace:^",
+    "@react-types/provider": "^3.8.1",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

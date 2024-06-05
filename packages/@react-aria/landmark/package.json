@@ -22,8 +22,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "workspace:^",
-    "@react-types/shared": "workspace:^",
+    "@react-aria/utils": "^3.24.1",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0",
     "use-sync-external-store": "^1.2.0"
   },

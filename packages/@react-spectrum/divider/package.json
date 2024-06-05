@@ -36,10 +36,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/separator": "workspace:^",
-    "@react-spectrum/utils": "workspace:^",
-    "@react-types/divider": "workspace:^",
-    "@react-types/shared": "workspace:^",
+    "@react-aria/separator": "^3.3.13",
+    "@react-spectrum/utils": "^3.11.7",
+    "@react-types/divider": "^3.3.9",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

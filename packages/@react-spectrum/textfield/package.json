@@ -36,25 +36,25 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "workspace:^",
-    "@react-aria/interactions": "workspace:^",
-    "@react-aria/textfield": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-spectrum/form": "workspace:^",
-    "@react-spectrum/label": "workspace:^",
-    "@react-spectrum/utils": "workspace:^",
-    "@react-stately/utils": "workspace:^",
-    "@react-types/shared": "workspace:^",
-    "@react-types/textfield": "workspace:^",
-    "@spectrum-icons/ui": "workspace:^",
+    "@react-aria/focus": "^3.17.1",
+    "@react-aria/interactions": "^3.21.3",
+    "@react-aria/textfield": "^3.14.5",
+    "@react-aria/utils": "^3.24.1",
+    "@react-spectrum/form": "^3.7.6",
+    "@react-spectrum/label": "^3.16.6",
+    "@react-spectrum/utils": "^3.11.7",
+    "@react-stately/utils": "^3.10.1",
+    "@react-types/shared": "^3.23.1",
+    "@react-types/textfield": "^3.9.3",
+    "@spectrum-icons/ui": "^3.6.7",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@spectrum-icons/workflow": "workspace:^"
+    "@spectrum-icons/workflow": "^4.2.12"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
+    "@react-spectrum/provider": "^3.9.7",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "publishConfig": {

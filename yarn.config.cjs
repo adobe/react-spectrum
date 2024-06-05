@@ -133,7 +133,8 @@ function enforceWorkspaceDependencies({Yarn}) {
         continue;
 
       if (isOurPackage(dependency)) {
-        dependency.update('workspace:^');
+        // change back to workspaces:^ when we're ready for yarn to handle versioning
+        dependency.update(otherDependency.range);
       }
     }
   }

@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "workspace:^",
-    "@react-types/shared": "workspace:^"
+    "@internationalized/date": "^3.5.4",
+    "@react-types/shared": "^3.23.1"
   },
   "publishConfig": {
     "access": "public"

@@ -22,10 +22,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-stately/form": "workspace:^",
-    "@react-types/shared": "workspace:^",
+    "@react-aria/interactions": "^3.21.3",
+    "@react-aria/utils": "^3.24.1",
+    "@react-stately/form": "^3.0.3",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

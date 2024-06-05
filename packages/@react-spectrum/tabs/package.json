@@ -36,27 +36,27 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "workspace:^",
-    "@react-aria/i18n": "workspace:^",
-    "@react-aria/interactions": "workspace:^",
-    "@react-aria/tabs": "workspace:^",
-    "@react-aria/utils": "workspace:^",
-    "@react-spectrum/picker": "workspace:^",
-    "@react-spectrum/text": "workspace:^",
-    "@react-spectrum/utils": "workspace:^",
-    "@react-stately/collections": "workspace:^",
-    "@react-stately/list": "workspace:^",
-    "@react-stately/tabs": "workspace:^",
-    "@react-types/select": "workspace:^",
-    "@react-types/shared": "workspace:^",
-    "@react-types/tabs": "workspace:^",
+    "@react-aria/focus": "^3.17.1",
+    "@react-aria/i18n": "^3.11.1",
+    "@react-aria/interactions": "^3.21.3",
+    "@react-aria/tabs": "^3.9.1",
+    "@react-aria/utils": "^3.24.1",
+    "@react-spectrum/picker": "^3.14.5",
+    "@react-spectrum/text": "^3.5.5",
+    "@react-spectrum/utils": "^3.11.7",
+    "@react-stately/collections": "^3.10.7",
+    "@react-stately/list": "^3.10.5",
+    "@react-stately/tabs": "^3.6.6",
+    "@react-types/select": "^3.9.4",
+    "@react-types/shared": "^3.23.1",
+    "@react-types/tabs": "^3.3.7",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "@react-spectrum/provider": "^3.0.0",
+    "@react-spectrum/provider": "^3.9.7",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
