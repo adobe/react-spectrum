@@ -102,8 +102,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   getLastKey() {
     let rows = [...this.getChildren(this.body.key)];
-    let lastRow = rows[rows.length - 1];
-    return (lastRow?.type === 'loader' ? lastRow.prevKey : lastRow?.key) as Key;
+    return rows[rows.length - 1]?.key;
   }
 
   getKeyAfter(key: Key) {
@@ -112,10 +111,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       return node.nextKey ?? null;
     }
 
-    // TODO: may need to update this logic to skip over loader and pass the key of the row after the loader if any,
-    // implement when expandable rows + loaders becomes a thing in RAC
-    let nextKey = super.getKeyAfter(key);
-    return nextKey != null && this.getItem(nextKey)?.type !== 'loader' ? nextKey : null;
+    return super.getKeyAfter(key);
   }
 
   getKeyBefore(key: Key) {
@@ -125,8 +121,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     let k = super.getKeyBefore(key);
-    // TODO: will need to intentionally skip "loader" items most likely, implement when expandable rows with
-    // loaders become a thing becomes a thing in RAC
     if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
