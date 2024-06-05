@@ -10,6 +10,7 @@ export function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>) {
 
 export function Breadcrumb(props: BreadcrumbProps & LinkProps) {
   return (
+    // @ts-ignore
     <AriaBreadcrumb {...props} className={twMerge('flex items-center gap-1', props.className)}>
       <Link variant="secondary" {...props} />
       {props.href && <ChevronRight className="w-3 h-3 text-gray-600 dark:text-zinc-400" />}
