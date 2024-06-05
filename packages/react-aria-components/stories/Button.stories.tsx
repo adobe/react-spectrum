@@ -68,7 +68,7 @@ function PendingButtonExample(props) {
       {...props}
       isPending={isPending}
       onPress={handlePress}
-      renderPendingState={'pending'}>
+      renderPendingState={() => 'pending'}>
       {props.children}
     </Button>
   );
