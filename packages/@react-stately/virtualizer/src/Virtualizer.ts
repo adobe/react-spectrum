@@ -133,7 +133,7 @@ export class Virtualizer<T extends object, V, W> {
    */
   keyAtPoint(point: Point): Key | null {
     let rect = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = rect.height === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
 
     // Layout may return multiple layout infos in the case of
     // persisted keys, so find the first one that actually intersects.
@@ -180,7 +180,7 @@ export class Virtualizer<T extends object, V, W> {
       rect = this._overscanManager.getOverscannedRect();
     }
 
-    let layoutInfos = rect.height === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
