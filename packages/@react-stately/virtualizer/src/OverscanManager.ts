@@ -36,9 +36,6 @@ export class OverscanManager {
 
   getOverscannedRect() {
     let overscanned = this.visibleRect.copy();
-    if (this.visibleRect.height === 0) {
-      return overscanned;
-    }
 
     let overscanY = this.visibleRect.height / 3;
     overscanned.height += overscanY;
