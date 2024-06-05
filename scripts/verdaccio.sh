@@ -41,7 +41,7 @@ set -e
 make build
 
 # Start verdaccio and send it to the background
-yarn verdaccio --config "./.verdaccio-ci.config.yml" --listen $port &>${output}&
+yarn verdaccio --listen $port &>${output}&
 
 # Wait for verdaccio to start
 grep -q 'http address' <(tail -f $output)
@@ -83,7 +83,7 @@ then
   yarn config set npmRegistryServer $registry
   cd ../..
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
-  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~0`/verdaccio/docs make website-production
+  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
 
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
