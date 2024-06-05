@@ -70,6 +70,7 @@ yarn lerna publish from-package --registry $registry --yes
 
 # set the npm registry because that will set it at a higher level, making local testing easier
 npm set registry $registry
+yarn config set npmRegistryServer $registry
 
 if [ "$ci" = true ];
 then

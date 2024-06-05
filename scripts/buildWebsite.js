@@ -37,6 +37,7 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
+      'packages/@internationalized/string-compiler',
       'packages/dev/*',
       'packages/@adobe/spectrum-css-temp'
     ],
