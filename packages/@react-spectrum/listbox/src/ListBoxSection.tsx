@@ -42,7 +42,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   });
 
   let {direction} = useLocale();
-  let state = useContext(ListBoxContext);
+  let {state} = useContext(ListBoxContext);
 
   return (
     <Fragment>

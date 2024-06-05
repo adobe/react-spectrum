@@ -74,6 +74,7 @@
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
     "@babel/register": "^7.23.7",
+    "@faker-js/faker": "^8.4.1",
     "@octokit/rest": "*",
     "@parcel/bundler-library": "2.11.1-dev.3224",
     "@parcel/optimizer-data-url": "2.0.0-dev.1601",
