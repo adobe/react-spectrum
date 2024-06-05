@@ -71,9 +71,6 @@ yarn lerna publish from-package --registry $registry --yes
 # set the npm registry because that will set it at a higher level, making local testing easier
 npm set registry $registry
 
-# Publish packages anonymously to verdaccio
-yarn workspaces foreach --all --no-private -pt npm publish
-
 if [ "$ci" = true ];
 then
   echo 'build prod docs'
