@@ -12,7 +12,7 @@
 import {AriaBreadcrumbsProps} from 'react-aria';
 import {Collection, Node} from 'react-stately';
 import {CollectionChildren, CollectionProps, createLeafComponent, useCollection} from './Collection';
-import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {LinkContext} from './Link';
@@ -67,7 +67,15 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
 const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
 
-export interface BreadcrumbProps extends StyleProps {
+export interface BreadcrumbRenderProps {
+  /**
+   * Whether the breadcrumb is for the current page.
+   * @selector [data-current]
+   */
+  isCurrent: boolean
+}
+
+export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {
   /** A unique id for the breadcrumb, which will be passed to `onAction` when the breadcrumb is pressed. */
   id?: Key,
   /** The children of the breadcrumb, typically a `<Link>`. */

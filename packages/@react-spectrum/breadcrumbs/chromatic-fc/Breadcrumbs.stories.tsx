@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {Breadcrumbs} from '../';
 import {Default as ChromaticDefault} from '../chromatic/Breadcrumbs.stories';
 
 export default {
-  title: 'Breadcrumbs'
+  title: 'Breadcrumbs',
+  component: Breadcrumbs
 };
 
 export const Default = {
