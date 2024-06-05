@@ -111,6 +111,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
     switch (e.key) {
       case 'Enter':
       case 'Tab':

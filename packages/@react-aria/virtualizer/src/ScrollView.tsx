@@ -155,7 +155,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     updateSize();
   }, [updateSize]);
   let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>();
-  let onResize = () => {
+  let onResize = useCallback(() => {
     if (isOldReact) {
       raf.current ??= requestAnimationFrame(() => {
         updateSize();
@@ -164,7 +164,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     } else {
       updateSize();
     }
-  };
+  }, [updateSize]);
   useResizeObserver({ref, onResize});
   useEffect(() => {
     return () => {
@@ -202,7 +202,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   };
 
   return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
+    <div role="presentation" {...otherProps} style={style} ref={ref} onScroll={onScroll}>
       <div role="presentation" style={innerStyle}>
         {children}
       </div>
