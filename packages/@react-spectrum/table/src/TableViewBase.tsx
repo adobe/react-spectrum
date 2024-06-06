@@ -291,7 +291,11 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         <TableRowGroup 
           key={reusableView.key}
           layoutInfo={reusableView.layoutInfo}
-          parent={parent?.layoutInfo}>
+          parent={parent?.layoutInfo}
+          // Override the default role="rowgroup" with role="presentation",
+          // in favor or adding role="rowgroup" to the ScrollView with
+          // ref={bodyRef} in the TableVirtualizer below.
+          role="presentation">
           {renderChildren(children)}
         </TableRowGroup>
       );
@@ -332,7 +336,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         </TableHeaderRow>
       );
     }
-    
+
     return (
       <TableCellWrapper
         key={reusableView.key}
@@ -448,7 +452,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   );
 
   return (
-    <TableContext.Provider 
+    <TableContext.Provider
       value={{
         state,
         dragState,
@@ -491,7 +495,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
             styleProps.className
           )
         }
-        // This should be `tableLayout` rather than `layout` so it doesn't 
+        // This should be `tableLayout` rather than `layout` so it doesn't
         // change objects and invalidate virtualizer.
         layout={tableLayout}
         collection={state.collection}
@@ -617,7 +621,6 @@ function TableVirtualizer(props) {
             {state.visibleViews[0]}
           </div>
           <ScrollView
-            role="presentation"
             className={
               classNames(
                 styles,
@@ -635,6 +638,11 @@ function TableVirtualizer(props) {
                 )
               )
             }
+            //  Firefox and Chrome make generic elements using CSS overflow 'scroll' or 'auto' tabbable,
+            //  including them within the accessibility tree, which breaks the table structure in Firefox.
+            //  Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
+            //  here and role="presentation" on the table body content fixes the table structure.
+            role="rowgroup"
             tabIndex={isVirtualDragging ? null : -1}
             style={{
               flex: 1,
