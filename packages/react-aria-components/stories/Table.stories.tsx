@@ -207,7 +207,6 @@ export const TableDynamicExample = () => {
   );
 };
 
-
 const MyColumn = (props: ColumnProps) => {
   return (
     <Column {...props}>
@@ -407,9 +406,6 @@ const MyTableLoader = () => {
   );
 };
 
-// TODO: note that there exists a problem if you combine dynamic cell rendering with static rows relying on automatic id generation, the collection will mess up due the id scoping being required
-// This happened below when I added a fragment wrapper to the table and didn't forward the id to the row in the wrapper
-// Will add warning for this and add a test
 const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
   return (
     <Table aria-label="Files">
@@ -493,7 +489,6 @@ export const TableLoadingRowRenderWrapperStory = {
 
 // TODO: when writing the docs, prefer this pattern in the docs, establish renderEmptyState as something distinct from empty + loading
 // (aka users should use empty state for if their table is empty and not loading, but should render the TableLoader for empty + loading and for has items + loading)
-// TODO: there is buggy behavior here, try keyboard naving the table when isLoading. Ideally everything should be disabled
 const RenderEmptyState = (args: {isLoading: boolean}) => {
   return (
     <Table aria-label="Files" selectionMode="multiple">
