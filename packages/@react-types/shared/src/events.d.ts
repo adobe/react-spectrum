@@ -68,11 +68,7 @@ export interface HoverEvent {
   /** The pointer type that triggered the hover event. */
   pointerType: 'mouse' | 'pen',
   /** The target element of the hover event. */
-  target: HTMLElement,
-  /** X position relative to the target. */
-  x: number,
-  /** Y position relative to the target. */
-  y: number
+  target: HTMLElement
 }
 
 export interface KeyboardEvents {

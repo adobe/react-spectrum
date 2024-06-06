@@ -316,9 +316,7 @@ describe('useHover', function () {
         {
           type: 'hoverstart',
           target: el,
-          pointerType: 'mouse',
-          x: 0,
-          y: 0
+          pointerType: 'mouse'
         },
         {
           type: 'hoverchange',
@@ -327,9 +325,7 @@ describe('useHover', function () {
         {
           type: 'hoverend',
           target: el,
-          pointerType: 'mouse',
-          x: 0,
-          y: 0
+          pointerType: 'mouse'
         },
         {
           type: 'hoverchange',
@@ -402,9 +398,7 @@ describe('useHover', function () {
         {
           type: 'hoverstart',
           target: el,
-          pointerType: 'mouse',
-          x: 0,
-          y: 0
+          pointerType: 'mouse'
         },
         {
           type: 'hoverchange',
@@ -413,9 +407,7 @@ describe('useHover', function () {
         {
           type: 'hoverend',
           target: el,
-          pointerType: 'mouse',
-          x: 0,
-          y: 0
+          pointerType: 'mouse'
         },
         {
           type: 'hoverchange',
@@ -441,9 +433,7 @@ describe('useHover', function () {
         {
           type: 'hoverstart',
           target: el,
-          pointerType: 'mouse',
-          x: 0,
-          y: 0
+          pointerType: 'mouse'
         },
         {
           type: 'hoverchange',
