@@ -24,7 +24,7 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
@@ -124,7 +124,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let updateSize = useCallback(() => {
+  let updateSize = useEffectEvent(() => {
     let dom = ref.current;
     if (!dom) {
       return;
@@ -149,7 +149,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       state.height = h;
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
     }
-  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
+  });
 
   useLayoutEffect(() => {
     updateSize();
