@@ -18,7 +18,6 @@ import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {reactDomRenderer, unmount} from '@react-spectrum/test-utils-internal/src/reactCompat';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
@@ -1632,19 +1631,17 @@ describe('FocusScope with Shadow DOM', function () {
   });
 
   it('should contain focus within the shadow DOM scope', async function () {
-    const {shadowRoot, shadowHost} = createShadowRoot();
-    const FocusableComponent = () => (
+    const {shadowRoot} = createShadowRoot();
+    const FocusableComponent = () => ReactDOM.createPortal(
       <FocusScope contain>
         <input data-testid="input1" />
         <input data-testid="input2" />
         <input data-testid="input3" />
-      </FocusScope>
+      </FocusScope>,
+      shadowRoot
     );
 
-    let root;
-    act(() => {
-      root  = reactDomRenderer(<FocusableComponent />, shadowRoot);
-    });
+    const {unmount} = render(<FocusableComponent />);
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     const input2 = shadowRoot.querySelector('[data-testid="input2"]');
@@ -1667,28 +1664,22 @@ describe('FocusScope with Shadow DOM', function () {
     expect(shadowRoot.activeElement).toBe(input1);
 
     // Cleanup
+    unmount();
     document.body.removeChild(shadowRoot.host);
-    act(() => {
-      unmount({
-        container: shadowHost,
-        root
-      });
-    });
   });
 
   it('should manage focus within nested shadow DOMs', async function () {
-    const {shadowRoot: parentShadowRoot, shadowHost} = createShadowRoot();
+    const {shadowRoot: parentShadowRoot} = createShadowRoot();
     const nestedDiv = document.createElement('div');
     parentShadowRoot.appendChild(nestedDiv);
     const childShadowRoot = nestedDiv.attachShadow({mode: 'open'});
 
-    let root;
-    act(() => {
-      root = reactDomRenderer(<FocusScope contain>
-        <input data-testid="input1" />
-        <input data-testid="input2" />
-      </FocusScope>, childShadowRoot);
-    });
+    const FocusableComponent = () =>  ReactDOM.createPortal(<FocusScope contain>
+      <input data-testid="input1" />
+      <input data-testid="input2" />
+    </FocusScope>, childShadowRoot);
+
+    const {unmount} = render(<FocusableComponent />);
 
     const input1 = childShadowRoot.querySelector('[data-testid=input1]');
     const input2 = childShadowRoot.querySelector('[data-testid=input2]');
@@ -1700,13 +1691,8 @@ describe('FocusScope with Shadow DOM', function () {
     expect(childShadowRoot.activeElement).toBe(input2);
 
     // Cleanup
+    unmount();
     document.body.removeChild(parentShadowRoot.host);
-    act(() => {
-      unmount({
-        container: shadowHost,
-        root
-      });
-    });
   });
 
   /**
@@ -1731,18 +1717,16 @@ describe('FocusScope with Shadow DOM', function () {
     const shadowHost = document.getElementById('shadow-host');
     const shadowRoot = shadowHost.attachShadow({mode: 'open'});
 
-    const FocusableComponent = () => (
+    const FocusableComponent = () => ReactDOM.createPortal(
       <FocusScope restoreFocus>
         <input data-testid="input1" />
         <input data-testid="input2" />
         <input data-testid="input3" />
-      </FocusScope>
+      </FocusScope>,
+      shadowRoot
     );
 
-    let root;
-    act(() => {
-      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
-    });
+    const {unmount} = render(<FocusableComponent />);
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     act(() => { input1.focus(); });
@@ -1754,12 +1738,9 @@ describe('FocusScope with Shadow DOM', function () {
 
     act(() => {
       jest.runAllTimers();
-
-      unmount({
-        container: shadowHost,
-        root
-      });
     });
+
+    unmount();
 
     expect(document.activeElement).toBe(externalInput);
   });
@@ -1771,18 +1752,16 @@ describe('FocusScope with Shadow DOM', function () {
   it('should autofocus and lock tab navigation inside shadow DOM', async function () {
     const {shadowRoot, shadowHost} = createShadowRoot();
 
-    const FocusableComponent = () => (
+    const FocusableComponent = () => ReactDOM.createPortal(
       <FocusScope contain>
         <input data-testid="input1" />
         <input data-testid="input2" />
         <button data-testid="button">Button</button>
-      </FocusScope>
+      </FocusScope>,
+      shadowRoot
     );
 
-    let root;
-    act(() => {
-      root = reactDomRenderer(<FocusableComponent />, shadowRoot);
-    });
+    const {unmount} = render(<FocusableComponent />);
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     const input2 = shadowRoot.querySelector('[data-testid="input2"]');
@@ -1805,13 +1784,8 @@ describe('FocusScope with Shadow DOM', function () {
     expect(shadowRoot.activeElement).toBe(input1);
 
     // Cleanup
+    unmount();
     document.body.removeChild(shadowHost);
-    act(() => {
-      unmount({
-        container: shadowHost,
-        root
-      });
-    });
   });
 });
 

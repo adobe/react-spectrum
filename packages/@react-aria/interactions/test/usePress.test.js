@@ -17,8 +17,7 @@ import {getDeepActiveElement} from '@react-aria/utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render as ReactDOMRender} from 'react-dom';
-import {reactDomRenderer, unmount} from '@react-spectrum/test-utils-internal/src/reactCompat';
+import ReactDOM, {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
@@ -3306,16 +3305,15 @@ describe('usePress', function () {
 
   describe('usePress with Shadow DOM', function () {
     installPointerEvent();
-    let cleanupShadowHost, root;
+    let unmount;
     let events = [];
     let addEvent = (e) => events.push(e);
 
     function setupShadowDOMTest(extraProps = {}, isDraggable = false) {
-      const {shadowRoot, shadowHost} = createShadowRoot();
-      cleanupShadowHost = shadowHost;
+      const {shadowRoot} = createShadowRoot();
       events = [];
       addEvent = (e) => events.push(e);
-      const ExampleComponent = () => (
+      const ExampleComponent = () => ReactDOM.createPortal(
         <div draggable={isDraggable}>
           <Example
             onPressStart={addEvent}
@@ -3324,12 +3322,12 @@ describe('usePress', function () {
             onPress={addEvent}
             onPressUp={addEvent}
             {...extraProps} />
-        </div>
+        </div>,
+        shadowRoot
       );
 
-      act(() => {
-        root = reactDomRenderer(<ExampleComponent />, shadowRoot);
-      });
+      const {unmount: _unmount} = render(<ExampleComponent />);
+      unmount = _unmount;
 
       return shadowRoot;
     }
@@ -3340,12 +3338,7 @@ describe('usePress', function () {
 
     afterEach(() => {
       act(() => {jest.runAllTimers();});
-      act(() => {
-        unmount({
-          container: cleanupShadowHost,
-          root
-        });
-      });
+      unmount();
     });
 
     it('should fire press events based on pointer events', function () {

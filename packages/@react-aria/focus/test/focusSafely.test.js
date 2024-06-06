@@ -15,7 +15,7 @@ import {act, createShadowRoot, render} from '@react-spectrum/test-utils-internal
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '@react-aria/utils';
-import {reactDomRenderer, unmount} from '@react-spectrum/test-utils-internal/src/reactCompat';
+import ReactDOM from 'react-dom';
 import {setInteractionModality} from '@react-aria/interactions';
 
 jest.mock('@react-aria/utils', () => {
@@ -75,19 +75,14 @@ describe('focusSafely', () => {
       const {shadowRoot, shadowHost} = createShadowRoot();
       setInteractionModality('virtual');
 
-      const Example = () => <button>Button</button>;
+      const Example = () => ReactDOM.createPortal(<button>Button</button>, shadowRoot);
 
-      let root;
-      act(() => {
-        root = reactDomRenderer(<Example />, shadowRoot);
-      });
+      const {unmount} = render(<Example />);
 
       const button = shadowRoot.querySelector('button');
 
       requestAnimationFrame(() => {
-        act(() => {
-          unmount({container: shadowHost, root});
-        });
+        unmount();
         document.body.removeChild(shadowHost);
       });
       expect(button).toBeTruthy();
@@ -101,15 +96,12 @@ describe('focusSafely', () => {
     });
 
     it("should focus on the element if it's connected within shadow DOM", async function () {
-      const {shadowRoot, shadowHost} = createShadowRoot();
+      const {shadowRoot} = createShadowRoot();
       setInteractionModality('virtual');
 
-      const Example = () => <button>Button</button>;
+      const Example = () => ReactDOM.createPortal(<button>Button</button>, shadowRoot);
 
-      let root;
-      act(() => {
-        root = reactDomRenderer(<Example />, shadowRoot);
-      });
+      const {unmount} = render(<Example />);
 
       const button = shadowRoot.querySelector('button');
 
@@ -122,9 +114,7 @@ describe('focusSafely', () => {
 
       expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
 
-      act(() => {
-        unmount({container: shadowHost, root});
-      });
+      unmount();
       shadowRoot.host.remove();
     });
   });
