@@ -774,23 +774,9 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
     }
   );
 
-  // Custom function to handle shadow DOM traversal
-  const originalNextNode = walker.nextNode;
-  walker.nextNode = function () {
-    let next = originalNextNode.call(this);
-    while (next && next.shadowRoot) {
-      // Enter shadow DOM
-      let shadowWalker = getFocusableTreeWalker(next.shadowRoot, opts, scope);
-      let shadowNode = shadowWalker.nextNode();
-      if (shadowNode) {
-        return shadowNode;
-      } else {
-        // If no focusable elements in the shadow DOM, continue in the light DOM
-        next = originalNextNode.call(this);
-      }
-    }
-    return next;
-  };
+  if (opts?.from) {
+    walker.currentNode = opts.from;
+  }
 
   return walker;
 }
