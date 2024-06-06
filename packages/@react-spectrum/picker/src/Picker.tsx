@@ -76,7 +76,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
-  let layout = useListBoxLayout(state, isLoadingMore);
+  let layout = useListBoxLayout(state);
   let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
     ...props,
     'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),
@@ -101,6 +101,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       // Set max height: inherit so Tray scrolling works
       UNSAFE_style={{maxHeight: 'inherit'}}
       isLoading={props.isLoading}
+      showLoadingSpinner={isLoadingMore}
       onLoadMore={props.onLoadMore} />
   );
 
