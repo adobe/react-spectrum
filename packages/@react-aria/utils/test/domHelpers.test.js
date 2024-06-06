@@ -27,9 +27,9 @@ describe('getRootNode', () => {
     expect(getRootNode(div)).toBe(document);
   });
 
-  it('returns the document if object passed in does not have an ownerdocument', () => {
-    const div = document.createElement('div');
-    expect(getRootNode(div)).toBe(document);
+  it('returns null if the element is disconnected from the document', () => {
+    const div = document.createElement('div');  // div is not appended to the document
+    expect(getRootNode(div)).toBe(null);
   });
 
   it('returns the document if nothing is passed in', () => {
