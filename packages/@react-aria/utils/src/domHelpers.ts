@@ -9,7 +9,7 @@ export const getOwnerWindow = (
     return el;
   }
 
-  const doc = getRootNode(el as Element | null | undefined);
+  const doc = getRootNode(el);
   return doc instanceof ShadowRoot ?  doc.ownerDocument.defaultView || window :  doc?.defaultView || window;
 };
 
