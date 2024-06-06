@@ -326,7 +326,7 @@ export function usePress(props: PressHookProps): PressResult {
               focusWithoutScrolling(e.currentTarget);
             }
 
-            let stopPressStart = triggerPressStart(createEvent(state.target, initEventCoordinates(e, state.target)), 'virtual');
+            let stopPressStart = triggerPressStart(createEvent(state.target, initEventCoordinates(e, e.currentTarget)), 'virtual');
             let stopPressUp = triggerPressUp(initEventCoordinates(e, e.currentTarget), 'virtual');
             let stopPressEnd = triggerPressEnd(initEventCoordinates(e, e.currentTarget), 'virtual');
             shouldStopPropagation = stopPressStart && stopPressUp && stopPressEnd;
