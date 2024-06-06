@@ -1,4 +1,4 @@
-import {Form, TextArea, TextField, Button, Checkbox, SearchField, CheckboxGroup, Switch, Radio, RadioGroup} from '../src';
+import {Form, TextArea, TextField, Button, Checkbox, SearchField, CheckboxGroup, Switch, Radio, RadioGroup, Slider, RangeSlider} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -34,5 +34,7 @@ export const Example = (args: any) => (
     <Switch>Wi-Fi</Switch>
     <Checkbox>I agree to the terms</Checkbox>
     <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+    <Slider label="Cookies"  defaultValue={30} thumbLabel="cookie" />
+    <RangeSlider label="Range"  defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
   </Form>
 );
