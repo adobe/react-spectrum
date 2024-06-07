@@ -36,7 +36,7 @@ let TestSelect = (props) => (
 
 describe('Select', () => {
   let user;
-  let selectUtil = new User().select;
+  let testUtilUser = new User();
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -44,6 +44,7 @@ describe('Select', () => {
 
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('select'));
 
     let trigger = selectUtil.trigger;
@@ -86,6 +87,7 @@ describe('Select', () => {
       </SelectContext.Provider>
     );
 
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('select'));
     let trigger = selectUtil.trigger;
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
@@ -120,6 +122,7 @@ describe('Select', () => {
       </Select>
     );
 
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('select'));
     let trigger = selectUtil.trigger;
     expect(trigger).toHaveTextContent('Cat');
@@ -149,6 +152,7 @@ describe('Select', () => {
       </Select>
     );
 
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('select'));
     let trigger = selectUtil.trigger;
     expect(trigger).toHaveTextContent('1 - Cat');
@@ -156,6 +160,7 @@ describe('Select', () => {
 
   it('supports placeholder', () => {
     let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('select'));
     let trigger = selectUtil.trigger;
     expect(trigger).toHaveTextContent('Select an animal');
@@ -183,6 +188,7 @@ describe('Select', () => {
       </Select>
     );
 
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('select'));
     let trigger = selectUtil.trigger;
     expect(trigger).toHaveTextContent('open');
@@ -227,6 +233,7 @@ describe('Select', () => {
       </form>
     );
 
+    let selectUtil = testUtilUser.createTester('SelectTester');
     selectUtil.setElement(getByTestId('test-select'));
     let trigger = selectUtil.trigger;
     let select = selectUtil.element;
