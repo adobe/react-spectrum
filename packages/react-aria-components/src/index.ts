@@ -75,7 +75,7 @@ export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
 
-export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
+export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
