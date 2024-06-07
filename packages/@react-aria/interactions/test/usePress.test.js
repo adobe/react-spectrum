@@ -3614,83 +3614,160 @@ describe('coordinates', () => {
     right,
     toJSON() { return this; }
   });
-  installPointerEvent();
+  describe('pointer', () => {
+    installPointerEvent();
 
-  it('should fire press events based on pointer events', function () {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
-      () => getBoundingClientRect({})
-    );
-    let events = [];
-    let addEvent = (e) => events.push(e);
-    let res = render(
-      <Example
-        onPressStart={addEvent}
-        onPressEnd={addEvent}
-        onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-        onPress={addEvent}
-        onPressUp={addEvent} />
-    );
+    it('mouse pointer events should have coordinates', function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+        () => getBoundingClientRect({})
+      );
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
 
-    let el = res.getByText('test');
-    fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 25, clientY: 0}));
-    fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 75, clientY: 75}));
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 25, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 75, clientY: 75}));
 
-    // How else to get the DOM node it renders the hook to?
-    // let el = events[0].target;
-    expect(events).toEqual([
-      {
-        type: 'pressstart',
-        target: el,
-        pointerType: 'mouse',
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-        x: 25,
-        y: 0
-      },
-      {
-        type: 'presschange',
-        pressed: true
-      },
-      {
-        type: 'pressup',
-        target: el,
-        pointerType: 'mouse',
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-        x: 75,
-        y: 75
-      },
-      {
-        type: 'pressend',
-        target: el,
-        pointerType: 'mouse',
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-        x: 75,
-        y: 75
-      },
-      {
-        type: 'presschange',
-        pressed: false
-      },
-      {
-        type: 'press',
-        target: el,
-        pointerType: 'mouse',
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-        x: 75,
-        y: 75
-      }
-    ]);
+      // How else to get the DOM node it renders the hook to?
+      // let el = events[0].target;
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 25,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        }
+      ]);
+    });
+
+    it('pointer touch events should have coordinates', function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+        () => getBoundingClientRect({})
+      );
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch', clientX: 25, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch', clientX: 75, clientY: 75}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 25,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        }
+      ]);
+    });
   });
 
   it('should return the center of the element when keyboard pressed', function () {
@@ -3767,7 +3844,7 @@ describe('coordinates', () => {
     ]);
   });
 
-  it('should fire press events based on touch events', function () {
+  it('cancel from scroll events should have coordinates', function () {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
       () => getBoundingClientRect({})
     );
@@ -3783,8 +3860,9 @@ describe('coordinates', () => {
     );
 
     let el = res.getByText('test');
-    fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch', clientX: 25, clientY: 0}));
-    fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch', clientX: 75, clientY: 75}));
+    fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 25, clientY: 25}]});
+    fireEvent.scroll(document.body);
+    fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 25, clientY: 0}]});
 
     expect(events).toEqual([
       {
@@ -3796,22 +3874,11 @@ describe('coordinates', () => {
         shiftKey: false,
         altKey: false,
         x: 25,
-        y: 0
+        y: 25
       },
       {
         type: 'presschange',
         pressed: true
-      },
-      {
-        type: 'pressup',
-        target: el,
-        pointerType: 'touch',
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-        x: 75,
-        y: 75
       },
       {
         type: 'pressend',
@@ -3821,23 +3888,13 @@ describe('coordinates', () => {
         metaKey: false,
         shiftKey: false,
         altKey: false,
-        x: 75,
-        y: 75
+        // center because the event was canceled by scroll, not by the touchEnd
+        x: 50,
+        y: 50
       },
       {
         type: 'presschange',
         pressed: false
-      },
-      {
-        type: 'press',
-        target: el,
-        pointerType: 'touch',
-        ctrlKey: false,
-        metaKey: false,
-        shiftKey: false,
-        altKey: false,
-        x: 75,
-        y: 75
       }
     ]);
   });
