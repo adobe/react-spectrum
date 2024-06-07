@@ -115,6 +115,7 @@ export class SelectTester {
       this.getOptions();
     }
 
+    let option = within(this._listbox).getByText(optionText);
     if (this._interactionType === 'keyboard') {
       if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
         act(() => this._listbox.focus());
@@ -126,7 +127,6 @@ export class SelectTester {
       await this.user.keyboard('[Enter]');
     } else {
       // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
-      let option = within(this._listbox).getByText(optionText);
       if (this._interactionType === 'mouse') {
         await this.user.click(option);
       } else {
@@ -134,17 +134,19 @@ export class SelectTester {
       }
     }
 
-    // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
-    await waitFor(() => {
-      if (document.activeElement !== this.trigger) {
-        throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
-      } else {
-        return true;
-      }
-    });
+    if (option.getAttribute('href') == null) {
+      // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
+      await waitFor(() => {
+        if (document.activeElement !== this.trigger) {
+          throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+        } else {
+          return true;
+        }
+      });
 
-    if (document.contains(this._listbox)) {
-      throw new Error('Expected select element listbox to not be in the document after selecting an option');
+      if (document.contains(this._listbox)) {
+        throw new Error('Expected select element listbox to not be in the document after selecting an option');
+      }
     }
   }
 
@@ -156,14 +158,14 @@ export class SelectTester {
 
     await waitFor(() => {
       if (document.activeElement !== this.trigger) {
-        throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+        throw new Error(`Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`);
       } else {
         return true;
       }
     });
 
     if (document.contains(this._listbox)) {
-      throw new Error('Expected select element listbox to not be in the document after closing the dropdown.');
+      throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
     }
   }
 
