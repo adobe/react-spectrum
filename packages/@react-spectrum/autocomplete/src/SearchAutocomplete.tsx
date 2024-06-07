@@ -100,7 +100,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       validate: useCallback(v => validate?.(v.inputValue), [validate])
     }
   );
-  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
+  let layout = useListBoxLayout(state);
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
@@ -179,6 +179,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           state={state}
           shouldUseVirtualFocus
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
+          showLoadingSpinner={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(searchAutocompleteStyles, 'no-results')}>

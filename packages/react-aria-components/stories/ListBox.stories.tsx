@@ -287,8 +287,7 @@ const VirtualizedCollectionRenderer: CollectionRenderer = (collection, parent) =
       scrollDirection="vertical"
       layout={layout}
       style={{height: 'inherit'}}
-      collection={collection}
-      shouldUseVirtualFocus>
+      collection={collection}>
       {(type, item) => {
         switch (type) {
           case 'placeholder':
