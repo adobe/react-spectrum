@@ -78,9 +78,21 @@ export class SelectTester {
     // we can do something like detecting if fake timers (like in https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16)
     // are enabled and advance by a specific amount of time (here it would be doing advanceTimersBy perhaps by the transtion time or runOnlyPendingTimers)
     // Alternatively, maybe we need to accept an option for https://testing-library.com/docs/user-event/options/#advancetimers
-    await waitFor(() => expect(this._trigger).toHaveAttribute('aria-controls'));
+    await waitFor(() => {
+      if (this._trigger.getAttribute('aria-controls') == null) {
+        throw new Error('No aria-controls found on select element trigger.');
+      } else {
+        return true;
+      }
+    });
     let listBoxId = this._trigger.getAttribute('aria-controls');
-    await waitFor(() => expect(document.getElementById(listBoxId)).toBeInTheDocument());
+    await waitFor(() => {
+      if (document.getElementById(listBoxId) == null) {
+        throw new Error(`ListBox with id of ${listBoxId} not found in document.`);
+      } else {
+        return true;
+      }
+    });
     this.getOptions();
   }
 
@@ -122,8 +134,18 @@ export class SelectTester {
       }
     }
 
-    await waitFor(() => expect(document.activeElement).toBe(this.trigger));
-    expect(this._listbox).not.toBeInTheDocument();
+    // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
+    await waitFor(() => {
+      if (document.activeElement !== this.trigger) {
+        throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+      } else {
+        return true;
+      }
+    });
+
+    if (document.contains(this._listbox)) {
+      throw new Error('Expected select element listbox to not be in the document after selecting an option');
+    }
   }
 
   async close() {
@@ -131,8 +153,18 @@ export class SelectTester {
       act(() => this._listbox.focus());
       await this.user.keyboard('[Escape]');
     }
-    await waitFor(() => expect(document.activeElement).toBe(this.trigger));
-    expect(this._listbox).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      if (document.activeElement !== this.trigger) {
+        throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+      } else {
+        return true;
+      }
+    });
+
+    if (document.contains(this._listbox)) {
+      throw new Error('Expected select element listbox to not be in the document after closing the dropdown.');
+    }
   }
 
   // TODO is it valuable to add support for a utility for pressing ArrowLeft/ArrowRight when the picker is closed to cycle through the options?

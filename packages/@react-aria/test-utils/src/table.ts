@@ -20,6 +20,7 @@ interface TableOptions {
 }
 
 // TODO: move somewhere central if it ends up being used in multiple places
+// TODO: figure out how to replace this generically so it isn't jest specific
 function jestFakeTimersAreEnabled() {
   if (typeof jest !== 'undefined' && jest !== null) {
     // Logic for this is from https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
@@ -38,10 +39,13 @@ async function triggerLongPress(element: HTMLElement, pointerOpts = {}, waitTime
   // util before first render. Will need to document it well
 
   await fireEvent.pointerDown(element, {pointerType: 'touch', ...pointerOpts});
+  // TODO: if we can make this generic, perhaps the user should pass a parameter of some sort to indicate that fake timers are
+  // being used or not
   if (!jestFakeTimersAreEnabled()) {
     await act(async () => await new Promise((resolve) => setTimeout(resolve, waitTime)));
   } else {
     act(() => {
+      // TODO: make generic
       jest.advanceTimersByTime(waitTime);
     });
   }
@@ -144,10 +148,23 @@ export class TableTester {
         await this.pressElement(menuButton);
       }
 
-      await waitFor(() => expect(menuButton).toHaveAttribute('aria-controls'));
+      await waitFor(() => {
+        if (menuButton.getAttribute('aria-controls') == null) {
+          throw new Error('No aria-controls found on table column dropdown menu trigger element.');
+        } else {
+          return true;
+        }
+      });
 
       let menuId = menuButton.getAttribute('aria-controls');
-      await waitFor(() => expect(document.getElementById(menuId)).toBeInTheDocument());
+      await waitFor(() => {
+        if (document.getElementById(menuId) == null) {
+          throw new Error(`Table column header menu with id of ${menuId} not found in document.`);
+        } else {
+          return true;
+        }
+      });
+
       let menu = document.getElementById(menuId);
       if (currentSort === 'ascending') {
         await this.pressElement(within(menu).getAllByRole('menuitem')[1]);
@@ -155,10 +172,24 @@ export class TableTester {
         await this.pressElement(within(menu).getAllByRole('menuitem')[0]);
       }
 
-      await waitFor(() => expect(menu).not.toBeInTheDocument());
-      await waitFor(() => expect(document.activeElement).toBe(menuButton));
+      await waitFor(() => {
+        if (document.contains(menu)) {
+          throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
+        } else {
+          return true;
+        }
+      });
+
+      await waitFor(() => {
+        if (document.activeElement !== menuButton) {
+          throw new Error(`Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`);
+        } else {
+          return true;
+        }
+      });
 
       // Handle cases where the table may transition in response to the row selection/deselection
+      // TODO: make this generic instead of specific to jest
       if (!jestFakeTimersAreEnabled()) {
         await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
       } else {

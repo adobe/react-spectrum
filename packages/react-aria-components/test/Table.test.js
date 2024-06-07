@@ -169,18 +169,18 @@ let renderTable = (props) => render(<TestTable {...props} />);
 
 describe('Table', () => {
   let user;
-  let tableUtil;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   beforeEach(() => {
-    tableUtil = new User().table;
     jest.useFakeTimers();
   });
 
   it('should render with default classes', async () => {
     let {getByRole} = renderTable();
+    let tableUtil = testUtilUser.createTester('TableTester');
     tableUtil.setTable(getByRole('grid'));
     let table = tableUtil.table;
     expect(table).toHaveAttribute('class', 'react-aria-Table');
@@ -577,6 +577,7 @@ describe('Table', () => {
       </Table>
     );
 
+    let tableUtil = testUtilUser.createTester('TableTester');
     tableUtil.setTable(getByRole('grid'));
     await tableUtil.triggerRowAction({index: 0});
     expect(onAction).toHaveBeenCalled();
@@ -589,6 +590,7 @@ describe('Table', () => {
       columnProps: {allowsSorting: true}
     });
 
+    let tableUtil = testUtilUser.createTester('TableTester');
     tableUtil.setTable(getByRole('grid'));
 
     let columns = tableUtil.columns;
@@ -626,6 +628,7 @@ describe('Table', () => {
   it('supports removing rows', async () => {
     let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
 
+    let tableUtil = testUtilUser.createTester('TableTester');
     tableUtil.setTable(getByRole('grid'));
     await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
