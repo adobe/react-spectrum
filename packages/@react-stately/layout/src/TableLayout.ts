@@ -23,95 +23,55 @@ type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   initialCollection: TableCollection<T>
 }
 
+export interface TableLayoutProps extends ListLayoutProps {
+  columnWidths?: Map<Key, number>
+}
+
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number> = new Map();
+  columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
   lastPersistedKeys: Set<Key> = null;
   persistedIndices: Map<Key, number[]> = new Map();
   private disableSticky: boolean;
-  columnLayout: TableColumnLayout<T>;
-  controlledColumns: Map<Key, GridNode<unknown>>;
-  uncontrolledColumns: Map<Key, GridNode<unknown>>;
-  uncontrolledWidths: Map<Key, ColumnSize>;
-  resizingColumn: Key | null;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
     this.collection = options.initialCollection;
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();
-    this.columnLayout = options.columnLayout;
-    let [controlledColumns, uncontrolledColumns] = this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
-    this.controlledColumns = controlledColumns;
-    this.uncontrolledColumns = uncontrolledColumns;
-    this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
   }
 
-  protected shouldInvalidateEverything(invalidationContext: InvalidationContext): boolean {
-    // If columns changed, clear layout cache.
-    return super.shouldInvalidateEverything(invalidationContext) || (
-      !this.lastCollection ||
-      this.collection.columns.length !== this.lastCollection.columns.length ||
-      this.collection.columns.some((c, i) =>
-        c.key !== this.lastCollection.columns[i].key ||
-        c.props.width !== this.lastCollection.columns[i].props.width ||
-        c.props.minWidth !== this.lastCollection.columns[i].props.minWidth ||
-        c.props.maxWidth !== this.lastCollection.columns[i].props.maxWidth
-      )
-    );
+  private columnsChanged(newCollection: TableCollection<T>, oldCollection: TableCollection<T> | null) {
+    return !oldCollection || 
+      newCollection.columns !== oldCollection.columns &&
+      newCollection.columns.length !== oldCollection.columns.length ||
+      newCollection.columns.some((c, i) =>
+        c.key !== oldCollection.columns[i].key ||
+        c.props.width !== oldCollection.columns[i].props.width ||
+        c.props.minWidth !== oldCollection.columns[i].props.minWidth ||
+        c.props.maxWidth !== oldCollection.columns[i].props.maxWidth
+      );
   }
 
-  getResizerPosition(): Key {
-    return this.getLayoutInfo(this.resizingColumn)?.rect.maxX;
+  validate(invalidationContext: InvalidationContext<TableLayoutProps>): void {
+    let newCollection = this.virtualizer.collection as TableCollection<T>;
+
+    // If columnWidths were provided via layoutOptions, update those.
+    // Otherwise, calculate column widths ourselves.
+    if (invalidationContext.layoutOptions?.columnWidths && invalidationContext.layoutOptions.columnWidths !== this.columnWidths) {
+      this.columnWidths = invalidationContext.layoutOptions.columnWidths;
+      invalidationContext.sizeChanged = true;
+    } else if (invalidationContext.sizeChanged || this.columnsChanged(newCollection, this.collection)) {
+      let columnLayout = new TableColumnLayout({});
+      this.columnWidths = columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, newCollection, new Map());
+      invalidationContext.sizeChanged = true;
   }
 
-  getColumnWidth(key: Key): number {
-    return this.columnLayout.getColumnWidth(key) ?? 0;
-  }
-
-  getColumnMinWidth(key: Key): number {
-    let column = this.collection.columns.find(col => col.key === key);
-    if (!column) {
-      return 0;
-    }
-    return this.columnLayout.getColumnMinWidth(key);
-  }
-
-  getColumnMaxWidth(key: Key): number {
-    let column = this.collection.columns.find(col => col.key === key);
-    if (!column) {
-      return 0;
-    }
-    return this.columnLayout.getColumnMaxWidth(key);
-  }
-
-  // outside, where this is called, should call props.onColumnResizeStart...
-  startResize(key: Key): void {
-    this.resizingColumn = key;
-  }
-
-  // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
-  updateResizedColumns(key: Key, width: number): Map<Key, ColumnSize> {
-    let newControlled = new Map(Array.from(this.controlledColumns).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.uncontrolledWidths, key, width);
-
-    let map = new Map(Array.from(this.uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
-    map.set(key, width);
-    this.uncontrolledWidths = map;
-    // invalidate still uses setState, should happen at the same time the parent
-    // component's state is processed as a result of props.onColumnResize
-    if (this.uncontrolledWidths.size > 0) {
-      this.virtualizer.invalidate({sizeChanged: true});
-    }
-    return newSizes;
-  }
-
-  endResize(): void {
-    this.resizingColumn = null;
+    super.validate(invalidationContext);
   }
 
   buildCollection(): LayoutNode[] {
@@ -128,13 +88,6 @@ export class TableLayout<T> extends ListLayout<T> {
         this.stickyColumnIndices.push(column.index);
       }
     }
-
-    let [controlledColumns, uncontrolledColumns] = this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
-    this.controlledColumns = controlledColumns;
-    this.uncontrolledColumns = uncontrolledColumns;
-    let colWidths = this.columnLayout.recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
-
-    this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, colWidths);
 
     let header = this.buildHeader();
     let body = this.buildBody(0);
