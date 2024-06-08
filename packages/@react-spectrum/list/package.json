@@ -41,6 +41,7 @@
     "@react-aria/gridlist": "^3.8.1",
     "@react-aria/i18n": "^3.11.1",
     "@react-aria/interactions": "^3.21.3",
+    "@react-aria/selection": "^3.18.1",
     "@react-aria/utils": "^3.24.1",
     "@react-aria/virtualizer": "^3.10.1",
     "@react-aria/visually-hidden": "^3.8.12",

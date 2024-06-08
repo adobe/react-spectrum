@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxProps} from '@react-types/listbox';
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, LayoutDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
@@ -36,6 +36,13 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
+
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate,
 
   /**
    * Whether the listbox items should use virtual focus instead of being focused directly.

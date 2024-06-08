@@ -18,6 +18,7 @@ import {
   DOMProps,
   Key,
   KeyboardDelegate,
+  LayoutDelegate,
   MultipleSelection
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
@@ -56,6 +57,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    */
   keyboardDelegate?: KeyboardDelegate,
   /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate,
+  /**
    * Whether focus should wrap around when the end/start is reached.
    * @default false
    */
@@ -86,6 +93,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   let {
     isVirtualized,
     keyboardDelegate,
+    layoutDelegate,
     onAction,
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow'
@@ -100,7 +108,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref,
-    keyboardDelegate: keyboardDelegate,
+    keyboardDelegate,
+    layoutDelegate,
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,

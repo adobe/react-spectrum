@@ -21,6 +21,7 @@ import {FocusRing, FocusScope} from '@react-aria/focus';
 import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
@@ -29,7 +30,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {JSX, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
-import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
@@ -93,20 +94,17 @@ const ROW_HEIGHTS = {
 
 function useListLayout<T>(state: ListState<T>, density: SpectrumListViewProps<T>['density'], overflowMode: SpectrumListViewProps<T>['overflowMode']) {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
     new ListLayout<T>({
       estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
-      collator,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
+      enableEmptyState: true
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [collator, scale, density, isEmpty, overflowMode]);
+    , [scale, density, isEmpty, overflowMode]);
 
-  layout.collection = state.collection;
-  layout.disabledKeys = state.disabledKeys;
   return layout;
 }
 
@@ -159,9 +157,6 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     props.density || 'regular',
     overflowMode
   );
-  // !!0 is false, so we can cast size or undefined and they'll be falsy
-  layout.allowDisabledKeyFocus = state.selectionManager.disabledBehavior === 'selection' || !!dragState?.draggingKeys.size;
-
 
   let DragPreview = dragAndDropHooks?.DragPreview;
   let dropState: DroppableCollectionState;
@@ -173,7 +168,12 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
       selectionManager
     });
     droppableCollection = dragAndDropHooks.useDroppableCollection({
-      keyboardDelegate: layout,
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection,
+        disabledKeys: dragState?.draggingKeys.size ? null : selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
       dropTargetDelegate: layout
     }, dropState, domRef);
 
@@ -183,7 +183,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let {gridProps} = useGridList({
     ...props,
     isVirtualized: true,
-    keyboardDelegate: layout,
+    layoutDelegate: layout,
     onAction
   }, state, domRef);
 

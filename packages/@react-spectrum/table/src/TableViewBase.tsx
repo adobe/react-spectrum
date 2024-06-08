@@ -266,7 +266,12 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       selectionManager: state.selectionManager
     });
     droppableCollection = dragAndDropHooks.useDroppableCollection({
-      keyboardDelegate: layout,
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: state.selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
       dropTargetDelegate: layout
     }, dropState, domRef);
 
@@ -276,7 +281,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,
-    layout,
+    layoutDelegate: layout,
     onRowAction: onAction,
     scrollRef: bodyRef
   }, state, domRef);

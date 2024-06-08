@@ -100,12 +100,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       validate: useCallback(v => validate?.(v.inputValue), [validate])
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout();
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
       ...props,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef,

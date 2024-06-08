@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropTarget, DropTargetDelegate, Key, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, DropTarget, DropTargetDelegate, Key, Node} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 
@@ -22,10 +22,8 @@ export type ListLayoutOptions<T> = {
   estimatedHeadingHeight?: number,
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
-  collator?: Intl.Collator,
   loaderHeight?: number,
   placeholderHeight?: number,
-  allowDisabledKeyFocus?: boolean
 };
 
 // A wrapper around LayoutInfo that supports hierarchy
@@ -45,16 +43,16 @@ interface ListLayoutProps {
 const DEFAULT_HEIGHT = 48;
 
 /**
- * The ListLayout class is an implementation of a collection view {@link Layout}
+ * The ListLayout class is an implementation of a virtualizer {@link Layout}
  * it is used for creating lists and lists with indented sub-lists.
  *
  * To configure a ListLayout, you can use the properties to define the
  * layouts and/or use the method for defining indentation.
- * The {@link ListKeyboardDelegate} extends the existing collection view
+ * The {@link ListKeyboardDelegate} extends the existing virtualizer
  * delegate with an additional method to do this (it uses the same delegate object as
- * the collection view itself).
+ * the virtualizer itself).
  */
-export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements KeyboardDelegate, DropTargetDelegate {
+export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements DropTargetDelegate {
   protected rowHeight: number;
   protected estimatedRowHeight: number;
   protected headingHeight: number;
@@ -64,14 +62,11 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
   protected layoutInfos: Map<Key, LayoutInfo>;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
-  collection: Collection<Node<T>>;
-  disabledKeys: Set<Key> = new Set();
-  allowDisabledKeyFocus: boolean = false;
-  isLoading: boolean;
+  protected collection: Collection<Node<T>>;
+  protected isLoading: boolean;
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
-  protected collator: Intl.Collator;
   protected invalidateEverything: boolean;
   protected loaderHeight: number;
   protected placeholderHeight: number;
@@ -90,7 +85,6 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
     this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
-    this.collator = options.collator;
     this.loaderHeight = options.loaderHeight;
     this.placeholderHeight = options.placeholderHeight;
     this.layoutInfos = new Map();
@@ -98,7 +92,6 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
-    this.allowDisabledKeyFocus = options.allowDisabledKeyFocus;
     this.lastValidRect = new Rect();
     this.validRect = new Rect();
     this.contentSize = new Size();
@@ -363,7 +356,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
     // If no explicit height is available, use an estimated height.
     if (rectHeight == null) {
       // If a previous version of this layout info exists, reuse its height.
-      // Mark as estimated if the size of the overall collection view changed,
+      // Mark as estimated if the size of the overall virtualizer changed,
       // or the content of the item changed.
       let previousLayoutNode = this.layoutNodes.get(node.key);
       let previousLayoutInfo = previousLayoutNode?.header || previousLayoutNode?.layoutInfo;
@@ -400,7 +393,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
     // If no explicit height is available, use an estimated height.
     if (rectHeight == null) {
       // If a previous version of this layout info exists, reuse its height.
-      // Mark as estimated if the size of the overall collection view changed,
+      // Mark as estimated if the size of the overall virtualizer changed,
       // or the content of the item changed.
       let previousLayoutNode = this.layoutNodes.get(node.key);
       if (previousLayoutNode) {
@@ -477,116 +470,6 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
 
   getContentSize() {
     return this.contentSize;
-  }
-
-  getKeyAbove(key: Key): Key | null {
-    let collection = this.collection;
-
-    key = collection.getKeyBefore(key);
-    while (key != null) {
-      let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
-        return key;
-      }
-
-      key = collection.getKeyBefore(key);
-    }
-  }
-
-  getKeyBelow(key: Key): Key | null {
-    let collection = this.collection;
-
-    key = collection.getKeyAfter(key);
-    while (key != null) {
-      let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
-        return key;
-      }
-
-      key = collection.getKeyAfter(key);
-    }
-  }
-
-  getKeyPageAbove(key: Key): Key | null {
-    let layoutInfo = this.getLayoutInfo(key);
-
-    if (layoutInfo) {
-      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y > pageY) {
-        let keyAbove = this.getKeyAbove(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyAbove);
-      }
-
-      if (layoutInfo) {
-        return layoutInfo.key;
-      }
-    }
-
-    return this.getFirstKey();
-  }
-
-  getKeyPageBelow(key: Key): Key | null {
-    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
-
-    if (layoutInfo) {
-      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y < pageY) {
-        let keyBelow = this.getKeyBelow(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyBelow);
-      }
-
-      if (layoutInfo) {
-        return layoutInfo.key;
-      }
-    }
-
-    return this.getLastKey();
-  }
-
-  getFirstKey(): Key | null {
-    let collection = this.collection;
-    let key = collection.getFirstKey();
-    while (key != null) {
-      let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
-        return key;
-      }
-
-      key = collection.getKeyAfter(key);
-    }
-  }
-
-  getLastKey(): Key | null {
-    let collection = this.collection;
-    let key = collection.getLastKey();
-    while (key != null) {
-      let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
-        return key;
-      }
-
-      key = collection.getKeyBefore(key);
-    }
-  }
-
-  getKeyForSearch(search: string, fromKey?: Key): Key | null {
-    if (!this.collator) {
-      return null;
-    }
-
-    let collection = this.collection;
-    let key = fromKey || this.getFirstKey();
-    while (key != null) {
-      let item = collection.getItem(key);
-      let substring = item.textValue.slice(0, search.length);
-      if (item.textValue && this.collator.compare(substring, search) === 0) {
-        return key;
-      }
-
-      key = this.getKeyBelow(key);
-    }
-
-    return null;
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {

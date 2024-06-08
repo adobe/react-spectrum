@@ -107,12 +107,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       allowsEmptyCollection: isAsync
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout();
 
   let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useComboBox(
     {
       ...props,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       buttonRef: unwrappedButtonRef,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
