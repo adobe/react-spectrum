@@ -99,6 +99,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {disabledBehavior, disabledKeys} = state.selectionManager;
+  let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => (
     new ListKeyboardDelegate({
       collection,
@@ -107,9 +108,9 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledKeys,
       disabledBehavior,
       layout,
-      direction: 'ltr'
+      direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, collator]);
+  ), [collection, ref, layout, disabledKeys, disabledBehavior, collator, direction]);
 
   let {gridProps} = useGridList({
     ...props,
@@ -138,7 +139,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let isRootDropTarget = false;
   let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
-  let {direction} = useLocale();
 
   if (isListDraggable && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
