@@ -15,6 +15,7 @@ import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
 import React, {
   CSSProperties,
+  ForwardedRef,
   HTMLAttributes,
   ReactNode,
   RefObject,
@@ -24,13 +25,13 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
   onVisibleRectChange: (rect: Rect) => void,
-  children: ReactNode,
+  children?: ReactNode,
   innerStyle?: CSSProperties,
   sizeToFit?: 'width' | 'height',
   onScrollStart?: () => void,
@@ -38,11 +39,26 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
+function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement>) {
+  ref = useObjectRef(ref);
+  let {scrollViewProps, contentProps} = useScrollView(props, ref);
+
+  return (
+    <div role="presentation" {...scrollViewProps} ref={ref}>
+      <div role="presentation" {...contentProps}>
+        {props.children}
+      </div>
+    </div>
+  );
+}
+
+const ScrollViewForwardRef = React.forwardRef(ScrollView);
+export {ScrollViewForwardRef as ScrollView};
+
+export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement>) {
   let {
     contentSize,
     onVisibleRectChange,
-    children,
     innerStyle,
     sizeToFit,
     onScrollStart,
@@ -51,8 +67,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  let defaultRef = useRef();
-  ref = ref || defaultRef;
   let state = useRef({
     scrollTop: 0,
     scrollLeft: 0,
@@ -113,6 +127,9 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       }
     });
   }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
+
+  // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
+  useEvent(ref, 'scroll', onScroll);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -176,6 +193,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let onResize = useCallback(() => {
     updateSize(flushSync);
   }, [updateSize]);
+
   // Watch border-box instead of of content-box so that we don't go into
   // an infinite loop when scrollbars appear or disappear.
   useResizeObserver({ref, box: 'border-box', onResize});
@@ -207,14 +225,13 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     ...innerStyle
   };
 
-  return (
-    <div role="presentation" {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={innerStyle}>
-        {children}
-      </div>
-    </div>
-  );
+  return {
+    scrollViewProps: {
+      style,
+      ...otherProps
+    },
+    contentProps: {
+      style: innerStyle
+    }
+  };
 }
-
-const ScrollViewForwardRef = React.forwardRef(ScrollView);
-export {ScrollViewForwardRef as ScrollView};

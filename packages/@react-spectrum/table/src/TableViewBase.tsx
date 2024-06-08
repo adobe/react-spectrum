@@ -199,7 +199,8 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    scrollContainer: 'body'
+    scrollContainer: 'body',
+    enableEmptyState: true
   }),
     // don't recompute when state.collection changes, only used for initial value
     // eslint-disable-next-line react-hooks/exhaustive-deps

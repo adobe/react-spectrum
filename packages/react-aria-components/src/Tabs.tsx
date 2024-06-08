@@ -13,7 +13,7 @@
 import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, Node, TabListState, useTabListState} from 'react-stately';
-import {CollectionChildren, CollectionDocumentContext, CollectionPortal, CollectionProps, createLeafComponent, useCollectionDocument} from './Collection';
+import {CollectionDocumentContext, CollectionPortal, CollectionProps, CollectionRendererContext, createLeafComponent, useCollectionDocument} from './Collection';
 import {ContextValue, createHideableComponent, forwardRefType, Hidden, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, RefObject, useContext, useMemo} from 'react';
@@ -208,6 +208,7 @@ interface TabListInnerProps<T> {
 
 function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInnerProps<T>) {
   let state = useContext(TabListStateContext)!;
+  let {CollectionRoot} = useContext(CollectionRendererContext);
   let {orientation = 'horizontal', keyboardActivation = 'automatic'} = useSlottedContext(TabsContext)!;
   let objectRef = useObjectRef(ref);
 
@@ -237,7 +238,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
       ref={objectRef}
       {...renderProps}
       data-orientation={orientation || undefined}>
-      <CollectionChildren collection={state.collection} />
+      <CollectionRoot collection={state.collection} focusedKey={state.selectionManager.focusedKey} />
     </div>
   );
 }

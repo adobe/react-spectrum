@@ -66,7 +66,7 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
       ref.current.scrollLeft = rect.x;
       ref.current.scrollTop = rect.y;
     },
-    persistedKeys: useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]),
+    persistedKeys: useMemo(() => focusedKey != null ? new Set([focusedKey]) : new Set(), [focusedKey]),
     layoutOptions
   });
 

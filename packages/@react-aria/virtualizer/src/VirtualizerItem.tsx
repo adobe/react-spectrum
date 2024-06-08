@@ -17,7 +17,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
-  parent?: LayoutInfo,
+  parent?: LayoutInfo | null,
   className?: string,
   children: ReactNode
 }
@@ -74,7 +74,9 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     position: layoutInfo.isSticky ? 'sticky' : 'absolute',
     // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
     display: layoutInfo.isSticky ? 'inline-block' : undefined,
-    overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
+    // Use clip instead of hidden to avoid creating an implicit generic container in the accessibility tree in Firefox.
+    // Hidden still allows programmatic scrolling whereas clip does not.
+    overflow: layoutInfo.allowOverflow ? 'visible' : 'clip',
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,

@@ -21,7 +21,7 @@ import {TreeState} from '@react-stately/tree';
 export interface TreeGridListProps<T> extends GridListProps<T> {}
 
 export interface AriaTreeGridListProps<T> extends Omit<AriaGridListProps<T>, 'keyboardNavigationBehavior'> {}
-export interface AriaTreeGridListOptions<T> extends Omit<AriaGridListOptions<T>, 'children' | 'isVirtualized' | 'shouldFocusWrap'> {
+export interface AriaTreeGridListOptions<T> extends Omit<AriaGridListOptions<T>, 'children' | 'shouldFocusWrap'> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.

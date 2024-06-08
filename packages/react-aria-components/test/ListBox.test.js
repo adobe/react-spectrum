@@ -62,6 +62,11 @@ describe('ListBox', () => {
     jest.useFakeTimers();
   });
 
+  beforeEach(() => {
+    jest.spyOn(HTMLElement.prototype, 'scrollLeft', 'get').mockImplementation(() => 0);
+    jest.spyOn(HTMLElement.prototype, 'scrollTop', 'get').mockImplementation(() => 0);
+  });
+
   afterEach(() => {
     act(() => {jest.runAllTimers();});
     jest.restoreAllMocks();

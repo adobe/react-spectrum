@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {CollectionChildren, CollectionDocumentContext, CollectionPortal, CollectionProps, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
+import {CollectionDocumentContext, CollectionPortal, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
@@ -132,6 +132,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
   let {direction} = useLocale();
   let {disabledBehavior, disabledKeys} = selectionManager;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
   let keyboardDelegate = useMemo(() => (
     props.keyboardDelegate || new ListKeyboardDelegate({
       collection,
@@ -141,14 +142,16 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
       disabledBehavior,
       layout,
       orientation,
-      direction
+      direction,
+      layoutDelegate
     })
-  ), [collection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout]);
+  ), [collection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout, layoutDelegate]);
 
   let {listBoxProps} = useListBox({
     ...props,
     shouldSelectOnPressUp: isListDraggable || props.shouldSelectOnPressUp,
-    keyboardDelegate
+    keyboardDelegate,
+    isVirtualized
   }, state, listBoxRef);
 
   let dragHooksProvided = useRef(isListDraggable);
@@ -189,7 +192,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
       selectionManager
     });
 
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, listBoxRef, {orientation, layout, direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, listBoxRef, {orientation, layout, direction});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -250,7 +253,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {render: ListBoxSection}]
           ]}>
-          <CollectionChildren collection={collection} />
+          <CollectionRoot collection={collection} focusedKey={selectionManager.focusedKey} scrollRef={listBoxRef} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -261,6 +264,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
 
 function ListBoxSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
   let state = useContext(ListStateContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
     heading,
@@ -280,7 +284,7 @@ function ListBoxSection<T extends object>(props: SectionProps<T>, ref: Forwarded
       {...renderProps}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
-        <CollectionChildren collection={state.collection} parent={section} />
+        <CollectionBranch collection={state.collection} parent={section} />
       </HeaderContext.Provider>
     </section>
   );

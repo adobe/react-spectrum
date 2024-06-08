@@ -24,6 +24,7 @@ export type ListLayoutOptions<T> = {
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
   loaderHeight?: number,
   placeholderHeight?: number,
+  enableEmptyState?: boolean
 };
 
 // A wrapper around LayoutInfo that supports hierarchy
@@ -36,7 +37,7 @@ export interface LayoutNode {
   index?: number
 }
 
-interface ListLayoutProps {
+export interface ListLayoutProps {
   isLoading?: boolean
 }
 
@@ -70,6 +71,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
   protected invalidateEverything: boolean;
   protected loaderHeight: number;
   protected placeholderHeight: number;
+  protected enableEmptyState: boolean;
   protected lastValidRect: Rect;
   protected validRect: Rect;
 
@@ -87,6 +89,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     this.indentationForItem = options.indentationForItem;
     this.loaderHeight = options.loaderHeight;
     this.placeholderHeight = options.placeholderHeight;
+    this.enableEmptyState = options.enableEmptyState || false;
     this.layoutInfos = new Map();
     this.layoutNodes = new Map();
     this.rootNodes = [];
@@ -136,7 +139,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return res;
   }
 
-  layoutIfNeeded(rect: Rect) {
+  protected layoutIfNeeded(rect: Rect) {
     if (!this.lastCollection) {
       return;
     }
@@ -155,7 +158,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     }
   }
 
-  ensureLayoutInfo(key: Key) {
+  private ensureLayoutInfo(key: Key) {
     // If the layout info wasn't found, it might be outside the bounds of the area that we've
     // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
     // Compute the full layout and try again.
@@ -170,7 +173,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return false;
   }
 
-  isVisible(node: LayoutNode, rect: Rect) {
+  private isVisible(node: LayoutNode, rect: Rect) {
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || this.virtualizer.isPersistedKey(node.layoutInfo.key);
   }
 
@@ -213,7 +216,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     this.invalidateEverything = false;
   }
 
-  buildCollection(): LayoutNode[] {
+  protected buildCollection(): LayoutNode[] {
     let y = this.padding;
     let skipped = 0;
     let nodes = [];
@@ -227,7 +230,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
         continue;
       }
 
-      let layoutNode = this.buildChild(node, 0, y);
+      let layoutNode = this.buildChild(node, 0, y, null);
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
 
@@ -246,7 +249,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       y = loader.rect.maxY;
     }
 
-    if (nodes.length === 0) {
+    if (nodes.length === 0 && this.enableEmptyState) {
       let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
         this.placeholderHeight ?? this.virtualizer.visibleRect.height);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
@@ -259,7 +262,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return nodes;
   }
 
-  isValid(node: Node<T>, y: number) {
+  protected isValid(node: Node<T>, y: number) {
     let cached = this.layoutNodes.get(node.key);
     return (
       !this.invalidateEverything &&
@@ -271,7 +274,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     );
   }
 
-  buildChild(node: Node<T>, x: number, y: number): LayoutNode {
+  protected buildChild(node: Node<T>, x: number, y: number, parentKey: Key | null): LayoutNode {
     if (this.isValid(node, y)) {
       return this.layoutNodes.get(node.key);
     }
@@ -279,7 +282,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     let layoutNode = this.buildNode(node, x, y);
     layoutNode.node = node;
 
-    layoutNode.layoutInfo.parentKey = node.parentKey ?? null;
+    layoutNode.layoutInfo.parentKey = parentKey ?? null;
     this.layoutInfos.set(layoutNode.layoutInfo.key, layoutNode.layoutInfo);
     if (layoutNode.header) {
       this.layoutInfos.set(layoutNode.header.key, layoutNode.header);
@@ -289,22 +292,22 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return layoutNode;
   }
 
-  buildNode(node: Node<T>, x: number, y: number): LayoutNode {
+  protected buildNode(node: Node<T>, x: number, y: number): LayoutNode {
     switch (node.type) {
       case 'section':
         return this.buildSection(node, x, y);
       case 'item':
         return this.buildItem(node, x, y);
       case 'header':
-        return this.buildHeader(node, x, y);
+        return this.buildSectionHeader(node, x, y);
     }
   }
 
-  buildSection(node: Node<T>, x: number, y: number): LayoutNode {
+  private buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let header = null;
     if (node.rendered) {
-      let headerNode = this.buildHeader(node, x, y);
+      let headerNode = this.buildSectionHeader(node, x, y);
       header = headerNode.layoutInfo;
       header.key += ':header';
       header.parentKey = node.key;
@@ -327,7 +330,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
         continue;
       }
 
-      let layoutNode = this.buildChild(child, x, y);
+      let layoutNode = this.buildChild(child, x, y, layoutInfo.key);
       y = layoutNode.layoutInfo.rect.maxY;
       children.push(layoutNode);
 
@@ -348,7 +351,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     };
   }
 
-  buildHeader(node: Node<T>, x: number, y: number): LayoutNode {
+  private buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.headingHeight;
     let isEstimated = false;
@@ -385,7 +388,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     };
   }
 
-  buildItem(node: Node<T>, x: number, y: number): LayoutNode {
+  private buildItem(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
@@ -453,7 +456,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return false;
   }
 
-  updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
+  private updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
     let n = this.layoutNodes.get(key);
     if (n) {
       // Invalidate by reseting validRect.
