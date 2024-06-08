@@ -294,6 +294,37 @@ describe('GridList', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should support grid layout', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" layout="grid">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);
