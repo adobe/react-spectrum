@@ -67,7 +67,7 @@ For a full example of building a modal dialog, see [useDialog](useDialog.html).
 import {FocusScope} from '@react-aria/focus';
 
 function Example() {
-  let [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setOpen] = React.useState(false);
   return (
     <>
       <button onClick={() => setOpen(true)}>Open</button>
@@ -93,7 +93,7 @@ right arrow keys to move focus to the previous and next buttons. The `wrap` opti
 used to make focus wrap around when it reaches the first or last button.
 
 ```tsx example
-import {useFocusManager} from '@react-aria/focus';
+import {FocusScope, useFocusManager} from '@react-aria/focus';
 
 function Toolbar(props) {
   return (
@@ -106,8 +106,8 @@ function Toolbar(props) {
 }
 
 function ToolbarButton(props) {
-  let focusManager = useFocusManager();
-  let onKeyDown = (e) => {
+  const focusManager = useFocusManager();
+  const onKeyDown = (e) => {
     switch (e.key) {
       case 'ArrowRight':
         focusManager.focusNext({wrap: true});
