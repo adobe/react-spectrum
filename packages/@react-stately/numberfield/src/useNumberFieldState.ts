@@ -16,6 +16,44 @@ import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
 
+let supportedLocales: string[] = [
+  'ar-AE', // Arabic (United Arab Emirates)
+  'bg-BG', // Bulgarian (Bulgaria)
+  'zh-CN', // Chinese (Simplified)
+  'zh-TW', // Chinese (Traditional)
+  'hr-HR', // Croatian (Croatia)
+  'cs-CZ', // Czech (Czech Republic)
+  'da-DK', // Danish (Denmark)
+  'nl-NL', // Dutch (Netherlands)
+  'en-GB', // English (Great Britain)
+  'en-US', // English (United States)
+  'et-EE', // Estonian (Estonia)
+  'fi-FI', // Finnish (Finland)
+  'fr-CA', // French (Canada)
+  'fr-FR', // French (France)
+  'de-DE', // German (Germany)
+  'el-GR', // Greek (Greece)
+  'he-IL', // Hebrew (Israel)
+  'hu-HU', // Hungarian (Hungary)
+  'it-IT', // Italian (Italy)
+  'ja-JP', // Japanese (Japan)
+  'ko-KR', // Korean (Korea)
+  'lv-LV', // Latvian (Latvia)
+  'lt-LT', // Lithuanian (Lithuania)
+  'no-NO', // Norwegian (Norway)
+  'pl-PL', // Polish (Poland)
+  'pt-BR', // Portuguese (Brazil)
+  'ro-RO', // Romanian (Romania)
+  'ru-RU', // Russian (Russia)
+  'sr-RS', // Serbian (Serbia)
+  'sk-SK', // Slovakian (Slovakia)
+  'sl-SI', // Slovenian (Slovenia)
+  'es-ES', // Spanish (Spain)
+  'sv-SE', // Swedish (Sweden)
+  'tr-TR', // Turkish (Turkey)
+  'uk-UA'  // Ukrainian (Ukraine)
+];
+
 export interface NumberFieldState extends FormValidationState {
   /**
    * The current text value of the input. Updated as the user types,
@@ -59,7 +97,12 @@ export interface NumberFieldState extends FormValidationState {
   /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
   incrementToMax(): void,
   /** Sets the current value to the `minValue` if any, and fires `onChange`. */
-  decrementToMin(): void
+  decrementToMin(): void,
+  /**
+   * Parses a string value in any supported locale to a number.
+   * This is useful when the user pastes a value that may be in a different locale.
+   */
+  parseValueInAnySupportedLocale(value: string): number
 }
 
 export interface NumberFieldStateOptions extends NumberFieldProps {
@@ -261,6 +304,44 @@ export function useNumberFieldState(
 
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
+  let parseValueInAnySupportedLocale = (value: string) => {
+    let locales = supportedLocales.filter(localeCode => localeCode !== locale);
+    locales.unshift(locale);
+    let localeCodes = locales.map(localeCode => {
+      let numberFormatter = new NumberFormatter(localeCode, formatOptions);
+      return {
+        locale: localeCode,
+        groupSeparator: numberFormatter.formatToParts(1111).find(part => part.type === 'group')?.value,
+        decimalSeparator: numberFormatter.formatToParts(1.1).find(part => part.type === 'decimal')?.value
+      };
+    });
+
+    let _parsedValue = NaN;
+    for (let localeCode of localeCodes) {
+      let _numberParser = new NumberParser(localeCode.locale, formatOptions);
+      if (
+        (
+          (localeCode.groupSeparator && value.includes(localeCode.groupSeparator)) ||
+          (localeCode.decimalSeparator && value.includes(localeCode.decimalSeparator))
+        ) &&
+        value.lastIndexOf(localeCode.groupSeparator ?? '') > value.lastIndexOf(localeCode.decimalSeparator ?? '')
+      ) {
+        if (value.lastIndexOf(localeCode.decimalSeparator ?? '') === -1) {
+          let pv = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
+          if (!isNaN(pv) && parseFloat(value.replaceAll(localeCode.groupSeparator ?? '', '')) === pv) {
+            return pv;
+          }
+        }
+        continue;
+      }
+      _parsedValue = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
+      if (!isNaN(_parsedValue)) {
+        return _parsedValue;
+      }
+    }
+    return _parsedValue;
+  };
+
   return {
     ...validation,
     validate,
@@ -276,7 +357,8 @@ export function useNumberFieldState(
     setNumberValue,
     setInputValue,
     inputValue,
-    commit
+    commit,
+    parseValueInAnySupportedLocale
   };
 }
 
