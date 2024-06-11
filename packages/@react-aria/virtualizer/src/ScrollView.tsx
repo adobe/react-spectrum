@@ -24,7 +24,7 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
@@ -37,8 +37,6 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
-
-let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.');
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let {
@@ -124,7 +122,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let updateSize = useCallback(() => {
+  let updateSize = useEffectEvent((flush: typeof flushSync) => {
     let dom = ref.current;
     if (!dom) {
       return;
@@ -133,8 +131,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
-    let w = isTestEnv && !isClientWidthMocked ? Infinity : dom.clientWidth;
-    let h = isTestEnv && !isClientHeightMocked ? Infinity : dom.clientHeight;
+    let clientWidth = dom.clientWidth;
+    let clientHeight = dom.clientHeight;
+    let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
+    let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
 
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
       if (sizeToFit === 'width') {
@@ -147,32 +147,38 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
-      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+      flush(() => {
+        onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+      });
+
+      // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
+      // a result of the layout update. In this case, re-layout again to account for the
+      // adjusted space. In very specific cases this might result in the scrollbars disappearing
+      // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
+      // an infinite loop. This matches how browsers behavior with native CSS grid layout.
+      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
+        state.width = dom.clientWidth;
+        state.height = dom.clientHeight;
+        flush(() => {
+          onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
+        });
+      }
     }
-  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
+  });
 
   useLayoutEffect(() => {
-    updateSize();
+    // React doesn't allow flushSync inside effects so pass an identity function instead.
+    // This only happens on initial render. The resize observer will also call updateSize
+    // once it initializes, but we need earlier initialization in a layout effect to avoid
+    // a flash of missing content.
+    updateSize(fn => fn());
   }, [updateSize]);
-  let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>();
   let onResize = useCallback(() => {
-    if (isOldReact) {
-      raf.current ??= requestAnimationFrame(() => {
-        updateSize();
-        raf.current = null;
-      });
-    } else {
-      updateSize();
-    }
+    updateSize(flushSync);
   }, [updateSize]);
-  useResizeObserver({ref, onResize});
-  useEffect(() => {
-    return () => {
-      if (raf.current) {
-        cancelAnimationFrame(raf.current);
-      }
-    };
-  }, []);
+  // Watch border-box instead of of content-box so that we don't go into
+  // an infinite loop when scrollbars appear or disappear.
+  useResizeObserver({ref, box: 'border-box', onResize});
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
