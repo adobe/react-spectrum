@@ -408,7 +408,7 @@ export function VirtualizedTable() {
 
   return (
     <Virtualizer layout={layout}>
-      <Table aria-label="virtualized table" style={{height: 400, width: 400, overflow: 'auto'}}>
+      <Table aria-label="virtualized table" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column isRowHeader><strong>Foo</strong></Column>
           <Column><strong>Bar</strong></Column>
@@ -442,7 +442,7 @@ export function VirtualizedTableWithResizing() {
   }, []);
 
   return (
-    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
       <Virtualizer layout={layout}>
         <Table aria-label="virtualized table">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
