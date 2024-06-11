@@ -15,7 +15,6 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
-import { parse } from 'yargs';
 
 let supportedLocales: string[] = [
   'ar-AE', // Arabic (United Arab Emirates)
@@ -322,20 +321,20 @@ export function useNumberFieldState(
       let _numberParser = new NumberParser(localeCode.locale, formatOptions);
       if (
         (
-          value.includes(localeCode.groupSeparator) ||
-          value.includes(localeCode.decimalSeparator)
+          (localeCode.groupSeparator && value.includes(localeCode.groupSeparator)) ||
+          (localeCode.decimalSeparator && value.includes(localeCode.decimalSeparator))
         ) &&
         value.lastIndexOf(localeCode.groupSeparator) > value.lastIndexOf(localeCode.decimalSeparator)
       ) {
         if (value.lastIndexOf(localeCode.decimalSeparator) === -1) {
-          let pv = _numberParser.parse(value.replaceAll(localeCode.groupSeparator, ''));
-          if (!isNaN(pv) && parseFloat(value.replaceAll(localeCode.groupSeparator, '')) === pv) {
+          let pv = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
+          if (!isNaN(pv) && parseFloat(value.replaceAll(localeCode.groupSeparator ?? '', '')) === pv) {
             return pv;
           }
         }
         continue;
       }
-      _parsedValue = _numberParser.parse(value.replaceAll(localeCode.groupSeparator, ''));
+      _parsedValue = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
       if (!isNaN(_parsedValue)) {
         return _parsedValue;
       }

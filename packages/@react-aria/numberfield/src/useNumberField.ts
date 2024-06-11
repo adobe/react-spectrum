@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { announce } from '@react-aria/live-announcer';
+import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
