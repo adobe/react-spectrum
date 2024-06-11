@@ -15,8 +15,10 @@ import {
   mergeProps,
   useButton,
   useFocusRing,
-  useHover, useId,
-  useLocalizedStringFormatter
+  useHover,
+  useId,
+  useLocalizedStringFormatter,
+  VisuallyHidden
 } from 'react-aria';
 import {
   ContextValue,
@@ -29,7 +31,7 @@ import {
 import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, ReactNode, useEffect, useState} from 'react';
+import React, {createContext, ForwardedRef, ReactNode} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -58,10 +60,10 @@ export interface ButtonRenderProps {
    */
   isDisabled: boolean,
   /**
-   * If the button is currently in the `isPending` state after the `pendingDelay`.
-   * @selector [data-pending-visible]
+   * If the button is currently in the `isPending` state.
+   * @selector [data-pending]
    */
-  isPendingVisible: boolean
+  isPending?: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
@@ -92,11 +94,6 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    */
   isPending?: boolean,
   /**
-   * Number of milliseconds to wait before displaying the `isPending` state.
-   * @default 1000
-   */
-  pendingDelay?: number,
-  /**
    * What to render as children while pending state is true.
    */
   renderPendingState?: (props: ButtonRenderProps) => ReactNode
@@ -114,11 +111,11 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
+  let {isPending, renderPendingState} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
-  let [isPendingVisible, setIsPendingVisible] = useState(false);
-  let renderValues = {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isPendingVisible};
+  let renderValues = {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isPending};
   let renderProps = useRenderProps({
     ...props,
     values: renderValues,
@@ -126,30 +123,11 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   });
 
   let formatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
-  let {isPending, pendingDelay = 1000, renderPendingState} = ctx;
   // an aria label will block children and their labels from being read, this is undesirable for pending state
   let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
   let spinnerId = useId();
   let buttonId = useId(buttonProps.id);
   let containerId = useId();
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isPending) {
-      // Start timer when isPending is set to true.
-      timeout = setTimeout(() => {
-        setIsPendingVisible(true);
-      }, pendingDelay);
-    } else {
-      // Exit loading state when isPending is set to false. */
-      setIsPendingVisible(false);
-    }
-    return () => {
-      // Clean up on unmount or when user removes isPending prop before entering loading state.
-      clearTimeout(timeout);
-    };
-  }, [isPending]);
 
   const isPendingAriaLiveLabel = `${hasAriaLabel ? buttonProps['aria-label'] : ''} ${formatter.format('pending')}`.trim();
   const isPendingAriaLiveLabelledby = hasAriaLabel ? (buttonProps['aria-labelledby']?.replace(buttonId, spinnerId) ?? spinnerId) : `${containerId} ${spinnerId}`.trim();
@@ -174,33 +152,33 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
+      data-pending={isPending || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       <div
-        style={{display: 'contents', visibility: isPendingVisible ? 'hidden' : 'visible'}}
+        style={{display: 'contents'}}
         id={containerId}
         aria-atomic>
         {renderProps.children}
       </div>
-      {isPending && renderPendingState && (
-        <div
-          aria-hidden="true"
-          style={{visibility: isPendingVisible ? 'visible' : 'hidden'}}
-          className={'react-aria-ButtonPending'}>
-          {renderPendingState(renderValues)}
-        </div>
-      )}
-      {isPending && renderPendingState &&
+      {renderPendingState &&
         <>
-          <div aria-live={isFocused ? ariaLive : 'off'}>
-            {isPendingVisible &&
-              <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
-            }
+          <div
+            aria-hidden
+            style={{display: !isPending ? 'none' : 'contents'}}>
+            {isPending && renderPendingState(renderValues)}
           </div>
-          {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
+          <VisuallyHidden>
+            <div aria-live={isFocused ? ariaLive : 'off'}>
+              {isPending &&
+                <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
+              }
+            </div>
+            {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
           Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
           https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
           The aria-live may cause extra announcements in other browsers. */}
-          <div id={spinnerId} role="img" aria-label={isPendingAriaLiveLabel} />
+            <div id={spinnerId} role="img" aria-label={isPending ? isPendingAriaLiveLabel : undefined} />
+          </VisuallyHidden>
         </>
       }
     </button>
