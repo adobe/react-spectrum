@@ -13,7 +13,7 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
-import {FocusableElement, FocusStrategy, KeyboardEvent, PressEvent, Node as RSNode} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
@@ -21,8 +21,11 @@ import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
 export interface AriaSubmenuTriggerProps {
-  /** An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item. */
-  node: RSNode<unknown>,
+  /**
+   * An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item.
+   * @deprecated
+   */
+  node?: Node<unknown>,
   /** Whether the submenu trigger is disabled. */
   isDisabled?: boolean,
   /** The type of the contents that the submenu trigger opens. */
@@ -64,7 +67,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, node, delay = 200} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -117,7 +120,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
 
   let submenuProps = {
     id: overlayId,
-    'aria-label': node.textValue,
+    'aria-labelledby': submenuTriggerId,
     submenuLevel: state.submenuLevel,
     ...(type === 'menu' && {
       onClose: state.closeAll,

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/utils/src/scrollIntoView');
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {composeStories} from '@storybook/react';
@@ -19,10 +20,13 @@ import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {scrollIntoView} from '@react-aria/utils';
 import * as stories from '../stories/GridCardView.stories';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
+
+let isOldReact = parseInt(React.version, 10) < 18;
 
 let {falsyItems} = stories;
 let {FalsyIds} = composeStories(stories);
@@ -175,7 +179,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('img');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -206,7 +210,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('img');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -235,7 +239,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('img');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('long description', {exact: false})).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -254,7 +258,7 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation');
+      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
       let currentTop;
       let currentLeft;
       let expectedWidth;
@@ -553,7 +557,7 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation');
+      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
       let currentTop;
       let expectedLeft;
       let expectedHeight;
@@ -721,7 +725,7 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation');
+      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
       let expectedWidth;
       let columnLefts = [];
       let columnHeights = [];
@@ -1161,16 +1165,8 @@ describe('CardView', function () {
       expect(cards).toBeTruthy();
       await user.click(cards[1]);
 
-      // Scroll to the 'ideal' end, however, this won't be the true y position after everything has
-      // been rendered and layout infos are all calculated. So scroll to the beginning again and then back one more time.
-      // This time we'll end up at the true end and the progress bar will be visible.
-      await user.keyboard('{End}');
-      await user.keyboard('{Home}');
-
-      await user.keyboard('{End}');
-
       act(() => {
-        grid.scrollTop += 100;
+        grid.scrollTop += 1000;
         fireEvent.scroll(grid);
       });
 
@@ -1199,19 +1195,11 @@ describe('CardView', function () {
 
       let cards = tree.getAllByRole('gridcell');
       expect(cards).toBeTruthy();
-      // Virtualizer calls onLoadMore twice due to initial layout
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
-      await user.click(cards[1]);
-
-      await user.keyboard('{End}');
-      act(() => {
-        jest.runAllTimers();
-      });
 
       let grid = tree.getByRole('grid');
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it.each`
@@ -1274,18 +1262,17 @@ describe('CardView', function () {
     let cards = tree.getAllByRole('gridcell');
     expect(cards).toBeTruthy();
     let grid = tree.getByRole('grid');
-    let initialScrollTop = grid.scrollTop;
-    await user.click(cards[cards.length - 1]);
+    await user.click(cards[4]);
     act(() => {
       jest.runAllTimers();
     });
-    expect(grid.scrollTop).toBe(initialScrollTop);
+    expect(scrollIntoView).not.toHaveBeenCalled();
 
     await user.keyboard('{ArrowDown}');
     act(() => {
       jest.runAllTimers();
     });
 
-    expect(grid.scrollTop).toBeGreaterThan(initialScrollTop);
+    expect(scrollIntoView).toHaveBeenLastCalledWith(grid, document.activeElement);
   });
 });
