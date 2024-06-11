@@ -147,7 +147,7 @@ const icon = style<InlineStylesProps>({
           variant: {
             informative: 'informative',
             positive: 'positive',
-            notice: 'notice',
+            notice: 'negative',
             negative: 'negative',
             neutral: 'neutral'
           }
