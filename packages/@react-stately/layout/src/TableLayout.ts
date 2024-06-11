@@ -61,9 +61,11 @@ export class TableLayout<T> extends ListLayout<T> {
 
     // If columnWidths were provided via layoutOptions, update those.
     // Otherwise, calculate column widths ourselves.
-    if (invalidationContext.layoutOptions?.columnWidths && invalidationContext.layoutOptions.columnWidths !== this.columnWidths) {
-      this.columnWidths = invalidationContext.layoutOptions.columnWidths;
-      invalidationContext.sizeChanged = true;
+    if (invalidationContext.layoutOptions?.columnWidths) {
+      if (invalidationContext.layoutOptions.columnWidths !== this.columnWidths) {
+        this.columnWidths = invalidationContext.layoutOptions.columnWidths;
+        invalidationContext.sizeChanged = true;
+      }
     } else if (invalidationContext.sizeChanged || this.columnsChanged(newCollection, this.collection)) {
       let columnLayout = new TableColumnLayout({});
       this.columnWidths = columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, newCollection, new Map());
