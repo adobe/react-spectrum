@@ -16,43 +16,149 @@ import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
 
-let supportedLocales: string[] = [
-  'ar-AE', // Arabic (United Arab Emirates)
-  'bg-BG', // Bulgarian (Bulgaria)
-  'zh-CN', // Chinese (Simplified)
-  'zh-TW', // Chinese (Traditional)
-  'hr-HR', // Croatian (Croatia)
-  'cs-CZ', // Czech (Czech Republic)
-  'da-DK', // Danish (Denmark)
-  'nl-NL', // Dutch (Netherlands)
-  'en-GB', // English (Great Britain)
-  'en-US', // English (United States)
-  'et-EE', // Estonian (Estonia)
-  'fi-FI', // Finnish (Finland)
-  'fr-CA', // French (Canada)
-  'fr-FR', // French (France)
-  'de-DE', // German (Germany)
-  'el-GR', // Greek (Greece)
-  'he-IL', // Hebrew (Israel)
-  'hu-HU', // Hungarian (Hungary)
-  'it-IT', // Italian (Italy)
-  'ja-JP', // Japanese (Japan)
-  'ko-KR', // Korean (Korea)
-  'lv-LV', // Latvian (Latvia)
-  'lt-LT', // Lithuanian (Lithuania)
-  'no-NO', // Norwegian (Norway)
-  'pl-PL', // Polish (Poland)
-  'pt-BR', // Portuguese (Brazil)
-  'ro-RO', // Romanian (Romania)
-  'ru-RU', // Russian (Russia)
-  'sr-RS', // Serbian (Serbia)
-  'sk-SK', // Slovakian (Slovakia)
-  'sl-SI', // Slovenian (Slovenia)
-  'es-ES', // Spanish (Spain)
-  'sv-SE', // Swedish (Sweden)
-  'tr-TR', // Turkish (Turkey)
-  'uk-UA'  // Ukrainian (Ukraine)
-];
+
+let supportedLocales = new Map<string, {groupSeparator: string, decimalSeparator: string}>([
+  [
+    'ar-AE', // Arabic (United Arab Emirates)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'bg-BG', // Bulgarian (Bulgaria)
+    {groupSeparator: '', decimalSeparator: ','}
+  ],
+  [
+    'zh-CN', // Chinese (Simplified)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'zh-TW', // Chinese (Traditional)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'hr-HR', // Croatian (Croatia)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'cs-CZ', // Czech (Czech Republic)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'da-DK', // Danish (Denmark)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'nl-NL', // Dutch (Netherlands)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'en-GB', // English (Great Britain)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'en-US', // English (United States)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'et-EE', // Estonian (Estonia)
+    {groupSeparator: '', decimalSeparator: ','}
+  ],
+  [
+    'fi-FI', // Finnish (Finland)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'fr-CA', // French (Canada)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'fr-FR', // French (France)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'de-DE', // German (Germany)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'el-GR', // Greek (Greece)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'he-IL', // Hebrew (Israel)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'hu-HU', // Hungarian (Hungary)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'it-IT', // Italian (Italy)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'ja-JP', // Japanese (Japan)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'ko-KR', // Korean (Korea)
+    {groupSeparator: ',', decimalSeparator: '.'}
+  ],
+  [
+    'lv-LV', // Latvian (Latvia)
+    {groupSeparator: '', decimalSeparator: ','}
+  ],
+  [
+    'lt-LT', // Lithuanian (Lithuania)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'no-NO', // Norwegian (Norway)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'pl-PL', // Polish (Poland)
+    {groupSeparator: '', decimalSeparator: ','}
+  ],
+  [
+    'pt-BR', // Portuguese (Brazil)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'ro-RO', // Romanian (Romania)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'ru-RU', // Russian (Russia)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'sr-RS', // Serbian (Serbia)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'sk-SK', // Slovakian (Slovakia)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'sl-SI', // Slovenian (Slovenia)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'es-ES', // Spanish (Spain)
+    {groupSeparator: '', decimalSeparator: ','}
+  ],
+  [
+    'sv-SE', // Swedish (Sweden)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ],
+  [
+    'tr-TR', // Turkish (Turkey)
+    {groupSeparator: '.', decimalSeparator: ','}
+  ],
+  [
+    'uk-UA', // Ukrainian (Ukraine)
+    {groupSeparator: ' ', decimalSeparator: ','}
+  ]
+]);
 
 export interface NumberFieldState extends FormValidationState {
   /**
@@ -305,36 +411,34 @@ export function useNumberFieldState(
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   let parseValueInAnySupportedLocale = (value: string) => {
-    let locales = supportedLocales.filter(localeCode => localeCode !== locale);
-    locales.unshift(locale);
-    let localeCodes = locales.map(localeCode => {
-      let numberFormatter = new NumberFormatter(localeCode, formatOptions);
-      return {
-        locale: localeCode,
-        groupSeparator: numberFormatter.formatToParts(1111).find(part => part.type === 'group')?.value,
-        decimalSeparator: numberFormatter.formatToParts(1.1).find(part => part.type === 'decimal')?.value
-      };
-    });
+    let currentLocaleCode = [...supportedLocales].find(([localeCode]) => localeCode === locale) || ['en-US', {groupSeparator: ',', decimalSeparator: '.'}];
+    let localesWithDifferentSeparators = [...supportedLocales].filter(([, separators]) => separators.groupSeparator !== currentLocaleCode?.[1].groupSeparator && separators.decimalSeparator !== currentLocaleCode?.[1].decimalSeparator);
+    let locales = new Map(
+      [
+        currentLocaleCode,
+        ...localesWithDifferentSeparators
+      ]
+    );
 
     let _parsedValue = NaN;
-    for (let localeCode of localeCodes) {
-      let _numberParser = new NumberParser(localeCode.locale, formatOptions);
+    for (let [localeCode, separators] of locales) {
+      let _numberParser = new NumberParser(localeCode, formatOptions);
       if (
         (
-          (localeCode.groupSeparator && value.includes(localeCode.groupSeparator)) ||
-          (localeCode.decimalSeparator && value.includes(localeCode.decimalSeparator))
+          value.includes(separators.groupSeparator) ||
+          value.includes(separators.decimalSeparator)
         ) &&
-        value.lastIndexOf(localeCode.groupSeparator ?? '') > value.lastIndexOf(localeCode.decimalSeparator ?? '')
+        value.lastIndexOf(separators.groupSeparator) > value.lastIndexOf(separators.decimalSeparator)
       ) {
-        if (value.lastIndexOf(localeCode.decimalSeparator ?? '') === -1) {
-          let pv = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
-          if (!isNaN(pv) && parseFloat(value.replaceAll(localeCode.groupSeparator ?? '', '')) === pv) {
+        if (value.lastIndexOf(separators.decimalSeparator) === -1) {
+          let pv = _numberParser.parse(value.replaceAll(separators.groupSeparator, ''));
+          if (!isNaN(pv) && parseFloat(value.replaceAll(separators.groupSeparator, '')) === pv) {
             return pv;
           }
         }
         continue;
       }
-      _parsedValue = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
+      _parsedValue = _numberParser.parse(value.replaceAll(separators.groupSeparator, ''));
       if (!isNaN(_parsedValue)) {
         return _parsedValue;
       }
