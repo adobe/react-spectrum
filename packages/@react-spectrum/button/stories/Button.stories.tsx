@@ -16,6 +16,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
 import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
@@ -345,6 +346,14 @@ function Pending(props) {
           </Button>
         </PendingButtonContainerComponent>
       </Flex>
+
+      <Flex wrap="wrap" alignItems={'center'}>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonFormComponent {...props} type="submit">
+            Form submit
+          </PendingButtonFormComponent>
+        </PendingButtonContainerComponent>
+      </Flex>
     </div>
   );
 }
@@ -388,5 +397,30 @@ function PendingButtonOnClickComponent(props) {
       onClick={handlePress}>
       {props.children}
     </Button>
+  );
+}
+
+function PendingButtonFormComponent(props) {
+  let [isPending, setPending] = useState(false);
+
+  let onSubmit = (e) => {
+    console.log('onSubmit called.');
+    e.preventDefault();
+    if (!isPending) {
+      setPending(true);
+      setTimeout(() => {
+        setPending(false);
+      }, timerValue);
+    }
+  };
+
+  return (
+    <Form onSubmit={onSubmit}>
+      <Button
+        {...props}
+        isPending={isPending}>
+        {props.children}
+      </Button>
+    </Form>
   );
 }

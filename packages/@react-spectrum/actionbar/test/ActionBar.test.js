@@ -172,6 +172,7 @@ describe('ActionBar', () => {
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
+    expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Foo 1');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
     await user.tab();
@@ -203,11 +204,11 @@ describe('ActionBar', () => {
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
     await act(async () => Promise.resolve());
-    expect(rows[1]).not.toBeInTheDocument();
 
     rows = within(table).getAllByRole('row');
     expect(toolbar).not.toBeInTheDocument();
     expect(document.activeElement).toBe(rows[1]);
+    expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Foo 2');
   });
 
   it('should restore focus to the new first row if the row we wanted to restore to was removed via actiongroup menu', async () => {
