@@ -34,7 +34,7 @@ function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: Foc
     createCalendar
   });
 
-  let domRef = useRef(undefined);
+  let domRef = useRef(null);
   useImperativeHandle(ref, () => ({
     ...createDOMRef(domRef),
     focus() {

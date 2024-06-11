@@ -45,7 +45,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.collator = opts.collator;
       this.disabledKeys = opts.disabledKeys || new Set();
       this.disabledBehavior = opts.disabledBehavior || 'all';
-      this.orientation = opts.orientation;
+      this.orientation = opts.orientation || 'vertical';
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
     } else {

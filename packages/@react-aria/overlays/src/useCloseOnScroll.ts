@@ -42,6 +42,13 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions) {
         return;
       }
 
+      // Ignore scroll events on any input or textarea as the cursor position can cause it to scroll
+      // such as in a combobox. Clicking the dropdown button places focus on the input, and if the
+      // text inside the input extends beyond the 'end', then it will scroll so the cursor is visible at the end.
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
       let onCloseHandler = onClose || onCloseMap.get(triggerRef.current);
       if (onCloseHandler) {
         onCloseHandler();

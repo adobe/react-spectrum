@@ -15,7 +15,7 @@ import {useEffectEvent} from './useEffectEvent';
 
 export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
   ref: RefObject<EventTarget | null>,
-  event: K,
+  event: K | (string & {}),
   handler?: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ) {

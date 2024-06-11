@@ -40,11 +40,9 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
-  let triggerNode = state.collection.getItem(targetKey);
+  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState} = useMenuStateContext();
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
-    node: triggerNode,
     parentMenuRef,
     submenuRef: menuRef
   }, submenuTriggerState, triggerRef);

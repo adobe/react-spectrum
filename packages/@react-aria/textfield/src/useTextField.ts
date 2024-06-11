@@ -163,7 +163,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     labelProps,
     inputProps: mergeProps(
       domProps,
-      inputElementType === 'input' && inputOnlyProps,
+      inputElementType === 'input' ? inputOnlyProps : undefined,
       {
         disabled: isDisabled,
         readOnly: isReadOnly,

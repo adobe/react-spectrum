@@ -96,13 +96,20 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {defaultValue, onChange, onChangeEnd} = props;
+  let {value: propsValue, defaultValue, onChange, onChangeEnd} = props;
 
-  if (!props.value && !defaultValue) {
+  if (!propsValue && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
   }
+  if (propsValue) {
+    propsValue = normalizeColor(propsValue);
+  }
+  if (defaultValue) {
+    defaultValue = normalizeColor(defaultValue);
+  }
 
-  let [stateValue, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we assign a default
+  let [stateValue, setValueState] = useControlledState<Color>(propsValue as Color, defaultValue as Color, onChange);
   let value = useMemo(() => {
     let colorSpace = stateValue.getColorSpace();
     return colorSpace === 'hsl' || colorSpace === 'hsb' ? stateValue : stateValue.toFormat('hsl');

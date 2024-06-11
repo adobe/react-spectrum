@@ -75,10 +75,6 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
     display: layoutInfo.isSticky ? 'inline-block' : undefined,
     overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
-    transition: 'all',
-    WebkitTransition: 'all',
-    WebkitTransitionDuration: 'inherit',
-    transitionDuration: 'inherit',
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
