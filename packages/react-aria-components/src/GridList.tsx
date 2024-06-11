@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
@@ -19,7 +19,7 @@ import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContex
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -44,6 +44,11 @@ export interface GridListRenderProps {
    */
   isDropTarget: boolean,
   /**
+   * Whether the items are arranged in a stack or grid.
+   * @selector [data-layout="stack | grid"]
+   */
+  layout: 'stack' | 'grid',
+  /**
    * State of the grid list.
    */
   state: ListState<unknown>
@@ -55,7 +60,12 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: (props: GridListRenderProps) => ReactNode
+  renderEmptyState?: (props: GridListRenderProps) => ReactNode,
+  /**
+   * Whether the items are arranged in a stack or grid.
+   * @default 'stack'
+   */
+  layout?: 'stack' | 'grid'
 }
 
 
@@ -80,14 +90,34 @@ interface GridListInnerProps<T extends object> {
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  let {dragAndDropHooks} = props;
+  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let state = useListState({
     ...props,
     collection,
     children: undefined
   });
 
-  let {gridProps} = useGridList(props, state, ref);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let {disabledBehavior, disabledKeys} = state.selectionManager;
+  let {direction} = useLocale();
+  let keyboardDelegate = useMemo(() => (
+    new ListKeyboardDelegate({
+      collection,
+      collator,
+      ref,
+      disabledKeys,
+      disabledBehavior,
+      layout,
+      direction
+    })
+  ), [collection, ref, layout, disabledKeys, disabledBehavior, collator, direction]);
+
+  let {gridProps} = useGridList({
+    ...props,
+    keyboardDelegate,
+    // Only tab navigation is supported in grid layout.
+    keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior
+  }, state, ref);
 
   let selectionManager = state.selectionManager;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -136,7 +166,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledBehavior: selectionManager.disabledBehavior,
       ref
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -151,6 +181,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     isEmpty: state.collection.size === 0,
     isFocused,
     isFocusVisible,
+    layout,
     state
   };
   let renderProps = useRenderProps({
@@ -185,7 +216,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-drop-target={isRootDropTarget || undefined}
         data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}>
+        data-focus-visible={isFocusVisible || undefined}
+        data-layout={layout}>
         <Provider
           values={[
             [ListStateContext, state],
