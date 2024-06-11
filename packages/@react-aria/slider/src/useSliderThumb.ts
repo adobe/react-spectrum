@@ -85,7 +85,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   let currentPosition = useRef<number>(null);
 
   const realTimeThumbDraggingIndex = useRef<number | null>(null);
-  const isBeingStuckBeforeDragging = useRef<boolean | undefined>(undefined);
+  const isCanBeSwapped = useRef<boolean | undefined>(undefined);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -114,8 +114,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       let controlledThumbIndex = index;
       realTimeThumbDraggingIndex.current = index;
 
-      if (isBeingStuckBeforeDragging.current === undefined) {
-        isBeingStuckBeforeDragging.current = getStuckThumbsIndexes(state, index) !== null;
+      if (isCanBeSwapped.current === undefined) {
+        isCanBeSwapped.current = getStuckThumbsIndexes(state, index) !== null;
       }
 
       setThumbDragging(controlledThumbIndex, true);
@@ -139,9 +139,9 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           controlledThumbIndex = indexForSwap;
         }
 
-        if (swapDisabled && isBeingStuckBeforeDragging.current) {
+        if (swapDisabled && isCanBeSwapped.current) {
           controlledThumbIndex = indexForSwap ?? realTimeThumbDraggingIndex.current;
-          isBeingStuckBeforeDragging.current = false;
+          isCanBeSwapped.current = false;
         }
       }      
 
@@ -163,7 +163,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       if (
         realTimeThumbDraggingIndex.current !== controlledThumbIndex
       ) {
-        isBeingStuckBeforeDragging.current = undefined;
+        isCanBeSwapped.current = undefined;
 
         setFocusedThumb(controlledThumbIndex);
         setThumbDragging(realTimeThumbDraggingIndex.current, false);
@@ -178,8 +178,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
     onMoveStart() {
       currentPosition.current = null;
 
-      if (isBeingStuckBeforeDragging.current === undefined) {
-        isBeingStuckBeforeDragging.current = getStuckThumbsIndexes(state, index) !== null;
+      if (isCanBeSwapped.current === undefined) {
+        isCanBeSwapped.current = getStuckThumbsIndexes(state, index) !== null;
       }
 
       if (realTimeThumbDraggingIndex.current === null) {
@@ -236,8 +236,9 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       }
 
       const stuckThumbsIndexes = getStuckThumbsIndexes(state, controlledThumbIndex);
+      const isNeedToSwap = stuckThumbsIndexes !== null;
 
-      if (stuckThumbsIndexes !== null && isValueMustBeChanged) {
+      if (isNeedToSwap && isValueMustBeChanged) {
         const possibleIndexesForSwap = stuckThumbsIndexes.filter((i) =>
           isValueMustBeDecreasing
             ? i < controlledThumbIndex && isThumbEditable(i)
@@ -252,10 +253,23 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           controlledThumbIndex = indexForSwap;
         }
 
-        if (swapDisabled && isBeingStuckBeforeDragging.current) {
+        if (swapDisabled && isCanBeSwapped.current) {
           controlledThumbIndex = indexForSwap ?? realTimeThumbDraggingIndex.current;
-          isBeingStuckBeforeDragging.current = false;
+          isCanBeSwapped.current = false;
         }
+      }
+
+      if (
+        realTimeThumbDraggingIndex.current !== null &&
+        realTimeThumbDraggingIndex.current !== controlledThumbIndex
+      ) {
+        // The order matters because in the case of an empty array,
+        // an event (onChangeEnd) will be prematurely called
+        setThumbDragging(controlledThumbIndex, true);
+        setThumbDragging(realTimeThumbDraggingIndex.current, false);
+
+        setFocusedThumb(controlledThumbIndex);
+        realTimeThumbDraggingIndex.current = controlledThumbIndex;
       }
 
       if (pointerType === 'keyboard') {
@@ -269,25 +283,10 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       if (pointerType !== 'keyboard' && isValueMustBeChanged) {
         setThumbPercent(controlledThumbIndex, clamp(currentPosition.current / size, 0, 1));
       }
-
-      if (
-        realTimeThumbDraggingIndex.current !== null &&
-        realTimeThumbDraggingIndex.current !== controlledThumbIndex
-      ) {
-        const prevDraggedIndex = realTimeThumbDraggingIndex.current;
-        realTimeThumbDraggingIndex.current = controlledThumbIndex;
-
-        // The order matters because in the case of an empty array,
-        // an event (onChangeEnd) will be prematurely called
-        setThumbDragging(controlledThumbIndex, true);
-        setThumbDragging(prevDraggedIndex, false);
-
-        setFocusedThumb(realTimeThumbDraggingIndex.current);
-      }
     },
     onMoveEnd({pointerType}) {
       if (pointerType !== 'keyboard') {
-        isBeingStuckBeforeDragging.current = undefined;
+        isCanBeSwapped.current = undefined;
       }
 
       if (realTimeThumbDraggingIndex.current !== null) {
@@ -314,7 +313,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
     currentPointer.current = id;
 
     realTimeThumbDraggingIndex.current = index;
-    isBeingStuckBeforeDragging.current = getStuckThumbsIndexes(state, index) !== null;
+    isCanBeSwapped.current = getStuckThumbsIndexes(state, index) !== null;
     
     state.setThumbDragging(index, true);
     
@@ -333,7 +332,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
         state.setThumbDragging(realTimeThumbDraggingIndex.current, false);
 
         realTimeThumbDraggingIndex.current = null;
-        isBeingStuckBeforeDragging.current = undefined;        
+        isCanBeSwapped.current = undefined;        
       }
 
       removeGlobalListener(window, 'mouseup', onUp, false);
