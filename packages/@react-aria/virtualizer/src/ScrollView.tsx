@@ -227,8 +227,8 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   return {
     scrollViewProps: {
-      style,
-      ...otherProps
+      ...otherProps,
+      style
     },
     contentProps: {
       style: innerStyle
