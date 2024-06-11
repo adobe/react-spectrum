@@ -43,11 +43,9 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
-  let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
   let {submenuTriggerProps, popoverProps} = useSubmenuTrigger({
-    node: triggerNode,
     parentMenuRef,
     submenuRef,
     type: 'dialog',

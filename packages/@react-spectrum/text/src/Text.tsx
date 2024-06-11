@@ -26,7 +26,7 @@ function Text(props: TextProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
 
   return (
-    <span {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <span role="none" {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </span>
   );

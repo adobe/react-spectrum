@@ -42,7 +42,7 @@ export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
 export {Input, InputContext} from './Input';
-export {Section, Collection} from './Collection';
+export {Section, Collection, CollectionRendererContext} from './Collection';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
@@ -75,7 +75,7 @@ export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
 
-export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
+export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
@@ -99,7 +99,7 @@ export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItem
 export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
-export type {SectionProps} from './Collection';
+export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
