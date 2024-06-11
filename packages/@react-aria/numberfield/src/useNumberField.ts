@@ -187,7 +187,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onPaste: ClipboardEventHandler<HTMLInputElement> = (e: ClipboardEvent<HTMLInputElement>) => {
     props.onPaste?.(e);
     let inputElement = e.target as HTMLInputElement;
-    if (inputElement && (inputElement.selectionEnd - inputElement.selectionStart) === inputElement.value.length) {
+    if (
+      inputElement &&
+      (
+        ((inputElement.selectionEnd ?? -1) - (inputElement.selectionStart ?? 0)) === inputElement.value.length
+      )
+    ) {
       e.preventDefault();
       let pastedText = e.clipboardData?.getData?.('text/plain')?.trim() ?? '';
       let value = state.parseValueInAnySupportedLocale(pastedText);

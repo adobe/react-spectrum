@@ -324,9 +324,9 @@ export function useNumberFieldState(
           (localeCode.groupSeparator && value.includes(localeCode.groupSeparator)) ||
           (localeCode.decimalSeparator && value.includes(localeCode.decimalSeparator))
         ) &&
-        value.lastIndexOf(localeCode.groupSeparator) > value.lastIndexOf(localeCode.decimalSeparator)
+        value.lastIndexOf(localeCode.groupSeparator ?? '') > value.lastIndexOf(localeCode.decimalSeparator ?? '')
       ) {
-        if (value.lastIndexOf(localeCode.decimalSeparator) === -1) {
+        if (value.lastIndexOf(localeCode.decimalSeparator ?? '') === -1) {
           let pv = _numberParser.parse(value.replaceAll(localeCode.groupSeparator ?? '', ''));
           if (!isNaN(pv) && parseFloat(value.replaceAll(localeCode.groupSeparator ?? '', '')) === pv) {
             return pv;
