@@ -397,14 +397,24 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
 const MyTableLoader = () => {
   return (
     <UNSTABLE_TableLoader>
-      {({isTableEmpty}) => (
-        <span>
-          {isTableEmpty ? 'Loading spinner' : 'Load more spinner'}
-        </span>
-      )}
+      <span>
+        Load more spinner
+      </span>
     </UNSTABLE_TableLoader>
   );
 };
+
+function MyTableBody(props) {
+  let {rows, children, isLoading, ...otherProps} = props;
+  return (
+    <TableBody {...otherProps}>
+      <Collection items={rows}>
+        {children}
+      </Collection>
+      {isLoading && <MyTableLoader />}
+    </TableBody>
+  );
+}
 
 const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
   return (
@@ -427,18 +437,6 @@ const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
   );
 };
 
-function MyTableBody(props) {
-  let {rows, children, isLoading, ...otherProps} = props;
-  return (
-    <TableBody {...otherProps}>
-      <Collection items={rows}>
-        {children}
-      </Collection>
-      {isLoading && <MyTableLoader />}
-    </TableBody>
-  );
-}
-
 export const TableLoadingBodyWrapperStory = {
   render: TableLoadingBodyWrapper,
   args: {
@@ -446,6 +444,16 @@ export const TableLoadingBodyWrapperStory = {
   },
   name: 'Table loading, table body wrapper with collection'
 };
+
+function MyRow(props) {
+  return (
+    <>
+      {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
+      <Row {...props} />
+      {props.isLoading && <MyTableLoader />}
+    </>
+  );
+}
 
 const TableLoadingRowRenderWrapper = (args: {isLoading: boolean}) => {
   return (
@@ -468,16 +476,6 @@ const TableLoadingRowRenderWrapper = (args: {isLoading: boolean}) => {
   );
 };
 
-function MyRow(props) {
-  return (
-    <>
-      {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
-      <Row {...props} />
-      {props.isLoading && <MyTableLoader />}
-    </>
-  );
-}
-
 export const TableLoadingRowRenderWrapperStory = {
   render: TableLoadingRowRenderWrapper,
   args: {
@@ -487,9 +485,12 @@ export const TableLoadingRowRenderWrapperStory = {
 };
 
 
-// TODO: when writing the docs, prefer this pattern in the docs, establish renderEmptyState as something distinct from empty + loading
-// (aka users should use empty state for if their table is empty and not loading, but should render the TableLoader for empty + loading and for has items + loading)
+function renderEmptyLoader({isLoading}) {
+  return isLoading ? 'Loading spinner' : 'No results found.';
+}
+
 const RenderEmptyState = (args: {isLoading: boolean}) => {
+  let {isLoading} = args;
   return (
     <Table aria-label="Files" selectionMode="multiple">
       <TableHeader columns={columns}>
@@ -501,7 +502,7 @@ const RenderEmptyState = (args: {isLoading: boolean}) => {
           )}
         </Collection>
       </TableHeader>
-      <TableBody renderEmptyState={() => 'No results found.'}>
+      <TableBody renderEmptyState={() => renderEmptyLoader({isLoading})}>
         <Collection items={[]}>
           {(item) => (
             <Row columns={columns}>
@@ -511,7 +512,6 @@ const RenderEmptyState = (args: {isLoading: boolean}) => {
             </Row>
           )}
         </Collection>
-        {args.isLoading && <MyTableLoader />}
       </TableBody>
     </Table>
   );

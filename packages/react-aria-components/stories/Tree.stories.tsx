@@ -194,11 +194,9 @@ let rows = [
 const MyTreeLoader = () => {
   return (
     <UNSTABLE_TreeLoader>
-      {({isTreeEmpty, level}) => {
+      {({level}) => {
         let message = `Level ${level} loading spinner`;
-        if (isTreeEmpty) {
-          message = 'Root level loading spinner';
-        } else if (level === 1) {
+        if (level === 1) {
           message = 'Load more spinner';
         }
         return (
@@ -318,12 +316,16 @@ WithLinks.story = {
   }
 };
 
+function renderEmptyLoader({isLoading}) {
+  return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
+}
+
 const EmptyTreeStatic = (args: {isLoading: boolean}) => (
   <UNSTABLE_Tree
     {...args}
     className={styles.tree}
     aria-label="test empty static tree"
-    renderEmptyState={() => <span>Nothing in tree</span>}>
+    renderEmptyState={() => renderEmptyLoader({isLoading: args.isLoading})}>
     <Collection items={[]} dependencies={[args.isLoading]}>
       {(item: any) => (
         <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
@@ -331,7 +333,6 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
         </DynamicTreeItem>
       )}
     </Collection>
-    {args.isLoading && <MyTreeLoader />}
   </UNSTABLE_Tree>
 );
 

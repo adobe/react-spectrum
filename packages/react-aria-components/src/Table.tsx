@@ -93,7 +93,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   get size() {
-    return [...this.getChildren(this.body.key)].filter(item => item.type !== 'loader').length;
+    return [...this.getChildren(this.body.key)].length;
   }
 
   getFirstKey() {
@@ -839,11 +839,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
-  let isTableEmpty = collection.size === 0 && collection.rows.filter(row => row.type === 'loader').length === 0;
 
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: isTableEmpty
+    isEmpty: collection.size === 0
   };
   let renderProps = useRenderProps({
     ...props,
@@ -854,8 +853,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   });
 
   let emptyState;
-
-  if (isTableEmpty && props.renderEmptyState && state) {
+  if (collection.size === 0 && props.renderEmptyState && state) {
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
@@ -871,7 +869,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
       {...renderProps}
       ref={ref}
-      data-empty={isTableEmpty || undefined}>
+      data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
       <CollectionChildren collection={collection} parent={collection.body} />
       {emptyState}
@@ -1226,17 +1224,10 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoaderRenderProps {
-  /**
-   * Whether the table is currently empty.
-   * @selector [data-table-empty]
-   */
-  isTableEmpty: boolean
-}
+// TOOD: no props for now, maybe get rid of this? Might be good to keep it just in case
+export interface TableLoaderProps {}
 
-export interface TableLoaderProps extends RenderProps<TableLoaderRenderProps> {}
-
-export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps,  ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let numColumns = state.collection.columns.length;
   let renderProps = useRenderProps({
@@ -1244,9 +1235,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TableLoader',
-    values: {
-      isTableEmpty: state.collection.size === 0
-    }
+    values: null
   });
 
   // TODO: add aria attributes when we add virtualizer
@@ -1257,8 +1246,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
         role="row"
         ref={ref}
         {...mergeProps(filterDOMProps(props as any))}
-        {...renderProps}
-        data-table-empty={state.collection.size === 0}>
+        {...renderProps}>
         <td role="rowheader" colSpan={numColumns}>
           {renderProps.children}
         </td>

@@ -1207,12 +1207,10 @@ describe('Tree', () => {
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(22);
       let subRowLoader = rows[6];
-      expect(subRowLoader).toHaveAttribute('data-tree-empty', 'false');
       expect(subRowLoader).toHaveAttribute('data-level', '3');
       expect(subRowLoader).toHaveTextContent('Level 3 loading spinner');
 
       let rootLoader = rows[21];
-      expect(rootLoader).toHaveAttribute('data-tree-empty', 'false');
       expect(rootLoader).toHaveAttribute('data-level', '1');
       expect(rootLoader).toHaveTextContent('Load more spinner');
 
@@ -1275,16 +1273,7 @@ describe('Tree', () => {
       expect(document.activeElement).toBe(rows[19]);
     });
 
-    it('should provide isTreeEmpty via render props', () => {
-      let {getAllByRole} = render(<EmptyLoadingTree isLoading />);
-      let rows = getAllByRole('row');
-      let loader = rows[0];
-      expect(loader).toHaveTextContent('Root level loading spinner');
-      expect(loader).toHaveAttribute('data-tree-empty', 'true');
-      expect(loader).toHaveAttribute('data-level', '1');
-    });
-
-    it('should not render renderEmpty state and the loader at the same time', () => {
+    it('should not render no results state and the loader at the same time', () => {
       let {getByRole, getAllByRole, rerender} = render(<EmptyLoadingTree isLoading />);
 
       let rows = getAllByRole('row');
@@ -1292,7 +1281,7 @@ describe('Tree', () => {
       let body = getByRole('treegrid');
 
       expect(rows).toHaveLength(1);
-      expect(body).not.toHaveAttribute('data-empty');
+      expect(body).toHaveAttribute('data-empty', 'true');
       expect(loader).toHaveTextContent('Root level loading spinner');
 
       rerender(<EmptyLoadingTree />);

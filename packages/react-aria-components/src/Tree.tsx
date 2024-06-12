@@ -185,14 +185,11 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     disabledBehavior
   });
 
-  // TODO: is this strange? Maybe should have a separate getter from the flattened collection for the original collection size
-  // Definitely a bit confusing that there are two collections and that I'm using the original one to check if the tree is empty
-  let isTreeEmpty = collection.size === 0;
   let {gridProps} = useTreeGridList(props, state, ref);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
-    isEmpty: isTreeEmpty,
+    isEmpty: state.collection.size === 0,
     isFocused,
     isFocusVisible,
     state
@@ -207,7 +204,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
-  if (isTreeEmpty && props.renderEmptyState) {
+  if (state.collection.size === 0 && props.renderEmptyState) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {isEmpty, ...values} = renderValues;
     let content = props.renderEmptyState({...values});
@@ -235,7 +232,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
-        data-empty={collection.size === 0 || undefined}
+        data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
@@ -441,11 +438,6 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
 
 export interface TreeLoaderRenderProps {
   /**
-   * Whether the tree is currently empty.
-   * @selector [data-tree-empty]
-   */
-  isTreeEmpty: boolean,
-  /**
    * What level the tree item has within the tree.
    * @selector [data-level]
    */
@@ -460,8 +452,6 @@ export const UNSTABLE_TreeLoader = createLeafComponent('loader', function TreeLo
   // @ts-ignore
   let {rowProps} = useTreeGridListItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
-   // If the loader is being rendered and there is only one item in the collection, it must be the loader and not an actual row
-  let isTreeEmpty = !!(state && state.collection.size <= 1);
 
   let ariaProps = {
     'aria-level': rowProps['aria-level'],
@@ -475,7 +465,6 @@ export const UNSTABLE_TreeLoader = createLeafComponent('loader', function TreeLo
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
     values: {
-      isTreeEmpty,
       level
     }
   });
@@ -487,7 +476,6 @@ export const UNSTABLE_TreeLoader = createLeafComponent('loader', function TreeLo
         ref={ref}
         {...mergeProps(filterDOMProps(props as any), ariaProps)}
         {...renderProps}
-        data-tree-empty={isTreeEmpty}
         data-level={level}>
         <div role="gridcell" aria-colindex={1}>
           {renderProps.children}

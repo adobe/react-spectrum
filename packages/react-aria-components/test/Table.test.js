@@ -1284,7 +1284,6 @@ describe('Table', () => {
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(6);
       let loader = rows[5];
-      expect(loader).toHaveAttribute('data-table-empty', 'false');
       expect(loader).toHaveTextContent('Load more spinner');
 
       let cell = within(loader).getByRole('rowheader');
@@ -1365,15 +1364,7 @@ describe('Table', () => {
       expect(within(column).getByRole('checkbox', {hidden: true})).toBeDisabled();
     });
 
-    it('should provide isTableEmpty via render props', () => {
-      let {getAllByRole} = render(<EmptyLoadingTable isLoading />);
-      let rows = getAllByRole('row');
-      let loader = rows[1];
-      expect(loader).toHaveTextContent('Loading spinner');
-      expect(loader).toHaveAttribute('data-table-empty', 'true');
-    });
-
-    it('should not render renderEmpty state and the loader at the same time', () => {
+    it('should not render no results state and the loader at the same time', () => {
       let {getAllByRole, rerender} = render(<EmptyLoadingTable isLoading />);
 
       let rows = getAllByRole('row');
@@ -1381,7 +1372,7 @@ describe('Table', () => {
       let body = getAllByRole('rowgroup')[1];
 
       expect(rows).toHaveLength(2);
-      expect(body).not.toHaveAttribute('data-empty');
+      expect(body).toHaveAttribute('data-empty', 'true');
       expect(loader).toHaveTextContent('Loading spinner');
 
       rerender(<EmptyLoadingTable />);

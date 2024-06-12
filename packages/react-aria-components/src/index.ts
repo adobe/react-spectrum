@@ -69,7 +69,7 @@ export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
+export {UNSTABLE_TreeLoader, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
