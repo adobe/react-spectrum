@@ -99,7 +99,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
         incrementThumb,
         isThumbEditable,
         pageSize,
-        swapDisabled
+        swapEnabled
       } = state;
 
       // these are the cases that useMove or useSlider don't handle
@@ -114,17 +114,18 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       let controlledThumbIndex = index;
       realTimeThumbDraggingIndex.current = index;
 
+      setThumbDragging(controlledThumbIndex, true);
+
       if (isCanBeSwapped.current === undefined) {
         isCanBeSwapped.current = getStuckThumbsIndexes(state, index) !== null;
       }
 
-      setThumbDragging(controlledThumbIndex, true);
-
       const stuckThumbsIndexes = getStuckThumbsIndexes(state, controlledThumbIndex);
-      
       const isValueMustBeDecreasing = (e.key === 'PageDown') || (e.key === 'Home');
+      
+      const isNeededToSwap = stuckThumbsIndexes !== null;
 
-      if (stuckThumbsIndexes !== null) {
+      if (isNeededToSwap) {
         const possibleIndexesForSwap = stuckThumbsIndexes.filter((i) =>
           isValueMustBeDecreasing
             ? i < controlledThumbIndex && isThumbEditable(i)
@@ -135,11 +136,11 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           ? possibleIndexesForSwap[0]
           : possibleIndexesForSwap[possibleIndexesForSwap.length - 1];
 
-        if (indexForSwap !== undefined && !swapDisabled) {
+        if (indexForSwap !== undefined && swapEnabled) {
           controlledThumbIndex = indexForSwap;
         }
 
-        if (swapDisabled && isCanBeSwapped.current) {
+        if (!swapEnabled && isCanBeSwapped.current) {
           controlledThumbIndex = indexForSwap ?? realTimeThumbDraggingIndex.current;
           isCanBeSwapped.current = false;
         }
@@ -191,7 +192,6 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       const {
         getThumbPercent,
         getPercentValue,
-        getThumbValue,
         setThumbPercent,
         setFocusedThumb,
         setThumbDragging,
@@ -200,7 +200,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
         isThumbEditable,
         step,
         pageSize,
-        swapDisabled
+        swapEnabled
       } = state;
       let {width, height} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
@@ -229,16 +229,14 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
 
         const percent = clamp(currentPosition.current / size, 0, 1);
 
-        isValueMustBeChanged =
-          getPercentValue(percent) !== getThumbValue(controlledThumbIndex);
-        isValueMustBeDecreasing =
-          getPercentValue(percent) < getThumbValue(controlledThumbIndex);
+        isValueMustBeChanged = getPercentValue(percent) !== value;
+        isValueMustBeDecreasing = getPercentValue(percent) < value;
       }
 
       const stuckThumbsIndexes = getStuckThumbsIndexes(state, controlledThumbIndex);
-      const isNeedToSwap = stuckThumbsIndexes !== null;
+      const isNeededToSwap = stuckThumbsIndexes !== null;
 
-      if (isNeedToSwap && isValueMustBeChanged) {
+      if (isNeededToSwap && isValueMustBeChanged) {
         const possibleIndexesForSwap = stuckThumbsIndexes.filter((i) =>
           isValueMustBeDecreasing
             ? i < controlledThumbIndex && isThumbEditable(i)
@@ -249,11 +247,11 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           ? possibleIndexesForSwap[0]
           : possibleIndexesForSwap[possibleIndexesForSwap.length - 1];
 
-        if (indexForSwap !== undefined && !swapDisabled) {
+        if (indexForSwap !== undefined && swapEnabled) {
           controlledThumbIndex = indexForSwap;
         }
 
-        if (swapDisabled && isCanBeSwapped.current) {
+        if (!swapEnabled && isCanBeSwapped.current) {
           controlledThumbIndex = indexForSwap ?? realTimeThumbDraggingIndex.current;
           isCanBeSwapped.current = false;
         }

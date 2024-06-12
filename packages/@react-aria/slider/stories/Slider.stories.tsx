@@ -181,8 +181,7 @@ export const _4StackedThumbsWithDisabledSwap = () => (
     onChange={action('onChange')}
     onChangeEnd={action('onChangeEnd')}
     defaultValue={[50, 50, 50, 50]}
-    step={10}
-    disallowSwap>
+    step={10}>
     <StoryThumb label="A" />
     <StoryThumb label="B" />
     <StoryThumb label="C" />
@@ -199,7 +198,8 @@ export const _4StackedThumbsWithEnabledSwap = () => (
     label="4 thumbs - all stacked"
     onChange={action('onChange')}
     onChangeEnd={action('onChangeEnd')}
-    defaultValue={[50, 50, 50, 50]}>
+    defaultValue={[50, 50, 50, 50]}
+    allowSwap>
     <StoryThumb label="A" />
     <StoryThumb label="B" />
     <StoryThumb label="C" />

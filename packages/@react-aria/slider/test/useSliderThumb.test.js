@@ -529,7 +529,7 @@ describe('useSliderThumb', () => {
         it('can be swapped with the pointer', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} allowSwap />);
 
           const thumb3 = screen.getByTestId('thumb3');
 
@@ -554,7 +554,7 @@ describe('useSliderThumb', () => {
         it('can be swapped thumbs when they get stuck in each other', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} allowSwap />);
   
           const thumb4 = screen.getByTestId('thumb3');
   
@@ -602,7 +602,7 @@ describe('useSliderThumb', () => {
         it('can be swapped', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} allowSwap />);
   
           const thumb3 = screen.getByTestId('thumb3');
   
@@ -638,7 +638,7 @@ describe('useSliderThumb', () => {
 
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} allowSwap />);
   
           const thumb3 = screen.getByTestId('thumb3');
   
@@ -688,7 +688,7 @@ describe('useSliderThumb', () => {
   
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} step={10} />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} step={10} allowSwap />);
   
           await user.tab();
           await user.keyboard('{ArrowRight}');
@@ -719,7 +719,7 @@ describe('useSliderThumb', () => {
   
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} allowSwap />);
   
           // Choose the third thumb
           await user.tab();
@@ -763,7 +763,7 @@ describe('useSliderThumb', () => {
         it('can not be swapped', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} disallowSwap />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} />);
   
           const thumb3 = screen.getByTestId('thumb3');
   
@@ -790,7 +790,7 @@ describe('useSliderThumb', () => {
         it('can be swapped thumbs when they get stuck in each other (only once)', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} disallowSwap />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} />);
     
           const thumb3 = screen.getByTestId('thumb3');
     
@@ -838,7 +838,7 @@ describe('useSliderThumb', () => {
         it('can not be swapped', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} disallowSwap />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} />);
     
           const thumb3 = screen.getByTestId('thumb3');
     
@@ -872,7 +872,7 @@ describe('useSliderThumb', () => {
         it('can be swapped thumbs when they get stuck in each other (only once)', () => {
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} disallowSwap />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[50, 50, 50, 50]} />);
     
           const thumb3 = screen.getByTestId('thumb3');
     
@@ -922,7 +922,7 @@ describe('useSliderThumb', () => {
     
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} step={10} disallowSwap />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} step={10} />);
     
           await user.tab();
           await user.keyboard('{ArrowRight}');
@@ -954,7 +954,7 @@ describe('useSliderThumb', () => {
     
           let onChangeSpy = jest.fn();
           let onChangeEndSpy = jest.fn();
-          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} disallowSwap />);
+          render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={defaultValue} />);
     
           // Choose the first thumb
           await user.tab();

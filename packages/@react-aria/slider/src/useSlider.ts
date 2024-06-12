@@ -88,7 +88,7 @@ export function useSlider<T extends number | number[]>(
         setThumbPercent, 
         setThumbDragging, 
         setFocusedThumb,
-        swapDisabled
+        swapEnabled
       } = state;
 
       let {height, width} = trackRef.current.getBoundingClientRect();
@@ -116,8 +116,9 @@ export function useSlider<T extends number | number[]>(
       const isValueMustBeChanged = getPercentValue(percent) !== value;
 
       const stuckThumbsIndexes = getStuckThumbsIndexes(state, controlledThumbIndex);
+      const isNeededToSwap = stuckThumbsIndexes !== null;
 
-      if (stuckThumbsIndexes !== null && isValueMustBeChanged) {
+      if (isNeededToSwap && isValueMustBeChanged) {
         const possibleIndexesForSwap = stuckThumbsIndexes.filter((i) => 
             isValueMustBeDecreasing
               ? i < controlledThumbIndex && isThumbEditable(i)
@@ -131,33 +132,32 @@ export function useSlider<T extends number | number[]>(
             ? possibleIndexesForSwap[0]
             : possibleIndexesForSwap[possibleIndexesForSwap.length - 1];
 
-        if (indexForSwap !== undefined && !swapDisabled) {
+        if (indexForSwap !== undefined && swapEnabled) {
           controlledThumbIndex = indexForSwap;
         }
   
         // This allows to select the controlled thumb once and when it gets stuck again 
         // as you move in other thumbs, then control will remain over it.
-        if (swapDisabled && isBeingStuckBeforeDragging.current) {
+        if (!swapEnabled && isBeingStuckBeforeDragging.current) {
           controlledThumbIndex = indexForSwap ?? controlledThumbIndex;
           isBeingStuckBeforeDragging.current = false;
         }
-      }
-
-      if (controlledThumbIndex !== null && trackRef.current && isValueMustBeChanged) {
-        setThumbPercent(controlledThumbIndex, percent);
       }
 
       if (
         realTimeTrackDraggingIndex.current !== null &&
         realTimeTrackDraggingIndex.current !== controlledThumbIndex
       ) {
-        const prevDraggedIndex = realTimeTrackDraggingIndex.current;
-        realTimeTrackDraggingIndex.current = controlledThumbIndex;
-
         setThumbDragging(controlledThumbIndex, true);
-        setThumbDragging(prevDraggedIndex, false);
+        setThumbDragging(realTimeTrackDraggingIndex.current, false);
 
-        setFocusedThumb(realTimeTrackDraggingIndex.current);
+        setFocusedThumb(controlledThumbIndex);
+
+        realTimeTrackDraggingIndex.current = controlledThumbIndex;
+      }
+
+      if (controlledThumbIndex !== null && trackRef.current && isValueMustBeChanged) {
+        setThumbPercent(controlledThumbIndex, percent);
       }
     },
     onMoveEnd() {

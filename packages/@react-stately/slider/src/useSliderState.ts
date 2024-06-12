@@ -146,7 +146,7 @@ export interface SliderState {
   readonly isDisabled: boolean,
 
   /** The behavior of swapping thumbs. */
-  readonly swapDisabled: boolean
+  readonly swapEnabled: boolean,
 }
 
 const DEFAULT_MIN_VALUE = 0;
@@ -173,7 +173,7 @@ export function useSliderState<T extends number | number[]>(
     numberFormatter: formatter,
     step = DEFAULT_STEP_VALUE,
     orientation = 'horizontal',
-    disallowSwap = false
+    allowSwap = false
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
@@ -342,7 +342,7 @@ export function useSliderState<T extends number | number[]>(
     pageSize,
     orientation,
     isDisabled,
-    swapDisabled: disallowSwap
+    swapEnabled: allowSwap
   };
 }
 
