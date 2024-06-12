@@ -30,7 +30,7 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import {StyleString} from '../style/types';
 import {mergeRefs} from '@react-aria/utils';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The size of the text field.
    *
@@ -129,7 +129,8 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
           size={props.size}
           labelPosition={labelPosition}
           labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}>
+          necessityIndicator={necessityIndicator}
+          contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
         {/* TODO: set GroupContext in RAC TextField */}

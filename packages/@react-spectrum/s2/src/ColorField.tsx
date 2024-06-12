@@ -24,7 +24,7 @@ import {Ref, forwardRef, useContext, useImperativeHandle, useRef} from 'react';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The size of the color field.
    *
@@ -81,7 +81,8 @@ function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
           size={props.size}
           labelPosition={labelPosition}
           labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}>
+          necessityIndicator={necessityIndicator}
+          contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
         <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size}>

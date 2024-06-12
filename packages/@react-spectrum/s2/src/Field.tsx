@@ -12,6 +12,7 @@
 
 import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, Provider} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {ContextualHelpContext} from './ContextualHelp';
 import {StyleProps, UnsafeStyles, fieldInput, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/Asterisk';
 import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
@@ -21,6 +22,7 @@ import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBase
 import {NecessityIndicator, Alignment, DOMRef} from '@react-types/shared';
 import {forwardRef, ForwardedRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useId} from '@react-aria/utils';
 import {StyleString} from '../style/types';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
@@ -32,6 +34,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   labelPosition?: 'top' | 'side',
   includeNecessityIndicatorInAccessibilityName?: boolean,
   staticColor?: 'white' | 'black',
+  contextualHelp?: ReactNode,
   children?: ReactNode
 }
 
@@ -45,81 +48,110 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelAlign,
     labelPosition,
     staticColor,
+    contextualHelp,
     UNSAFE_style,
     UNSAFE_className = '',
     ...labelProps
   } = props;
 
   let domRef = useDOMRef(ref);
+  let contextualHelpId = useId();
+  let fallbackLabelPropsId = useId();
+  if (contextualHelp && !labelProps.id) {
+    labelProps.id = fallbackLabelPropsId;
+  }
 
   return (
-    <Label
-      {...labelProps}
-      ref={domRef}
-      style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(
-        style({
-          gridArea: 'label',
-          fontFamily: 'sans',
-          fontSize: 'control',
-          lineHeight: 'ui',
-          cursor: 'default',
-          color: {
-            default: 'neutral-subdued',
-            isDisabled: 'disabled',
-            staticColor: {
-              white: {
-                default: 'transparent-white-700'
-              },
-              black: {
-                default: 'transparent-black-900'
-              }
-            },
-            forcedColors: 'ButtonText'
-          },
-          textAlign: {
-            labelAlign: {
-              start: 'start',
-              end: 'end'
-            }
-          },
-          contain: {
-            labelPosition: {
-              top: 'inline-size'
-            }
-          },
-          paddingBottom: {
-            labelPosition: {
-              top: '--field-gap'
-            }
+    <div
+      className={style({
+        gridArea: 'label',
+        display: 'inline',
+        textAlign: {
+          labelAlign: {
+            start: 'start',
+            end: 'end'
           }
-        })({labelAlign, labelPosition, isDisabled, size, staticColor}), props.styles)}>
-      {props.children}
-      {(isRequired || necessityIndicator === 'label') && (
-        <span className={style({whiteSpace: 'nowrap'})}>
-          &nbsp;
-          {necessityIndicator === 'icon' &&
-            <AsteriskIcon
-              size={size}
-              className={style({
-                '--iconPrimary': {
-                  type: 'fill',
-                  value: 'currentColor'
+        },
+        paddingBottom: {
+          labelPosition: {
+            top: '--field-gap'
+          }
+        }
+      })({labelAlign, labelPosition})}>
+      <Label
+        {...labelProps}
+        ref={domRef}
+        style={UNSAFE_style}
+        className={UNSAFE_className + mergeStyles(
+          style({
+            fontFamily: 'sans',
+            fontSize: 'control',
+            lineHeight: 'ui',
+            cursor: 'default',
+            color: {
+              default: 'neutral-subdued',
+              isDisabled: 'disabled',
+              staticColor: {
+                white: {
+                  default: 'transparent-white-700'
+                },
+                black: {
+                  default: 'transparent-black-900'
                 }
-              })}
-              aria-label={includeNecessityIndicatorInAccessibilityName ? '(required)' : undefined} />
-          }
-          {necessityIndicator === 'label' &&
-            /* The necessity label is hidden to screen readers if the field is required because
-             * aria-required is set on the field in that case. That will already be announced,
-             * so no need to duplicate it here. If optional, we do want it to be announced here. */
-            <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
-              {isRequired ? '(required)' : '(optional)' /* TODO translate */}
-            </span>
-          }
-        </span>
+              },
+              forcedColors: 'ButtonText'
+            },
+            contain: {
+              labelPosition: {
+                top: 'inline-size'
+              }
+            }
+          })({labelPosition, isDisabled, size, staticColor}), props.styles)}>
+        {props.children}
+        {(isRequired || necessityIndicator === 'label') && (
+          <span className={style({whiteSpace: 'nowrap'})}>
+            &nbsp;
+            {necessityIndicator === 'icon' &&
+              <AsteriskIcon
+                size={size}
+                className={style({
+                  '--iconPrimary': {
+                    type: 'fill',
+                    value: 'currentColor'
+                  }
+                })}
+                aria-label={includeNecessityIndicatorInAccessibilityName ? '(required)' : undefined} />
+            }
+            {necessityIndicator === 'label' &&
+              /* The necessity label is hidden to screen readers if the field is required because
+              * aria-required is set on the field in that case. That will already be announced,
+              * so no need to duplicate it here. If optional, we do want it to be announced here.
+              */
+              <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
+                {isRequired ? '(required)' : '(optional)' /* TODO translate */}
+              </span>
+            }
+          </span>
+        )}
+      </Label>
+      {contextualHelp && (
+        <CenterBaseline
+          className={style({
+            display: 'inline-flex',
+            contain: 'size',
+            marginStart: 4
+          })}>
+          <ContextualHelpContext.Provider
+            value={{
+              id: contextualHelpId,
+              'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
+              size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
+            }}>
+            {contextualHelp}
+          </ContextualHelpContext.Provider>
+        </CenterBaseline>
       )}
-    </Label>
+    </div>
   );
 }
 

@@ -12,8 +12,8 @@
 
 import {ColorThumb} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {RefObject, cloneElement, useId, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import {RefObject, cloneElement, useState} from 'react';
+import {useId, useLayoutEffect} from '@react-aria/utils';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 

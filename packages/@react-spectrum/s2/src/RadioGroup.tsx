@@ -22,7 +22,7 @@ import React, {forwardRef, ReactNode, useContext} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The Radios contained within the RadioGroup.
    */
@@ -91,7 +91,8 @@ function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
             size={size}
             labelPosition={labelPosition}
             labelAlign={labelAlign}
-            necessityIndicator={necessityIndicator}>
+            necessityIndicator={necessityIndicator}
+            contextualHelp={props.contextualHelp}>
             {label}
           </FieldLabel>
           <div

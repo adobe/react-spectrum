@@ -68,7 +68,7 @@ export interface ComboBoxProps<T extends object> extends
   Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection'>,
   ComboboxStyleProps,
   StyleProps,
-  Omit<SpectrumLabelableProps, 'contextualHelp'>,
+  SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
   Pick<AriaPopoverProps, 'shouldFlip'> {
@@ -217,7 +217,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: FocusableRef<H
               size={size}
               labelPosition={labelPosition}
               labelAlign={labelAlign}
-              necessityIndicator={necessityIndicator}>
+              necessityIndicator={necessityIndicator}
+              contextualHelp={props.contextualHelp}>
               {label}
             </FieldLabel>
             <FieldGroup

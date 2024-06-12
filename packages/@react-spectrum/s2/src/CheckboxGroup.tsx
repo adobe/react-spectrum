@@ -23,7 +23,7 @@ import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type:
 import {useDOMRef} from '@react-spectrum/utils';
 import {CheckboxContext} from './Checkbox';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The size of the Checkboxes in the CheckboxGroup.
    *
@@ -91,7 +91,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
           size={size}
           labelPosition={labelPosition}
           labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}>
+          necessityIndicator={necessityIndicator}
+          contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
         <div

@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {Link} from '../src/Link';
 import {TextArea, TextField, Form, Button} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -40,6 +43,59 @@ export const Validation = (args: any) => (
 Validation.args = {
   ...Example.args,
   isRequired: true
+};
+
+export const ContextualHelpExample = (args: any) => (
+  <div
+    className={style({
+      width: 256,
+      display: 'flex',
+      flexDirection: 'column',
+      rowGap: 12
+    })}>
+    <TextField {...args} size="S" />
+    <TextField label="Segment" size="S" />
+    <TextField {...args} size="M" />
+    <TextField label="Segment" size="M" />
+    <TextField {...args} size="L" />
+    <TextField label="Segment" size="L" />
+    <TextField {...args} size="XL" />
+    <TextField label="Segment" size="XL" />
+    <TextField
+      {...args}
+      size="M"
+      label="Segments identify who your visitors are and much more." />
+    <TextField
+      size="M"
+      label="Segments identify who your visitors are and much more." />
+  </div>
+);
+
+ContextualHelpExample.args = {
+  label: 'Segment',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>
+        <Text>
+          Segments identify who your visitors are, what devices and services they
+          use, where they navigated from, and much more.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
+          target="_blank">Learn more about segments</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    disable: true
+  }
 };
 
 export const TextAreaExample = (args: any) => <TextArea {...args} />;

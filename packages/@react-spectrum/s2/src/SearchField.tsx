@@ -29,7 +29,7 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The size of the SearchField.
    *
@@ -99,7 +99,8 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
           size={props.size}
           labelPosition={labelPosition}
           labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}>
+          necessityIndicator={necessityIndicator}
+          contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>}
         <FieldGroup

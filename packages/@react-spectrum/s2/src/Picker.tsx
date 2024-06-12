@@ -74,7 +74,7 @@ export interface PickerProps<T extends object> extends
   Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
   PickerStyleProps,
   StyleProps,
-  Omit<SpectrumLabelableProps, 'contextualHelp'>,
+  SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
   Pick<AriaPopoverProps, 'shouldFlip'> {
@@ -230,7 +230,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               size={size}
               labelPosition={labelPosition}
               labelAlign={labelAlign}
-              necessityIndicator={necessityIndicator}>
+              necessityIndicator={necessityIndicator}
+              contextualHelp={props.contextualHelp}>
               {label}
             </FieldLabel>
             <Button

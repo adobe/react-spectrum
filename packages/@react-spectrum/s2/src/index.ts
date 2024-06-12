@@ -25,6 +25,7 @@ export {ColorSwatch} from './ColorSwatch';
 export {ColorSwatchPicker} from './ColorSwatchPicker';
 export {ColorWheel} from './ColorWheel';
 export {ComboBox, ComboBoxItem, ComboBoxSection} from './ComboBox';
+export {ContextualHelp} from './ContextualHelp';
 export {Heading, Header, Content, Footer, Image, Text, Keyboard} from './Content';
 export {Dialog} from './Dialog';
 export {DialogTrigger} from './DialogTrigger';

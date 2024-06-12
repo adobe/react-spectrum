@@ -154,7 +154,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
 let _Dialog = forwardRef(Dialog);
 export {_Dialog as Dialog};
 
-const dialogInner = style({
+export const dialogInner = style({
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,

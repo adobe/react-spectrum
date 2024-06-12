@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Form, Header, Heading, Text} from '../src';
+import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Form, Footer, Header, Heading, Link, Text} from '../src';
 import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
 
@@ -127,3 +127,40 @@ Validation.args = {
   isRequired: true
 };
 
+export const ContextualHelpExample = (args: any) => (
+  <ComboBox {...args}>
+    <ComboBoxItem>Chocolate</ComboBoxItem>
+    <ComboBoxItem>Mint</ComboBoxItem>
+    <ComboBoxItem>Strawberry</ComboBoxItem>
+    <ComboBoxItem>Vanilla</ComboBoxItem>
+    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+  </ComboBox>
+);
+
+ContextualHelpExample.args = {
+  label: 'Ice cream flavor',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a ice cream?</Heading>
+      <Content>
+        <Text>
+          A combination of sugar, eggs, milk, and cream is cooked to make
+          a custard base. Then, flavorings are added, and this flavored
+          mixture is carefully churned and frozen to make ice cream.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Ice_cream"
+          target="_blank">Learn more about ice cream</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    disable: true
+  }
+};
