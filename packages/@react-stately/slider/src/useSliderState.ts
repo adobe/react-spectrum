@@ -146,7 +146,7 @@ export interface SliderState {
   readonly isDisabled: boolean,
 
   /** The behavior of swapping thumbs. */
-  readonly swapEnabled: boolean,
+  readonly swapEnabled: boolean
 }
 
 const DEFAULT_MIN_VALUE = 0;
