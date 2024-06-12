@@ -11,7 +11,16 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Checkbox, DropIndicator, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
+import {
+  Button,
+  Checkbox,
+  DropIndicator,
+  GridList,
+  GridListContext,
+  GridListItem,
+  RouterProvider,
+  useDragAndDrop
+} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -294,6 +303,37 @@ describe('GridList', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should support grid layout', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" layout="grid">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);
@@ -490,6 +530,23 @@ describe('GridList', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <GridList aria-label="listview">
+              <GridListItem href="/foo" routerOptions={{foo: 'bar'}}>One</GridListItem>
+            </GridList>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
     });
   });

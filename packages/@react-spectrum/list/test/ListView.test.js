@@ -1664,4 +1664,28 @@ describe('ListView', function () {
       });
     });
   });
+
+  describe('height 0', () => {
+
+    it('should render and not infinite loop', function () {
+      offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 0);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 0);
+      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 0);
+      let tree = render(
+        <ListView
+          width="250px"
+          height="60px"
+          aria-label="List"
+          data-testid="test"
+          items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+          {item => <Item>{item.name}</Item>}
+        </ListView>
+      );
+      let grid = tree.getByRole('grid');
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(grid.firstChild).toBeEmptyDOMElement();
+    });
+  });
 });

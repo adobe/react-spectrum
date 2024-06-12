@@ -26,6 +26,8 @@ import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css'
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
+let isOldReact = parseInt(React.version, 10) < 18;
+
 let {falsyItems} = stories;
 let {FalsyIds} = composeStories(stories);
 
@@ -177,7 +179,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('img');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -208,7 +210,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('img');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -237,7 +239,7 @@ describe('CardView', function () {
       let cell = within(row).getByRole('gridcell');
       expect(cell).toBeTruthy();
 
-      let image = within(cell).getByRole('img');
+      let image = within(cell).getByRole(isOldReact ? 'img' : 'presentation');
       expect(image).toHaveAttribute('src');
       expect(within(cell).getByText('long description', {exact: false})).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
@@ -256,7 +258,7 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation');
+      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
       let currentTop;
       let currentLeft;
       let expectedWidth;
@@ -555,7 +557,7 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation');
+      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
       let currentTop;
       let expectedLeft;
       let expectedHeight;
@@ -723,7 +725,7 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation');
+      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
       let expectedWidth;
       let columnLefts = [];
       let columnHeights = [];
