@@ -11,7 +11,16 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Checkbox, DropIndicator, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
+import {
+  Button,
+  Checkbox,
+  DropIndicator,
+  GridList,
+  GridListContext,
+  GridListItem,
+  RouterProvider,
+  useDragAndDrop
+} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -521,6 +530,23 @@ describe('GridList', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <GridList aria-label="listview">
+              <GridListItem href="/foo" routerOptions={{foo: 'bar'}}>One</GridListItem>
+            </GridList>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
     });
   });
