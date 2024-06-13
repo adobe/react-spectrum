@@ -11,7 +11,7 @@ jobs:
       contains(github.event.comment.body, 'GET_BUILD')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Use Node 18
         uses: actions/setup-node@v3
         with:
