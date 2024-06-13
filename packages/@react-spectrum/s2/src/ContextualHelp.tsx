@@ -33,7 +33,7 @@ export interface ContextualHelpProps extends
    *
    * @default 'XS'
    */
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL'
+  size?: 'XS' | 'S'
 }
 
 const popover = style({
