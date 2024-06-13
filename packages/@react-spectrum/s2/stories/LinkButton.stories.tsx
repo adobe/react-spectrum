@@ -14,7 +14,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import {LinkButton, Text} from '../src';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator, categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof LinkButton> = {
   component: LinkButton,
@@ -22,7 +22,10 @@ const meta: Meta<typeof LinkButton> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+  }
 };
 
 export default meta;

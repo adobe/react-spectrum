@@ -1,5 +1,5 @@
 import '../src/page';
-import {themes} from '@storybook/theming';
+import { themes } from '@storybook/theming';
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
@@ -17,6 +17,7 @@ const preview = {
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {},
+      exclude: ['key', 'ref']
     },
     docs: {
       container: (props) => {
@@ -62,6 +63,20 @@ const preview = {
         brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
       }
     }
+  },
+  argTypes: {
+    styles: {
+      table: {category: 'Styles'},
+      control: {disable: true},
+    },
+    UNSAFE_className: {
+      table: {category: 'Styles'},
+      control: {disable: true},
+    },
+    UNSAFE_style: {
+      table: {category: 'Styles'},
+      control: {disable: true},
+    }
   }
 };
 
@@ -79,7 +94,7 @@ export const parameters = {
       ]
     }
   },
-  layout: 'fullscreen'
+  layout: 'fullscreen',
 };
 
 export default preview;

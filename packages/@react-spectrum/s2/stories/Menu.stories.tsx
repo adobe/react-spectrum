@@ -22,13 +22,17 @@ import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N
 import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
 
 import type {Meta, StoryObj} from '@storybook/react';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'])
+  }
 };
 
 export default meta;

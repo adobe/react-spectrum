@@ -14,13 +14,17 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Form, Footer, Header, Heading, Link, Text} from '../src';
 import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ComboBox> = {
   component: ComboBox,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
+  }
 };
 
 export default meta;

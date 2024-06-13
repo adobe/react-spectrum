@@ -13,13 +13,17 @@
 import {ActionMenu, MenuItem} from '../src';
 
 import type {Meta, StoryObj} from '@storybook/react';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onAction', 'onOpenChange'])
+  }
 };
 
 export default meta;

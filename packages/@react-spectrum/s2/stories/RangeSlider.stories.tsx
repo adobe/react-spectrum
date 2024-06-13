@@ -19,7 +19,10 @@ const meta: Meta<typeof RangeSlider> = {
     layout: 'centered',
     controls: {exclude: ['onChange']}
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    onChangeEnd: {table: {category: 'Events'}}
+  }
 };
 
 export default meta;

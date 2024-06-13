@@ -13,13 +13,17 @@
 import {ColorSlider} from '../src/ColorSlider';
 
 import type {Meta} from '@storybook/react';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+  }
 };
 
 export default meta;

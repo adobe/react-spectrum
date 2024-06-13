@@ -13,13 +13,17 @@
 import {ColorWheel} from '../src/ColorWheel';
 
 import type {Meta} from '@storybook/react';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ColorWheel> = {
   component: ColorWheel,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+  }
 };
 
 export default meta;

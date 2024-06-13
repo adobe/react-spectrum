@@ -24,8 +24,6 @@ const config: StorybookConfig = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     // "@storybook/addon-styling-webpack",
-    // re-enable when we get single components in Figma
-    "@storybook/addon-designs",
     "storybook-dark-mode"
   ],
   framework: {

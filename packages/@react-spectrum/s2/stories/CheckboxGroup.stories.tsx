@@ -18,7 +18,10 @@ const meta: Meta<typeof CheckboxGroup> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    onChange: {table: {category: 'Events'}}
+  }
 };
 
 export default meta;

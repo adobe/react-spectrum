@@ -13,7 +13,7 @@
 import {Link} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator, categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof Link> = {
   component: Link,
@@ -25,7 +25,10 @@ const meta: Meta<typeof Link> = {
     target: '_blank'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+  }
 };
 
 export default meta;

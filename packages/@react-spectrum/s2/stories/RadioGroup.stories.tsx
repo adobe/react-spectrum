@@ -19,7 +19,10 @@ const meta: Meta<typeof RadioGroup> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    onChange: {table: {category: 'Events'}}
+  }
 };
 
 export default meta;

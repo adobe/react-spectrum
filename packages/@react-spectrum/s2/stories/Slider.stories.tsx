@@ -20,7 +20,10 @@ const meta: Meta<typeof Slider> = {
     layout: 'centered',
     controls: {exclude: ['onChange']} // purposely excluded this control because it was slowing slider down a lot 
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    onChangeEnd: {table: {category: 'Events'}}
+  }
 };
 
 export default meta;

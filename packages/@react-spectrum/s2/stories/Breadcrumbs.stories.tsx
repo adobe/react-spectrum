@@ -22,13 +22,16 @@ const meta: Meta<typeof Breadcrumbs> = {
   argTypes: {
     size: {
       control: 'radio',
-      options: [undefined, 'M', 'L']
+      options: ['M', 'L']
     },
     isDisabled: {
       control: {type: 'boolean'}
     },
     isMultiline: {
       control: {type: 'boolean'}
+    },
+    onAction: {
+      table: {category: 'Events'}
     }
   },
   tags: ['autodocs']

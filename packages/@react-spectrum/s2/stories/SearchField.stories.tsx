@@ -13,13 +13,17 @@
 import {SearchField} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof SearchField> = {
   component: SearchField,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
+  }
 };
 
 export default meta;

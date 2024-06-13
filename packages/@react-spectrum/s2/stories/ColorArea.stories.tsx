@@ -12,13 +12,17 @@
 
 import {ColorArea} from '../src/ColorArea';
 import type {Meta} from '@storybook/react';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+  }
 };
 
 export default meta;

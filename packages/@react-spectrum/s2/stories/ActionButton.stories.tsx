@@ -13,7 +13,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {ActionButton, Text} from '../src';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator, categorizeArgTypes} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import './unsafe.css';
 
@@ -23,7 +23,10 @@ const meta: Meta<typeof ActionButton> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+  }
 };
 
 export default meta;

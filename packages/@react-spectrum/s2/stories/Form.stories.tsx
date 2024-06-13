@@ -13,13 +13,17 @@
 import {Form, TextArea, TextField, Button, Checkbox, SearchField, CheckboxGroup, Switch, Radio, RadioGroup, Slider, RangeSlider} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof Form> = {
   component: Form,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
+  }
 };
 
 export default meta;

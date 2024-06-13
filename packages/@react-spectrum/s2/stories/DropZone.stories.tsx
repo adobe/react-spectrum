@@ -17,13 +17,17 @@ import React, {useState} from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import DropToUpload from '../spectrum-illustrations/dropToUpload.svg';
 import Cloud from '../spectrum-illustrations/Cloud.svg';
+import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
+  }
 };
 
 export default meta;

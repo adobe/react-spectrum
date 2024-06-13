@@ -28,7 +28,8 @@ const meta: Meta<typeof TagGroup> = {
   argTypes: {
     onRemove: {
       control: {type: 'boolean'}
-    }
+    },
+    onSelectionChange: {table: {category: 'Events'}}
   },
   tags: ['autodocs']
 };

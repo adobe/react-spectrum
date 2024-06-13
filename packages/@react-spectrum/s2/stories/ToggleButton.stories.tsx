@@ -13,7 +13,7 @@
 import {ToggleButton, Text} from '../src';
 import type {Meta, StoryFn} from '@storybook/react';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator, categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
@@ -21,7 +21,10 @@ const meta: Meta<typeof ToggleButton> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
+  }
 };
 
 export default meta;

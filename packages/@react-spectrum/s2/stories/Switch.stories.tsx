@@ -19,7 +19,11 @@ const meta: Meta<typeof Switch> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  argTypes: {
+    inputRef: {control: {disable: true}},
+    onChange: {table: {category: 'Events'}}
+  }
 };
 
 export default meta;
