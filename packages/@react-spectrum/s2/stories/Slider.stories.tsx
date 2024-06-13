@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import {Slider} from '../src/Slider';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
@@ -69,4 +72,39 @@ FormatOptions.args = {
   maxValue: 500,
   formatOptions: {style: 'currency', currency: 'JPY'},
   thumbLabel: 'currency'
+};
+
+export const ContextualHelpExample = (args: any) => (
+  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+    <Slider {...args} />
+  </div>
+);
+
+ContextualHelpExample.args = {
+  label: 'Cookies',
+  defaultValue: 30,
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a ice cream?</Heading>
+      <Content>
+        <Text>
+          A combination of sugar, eggs, milk, and cream is cooked to make
+          a custard base. Then, flavorings are added, and this flavored
+          mixture is carefully churned and frozen to make ice cream.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Ice_cream"
+          target="_blank">Learn more about ice cream</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    disable: true
+  }
 };

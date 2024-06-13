@@ -11,7 +11,6 @@
  */
 
 import {
-  Label,
   Slider as AriaSlider,
   SliderOutput,
   SliderProps as AriaSliderProps,
@@ -19,8 +18,9 @@ import {
   SliderTrack
 } from 'react-aria-components';
 import {FormContext, useFormProps} from './Form';
+import {FieldLabel} from './Field';
 import {ReactNode, useRef, forwardRef, RefObject, useContext} from 'react';
-import {FocusableRef, LabelPosition, InputDOMProps, Alignment} from '@react-types/shared';
+import {Alignment, FocusableRef, InputDOMProps, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {style, size} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, field, fieldInput, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -30,12 +30,10 @@ import {clamp} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 
-export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children'>, StyleProps, InputDOMProps {
+export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps, InputDOMProps {
   children?: ReactNode,
   label?: ReactNode,
-  labelAlign?: Alignment,
-  size?: 'S' | 'M' | 'L' | 'XL',
-  labelPosition?: LabelPosition
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export interface SliderProps<T> extends Omit<AriaSliderProps<T>, 'style' | 'className' | 'orientation'>, StyleProps {
@@ -118,7 +116,7 @@ const labelContainer = style({
   width: 'full',
   gridTemplateAreas: {
     labelPosition: {
-      top: ['sliderLabel . output']
+      top: ['label . output']
     }
   },
   gridTemplateColumns: {
@@ -137,6 +135,10 @@ const labelContainer = style({
         }
       }
     }
+  },
+  '--field-gap': {
+    type: 'paddingBottom',
+    value: 0
   }
 });
 
@@ -347,7 +349,6 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   let formatter = useNumberFormatter(formatOptions);
   let {direction} = useLocale();
 
-
   return (
     <AriaSlider 
       {...props} 
@@ -384,9 +385,14 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
         return (
           <>
             <div className={labelContainer({labelPosition, labelAlign})}>
-              <Label className={style({gridArea: {labelPosition: {top: 'sliderLabel'}}})({labelPosition})}>
+              <FieldLabel
+                isDisabled={props.isDisabled}
+                size={props.size}
+                labelPosition={labelPosition}
+                labelAlign={labelAlign}
+                contextualHelp={props.contextualHelp}>
                 {label}
-              </Label>
+              </FieldLabel>
               {labelPosition === 'top' && outputValue}
             </div>
             <div className={style({gridArea: 'input', display: 'inline-flex', alignItems: 'center', gap: {default: 16, size: {L: 20, XL: 24}}})({size})}>

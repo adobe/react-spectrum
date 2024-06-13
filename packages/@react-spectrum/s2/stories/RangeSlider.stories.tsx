@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Link} from '../src/Link';
 import {RangeSlider} from '../src';
 import type {Meta} from '@storybook/react';
 
@@ -33,4 +36,35 @@ Example.args = {
   label: 'Range',
   defaultValue: [30, 60],
   thumbLabels: ['start', 'end']
+};
+
+export const ContextualHelpExample = (args: any) => <RangeSlider {...args} />;
+
+ContextualHelpExample.args = {
+  label: 'Range',
+  defaultValue: [30, 60],
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a ice cream?</Heading>
+      <Content>
+        <Text>
+          A combination of sugar, eggs, milk, and cream is cooked to make
+          a custard base. Then, flavorings are added, and this flavored
+          mixture is carefully churned and frozen to make ice cream.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Ice_cream"
+          target="_blank">Learn more about ice cream</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    disable: true
+  }
 };

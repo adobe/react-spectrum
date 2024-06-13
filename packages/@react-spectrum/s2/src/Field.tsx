@@ -138,7 +138,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         <CenterBaseline
           className={style({
             display: 'inline-flex',
-            contain: 'size',
+            height: 0,
             marginStart: 4
           })}>
           <ContextualHelpContext.Provider

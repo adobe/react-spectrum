@@ -43,7 +43,7 @@ export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'cla
   children?: ReactNode
 }
 
-export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator' | 'contextualHelp'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
+export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
   /** A description for the tag group. */
   description?: ReactNode,
   /**
@@ -146,7 +146,8 @@ function TagGroup<T extends object>(
       <FieldLabel
         size={size}
         labelPosition={labelPosition}
-        labelAlign={labelAlign}>
+        labelAlign={labelAlign}
+        contextualHelp={props.contextualHelp}>
         {label}
       </FieldLabel>
       <div

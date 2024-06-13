@@ -22,9 +22,9 @@ import {ColorHandle} from './ColorHandle';
 import {forwardRef, useRef} from 'react';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style'>, StyleProps {
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style'>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
   label?: string
 }
 
@@ -65,7 +65,7 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
       }, getAllowedOverrides())(renderProps, styles)}>
       {({isDisabled, orientation, state}) => (<>
         {orientation === 'horizontal' && props.label && 
-          <FieldLabel isDisabled={isDisabled}>{props.label}</FieldLabel>
+          <FieldLabel isDisabled={isDisabled} contextualHelp={props.contextualHelp}>{props.label}</FieldLabel>
         }
         {orientation === 'horizontal' && 
           <SliderOutput
