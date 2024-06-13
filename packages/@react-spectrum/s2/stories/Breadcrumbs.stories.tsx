@@ -10,30 +10,72 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs} from '../src/Breadcrumbs';
-import {Breadcrumb, Link} from 'react-aria-components';
-
 import type {Meta} from '@storybook/react';
+import {Breadcrumbs, Breadcrumb, Heading} from '../src';
+import {action} from '@storybook/addon-actions';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   parameters: {
     layout: 'centered'
-  }
+  },
+  argTypes: {
+    size: {
+      control: 'radio',
+      options: [undefined, 'M', 'L']
+    },
+    isDisabled: {
+      control: {type: 'boolean'}
+    },
+    isMultiline: {
+      control: {type: 'boolean'}
+    }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;
 
 export const Example = (args: any) => (
   <Breadcrumbs {...args}>
+    <Breadcrumb href="/">
+      Home
+    </Breadcrumb>
+    <Breadcrumb href="/react-aria">
+      React Aria
+    </Breadcrumb>
+    <Breadcrumb href="/breadcrumbs">
+      Breadcrumbs
+    </Breadcrumb>
+  </Breadcrumbs>
+);
+
+export const WithActions = (args: any) => (
+  <Breadcrumbs onAction={action('onAction')} {...args}>
     <Breadcrumb>
-      <Link href="/">Home</Link>
+      Home
     </Breadcrumb>
     <Breadcrumb>
-      <Link href="/react-aria">React Aria</Link>
+      React Aria
     </Breadcrumb>
     <Breadcrumb>
-      <Link>Breadcrumbs</Link>
+      Breadcrumbs
+    </Breadcrumb>
+  </Breadcrumbs>
+);
+
+export const WithUserProvidedHeading = (args: any) => (
+  <Breadcrumbs isMultiline {...args}>
+    <Breadcrumb href="/">
+      Home
+    </Breadcrumb>
+    <Breadcrumb href="/react-aria">
+      React Aria
+    </Breadcrumb>
+    <Breadcrumb href="/breadcrumbs">
+      <Heading level={2}>
+        Breadcrumbs
+      </Heading>
     </Breadcrumb>
   </Breadcrumbs>
 );
