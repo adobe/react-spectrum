@@ -24,7 +24,7 @@ import {
 } from 'react-aria-components';
 import {useFocusableRef} from '@react-spectrum/utils';
 
-export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd'>, StyleProps {
+export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
   /**
    * The label for the element.
    */

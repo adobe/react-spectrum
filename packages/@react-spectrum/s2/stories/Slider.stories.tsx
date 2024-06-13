@@ -39,8 +39,7 @@ export const Example = (args: any) => (
 
 Example.args = {
   label: 'Cookies',
-  defaultValue: 30,
-  thumbLabel: 'cookie'
+  defaultValue: 30
 };
 
 export const FillOffset = (args: any) => (
@@ -56,8 +55,7 @@ FillOffset.args = {
   minValue: -5,
   maxValue: 5,
   formatOptions: {signDisplay: 'always'},
-  step: 0.01,
-  thumbLabel: 'exposure'
+  step: 0.01
 };
 
 export const FormatOptions = (args: any) => (
@@ -70,8 +68,7 @@ FormatOptions.args = {
   label: 'Currency',
   defaultValue: 0,
   maxValue: 500,
-  formatOptions: {style: 'currency', currency: 'JPY'},
-  thumbLabel: 'currency'
+  formatOptions: {style: 'currency', currency: 'JPY'}
 };
 
 export const ContextualHelpExample = (args: any) => (

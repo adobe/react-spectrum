@@ -49,8 +49,8 @@ export const Example = (args: any) => (
     <TextArea label="Comment" name="comment" />
     <Switch>Wi-Fi</Switch>
     <Checkbox>I agree to the terms</Checkbox>
-    <Slider label="Cookies"  defaultValue={30} thumbLabel="cookie" />
-    <RangeSlider label="Range"  defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
+    <Slider label="Cookies"  defaultValue={30} />
+    <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
     <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
   </Form>
 );

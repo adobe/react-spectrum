@@ -45,7 +45,7 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children?: ReactNode
 }

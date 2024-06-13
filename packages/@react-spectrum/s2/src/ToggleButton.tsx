@@ -22,7 +22,7 @@ import {IconContext} from './Icon';
 import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 
-export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd'>, StyleProps, ActionButtonStyleProps {
+export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
   children?: ReactNode,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */

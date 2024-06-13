@@ -34,15 +34,20 @@ export const Example = (args: any) => <RangeSlider {...args} />;
 
 Example.args = {
   label: 'Range',
-  defaultValue: [30, 60],
-  thumbLabels: ['start', 'end']
+  defaultValue: {
+    start: 30,
+    end: 60
+  }
 };
 
 export const ContextualHelpExample = (args: any) => <RangeSlider {...args} />;
 
 ContextualHelpExample.args = {
   label: 'Range',
-  defaultValue: [30, 60],
+  defaultValue: {
+    start: 30,
+    end: 60
+  },
   contextualHelp: (
     <ContextualHelp>
       <Heading>What is a ice cream?</Heading>

@@ -20,53 +20,23 @@ import {
 import {FormContext, useFormProps} from './Form';
 import {FieldLabel} from './Field';
 import {ReactNode, useRef, forwardRef, RefObject, useContext} from 'react';
-import {Alignment, FocusableRef, InputDOMProps, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {style, size} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, field, fieldInput, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {forwardRefType} from './types';
 import {useNumberFormatter, useLocale} from '@react-aria/i18n';
 import {clamp} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 
-export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps, InputDOMProps {
+export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
   children?: ReactNode,
-  label?: ReactNode,
-  size?: 'S' | 'M' | 'L' | 'XL'
-}
-
-export interface SliderProps<T> extends Omit<AriaSliderProps<T>, 'style' | 'className' | 'orientation'>, StyleProps {
-  /**
-   * The content to display as the label.
-   */
-  label?: ReactNode,
-  /**
-   * The label for the Slider's thumb.
-   */
-  thumbLabel?: string,
   /**
    * The size of the Slider.
    * 
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
-  /**
-   * The label's horizontal alignment relative to the element it is labeling.
-   * 
-   * @default 'start'
-   */
-  labelAlign?: Alignment,
-  /**
-   * The label's overall position relative to the element it is labeling.
-   * 
-   * @default 'top'
-   */
-  labelPosition?: LabelPosition,
-  /**
-   * The offset from which to start the fill.
-   */
-  fillOffset?: number,
   /**
    * Whether the Slider should be displayed with an emphasized style.
    */
@@ -84,7 +54,14 @@ export interface SliderProps<T> extends Omit<AriaSliderProps<T>, 'style' | 'clas
    */
   thumbStyle?: 'default' | 'precise'
   // TODO
-  // isEditable?: boolean
+  // isEditable?: boolean,
+}
+
+export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, InputDOMProps {
+  /**
+   * The offset from which to start the fill.
+   */
+  fillOffset?: number
 }
 
 const slider = style({
@@ -111,7 +88,11 @@ const slider = style({
 }, getAllowedOverrides());
 
 const labelContainer = style({
-  display: 'grid',
+  display: {
+    labelPosition: {
+      top: 'grid'
+    }
+  },
   gridArea: 'label',
   width: 'full',
   gridTemplateAreas: {
@@ -406,11 +387,10 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   );
 }
 
-function Slider<T extends number | number[]>(props: SliderProps<T>, ref: FocusableRef<HTMLDivElement>) {
+function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
-    thumbLabel, 
     labelPosition = 'top', 
     size = 'M',
     fillOffset,
@@ -446,7 +426,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Focusab
             <>
               <div className={upperTrack({isDisabled, trackStyle})} />
               <div style={{width: `${Math.abs(fillWidth!) * 100}%`, [cssDirection]: `${offset! * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
-              <SliderThumb  className={thumbContainer} index={0} ref={thumbRef}  aria-label={thumbLabel} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
+              <SliderThumb  className={thumbContainer} index={0} name={props.name} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (
                   <div className={thumbHitArea({size})}>
                     <div
@@ -466,5 +446,5 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Focusab
   );
 }
 
-let _Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(Slider);
+let _Slider = /*#__PURE__*/ forwardRef(Slider);
 export {_Slider as Slider};

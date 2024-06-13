@@ -24,10 +24,12 @@ function merge(api) {
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/badge/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/button/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/avatar/dist/api.json'));
-// merge(require('../react-spectrum/dist/branch-api/@react-spectrum/breadcrumbs/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/breadcrumbs/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/buttongroup/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/checkbox/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/color/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/combobox/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/contextualhelp/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/dialog/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/divider/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/dropzone/dist/api.json'));
@@ -42,6 +44,7 @@ merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/progress/dis
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/provider/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/radio/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/searchfield/dist/api.json'));
+merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/slider/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/statuslight/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/switch/dist/api.json'));
 merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/tag/dist/api.json'));
@@ -51,6 +54,7 @@ merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/tooltip/dist
 const styleProps = new Set(['margin', 'marginStart', 'marginEnd', 'marginTop', 'marginBottom', 'marginX', 'marginY', 'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'justifySelf', 'alignSelf', 'order', 'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'position', 'zIndex', 'top', 'bottom', 'start', 'end', 'left', 'right', 'isHidden']);
 const skipStyleProps = process.argv.includes('--skip-style-props');
 const skipSame = process.argv.includes('--skip-same');
+let depth = 0;
 
 let res = '';
 for (let name in v3API.exports) {
@@ -130,7 +134,6 @@ for (let name in v3API.exports) {
 
 require('fs').writeFileSync('api-diff.md', res);
 
-let depth = 0;
 function processType(value) {
   if (!value) {
     console.trace('UNTYPED', value);
