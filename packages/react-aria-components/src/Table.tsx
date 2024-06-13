@@ -713,7 +713,7 @@ export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResiz
 
 interface ColumnResizerContextValue {
   column: GridNode<unknown>,
-  triggerRef: RefObject<HTMLDivElement>
+  triggerRef: RefObject<HTMLDivElement | null>
 }
 
 const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
