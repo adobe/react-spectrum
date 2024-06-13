@@ -1199,12 +1199,7 @@ describe('CardView', function () {
       let grid = tree.getByRole('grid');
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
-      let isReact19 = parseInt(React.version, 10) >= 19;
-      if (isReact19) {
-        expect(onLoadMore).toHaveBeenCalledTimes(2);
-      } else {
-        expect(onLoadMore).toHaveBeenCalledTimes(1);
-      }
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it.each`
