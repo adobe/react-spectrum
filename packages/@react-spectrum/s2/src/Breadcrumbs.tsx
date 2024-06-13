@@ -27,11 +27,11 @@ interface BreadcrumbsStyleProps {
    */
   size?: 'M' | 'L',
   /** Whether the breadcrumbs are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean
   /**
    * Whether to place the last Breadcrumb item onto a new line.
    */
-  isMultiline?: boolean
+  // TODO: isMultiline?: boolean
   /** Whether to always show the root item if the items are collapsed. */
   // TODO: showRoot?: boolean,
 }
@@ -45,10 +45,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
   display: 'flex',
   justifyContent: 'start',
   listStyleType: 'none',
-  flexWrap: {
-    default: 'nowrap',
-    isMultiline: 'wrap'
-  },
+  flexWrap: 'nowrap',
   flexGrow: 1,
   flexShrink: 0,
   flexBasis: 0,
@@ -56,8 +53,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
     size: {
       M: size(6), // breadcrumbs-text-to-separator-medium
       L: size(9) // breadcrumbs-text-to-separator-large
-    },
-    isMultiline: 4
+    }
   },
   padding: 0,
   transition: 'default',
@@ -67,8 +63,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
     size: {
       M: size(6),
       L: size(9)
-    },
-    isMultiline: 4
+    }
   }
 }, getAllowedOverrides());
 
@@ -80,7 +75,7 @@ function Breadcrumbs<T extends object>({
     styles,
     ...props
 }: BreadcrumbsProps<T>) {
-  let {size = 'M', isMultiline, isDisabled} = props;
+  let {size = 'M', isDisabled} = props;
   let ref = useRef(null);
   // TODO: Remove when https://github.com/adobe/react-spectrum/pull/6440 is released
   let childArray: ReactElement[] = [];
@@ -96,12 +91,11 @@ function Breadcrumbs<T extends object>({
       ref={ref}
       style={UNSAFE_style}
       className={UNSAFE_className + wrapper({
-        size,
-        isMultiline
+        size
       }, styles)}>
       <Provider
         values={[
-          [BreadcrumbsInternalContext, {size, isDisabled, isMultiline, length: childArray.length}]
+          [BreadcrumbsInternalContext, {size, isDisabled, length: childArray.length}]
         ]}>
         {childArray}
       </Provider>
@@ -115,25 +109,9 @@ export {_Breadcrumbs as Breadcrumbs};
 
 const breadcrumbStyles = style({
   display: 'inline-flex',
-  flexShrink: {
-    isMultiline: {
-      isCurrent: 0
-    }
-  },
-  flexBasis: {
-    isMultiline: {
-      isCurrent: 'full'
-    }
-  },
   alignItems: 'center',
   justifyContent: 'start',
-  height: {
-    default: 'control',
-    isMultiline: {
-      default: 24,
-      isCurrent: 35
-    }
-  },
+  height: 'control',
   transition: 'default',
   position: 'relative',
   color: {
@@ -169,18 +147,10 @@ const linkStyles = style({
   },
   transition: 'default',
   fontFamily: 'sans',
-  fontSize: {
-    default: 'control',
-    isMultiline: {
-      default: 'ui-sm'
-    }
-  },
+  fontSize: 'control',
   fontWeight: {
     default: 'normal',
-    isCurrent: 'bold',
-    isMultiline: {
-      isCurrent: 'extra-bold'
-    }
+    isCurrent: 'bold'
   },
   textDecoration: {
     default: 'none',
@@ -198,22 +168,16 @@ const linkStyles = style({
   },
   disableTapHighlight: true,
   marginTop: {
-    default: {
-      size: {
-        M: size(6), // component-top-to-text-100
-        L: size(9) // component-top-to-text-200
-      }
-    },
-    isMultiline: size(4)
+    size: {
+      M: size(6), // component-top-to-text-100
+      L: size(9) // component-top-to-text-200
+    }
   },
   marginBottom: {
-    default: {
-      size: {
-        M: size(8), // component-bottom-to-text-100
-        L: size(11) // component-bottom-to-text-200
-      }
-    },
-    isMultiline: size(5)
+    size: {
+      M: size(8), // component-bottom-to-text-100
+      L: size(11) // component-bottom-to-text-200
+    }
   }
 });
 
@@ -224,22 +188,15 @@ const currentStyles = style({
   },
   transition: 'default',
   fontFamily: 'sans',
-  fontSize: {
-    default: 'control',
-    isMultiline: 'heading-lg' // TODO: Customizable, but it’s preferred to use: heading-size-s, heading-size-m, heading-size-l (default), and heading-size-xl
-  },
-  fontWeight: {
-    default: 'bold',
-    isMultiline: 'extra-bold'
-  },
+  fontSize: 'control',
+  fontWeight: 'bold',
   marginTop: {
     default: {
       size: {
         M: size(6), // component-top-to-text-100
         L: size(9) // component-top-to-text-200
       }
-    },
-    isMultiline: 0
+    }
   },
   marginBottom: {
     default: {
@@ -247,8 +204,7 @@ const currentStyles = style({
         M: size(9), // component-bottom-to-text-100
         L: size(11) // component-bottom-to-text-200
       }
-    },
-    isMultiline: size(9)
+    }
   }
 });
 
@@ -267,7 +223,7 @@ export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children
 
 export function Breadcrumb({children, ...props}: BreadcrumbProps) {
   let {href, target, rel, download, ping, referrerPolicy, ...other} = props;
-  let {size = 'M', isMultiline, length, isDisabled} = useContext(BreadcrumbsInternalContext);
+  let {size = 'M', length, isDisabled} = useContext(BreadcrumbsInternalContext);
   let ref = useRef(null);
   // TODO: use isCurrent render prop when https://github.com/adobe/react-spectrum/pull/6440 is released
   let isCurrent = (props as BreadcrumbProps & {index: number}).index === length - 1;
@@ -275,10 +231,10 @@ export function Breadcrumb({children, ...props}: BreadcrumbProps) {
     <AriaBreadcrumb
       {...other}
       ref={ref}
-      className={breadcrumbStyles({size, isMultiline, isCurrent})} >
+      className={breadcrumbStyles({size, isCurrent})} >
       {isCurrent ?
         <span
-          className={currentStyles({size, isMultiline, isCurrent})}>
+          className={currentStyles({size, isCurrent})}>
           <Provider
             values={[
               [HeadingContext, {className: heading}]
@@ -297,11 +253,11 @@ export function Breadcrumb({children, ...props}: BreadcrumbProps) {
               ping={ping}
               referrerPolicy={referrerPolicy}
               isDisabled={isDisabled || isCurrent}
-              className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isCurrent, isMultiline, isPressed})}>
+              className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isCurrent, isPressed})}>
               {children}
             </Link>
             <ChevronIcon
-              size={isMultiline ? 'S' : 'M'}
+              size="M"
               className={chevronStyles} />
           </>
         )}

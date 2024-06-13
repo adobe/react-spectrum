@@ -11,7 +11,7 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {Breadcrumbs, Breadcrumb, Heading} from '../src';
+import {Breadcrumbs, Breadcrumb} from '../src';
 import {action} from '@storybook/addon-actions';
 
 const meta: Meta<typeof Breadcrumbs> = {
@@ -25,9 +25,6 @@ const meta: Meta<typeof Breadcrumbs> = {
       options: ['M', 'L']
     },
     isDisabled: {
-      control: {type: 'boolean'}
-    },
-    isMultiline: {
       control: {type: 'boolean'}
     },
     onAction: {
@@ -63,22 +60,6 @@ export const WithActions = (args: any) => (
     </Breadcrumb>
     <Breadcrumb>
       Breadcrumbs
-    </Breadcrumb>
-  </Breadcrumbs>
-);
-
-export const WithUserProvidedHeading = (args: any) => (
-  <Breadcrumbs isMultiline {...args}>
-    <Breadcrumb href="/">
-      Home
-    </Breadcrumb>
-    <Breadcrumb href="/react-aria">
-      React Aria
-    </Breadcrumb>
-    <Breadcrumb href="/breadcrumbs">
-      <Heading level={2}>
-        Breadcrumbs
-      </Heading>
     </Breadcrumb>
   </Breadcrumbs>
 );
