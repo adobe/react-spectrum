@@ -179,6 +179,7 @@
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
   },
   "dependencies": {
+    "@react-aria/i18n": "^3.11.0",
     "@react-aria/utils": "^3.23.0",
     "@react-spectrum/utils": "^3.11.3",
     "@react-types/dialog": "^3.5.8",
