@@ -14,10 +14,10 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {useMemo} from 'react';
+import React, {useMemo, useRef} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoader} from '../src/Table';
-import {useListData} from 'react-stately';
+import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -405,18 +405,18 @@ const MyTableLoader = () => {
 };
 
 function MyTableBody(props) {
-  let {rows, children, isLoading, ...otherProps} = props;
+  let {rows, children, isLoadingMore, ...otherProps} = props;
   return (
     <TableBody {...otherProps}>
       <Collection items={rows}>
         {children}
       </Collection>
-      {isLoading && <MyTableLoader />}
+      {isLoadingMore && <MyTableLoader />}
     </TableBody>
   );
 }
 
-const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
+const TableLoadingBodyWrapper = (args: {isLoadingMore: boolean}) => {
   return (
     <Table aria-label="Files">
       <TableHeader columns={columns}>
@@ -424,7 +424,7 @@ const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <MyTableBody rows={rows} isLoading={args.isLoading}>
+      <MyTableBody rows={rows} isLoadingMore={args.isLoadingMore}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -440,7 +440,7 @@ const TableLoadingBodyWrapper = (args: {isLoading: boolean}) => {
 export const TableLoadingBodyWrapperStory = {
   render: TableLoadingBodyWrapper,
   args: {
-    isLoading: false
+    isLoadingMore: false
   },
   name: 'Table loading, table body wrapper with collection'
 };
@@ -450,12 +450,12 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.isLoading && <MyTableLoader />}
+      {props.isLoadingMore && <MyTableLoader />}
     </>
   );
 }
 
-const TableLoadingRowRenderWrapper = (args: {isLoading: boolean}) => {
+const TableLoadingRowRenderWrapper = (args: {isLoadingMore: boolean}) => {
   return (
     <Table aria-label="Files">
       <TableHeader columns={columns}>
@@ -463,9 +463,9 @@ const TableLoadingRowRenderWrapper = (args: {isLoading: boolean}) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <TableBody items={rows} dependencies={[args.isLoading]}>
+      <TableBody items={rows} dependencies={[args.isLoadingMore]}>
         {(item) => (
-          <MyRow columns={columns} isLoading={item.id === 4 && args.isLoading}>
+          <MyRow columns={columns} isLoadingMore={item.id === 4 && args.isLoadingMore}>
             {(column) => {
               return <Cell>{item[column.id]}</Cell>;
             }}
@@ -479,7 +479,7 @@ const TableLoadingRowRenderWrapper = (args: {isLoading: boolean}) => {
 export const TableLoadingRowRenderWrapperStory = {
   render: TableLoadingRowRenderWrapper,
   args: {
-    isLoading: false
+    isLoadingMore: false
   },
   name: 'Table loading, row renderer wrapper and dep array'
 };
@@ -524,6 +524,7 @@ export const RenderEmptyStateStory  = {
   },
   name: 'Empty/Loading Table rendered with TableLoader collection element'
 };
+
 export function VirtualizedTable() {
   let items: {id: number, foo: string, bar: string, baz: string}[] = [];
   for (let i = 0; i < 1000; i++) {
@@ -621,3 +622,67 @@ export function VirtualizedTableWithEmptyState() {
     </ResizableTableContainer>
   );
 }
+
+// TODO: also make a story for if the user were to make a resizable table with the wrapper
+// There are at least two possible scroll refs, one being if the body has the overflow auto and the other being if the overall wrapper has
+// overflow (see stock table example)
+// TODO: with the eventual introduction of virtualizer, the body having overflow auto might not be a thing perhaps
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const OnLoadMoreTable = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+  let scrollRef = useRef();
+
+  return (
+    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore} scrollRef={scrollRef}>
+        <TableHeader>
+          <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
+          <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
+          <Column id="mass" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Mass</Column>
+          <Column id="birth_year" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Birth Year</Column>
+        </TableHeader>
+        <MyTableBody
+          renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
+          isLoadingMore={list.loadingState === 'loadingMore'}
+          rows={list.items}>
+          {(item) => (
+            <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.height}</Cell>
+              <Cell>{item.mass}</Cell>
+              <Cell>{item.birth_year}</Cell>
+            </Row>
+          )}
+        </MyTableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+};
+
+export const OnLoadMoreTableStory  = {
+  render: OnLoadMoreTable,
+  name: 'onLoadMore table'
+};

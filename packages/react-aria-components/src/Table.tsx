@@ -8,7 +8,7 @@ import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableP
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -312,7 +312,13 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks,
+  // TODO: finalize these
+  // Perhaps we should make isLoading be loadingKeys for the eventual section/nested rows loading case
+  isLoading?: boolean,
+  onLoadMore?: () => void,
+  scrollOffset?: number,
+  scrollRef?: RefObject<HTMLElement>
 }
 
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
@@ -333,6 +339,8 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     layoutDelegate,
     isVirtualized
   }, state, ref);
+  let {scrollViewProps} = useLoadMore(props, props.scrollRef || ref);
+  useEvent(props.scrollRef || ref, 'scroll', scrollViewProps.onScroll);
 
   let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
@@ -1307,3 +1315,55 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
     </>
   );
 });
+
+interface LoadMoreProps {
+  isLoading?: boolean,
+  onLoadMore?: () => void,
+  scrollOffset?: number
+}
+
+function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
+  let {isLoading, onLoadMore, scrollOffset = 25} = props;
+
+  // Handle scrolling, and call onLoadMore when nearing the bottom.
+  let isLoadingRef = useRef(isLoading);
+  let prevProps = useRef(props);
+  let onScroll = useCallback(() => {
+    if (ref.current && !isLoadingRef.current && onLoadMore) {
+      let shouldLoadMore = ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight < scrollOffset;
+
+      if (shouldLoadMore) {
+        isLoadingRef.current = true;
+        onLoadMore();
+      }
+
+    }
+  }, [onLoadMore, ref, scrollOffset]);
+
+  useLayoutEffect(() => {
+    // Only update isLoadingRef if props object actually changed,
+    // not if a local state change occurred.
+    let wasLoading = isLoadingRef.current;
+    if (props !== prevProps.current) {
+      isLoadingRef.current = isLoading;
+      prevProps.current = props;
+    }
+
+    let shouldLoadMore = ref.current &&
+      !isLoadingRef.current
+      && onLoadMore
+      && ref.current.clientHeight === ref.current.scrollHeight
+      && wasLoading;
+
+    if (shouldLoadMore) {
+      isLoadingRef.current = true;
+      onLoadMore();
+    }
+  }, [isLoading, onLoadMore, props, ref]);
+
+  return {
+    scrollViewProps: {
+      onScroll
+    }
+  };
+}
