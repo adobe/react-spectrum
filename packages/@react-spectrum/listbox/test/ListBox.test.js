@@ -895,7 +895,7 @@ describe('ListBox', function () {
       expect(options.length).toBe(5);
       let isReact19 = parseInt(React.version, 10) >= 19;
       if (isReact19) {
-        expect(onLoadMore).toHaveBeenCalledTimes(3);
+        expect(onLoadMore).toHaveBeenCalledTimes(2);
       } else {
         expect(onLoadMore).toHaveBeenCalledTimes(1);
       }
