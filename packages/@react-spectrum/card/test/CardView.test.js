@@ -1200,7 +1200,7 @@ describe('CardView', function () {
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
       let isReact19 = parseInt(React.version, 10) >= 19;
-      if (isReact19) {
+      if (isReact19 && layout !== GridLayout) {
         expect(onLoadMore).toHaveBeenCalledTimes(2);
       } else {
         expect(onLoadMore).toHaveBeenCalledTimes(1);
