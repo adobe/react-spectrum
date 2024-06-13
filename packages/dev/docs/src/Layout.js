@@ -21,7 +21,7 @@ import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png'
 import heroImageInternationalized from 'url:../pages/assets/internationalized@2x.png?as=webp&width=1952';
 import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
 import heroImageStately from 'url:../pages/assets/ReactStately_976x445_2x.png';
-import highlightCss from './syntax-highlight.css';
+import * as highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';

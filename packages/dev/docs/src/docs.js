@@ -17,7 +17,7 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
 import {FocusScope} from '@react-aria/focus';
-import highlightCss from './syntax-highlight.css';
+import * as highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
 import {Pressable, usePress} from '@react-aria/interactions';
 import React, {useRef, useState} from 'react';
