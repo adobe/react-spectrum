@@ -1,4 +1,4 @@
-import {ActionButton, ActionButtonProps} from './ActionButton';
+import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
 import {ContentContext, FooterContext, HeadingContext} from './Content';
 import {ContextValue, Dialog as RACDialog, DEFAULT_SLOT, Provider, TextContext, useContextProps} from 'react-aria-components';
@@ -25,10 +25,15 @@ export interface ContextualHelpStyleProps {
 export interface ContextualHelpProps extends
   Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'shouldFlip' | 'offset' | 'crossOffset' | 'placement'>,
   Pick<PopoverProps, 'containerPadding'>,
-  Pick<ActionButtonProps, 'size'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
-  children?: ReactNode
+  children?: ReactNode,
+  /**
+   * The size of the ActionButton.
+   *
+   * @default 'XS'
+   */
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
 const popover = style({
