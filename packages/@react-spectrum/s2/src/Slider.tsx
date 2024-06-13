@@ -22,8 +22,8 @@ import {FormContext, useFormProps} from './Form';
 import {ReactNode, useRef, forwardRef, RefObject, useContext} from 'react';
 import {FocusableRef, LabelPosition, InputDOMProps, Alignment} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {style, size} from '../style/spectrum-theme' with {type: 'macro'};
+import {StyleProps, focusRing, field, fieldInput, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {useNumberFormatter, useLocale} from '@react-aria/i18n';
 import {clamp} from '@react-aria/utils';
@@ -38,19 +38,55 @@ export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children'>
   labelPosition?: LabelPosition
 }
 
-export interface SliderProps<T> extends AriaSliderProps<T>, StyleProps {
+export interface SliderProps<T> extends Omit<AriaSliderProps<T>, 'style' | 'className' | 'orientation'>, StyleProps {
+  /**
+   * The content to display as the label.
+   */
   label?: ReactNode,
+  /**
+   * The label for the Slider's thumb.
+   */
   thumbLabel?: string,
-  labelAlign?: Alignment,
+  /**
+   * The size of the Slider.
+   * 
+   * @default 'M'
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The label's horizontal alignment relative to the element it is labeling.
+   * 
+   * @default 'start'
+   */
+  labelAlign?: Alignment,
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * 
+   * @default 'top'
+   */
   labelPosition?: LabelPosition,
+  /**
+   * The offset from which to start the fill.
+   */
   fillOffset?: number,
+  /**
+   * Whether the Slider should be displayed with an emphasized style.
+   */
   isEmphasized?: boolean,
-  isThick?: boolean,
-  isPrecise?: boolean
+  /**
+   * The style of the Slider's track.
+   * 
+   * @default 'thin'
+   */
+  trackStyle?: 'thin' | 'thick', // TODO: add ramp
+  /**
+   * The style of the Slider's thumb.
+   * 
+   * @default 'default'
+   */
+  thumbStyle?: 'default' | 'precise'
   // TODO
   // isEditable?: boolean
-  // isRamp?: boolean
 }
 
 const slider = style({
@@ -64,17 +100,6 @@ const slider = style({
   color: {
     default: 'neutral-subdued',
     isDisabled: 'disabled'
-  },
-  width: {
-    default: {
-      size: {
-        S: 192,
-        M: 208,
-        L: 224,
-        XL: 240
-      }
-    },
-    isInForm: 'auto'
   },
   columnGap: {
     size: {
@@ -137,9 +162,9 @@ const output = style({
 });
 
 export let track = style({
+  ...fieldInput(),
   gridArea: 'track', 
   position: 'relative', 
-  minWidth: 112, // an arbitrary number, no tokens for minwidth, can adjust if needed
   width: 'full',
   height: {
     size: {
@@ -151,13 +176,12 @@ export let track = style({
   }
 });
 
-
 export let thumbContainer = style({
   size: {
     size: {
-      S: '[18px]',
+      S: size(18),
       M: 20,
-      L: '[22px]',
+      L: size(22),
       XL: 24
     }
   },
@@ -169,20 +193,22 @@ export let thumbContainer = style({
 // if precision thumb should have a smaller hit area, then remove this
 export let thumbHitArea = style({
   size: {
-    default: {
-      size: {
-        S: '[18px]',
-        M: 20,
-        L: '[22px]',
-        XL: 24
-      }
-    },
-    isPrecise: {
-      size: {
-        S: 20,
-        M: '[22px]',
-        L: 24,
-        XL: '[26px]'
+    thumbStyle: {
+      default: {
+        size: {
+          S: size(18),
+          M: 20,
+          L: size(22),
+          XL: 24
+        }
+      },
+      precise: {
+        size: {
+          S: 20,
+          M: size(22),
+          L: 24,
+          XL: size(26)
+        }
       }
     }
   }
@@ -197,40 +223,41 @@ export let thumb = style({
   left: '[50%]',
   transform: 'translateY(-50%) translateX(-50%)',
   width: {
-    default: {
-      size: {
-        S: '[18px]',
-        M: 20,
-        L: '[22px]',
-        XL: 24
-      }
-    },
-    isPrecise: '[6px]'
+    thumbStyle: {
+      default: {
+        size: {
+          S: size(18),
+          M: 20,
+          L: size(22),
+          XL: 24
+        }
+      },
+      precise: size(6)
+    }
   },
   height: {
-    default: {
-      size: {
-        S: '[18px]',
-        M: 20,
-        L: '[22px]',
-        XL: 24
-      }
-    },
-    isPrecise: {
-      size: {
-        S: 20,
-        M: '[22px]',
-        L: 24,
-        XL: '[26px]'
+    thumbStyle: {
+      default: {
+        size: {
+          S: size(18),
+          M: 20,
+          L: size(22),
+          XL: 24
+        }
+      },
+      precise: {
+        size: {
+          S: 20,
+          M: size(22),
+          L: 24,
+          XL: size(26)
+        }
       }
     }
   },
   borderRadius: 'full',
   borderStyle: 'solid',
-  borderWidth: {
-    default: '[2px]',
-    isPrecise: '[2px]'
-  },
+  borderWidth: '[2px]',
   borderColor: {
     default: 'gray-800',
     isHovered: 'gray-900',
@@ -243,20 +270,28 @@ export let thumb = style({
   backgroundColor: 'gray-25'
 });
 
+const trackStyling = {
+  height: {
+    trackStyle: {
+      thin: 4,
+      thick: 16
+    }
+  },
+  top: '[50%]',
+  borderRadius: {
+    trackStyle: {
+      thin: 'lg',
+      thick: 'sm'
+    }
+  }
+} as const;
+
 export let upperTrack = style({
+  ...trackStyling,
   position: 'absolute',
   backgroundColor: {
     default: 'gray-300',
     isDisabled: 'disabled'
-  },
-  height: {
-    default: 4,
-    isThick: 16
-  },
-  top: '[50%]',
-  borderRadius: {
-    default: 'lg',
-    isThick: 'sm'
   },
   translateY: '[-50%]',
   width: 'full',
@@ -273,6 +308,7 @@ export let upperTrack = style({
 });
 
 export let filledTrack = style({
+  ...trackStyling,
   position: 'absolute',
   backgroundColor: {
     default: 'gray-700',
@@ -282,15 +318,6 @@ export let filledTrack = style({
       default: 'Highlight',
       isDisabled: 'GrayText'
     }
-  },
-  height: {
-    default: 4,
-    isThick: 16
-  },
-  top: '[50%]',
-  borderRadius: {
-    default: 'lg',
-    isThick: 'sm'
   },
   boxSizing: 'border-box',
   borderStyle: 'solid',
@@ -382,8 +409,8 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Focusab
     size = 'M',
     fillOffset,
     isEmphasized,
-    isThick,
-    isPrecise
+    trackStyle = 'thin',
+    thumbStyle = 'default'
   } = props; 
   let thumbRef = useRef(null);
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
@@ -411,8 +438,8 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Focusab
 
           return (
             <>
-              <div className={upperTrack({isDisabled, isThick})} />
-              <div style={{width: `${Math.abs(fillWidth!) * 100}%`, [cssDirection]: `${offset! * 100}%`}} className={filledTrack({isDisabled, isEmphasized, isThick})} />
+              <div className={upperTrack({isDisabled, trackStyle})} />
+              <div style={{width: `${Math.abs(fillWidth!) * 100}%`, [cssDirection]: `${offset! * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
               <SliderThumb  className={thumbContainer} index={0} ref={thumbRef}  aria-label={thumbLabel} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (
                   <div className={thumbHitArea({size})}>
@@ -420,7 +447,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Focusab
                       className={thumb({
                         ...renderProps,
                         size,
-                        isPrecise
+                        thumbStyle
                       })} />
                   </div>
                 )}

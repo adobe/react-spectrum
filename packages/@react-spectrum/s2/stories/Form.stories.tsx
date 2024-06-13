@@ -45,8 +45,8 @@ export const Example = (args: any) => (
     <TextArea label="Comment" name="comment" />
     <Switch>Wi-Fi</Switch>
     <Checkbox>I agree to the terms</Checkbox>
-    <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
     <Slider label="Cookies"  defaultValue={30} thumbLabel="cookie" />
     <RangeSlider label="Range"  defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
+    <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
   </Form>
 );

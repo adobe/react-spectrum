@@ -24,6 +24,9 @@ import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
 
 export interface RangeSliderProps<T> extends Omit<SliderProps<T>, 'fillOffset' | 'thumbLabel'> {
+  /**
+   * The label for each of the Slider's thumbs.
+   */
   thumbLabels?: string[]
 }
 
@@ -35,8 +38,8 @@ function RangeSlider<T extends number | number[]>(props: RangeSliderProps<T>, re
     labelPosition = 'top', 
     size = 'M',
     isEmphasized,
-    isThick,
-    isPrecise
+    trackStyle = 'thin',
+    thumbStyle = 'default'
   } = props; 
   let lowerThumbRef = useRef(null);
   let upperThumbRef = useRef(null);
@@ -54,8 +57,8 @@ function RangeSlider<T extends number | number[]>(props: RangeSliderProps<T>, re
         className={track({size, labelPosition, isInForm: !!formContext})}>
         {({state, isDisabled}) => (
           <>
-            <div className={upperTrack({isDisabled, isThick})} />
-            <div style={{width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`, [cssDirection]: `${state.getThumbPercent(0) * 100}%`}} className={filledTrack({isDisabled, isEmphasized, isThick})} />
+            <div className={upperTrack({isDisabled, trackStyle})} />
+            <div style={{width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`, [cssDirection]: `${state.getThumbPercent(0) * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
             <SliderThumb className={thumbContainer} index={0} aria-label={thumbLabels?.[0]} ref={lowerThumbRef} style={(renderProps) => pressScale(lowerThumbRef, {transform: 'translate(-50%, -50%)', zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined})({...renderProps, isPressed: renderProps.isDragging})}>
               {(renderProps) => (
                 <div className={thumbHitArea({size})}>
@@ -63,7 +66,7 @@ function RangeSlider<T extends number | number[]>(props: RangeSliderProps<T>, re
                     className={thumb({
                       ...renderProps,
                       size,
-                      isPrecise
+                      thumbStyle
                     })} />
                 </div>
               )}
@@ -75,7 +78,7 @@ function RangeSlider<T extends number | number[]>(props: RangeSliderProps<T>, re
                     className={thumb({
                       ...renderProps,
                       size,
-                      isPrecise
+                      thumbStyle
                     })} />
                 </div>
               )}
