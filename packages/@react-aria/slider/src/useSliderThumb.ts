@@ -192,6 +192,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       const {
         getThumbPercent,
         getPercentValue,
+        getThumbValue,
         setThumbPercent,
         setFocusedThumb,
         setThumbDragging,
@@ -229,8 +230,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
 
         const percent = clamp(currentPosition.current / size, 0, 1);
 
-        isValueMustBeChanged = getPercentValue(percent) !== value;
-        isValueMustBeDecreasing = getPercentValue(percent) < value;
+        isValueMustBeChanged = getPercentValue(percent) !== getThumbValue(controlledThumbIndex);
+        isValueMustBeDecreasing = getPercentValue(percent) < getThumbValue(controlledThumbIndex);
       }
 
       const stuckThumbsIndexes = getStuckThumbsIndexes(state, controlledThumbIndex);
@@ -277,6 +278,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           incrementThumb(controlledThumbIndex, shiftKey ? pageSize : step);
         }
       }
+
+      console.log('move', isValueMustBeChanged);
       
       if (pointerType !== 'keyboard' && isValueMustBeChanged) {
         setThumbPercent(controlledThumbIndex, clamp(currentPosition.current / size, 0, 1));
