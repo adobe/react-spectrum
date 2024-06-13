@@ -21,8 +21,8 @@ import {ReactNode, forwardRef, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
-import {Provider, HeadingContext} from 'react-aria-components';
-import {ContentContext} from './Content';
+import {Provider} from 'react-aria-components';
+import {ContentContext, HeadingContext} from './Content';
 import {IconContext} from './Icon';
 
 export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
@@ -183,7 +183,7 @@ let ICONS = {
   neutral: undefined
 };
 
-const heading = style<InlineStylesProps>({
+const heading = style({
   marginTop: 0,
   gridArea: 'heading',
   fontSize: 'ui',
@@ -191,7 +191,7 @@ const heading = style<InlineStylesProps>({
   color: '[inherit]'
 });
 
-const content = style<InlineStylesProps>({
+const content = style({
   gridArea: 'content',
   fontSize: 'body-sm',
   lineHeight: 'body'
@@ -241,9 +241,7 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
         className={grid}>
         <Provider
           values={[
-            // @ts-ignore
             [HeadingContext, {className: heading}],
-            // @ts-ignore
             [ContentContext, {className: content}],
             [IconContext, {styles: icon({variant, fillStyle})}]
           ]}>

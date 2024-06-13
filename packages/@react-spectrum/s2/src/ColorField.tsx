@@ -12,11 +12,10 @@
 
 import {
   ColorField as AriaColorField,
-  ColorFieldProps as AriaColorFieldProps,
-  FormContext
+  ColorFieldProps as AriaColorFieldProps
 } from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useFormProps} from './Form';
+import {FormContext, useFormProps} from './Form';
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';

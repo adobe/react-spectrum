@@ -17,7 +17,7 @@ import {
   TagList,
   TagListProps,
   TagProps as AriaTagProps,
-  TextContext,
+  TextContext as RACTextContext,
   composeRenderProps,
   Provider
 } from 'react-aria-components';
@@ -30,7 +30,7 @@ import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro'
 import {pressScale} from './pressScale';
 import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
-import {Text, ImageContext} from './Content';
+import {Text, ImageContext, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {forwardRefType} from './types';
@@ -108,7 +108,7 @@ function TagGroup<T extends object>(
   let {size = 'M'} = props;
   let domRef = useDOMRef(ref);
 
-  let helpText = undefined; 
+  let helpText = undefined;
   if (!isInvalid && description) {
     helpText =  (
       <Text
@@ -161,7 +161,7 @@ function TagGroup<T extends object>(
         <FormContext.Provider value={{...formContext, size}}>
           <Provider
             values={[
-              [TextContext, undefined],
+              [RACTextContext, undefined],
               [TagGroupContext, {size, isEmphasized}]
             ]}>
             <TagList

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonProps, ButtonRenderProps, Button as RACButton, Text, TextContext, Provider} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, Button as RACButton, Text, Provider} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with { type: 'macro' };
@@ -19,6 +19,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {ReactNode, forwardRef} from 'react';
 import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
+import {TextContext} from './Content';
 
 export interface ActionButtonStyleProps {
   /**
