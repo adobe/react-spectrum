@@ -618,7 +618,7 @@ describe('Table', () => {
     );
     let body = getAllByRole('rowgroup')[1];
     expect(body).toHaveAttribute('data-empty', 'true');
-    let cell = getByRole('gridcell');
+    let cell = getByRole('rowheader');
     expect(cell).toHaveTextContent('No results');
   });
 

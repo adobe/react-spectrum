@@ -883,6 +883,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
   let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
@@ -901,13 +902,24 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     values: renderValues
   });
 
+  // TODO the empty state doesn't render inside the CollectionBranch element and is thus improperly positioned
   let emptyState;
   if (collection.size === 0 && props.renderEmptyState && state) {
     let TR = useElementType('tr');
     let TD = useElementType('td');
+
+    let rowProps = {};
+    let rowHeaderProps = {};
+    if (isVirtualized) {
+      rowProps['aria-rowindex'] = state.collection.headerRows.length + 1;
+      rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+    } else {
+      rowHeaderProps['colSpan'] = collection.columnCount;
+    }
+
     emptyState = (
-      <TR role="row">
-        <TD role="gridcell" colSpan={collection.columnCount}>
+      <TR role="row" {...rowProps}>
+        <TD role="rowheader" {...rowHeaderProps}>
           {props.renderEmptyState(renderValues)}
         </TD>
       </TR>
@@ -1296,6 +1308,7 @@ export interface TableLoaderProps {}
 
 export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let numColumns = state.collection.columns.length;
   let renderProps = useRenderProps({
     ...props,
@@ -1304,20 +1317,29 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
     defaultClassName: 'react-aria-TableLoader',
     values: null
   });
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let rowProps = {};
+  let rowHeaderProps = {};
 
-  // TODO: add aria attributes when we add virtualizer
-  // Note that the level, etc may need to be adjusted since this isn't a "item" and thus doesn't get the same level calulation handling
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+  } else {
+    rowHeaderProps['colSpan'] = numColumns;
+  }
+
   return (
     <>
-      <tr
+      <TR
         role="row"
         ref={ref}
-        {...mergeProps(filterDOMProps(props as any))}
+        {...mergeProps(filterDOMProps(props as any), rowProps)}
         {...renderProps}>
-        <td role="rowheader" colSpan={numColumns}>
+        <TD role="rowheader" {...rowHeaderProps}>
           {renderProps.children}
-        </td>
-      </tr>
+        </TD>
+      </TR>
     </>
   );
 });
@@ -1357,10 +1379,14 @@ function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
       prevProps.current = props;
     }
 
-    let shouldLoadMore = ref?.current &&
-      !isLoadingRef.current
+    // TODO: this actually calls loadmore twice in succession on intial load because after the first load
+    // the scrollable element hasn't yet recieved its new height with the newly loaded items... Because of RAC collection needing two renders?
+    let shouldLoadMore = ref?.current
+      && !isLoadingRef.current
       && onLoadMore
       && ref.current.clientHeight === ref.current.scrollHeight
+      // Only try loading more if the content size changed, or if we just finished
+      // loading and still have room for more items.
       && (wasLoading || ref.current.scrollHeight !== lastContentSize.current);
 
     if (shouldLoadMore) {
@@ -1370,6 +1396,7 @@ function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
     lastContentSize.current = ref.current?.scrollHeight || 0;
   }, [isLoading, onLoadMore, props, ref]);
 
-  // TODO: figure I'd just attach to ref here, no need to return onScroll
+  // TODO: figure I'd just attach to ref here, no need to return onScroll. However if this need to replace useVirtualizer 1:1, then I can
+  // make it return onScroll and attach it to the ref outside
   useEvent(ref, 'scroll', onScroll);
 }

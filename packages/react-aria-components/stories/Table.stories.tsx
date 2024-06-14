@@ -653,7 +653,7 @@ const OnLoadMoreTable = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>();
+  let scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     // TODO: but why typescript?
@@ -712,7 +712,7 @@ const OnLoadMoreTableBodyScroll = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLTableSectionElement>();
+  let scrollRef = useRef<HTMLTableSectionElement>(null);
   return (
     <Table
       aria-label="Load more table"
@@ -750,4 +750,113 @@ const OnLoadMoreTableBodyScroll = () => {
 export const OnLoadMoreTableStoryBodyScroll  = {
   render: OnLoadMoreTableBodyScroll,
   name: 'onLoadMore table, scrollable body'
+};
+
+// TODO: things to fix
+// it isn't rendering the load more spinner with a height
+const OnLoadMoreTableVirtualized = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 40000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+
+  return (
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Virtualizer layout={layout}>
+        <Table aria-label="Load more table virtualized" isLoading={isLoading} onLoadMore={list.loadMore}>
+          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+            <Column id="name" isRowHeader>Name</Column>
+            <Column id="height">Height</Column>
+            <Column id="mass">Mass</Column>
+            <Column id="birth_year">Birth Year</Column>
+          </TableHeader>
+          <MyTableBody
+            renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
+            isLoadingMore={list.loadingState === 'loadingMore'}
+            rows={list.items}>
+            {(item) => (
+              <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.height}</Cell>
+                <Cell>{item.mass}</Cell>
+                <Cell>{item.birth_year}</Cell>
+              </Row>
+            )}
+          </MyTableBody>
+        </Table>
+      </Virtualizer>
+    </ResizableTableContainer>
+  );
+};
+
+export const OnLoadMoreTableStoryVirtualized  = {
+  render: OnLoadMoreTableVirtualized,
+  name: 'onLoadMore table, virtualized'
+};
+
+
+const VirtualizedEmptyState = (args) => {
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25,
+      enableEmptyState: true
+    });
+  }, []);
+
+  return (
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Virtualizer layout={layout}>
+        <Table aria-label="empty virtualized table">
+          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+            <Column id="name" isRowHeader>Name</Column>
+            <Column id="height">Height</Column>
+            <Column id="mass">Mass</Column>
+            <Column id="birth_year">Birth Year</Column>
+          </TableHeader>
+          <MyTableBody
+            renderEmptyState={() => renderEmptyLoader({isLoading: args.isLoading})}
+            rows={[]}>
+            {(item) => (
+              <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.height}</Cell>
+                <Cell>{item.mass}</Cell>
+                <Cell>{item.birth_year}</Cell>
+              </Row>
+            )}
+          </MyTableBody>
+        </Table>
+      </Virtualizer>
+    </ResizableTableContainer>
+  );
+};
+
+export const VirtualizedEmptyStateStory  = {
+  render: VirtualizedEmptyState,
+  args: {
+    isLoading: false
+  },
+  name: 'Empty virtualized table'
 };
