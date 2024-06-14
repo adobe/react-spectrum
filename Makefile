@@ -81,8 +81,8 @@ storybook-16:
 storybook-17:
 	yarn build:storybook-17
 
-storybook-18:
-	yarn build:storybook-18
+storybook-19:
+	yarn build:storybook-19
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:

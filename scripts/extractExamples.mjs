@@ -77,9 +77,9 @@ for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-ari
     if (!options.includes('render=false')) {
       if (/function (.|\n)*}\s*$/.test(code)) {
         let name = code.match(/function (.*?)\s*(?:<.*?)?\(/)[1];
-        code = `${code}\nlet root = ReactDOM.createRoot(document.getElementById("root"));\nroot.render(<${name} />);`;
+        code = `${code}\nReactDOM.render(<${name} />, document.getElementById("root"));`;
       } else if (/^<(.|\n)*>$/m.test(code)) {
-        code = code.replace(/^(<(.|\n)*>)$/m, `let root = ReactDOM.createRoot(document.getElementById("root"));\nroot.render(<>$1</>);`);
+        code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<>$1</>, document.getElementById("root"));`);
       }
     }
 

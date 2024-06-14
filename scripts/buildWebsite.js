@@ -65,8 +65,7 @@ async function build() {
       'react-aria': 'latest',
       'react-stately': 'latest',
       'react-aria-components': 'latest',
-      'tailwindcss-react-aria-components': 'latest',
-      'process': 'latest'
+      'tailwindcss-react-aria-components': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
