@@ -49,29 +49,7 @@ Validation.args = {
 };
 
 export const ContextualHelpExample = (args: any) => (
-  <div
-    className={style({
-      width: 256,
-      display: 'flex',
-      flexDirection: 'column',
-      rowGap: 12
-    })}>
-    <TextField {...args} size="S" />
-    <TextField label="Segment" size="S" />
-    <TextField {...args} size="M" />
-    <TextField label="Segment" size="M" />
-    <TextField {...args} size="L" />
-    <TextField label="Segment" size="L" />
-    <TextField {...args} size="XL" />
-    <TextField label="Segment" size="XL" />
-    <TextField
-      {...args}
-      size="M"
-      label="Segments identify who your visitors are and much more." />
-    <TextField
-      size="M"
-      label="Segments identify who your visitors are and much more." />
-  </div>
+  <TextField {...args} />
 );
 
 ContextualHelpExample.args = {
@@ -97,7 +75,34 @@ ContextualHelpExample.args = {
 
 ContextualHelpExample.parameters = {
   docs: {
-    disable: true
+    source: {
+      transform: () => {
+        return `
+<TextField
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>
+        What is a segment?
+      </Heading>
+      <Content>
+        <Text>
+          Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
+          isStandalone
+          target="_blank">
+          Learn more about segments
+        </Link>
+      </Footer>
+    </ContextualHelp>
+  }
+  label="Segment"
+/>`;
+      }
+    }
   }
 };
 
