@@ -76,6 +76,11 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
           labelPosition: {
             top: '--field-gap'
           }
+        },
+        contain: {
+          labelPosition: {
+            top: 'inline-size'
+          }
         }
       })({labelAlign, labelPosition})}>
       <Label

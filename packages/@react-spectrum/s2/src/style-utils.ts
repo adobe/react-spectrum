@@ -33,7 +33,11 @@ export const field = () => ({
     isInForm: 1
   },
   gridColumnEnd: {
-    isInForm: 'span 2'
+    isInForm: {
+      labelPosition: {
+        side: 'span 2'
+      }
+    }
   },
   gridTemplateColumns: {
     default: {
@@ -100,11 +104,6 @@ export const fieldLabel = () => ({
       }
     },
     forcedColors: 'ButtonText'
-  },
-  contain: {
-    labelPosition: {
-      top: 'inline-size'
-    }
   }
 } as const);
 

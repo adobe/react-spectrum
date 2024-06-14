@@ -97,13 +97,13 @@ const labelContainer = style({
   width: 'full',
   gridTemplateAreas: {
     labelPosition: {
-      top: ['label . output']
+      top: ['label output']
     }
   },
   gridTemplateColumns: {
     labelPosition: {
       top: [
-        'auto 1fr auto'
+        '1fr auto'
       ]
     }
   },
