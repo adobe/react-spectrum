@@ -266,15 +266,19 @@ export class TableLayout<T> extends ListLayout<T> {
       children.push({layoutInfo: loader, validRect: loader.rect});
       y = loader.rect.maxY;
       width = Math.max(width, rect.width);
-    } else if (children.length === 0 && this.enableEmptyState) {
-      let rect = new Rect(40, Math.max(y, 40), this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
-      let empty = new LayoutInfo('empty', 'empty', rect);
-      empty.parentKey = layoutInfo.key;
-      empty.isSticky = !this.disableSticky;
-      this.layoutInfos.set('empty', empty);
-      children.push({layoutInfo: empty, validRect: empty.rect});
-      y = empty.rect.maxY;
-      width = Math.max(width, rect.width);
+    } else if (children.length === 0) {
+      if (this.enableEmptyState) {
+        let rect = new Rect(40, Math.max(y, 40), this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
+        let empty = new LayoutInfo('empty', 'empty', rect);
+        empty.parentKey = layoutInfo.key;
+        empty.isSticky = !this.disableSticky;
+        this.layoutInfos.set('empty', empty);
+        children.push({layoutInfo: empty, validRect: empty.rect});
+        y = empty.rect.maxY;
+        width = Math.max(width, rect.width);
+      } else {
+        y = this.virtualizer.visibleRect.maxY;
+      }
     }
 
     rect.width = width;

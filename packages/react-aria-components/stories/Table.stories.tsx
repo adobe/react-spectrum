@@ -464,3 +464,29 @@ export function VirtualizedTableWithResizing() {
     </ResizableTableContainer>
   );
 }
+
+export function VirtualizedTableWithEmptyState() {
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  return (
+    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+      <Virtualizer layout={layout}>
+        <Table aria-label="virtualized table">
+          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+            <MyColumn isRowHeader>Foo</MyColumn>
+            <MyColumn>Bar</MyColumn>
+            <MyColumn>Baz</MyColumn>
+          </TableHeader>
+          <TableBody renderEmptyState={() => 'Empty'}>
+            <></>
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    </ResizableTableContainer>
+  );
+}
