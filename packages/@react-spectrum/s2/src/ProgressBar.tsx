@@ -20,7 +20,7 @@ import {
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
 import {ReactNode, forwardRef} from 'react';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {StyleProps, fieldLabel, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -65,6 +65,7 @@ const wrapper = style<ProgressBarStyleProps>({
 }, getAllowedOverrides());
 
 const valueStyles = style({
+  ...fieldLabel(),
   gridArea: 'value'
 });
 
@@ -122,8 +123,7 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
       {({percentage, valueText}) => (
         <>
           <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>
-          {/* TODO: this cannot be a label because they will both receive context */}
-          <FieldLabel size={size} labelAlign="end" staticColor={staticColor} styles={valueStyles}>{valueText}</FieldLabel>
+          <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>
           <div className={trackStyles({...props})}>
             <div
               className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}

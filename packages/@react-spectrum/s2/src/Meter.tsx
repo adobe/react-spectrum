@@ -14,7 +14,7 @@ import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {forwardRef, ReactNode} from 'react';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   Meter as AriaMeter,
   MeterProps as AriaMeterProps
@@ -53,6 +53,7 @@ const wrapper = style<MeterStyleProps>({
 }, getAllowedOverrides());
 
 const valueStyles = style({
+  ...fieldLabel(),
   gridArea: 'value'
 });
 
@@ -120,7 +121,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       {({percentage, valueText}) => (
         <>
           <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>
-          <FieldLabel size={size} labelAlign="end" staticColor={staticColor} styles={valueStyles}>{valueText}</FieldLabel>
+          <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>
           <div className={trackStyles({staticColor, size})}>
             <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
           </div>

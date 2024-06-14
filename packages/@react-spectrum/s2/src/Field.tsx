@@ -13,7 +13,7 @@
 import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, Provider} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ContextualHelpContext} from './ContextualHelp';
-import {StyleProps, UnsafeStyles, fieldInput, focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, UnsafeStyles, fieldInput, fieldLabel, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/Asterisk';
 import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
 import {IconContext} from './Icon';
@@ -82,31 +82,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         {...labelProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={UNSAFE_className + mergeStyles(
-          style({
-            fontFamily: 'sans',
-            fontSize: 'control',
-            lineHeight: 'ui',
-            cursor: 'default',
-            color: {
-              default: 'neutral-subdued',
-              isDisabled: 'disabled',
-              staticColor: {
-                white: {
-                  default: 'transparent-white-700'
-                },
-                black: {
-                  default: 'transparent-black-900'
-                }
-              },
-              forcedColors: 'ButtonText'
-            },
-            contain: {
-              labelPosition: {
-                top: 'inline-size'
-              }
-            }
-          })({labelPosition, isDisabled, size, staticColor}), props.styles)}>
+        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, staticColor}), props.styles)}>
         {props.children}
         {(isRequired || necessityIndicator === 'label') && (
           <span className={style({whiteSpace: 'nowrap'})}>

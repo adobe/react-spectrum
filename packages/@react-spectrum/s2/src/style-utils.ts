@@ -83,6 +83,31 @@ export const field = () => ({
   disableTapHighlight: true
 } as const);
 
+export const fieldLabel = () => ({
+  fontFamily: 'sans',
+  fontSize: 'control',
+  lineHeight: 'ui',
+  cursor: 'default',
+  color: {
+    default: 'neutral-subdued',
+    isDisabled: 'disabled',
+    staticColor: {
+      white: {
+        default: 'transparent-white-700'
+      },
+      black: {
+        default: 'transparent-black-900'
+      }
+    },
+    forcedColors: 'ButtonText'
+  },
+  contain: {
+    labelPosition: {
+      top: 'inline-size'
+    }
+  }
+} as const);
+
 export const fieldInput = () => ({
   gridArea: 'input',
   minWidth: 'control',
