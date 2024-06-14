@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {useMemo, useRef} from 'react';
+import React, {RefObject, useMemo, useRef} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoader} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
@@ -653,11 +653,12 @@ const OnLoadMoreTable = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef();
+  let scrollRef = useRef<HTMLDivElement>();
 
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
-      <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore} scrollRef={scrollRef}>
+    // TODO: but why typescript?
+    <ResizableTableContainer ref={scrollRef as RefObject<HTMLDivElement>} style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore} scrollRef={scrollRef as RefObject<HTMLDivElement>}>
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
           <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
@@ -688,6 +689,10 @@ export const OnLoadMoreTableStory  = {
 };
 
 // TODO: this doens't quite work because the table body isn't initially rendered thus the ref is scrollRef is undef
+// This could be remedied perhaps by moving the onLoadMore call to TableBody internally and passing down the scrollRef and other load props via context from body.
+// That would guarentee that the ref for the table body is defined at the time the hook renders. Stashed this change locally, to be discussed.
+// TODO: Depenedent on whether or not we need to support the TableBody being scrollable, or can get away with just having the table resize container or the table itself
+// be scrollable. The vertical scrollbar extending to the column and the table body outline disappearing when horizontally scrolled are some of the problems with this
 const OnLoadMoreTableBodyScroll = () => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
@@ -707,17 +712,22 @@ const OnLoadMoreTableBodyScroll = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef();
+  let scrollRef = useRef<HTMLTableSectionElement>();
   return (
-    <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore} scrollRef={scrollRef}>
-      <TableHeader>
+    <Table
+      aria-label="Load more table"
+      isLoading={isLoading}
+      onLoadMore={list.loadMore}
+      // TODO: but why typescript?
+      scrollRef={scrollRef as RefObject<HTMLTableSectionElement>}>
+      <TableHeader style={{display: 'block'}}>
         <Column id="name" isRowHeader>Name</Column>
         <Column id="height">Height</Column>
         <Column id="mass">Mass</Column>
         <Column id="birth_year">Birth Year</Column>
       </TableHeader>
       <TableBody
-        ref={scrollRef}
+        ref={scrollRef as RefObject<HTMLTableSectionElement>}
         style={{display: 'block', overflow: 'auto', maxHeight: 100}}
         renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
         items={list.items}>

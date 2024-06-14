@@ -862,7 +862,6 @@ const _ColumnResizer = forwardRef(ColumnResizer);
 export {_ColumnResizer as ColumnResizer};
 
 export interface TableBodyRenderProps {
-  // TODO: I wonder if this should also be true if the table only has the loading row. I figure we should keep loading and empty state as separate states
   /**
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
@@ -1329,7 +1328,7 @@ interface LoadMoreProps {
   scrollOffset?: number
 }
 
-// TODO: need to handle virtualized case, see what info is available with new RAV virtualizer stuff
+// TODO where to move it? Layout package? Pagination? Needs to be in aria and not stately
 function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
   let {isLoading, onLoadMore, scrollOffset = 25} = props;
 
@@ -1348,6 +1347,7 @@ function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
     }
   }, [onLoadMore, ref, scrollOffset]);
 
+  let lastContentSize = useRef(0);
   useLayoutEffect(() => {
     // Only update isLoadingRef if props object actually changed,
     // not if a local state change occurred.
@@ -1361,12 +1361,13 @@ function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
       !isLoadingRef.current
       && onLoadMore
       && ref.current.clientHeight === ref.current.scrollHeight
-      && wasLoading;
+      && (wasLoading || ref.current.scrollHeight !== lastContentSize.current);
 
     if (shouldLoadMore) {
       isLoadingRef.current = true;
-      onLoadMore();
+      onLoadMore?.();
     }
+    lastContentSize.current = ref.current?.scrollHeight || 0;
   }, [isLoading, onLoadMore, props, ref]);
 
   // TODO: figure I'd just attach to ref here, no need to return onScroll
