@@ -401,7 +401,7 @@ describe('Tree', () => {
 
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(7);
-    expect(rows.map(r => r.querySelector('span').textContent)).toEqual(['Projects', 'Project 1', 'Project 2', 'Project 2A', 'Project 2B', 'Project 2C', 'Project 3']);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Projects', 'Project 1', 'Project 2', 'Project 2A', 'Project 2B', 'Project 2C', 'Project 3']);
 
     let tree = getByRole('treegrid');
     tree.scrollTop = 200;
@@ -409,14 +409,14 @@ describe('Tree', () => {
     
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
-    expect(rows.map(r => r.querySelector('span').textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A']);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A']);
   
     await user.tab();
     await user.keyboard('{End}');
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
-    expect(rows.map(r => r.querySelector('span').textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A', 'Reports 2']);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A', 'Reports 2']);
   });
 
   describe('general interactions', () => {
