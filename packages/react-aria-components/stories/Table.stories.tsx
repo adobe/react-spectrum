@@ -686,3 +686,58 @@ export const OnLoadMoreTableStory  = {
   render: OnLoadMoreTable,
   name: 'onLoadMore table'
 };
+
+// TODO: this doens't quite work because the table body isn't initially rendered thus the ref is scrollRef is undef
+const OnLoadMoreTableBodyScroll = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+  let scrollRef = useRef();
+  return (
+    <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore} scrollRef={scrollRef}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="height">Height</Column>
+        <Column id="mass">Mass</Column>
+        <Column id="birth_year">Birth Year</Column>
+      </TableHeader>
+      <TableBody
+        ref={scrollRef}
+        style={{display: 'block', overflow: 'auto', maxHeight: 100}}
+        renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
+        items={list.items}>
+        <Collection items={list.items}>
+          {(item) => (
+            <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.height}</Cell>
+              <Cell>{item.mass}</Cell>
+              <Cell>{item.birth_year}</Cell>
+            </Row>
+          )}
+        </Collection>
+        {list.loadingState === 'loadingMore' && <MyTableLoader />}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const OnLoadMoreTableStoryBodyScroll  = {
+  render: OnLoadMoreTableBodyScroll,
+  name: 'onLoadMore table, scrollable body'
+};

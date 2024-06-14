@@ -315,6 +315,9 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   dragAndDropHooks?: DragAndDropHooks,
   // TODO: finalize these
   // Perhaps we should make isLoading be loadingKeys for the eventual section/nested rows loading case
+  // Or should it follow the loadingState api we have for our async hook
+  // TODO: should the below be loadMoreOptions? These are just passed to the hook and making a prop that takes in a object containing the
+  // options might be easier to adjust in the future
   isLoading?: boolean,
   onLoadMore?: () => void,
   scrollOffset?: number,
@@ -334,15 +337,19 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, scrollRef, dragAndDropHooks} = props;
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    scrollOffset
+  }), [isLoading, onLoadMore, scrollOffset]);
+  useLoadMore(memoedLoadMoreProps, scrollRef || ref);
+
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
     isVirtualized
   }, state, ref);
-  let {scrollViewProps} = useLoadMore(props, props.scrollRef || ref);
-  useEvent(props.scrollRef || ref, 'scroll', scrollViewProps.onScroll);
-
-  let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -1322,6 +1329,7 @@ interface LoadMoreProps {
   scrollOffset?: number
 }
 
+// TODO: need to handle virtualized case, see what info is available with new RAV virtualizer stuff
 function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
   let {isLoading, onLoadMore, scrollOffset = 25} = props;
 
@@ -1349,7 +1357,7 @@ function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
       prevProps.current = props;
     }
 
-    let shouldLoadMore = ref.current &&
+    let shouldLoadMore = ref?.current &&
       !isLoadingRef.current
       && onLoadMore
       && ref.current.clientHeight === ref.current.scrollHeight
@@ -1361,9 +1369,6 @@ function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
     }
   }, [isLoading, onLoadMore, props, ref]);
 
-  return {
-    scrollViewProps: {
-      onScroll
-    }
-  };
+  // TODO: figure I'd just attach to ref here, no need to return onScroll
+  useEvent(ref, 'scroll', onScroll);
 }
