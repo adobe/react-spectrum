@@ -27,6 +27,7 @@ clean_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 	rm -rf examples/*/node_modules
+	rm -rf starters/*/node_modules
 
 clean_dist:
 	rm -rf packages/*/*/dist

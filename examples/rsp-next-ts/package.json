@@ -29,7 +29,7 @@
     "@swc/jest": "^0.2.36",
     "@testing-library/react": "^15.0.7",
     "@types/node": "^18.8.2",
-    "@types/react": "^18.0.21",
+    "@types/react": "^18",
     "eslint": "^8.24.0",
     "eslint-config-next": "^13.4.1",
     "identity-obj-proxy": "^3.0.0",
