@@ -820,8 +820,7 @@ const VirtualizedEmptyState = (args) => {
   let layout = useMemo(() => {
     return new TableLayout({
       rowHeight: 25,
-      headingHeight: 25,
-      enableEmptyState: true
+      headingHeight: 25
     });
   }, []);
 
