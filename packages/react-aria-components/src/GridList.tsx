@@ -269,10 +269,12 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
-      shouldSelectOnPressUp: !!dragState
+      shouldSelectOnPressUp: !!dragState,
+      isVirtualized
     },
     state,
     ref
