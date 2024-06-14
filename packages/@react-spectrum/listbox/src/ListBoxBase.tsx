@@ -113,7 +113,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           {...mergeProps(listBoxProps, domProps)}
           ref={ref}
           focusedKey={state.selectionManager.focusedKey}
-          autoFocus={!!props.autoFocus}
+          autoFocus={props.autoFocus || undefined}
           sizeToFit="height"
           scrollDirection="vertical"
           className={
