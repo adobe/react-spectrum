@@ -14,7 +14,8 @@ import {
   ColorSlider as AriaColorSlider,
   ColorSliderProps as AriaColorSliderProps,
   SliderOutput,
-  SliderTrack
+  SliderTrack,
+  useLocale
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -32,6 +33,8 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
   let trackRef = useRef(null);
+  let {locale} = useLocale();
+
   return (
     <AriaColorSlider 
       {...props}
@@ -64,9 +67,15 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
         rowGap: 4
       }, getAllowedOverrides())(renderProps, styles)}>
       {({isDisabled, orientation, state}) => (<>
-        {orientation === 'horizontal' && props.label && 
-          <FieldLabel isDisabled={isDisabled} contextualHelp={props.contextualHelp}>{props.label}</FieldLabel>
-        }
+        {orientation === 'horizontal' && (props.label || (props.label === undefined && !props['aria-label'] && !props['aria-labelledby'])) && (
+          // If no external label, aria-label or aria-labelledby is provided,
+          // default to displaying the localized channel value.
+          // Specifically check if label is undefined. If label is `null` then display no visible label.
+          // A default aria-label is provided by useColorSlider in that case.
+          <FieldLabel isDisabled={isDisabled} contextualHelp={props.contextualHelp}>
+            {props.label || state.value.getChannelName(props.channel, locale)}
+          </FieldLabel>
+        )}
         {orientation === 'horizontal' && 
           <SliderOutput
             className={style({

@@ -55,7 +55,7 @@ function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>)
     <SliderBase
       {...props}
       value={props.value ? [props.value.start, props.value.end] : undefined}
-      defaultValue={props.defaultValue ? [props.defaultValue.start, props.defaultValue.end] : undefined}
+      defaultValue={props.defaultValue ? [props.defaultValue.start, props.defaultValue.end] : [props.minValue ?? 0, props.maxValue ?? 100]}
       onChange={v => props.onChange?.({start: v[0], end: v[1]})}
       onChangeEnd={v => props.onChangeEnd?.({start: v[0], end: v[1]})}
       sliderRef={domRef}>
