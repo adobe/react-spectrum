@@ -23,8 +23,8 @@ import {Size} from './Size';
 
 /**
  * The Virtualizer class renders a scrollable collection of data using customizable layouts.
- * It supports very large collections by only rendering visible views to the DOM, reusing 
- * them as you scroll. Virtualizer can present any type of view, including non-item views 
+ * It supports very large collections by only rendering visible views to the DOM, reusing
+ * them as you scroll. Virtualizer can present any type of view, including non-item views
  * such as section headers and footers.
  *
  * Virtualizer uses {@link Layout} objects to compute what views should be visible, and how
@@ -133,7 +133,7 @@ export class Virtualizer<T extends object, V, W> {
    */
   keyAtPoint(point: Point): Key | null {
     let rect = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
 
     // Layout may return multiple layout infos in the case of
     // persisted keys, so find the first one that actually intersects.
@@ -180,7 +180,7 @@ export class Virtualizer<T extends object, V, W> {
       rect = this._overscanManager.getOverscannedRect();
     }
 
-    let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
@@ -273,7 +273,7 @@ export class Virtualizer<T extends object, V, W> {
     if (!this.visibleRect.equals(opts.visibleRect)) {
       this._overscanManager.setVisibleRect(opts.visibleRect);
       let shouldInvalidate = this.layout.shouldInvalidate(opts.visibleRect, this.visibleRect);
-  
+
       if (shouldInvalidate) {
         offsetChanged = !opts.visibleRect.pointEquals(this.visibleRect);
         sizeChanged = !opts.visibleRect.sizeEquals(this.visibleRect);
