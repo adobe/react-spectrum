@@ -183,12 +183,24 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     }
   });
 
+  let didUpdateSize = useRef(false);
   useLayoutEffect(() => {
-    // React doesn't allow flushSync inside effects so pass an identity function instead.
-    // This only happens on initial render. The resize observer will also call updateSize
-    // once it initializes, but we need earlier initialization in a layout effect to avoid
-    // a flash of missing content.
-    updateSize(fn => fn());
+    // React doesn't allow flushSync inside effects, so queue a microtask.
+    // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
+    queueMicrotask(() => {
+      if (!didUpdateSize.current) {
+        didUpdateSize.current = true;
+        updateSize(flushSync);
+      }
+    });
+  }, [updateSize]);
+  useEffect(() => {
+    if (!didUpdateSize.current) {
+      // If useEffect ran before the above microtask, we are in a synchronous render (e.g. act).
+      // Update the size here so that you don't need to mock timers in tests.
+      didUpdateSize.current = true;
+      updateSize(fn => fn());
+    }
   }, [updateSize]);
   let onResize = useCallback(() => {
     updateSize(flushSync);
