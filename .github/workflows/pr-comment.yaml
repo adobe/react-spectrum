@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - name: Use Node 16
-        uses: actions/setup-node@v2
+      - name: Use Node 18
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
       - name: install
         run: yarn install
       - name: Check write permissions of commentor
