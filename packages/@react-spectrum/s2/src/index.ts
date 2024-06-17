@@ -12,6 +12,7 @@
 
 export {ActionButton} from './ActionButton';
 export {ActionMenu} from './ActionMenu';
+export {AlertBanner} from './AlertBanner';
 export {AlertDialog} from './AlertDialog';
 export {Avatar} from './Avatar';
 export {Badge} from './Badge';
