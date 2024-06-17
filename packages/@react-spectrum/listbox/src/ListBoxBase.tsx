@@ -57,6 +57,7 @@ export function useListBoxLayout<T>(): ListLayout<T> {
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       loaderHeight: 40,
       placeholderHeight: scale === 'large' ? 48 : 32,
+      forceSectionHeaders: true,
       enableEmptyState: true
     })
   , [scale]);

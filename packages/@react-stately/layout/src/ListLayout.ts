@@ -24,6 +24,7 @@ export type ListLayoutOptions<T> = {
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
   loaderHeight?: number,
   placeholderHeight?: number,
+  forceSectionHeaders?: boolean,
   enableEmptyState?: boolean
 };
 
@@ -58,6 +59,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
   protected estimatedRowHeight: number;
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
+  protected forceSectionHeaders: boolean;
   protected padding: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
@@ -85,6 +87,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
+    this.forceSectionHeaders = options.forceSectionHeaders;
     this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
     this.loaderHeight = options.loaderHeight;
@@ -306,7 +309,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
   private buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let header = null;
-    if (node.rendered) {
+    if (node.rendered || this.forceSectionHeaders) {
       let headerNode = this.buildSectionHeader(node, x, y);
       header = headerNode.layoutInfo;
       header.key += ':header';
