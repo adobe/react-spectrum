@@ -786,7 +786,7 @@ const OnLoadMoreTableVirtualized = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 20000));
+      await new Promise(resolve => setTimeout(resolve, 4000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {

@@ -8,12 +8,13 @@ import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableP
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useLoadOnScroll} from '@react-aria/loading';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -343,7 +344,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     onLoadMore,
     scrollOffset
   }), [isLoading, onLoadMore, scrollOffset]);
-  useLoadMore(memoedLoadMoreProps, scrollRef || ref);
+  useLoadOnScroll(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
 
   let {gridProps} = useTable({
     ...props,
@@ -902,7 +903,6 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     values: renderValues
   });
 
-  // TODO the empty state doesn't render inside the CollectionBranch element and is thus improperly positioned
   let emptyState;
   if (collection.size === 0 && props.renderEmptyState && state) {
     let TR = useElementType('tr');
@@ -1345,60 +1345,3 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
     </>
   );
 });
-
-interface LoadMoreProps {
-  isLoading?: boolean,
-  onLoadMore?: () => void,
-  scrollOffset?: number
-}
-
-// TODO where to move it? Layout package? Pagination? Needs to be in aria and not stately
-function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement>) {
-  let {isLoading, onLoadMore, scrollOffset = 25} = props;
-
-  // Handle scrolling, and call onLoadMore when nearing the bottom.
-  let isLoadingRef = useRef(isLoading);
-  let prevProps = useRef(props);
-  let onScroll = useCallback(() => {
-    if (ref.current && !isLoadingRef.current && onLoadMore) {
-      let shouldLoadMore = ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight < scrollOffset;
-
-      if (shouldLoadMore) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-
-    }
-  }, [onLoadMore, ref, scrollOffset]);
-
-  let lastContentSize = useRef(0);
-  useLayoutEffect(() => {
-    // Only update isLoadingRef if props object actually changed,
-    // not if a local state change occurred.
-    let wasLoading = isLoadingRef.current;
-    if (props !== prevProps.current) {
-      isLoadingRef.current = isLoading;
-      prevProps.current = props;
-    }
-
-    // TODO: this actually calls loadmore twice in succession on intial load because after the first load
-    // the scrollable element hasn't yet recieved its new height with the newly loaded items... Because of RAC collection needing two renders?
-    let shouldLoadMore = ref?.current
-      && !isLoadingRef.current
-      && onLoadMore
-      && ref.current.clientHeight === ref.current.scrollHeight
-      // Only try loading more if the content size changed, or if we just finished
-      // loading and still have room for more items.
-      && (wasLoading || ref.current.scrollHeight !== lastContentSize.current);
-
-    if (shouldLoadMore) {
-      isLoadingRef.current = true;
-      onLoadMore?.();
-    }
-    lastContentSize.current = ref.current?.scrollHeight || 0;
-  }, [isLoading, onLoadMore, props, ref]);
-
-  // TODO: figure I'd just attach to ref here, no need to return onScroll. However if this need to replace useVirtualizer 1:1, then I can
-  // make it return onScroll and attach it to the ref outside
-  useEvent(ref, 'scroll', onScroll);
-}
