@@ -408,7 +408,7 @@ const MyTableLoader = ({tableWidth = 400}) => {
 function MyTableBody(props) {
   let {rows, children, isLoadingMore, tableWidth, ...otherProps} = props;
   return (
-    <TableBody loadingState="loading" {...otherProps}>
+    <TableBody {...otherProps}>
       <Collection items={rows}>
         {children}
       </Collection>

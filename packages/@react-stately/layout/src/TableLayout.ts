@@ -18,7 +18,7 @@ import {LayoutNode, ListLayout, ListLayoutOptions, ListLayoutProps} from './List
 import {TableCollection} from '@react-types/table';
 import {TableColumnLayout} from '@react-stately/table';
 
-export interface TableLayoutOptions<T> extends ListLayoutOptions<T> {
+export interface TableLayoutOptions<T> extends Omit<ListLayoutOptions<T>, 'loaderHeight'> {
   scrollContainer?: 'table' | 'body'
 }
 
