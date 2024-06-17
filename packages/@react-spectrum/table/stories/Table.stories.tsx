@@ -28,11 +28,12 @@ import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Key, LoadingState} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import {LoadingState} from '@react-types/shared';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -448,6 +449,17 @@ export const FocusableCells: TableStory = {
           <Row>
             <Cell><Switch aria-label="Foo" /></Cell>
             <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell><Switch aria-label="Foo" /></Cell>
+            <Cell>
+              <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
+                <Item key="Yahoo">Yahoo</Item>
+                <Item key="Google">Google</Item>
+                <Item key="DuckDuckGo">DuckDuckGo</Item>
+              </Picker>
+            </Cell>
             <Cell>Three</Cell>
           </Row>
         </TableBody>
@@ -928,7 +940,6 @@ function AsyncLoadingExample(props) {
       if (cursor) {
         url.searchParams.append('after', cursor);
       }
-
       let res = await fetch(url.toString(), {signal});
       let json = await res.json();
       return {items: json.data.children, cursor: json.data.after};
@@ -982,6 +993,153 @@ export const AsyncLoading: TableStory = {
   render: (args) => <AsyncLoadingExample {...args} />,
   name: 'async loading'
 };
+
+async function fakeFetch() {
+  return new Promise(
+    (resolve) => {
+      setTimeout(() => resolve({json: async function () {
+        return {data: {children: [
+          {data: {id: 'foo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: 'fooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: 'foooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: 'fooooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: 'foooooo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: 'doo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: '1', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: '2', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: '3', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: '4', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: '5', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
+          {data: {id: '6', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}}
+        ]}};
+      }}), 1000);
+    }
+  );
+}
+
+export const AsyncLoadingQuarryTest: TableStory = {
+  args: {
+    'aria-label': 'Top news from Reddit',
+    selectionMode: 'multiple',
+    height: 400,
+    width: '100%'
+  },
+  render: (args) => <AsyncLoadingExampleQuarryTest {...args} />,
+  name: 'async reload on sort'
+};
+
+function AsyncLoadingExampleQuarryTest(props) {
+  let [filters, setFilters] = React.useState({});
+
+  const rColumns = [
+    {
+      key: 'title',
+      label: 'Title'
+    },
+    {
+      key: 'ups',
+      label: 'Upvotes',
+      width: 200
+    },
+    {
+      key: 'created',
+      label: 'Created',
+      width: 350
+    }
+  ];
+  interface Post {
+    id: string,
+    key: string,
+    preview?: string,
+    ups: number,
+    title: string,
+    created: string,
+    url: string
+  }
+
+  let list = useAsyncList<Post>({
+    getKey: (item) => item.id,
+    async load({cursor}) {
+      const url = new URL('https://www.reddit.com/r/aww.json');
+
+      if (cursor) {
+        url.searchParams.append('after', cursor);
+      }
+
+      const res = await fakeFetch();
+      // @ts-ignore
+      const json = await res.json();
+      const items = json.data.children.map((item) => {
+        return {
+          id: item.data.id,
+          preview: item.data.thumbnail,
+          ups: item.data.ups,
+          title: item.data.title,
+          created: new Date(item.data.created * 1000).toISOString()
+        };
+      });
+      return {
+        items,
+        cursor: json.data.after,
+        total: 987
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.slice().sort((a, b) => {
+          let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
+
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+
+          return cmp;
+        })
+
+      };
+    }
+  });
+
+  let reloadDeps = [filters];
+
+  useMountEffect((): void => {
+    list.reload();
+  }, reloadDeps);
+
+  return (
+    <TableView {...props} width="90vw" sortDescriptor={list.sortDescriptor} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onSortChange={setFilters}>
+      <TableHeader columns={rColumns}>
+        {(column) => (
+          <Column key={column.key} allowsSorting>
+            {column.label}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
+        {item =>
+          (<Row key={item.id}>
+            {key =>
+              key === 'title'
+                ? <Cell textValue={item.title}><Link isQuiet><a href={item.url} target="_blank">{item.title}</a></Link></Cell>
+                : <Cell>{item[key]}</Cell>
+            }
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
+  );
+}
+
+function useMountEffect(fn: () => void, deps: Array<unknown>): void {
+  const mounted = React.useRef(false);
+  React.useEffect(() => {
+    if (mounted.current) {
+      fn();
+    } else {
+      mounted.current = true;
+    }
+  }, deps);
+}
 
 export const HideHeader: TableStory = {
   args: {
@@ -1882,7 +2040,7 @@ export const Links = (args) => {
 
 export const ColumnHeaderFocusRingTable = {
   render: () => <LoadingTable />,
-  storyName: 'column header focus after loading',
+  name: 'column header focus after loading',
   parameters: {
     description: {
       data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
@@ -1924,3 +2082,5 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+export {Performance} from './Performance';

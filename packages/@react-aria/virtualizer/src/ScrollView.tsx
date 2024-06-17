@@ -24,7 +24,7 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
@@ -122,14 +122,20 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let updateSize = useCallback(() => {
+  let updateSize = useEffectEvent((flush: typeof flushSync) => {
     let dom = ref.current;
     if (!dom) {
       return;
     }
 
-    let w = dom.clientWidth;
-    let h = dom.clientHeight;
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
+    let clientWidth = dom.clientWidth;
+    let clientHeight = dom.clientHeight;
+    let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
+    let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
+
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
       if (sizeToFit === 'width') {
         w = Math.min(w, contentSize.width);
@@ -141,14 +147,38 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
-      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+      flush(() => {
+        onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
+      });
+
+      // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
+      // a result of the layout update. In this case, re-layout again to account for the
+      // adjusted space. In very specific cases this might result in the scrollbars disappearing
+      // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
+      // an infinite loop. This matches how browsers behavior with native CSS grid layout.
+      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
+        state.width = dom.clientWidth;
+        state.height = dom.clientHeight;
+        flush(() => {
+          onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
+        });
+      }
     }
-  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
+  });
 
   useLayoutEffect(() => {
-    updateSize();
+    // React doesn't allow flushSync inside effects so pass an identity function instead.
+    // This only happens on initial render. The resize observer will also call updateSize
+    // once it initializes, but we need earlier initialization in a layout effect to avoid
+    // a flash of missing content.
+    updateSize(fn => fn());
   }, [updateSize]);
-  useResizeObserver({ref, onResize: updateSize});
+  let onResize = useCallback(() => {
+    updateSize(flushSync);
+  }, [updateSize]);
+  // Watch border-box instead of of content-box so that we don't go into
+  // an infinite loop when scrollbars appear or disappear.
+  useResizeObserver({ref, box: 'border-box', onResize});
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
@@ -159,16 +189,27 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
-  } else if (scrollDirection === 'vertical') {
+  } else if (scrollDirection === 'vertical' || contentSize.width === state.width) {
+    // Set overflow-x: hidden if content size is equal to the width of the scroll view.
+    // This prevents horizontal scrollbars from flickering during resizing due to resize observer
+    // firing slower than the frame rate, which may cause an infinite re-render loop.
     style.overflowY = 'auto';
     style.overflowX = 'hidden';
   } else {
     style.overflow = 'auto';
   }
 
+  innerStyle = {
+    width: Number.isFinite(contentSize.width) ? contentSize.width : undefined,
+    height: Number.isFinite(contentSize.height) ? contentSize.height : undefined,
+    pointerEvents: isScrolling ? 'none' : 'auto',
+    position: 'relative',
+    ...innerStyle
+  };
+
   return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
+    <div role="presentation" {...otherProps} style={style} ref={ref} onScroll={onScroll}>
+      <div role="presentation" style={innerStyle}>
         {children}
       </div>
     </div>

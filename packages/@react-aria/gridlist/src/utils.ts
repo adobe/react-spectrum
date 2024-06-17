@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 import type {ListState} from '@react-stately/list';
 
 interface ListMapShared {
   id: string,
   onAction: (key: Key) => void,
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override',
+  keyboardNavigationBehavior: 'arrow' | 'tab'
 }
 
 // Used to share:

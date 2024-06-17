@@ -10,24 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderTooltip = () => render(
-  <TooltipTrigger delay={0}>
-    <Button><span aria-hidden="true">✏️</span></Button>
-    <Tooltip data-test="tooltip">
-      <OverlayArrow>
-        <svg width={8} height={8}>
-          <path d="M0 0,L4 4,L8 0" />
-        </svg>
-      </OverlayArrow>
-      Edit
-    </Tooltip>
-  </TooltipTrigger>
-);
+function TestTooltip(props) {
+  return (
+    <TooltipTrigger delay={0}>
+      <Button><span aria-hidden="true">✏️</span></Button>
+      <Tooltip data-test="tooltip" {...props}>
+        <OverlayArrow>
+          <svg width={8} height={8}>
+            <path d="M0 0,L4 4,L8 0" />
+          </svg>
+        </OverlayArrow>
+        Edit
+      </Tooltip>
+    </TooltipTrigger>
+  );
+}
+
+let renderTooltip = (props) => render(<TestTooltip {...props} />);
 
 describe('Tooltip', () => {
   let user;
@@ -84,5 +88,88 @@ describe('Tooltip', () => {
 
     let tooltip = getByRole('tooltip');
     expect(tooltip).toHaveTextContent('Content at bottom');
+  });
+
+  it('supports isEntering and isExiting props', async () => {
+    let {getByRole, rerender} = render(<TestTooltip isEntering />);
+
+    let button = getByRole('button');
+
+    fireEvent.mouseMove(document.body);
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveAttribute('data-entering');
+
+    rerender(<TestTooltip />);
+    expect(tooltip).not.toHaveAttribute('data-entering');
+
+    rerender(<TestTooltip isExiting />);
+    await user.unhover(button);
+    act(() => jest.runAllTimers());
+
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip).toHaveAttribute('data-exiting');
+
+    rerender(<TestTooltip />);
+    expect(tooltip).not.toBeInTheDocument();
+  });
+
+  it('supports overriding styles', async () => {
+    let {getByRole} = render(<TestTooltip style={{zIndex: 5}} />);
+
+    let button = getByRole('button');
+
+    fireEvent.mouseMove(document.body);
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveAttribute('style', expect.stringContaining('z-index: 5'));
+
+    await user.unhover(button);
+    act(() => jest.runAllTimers());
+  });
+
+
+  describe('portalContainer', () => {
+    function InfoTooltip(props) {
+      return (
+        <TooltipTrigger delay={0}>
+          <Button><span aria-hidden="true">✏️</span></Button>
+          <Tooltip UNSTABLE_portalContainer={props.container} data-test="tooltip" {...props}>
+            <OverlayArrow>
+              <svg width={8} height={8}>
+                <path d="M0 0,L4 4,L8 0" />
+              </svg>
+            </OverlayArrow>
+            Edit
+          </Tooltip>
+        </TooltipTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoTooltip container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(<App />);
+      let button = getByRole('button');
+
+      fireEvent.mouseMove(document.body);
+      await user.hover(button);
+      act(() => jest.runAllTimers());
+
+      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+
+      await user.unhover(button);
+      act(() => jest.runAllTimers());
+    });
   });
 });

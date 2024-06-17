@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Navigation
@@ -52,13 +53,10 @@ import {Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Link {
-  --focus-ring-color: slateblue;
-  --text-color: var(--spectrum-global-color-blue-600);
-  --text-color-pressed: var(--spectrum-global-color-blue-700);
-  --text-color-disabled: gray;
+@import "@react-aria/example-theme";
 
-  color: var(--text-color);
+.react-aria-Link {
+  color: var(--link-color);
   font-size: 18px;
   transition: all 200ms;
   text-decoration: underline;
@@ -71,12 +69,7 @@ import {Link} from 'react-aria-components';
   }
 
   &[data-pressed] {
-    color: var(--text-color-pressed);
-  }
-
-  &[data-disabled] {
-    cursor: default;
-    color: var(--text-color-disabled);
+    color: var(--link-color-pressed);
   }
 
   &[data-focus-visible]:after {
@@ -85,15 +78,6 @@ import {Link} from 'react-aria-components';
     inset: -3px -6px;
     border-radius: 6px;
     border: 2px solid var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Link {
-    --focus-ring-color: Highlight;
-    --text-color: LinkText;
-    --text-color-pressed: LinkText;
-    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -119,6 +103,12 @@ keyboard users may activate links using the <Keyboard>Enter</Keyboard> key.
 
 If a visual label is not provided (e.g. an icon or image only link), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the link to assistive technology.
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="link" />
 
 ## Content
 
@@ -174,6 +164,21 @@ event will not be fired. The link will be exposed as disabled to assistive techn
 ```tsx example
 <Link isDisabled href="https://adobe.com" target="_blank">Disabled link</Link>
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Link {
+  &[data-disabled] {
+    cursor: default;
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Props
 

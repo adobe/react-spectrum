@@ -30,7 +30,7 @@ let levels = {
 // Packages never to release
 let excludedPackages = new Set([
   '@adobe/spectrum-css-temp',
-  '@react-spectrum/test-utils',
+  '@react-spectrum/test-utils-internal',
   '@spectrum-icons/build-tools',
   '@react-spectrum/docs'
 ]);
@@ -217,7 +217,7 @@ class VersionManager {
               </tr>
             `).join('\n')}
               ${[...this.changedPackages].filter(pkg => !excludedPackages.has(pkg) && this.existingPackages.has(pkg)).map(pkg => {
-                let json = JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf8'));
+                let json = JSON.parse(fs.readFileSync(this.workspacePackages[pkg].location + '/package.json', 'utf8'));
                 let version = semver.parse(json.version);
                 return `
                   <tr>

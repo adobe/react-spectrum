@@ -156,17 +156,20 @@ governing permissions and limitations under the License.
     padding: var(--spectrum-global-dimension-size-65);
   }
 
+  .spectrum-Button-circleLoader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+  }
+
   &.spectrum-Button--pending {
-    .spectrum-Button-circleLoader {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
 
     .spectrum-Button-label,
     .spectrum-Icon {
-      visibility: hidden;
+      opacity: 0;
     }
   }
 }
@@ -225,6 +228,10 @@ a.spectrum-ActionButton {
   .spectrum-Icon:only-child,
   .spectrum-ActionButton-hold + .spectrum-Icon:last-child {
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
+  }
+
+  .spectrum-ActionGroup-itemIcon.spectrum-ActionGroup-itemIcon {
+    padding-inline-end: 0;
   }
 }
 

@@ -26,6 +26,7 @@ import Selection from '@react-spectrum/docs/pages/assets/component-illustrations
 import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
@@ -51,32 +52,32 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 <Table aria-label="Files" selectionMode="multiple">
   <TableHeader>
-    <Column><MyCheckbox /></Column>
+    <Column><MyCheckbox slot="selection" /></Column>
     <Column isRowHeader>Name</Column>
     <Column>Type</Column>
     <Column>Date Modified</Column>
   </TableHeader>
   <TableBody>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>Games</Cell>
       <Cell>File folder</Cell>
       <Cell>6/7/2020</Cell>
     </Row>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>Program Files</Cell>
       <Cell>File folder</Cell>
       <Cell>4/7/2021</Cell>
     </Row>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>bootmgr</Cell>
       <Cell>System file</Cell>
       <Cell>11/20/2010</Cell>
     </Row>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>log.txt</Cell>
       <Cell>Text Document</Cell>
       <Cell>1/18/2016</Cell>
@@ -87,33 +88,38 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
+@import './Checkbox.mdx' layer(checkbox);
+@import './Popover.mdx' layer(popover);
+@import './Menu.mdx' layer(menu);
+```
 
 ```css
-.react-aria-Table {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@import "@react-aria/example-theme";
 
+.react-aria-Table {
   padding: 0.286rem;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--background-color);
+  background: var(--overlay-background);
   outline: none;
   border-spacing: 0;
   min-height: 100px;
   align-self: start;
   max-width: 100%;
   word-break: break-word;
+  forced-color-adjust: none;
 
   &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 
   .react-aria-TableHeader {
+    color: var(--text-color);
+
     &:after {
       content: '';
       display: table-row;
@@ -126,29 +132,12 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  .react-aria-Column {
-    &[colspan] {
-      text-align: center;
-    }
-
-    .sort-indicator {
-      padding: 0 2px;
-    }
-
-    &:not([data-sort-direction]) .sort-indicator {
-      visibility: hidden;
-    }
-  }
-
-  .react-aria-TableBody {
-    &[data-empty] {
-      text-align: center;
-      font-style: italic;
-    }
-  }
-
   .react-aria-Row {
-    border-radius: 6px;
+    --radius-top: 6px;
+    --radius-bottom: 6px;
+    --radius: var(--radius-top) var(--radius-top) var(--radius-bottom) var(--radius-bottom);
+    border-radius: var(--radius);
+    clip-path: inset(0 round var(--radius)); /* firefox */
     outline: none;
     cursor: default;
     color: var(--text-color);
@@ -157,31 +146,22 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     transform: scale(1);
 
     &[data-focus-visible] {
-      outline: 2px solid var(--highlight-background);
+      outline: 2px solid var(--focus-ring-color);
       outline-offset: -2px;
     }
 
-    &[data-pressed] .react-aria-Cell {
-      background: var(--spectrum-global-color-gray-200);
+    &[data-pressed] {
+      background: var(--gray-100);
     }
 
     &[data-selected] {
-      .react-aria-Cell {
-        background: var(--highlight-background);
-        color: var(--highlight-foreground);
-      }
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
 
       &[data-focus-visible],
       .react-aria-Cell[data-focus-visible] {
-        outline-color: var(--highlight-foreground);
         outline-offset: -4px;
-      }
-
-      .react-aria-Button {
-        color: var(--highlight-foreground);
-        --focus-ring-color: var(--highlight-foreground);
-        --hover-highlight: rgb(255 255 255 / 0.1);
-        --active-highlight: rgb(255 255 255 / 0.2);
       }
     }
 
@@ -197,7 +177,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     outline: none;
 
     &[data-focus-visible] {
-      outline: 2px solid var(--highlight-background);
+      outline: 2px solid var(--focus-ring-color);
       outline-offset: -2px;
     }
   }
@@ -206,174 +186,33 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     transform: translateZ(0);
 
     &:first-child {
-      border-radius: 6px 0 0 6px;
+      border-radius: var(--radius-top) 0 0 var(--radius-bottom);
     }
 
     &:last-child {
-      border-radius: 0 6px 6px 0;
+      border-radius: 0 var(--radius-top) var(--radius-bottom) 0;
     }
   }
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    .react-aria-Row[data-selected]:has(+ [data-selected]) .react-aria-Cell,
-    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) .react-aria-Cell {
-      border-end-start-radius: 0;
-      border-end-end-radius: 0;
+    .react-aria-Row[data-selected]:has(+ [data-selected]),
+    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+      --radius-bottom: 0px;
     }
 
-    .react-aria-Row[data-selected] + [data-selected] .react-aria-Cell,
-    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected] .react-aria-Cell {
-      border-start-start-radius: 0;
-      border-start-end-radius: 0;
+    .react-aria-Row[data-selected] + [data-selected],
+    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected]{
+      --radius-top: 0px;
     }
-  }
-}
-
-.react-aria-Checkbox {
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
-  --focus-ring-color: slateblue;
-
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--deselected-color);
-  border-radius: 4px;
-  transition: all 200ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & svg {
-    width: 0.857rem;
-    height: 0.857rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected],
-  &[data-indeterminate] {
-    border-color: var(--selected-color);
-    background: var(--selected-color);
-
-    &[data-pressed] {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-indeterminate] {
-    & svg {
-      stroke: none;
-      fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
   }
 }
 
 :where(.react-aria-Row) .react-aria-Checkbox {
-  --selected-color: white;
-  --selected-color-pressed: #ddd;
-  --checkmark-color: slateblue;
+  --selected-color: var(--highlight-foreground);
+  --selected-color-pressed: var(--highlight-foreground-pressed);
+  --checkmark-color: var(--highlight-background);
   --background-color: var(--highlight-background);
-}
-
-.react-aria-Button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  line-height: 1.2em;
-  margin: 0;
-  outline: none;
-  padding: 4px 6px;
-  transition: background 200ms;
-  --focus-ring-color: slateblue;
-  --hover-highlight: var(--spectrum-alias-highlight-hover);
-  --active-highlight: var(--spectrum-alias-highlight-active);
-
-  &[data-hovered] {
-    background: var(--hover-highlight);
-  }
-
-  &[data-pressed] {
-    background: var(--active-highlight);
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Table {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --checkmark-color: HighlightText;
-    --spectrum-alias-background-color-default: Canvas;
-    --focus-ring-color: Highlight;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-    }
-  }
-
-  .react-aria-Row .react-aria-Checkbox {
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
-  }
-
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --focus-ring-color: Highlight;
-  }
 }
 ```
 
@@ -387,7 +226,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 `Table` helps achieve accessible and interactive table components that can be styled as needed.
 
 * **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
-* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
+* **Columns** – Support for column sorting and [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
 * **Interactive children** – Table cells may include interactive elements such as buttons, menus, etc.
 * **Actions** – Rows and cells support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
 * **Async loading** – Support for loading and sorting items asynchronously.
@@ -401,7 +240,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content. Columns may be nested to create column groups.
+A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
 
 If the table supports row selection, each row can optionally include a selection checkbox. Additionally, a "select all" checkbox may be displayed in a column header if the table supports multiple row selection. A drag button may also be included within a cell if the row is draggable.
 
@@ -441,14 +280,14 @@ import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, Resi
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -489,6 +328,12 @@ A `Table` uses the following components, which may also be used standalone or re
 
 <ExampleList tag="table" />
 
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="table" />
+
 ## Reusable wrappers
 
 If you will use a Table in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -498,7 +343,7 @@ The following example includes a custom Column component with a sort indicator. 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
 
-function MyColumn<T extends object>(props: ColumnProps<T>) {
+function MyColumn(props: ColumnProps) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
@@ -517,7 +362,7 @@ function MyColumn<T extends object>(props: ColumnProps<T>) {
 The TableHeader and Row components can also be wrapped to automatically include [checkboxes](Checkbox.html) for selection, and a drag handle when [drag and drop](#drag-and-drop) is enabled, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
 
 ```tsx example export=true render=false
-import type {TableHeaderProps, RowProps} from 'react-aria-components';
+import type {TableHeaderProps, RowProps, CheckboxProps} from 'react-aria-components';
 import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
 
 function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
@@ -527,7 +372,7 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
     <TableHeader>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
-      {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox />}</Column>}
+      {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox slot="selection" />}</Column>}
       <Collection items={columns}>
         {children}
       </Collection>
@@ -541,7 +386,7 @@ function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProp
   return (
     <Row id={id} {...otherProps}>
       {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
-      {selectionBehavior === 'toggle' && <Cell><MyCheckbox /></Cell>}
+      {selectionBehavior === 'toggle' && <Cell><MyCheckbox slot="selection" /></Cell>}
       <Collection items={columns}>
         {children}
       </Collection>
@@ -549,17 +394,20 @@ function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProp
   );
 }
 
-function MyCheckbox() {
+function MyCheckbox({children, ...props}: CheckboxProps) {
   return (
-    <Checkbox slot="selection">
-      {({isIndeterminate}) => (
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          {isIndeterminate
-            ? <rect x={1} y={7.5} width={15} height={3} />
-            : <polyline points="1 9 7 14 15 4" />
-          }
-        </svg>
-      )}
+    <Checkbox {...props}>
+      {({isIndeterminate}) => <>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
+        {children}
+      </>}
     </Checkbox>
   );
 }
@@ -606,9 +454,9 @@ import type {TableProps} from 'react-aria-components';
 
 function FileTable(props: TableProps) {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -630,7 +478,7 @@ function FileTable(props: TableProps) {
       <TableBody items={rows}>
         {item => (
           <MyRow columns={columns}>
-            {column => <Cell>{item[column.key]}</Cell>}
+            {column => <Cell>{item[column.id]}</Cell>}
           </MyRow>
         )}
       </TableBody>
@@ -644,7 +492,7 @@ function FileTable(props: TableProps) {
 ### Single selection
 
 By default, `Table` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
-Note that the value of the selected keys must match the `key` prop of the row.
+Note that the value of the selected keys must match the `id` prop of the row.
 
 The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with id equal to `2`.
 A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
@@ -675,7 +523,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ### Controlled selection
 
-To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `id` prop from the selected rows will
 be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 ```tsx example export=true
@@ -772,6 +620,48 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
+Rows may also have a row action specified by directly applying `onAction` on the `Row` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `Table`, both the table's and the row's `onAction` are called.
+
+```tsx example
+<Table aria-label="Table with onAction applied on the rows directly" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Charizard`)}>
+    {/*- end highlight -*/}
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Blastoise`)}>
+    {/*- end highlight -*/}
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Venusaur`)}>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Pikachu`)}>
+    {/*- end highlight -*/}
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
 ### Links
 
 Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
@@ -815,18 +705,80 @@ The `<Row>` component works with frameworks and client side routers like [Next.j
 
 ## Disabled rows
 
-You can disable specific rows by providing an array of keys to `Table` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+A `Row` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
+unless the `disabledBehavior` prop on `Table` is used to change this behavior.
 Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
 
 ```tsx example
-// Using the same table as above
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+<Table aria-label="Table with disabled rows" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
 ```
 
 By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
 
 ```tsx example
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} disabledBehavior="all" />
+<Table 
+  aria-label="Table with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledBehavior="all"
+  /*- end highlight -*/
+>
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    <MyRow isDisabled>
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Table` level instead of `isDisabled` on individual rows.
+This accepts a list of row ids that are disabled. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
 ```
 
 ## Sorting
@@ -902,111 +854,22 @@ function AsyncSortTable() {
 }
 ```
 
-## Nested columns
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
-attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
-appears in each row of the table body.
+```css
+.react-aria-Column {
+  .sort-indicator {
+    padding: 0 2px;
+  }
 
-### Static
-
-This example also shows the use of the `isRowHeader` prop for `Column`, which controls which columns are included in the
-accessibility name for each row. By default, only the first column is included, but in some cases more than one column may
-be used to represent the row. In this example, the first and last name columns are combined to form the ARIA label for the row.
-Only leaf columns may be marked as row headers.
-
-```tsx example
-<Table aria-label="Example table with nested columns">
-  <TableHeader>
-    <Column title="Name">
-      <Column isRowHeader>First Name</Column>
-      <Column isRowHeader>Last Name</Column>
-    </Column>
-    <Column title="Information">
-      <Column>Age</Column>
-      <Column>Birthday</Column>
-    </Column>
-  </TableHeader>
-  <TableBody>
-    <Row>
-      <Cell>Sam</Cell>
-      <Cell>Smith</Cell>
-      <Cell>36</Cell>
-      <Cell>May 3</Cell>
-    </Row>
-    <Row>
-      <Cell>Julia</Cell>
-      <Cell>Jones</Cell>
-      <Cell>24</Cell>
-      <Cell>February 10</Cell>
-    </Row>
-    <Row>
-      <Cell>Peter</Cell>
-      <Cell>Parker</Cell>
-      <Cell>28</Cell>
-      <Cell>September 7</Cell>
-    </Row>
-    <Row>
-      <Cell>Bruce</Cell>
-      <Cell>Wayne</Cell>
-      <Cell>32</Cell>
-      <Cell>December 18</Cell>
-    </Row>
-  </TableBody>
-</Table>
-```
-
-### Dynamic
-
-Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
-The following example is the same as the example above, but defined dynamically.
-
-```tsx example
-interface ColumnDefinition {
-  name: string,
-  key: string,
-  children?: ColumnDefinition[],
-  isRowHeader?: boolean
+  &:not([data-sort-direction]) .sort-indicator {
+    visibility: hidden;
+  }
 }
-
-let columns: ColumnDefinition[] = [
-  {name: 'Name', key: 'name', children: [
-    {name: 'First Name', key: 'first', isRowHeader: true},
-    {name: 'Last Name', key: 'last', isRowHeader: true}
-  ]},
-  {name: 'Information', key: 'info', children: [
-    {name: 'Age', key: 'age'},
-    {name: 'Birthday', key: 'birthday'}
-  ]}
-];
-
-let rows = [
-  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
-  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
-  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
-  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
-];
-
-<Table aria-label="Example table with dynamic nested columns">
-  <TableHeader columns={columns}>
-    {column => (
-      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
-        {column.name}
-      </Column>
-    )}
-  </TableHeader>
-  <TableBody items={rows}>
-    {item => (
-      <Row>
-        <Cell>{item.first}</Cell>
-        <Cell>{item.last}</Cell>
-        <Cell>{item.age}</Cell>
-        <Cell>{item.birthday}</Cell>
-      </Row>
-    )}
-  </TableBody>
-</Table>
 ```
+
+</details>
 
 ## Empty state
 
@@ -1026,6 +889,20 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
   </TableBody>
 </Table>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TableBody {
+  &[data-empty] {
+    text-align: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
 
 ## Column Resizing
 
@@ -1084,9 +961,6 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 
 ```css
 .react-aria-ResizableTableContainer {
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-
   max-width: 400px;
   overflow: auto;
   position: relative;
@@ -1105,15 +979,26 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 
   .column-name,
   .react-aria-Button {
+    --background-color: var(--overlay-background);
     flex: 1;
     font: inherit;
     text-align: start;
     color: inherit;
     overflow: hidden;
     text-overflow: ellipsis;
+    border-color: transparent;
+    transition: background 200ms;
+    &[data-hovered] {
+      background: var(--highlight-hover);
+    }
+
+    &[data-pressed] {
+      background: var(--highlight-pressed);
+      box-shadow: none;
+    }
 
     &:focus-visible {
-      outline: 2px solid slateblue;
+      outline: 2px solid var(--focus-ring-color);
     }
   }
 
@@ -1142,11 +1027,11 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
     }
 
     &[data-focus-visible] {
-      background-color: slateblue;
+      background-color: var(--focus-ring-color);
     }
 
     &[data-resizing] {
-      border-color: slateblue;
+      border-color: var(--focus-ring-color);
       background-color: transparent;
     }
   }
@@ -1156,13 +1041,6 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ResizableTableContainer {
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
   }
 }
 ```
@@ -1248,9 +1126,9 @@ The `Column` component exposes a `startResize` function as part of its render pr
 This example shows how to create a reusable component that wraps `<Column>` to include a menu with sorting and resizing functionality.
 
 ```tsx example export=true render=false
-import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
 
-interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
+interface ResizableTableColumnProps<T> extends Omit<ColumnProps, 'children'> {
   children: React.ReactNode
 }
 
@@ -1271,9 +1149,9 @@ function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps
                   startResize();
                 }
               }}>
-                <Item id="sortAscending">Sort Ascending</Item>
-                <Item id="sortDescending">Sort Descending</Item>
-                <Item id="resize">Resize</Item>
+                <MenuItem id="sortAscending">Sort Ascending</MenuItem>
+                <MenuItem id="sortDescending">Sort Descending</MenuItem>
+                <MenuItem id="resize">Resize</MenuItem>
               </Menu>
             </Popover>
           </MenuTrigger>
@@ -1345,102 +1223,6 @@ function Example() {
 }
 ```
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Menu {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --separator-color: var(--spectrum-global-color-gray-500);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  margin: 0;
-  min-width: 150px;
-  box-sizing: border-box;
-  outline: none;
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: grid;
-    grid-template-areas: "label kbd"
-                        "desc  kbd";
-    align-items: center;
-    column-gap: 20px;
-
-    &[data-focused] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Menu {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-}
-```
-
-</details>
-
 ## Drag and drop
 
 Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new items between existing rows, or reorder rows.
@@ -1496,7 +1278,7 @@ function Example() {
     >
       <TableHeader>
         <Column></Column>
-        <Column><MyCheckbox /></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
         <Column>Date Modified</Column>
@@ -1507,7 +1289,7 @@ function Example() {
             {/*- begin highlight -*/}
             <Cell><Button slot="drag">≡</Button></Cell>
             {/*- end highlight -*/}
-            <Cell><MyCheckbox /></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
             <Cell>{item.date}</Cell>
@@ -1536,13 +1318,7 @@ function Example() {
 
     &[data-focus-visible] {
       border-radius: 4px;
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-  }
-
-  &[data-selected] {
-    [slot=drag][data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-foreground);
+      outline: 2px solid var(--focus-ring-color);
     }
   }
 }
@@ -1609,7 +1385,7 @@ function Example() {
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column></Column>
-        <Column><MyCheckbox /></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
         <Column>Date Modified</Column>
@@ -1618,7 +1394,7 @@ function Example() {
         {item => (
           <Row>
             <Cell><Button slot="drag">≡</Button></Cell>
-            <Cell><MyCheckbox /></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
             <Cell>{item.date}</Cell>
@@ -1643,13 +1419,13 @@ function Example() {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  background: slateblue;
+  background: var(--highlight-background);
   color: white;
   border-radius: 4px;
 
   .badge {
-    background: white;
-    color: slateblue;
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
     padding: 0 8px;
     border-radius: 4px;
   }
@@ -1756,9 +1532,9 @@ function Example() {
 
 ```css
 .react-aria-Table[data-drop-target] {
-  border-color: var(--highlight-background);
-  box-shadow: 0 0 0 1px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay)
 }
 ```
 
@@ -1794,7 +1570,7 @@ function Example() {
 ```css
 .react-aria-Row[data-drop-target] {
   outline: 2px solid var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  background: var(--highlight-overlay)
 }
 ```
 
@@ -2442,7 +2218,7 @@ function DndTable(props: DndTableProps) {
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
-        <Column><MyCheckbox /></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
         <Column>ID</Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
@@ -2451,7 +2227,7 @@ function DndTable(props: DndTableProps) {
         {item => (
           <Row>
             <Cell><Button slot="drag">≡</Button></Cell>
-            <Cell><MyCheckbox /></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.id}</Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
@@ -2556,7 +2332,7 @@ The `className` and `style` props also accept functions which receive states for
 
 ```jsx
 <Row className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
+  {/* ... */}
 </Row>
 ```
 
@@ -2664,66 +2440,9 @@ import {ToggleButton} from 'react-aria-components';
 
 ```css
 .react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-gray-500);
-  --deselected-background-color: var(--spectrum-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-gray-100);
-  --selected-color: var(--spectrum-gray-800);
-  --selected-color-pressed: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: var(--spectrum-gray-50);
-
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0 0 8px 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[aria-pressed=true] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
-
-    &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-  }
+  margin-bottom: 8px;
 }
 ```
-
 </details>
 
 ### Custom children

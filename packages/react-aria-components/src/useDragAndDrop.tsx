@@ -31,7 +31,7 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from 'react-aria';
-import {DraggableCollectionProps, DroppableCollectionProps} from '@react-types/shared';
+import {DraggableCollectionProps, DroppableCollectionProps, Key} from '@react-types/shared';
 import {
   DraggableCollectionState,
   DraggableCollectionStateOptions,
@@ -40,7 +40,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useMemo} from 'react';
 import {RenderProps} from './utils';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
@@ -63,7 +63,7 @@ interface DropHooks {
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
 
-export type DragAndDropHooks = DragHooks & DropHooks;
+export type DragAndDropHooks = DragHooks & DropHooks
 
 export interface DragAndDrop {
   /** Drag and drop hooks for the collection element.  */
@@ -88,7 +88,9 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    */
   renderDropIndicator?: (target: DropTarget) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate?: DropTargetDelegate
+  dropTargetDelegate?: DropTargetDelegate,
+  /** Whether the drag and drop events should be disabled. */
+  isDisabled?: boolean
 }
 
 /**
@@ -106,12 +108,12 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       renderDragPreview,
       renderDropIndicator,
       dropTargetDelegate
-     } = options;
+    } = options;
 
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-    let hooks = {} as DragHooks & DropHooks;
+    let hooks = {} as DragAndDropHooks;
     if (isDraggable) {
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
         return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
@@ -125,7 +127,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
     if (isDroppable) {
       hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
         return useDroppableCollectionState({...props, ...options});
-      },
+      };
       hooks.useDroppableItem = useDroppableItem;
       hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
         return useDroppableCollection({...props, ...options}, state, ref);

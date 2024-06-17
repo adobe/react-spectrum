@@ -22,6 +22,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
@@ -58,106 +59,53 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './ToggleButton.mdx' layer(togglebutton);
+```
 
 ```css
-.react-aria-TagGroup {
-  --border-color: var(--spectrum-gray-600);
-  --border-color-hovered: var(--spectrum-gray-900);
-  --background-selected: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-gray-800);
-  --text-color-selected: var(--spectrum-gray-50);
-  --remove-button-color: var(--spectrum-gray-700);
-  --remove-button-color-hovered: var(--spectrum-gray-900);
-  --focus-ring-color: slateblue;
-  --invalid-color: var(--spectrum-global-color-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-TagGroup {
   display: flex;
   flex-direction: column;
   gap: 2px;
   font-size: small;
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--invalid-color);
-  }
+  color: var(--text-color);
 }
 
 .react-aria-TagList {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-
-  .react-aria-Tag {
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.929rem;
-    outline: none;
-    cursor: default;
-    display: flex;
-    align-items: center;
-    transition: border-color 200ms;
-
-    &[data-hovered] {
-      border-color: var(--border-color-hovered);
-    }
-
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: 2px;
-    }
-
-    &[data-selected] {
-      border-color: var(--background-selected);
-      background: var(--background-selected);
-      color: var(--text-color-selected);
-    }
-
-    &[data-disabled] {
-      opacity: 0.4;
-    }
-
-    [slot=remove] {
-      background: none;
-      border: none;
-      padding: 0;
-      margin-left: 8px;
-      color: var(--remove-button-color);
-      transition: color 200ms;
-      outline: none;
-      font-size: 0.95em;
-
-      &[data-hovered] {
-        color: var(--remove-button-color-hovered);
-      }
-    }
-  }
 }
 
-@media (forced-colors: active) {
-  .react-aria-TagGroup {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-hovered: ButtonBorder;
-    --background-selected: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-    --remove-button-color: ButtonText;
-    --remove-button-color-hovered: Highlight;
-    --focus-ring-color: Highlight;
-    --invalid-color: LinkText;
+.react-aria-Tag {
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  forced-color-adjust: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.929rem;
+  outline: none;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  transition: border-color 200ms;
 
-    .react-aria-Tag[data-disabled] {
-      opacity: 1;
-      --border-color: GrayText;
-      --border-color-hovered: GrayText;
-      --text-color: GrayText;
-    }
+  &[data-hovered] {
+    border-color: var(--border-color-hover);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  &[data-selected] {
+    border-color: var(--highlight-background);
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
   }
 }
 ```
@@ -208,14 +156,14 @@ import {TagGroup, TagList, Tag, Label, Button, Text} from 'react-aria-components
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -244,6 +192,12 @@ A `TagGroup` uses the following components, which may also be used standalone or
 </ExampleCard>
 
 </section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="taggroup" />
 
 ## Reusable wrappers
 
@@ -325,11 +279,41 @@ function Example() {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tag {
+  [slot=remove] {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    color: var(--text-color-base);
+    transition: color 200ms;
+    outline: none;
+    font-size: 0.95em;
+
+    &[data-hovered] {
+      color: var(--text-color-hover);
+    }
+  }
+
+  &[data-selected] {
+    [slot=remove] {
+      color: inherit;
+    }
+  }
+}
+```
+
+</details>
+
 ## Selection
 
  TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
  Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
- See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+ See the [Selection](selection.html) guide for more details.
 
  ```tsx example
  import type {Selection} from 'react-aria-components';
@@ -383,29 +367,69 @@ Tags may be links to another page or website. This can be achieved by passing th
 
 The `<Tag>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
- ## Disabled tags
+## Disabled tags
 
- TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
- corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
- to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
- See [Collections](../react-stately/collections.html) for more details.
+A `Tag` can be disabled with the `isDisabled` prop. Disabled tags are not focusable, selectable, or keyboard navigable.
 
- ```tsx example
- <MyTagGroup
-   label="Sandwich contents"
-   selectionMode="multiple"
-   ///- begin highlight -///
-   disabledKeys={['tuna']}
-   ///- end highlight -///
- >
-   <MyTag id="lettuce">Lettuce</MyTag>
-   <MyTag id="tomato">Tomato</MyTag>
-   <MyTag id="cheese">Cheese</MyTag>
-   <MyTag id="tuna">Tuna Salad</MyTag>
-   <MyTag id="egg">Egg Salad</MyTag>
-   <MyTag id="ham">Ham</MyTag>
- </MyTagGroup>
- ```
+```tsx example
+<MyTagGroup
+ label="Sandwich contents"
+ selectionMode="multiple"
+>
+  <MyTag>Lettuce</MyTag>
+  <MyTag>Tomato</MyTag>
+  <MyTag>Cheese</MyTag>
+  {/*- begin highlight -*/}
+  <MyTag isDisabled>Tuna Salad</MyTag>
+  {/*- end highlight -*/}
+  <MyTag>Egg Salad</MyTag>
+  <MyTag>Ham</MyTag>
+</MyTagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TagList {
+  .react-aria-Tag {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `TagGroup` level instead of `isDisabled` on individual tags. Each key in this list
+corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). A tag is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let options = [
+    { id: 1, name: "News" },
+    { id: 2, name: "Travel" },
+    { id: 3, name: "Gaming" },
+    { id: 4, name: "Shopping" }
+  ];
+
+  return (
+    <MyTagGroup
+      label="Categories"
+      items={options}
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      disabledKeys={[2, 4]}
+      /*- end highlight -*/
+    >
+      {(item) => <MyTag>{item.name}</MyTag>}
+    </MyTagGroup>
+  );
+}
+```
 
 ## Empty state
 
@@ -443,6 +467,24 @@ The `description` slot can be used to associate additional help text with a `Tag
 </TagGroup>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TagGroup {
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
 ### Error message
 
 The `errorMessage` slot can be used to help the user fix a validation error.
@@ -476,7 +518,7 @@ A `<TagList>` is a list of tags within a `<TagGroup>`.
 
 ### Tag
 
-An `<Tag>` defines a single item within a `<TagList>`. If the children are not plain text, then the `textValue` prop must also be set to a plain text representation for accessibility.
+A `<Tag>` defines a single item within a `<TagList>`. If the children are not plain text, then the `textValue` prop must also be set to a plain text representation for accessibility.
 
 <PropTable component={docs.exports.Tag} links={docs.links} />
 
@@ -616,76 +658,9 @@ import {ToggleButton} from 'react-aria-components';
     <MyTag id="strawberry">Strawberry</MyTag>
     <MyTag id="vanilla">Vanilla</MyTag>
   </MyTagGroup>
-  <ToggleButton>Edit</ToggleButton>
+  <ToggleButton style={{marginTop: '8px'}}>Edit</ToggleButton>
 </Removable>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-gray-500);
-  --deselected-background-color: var(--spectrum-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-gray-100);
-  --selected-color: var(--spectrum-gray-800);
-  --selected-color-pressed: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: var(--spectrum-gray-50);
-
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 8px 0 0 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[aria-pressed=true] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
-
-    &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-  }
-}
-```
-
-</details>
 
 ### Custom children
 

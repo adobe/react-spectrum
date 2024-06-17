@@ -18,13 +18,13 @@ import {
   render as renderComponent,
   waitFor,
   within
-} from '@react-spectrum/test-utils';
+} from '@react-spectrum/test-utils-internal';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 import {DragBetweenTablesComplex} from '../stories/TableDnDUtilExamples';
-import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, ReorderExample} from '../stories/TableDnDExamples';
+import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, ReorderExample} from '../stories/TableDnDExamples';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {Flex} from '@react-spectrum/layout';
 import {globalDndState} from '@react-aria/dnd/src/utils';
@@ -114,6 +114,12 @@ describe('TableView', function () {
       );
     }
 
+    function DraggbleWithoutRowHeader(props) {
+      return (
+        <DragWithoutRowHeaderExample onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+      );
+    }
+
     function Reorderable(props) {
       return (
         <ReorderExample disabledKeys={['a']} onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
@@ -193,6 +199,56 @@ describe('TableView', function () {
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
         expect(dataTransfer._dragImage.node.tagName).toBe('DIV');
         expect(dataTransfer._dragImage.node.textContent).toBe('Custom preview for [a, b] , while dragging a.');
+        expect(dataTransfer._dragImage.x).toBe(5);
+        expect(dataTransfer._dragImage.y).toBe(5);
+      });
+
+      it('should render a drag preview with highlight selection style', function () {
+        let {getByRole, getAllByText} = render(
+          <DraggbleWithoutRowHeader tableViewProps={{selectedKeys: ['a'], selectionStyle: 'highlight'}} />
+        );
+
+        let grid = getByRole('grid');
+        let rowgroups = within(grid).getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let row = rows[0];
+        let cell = within(row).getAllByRole('rowheader')[0];
+        let cellText = getAllByText(cell.textContent);
+        expect(cellText).toHaveLength(1);
+
+        let dataTransfer = new DataTransfer();
+
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+        expect(dataTransfer._dragImage.node.tagName).toBe('DIV');
+
+        // Verify that when no rowHeader is set, the drag preview displays the text of the first element of the row
+        expect(dataTransfer._dragImage.node.textContent).toBe('Vin');
+        expect(dataTransfer._dragImage.x).toBe(5);
+        expect(dataTransfer._dragImage.y).toBe(5);
+      });
+
+      it('should render a drag preview with checkbox selection style', function () {
+        let {getByRole, getAllByText} = render(
+          <DraggbleWithoutRowHeader tableViewProps={{selectedKeys: ['a'], selectionStyle: 'checkbox'}} />
+        );
+      
+        let grid = getByRole('grid');
+        let rowgroups = within(grid).getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let row = rows[0];
+        let cell = within(row).getAllByRole('rowheader')[0];
+        let cellText = getAllByText(cell.textContent);
+        expect(cellText).toHaveLength(1);
+      
+        let dataTransfer = new DataTransfer();
+      
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+
+        // Verify that when no rowHeader is set, the drag preview displays the text of the first element of the row
+        expect(dataTransfer._dragImage.node.tagName).toBe('DIV');
+        expect(dataTransfer._dragImage.node.textContent).toBe('Vin');
         expect(dataTransfer._dragImage.x).toBe(5);
         expect(dataTransfer._dragImage.y).toBe(5);
       });
@@ -2532,13 +2588,11 @@ describe('TableView', function () {
         grid = getByRole('grid');
         rowgroups = within(grid).getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
-        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
-        // TODO
-        // expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Dodie');
-        // expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
-        // expect(within(rows[3]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
-
-        // expect(document.activeElement).toBe(rows[3]);
+        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
+        expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
+        expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
+        expect(within(rows[3]).getAllByRole('rowheader')[0]).toHaveTextContent('Dodie');
+        expect(document.activeElement).toBe(rows[2]);
       });
 
       it('should allow moving one row into another table', async function () {

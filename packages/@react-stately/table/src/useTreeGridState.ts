@@ -12,7 +12,8 @@
 
 import {CollectionBuilder} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
-import {Key, ReactElement, useMemo} from 'react';
+import {Key} from '@react-types/shared';
+import {ReactElement, useMemo} from 'react';
 import {TableCollection} from './TableCollection';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TableStateProps, useTableState} from './useTableState';

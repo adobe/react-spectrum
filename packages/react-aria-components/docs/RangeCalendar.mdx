@@ -23,6 +23,7 @@ import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Date and Time
@@ -57,22 +58,14 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+```
 
 ```css
-.react-aria-RangeCalendar {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --pressed-color: var(--spectrum-global-color-gray-200);
-  --unavailable-color: var(--spectrum-global-color-red-600);
-  --invalid-color: var(--spectrum-global-color-static-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-RangeCalendar {
   width: fit-content;
   max-width: 100%;
   color: var(--text-color);
@@ -111,17 +104,19 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
     border-radius: 6px;
     cursor: default;
     outline: none;
+    forced-color-adjust: none;
 
     &[data-outside-month] {
       display: none;
     }
 
     &[data-pressed] {
-      background: var(--pressed-color);
+      background: var(--gray-100);
     }
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
+      outline: 2px solid var(--highlight-background);
+      outline-offset: -2px;
     }
 
     &[data-selected] {
@@ -130,7 +125,8 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
       border-radius: 0;
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 1px var(--highlight-background), inset 0 0 0 3px var(--highlight-foreground);
+        outline-color: var(--highlight-foreground);
+        outline-offset: -3px;
       }
     }
 
@@ -143,86 +139,6 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
       border-start-end-radius: 6px;
       border-end-end-radius: 6px;
     }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    &[data-unavailable] {
-      text-decoration: line-through;
-      color: var(--unavailable-color);
-    }
-
-    &[data-invalid] {
-      background: var(--invalid-color);
-      color: var(--highlight-foreground);
-    }
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-.react-aria-Button {
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
-  --focus-ring-color: slateblue;
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  background: var(--button-background);
-  border: 1px solid var(--button-border);
-  color: var(--text-color);
-  box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  padding: 0.4rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-
-  &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    background: var(--button-backgound-pressed);
-  }
-
-  &[data-disabled] {
-    border-color: var(--button-border-disabled);
-    color: var(--text-color-disabled);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-RangeCalendar {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --text-color-invalid: LinkText;
-    --unavailable-color: GrayText;
-    --invalid-color: LinkText;
-    --pressed-color: Canvas;
-    --spectrum-alias-background-color-default: Canvas;
-  }
-
-  .react-aria-Button {
-    --button-border: ButtonBorder;
-    --button-border-disabled: GrayText;
-    --button-background: ButtonFace;
-    --button-backgound-pressed: ButtonFace;
-    --focus-ring-color: Highlight;
-    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -301,6 +217,12 @@ A `Calendar` uses the following components, which may also be used standalone or
 </ExampleCard>
 
 </section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="rangecalendar" />
 
 ## Reusable wrappers
 
@@ -483,6 +405,21 @@ import {today} from '@internationalized/date';
 <MyRangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RangeCalendar {
+  .react-aria-CalendarCell {
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
 ### Unavailable dates
 
 `RangeCalendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
@@ -507,6 +444,28 @@ function Example() {
   return <MyRangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RangeCalendar {
+  .react-aria-CalendarCell {
+
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--invalid-color);
+    }
+
+    &[data-invalid] {
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
+    }
+  }
+}
+```
+
+</details>
 
 ### Non-contiguous ranges
 
@@ -554,6 +513,20 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RangeCalendar {
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
 
 ## Controlling the focused date
 

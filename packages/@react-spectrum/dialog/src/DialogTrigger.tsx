@@ -14,7 +14,7 @@ import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
+import React, {Fragment, JSX, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {useIsMobileDevice} from '@react-spectrum/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -144,7 +144,7 @@ let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
-  let triggerRef = useRef<HTMLElement>();
+  let triggerRef = useRef<HTMLElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   let triggerPropsWithRef = {
@@ -179,7 +179,7 @@ interface SpectrumDialogTriggerBase {
   isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},
   triggerProps?: any,
-  overlay: ReactElement,
+  overlay?: ReactElement,
   trigger: ReactElement
 }
 

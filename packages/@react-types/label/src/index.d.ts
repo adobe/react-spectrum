@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
-import {ElementType, HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation, ValidationResult} from '@react-types/shared';
+import {ElementType, HTMLAttributes, LabelHTMLAttributes, ReactElement, ReactNode} from 'react';
 
 export interface LabelProps {
   children?: ReactNode,
@@ -30,11 +30,11 @@ interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
 
 export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
 
-export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps, Omit<Validation, 'validationState'>, SpectrumFieldValidation {
+export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps, Omit<Validation<any>, 'validationState'>, SpectrumFieldValidation<any>, Partial<ValidationResult> {
   children: ReactElement,
   label?: ReactNode,
   contextualHelp?: ReactNode,
-  labelProps?: HTMLAttributes<HTMLElement>,
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   wrapperClassName?: string,

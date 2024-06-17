@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
@@ -67,7 +67,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       // How else to get the DOM node it renders the hook to?
@@ -80,7 +80,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -93,7 +95,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -102,7 +106,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -115,7 +121,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -133,7 +141,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
@@ -146,7 +154,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -159,7 +169,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 100,
+          y: 100
         },
         {
           type: 'presschange',
@@ -168,7 +180,7 @@ describe('usePress', function () {
       ]);
 
       events = [];
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
@@ -181,7 +193,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -194,7 +208,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 100,
+          y: 100
         },
         {
           type: 'presschange',
@@ -207,7 +223,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -220,7 +238,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -229,7 +249,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -242,7 +264,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -260,8 +284,8 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointercancel', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointercancel', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
         {
@@ -271,7 +295,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -284,7 +310,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -306,7 +334,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
 
       expect(events).toEqual([
@@ -317,7 +345,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -330,7 +360,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -353,7 +385,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
@@ -365,7 +397,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -378,7 +412,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 100,
+          y: 100
         },
         {
           type: 'presschange',
@@ -400,7 +436,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', shiftKey: true}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', shiftKey: true, clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', ctrlKey: true, clientX: 0, clientY: 0}));
 
       // How else to get the DOM node it renders the hook to?
@@ -413,7 +449,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -426,7 +464,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -435,7 +475,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -448,7 +490,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -546,7 +590,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
 
       expect(events).toEqual([]);
@@ -560,7 +604,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressup',
@@ -569,7 +615,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -578,7 +626,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'press',
@@ -587,7 +637,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -606,7 +658,7 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
@@ -617,7 +669,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressup',
@@ -626,7 +680,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -635,7 +691,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'press',
@@ -644,7 +702,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
 
@@ -679,7 +739,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressup',
@@ -688,7 +750,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -697,7 +761,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'press',
@@ -706,7 +772,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -742,6 +810,18 @@ describe('usePress', function () {
 
       expect(spy).toHaveBeenCalled();
     });
+
+    it('should add/remove user-select: none to the element on pointer down/up', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(el).toHaveStyle('user-select: none');
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      expect(el).not.toHaveStyle('user-select: none');
+    });
   });
 
   describe('mouse events', function () {
@@ -770,7 +850,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -783,7 +865,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -792,7 +876,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -805,7 +891,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -836,7 +924,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -849,7 +939,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -872,7 +964,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -885,7 +979,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -898,7 +994,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -911,7 +1009,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -920,7 +1020,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -933,7 +1035,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -964,7 +1068,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -977,7 +1083,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1011,7 +1119,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: true,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1024,7 +1134,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1033,7 +1145,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1046,7 +1160,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1154,7 +1270,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1167,7 +1285,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1202,7 +1322,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1215,7 +1337,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1224,7 +1348,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1237,7 +1363,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1267,7 +1395,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1280,7 +1410,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1302,7 +1434,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1315,7 +1449,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1328,7 +1464,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1341,7 +1479,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1350,7 +1490,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1363,7 +1505,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1394,7 +1538,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1407,7 +1553,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1447,7 +1595,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1460,7 +1610,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1473,7 +1625,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1486,7 +1640,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1495,7 +1651,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1508,7 +1666,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1538,7 +1698,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1551,7 +1713,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1585,7 +1749,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1598,7 +1764,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1638,7 +1806,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1651,7 +1821,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1660,7 +1832,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1673,7 +1847,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1702,7 +1878,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1715,7 +1893,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1777,7 +1957,6 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
-
       expect(events).toEqual([
         {
           type: 'pressstart',
@@ -1786,7 +1965,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1799,7 +1980,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1808,7 +1991,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1821,7 +2006,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1864,7 +2051,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1880,7 +2069,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1889,7 +2080,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1902,7 +2095,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -1940,7 +2135,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1953,7 +2150,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -1962,7 +2161,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -1975,7 +2176,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2010,7 +2213,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2023,7 +2228,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2032,7 +2239,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2045,7 +2254,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'click'
@@ -2077,7 +2288,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2090,7 +2303,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2099,7 +2314,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2112,7 +2329,9 @@ describe('usePress', function () {
           ctrlKey: true,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2147,7 +2366,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: true,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2160,7 +2381,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: true,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2169,7 +2392,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: true,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2182,7 +2407,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: true,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2215,7 +2442,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2228,7 +2457,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2243,7 +2474,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2256,7 +2489,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2265,7 +2500,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2278,7 +2515,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2333,7 +2572,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2351,7 +2592,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2364,7 +2607,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2373,7 +2618,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2386,7 +2633,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2416,7 +2665,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2429,7 +2680,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -2438,7 +2691,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -2451,7 +2706,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -2483,7 +2740,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -3038,7 +3297,7 @@ describe('usePress', function () {
         });
 
         const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[data-testid="example"]');
-        fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+        fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
         fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
         expect(events).toEqual([
@@ -3049,7 +3308,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           },
           {
             type: 'presschange',
@@ -3062,7 +3323,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           },
           {
             type: 'pressend',
@@ -3071,7 +3334,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           },
           {
             type: 'presschange',
@@ -3084,7 +3349,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           }
         ]);
       });
@@ -3118,7 +3385,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -3131,7 +3400,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -3140,7 +3411,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'presschange',
@@ -3153,7 +3426,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
@@ -3190,7 +3465,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           },
           {
             type: 'presschange',
@@ -3203,7 +3480,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           },
           {
             type: 'pressend',
@@ -3212,7 +3491,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           },
           {
             type: 'presschange',
@@ -3225,7 +3506,9 @@ describe('usePress', function () {
             ctrlKey: false,
             metaKey: false,
             shiftKey: false,
-            altKey: false
+            altKey: false,
+            x: 0,
+            y: 0
           }
         ]);
       });
@@ -3258,7 +3541,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressup',
@@ -3267,7 +3552,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'pressend',
@@ -3276,7 +3563,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         },
         {
           type: 'press',
@@ -3285,9 +3574,328 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
+          altKey: false,
+          x: 0,
+          y: 0
         }
       ]);
     });
+  });
+});
+
+
+describe('coordinates', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
+  });
+
+  const DEFAULT_SIZE = 100;
+  const getBoundingClientRect = ({
+    width = DEFAULT_SIZE,
+    height = DEFAULT_SIZE,
+    x = 0,
+    y = 0,
+    top = 0,
+    left = 0,
+    bottom = y + DEFAULT_SIZE,
+    right = x + DEFAULT_SIZE
+  }) => ({
+    width,
+    height,
+    x,
+    y,
+    top,
+    left,
+    bottom,
+    right,
+    toJSON() { return this; }
+  });
+  describe('pointer', () => {
+    installPointerEvent();
+
+    it('mouse pointer events should have coordinates', function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+        () => getBoundingClientRect({})
+      );
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 25, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 75, clientY: 75}));
+
+      // How else to get the DOM node it renders the hook to?
+      // let el = events[0].target;
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 25,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        }
+      ]);
+    });
+
+    it('pointer touch events should have coordinates', function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+        () => getBoundingClientRect({})
+      );
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch', clientX: 25, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch', clientX: 75, clientY: 75}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 25,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 75,
+          y: 75
+        }
+      ]);
+    });
+  });
+
+  it('should return the center of the element when keyboard pressed', function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      () => getBoundingClientRect({})
+    );
+    let events = [];
+    let addEvent = (e) => events.push(e);
+    let {getByText} = render(
+      <Example
+        onPressStart={addEvent}
+        onPressEnd={addEvent}
+        onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+        onPress={addEvent}
+        onPressUp={addEvent} />
+    );
+
+    let el = getByText('test');
+    fireEvent.keyDown(el, {key: ' '});
+    fireEvent.keyUp(el, {key: ' '});
+    expect(events).toEqual([
+      {
+        type: 'pressstart',
+        target: el,
+        pointerType: 'keyboard',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 50,
+        y: 50
+      },
+      {
+        type: 'presschange',
+        pressed: true
+      },
+      {
+        type: 'pressup',
+        target: el,
+        pointerType: 'keyboard',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 50,
+        y: 50
+      },
+      {
+        type: 'pressend',
+        target: el,
+        pointerType: 'keyboard',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 50,
+        y: 50
+      },
+      {
+        type: 'presschange',
+        pressed: false
+      },
+      {
+        type: 'press',
+        target: el,
+        pointerType: 'keyboard',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 50,
+        y: 50
+      }
+    ]);
+  });
+
+  it('cancel from scroll events should have coordinates', function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      () => getBoundingClientRect({})
+    );
+    let events = [];
+    let addEvent = (e) => events.push(e);
+    let res = render(
+      <Example
+        onPressStart={addEvent}
+        onPressEnd={addEvent}
+        onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+        onPress={addEvent}
+        onPressUp={addEvent} />
+    );
+
+    let el = res.getByText('test');
+    fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 25, clientY: 25}]});
+    fireEvent.scroll(document.body);
+    fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 25, clientY: 0}]});
+
+    expect(events).toEqual([
+      {
+        type: 'pressstart',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        x: 25,
+        y: 25
+      },
+      {
+        type: 'presschange',
+        pressed: true
+      },
+      {
+        type: 'pressend',
+        target: el,
+        pointerType: 'touch',
+        ctrlKey: false,
+        metaKey: false,
+        shiftKey: false,
+        altKey: false,
+        // center because the event was canceled by scroll, not by the touchEnd
+        x: 50,
+        y: 50
+      },
+      {
+        type: 'presschange',
+        pressed: false
+      }
+    ]);
   });
 });

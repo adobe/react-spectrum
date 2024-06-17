@@ -24,37 +24,26 @@ import {Text} from '@react-spectrum/text';
 import {useOption} from '@react-aria/listbox';
 
 interface OptionProps<T> {
-  item: Node<T>,
-  shouldSelectOnPressUp?: boolean,
-  shouldFocusOnHover?: boolean,
-  shouldUseVirtualFocus?: boolean
+  item: Node<T>
 }
 
 /** @private */
 export function ListBoxOption<T>(props: OptionProps<T>) {
-  let {
-    item,
-    shouldSelectOnPressUp,
-    shouldFocusOnHover,
-    shouldUseVirtualFocus
-  } = props;
+  let {item} = props;
 
   let {
     rendered,
     key
   } = item;
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-  let state = useContext(ListBoxContext);
+  let {state, shouldFocusOnHover, shouldUseVirtualFocus} = useContext(ListBoxContext);
 
   let ref = useRef<any>();
   let {optionProps, labelProps, descriptionProps, isSelected, isDisabled, isFocused} = useOption(
     {
       'aria-label': item['aria-label'],
       key,
-      shouldSelectOnPressUp,
-      shouldFocusOnHover,
-      isVirtualized: true,
-      shouldUseVirtualFocus
+      isVirtualized: true
     },
     state,
     ref
@@ -101,6 +90,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
               slots={{
                 text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
                 icon: {size: 'S', UNSAFE_className: styles['spectrum-Menu-icon']},
+                avatar: {size: 'avatar-size-100', UNSAFE_className: styles['spectrum-Menu-avatar']},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
               }}>
               {contents}

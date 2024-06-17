@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {ColorField} from '../';
+import {Form} from '@react-spectrum/form';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -291,7 +293,7 @@ describe('ColorField', function () {
     Name                                | expected                 | key
     ${'increment with arrow up key'}    | ${parseColor('#AAAAAB')}  | ${'ArrowUp'}
     ${'decrement with arrow down key'}  | ${parseColor('#AAAAA9')}  | ${'ArrowDown'}
-  `('should handle $Name event', function ({expected, key}) {
+  `('should handle $Name event', async function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
@@ -300,8 +302,8 @@ describe('ColorField', function () {
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
 
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
     expect(colorField.value).toBe(expected.toString('hex'));
   });
@@ -330,22 +332,22 @@ describe('ColorField', function () {
     Name                                 | props                                   | initExpected  | key
     ${'not increment beyond max value'}  | ${{defaultValue: '#fffffe'}}            | ${'#FFFFFE'}  | ${'ArrowUp'}
     ${'increment to max value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'End'}
-  `('should $Name', function ({props, initExpected, key}) {
+  `('should $Name', async function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe(initExpected);
 
     let maxColor = parseColor('#FFFFFF');
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(colorField.value).toBe(maxColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at max
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -353,22 +355,235 @@ describe('ColorField', function () {
     Name                                 | props                                   | initExpected  | key
     ${'not decrement beyond min value'}  | ${{defaultValue: '#000001'}}            | ${'#000001'}  | ${'ArrowDown'}
     ${'decrement to min value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'Home'}
-  `('should $Name', function ({props, initExpected, key}) {
+  `('should $Name', async function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe(initExpected);
 
     let minColor = parseColor('#000000');
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledWith(minColor);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(colorField.value).toBe(minColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at min
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support the channel prop', async function () {
+    let onChange = jest.fn();
+    let {getByRole} = renderComponent({label: null, value: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
+    let colorField = getByRole('textbox');
+    expect(colorField.value).toBe('210°');
+    expect(colorField).toHaveAttribute('aria-label', 'Hue');
+
+    await user.tab();
+    await user.keyboard('100');
+    await user.tab();
+    expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it('supports isRequired', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <ColorField data-testid="input" label="Color" isRequired validationBehavior="native"  />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('#000');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it('supports validate function', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <ColorField data-testid="input" label="Color" defaultValue="#000" step={2} validationBehavior="native" validate={v => v.red === 0 ? 'Invalid value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.activeElement).toBe(input);
+
+        await user.clear(input);
+        await user.keyboard('#111');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports server validation', async () => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              value: 'Invalid value.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                <ColorField data-testid="input" label="Color" name="value" validationBehavior="native" />
+                <Button type="submit" data-testid="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getByTestId} = render(<Test />);
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        await user.click(getByTestId('submit'));
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab({shift: true});
+        await user.keyboard('#333');
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports customizing native error messages', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <ColorField data-testid="input" label="Color" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+      });
+
+      it('only commits on blur if the value changed', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <ColorField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab();
+        await user.tab({shift: true});
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('333');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it('supports validate function', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <ColorField data-testid="input" label="Color" defaultValue="#000" validate={v => v.red === 0 ? 'Invalid value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        await user.keyboard('#333');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+
+      it('supports server validation', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{value: 'Invalid value'}}>
+              <ColorField data-testid="input" label="Color" name="value" validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+        await user.tab();
+        await user.keyboard('#fff');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+    });
   });
 });

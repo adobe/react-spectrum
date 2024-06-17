@@ -10,20 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase} from '@react-types/shared';
-import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
+import {CollectionStateBase, FocusStrategy} from '@react-types/shared';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useState} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
-export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {
+export interface SelectState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
   /** Sets whether the select is focused. */
-  setFocused(isFocused: boolean): void
+  setFocused(isFocused: boolean): void,
+
+  /** Controls which item will be auto focused when the menu opens. */
+  readonly focusStrategy: FocusStrategy,
+
+  /** Opens the menu. */
+  open(focusStrategy?: FocusStrategy | null): void,
+
+  /** Toggles the menu. */
+  toggle(focusStrategy?: FocusStrategy | null): void
 }
 
 /**
@@ -32,7 +42,8 @@ export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerSta
  * multiple selection state.
  */
 export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
-  let triggerState = useMenuTriggerState(props);
+  let triggerState = useOverlayTriggerState(props);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
   let listState = useSingleSelectListState({
     ...props,
     onSelectionChange: (key) => {
@@ -41,23 +52,33 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
       }
 
       triggerState.close();
+      validationState.commitValidation();
     }
+  });
+
+  let validationState = useFormValidationState({
+    ...props,
+    value: listState.selectedKey
   });
 
   let [isFocused, setFocused] = useState(false);
 
   return {
+    ...validationState,
     ...listState,
     ...triggerState,
-    open() {
+    focusStrategy,
+    open(focusStrategy: FocusStrategy = null) {
       // Don't open if the collection is empty.
       if (listState.collection.size !== 0) {
+        setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
-    toggle(focusStrategy) {
+    toggle(focusStrategy: FocusStrategy = null) {
       if (listState.collection.size !== 0) {
-        triggerState.toggle(focusStrategy);
+        setFocusStrategy(focusStrategy);
+        triggerState.toggle();
       }
     },
     isFocused,

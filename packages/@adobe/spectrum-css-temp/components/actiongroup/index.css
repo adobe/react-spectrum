@@ -49,6 +49,10 @@ governing permissions and limitations under the License.
 
   .spectrum-ActionGroup-item {
     flex-shrink: 0;
+
+    &.spectrum-ActionGroup-item--iconOnly {
+      padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
+    }
   }
 
   &:focus {
@@ -199,8 +203,4 @@ governing permissions and limitations under the License.
     align-items: center;
     justify-content: center;
   }
-}
-
-.spectrum-ActionGroup-item--iconOnly {
-  padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
 }

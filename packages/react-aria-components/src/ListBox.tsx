@@ -11,14 +11,15 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {CollectionDocumentContext, CollectionPortal, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {CollectionChildren, CollectionDocumentContext, CollectionPortal, CollectionProps, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
+import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {Header} from './Header';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
-import {Separator, SeparatorContext} from './Separator';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {HeaderContext} from './Header';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
 export interface ListBoxRenderProps {
@@ -53,7 +54,7 @@ export interface ListBoxRenderProps {
   state: ListState<unknown>
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
@@ -123,7 +124,7 @@ interface ListBoxInnerProps<T> {
   listBoxRef: RefObject<HTMLDivElement>
 }
 
-function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
+function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -136,7 +137,8 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       collection,
       collator,
       ref: listBoxRef,
-      disabledKeys: disabledBehavior === 'selection' ? new Set<React.Key>() : disabledKeys,
+      disabledKeys,
+      disabledBehavior,
       layout,
       orientation,
       direction
@@ -148,22 +150,6 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
     shouldSelectOnPressUp: isListDraggable || props.shouldSelectOnPressUp,
     keyboardDelegate
   }, state, listBoxRef);
-
-  let children = useCachedChildren({
-    items: collection,
-    children: (item: Node<T>) => {
-      switch (item.type) {
-        case 'section':
-          return <ListBoxSection section={item} />;
-        case 'separator':
-          return <Separator {...item.props} />;
-        case 'item':
-          return <Option item={item} />;
-        default:
-          throw new Error('Unsupported node type in Menu: ' + item.type);
-      }
-    }
-  });
 
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
@@ -248,6 +234,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         {...renderProps}
         ref={listBoxRef}
         slot={props.slot || undefined}
+        onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
         data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
@@ -260,9 +247,10 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
             [ListStateContext, state],
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [SeparatorContext, {elementType: 'div'}],
-            [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}]
+            [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
+            [SectionContext, {render: ListBoxSection}]
           ]}>
-          {children}
+          <CollectionChildren collection={collection} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -271,86 +259,72 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   );
 }
 
-interface ListBoxSectionProps<T> extends StyleProps {
-  section: Node<T>
-}
-
-function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) {
+function ListBoxSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
   let state = useContext(ListStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
     heading,
-    'aria-label': section['aria-label'] ?? undefined
+    'aria-label': props['aria-label'] ?? undefined
   });
-
-  let children = useCachedChildren({
-    items: state.collection.getChildren!(section.key),
-    children: item => {
-      switch (item.type) {
-        case 'header': {
-          return (
-            <SectionHeader
-              item={item}
-              headingProps={headingProps}
-              headingRef={headingRef} />
-          );
-        }
-        case 'item':
-          return <Option item={item} />;
-        default:
-          throw new Error('Unsupported element type in Section: ' + item.type);
-      }
-    }
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-Section',
+    className: props.className,
+    style: props.style,
+    values: {}
   });
 
   return (
     <section
-      {...filterDOMProps(section.props)}
+      {...filterDOMProps(props as any)}
       {...groupProps}
-      className={className || section.props?.className || 'react-aria-Section'}
-      style={style || section.props?.style}
-      ref={section.props.ref}>
-      {children}
+      {...renderProps}
+      ref={ref}>
+      <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
+        <CollectionChildren collection={state.collection} parent={section} />
+      </HeaderContext.Provider>
     </section>
   );
 }
 
-// This is a separate component so that headingProps.id doesn't override the item key in useCachedChildren.
-function SectionHeader({item, headingProps, headingRef}) {
-  let {ref, ...otherProps} = item.props;
-  return (
-    <Header
-      {...headingProps}
-      {...otherProps}
-      ref={mergeRefs(headingRef, ref)}>
-      {item.rendered}
-    </Header>
-  );
+export interface ListBoxItemRenderProps extends ItemRenderProps {}
+
+export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents {
+  /** The unique id of the item. */
+  id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** A string representation of the item's contents, used for features like typeahead. */
+  textValue?: string,
+  /** An accessibility label for this item. */
+  'aria-label'?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
-interface OptionProps<T> {
-  item: Node<T>
-}
-
-function Option<T>({item}: OptionProps<T>) {
-  let ref = useObjectRef<any>(item.props.ref);
+/**
+ * A ListBoxItem represents an individual option in a ListBox.
+ */
+export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
-  let {shouldFocusOnHover} = useSlottedContext(ListBoxContext)! as AriaListBoxOptions<T>;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
-    {key: item.key},
+    {key: item.key, 'aria-label': props?.['aria-label']},
     state,
     ref
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: shouldFocusOnHover || (!states.allowsSelection && !states.hasAction)
+    isDisabled: !states.allowsSelection && !states.hasAction,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
-
-  if (shouldFocusOnHover) {
-    hoverProps = {};
-    isHovered = states.isFocused;
-  }
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
@@ -364,13 +338,12 @@ function Option<T>({item}: OptionProps<T>) {
     }, dropState, ref);
   }
 
-  let props: ItemProps<T> = item.props;
   let isDragging = dragState && dragState.isDragging(item.key);
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
-    children: item.rendered,
-    defaultClassName: 'react-aria-Item',
+    children: props.children,
+    defaultClassName: 'react-aria-ListBoxItem',
     values: {
       ...states,
       isHovered,
@@ -386,7 +359,7 @@ function Option<T>({item}: OptionProps<T>) {
 
   useEffect(() => {
     if (!item.textValue) {
-      console.warn('A `textValue` prop is required for <Item> elements with non-plain text children in order to support accessibility features such as type to select.');
+      console.warn('A `textValue` prop is required for <ListBoxItem> elements with non-plain text children in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);
 
@@ -428,7 +401,7 @@ function Option<T>({item}: OptionProps<T>) {
       }
     </>
   );
-}
+});
 
 function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
@@ -444,7 +417,7 @@ function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRe
   }
 
   return (
-    <ListBoxtDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
+    <ListBoxDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} ref={ref} />
   );
 }
 
@@ -453,7 +426,7 @@ interface ListBoxDropIndicatorProps extends DropIndicatorProps {
   isDropTarget: boolean
 }
 
-function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   let {
     dropIndicatorProps,
     isDropTarget,
@@ -479,4 +452,4 @@ function ListBoxtDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedR
   );
 }
 
-const ListBoxtDropIndicatorForwardRef = forwardRef(ListBoxtDropIndicator);
+const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);

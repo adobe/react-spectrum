@@ -81,6 +81,9 @@ storybook-16:
 storybook-17:
 	yarn build:storybook-17
 
+storybook-canary:
+	yarn build:storybook-canary
+
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish
@@ -92,27 +95,42 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize
+	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
 	yarn lerna run prepublishOnly
 	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
-		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
+		do node scripts/buildEsm.js $$pkg; \
 	done
-	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
-	sed -i.bak 's/@react-aria\/i18n/.\/real-main.js/' packages/@react-aria/i18n/dist/useMessageFormatter.js
-	sed -i.bak 's/@react-aria\/i18n/.\/real-module.js/' packages/@react-aria/i18n/dist/useMessageFormatter.module.js
-	sed -i.bak 's/@react-aria\/i18n/.\/real-module.mjs/' packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs
-	rm packages/@react-aria/i18n/dist/import.mjs.bak
-	rm packages/@react-aria/i18n/dist/useMessageFormatter.js.bak
-	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.js.bak
-	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs.bak
+	node scripts/buildI18n.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/docs/robots.txt
 
 website-production:
-	node scripts/buildWebsite.js
+	node scripts/buildWebsite.js $$PUBLIC_URL
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	$(MAKE) starter-zip
+	$(MAKE) tailwind-starter
 
 check-examples:
 	node scripts/extractExamples.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
+
+starter:
+	node scripts/extractStarter.mjs
+	cd starters/docs && yarn && yarn tsc
+
+starter-zip: starter
+	cp LICENSE starters/docs/.
+	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
+	cd starters/docs && yarn build-storybook
+	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
+
+tailwind-starter:
+	cp LICENSE starters/tailwind/.
+	cd starters/tailwind && yarn && yarn tsc
+	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	cd starters/tailwind && yarn build-storybook
+	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter

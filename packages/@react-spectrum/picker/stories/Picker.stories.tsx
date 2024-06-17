@@ -15,6 +15,7 @@ import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
@@ -134,6 +135,14 @@ export default {
     isQuiet: {
       control: 'boolean'
     },
+    direction: {
+      control: 'radio',
+      options: ['top', 'bottom']
+    },
+    align: {
+      control: 'radio',
+      options: ['start', 'end']
+    },
     width: {
       control: {
         type: 'radio',
@@ -218,6 +227,30 @@ export type ComplexItemsStory = ComponentStoryObj<typeof ComplexItemsPicker>;
 export const ComplexItems: ComplexItemsStory = {
   render: (args) => <ComplexItemsPicker {...args} />,
   name: 'complex items'
+};
+
+export const WithAvatars: PickerStory = {
+  args: {label: 'Select a user'},
+  render: (args) => (
+    <Picker {...args}>
+      <Item textValue="User 1">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
+      </Item>
+    </Picker>
+  )
 };
 
 export const LongItemText: PickerStory = {
@@ -359,6 +392,60 @@ export const Links: PickerStory = {
       <Item key="bar">Bar</Item>
       <Item href="https://google.com">Google</Item>
     </Picker>
+  )
+};
+
+export const Quiet: PickerStory = {
+  render: () => (
+    <View>
+      <View>
+        <h4>Quiet picker with label</h4>
+        <Picker label="Choose frequency" isQuiet>
+          <Item key="rarely">Rarely</Item>
+          <Item key="sometimes">Sometimes</Item>
+          <Item key="always">Always</Item>
+        </Picker>
+      </View>
+      <hr />
+      <View>
+        <h4>Quiet picker without label</h4>
+        <Picker aria-label="Choose frequency" isQuiet>
+          <Item key="rarely">Rarely</Item>
+          <Item key="sometimes">Sometimes</Item>
+          <Item key="always">Always</Item>
+        </Picker>
+      </View>
+      <hr />
+      <View
+        width={200}>
+        <h4>Quiet picker with label and fixed width (200px)</h4>
+        <Picker
+          isQuiet
+          label="Choose frequency"
+          defaultSelectedKey="sometimes">
+          <Item key="rarely">Rarely</Item>
+          <Item key="sometimes">
+            This text is very long and will overflow the container
+          </Item>
+          <Item key="always">Always</Item>
+        </Picker>
+      </View>
+      <hr />
+      <View
+        width={600}>
+        <h4>Quiet picker with label and fixed width (600px)</h4>
+        <Picker
+          isQuiet
+          label="Choose frequency"
+          defaultSelectedKey="sometimes">
+          <Item key="rarely">Rarely</Item>
+          <Item key="sometimes">
+            This text is very long the picker should expand to fit
+          </Item>
+          <Item key="always">Always</Item>
+        </Picker>
+      </View>
+    </View>
   )
 };
 

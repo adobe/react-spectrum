@@ -47,6 +47,9 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
         // Explicitly allow undo/redo. e.data is null in this case, but there's no need to validate,
         // because presumably the input would have already been validated previously.
         return;
+      case 'insertLineBreak':
+        // Explicitly allow "insertLineBreak" event, to allow onSubmit for "enter" key. e.data is null in this case.
+        return;
       case 'deleteContent':
       case 'deleteByCut':
       case 'deleteByDrag':
@@ -113,7 +116,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     }
     : null;
 
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useTextField(props, inputRef);
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, ...validation} = useTextField(props, inputRef);
 
   let compositionStartState = useRef(null);
   return {
@@ -151,6 +154,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     ),
     labelProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    ...validation
   };
 }

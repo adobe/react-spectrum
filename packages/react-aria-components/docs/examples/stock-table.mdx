@@ -106,7 +106,7 @@ function StockTableExample() {
 
   return (
     <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center md:col-span-2">
-      <ResizableTableContainer className="max-h-[280px] w-full overflow-auto relative bg-white rounded-lg shadow text-gray-600">
+      <ResizableTableContainer className="max-h-[280px] w-full overflow-auto scroll-pt-[2.321rem] relative bg-white rounded-lg shadow text-gray-600">
         <Table aria-label="Stocks" selectionMode="multiple" selectionBehavior="replace" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="border-separate border-spacing-0">
           <TableHeader>
             <StockColumn id="symbol" allowsSorting>Symbol</StockColumn>

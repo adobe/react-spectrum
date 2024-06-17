@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
@@ -68,7 +68,10 @@ describe('Switch', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<Switch className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Switch>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Switch className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-hovered');
@@ -77,10 +80,14 @@ describe('Switch', () => {
     await user.hover(s);
     expect(s).toHaveAttribute('data-hovered', 'true');
     expect(s).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(s);
     expect(s).not.toHaveAttribute('data-hovered');
     expect(s).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
@@ -99,6 +106,36 @@ describe('Switch', () => {
     await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
+  });
+
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    
+    let {getByRole, getByText} = render(
+      <>
+        <Switch onBlur={onBlur} onFocus={onFocus} onFocusChange={onFocusChange}>Test</Switch>
+        <button>Steal focus</button>
+      </>
+    );
+
+    let s = getByRole('switch');
+    let button = getByText('Steal focus');
+
+    await user.tab();
+    expect(document.activeElement).toBe(s);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
   it('should support press state', () => {
@@ -167,5 +204,29 @@ describe('Switch', () => {
     let outerEl = getAllByTestId('switch-test');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-Switch');
+  });
+
+  it('should support refs', () => {
+    let ref = React.createRef();
+    let {getByRole} = render(<Switch ref={ref}>Test</Switch>);
+    expect(ref.current).toBe(getByRole('switch').closest('.react-aria-Switch'));
+  });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(<Switch inputRef={inputRef}>Test</Switch>);
+    expect(inputRef.current).toBe(getByRole('switch'));
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <SwitchContext.Provider value={{inputRef: contextInputRef}}>
+        <Switch inputRef={inputRef}>Test</Switch>
+      </SwitchContext.Provider>
+    );
+    expect(inputRef.current).toBe(getByRole('switch'));
+    expect(contextInputRef.current).toBe(getByRole('switch'));
   });
 });

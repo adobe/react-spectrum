@@ -11,11 +11,16 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
-import {InputHTMLAttributes, RefObject, useEffect} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 import {ToggleState} from '@react-stately/toggle';
+import {useFormValidation} from '@react-aria/form';
+import {useFormValidationState} from '@react-stately/form';
 import {useToggle} from '@react-aria/toggle';
+import {ValidationResult} from '@react-types/shared';
 
-export interface CheckboxAria {
+export interface CheckboxAria extends ValidationResult {
+  /** Props for the label wrapper element. */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Whether the checkbox is selected. */
@@ -25,9 +30,7 @@ export interface CheckboxAria {
   /** Whether the checkbox is disabled. */
   isDisabled: boolean,
   /** Whether the checkbox is read only. */
-  isReadOnly: boolean,
-  /** Whether the checkbox is invalid. */
-  isInvalid: boolean
+  isReadOnly: boolean
 }
 
 /**
@@ -39,26 +42,39 @@ export interface CheckboxAria {
  * @param inputRef - A ref for the HTML input element.
  */
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
-  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useToggle(props, state, inputRef);
+  // Create validation state here because it doesn't make sense to add to general useToggleState.
+  let validationState = useFormValidationState({...props, value: state.isSelected});
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
+  let {labelProps, inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle({
+    ...props,
+    isInvalid
+  }, state, inputRef);
 
-  let {isIndeterminate} = props;
+  useFormValidation(props, validationState, inputRef);
+
+  let {isIndeterminate, isRequired, validationBehavior = 'aria'} = props;
   useEffect(() => {
     // indeterminate is a property, but it can only be set via javascript
     // https://css-tricks.com/indeterminate-checkboxes/
     if (inputRef.current) {
-      inputRef.current.indeterminate = isIndeterminate;
+      inputRef.current.indeterminate = !!isIndeterminate;
     }
   });
 
   return {
+    labelProps,
     inputProps: {
       ...inputProps,
-      checked: isSelected
+      checked: isSelected,
+      'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+      required: isRequired && validationBehavior === 'native'
     },
     isSelected,
     isPressed,
     isDisabled,
     isReadOnly,
-    isInvalid
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

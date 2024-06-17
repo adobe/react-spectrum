@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, pointerMap, render, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, pointerMap, render, renderHook} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
@@ -54,9 +54,9 @@ describe('useControlledState tests', function () {
 
   it('using NaN will only trigger onChange once', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState<number | undefined>(undefined, undefined, onChangeSpy));
+    let {result} = renderHook(() => useControlledState<number | null>(undefined, null, onChangeSpy));
     let [value, setValue] = result.current;
-    expect(value).not.toBeDefined();
+    expect(value).toBe(null);
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => setValue(NaN));
     [value, setValue] = result.current;

@@ -17,6 +17,7 @@ const path = require('path');
 const glob = require('fast-glob');
 const semver = require('semver');
 const spawn = require('cross-spawn');
+const spawnSync = require('child_process').spawnSync;
 
 build().catch(err => {
   console.error(err.stack);
@@ -30,6 +31,7 @@ async function build() {
   console.log(`Building into ${dir}...`);
 
   // Generate a package.json containing just what we need to build the website
+  let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
   let pkg = {
     name: 'rsp-website',
     version: '0.0.0',
@@ -52,11 +54,14 @@ async function build() {
           name === 'framer-motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
-          name === 'autoprefixer'
+          name === 'autoprefixer' ||
+          name === 'lucide-react' ||
+          name === 'tailwind-variants'
         )
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
+      '@react-aria/example-theme': 'latest',
       'react-aria': 'latest',
       'react-stately': 'latest',
       'react-aria-components': 'latest',
@@ -66,7 +71,7 @@ async function build() {
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process GIT_HASH=${gitHash} parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
@@ -119,6 +124,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
+  fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
@@ -151,17 +157,6 @@ async function build() {
   let json = JSON.parse(fs.readFileSync(p));
   json.sideEffects = ['*.css'];
   fs.writeFileSync(p, JSON.stringify(json, false, 2));
-
-  // TEMP HACK: Patch textfield css to workaround parcel bug
-  fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
-  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
-  let tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'import "./label.css";\n' + tf;
-  fs.writeFileSync(tfpath, tf);
-  tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
-  tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'require("./label.css");\n' + tf;
-  fs.writeFileSync(tfpath, tf);
 
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});

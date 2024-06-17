@@ -19,7 +19,7 @@ import {
 } from './TableUtils';
 import {ColumnSize, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 
 export interface TableColumnLayoutOptions<T> {
   getDefaultWidth?: (column: GridNode<T>) => ColumnSize | null | undefined,
@@ -73,11 +73,11 @@ export class TableColumnLayout<T> {
   }
 
   getColumnMinWidth(key: Key): number {
-    return this.columnMinWidths.get(key);
+    return this.columnMinWidths.get(key) ?? 0;
   }
 
   getColumnMaxWidth(key: Key): number {
-    return this.columnMaxWidths.get(key);
+    return this.columnMaxWidths.get(key) ?? 0;
   }
 
   resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, ColumnSize>, uncontrolledWidths: Map<Key, ColumnSize>, col = null, width: number): Map<Key, ColumnSize> {

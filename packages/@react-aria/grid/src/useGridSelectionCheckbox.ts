@@ -3,7 +3,7 @@ import {GridCollection} from '@react-types/grid';
 import {GridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -33,7 +33,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
 
   let onChange = () => manager.select(key);
 
-  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
 
   return {
     checkboxProps: {

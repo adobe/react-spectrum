@@ -22,16 +22,16 @@ interface CalendarStateBase {
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
   /** The minimum allowed date that a user may select. */
-  readonly minValue?: DateValue,
+  readonly minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
-  readonly maxValue?: DateValue,
+  readonly maxValue?: DateValue | null,
   /** The time zone of the dates currently being displayed. */
   readonly timeZone: string,
   /**
    * The current validation state of the selected value.
    * @deprecated Use `isValueInvalid` instead.
    */
-  readonly validationState: ValidationState,
+  readonly validationState: ValidationState | null,
   /** Whether the calendar is invalid. */
   readonly isValueInvalid: boolean,
   /** The currently focused date. */
@@ -101,16 +101,16 @@ interface CalendarStateBase {
 
 export interface CalendarState extends CalendarStateBase {
   /** The currently selected date. */
-  readonly value: CalendarDate,
+  readonly value: CalendarDate | null,
   /** Sets the currently selected date. */
-  setValue(value: CalendarDate): void
+  setValue(value: CalendarDate | null): void
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
   /** The currently selected date range. */
-  readonly value: RangeValue<DateValue>,
+  readonly value: RangeValue<DateValue> | null,
   /** Sets the currently selected date range. */
-  setValue(value: RangeValue<DateValue>): void,
+  setValue(value: RangeValue<DateValue> | null): void,
   /** Highlights the given date during selection, e.g. by hovering or dragging. */
   highlightDate(date: CalendarDate): void,
   /** The current anchor date that the user clicked on to begin range selection. */
@@ -118,7 +118,7 @@ export interface RangeCalendarState extends CalendarStateBase {
   /** Sets the anchor date that the user clicked on to begin range selection. */
   setAnchorDate(date: CalendarDate | null): void,
   /** The currently highlighted date range. */
-  readonly highlightedRange: RangeValue<CalendarDate>,
+  readonly highlightedRange: RangeValue<CalendarDate> | null,
   /** Whether the user is currently dragging over the calendar. */
   readonly isDragging: boolean,
   /** Sets whether the user is dragging over the calendar. */

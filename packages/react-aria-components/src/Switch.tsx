@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
+import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps>, SlotProps {}
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: MutableRefObject<HTMLInputElement>
+}
 
 export interface SwitchRenderProps {
   /**
@@ -60,48 +65,35 @@ export interface SwitchRenderProps {
   state: ToggleState
 }
 
-export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
+export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
-  [props, ref] = useContextProps(props, ref, SwitchContext);
+function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
+  let {
+    inputRef: userProvidedInputRef = null,
+    ...otherProps
+  } = props;
+  [props, ref] = useContextProps(otherProps, ref, SwitchContext);
+  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let state = useToggleState(props);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
+  let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed} = useSwitch({
     ...removeDataAttributes(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
-  }, state, ref);
+  }, state, inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
-  // Handle press state for full label. Keyboard press state is returned by useSwitch
-  // since it is handled on the <input> element itself.
-  let [isPressed, setPressed] = useState(false);
-  let {pressProps} = usePress({
-    isDisabled: isInteractionDisabled,
-    onPressStart(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(true);
-      }
-    },
-    onPressEnd(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(false);
-      }
-    }
-  });
-
   let {hoverProps, isHovered} = useHover({
+    ...props,
     isDisabled: isInteractionDisabled
   });
-
-  let pressed = isInteractionDisabled ? false : (isPressed || isPressedKeyboard);
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Switch',
     values: {
       isSelected,
-      isPressed: pressed,
+      isPressed,
       isHovered,
       isFocused,
       isFocusVisible,
@@ -116,17 +108,18 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
+      ref={ref}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
-      data-pressed={pressed || undefined}
+      data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={ref} />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>

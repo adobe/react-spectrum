@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
+import {AriaSliderProps, AriaSliderThumbProps, HoverEvents, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
@@ -142,13 +142,14 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
   isHovered: boolean
 }
 
-export interface SliderTrackProps extends RenderProps<SliderTrackRenderProps> {}
+export interface SliderTrackProps extends HoverEvents, RenderProps<SliderTrackRenderProps> {}
 interface SliderTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, SliderTrackProps {}
 
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderTrackContext);
   let state = useContext(SliderStateContext)!;
-  let {hoverProps, isHovered} = useHover({});
+  let {onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
+  let {hoverProps, isHovered} = useHover({onHoverStart, onHoverEnd, onHoverChange});
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderTrack',
@@ -162,7 +163,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
 
   return (
     <div
-      {...mergeProps(props, hoverProps)}
+      {...mergeProps(otherProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-hovered={isHovered || undefined}
@@ -209,13 +210,22 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'validationState'>, RenderProps<SliderThumbRenderProps> {}
+export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps> {
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: RefObject<HTMLInputElement>
+}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {
+    inputRef: userInputRef = null
+  } = props;
   let state = useContext(SliderStateContext)!;
   let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
-  let inputRef = useRef<HTMLInputElement>(null);
+  let defaultInputRef = useRef<HTMLInputElement>(null);
+  let inputRef = userInputRef || defaultInputRef;
   let [labelRef, label] = useSlot();
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
@@ -226,7 +236,7 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   }, state);
 
   let {focusProps, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
 
   let renderProps = useRenderProps({
     ...props,

@@ -16,13 +16,14 @@ import {
   DisabledBehavior,
   DOMAttributes,
   DOMProps,
+  Key,
   KeyboardDelegate,
   MultipleSelection
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
+import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
@@ -37,7 +38,14 @@ export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   disabledBehavior?: DisabledBehavior
 }
 
-export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether keyboard navigation to focusable elements within grid list items is
+   * via the left/right arrow keys or the tab key.
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab'
+}
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
@@ -79,7 +87,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     isVirtualized,
     keyboardDelegate,
     onAction,
-    linkBehavior = 'action'
+    linkBehavior = 'action',
+    keyboardNavigationBehavior = 'arrow'
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -99,7 +108,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior});
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,

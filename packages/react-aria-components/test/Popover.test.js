@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, OverlayArrow, Popover} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestPopover = () => (
+let TestPopover = (props) => (
   <DialogTrigger>
     <Button />
-    <Popover>
+    <Popover {...props}>
       <OverlayArrow>
         <svg width={12} height={12}>
           <path d="M0 0,L6 6,L12 0" />
@@ -49,6 +49,7 @@ describe('Popover', () => {
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeInTheDocument();
+    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DialogTrigger');
 
     await user.click(document.body);
 
@@ -98,7 +99,7 @@ describe('Popover', () => {
     let {getByRole} = render(<>
       <span ref={triggerRef}>Trigger</span>
       <Popover isOpen triggerRef={triggerRef} onOpenChange={onOpenChange}>
-        <Dialog>A popover</Dialog>
+        <Dialog aria-label="Popover">A popover</Dialog>
       </Popover>
     </>);
 
@@ -127,5 +128,88 @@ describe('Popover', () => {
     await user.click(document.body);
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('supports isEntering and isExiting props', async () => {
+    let {getByRole, rerender} = render(<TestPopover isEntering />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toHaveAttribute('data-entering');
+
+    rerender(<TestPopover />);
+    expect(popover).not.toHaveAttribute('data-entering');
+
+    rerender(<TestPopover isExiting />);
+    await user.click(button);
+
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-exiting');
+
+    rerender(<TestPopover />);
+    expect(popover).not.toBeInTheDocument();
+  });
+
+  it('supports overriding styles', async () => {
+    let {getByRole, getByTestId} = render(
+      <DialogTrigger>
+        <Button />
+        <Popover style={{zIndex: 5}}>
+          <OverlayArrow style={{top: 5}} data-testid="arrow">
+            <svg width={12} height={12}>
+              <path d="M0 0,L6 6,L12 0" />
+            </svg>
+          </OverlayArrow>
+          <Dialog>Popover</Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toHaveAttribute('style', expect.stringContaining('z-index: 5'));
+    let arrow = getByTestId('arrow');
+    expect(arrow).toHaveAttribute('style', expect.stringContaining('top: 5px'));
+  });
+
+  describe('portalContainer', () => {
+    function InfoPopover(props) {
+      return (
+        <DialogTrigger>
+          <Button />
+          <Popover UNSTABLE_portalContainer={props.container}>
+            <OverlayArrow>
+              <svg width={12} height={12}>
+                <path d="M0 0,L6 6,L12 0" />
+              </svg>
+            </OverlayArrow>
+            <Dialog>Popover</Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoPopover container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the dialog in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
   });
 });

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
-import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -81,6 +81,7 @@ describe('DatePicker', () => {
     expect(dialog).toHaveAttribute('aria-labelledby');
     expect(dialog.getAttribute('aria-labelledby')).toContain(label.id);
     expect(dialog.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DatePicker');
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
   });
@@ -118,7 +119,7 @@ describe('DatePicker', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+      <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
@@ -164,5 +165,110 @@ describe('DatePicker', () => {
     let outerEl = getAllByTestId('date-picker');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-DatePicker');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <DatePicker name="date" isRequired>
+          <Label>Birth date</Label>
+          <Group>
+            <DateInput>
+              {(segment) => <DateSegment segment={segment} />}
+            </DateInput>
+            <Button>▼</Button>
+          </Group>
+          <FieldError />
+          <Popover>
+            <Dialog>
+              <Calendar>
+                <header>
+                  <Button slot="previous">◀</Button>
+                  <Heading />
+                  <Button slot="next">▶</Button>
+                </header>
+                <CalendarGrid>
+                  {(date) => <CalendarCell date={date} />}
+                </CalendarGrid>
+              </Calendar>
+            </Dialog>
+          </Popover>
+        </DatePicker>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let datepicker = group.closest('.react-aria-DatePicker');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(datepicker).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
+
+    await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(getDescription()).not.toContain('Constraints not satisfied');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support close on select = true', async () => {
+    let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} />);
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+    await user.click(selected.nextSibling.children[0]);
+    expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should support close on select = false', async () => {
+    let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} shouldCloseOnSelect={false} />);
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+    await user.click(selected.nextSibling.children[0]);
+    expect(dialog).toBeInTheDocument();
+  });
+
+  it('should disable button and date input when DatePicker is disabled', () => {
+    let {getByRole} = render(<TestDatePicker isDisabled />);
+
+    let button = getByRole('button');
+    expect(button).toBeDisabled();
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('aria-disabled', 'true');
+
+    let spinbuttons = within(group).getAllByRole('spinbutton');
+    for (let spinbutton of spinbuttons) {
+      expect(spinbutton).toHaveAttribute('aria-disabled', 'true');
+    }
   });
 });

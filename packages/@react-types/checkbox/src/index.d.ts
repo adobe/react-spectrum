@@ -16,6 +16,7 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  FocusEvents,
   HelpTextProps,
   InputBase,
   InputDOMProps,
@@ -29,7 +30,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface ToggleProps extends InputBase, Validation, FocusableProps {
+export interface ToggleProps extends InputBase, Validation<boolean>, FocusableProps {
   /**
    * The label for the element.
    */
@@ -59,7 +60,7 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps, HelpTextProps, Validation {}
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, InputDOMProps, LabelableProps, HelpTextProps, Validation<string[]> {}
 
 export interface CheckboxProps extends ToggleProps {
   /**
@@ -71,7 +72,7 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps, FocusEvents {}
 
 export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {
   value: string
@@ -81,10 +82,16 @@ export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  /**
+   * A slot name for the component. Slots allow the component to receive props from a parent component.
+   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * @private
+   */
+  slot?: string | null
 }
 
-export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation, StyleProps, SpectrumHelpTextProps {
+export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation<string[]>, StyleProps, SpectrumHelpTextProps {
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */

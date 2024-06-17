@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {chain} from '@react-aria/utils';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -21,7 +21,7 @@ import {SearchFieldState} from '@react-stately/searchfield';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-export interface SearchFieldAria {
+export interface SearchFieldAria extends ValidationResult {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
@@ -45,11 +45,11 @@ export function useSearchField(
   state: SearchFieldState,
   inputRef: RefObject<HTMLInputElement>
 ): SearchFieldAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
   let {
     isDisabled,
     isReadOnly,
-    onSubmit = () => {},
+    onSubmit,
     onClear,
     type = 'search'
   } = props;
@@ -57,7 +57,7 @@ export function useSearchField(
   let onKeyDown = (e) => {
     const key = e.key;
 
-    if (key === 'Enter' || key === 'Escape') {
+    if (key === 'Enter' && (isDisabled || isReadOnly)) {
       e.preventDefault();
     }
 
@@ -65,14 +65,21 @@ export function useSearchField(
       return;
     }
 
-    if (key === 'Enter') {
+    // for backward compatibility;
+    // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
+    if (key === 'Enter' && onSubmit) {
+      e.preventDefault();
       onSubmit(state.value);
     }
 
     if (key === 'Escape') {
-      state.setValue('');
-      if (onClear) {
-        onClear();
+      if (state.value === '') {
+        e.continuePropagation();
+      } else {
+        state.setValue('');
+        if (onClear) {
+          onClear();
+        }
       }
     }
   };
@@ -91,11 +98,11 @@ export function useSearchField(
     inputRef.current?.focus();
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField({
     ...props,
     value: state.value,
     onChange: state.setValue,
-    onKeyDown: chain(onKeyDown, props.onKeyDown),
+    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
     type
   }, inputRef);
 
@@ -116,6 +123,7 @@ export function useSearchField(
       onPressStart
     },
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    ...validation
   };
 }

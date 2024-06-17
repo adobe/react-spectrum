@@ -10,16 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Checkbox, GridList, GridListContext, Item, useDragAndDrop} from '../';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  Button,
+  Checkbox,
+  DropIndicator,
+  GridList,
+  GridListContext,
+  GridListItem,
+  RouterProvider,
+  useDragAndDrop
+} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
-    <Item {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</Item>
-    <Item {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</Item>
-    <Item {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</Item>
+    <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</GridListItem>
+    <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</GridListItem>
+    <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
   </GridList>
 );
 
@@ -31,9 +40,9 @@ let DraggableGridList = (props) => {
 
   return (
     <GridList aria-label="Test" dragAndDropHooks={dragAndDropHooks}>
-      <Item id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</Item>
-      <Item id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</Item>
-      <Item id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</Item>
+      <GridListItem id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</GridListItem>
+      <GridListItem id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</GridListItem>
+      <GridListItem id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</GridListItem>
     </GridList>
   );
 };
@@ -57,7 +66,7 @@ describe('GridList', () => {
     expect(grid).toHaveAttribute('class', 'react-aria-GridList');
 
     for (let row of getAllByRole('row')) {
-      expect(row).toHaveAttribute('class', 'react-aria-Item');
+      expect(row).toHaveAttribute('class', 'react-aria-GridListItem');
     }
   });
 
@@ -98,7 +107,7 @@ describe('GridList', () => {
     let itemRef = React.createRef();
     render(
       <GridList aria-label="Test" ref={listBoxRef}>
-        <Item ref={itemRef}>Cat</Item>
+        <GridListItem ref={itemRef}>Cat</GridListItem>
       </GridList>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -106,7 +115,10 @@ describe('GridList', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
@@ -115,22 +127,35 @@ describe('GridList', () => {
     await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
 
     await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
   });
 
   it('should not show hover state when item is not interactive', async () => {
-    let {getAllByRole} = renderGridList({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderGridList({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
 
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {
@@ -211,6 +236,38 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).toBeDisabled();
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <GridList aria-label="Test">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" textValue="Dog" isDisabled>Dog <Button aria-label="Info">ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+    let items = getAllByRole('row');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+    expect(within(items[1]).getByRole('button')).toBeDisabled();
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test">
+        <GridListItem id="cat" onAction={onAction}>Cat</GridListItem>
+        <GridListItem id="dog">Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support empty state', () => {
     render(
       <GridList aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -230,12 +287,51 @@ describe('GridList', () => {
 
     let {getByRole} = render(
       <GridList aria-label="Test" items={items}>
-        {(item) => <Item id={item.id}>{item.name}</Item>}
+        {(item) => <GridListItem id={item.id}>{item.name}</GridListItem>}
       </GridList>
     );
 
     let gridList = getByRole('grid');
     expect(within(gridList).getAllByRole('row').map((r) => r.textContent)).toEqual(['Cat', 'Dog']);
+  });
+
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderGridList({onScroll});
+    let grid = getByRole('grid');
+    fireEvent.scroll(grid);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
+  it('should support grid layout', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" layout="grid">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
   });
 
   describe('drag and drop', () => {
@@ -247,7 +343,7 @@ describe('GridList', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let button = getAllByRole('button')[0];
       fireEvent.keyDown(button, {key: 'Enter'});
       fireEvent.keyUp(button, {key: 'Enter'});
@@ -257,6 +353,7 @@ describe('GridList', () => {
       expect(rows).toHaveLength(5);
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Cat');
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[2]).not.toHaveAttribute('data-drop-target');
@@ -354,8 +451,8 @@ describe('GridList', () => {
       it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <GridList aria-label="listview">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <GridListItem href="https://google.com">One</GridListItem>
+            <GridListItem href="https://adobe.com">Two</GridListItem>
           </GridList>
         );
 
@@ -365,8 +462,7 @@ describe('GridList', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -376,8 +472,8 @@ describe('GridList', () => {
       it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <GridList aria-label="listview" selectionMode={selectionMode}>
-            <Item href="https://google.com" textValue="one"><Checkbox slot="selection" /> One</Item>
-            <Item href="https://adobe.com" textValue="two"><Checkbox slot="selection" /> Two</Item>
+            <GridListItem href="https://google.com" textValue="one"><Checkbox slot="selection" /> One</GridListItem>
+            <GridListItem href="https://adobe.com" textValue="two"><Checkbox slot="selection" /> Two</GridListItem>
           </GridList>
         );
 
@@ -387,8 +483,7 @@ describe('GridList', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -397,18 +492,16 @@ describe('GridList', () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         await trigger(items[1], ' ');
-        expect(onClick).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
       });
 
       it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <GridList aria-label="listview" selectionMode={selectionMode} selectionBehavior="replace">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <GridListItem href="https://google.com">One</GridListItem>
+            <GridListItem href="https://adobe.com">Two</GridListItem>
           </GridList>
         );
 
@@ -418,8 +511,7 @@ describe('GridList', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
@@ -429,8 +521,6 @@ describe('GridList', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
@@ -440,6 +530,23 @@ describe('GridList', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <GridList aria-label="listview">
+              <GridListItem href="/foo" routerOptions={{foo: 'bar'}}>One</GridListItem>
+            </GridList>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
     });
   });

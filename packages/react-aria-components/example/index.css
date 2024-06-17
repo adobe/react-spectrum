@@ -3,6 +3,57 @@ html {
   font-family: system-ui;
 }
 
+.tree {
+  display: block;
+  margin: 4px 0 0 0;
+  border: 1px solid gray;
+  background:white;
+  width: 300px;
+  height: 300px;
+  overflow: auto;
+}
+
+.tree-item {
+  padding: 4px 5px;
+  outline: none;
+  cursor: default;
+  color: black;
+  background: transparent;
+  display: flex;
+
+  .content-wrapper {
+    display: flex;
+    gap: 2px;
+  }
+
+  .button,
+  [slot=chevron] {
+    background-color: transparent;
+    border: none;
+    color: black;
+  }
+
+  [slot=chevron] {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.focus-visible {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+  }
+
+  &.hovered.hovered {
+    background: lightsalmon;
+    color: white;
+  }
+
+  &.selected {
+    background: lightseagreen;
+    color: white;
+  }
+}
+
 .menu {
   display: block;
   min-width: 150px;
@@ -15,6 +66,8 @@ html {
 .menu, .group {
   padding: 0;
   list-style: none;
+  overflow-y: auto;
+  max-height: inherit;
 }
 
 .item {
@@ -43,14 +96,42 @@ html {
   }
 }
 
+.item[data-disabled] {
+  opacity: 0.4;
+}
+
 .item.focused {
   background: gray;
+  color: white;
+}
+
+.item.open:not(.focused) {
+  background: lightslategray;
+  color: white;
+}
+
+.item.item.hovered {
+  background: lightsalmon;
   color: white;
 }
 
 .item.selected {
   background: purple;
   color: white;
+}
+
+.item[data-has-submenu]::after {
+  content: '›';
+  content: '›' / '';
+  justify-self: end;
+}
+
+.popover[data-trigger=SubmenuTrigger][data-placement="right"] {
+  margin-left: -8px;
+}
+
+.popover[data-trigger=SubmenuTrigger][data-placement="left"] {
+  margin-right: -8px;
 }
 
 .wrapper {
@@ -370,5 +451,14 @@ html {
 
   &[data-disabled] {
     opacity: 0.4;
+  }
+}
+
+.textfieldExample {
+  display: flex;
+  flex-direction: column;
+
+  .errorMessage {
+    padding-bottom: 10px;
   }
 }

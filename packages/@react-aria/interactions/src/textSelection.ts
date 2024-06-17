@@ -36,6 +36,7 @@ let modifiedElementMap = new WeakMap<Element, string>();
 export function disableTextSelection(target?: Element) {
   if (isIOS()) {
     if (state === 'default') {
+      // eslint-disable-next-line no-restricted-globals
       const documentObject = getOwnerDocument(target);
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
@@ -68,6 +69,7 @@ export function restoreTextSelection(target?: Element) {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
+          // eslint-disable-next-line no-restricted-globals
           const documentObject = getOwnerDocument(target);
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';
@@ -82,7 +84,7 @@ export function restoreTextSelection(target?: Element) {
     // If not iOS, restore the target's original user-select if any
     // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {
-      let targetOldUserSelect = modifiedElementMap.get(target);
+      let targetOldUserSelect = modifiedElementMap.get(target) as string;
 
       if (target.style.userSelect === 'none') {
         target.style.userSelect = targetOldUserSelect;

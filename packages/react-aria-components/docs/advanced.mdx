@@ -14,14 +14,13 @@ import docs from 'docs:react-aria-components';
 import {TypeLink} from '@react-spectrum/docs';
 
 ---
-category: Concepts
+category: Guides
 keywords: [aria, accessibility, react, component]
-type: component
 description: React Aria Components is built using a flexible and composable API that you can extend to build new patterns. If you need even more customizability, drop down to the lower level Hook-based API for even more control over rendering and behavior. Mix and match as needed.
-order: 3
+order: 4
 ---
 
-# Advanced customization
+# Advanced Customization
 
 React Aria Components is built using a flexible and composable API that you can extend to build new patterns. If you need even more customizability, drop down to the lower level Hook-based API for even more control over rendering and behavior. Mix and match as needed.
 
@@ -115,6 +114,44 @@ function Stepper({children}) {
 ```
 
 The slots provided by each built-in React Aria component are shown in the Anatomy section of their documentation.
+
+#### Default slot
+
+The default slot is used to provide props to a component without specifying a slot name. This approach allows you to assign a default slot to a component for its default use case and enables you to specify a slot name for a specific use case.
+
+This example shows a custom component that passes a specific class name to a standard button child and to a button child with a slot named "end".
+
+```tsx
+import {Button, ButtonContext, DEFAULT_SLOT} from 'react-aria-components';
+
+function MyCustomComponent({children}) {
+  return (
+    <ButtonContext.Provider
+      value={{
+        slots: {
+          [DEFAULT_SLOT]: {
+            className: "left-button"
+          },
+          end: {
+            className: "right-button"
+          }
+        }
+      }}>
+      {children}
+    </ButtonContext.Provider>
+  );
+}
+
+<MyCustomComponent>
+  {/* Consumes the props passed to the default slot */}
+  <Button>Click me</Button>
+</MyCustomComponent>
+
+<MyCustomComponent>
+  {/* Consumes the props passed to the "end" slot */}
+  <Button slot="end">Click me</Button>
+</MyCustomComponent>
+```
 
 ### Provider
 
@@ -270,12 +307,12 @@ Since `MyCheckbox` consumes from `CheckboxContext` it can be used within other R
 
 ```tsx
 <GridList>
-  <Item>
+  <GridListItem>
     {/*- begin highlight -*/}
     <MyCheckbox slot="selection" />
     {/*- end highlight -*/}
     {/* ... */}
-  </Item>
+  </GridListItem>
 </GridList>
 ```
 

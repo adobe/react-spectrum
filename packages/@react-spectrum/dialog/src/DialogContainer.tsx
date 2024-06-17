@@ -39,7 +39,7 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
 
   // React.Children.toArray mutates the children, and we need them to be stable
   // between renders so that the lastChild comparison works.
-  let child = null;
+  let child: ReactElement | undefined = undefined;
   if (Array.isArray(children)) {
     child = children.find(React.isValidElement);
   } else if (React.isValidElement(children)) {

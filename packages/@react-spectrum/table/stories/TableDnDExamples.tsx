@@ -3,7 +3,7 @@ import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
-import {ItemDropTarget} from '@react-types/shared';
+import {ItemDropTarget, Key} from '@react-types/shared';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {useDragAndDrop} from '@react-spectrum/dnd';
@@ -14,6 +14,15 @@ let onSelectionChange = action('onSelectionChange');
 let columns = [
   {name: 'First name', key: 'first_name', isRowHeader: true},
   {name: 'Last name', key: 'last_name', isRowHeader: true},
+  {name: 'Email', key: 'email'},
+  {name: 'Department', key: 'department'},
+  {name: 'Job Title', key: 'job_title'},
+  {name: 'IP Address', key: 'ip_address'}
+];
+
+let columnsWithOutRowHeader = [
+  {name: 'First name', key: 'first_name'},
+  {name: 'Last name', key: 'last_name'},
   {name: 'Email', key: 'email'},
   {name: 'Department', key: 'department'},
   {name: 'Job Title', key: 'job_title'},
@@ -69,6 +78,40 @@ export function DragExample(props?) {
   );
 }
 
+export function DragWithoutRowHeaderExample(props?)  {
+  let {tableViewProps, dragHookOptions} = props;
+  let getItems = (keys) => [...keys].map(key => {
+    let item = items.find(item => item.id === key);
+    return {
+      'text/plain': `${item.first_name} ${item.last_name}`
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
+    ...dragHookOptions
+  });
+
+  return (
+    <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+      <TableHeader columns={columnsWithOutRowHeader}>
+        {column => <Column minWidth={100}>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row>
+            {key => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
 export function ReorderExample(props) {
   let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
   let list = useListData({
@@ -79,7 +122,7 @@ export function ReorderExample(props) {
   // Use a random drag type so the items can only be reordered within this table and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+  let onMove = (keys: Key[], target: ItemDropTarget) => {
     if (target.dropPosition === 'before') {
       list.moveBefore(target.key, keys);
     } else {
@@ -180,12 +223,12 @@ export function DragOntoRowExample(props) {
       {id: '8', type: 'folder', name: 'Folder 2', childNodes: []}
     ]
   });
-  let disabledKeys: React.Key[] = ['2', '7'];
+  let disabledKeys: Key[] = ['2', '7'];
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+  let onMove = (keys: Key[], target: ItemDropTarget) => {
     let folderItem = list.getItem(target.key);
     let draggedItems = keys.map((key) => list.getItem(key));
     list.update(target.key, {...folderItem, childNodes: [...folderItem.childNodes, ...draggedItems]});
@@ -299,7 +342,7 @@ export function DragBetweenTablesExample(props) {
     initialItems: props.items2 || itemList2
   });
 
-  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+  let onMove = (keys: Key[], target: ItemDropTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = list1.getItem(target.key) ? list1 : list2;
 
@@ -424,7 +467,7 @@ export function DragBetweenTablesRootOnlyExample(props) {
     initialItems: props.items2 || itemList2
   });
 
-  let onMove = (keys: React.Key[], destinationList) => {
+  let onMove = (keys: Key[], destinationList) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
 
     let items = keys.map(key => sourceList.getItem(key));

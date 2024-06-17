@@ -64,8 +64,7 @@ const GROUPS = {
     'textAlign',
     'verticalAlign',
     'lineHeight',
-    'letterSpacing',
-    'color'
+    'letterSpacing'
   ],
   Accessibility: [
     'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/
@@ -117,6 +116,10 @@ function groupProps(props) {
       }
 
       if (props[propName]) {
+        if (propName === 'id' && props[propName].value.type !== 'string') {
+          continue;
+        }
+
         groupProps[propName] = props[propName];
         delete props[propName];
       }

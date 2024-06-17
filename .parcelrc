@@ -5,11 +5,12 @@
     "apiCheck:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
+    "extract:*.mdx": ["parcel-transformer-mdx-extract"],
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
     "*.svg": ["@parcel/transformer-svg-react"],
-    "*.global.css": ["parcel-transformer-css-global", "..."],
+    "packages/@react-aria/example-theme/**/*.css": ["@parcel/transformer-css"],
     "*.css": ["...", "parcel-transformer-css-env"],
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",
@@ -19,10 +20,9 @@
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {
     "*.json": "parcel-packager-docs",
-    "*.html": "@parcel/packager-js"
+    "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.html": ["parcel-optimizer-ssg", "..."],
     "*.js": ["@parcel/optimizer-terser"]
   }
 }

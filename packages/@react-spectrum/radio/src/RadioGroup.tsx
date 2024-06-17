@@ -33,16 +33,14 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
 
   let domRef = useDOMRef(ref);
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
+  let {radioGroupProps, ...otherProps} = useRadioGroup(props, state);
 
   return (
     <Field
       {...props}
+      {...otherProps}
       ref={domRef}
       wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
-      labelProps={labelProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
       elementType="span">
       <div
         {...radioGroupProps}

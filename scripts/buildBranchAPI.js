@@ -104,6 +104,8 @@ async function build() {
   // does it in a different format
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  // Delete test-utils from copied packages since we don't expose anything from there
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
@@ -114,7 +116,7 @@ async function build() {
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
-    if (!p.includes('spectrum-css') && !p.includes('dev/')) {
+    if (!p.includes('spectrum-css') && !p.includes('example-theme') && !p.includes('dev/')) {
       let json = JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p)), 'utf8');
 
       if (json.name in excludeList) {

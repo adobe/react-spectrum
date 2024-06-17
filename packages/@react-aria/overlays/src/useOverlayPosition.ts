@@ -13,7 +13,7 @@
 import {calculatePosition, PositionResult} from './calculatePosition';
 import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
-import {RefObject, useCallback, useRef, useState} from 'react';
+import {RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -124,9 +124,32 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowSize
   ];
 
+  // Note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
+  // just be a non-realistic use case
+  // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
+  let lastScale = useRef(visualViewport?.scale);
+  useEffect(() => {
+    if (isOpen) {
+      lastScale.current = visualViewport?.scale;
+    }
+  }, [isOpen]);
+
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
+    }
+
+    if (visualViewport?.scale !== lastScale.current) {
+      return;
+    }
+
+    // Always reset the overlay's previous max height if not defined by the user so that we can compensate for
+    // RAC collections populating after a second render and properly set a correct max height + positioning when it populates.
+    let overlay = (overlayRef.current as HTMLElement);
+    if (!maxHeight && overlayRef.current) {
+      overlay.style.top = '0px';
+      overlay.style.bottom = '';
+      overlay.style.maxHeight = (window.visualViewport?.height ?? window.innerHeight) + 'px';
     }
 
     let position = calculatePosition({
@@ -146,8 +169,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
-    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
-    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
+    overlay.style.top = '';
+    overlay.style.bottom = '';
+    Object.keys(position.position).forEach(key => overlay.style[key] = position.position[key] + 'px');
+    overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
@@ -167,6 +192,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     onResize: updatePosition
   });
 
+  // Update position when the target changes size (might need to flip).
+  useResizeObserver({
+    ref: targetRef,
+    onResize: updatePosition
+  });
+
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
@@ -183,12 +214,19 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       updatePosition();
     };
 
-    visualViewport?.addEventListener('resize', onResize);
-    visualViewport?.addEventListener('scroll', onResize);
+    // Only reposition the overlay if a scroll event happens immediately as a result of resize (aka the virtual keyboard has appears)
+    // We don't want to reposition the overlay if the user has pinch zoomed in and is scrolling the viewport around.
+    let onScroll = () => {
+      if (isResizing.current) {
+        onResize();
+      }
+    };
 
+    visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onScroll);
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
-      visualViewport?.removeEventListener('scroll', onResize);
+      visualViewport?.removeEventListener('scroll', onScroll);
     };
   }, [updatePosition]);
 
@@ -212,7 +250,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         position: 'absolute',
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position.position,
-        maxHeight: position.maxHeight
+        maxHeight: position.maxHeight ?? '100vh'
       }
     },
     placement: position.placement,

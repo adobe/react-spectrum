@@ -74,8 +74,7 @@ npm set registry $registry
 if [ "$ci" = true ];
 then
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
-  node scripts/buildWebsite.js /reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs
-  cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
 
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
@@ -108,6 +107,7 @@ then
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
   yarn install
+  yarn test
 
   # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
   VERDACCIO=true yarn build | tee next-build-stats.txt

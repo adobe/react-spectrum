@@ -10,12 +10,14 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
-import React, {Key, RefObject, useEffect, useState} from 'react';
+import {Key} from '@react-types/shared';
+import React, {RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
+import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 
@@ -52,7 +54,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
   useVirtualizerContext();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {direction} = useLocale();
 
   let [isPointerDown, setIsPointerDown] = useState(false);
@@ -127,7 +129,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
 
 function CursorOverlay(props) {
   let {show, children} = props;
-  return show ? ReactDOM.createPortal(children, document.body) : null;
+  let {getContainer} = useUNSTABLE_PortalContext();
+  return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }
 
 const _Resizer = React.forwardRef(Resizer);

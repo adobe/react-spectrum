@@ -91,6 +91,10 @@ governing permissions and limitations under the License.
   margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
 }
 
+.spectrum-Dropdown-avatar + .spectrum-Dropdown-label {
+  margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
+}
+
 /* Only apply margin if there's a label */
 .spectrum-Dropdown-label ~ .spectrum-Dropdown-chevron {
   margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
@@ -155,14 +159,16 @@ governing permissions and limitations under the License.
 .spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
   display: inline-flex;
   flex-direction: column;
-  inline-size: auto;
+  inline-size: max-content;
+  max-width: 100%;
 
   .spectrum-Dropdown--quiet {
     inline-size: auto;
     min-inline-size: var(--spectrum-dropdown-quiet-min-width);
 
     .spectrum-Dropdown-trigger {
-      inline-size: auto;
+      inline-size: max-content;
+      max-width: 100%;
     }
   }
 

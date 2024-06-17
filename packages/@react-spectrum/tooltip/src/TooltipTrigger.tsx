@@ -12,7 +12,7 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -98,7 +98,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
 
 // Support TooltipTrigger inside components using CollectionBuilder.
 TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps) {
-  // Replaced the use of React.Childern.toArray because it mutates the key prop.
+  // Replaced the use of React.Children.toArray because it mutates the key prop.
   let childArray: ReactElement[] = [];
   React.Children.forEach(props.children, child => {
     if (React.isValidElement(child)) {

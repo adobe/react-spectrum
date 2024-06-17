@@ -12,13 +12,13 @@
 
 import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
-  const ref = useRef<HTMLInputElement>();
+  const ref = useRef<HTMLInputElement>(null);
   const {children} = props;
   const {inputProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
   return <label><input ref={ref} {...inputProps} />{children}</label>;
@@ -128,7 +128,7 @@ describe('useCheckboxGroup', () => {
 
     let labelId = checkboxGroup.getAttribute('aria-labelledby');
     expect(labelId).toBeDefined();
-    let label = document.getElementById(labelId);
+    let label = document.getElementById(labelId!);
     expect(label).toHaveTextContent('Favorite Pet');
   });
 

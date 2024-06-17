@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
-import {Key, RefObject, useRef, useState} from 'react';
+import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Key, Node} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {RefObject, useRef, useState} from 'react';
 
 export interface DraggableCollectionStateOptions extends DraggableCollectionProps {
   /** A collection of items. */
   collection: Collection<Node<unknown>>,
   /** An interface for reading and updating multiple selection state. */
-  selectionManager: MultipleSelectionManager
+  selectionManager: MultipleSelectionManager,
+  /** Whether the drag events should be disabled. */
+  isDisabled?: boolean
 }
 
 export interface DraggableCollectionState {
@@ -30,6 +32,8 @@ export interface DraggableCollectionState {
   draggedKey: Key | null,
   /** The keys of the items that are currently being dragged. */
   draggingKeys: Set<Key>,
+  /** Whether drag events are disabled. */
+  isDisabled?: boolean,
   /** Returns whether the given key is currently being dragged. */
   isDragging(key: Key): boolean,
   /** Returns the keys of the items that will be dragged with the given key (e.g. selected items). */
@@ -54,6 +58,7 @@ export interface DraggableCollectionState {
 export function useDraggableCollectionState(props: DraggableCollectionStateOptions): DraggableCollectionState {
   let {
     getItems,
+    isDisabled,
     collection,
     selectionManager,
     onDragStart,
@@ -95,6 +100,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     getItems(key) {
       return getItems(getKeys(key));
     },
+    isDisabled,
     preview,
     getAllowedDropOperations,
     startDrag(key, event) {

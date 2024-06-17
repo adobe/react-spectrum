@@ -28,8 +28,8 @@
   transform: translate(0, var(--spectrum-colorloupe-animation-distance));
   opacity: 0;
   transform-origin: bottom center;
-  bottom: calc(50% + var(--spectrum-colorloupe-offset));
-  left: calc(50% - calc(var(--spectrum-colorloupe-width-adjusted) / 2));
+  margin-top: calc(var(--spectrum-colorloupe-height-adjusted) * -1 - var(--spectrum-colorloupe-offset));
+  margin-left: calc(calc(var(--spectrum-colorloupe-width-adjusted) / -2));
   transition: transform 100ms ease-in-out, opacity 125ms ease-in-out;
 
   pointer-events: none;

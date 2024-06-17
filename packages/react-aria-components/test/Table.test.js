@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -27,7 +27,7 @@ function MyColumn(props) {
             {sortDirection === 'ascending' ? '▲' : '▼'}
           </span>
         )}
-        {props.allowsResizing && <ColumnResizer />}
+        {props.allowsResizing && <ColumnResizer data-testid="resizer" />}
       </>)}
     </Column>
   );
@@ -123,10 +123,19 @@ let DraggableTable = (props) => {
   return <TestTable tableProps={{dragAndDropHooks}} />;
 };
 
+let DraggableTableWithSelection = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <TestTable tableProps={{dragAndDropHooks, selectionMode: 'multiple'}} />;
+};
+
 let columns = [
-  {name: 'Name', key: 'name', isRowHeader: true},
-  {name: 'Type', key: 'type'},
-  {name: 'Date Modified', key: 'date'}
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
 ];
 
 let rows = [
@@ -148,7 +157,7 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
     <TableBody items={rows} {...tableBodyProps}>
       {item => (
         <MyRow columns={columns} {...rowProps}>
-          {column => <Cell>{item[column.key]}</Cell>}
+          {column => <Cell>{item[column.id]}</Cell>}
         </MyRow>
       )}
     </TableBody>
@@ -307,10 +316,45 @@ describe('Table', () => {
     expect(getAllByRole('row')).toHaveLength(5);
   });
 
+  it('should support column hover when sorting is allowed', async () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {allowsSorting: true, className: ({isHovered}) => isHovered ? 'hover' : ''}
+    });
+    let column = getAllByRole('columnheader')[0];
+
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+
+    await user.hover(column);
+    expect(column).toHaveAttribute('data-hovered', 'true');
+    expect(column).toHaveClass('hover');
+
+    await user.unhover(column);
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+  });
+
+  it('should not show column hover state when column is not sortable', async () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+    });
+    let column = getAllByRole('columnheader')[0];
+
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+
+    await user.hover(column);
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+  });
+
   it('should support hover', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}
     });
     let row = getAllByRole('row')[1];
 
@@ -320,24 +364,37 @@ describe('Table', () => {
     await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
 
     await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
   });
 
   it('should not show hover state when item is not interactive', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
     let {getAllByRole} = renderTable({
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
 
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {
@@ -456,6 +513,70 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rows[3]);
   });
 
+  it('should support isDisabled prop on rows', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow isDisabled>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 3</Cell>
+            <Cell>Bar 3</Cell>
+            <Cell>Baz 3</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    expect(items[2]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[3]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow onAction={onAction}>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[1]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support sorting', () => {
     let {getAllByRole} = renderTable({
       tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange: jest.fn()},
@@ -469,72 +590,6 @@ describe('Table', () => {
     expect(columns[1]).not.toHaveTextContent('▲');
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
-  });
-
-  it('should support nested column headers', async () => {
-    let columns = [
-      {name: 'Name', key: 'name', children: [
-        {name: 'First Name', key: 'first', isRowHeader: true},
-        {name: 'Last Name', key: 'last', isRowHeader: true}
-      ]},
-      {name: 'Information', key: 'info', children: [
-        {name: 'Age', key: 'age'},
-        {name: 'Birthday', key: 'birthday'}
-      ]}
-    ];
-
-    let leafColumns = [{key: 'first'}, {key: 'last'}, {key: 'age'}, {key: 'birthday'}];
-
-    let items = [
-      {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
-      {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
-      {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
-      {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
-    ];
-
-    let {getAllByRole} = render(
-      <DynamicTable
-        tableHeaderProps={{columns}}
-        tableBodyProps={{items}}
-        rowProps={{columns: leafColumns}} />
-    );
-
-    let header = getAllByRole('rowgroup')[0];
-    let rows = within(header).getAllByRole('row');
-    expect(rows).toHaveLength(2);
-
-    let cells = within(rows[0]).getAllByRole('columnheader');
-    expect(cells).toHaveLength(2);
-    expect(cells[0]).toHaveAttribute('aria-colspan', '2');
-    expect(cells[1]).toHaveAttribute('aria-colspan', '2');
-
-    await user.tab();
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-
-    cells = within(rows[1]).getAllByRole('columnheader');
-    expect(document.activeElement).toBe(cells[0]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[1]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[2]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[3]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-    cells = within(rows[0]).getAllByRole('columnheader');
-    expect(document.activeElement).toBe(cells[1]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
-    expect(document.activeElement).toBe(cells[0]);
   });
 
   it('should support empty state', () => {
@@ -610,6 +665,49 @@ describe('Table', () => {
     expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
   });
 
+  it('should support row render function and not call it with state', () => {
+    let renderRow = jest.fn(() => {});
+    render(
+      <Table aria-label="Search results">
+        <TableHeader columns={[columns[0]]}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[rows[0]]}>
+          {item => (
+            <Row columns={[columns[0]]}>
+              {column => {
+                renderRow(column);
+                return (
+                  <Cell>
+                    {item[column.id]}
+                  </Cell>
+                );
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    );
+
+    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // Every call should be the same, so just loop over them.
+    expect(renderRow.mock.calls.length).toBeGreaterThanOrEqual(1);
+    renderRow.mock.calls.forEach((call) => {
+      expect(call[0]).toBe(columns[0]);
+    });
+    renderRow.mockReset();
+
+    // We do not currently call the renderProps function on any of these changes
+    // let rowElems = getAllByRole('row');
+    // let cells = getAllByRole('rowheader');
+    // act(() => rowElems[1].focus());
+    // expect(cells[0]).toHaveTextContent('Games focused');
+  });
+
   it('should support cell render props', () => {
     let {getAllByRole} = render(
       <Table aria-label="Search results">
@@ -641,6 +739,55 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support updating columns', () => {
+    let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
+    let headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(3);
+
+    let newColumns = [columns[0], columns[2]];
+    tree.rerender(<DynamicTable tableHeaderProps={{columns: newColumns}} tableBodyProps={{dependencies: [newColumns]}} rowProps={{columns: newColumns}} />);
+
+    headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(2);
+  });
+
+  it('should support updating and reordering a row at the same time', () => {
+    let tree = render(<DynamicTable tableBodyProps={{items: rows}} />);
+    let rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Games', 'Program Files', 'bootmgr', 'log.txt']);
+
+    tree.rerender(<DynamicTable tableBodyProps={{items: [rows[1], {...rows[0], name: 'XYZ'}, ...rows.slice(2)]}} />);
+    rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Program Files', 'XYZ', 'bootmgr', 'log.txt']);
+  });
+
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderTable({tableProps: {onScroll}});
+    let grid = getByRole('grid');
+    fireEvent.scroll(grid);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
+  it('should support data-focus-visible-within', async () => {
+    let {getAllByRole} = renderTable();
+    let items = getAllByRole('row');
+    expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
+    await user.keyboard('{ArrowRight}');
+
+    let cell = within(items[1]).getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell);
+    expect(cell).toHaveAttribute('data-focus-visible', 'true');
+    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
+
+    await user.keyboard('{ArrowDown}');
+    expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
@@ -650,7 +797,7 @@ describe('Table', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableTable onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableTable onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let button = getAllByRole('button')[0];
       fireEvent.keyDown(button, {key: 'Enter'});
       fireEvent.keyUp(button, {key: 'Enter'});
@@ -660,6 +807,7 @@ describe('Table', () => {
       expect(rows).toHaveLength(5);
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Games');
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[2]).not.toHaveAttribute('data-drop-target');
@@ -741,6 +889,47 @@ describe('Table', () => {
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
+
+    it('should support disabled drag and drop', async () => {
+      let {queryAllByRole, getByRole, getAllByRole} = render(
+        <DraggableTable isDisabled />
+      );
+
+      let buttons = queryAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toBeDisabled();
+      });
+
+      let table = getByRole('grid');
+      expect(table).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(table).not.toHaveAttribute('draggable', 'true');
+
+      let rows = getAllByRole('row');
+      rows.forEach(row => {
+        expect(row).not.toHaveAttribute('draggable', 'true');
+      });
+    });
+
+    it('should allow selection even when drag and drop is disabled', async () => {
+      let {getAllByRole} = render(
+        <DraggableTableWithSelection isDisabled />
+    );
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+
+      let checkbox = getAllByRole('checkbox')[0];
+      expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+      await user.click(checkbox);
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).toBeChecked();
+      }
+    });
   });
 
   describe('column resizing', () => {
@@ -785,10 +974,10 @@ describe('Table', () => {
     resizingTests(render, (tree, ...args) => tree.rerender(...args), ResizableTable, ControlledResizableTable, resizeCol, resizeTable);
 
     function ResizableTable(props) {
-      let {columns, rows} = props;
+      let {columns, rows, onResizeStart, onResize, onResizeEnd, ...otherProps} = props;
       return (
-        <ResizableTableContainer>
-          <Table aria-label="Files">
+        <ResizableTableContainer onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd}>
+          <Table aria-label="Files" {...otherProps}>
             <MyTableHeader columns={columns}>
               {column => (
                 <MyColumn {...column} isRowHeader={column.id === 'name'}>
@@ -799,7 +988,7 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={columns}>
-                  {column => <Cell>{item[column.key]}</Cell>}
+                  {column => <Cell>{item[column.id]}</Cell>}
                 </MyRow>
               )}
             </TableBody>
@@ -825,7 +1014,7 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={columns}>
-                  {column => <Cell>{item[column.key]}</Cell>}
+                  {column => <Cell>{item[column.id]}</Cell>}
                 </MyRow>
               )}
             </TableBody>
@@ -833,6 +1022,39 @@ describe('Table', () => {
         </ResizableTableContainer>
       );
     }
+
+    it('Column resizer accepts data attributes', () => {
+      let {getAllByTestId} = render(<ControlledResizableTable />);
+      let resizers = getAllByTestId('resizer');
+      expect(resizers).toHaveLength(5);
+    });
+  });
+
+  it('should support overriding table style', () => {
+    let {getByRole} = render(
+      <Table aria-label="Table" style={{width: 200}}>
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow href="https://google.com">
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow href="https://adobe.com">
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+
+    let table = getByRole('grid');
+    expect(table).toHaveAttribute('style', expect.stringContaining('width: 200px'));
   });
 
   describe('links', function () {
@@ -875,8 +1097,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -912,8 +1133,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -922,10 +1142,8 @@ describe('Table', () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         await trigger(items[1], ' ');
-        expect(onClick).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
       });
 
@@ -957,9 +1175,7 @@ describe('Table', () => {
           expect(item.tagName).not.toBe('A');
           expect(item).toHaveAttribute('data-href');
         }
-
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault({once: true});
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
@@ -969,8 +1185,6 @@ describe('Table', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {

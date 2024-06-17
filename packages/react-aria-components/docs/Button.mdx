@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Buttons
@@ -50,18 +51,11 @@ import {Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Button {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-pressed: var(--spectrum-alias-border-color-down);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --background-color: var(--spectrum-global-color-gray-50);
-  --background-color-pressed: var(--spectrum-global-color-gray-100);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
+@import "@react-aria/example-theme";
 
+.react-aria-Button {
   color: var(--text-color);
-  background: var(--background-color);
+  background: var(--button-background);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   appearance: none;
@@ -75,32 +69,13 @@ import {Button} from 'react-aria-components';
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--background-color-pressed);
+    background: var(--button-background-pressed);
     border-color: var(--border-color-pressed);
   }
 
   &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-
-  &[data-disabled]{
-    border-color: var(--border-color-disabled);
-    color: var(--text-color-disabled);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-pressed: ButtonBorder;
-    --border-color-disabled: GrayText;
-    --background-color: ButtonFace;
-    --background-color-pressed: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 }
 ```
@@ -127,6 +102,12 @@ buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
 
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="button" />
 
 ## Events
 
@@ -158,6 +139,20 @@ A `Button` can be disabled using the `isDisabled` prop.
 ```tsx example
 <Button isDisabled>Pin</Button>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Button {
+  &[data-disabled]{
+    border-color: var(--border-color-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Link buttons
 

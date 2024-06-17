@@ -21,6 +21,7 @@ import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Text} from '@react-spectrum/text';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -119,6 +120,8 @@ Setting a selected option can be done by using the `defaultSelectedKey` or `sele
 Additionally see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
+import type {Key} from '@adobe/react-spectrum';
+
 function Example() {
   let options = [
     {name: 'Koala'},
@@ -128,7 +131,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState<React.Key>("Bison");
+  let [animal, setAnimal] = React.useState<Key>("Bison");
 
   return (
     <Flex gap="size-150" wrap>
@@ -285,7 +288,9 @@ function DynamicExample() {
 ```
 
 ## Complex items
-Items within Picker also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Items within Picker also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
+If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
 
 ```tsx example
 <Picker label="Options">
@@ -306,6 +311,29 @@ Items within Picker also allow for additional content used to better communicate
       <Text slot="description">Full access</Text>
     </Item>
   </Section>
+</Picker>
+```
+
+### With avatars
+
+```tsx example
+<Picker label="Select a user">
+  <Item textValue="User 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 1</Text>
+  </Item>
+  <Item textValue="User 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 2</Text>
+  </Item>
+  <Item textValue="User 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 3</Text>
+  </Item>
+  <Item textValue="User 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 4</Text>
+  </Item>
 </Picker>
 ```
 
@@ -349,6 +377,35 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+## Validation
+
+Picker supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <Picker label="Favorite animal" name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Item>Aardvark</Item>
+    <Item>Cat</Item>
+    <Item>Dog</Item>
+    <Item>Kangaroo</Item>
+    <Item>Panda</Item>
+    <Item>Snake</Item>
+  </Picker>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `Picker` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 
@@ -513,3 +570,21 @@ knowing that we manage the focus in this way and thus throw this false positive.
 To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
 problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
 from your automated accessibility tests as shown [here](../react-aria/accessibility.html#false-positives).
+
+## Testing
+
+The Picker features an overlay that transitions in and out of the page as it is opened and closed. Depending on
+your device configuration, this overlay may render as a tray or a dropdown. Additionally, the Picker features automatic virtualization
+and may need specific mocks in a test environment to enable said virtualization properly. Please see the following sections in the testing docs
+for more information on how to handle these behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+[Long press](./testing.html#simulating-user-long-press)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/picker/test/Picker.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

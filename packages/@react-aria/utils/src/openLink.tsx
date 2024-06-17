@@ -11,22 +11,25 @@
  */
 
 import {focusWithoutScrolling, isMac, isWebKit} from './index';
+import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
 import {isFirefox, isIPad} from './platform';
-import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
   isNative: boolean,
-  open: (target: Element, modifiers: Modifiers) => void
+  open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => void,
+  useHref: (href: Href) => string
 }
 
 const RouterContext = createContext<Router>({
   isNative: true,
-  open: openSyntheticLink
+  open: openSyntheticLink,
+  useHref: (href) => href
 });
 
 interface RouterProviderProps {
-  navigate: (path: string) => void,
+  navigate: (path: Href, routerOptions: RouterOptions | undefined) => void,
+  useHref?: (href: Href) => string,
   children: ReactNode
 }
 
@@ -35,20 +38,21 @@ interface RouterProviderProps {
  * and provides it to all nested React Aria links to enable client side navigation.
  */
 export function RouterProvider(props: RouterProviderProps) {
-  let {children, navigate} = props;
+  let {children, navigate, useHref} = props;
 
   let ctx = useMemo(() => ({
     isNative: false,
-    open: (target: Element, modifiers: Modifiers) => {
+    open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => {
       getSyntheticLink(target, link => {
         if (shouldClientNavigate(link, modifiers)) {
-          navigate(link.pathname + link.search + link.hash);
+          navigate(href, routerOptions);
         } else {
           openLink(link, modifiers);
         }
       });
-    }
-  }), [navigate]);
+    },
+    useHref: useHref || ((href) => href)
+  }), [navigate, useHref]);
 
   return (
     <RouterContext.Provider value={ctx}>
@@ -116,21 +120,21 @@ function getSyntheticLink(target: Element, open: (link: HTMLAnchorElement) => vo
     open(target);
   } else if (target.hasAttribute('data-href')) {
     let link = document.createElement('a');
-    link.href = target.getAttribute('data-href');
+    link.href = target.getAttribute('data-href')!;
     if (target.hasAttribute('data-target')) {
-      link.target = target.getAttribute('data-target');
+      link.target = target.getAttribute('data-target')!;
     }
     if (target.hasAttribute('data-rel')) {
-      link.rel = target.getAttribute('data-rel');
+      link.rel = target.getAttribute('data-rel')!;
     }
     if (target.hasAttribute('data-download')) {
-      link.download = target.getAttribute('data-download');
+      link.download = target.getAttribute('data-download')!;
     }
     if (target.hasAttribute('data-ping')) {
-      link.ping = target.getAttribute('data-ping');
+      link.ping = target.getAttribute('data-ping')!;
     }
     if (target.hasAttribute('data-referrer-policy')) {
-      link.referrerPolicy = target.getAttribute('data-referrer-policy');
+      link.referrerPolicy = target.getAttribute('data-referrer-policy')!;
     }
     target.appendChild(link);
     open(link);
@@ -142,13 +146,26 @@ function openSyntheticLink(target: Element, modifiers: Modifiers) {
   getSyntheticLink(target, link => openLink(link, modifiers));
 }
 
-export function getSyntheticLinkProps(props: LinkDOMProps) {
+export function useSyntheticLinkProps(props: LinkDOMProps) {
+  let router = useRouter();
   return {
-    'data-href': props.href,
+    'data-href': props.href ? router.useHref(props.href) : undefined,
     'data-target': props.target,
     'data-rel': props.rel,
     'data-download': props.download,
     'data-ping': props.ping,
     'data-referrer-policy': props.referrerPolicy
+  };
+}
+
+export function useLinkProps(props: LinkDOMProps) {
+  let router = useRouter();
+  return {
+    href: props?.href ? router.useHref(props?.href) : undefined,
+    target: props?.target,
+    rel: props?.rel,
+    download: props?.download,
+    ping: props?.ping,
+    referrerPolicy: props?.referrerPolicy
   };
 }

@@ -11,11 +11,12 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
 
-export interface NumberFieldState {
+export interface NumberFieldState extends FormValidationState {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -27,9 +28,9 @@ export interface NumberFieldState {
    */
   numberValue: number,
   /** The minimum value of the number field. */
-  minValue: number,
+  minValue?: number,
   /** The maximum value of the number field. */
-  maxValue: number,
+  maxValue?: number,
   /** Whether the current value can be incremented according to the maximum value and step. */
   canIncrement: boolean,
   /** Whether the current value can be decremented according to the minimum value and step. */
@@ -82,12 +83,32 @@ export function useNumberFieldState(
     step,
     formatOptions,
     value,
-    defaultValue,
+    defaultValue = NaN,
     onChange,
     locale,
     isDisabled,
     isReadOnly
   } = props;
+
+  if (value === null) {
+    value = NaN;
+  }
+
+  if (value !== undefined && !isNaN(value)) {
+    if (step !== undefined && !isNaN(step)) {
+      value = snapValueToStep(value, minValue, maxValue, step);
+    } else {
+      value = clamp(value, minValue, maxValue);
+    }
+  }
+
+  if (!isNaN(defaultValue)) {
+    if (step !== undefined && !isNaN(step)) {
+      defaultValue = snapValueToStep(defaultValue, minValue, maxValue, step);
+    } else {
+      defaultValue = clamp(defaultValue, minValue, maxValue);
+    }
+  }
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
   let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
@@ -98,8 +119,13 @@ export function useNumberFieldState(
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => (isNaN(value) || value === null) ? '' : formatter.format(value), [formatter]);
 
-  let clampStep = !isNaN(step) ? step : 1;
-  if (intlOptions.style === 'percent' && isNaN(step)) {
+  let validation = useFormValidationState({
+    ...props,
+    value: numberValue
+  });
+
+  let clampStep = (step !== undefined && !isNaN(step)) ? step : 1;
+  if (intlOptions.style === 'percent' && (step === undefined || isNaN(step))) {
     clampStep = 0.01;
   }
 
@@ -133,7 +159,7 @@ export function useNumberFieldState(
 
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue: number;
-    if (isNaN(step)) {
+    if (step === undefined || isNaN(step)) {
       clampedValue = clamp(parsedValue, minValue, maxValue);
     } else {
       clampedValue = snapValueToStep(parsedValue, minValue, maxValue, step);
@@ -146,7 +172,7 @@ export function useNumberFieldState(
     setInputValue(format(value === undefined ? clampedValue : numberValue));
   };
 
-  let safeNextStep = (operation: '+' | '-', minMax: number) => {
+  let safeNextStep = (operation: '+' | '-', minMax: number = 0) => {
     let prev = parsedValue;
 
     if (isNaN(prev)) {
@@ -183,6 +209,7 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let decrement = () => {
@@ -193,17 +220,20 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let incrementToMax = () => {
     if (maxValue != null) {
       setNumberValue(snapValueToStep(maxValue, minValue, maxValue, clampStep));
+      validation.commitValidation();
     }
   };
 
   let decrementToMin = () => {
     if (minValue != null) {
       setNumberValue(minValue);
+      validation.commitValidation();
     }
   };
 
@@ -212,7 +242,7 @@ export function useNumberFieldState(
     !isReadOnly &&
     (
       isNaN(parsedValue) ||
-      isNaN(maxValue) ||
+      (maxValue === undefined || isNaN(maxValue)) ||
       snapValueToStep(parsedValue, minValue, maxValue, clampStep) > parsedValue ||
       handleDecimalOperation('+', parsedValue, clampStep) <= maxValue
     )
@@ -223,7 +253,7 @@ export function useNumberFieldState(
     !isReadOnly &&
     (
       isNaN(parsedValue) ||
-      isNaN(minValue) ||
+      (minValue === undefined || isNaN(minValue)) ||
       snapValueToStep(parsedValue, minValue, maxValue, clampStep) < parsedValue ||
       handleDecimalOperation('-', parsedValue, clampStep) >= minValue
     )
@@ -232,6 +262,7 @@ export function useNumberFieldState(
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   return {
+    ...validation,
     validate,
     increment,
     incrementToMax,

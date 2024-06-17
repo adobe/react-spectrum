@@ -10,16 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  Button, Dialog,
+  DialogTrigger,
+  DropIndicator,
+  Header, Heading,
+  ListBox,
+  ListBoxContext,
+  ListBoxItem, Modal,
+  Section,
+  Text,
+  useDragAndDrop
+} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
   <ListBox aria-label="Test" {...listBoxProps}>
-    <Item {...itemProps} id="cat">Cat</Item>
-    <Item {...itemProps} id="dog">Dog</Item>
-    <Item {...itemProps} id="kangaroo">Kangaroo</Item>
+    <ListBoxItem {...itemProps} id="cat">Cat</ListBoxItem>
+    <ListBoxItem {...itemProps} id="dog">Dog</ListBoxItem>
+    <ListBoxItem {...itemProps} id="kangaroo">Kangaroo</ListBoxItem>
   </ListBox>
 );
 
@@ -31,9 +42,9 @@ let DraggableListBox = (props) => {
 
   return (
     <ListBox aria-label="Test" dragAndDropHooks={dragAndDropHooks} {...props}>
-      <Item id="cat">Cat</Item>
-      <Item id="dog">Dog</Item>
-      <Item id="kangaroo">Kangaroo</Item>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
     </ListBox>
   );
 };
@@ -56,13 +67,39 @@ describe('ListBox', () => {
     jest.restoreAllMocks();
   });
 
+  it('should have the base set of aria and data attributes', () => {
+    let {getByRole, getAllByRole} = render(
+      <ListBox aria-label="Animals">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        <Section>
+          <Header>Fish</Header>
+          <ListBoxItem id="salmon">Salmon</ListBoxItem>
+          <ListBoxItem id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem id="cod">Cod</ListBoxItem>
+        </Section>
+      </ListBox>
+    );
+    let menu = getByRole('listbox');
+    expect(menu).toHaveAttribute('data-rac');
+
+    for (let group of getAllByRole('group')) {
+      expect(group).toHaveAttribute('data-rac');
+    }
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-rac');
+    }
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderListbox();
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
 
     for (let option of getAllByRole('option')) {
-      expect(option).toHaveAttribute('class', 'react-aria-Item');
+      expect(option).toHaveAttribute('class', 'react-aria-ListBoxItem');
     }
   });
 
@@ -86,6 +123,14 @@ describe('ListBox', () => {
     }
   });
 
+  it('should support aria-label on the listbox items', () => {
+    let {getAllByRole} = renderListbox({}, {'aria-label': 'test'});
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('aria-label', 'test');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <ListBoxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -105,7 +150,7 @@ describe('ListBox', () => {
     render(
       <ListBox aria-label="Test" ref={listBoxRef}>
         <Section ref={sectionRef}>
-          <Item ref={itemRef}>Cat</Item>
+          <ListBoxItem ref={itemRef}>Cat</ListBoxItem>
         </Section>
       </ListBox>
     );
@@ -117,10 +162,10 @@ describe('ListBox', () => {
   it('should support slots', () => {
     let {getByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Item textValue="Read">
+        <ListBoxItem textValue="Read">
           <Text slot="label">Read</Text>
           <Text slot="description">Read only</Text>
-        </Item>
+        </ListBoxItem>
       </ListBox>
     );
 
@@ -136,15 +181,14 @@ describe('ListBox', () => {
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
         <Section data-test-prop="test-section-1">
           <Header>Veggies</Header>
-          <Item id="lettuce">Lettuce</Item>
-          <Item id="tomato">Tomato</Item>
-          <Item id="onion">Onion</Item>
+          <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+          <ListBoxItem id="tomato">Tomato</ListBoxItem>
+          <ListBoxItem id="onion">Onion</ListBoxItem>
         </Section>
-        <Section data-test-prop="test-section-2">
-          <Header>Protein</Header>
-          <Item id="ham">Ham</Item>
-          <Item id="tuna">Tuna</Item>
-          <Item id="tofu">Tofu</Item>
+        <Section data-test-prop="test-section-2" aria-label="Protein">
+          <ListBoxItem id="ham">Ham</ListBoxItem>
+          <ListBoxItem id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem id="tofu">Tofu</ListBoxItem>
         </Section>
       </ListBox>
     );
@@ -157,6 +201,7 @@ describe('ListBox', () => {
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+    expect(groups[1].getAttribute('aria-label')).toEqual('Protein');
 
     expect(groups[0]).toHaveAttribute('data-test-prop', 'test-section-1');
     expect(groups[1]).toHaveAttribute('data-test-prop', 'test-section-2');
@@ -170,7 +215,7 @@ describe('ListBox', () => {
 
     let {getAllByRole, rerender} = render(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -183,7 +228,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -197,7 +242,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -211,7 +256,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -225,7 +270,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -238,7 +283,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -255,8 +300,8 @@ describe('ListBox', () => {
       setItemText = _setItemText;
       return (
         <>
-          <Item id={1}>{itemText}</Item>
-          {showTwo && <Item id={2}>Two</Item>}
+          <ListBoxItem id={1}>{itemText}</ListBoxItem>
+          {showTwo && <ListBoxItem id={2}>Two</ListBoxItem>}
         </>
       );
     }
@@ -280,7 +325,10 @@ describe('ListBox', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverEnd: hoverEndSpy, onHoverChange: hoverChangeSpy});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-hovered');
@@ -289,26 +337,39 @@ describe('ListBox', () => {
     await user.hover(option);
     expect(option).toHaveAttribute('data-hovered', 'true');
     expect(option).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(option);
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should not show hover state when item is not interactive', async () => {
-    let {getAllByRole} = renderListbox({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderListbox({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverEnd, onHoverChange});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
 
     await user.hover(option);
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderListbox({selectionMode: 'multiple', shouldFocusOnHover: true}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-focus-visible');
@@ -318,6 +379,7 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(option);
     expect(option).toHaveAttribute('data-focus-visible', 'true');
     expect(option).toHaveClass('focus');
+    expect(option).not.toHaveAttribute('data-hovered');
 
     fireEvent.keyDown(option, {key: 'ArrowDown'});
     fireEvent.keyUp(option, {key: 'ArrowDown'});
@@ -381,6 +443,37 @@ describe('ListBox', () => {
     expect(option).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog" isDisabled>Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat" onAction={onAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support empty state', () => {
     let {getByRole} = render(
       <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -440,6 +533,63 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should not throw TypeError at boundaries of vertical grid layout when keyboard navigating (up/down)', async () => {
+    /**
+     * The following ListBox is roughly in this shape:
+     *
+     * -------------------
+     * | 1,1 | 1,2 | 1,3 |
+     * -------------------
+     * | 2,1 | 2,2 | 2,3 |
+     * -------------------
+     * | 3,1 | 3,2 | 3,3 |
+     * -------------------
+     */
+    let {getAllByRole} = render(
+      <ListBox layout="grid" aria-label="Test">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>);
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: Math.floor(index / 3) * 40, left: (index % 3) * 100, bottom: Math.floor(index / 3) * 40 + 40, right: (index % 3) * 100 + 100, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowDown');  // the end reached
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowDown');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowUp');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowUp');  // the end reached
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowUp');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+  });
+
   it('should support horizontal grid layout', async () => {
     let {getAllByRole} = renderListbox({layout: 'grid', orientation: 'horizontal'});
     let options = getAllByRole('option');
@@ -469,6 +619,71 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should not throw TypeError at boundaries of horizontal grid layout when keyboard navigating (left/right)', async () => {
+    /**
+     * The following ListBox is roughly in this shape:
+     *
+     * -------------------
+     * | 1,1 | 2,1 | 3,1 |
+     * -------------------
+     * | 1,2 | 2,2 | 3,2 |
+     * -------------------
+     * | 1,3 | 3,2 | 3,3 |
+     * -------------------
+     */
+    let {getAllByRole} = render(
+      <ListBox layout="grid" orientation="horizontal" aria-label="Test">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>);
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: (index % 3) * 40, left: Math.floor(index / 3) * 100, bottom: (index % 3) * 40 + 40, right: Math.floor(index / 3) * 100 + 100, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowRight');  // the end reached
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowRight');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowLeft');  // the end reached
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowLeft');  // shouldn't throw when pressed one more time at the boundary.
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+  });
+
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderListbox({onScroll});
+    let listbox = getByRole('listbox');
+    fireEvent.scroll(listbox);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support draggable items', () => {
       let {getAllByRole} = render(<DraggableListBox />);
@@ -478,7 +693,7 @@ describe('ListBox', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let option = getAllByRole('option')[0];
       fireEvent.keyDown(option, {key: 'Enter'});
       fireEvent.keyUp(option, {key: 'Enter'});
@@ -489,6 +704,7 @@ describe('ListBox', () => {
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(rows[1]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[1]).not.toHaveAttribute('data-drop-target');
       expect(rows[1]).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
@@ -643,6 +859,51 @@ describe('ListBox', () => {
     });
   });
 
+  describe('inside modals', () => {
+    it('should clear selection on first Escape, then allow the modal to close on the second Escape', async () => {
+      let onOpenChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <DialogTrigger onOpenChange={onOpenChange}>
+          <Button>Open Dialog</Button>
+          <Modal>
+            <Dialog>
+              <form>
+                <Heading slot="title">Sign up</Heading>
+                <ListBox aria-label="Test" selectionMode="multiple">
+                  <ListBoxItem id="cat">Cat</ListBoxItem>
+                  <ListBoxItem id="dog">Dog</ListBoxItem>
+                  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+                </ListBox>
+              </form>
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button'));
+      await user.keyboard('{Enter}');
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+
+      let options = getAllByRole('option');
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{Enter}');
+
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+      keyPress('Escape');
+
+      expect(options[0]).toBeInTheDocument();
+      expect(options[0]).toHaveAttribute('aria-selected', 'false');
+
+      keyPress('Escape');
+      expect(options[0]).not.toBeInTheDocument();
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       let trigger = async (item) => {
@@ -657,8 +918,8 @@ describe('ListBox', () => {
       it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <ListBox aria-label="listbox">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <ListBoxItem href="https://google.com">One</ListBoxItem>
+            <ListBoxItem href="https://adobe.com">Two</ListBoxItem>
           </ListBox>
         );
 
@@ -668,8 +929,7 @@ describe('ListBox', () => {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -679,8 +939,8 @@ describe('ListBox', () => {
       it.each(['single', 'multiple'])('should support links with selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <ListBox aria-label="listbox" selectionMode={selectionMode}>
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <ListBoxItem href="https://google.com">One</ListBoxItem>
+            <ListBoxItem href="https://adobe.com">Two</ListBoxItem>
           </ListBox>
         );
 
@@ -690,28 +950,25 @@ describe('ListBox', () => {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         await trigger(items[1]);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(onClick).toHaveBeenCalledTimes(2);
+        expect(onClick.mock.calls[1][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[1][0].target.href).toBe('https://adobe.com/');
         expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
       });
 
       it.each(['single', 'multiple'])('should support links with selectionMode="%s" selectionBehavior="replace"', async function (selectionMode) {
         let {getAllByRole} = render(
           <ListBox aria-label="listbox" selectionMode={selectionMode} selectionBehavior="replace">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <ListBoxItem href="https://google.com">One</ListBoxItem>
+            <ListBoxItem href="https://adobe.com">Two</ListBoxItem>
           </ListBox>
         );
 
@@ -721,8 +978,7 @@ describe('ListBox', () => {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
@@ -732,8 +988,6 @@ describe('ListBox', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {

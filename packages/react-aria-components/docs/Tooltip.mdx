@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Overlays
@@ -47,7 +48,7 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
   <Button>✏️</Button>
   <Tooltip>
     <OverlayArrow>
-      <svg width={8} height={8}><path d="M0 0,L4 4,L8 0" /></svg>
+      <svg width={8} height={8} viewBox="0 0 8 8"><path d="M0 0 L4 4 L8 0" /></svg>
     </OverlayArrow>
     Edit
   </Tooltip>
@@ -56,16 +57,24 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Tooltip {
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 4px;
-  background: slateblue;
-  color: white;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  forced-color-adjust: none;
   outline: none;
   padding: 2px 8px;
   max-width: 150px;
+  /* fixes FF gap */
+  transform: translate3d(0, 0, 0);
 
   &[data-placement=top] {
     margin-bottom: 8px;
@@ -98,7 +107,7 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 
   & .react-aria-OverlayArrow svg {
     display: block;
-    fill: slateblue;
+    fill: var(--highlight-background);
   }
 
   &[data-entering] {
@@ -119,49 +128,6 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
   to {
     transform: translateY(0);
     opacity: 1;
-  }
-}
-
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 4px;
-  color: var(--spectrum-alias-text-color);
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px;
-  transition: border-color 200ms;
-
-  &[data-hovered] {
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-600);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Tooltip {
-    border: 1px solid ButtonBorder;
-    background: ButtonFace;
-    color: ButtonText;
-
-    & .react-aria-OverlayArrow svg {
-      fill: ButtonFace;
-      stroke: ButtonBorder;
-    }
   }
 }
 ```
@@ -203,6 +169,12 @@ Tooltip triggers must be focusable and hoverable in order to ensure that all use
 
 **Note**: tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.
 
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="tooltip" />
+
 ## Reusable wrappers
 
 If you will use a Tooltip in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -220,7 +192,7 @@ function MyTooltip({children, ...props}: MyTooltipProps) {
   return (
     <Tooltip {...props}>
       <OverlayArrow>
-        <svg width={8} height={8}><path d="M0 0,L4 4,L8 0" /></svg>
+        <svg width={8} height={8} viewBox="0 0 8 8"><path d="M0 0 L4 4 L8 0" /></svg>
       </OverlayArrow>
       {children}
     </Tooltip>

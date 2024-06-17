@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useComboBoxState} from '../';
@@ -168,7 +168,7 @@ describe('useComboBoxState tests', function () {
     beforeEach(() => {
       onSelectionChange = jest.fn();
       let collator = {compare: jest.fn().mockReturnValue(true)};
-      defaultProps = {items: [{key: '0', name: 'one'}, {key: '1', name: 'onomatopoeia'}], children: (props) => <Item {...props}>{props.name}</Item>, onSelectionChange, collator};
+      defaultProps = {items: [{id: '0', name: 'one'}, {id: '1', name: 'onomatopoeia'}], children: (props) => <Item {...props}>{props.name}</Item>, onSelectionChange, collator};
     });
 
     it('support selectedKey', function () {
@@ -211,7 +211,7 @@ describe('useComboBoxState tests', function () {
 
     it('won\'t update the returned collection if the combobox is closed (uncontrolled items)', function () {
       let filter = renderHook((props) => useFilter(props), {sensitivity: 'base'});
-      let initialProps = {...defaultProps, items: null, defaultItems: [{key: '0', name: 'one'}, {key: '1', name: 'onomatopoeia'}], defaultInputValue: '', defaultFilter: filter.result.current.contains};
+      let initialProps = {...defaultProps, items: null, defaultItems: [{id: '0', name: 'one'}, {id: '1', name: 'onomatopoeia'}], defaultInputValue: '', defaultFilter: filter.result.current.contains};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.collection.size).toEqual(2);
       expect(result.current.inputValue).toBe('');
@@ -254,7 +254,7 @@ describe('useComboBoxState tests', function () {
       expect(result.current.collection.size).toEqual(2);
 
       act(() => {result.current.open();});
-      rerender({...initialProps, items: [{key: '1', name: 'onomatopoeia'}]});
+      rerender({...initialProps, items: [{id: '1', name: 'onomatopoeia'}]});
       // Returned collection reflects the items provided by the user since the combobox is open
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');

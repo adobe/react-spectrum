@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {DateField, DateFieldContext, DateInput, DateSegment, Label, Text} from '../';
-import {installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -23,6 +23,7 @@ describe('DateField', () => {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
       <DateField data-foo="bar">
@@ -94,11 +95,14 @@ describe('DateField', () => {
   });
 
   it('should support hover state', async () => {
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
         <DateInput className={({isHovered}) => isHovered ? 'hover' : ''}>
-          {segment => <DateSegment segment={segment} className={({isHovered}) => isHovered ? 'hover' : ''} />}
+          {segment => <DateSegment segment={segment} className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy} />}
         </DateInput>
       </DateField>
     );
@@ -119,10 +123,14 @@ describe('DateField', () => {
     await user.hover(segments[0]);
     expect(segments[0]).toHaveAttribute('data-hovered', 'true');
     expect(segments[0]).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(segments[0]);
     expect(segments[0]).not.toHaveAttribute('data-hovered', 'true');
     expect(segments[0]).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus visible state', async () => {
@@ -171,7 +179,7 @@ describe('DateField', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <DateField minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+      <DateField minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
@@ -213,4 +221,99 @@ describe('DateField', () => {
     expect(outerEl[0]).toHaveClass('react-aria-DateField');
   });
 
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <DateField name="date" isRequired>
+          <Label>Birth Date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FieldError />
+        </DateField>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
+
+    await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(getDescription()).not.toContain('Constraints not satisfied');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should use controlled validation first', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <DateField name="date" isRequired isInvalid={false}>
+          <Label>Birth Date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FieldError />
+        </DateField>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should focus previous segment when backspacing on an empty date segment', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+  
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    expect(document.activeElement).toBe(segments[2]);
+
+    // Press backspace to delete '2024'
+    for (let i = 0; i < 4; i++) {
+      await user.keyboard('{backspace}');
+    }
+    expect(document.activeElement).toBe(segments[2]);
+    await user.keyboard('{backspace}');
+    expect(document.activeElement).toBe(segments[1]);
+
+    // Press backspace to delete '31'
+    for (let i = 0; i < 2; i++) {
+      await user.keyboard('{backspace}');
+    }
+    expect(document.activeElement).toBe(segments[1]);
+    await user.keyboard('{backspace}');
+    expect(document.activeElement).toBe(segments[0]);
+  });
 });

@@ -12,12 +12,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
+import {useAsyncList} from '@react-stately/data';
+
 
 type SearchAutocompleteStory = ComponentStoryObj<typeof SearchAutocomplete>;
 
@@ -160,11 +164,24 @@ export default {
       options: ['focus', 'manual']
     },
     direction: {
-      control: 'select',
+      control: 'radio',
       options: ['top', 'bottom']
     },
+    align: {
+      control: 'radio',
+      options: ['start', 'end']
+    },
     width: {
-      control: 'text'
+      control: {
+        type: 'radio',
+        options: [null, '100px', '480px', 'size-4600']
+      }
+    },
+    menuWidth: {
+      control: {
+        type: 'radio',
+        options: [null, '100px', '480px', 'size-4600']
+      }
     }
   }
 } as ComponentMeta<typeof SearchAutocomplete>;
@@ -257,4 +274,73 @@ export const iconFilter: SearchAutocompleteStory = {
 export const iconNull: SearchAutocompleteStory = {
   args: {icon: null},
   name: 'icon: null'
+};
+
+export const WithAvatars: SearchAutocompleteStory = {
+  args: {label: 'Search users'},
+  render: (args) => (
+    <SearchAutocomplete {...args}>
+      <Item textValue="User 1">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
+      </Item>
+    </SearchAutocomplete>
+  )
+};
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // If no cursor is available, then we're loading the first page,
+      // filtering the results returned via a query string that
+      // mirrors the SearchAutocomplete input text.
+      // Otherwise, the cursor is the next URL to load,
+      // as returned from the previous page.
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <SearchAutocomplete
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </SearchAutocomplete>
+  );
+}
+
+export const AsyncList: SearchAutocompleteStory = {
+  render: (args) => (
+    <AsyncLoadingExample {...args} />
+  )
 };

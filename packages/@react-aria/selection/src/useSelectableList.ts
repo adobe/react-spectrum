@@ -11,10 +11,10 @@
  */
 
 import {AriaSelectableCollectionOptions, useSelectableCollection} from './useSelectableCollection';
-import {Collection, DOMAttributes, KeyboardDelegate, Node} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {Collection, DOMAttributes, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {useCollator} from '@react-aria/i18n';
+import {useMemo} from 'react';
 
 export interface AriaSelectableListOptions extends Omit<AriaSelectableCollectionOptions, 'keyboardDelegate'> {
   /**
@@ -55,7 +55,13 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let disabledBehavior = selectionManager.disabledBehavior;
   let delegate = useMemo(() => (
-    keyboardDelegate || new ListKeyboardDelegate(collection, disabledBehavior === 'selection' ? new Set() : disabledKeys, ref, collator)
+    keyboardDelegate || new ListKeyboardDelegate({
+      collection,
+      disabledKeys,
+      disabledBehavior,
+      ref,
+      collator
+    })
   ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({

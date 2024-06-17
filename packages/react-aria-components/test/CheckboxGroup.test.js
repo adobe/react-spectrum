@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxGroup, CheckboxGroupContext, Label, Text} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Checkbox, CheckboxGroup, CheckboxGroupContext, FieldError, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -205,5 +205,80 @@ describe('CheckboxGroup', () => {
     for (let checkbox of checkboxes) {
       expect(checkbox).toHaveAttribute('aria-describedby', 'test');
     }
+  });
+
+  it('should support validation errors', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <CheckboxGroup isRequired>
+          <Label>Test</Label>
+          <Checkbox value="a">A</Checkbox>
+          <FieldError />
+        </CheckboxGroup>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let checkboxes = getAllByRole('checkbox');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+    }
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).toHaveAttribute('data-invalid');
+    }
+
+    await user.click(checkboxes[0]);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+    }
+  });
+
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let {getAllByRole, getByText} = render(
+      <>
+        <TestCheckboxGroup groupProps={{onBlur, onFocus, onFocusChange}} />
+        <button>Steal focus</button>
+      </>
+    );
+    let checkboxes = getAllByRole('checkbox');
+    let button = getByText('Steal focus');
+
+    // first gaining focus
+    await user.tab();
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+    // inner focus changes shouldn't call the callbacks.
+    await user.tab();
+    expect(document.activeElement).toBe(checkboxes[1]);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+    // `onBlur` and the following `onFocusChange` only should be called when losing focus to an outer element.
+    await user.click(button);
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 });

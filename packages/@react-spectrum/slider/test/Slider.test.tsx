@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import React, {useCallback, useState} from 'react';
@@ -121,6 +121,27 @@ describe('Slider', function () {
     expect(slider).toHaveProperty('value', '40');
     expect(slider).toHaveAttribute('aria-valuetext', '40');
     expect(output).toHaveTextContent('40');
+  });
+
+  it.each`
+  Name                            | props                                        | expected
+  ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
+  ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
+  ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
+  ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
+  ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
+  ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
+  ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
+  ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
+  `('clamps value & defaultValue to the allowed range $Name', function ({props, expected}) {
+    let {getByRole} = render(<Slider label="The Label" {...props} />);
+
+    let slider = getByRole('slider');
+    let output = getByRole('status');
+
+    expect(slider).toHaveProperty('value', expected);
+    expect(slider).toHaveAttribute('aria-valuetext', expected);
+    expect(output).toHaveTextContent(expected);
   });
 
   it('can be controlled', function () {

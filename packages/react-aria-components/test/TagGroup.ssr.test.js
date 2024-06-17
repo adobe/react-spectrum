@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils';
+import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('TagGroup SSR', function () {
   it('should render without errors', async function () {
@@ -25,10 +25,10 @@ describe('TagGroup SSR', function () {
             <TagGroup aria-label="TagGroup">
               <Label>Test</Label>
               <TagList>
-                <Tag key="1">Left</Tag>
-                <Tag key="2">Middle</Tag>
-                {show && <Tag key="4">Extra</Tag>}
-                <Tag key="3">Right</Tag>
+                <Tag id="1">Left</Tag>
+                <Tag id="2">Middle</Tag>
+                {show && <Tag id="4">Extra</Tag>}
+                <Tag id="3">Right</Tag>
               </TagList>
             </TagGroup>
           </>

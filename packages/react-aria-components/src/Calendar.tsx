@@ -14,10 +14,10 @@ import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {HeadingContext} from './Heading';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
+import {DOMAttributes, FocusableElement, HoverEvents} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import {HeadingContext} from './RSPContexts';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -459,25 +459,26 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
-export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
   /** The date to render in the cell. */
   date: CalendarDate
 }
 
-function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
+function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
-  let objectRef = useObjectRef(ref);
+  let buttonRef = useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},
     state,
-    objectRef
+    buttonRef
   );
 
-  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled});
   let {focusProps, isFocusVisible} = useFocusRing();
+  isFocusVisible &&= states.isFocused;
   let isOutsideMonth = !isSameMonth(currentMonth, date);
   let isSelectionStart = false;
   let isSelectionEnd = false;
@@ -517,8 +518,8 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
   };
 
   return (
-    <td {...cellProps}>
-      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+    <td {...cellProps} ref={ref}>
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
 }

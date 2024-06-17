@@ -11,17 +11,21 @@
  */
 
 import {AriaToastRegionProps} from '@react-aria/toast';
-import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
+import {classNames} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
+import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
 
-export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
+export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
   /** A label for the action button within the toast. */
-  actionLabel?: ReactNode,
+  actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
   /** Whether the toast should automatically close when an action is performed. */
@@ -35,7 +39,7 @@ let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
 function getGlobalToastQueue() {
   if (!globalToastQueue) {
     globalToastQueue = new ToastQueue({
-      maxVisibleToasts: 1,
+      maxVisibleToasts: Infinity,
       hasExitAnimation: true
     });
   }
@@ -103,15 +107,21 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // Only render if this is the active toast provider instance, and there are visible toasts.
   let activeToastContainer = useActiveToastContainer();
   let state = useToastQueue(getGlobalToastQueue());
+
   if (ref === activeToastContainer && state.visibleToasts.length > 0) {
     return (
       <Toaster state={state} {...props}>
-        {state.visibleToasts.map((toast) => (
-          <Toast
-            key={toast.key}
-            toast={toast}
-            state={state} />
-        ))}
+        <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
+          {state.visibleToasts.slice().reverse().map((toast) => (
+            <li
+              key={toast.key}
+              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}>
+              <Toast
+                toast={toast}
+                state={state} />
+            </li>
+          ))}
+        </ol>
       </Toaster>
     );
   }
@@ -119,7 +129,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   return null;
 }
 
-function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
+function addToast(children: string, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
   // Dispatch a custom event so that toasts can be intercepted and re-targeted, e.g. when inside an iframe.
   if (typeof CustomEvent !== 'undefined' && typeof window !== 'undefined') {
     let event = new CustomEvent('react-spectrum-toast', {
@@ -143,7 +153,8 @@ function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], o
     variant,
     actionLabel: options.actionLabel,
     onAction: options.onAction,
-    shouldCloseOnAction: options.shouldCloseOnAction
+    shouldCloseOnAction: options.shouldCloseOnAction,
+    ...filterDOMProps(options)
   };
 
   // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
@@ -151,44 +162,27 @@ function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], o
   // It is debatable whether non-actionable toasts would also fail.
   let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
   let queue = getGlobalToastQueue();
-  let key = queue.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
+  let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);
 }
 
 const SpectrumToastQueue = {
   /** Queues a neutral toast. */
-  neutral(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'neutral', options);
   },
   /** Queues a positive toast. */
-  positive(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'positive', options);
   },
   /** Queues a negative toast. */
-  negative(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'negative', options);
   },
   /** Queues an informational toast. */
-  info(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  info(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'info', options);
   }
 };
 
 export {SpectrumToastQueue as ToastQueue};
-
-// https://spectrum.adobe.com/page/toast/#Priority-queue
-// TODO: if a lower priority toast comes in, no way to know until you dismiss the higher priority one.
-const VARIANT_PRIORITY = {
-  negative: 10,
-  positive: 3,
-  info: 2,
-  neutral: 1
-};
-
-function getPriority(variant: SpectrumToastValue['variant'], options: SpectrumToastOptions) {
-  let priority = VARIANT_PRIORITY[variant] || 1;
-  if (options.onAction) {
-    priority += 4;
-  }
-  return priority;
-}

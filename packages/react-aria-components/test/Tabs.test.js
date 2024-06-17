@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
-import {TabsExample} from '../stories/index.stories';
+import {TabsExample} from '../stories/Tabs.stories';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
@@ -79,6 +79,21 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
+  it('should support aria props on the tabs', () => {
+    let {getAllByRole} = renderTabs({}, {}, {
+      'aria-label': 'label',
+      'aria-labelledby': 'labelledby',
+      'aria-describedby': 'describedby',
+      'aria-details': 'details'
+    }, {});
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('aria-label', 'label');
+      expect(tab).toHaveAttribute('aria-labelledby', 'labelledby');
+      expect(tab).toHaveAttribute('aria-describedby', 'describedby');
+      expect(tab).toHaveAttribute('aria-details', 'details');
+    }
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
@@ -126,6 +141,7 @@ describe('Tabs', () => {
     await user.tab();
     expect(document.activeElement).toBe(tab);
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
+    expect(tab).toHaveAttribute('data-focused', 'true');
     expect(tab).toHaveClass('focus');
 
     await user.tab();
@@ -164,6 +180,28 @@ describe('Tabs', () => {
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
     expect(tab).toHaveClass('disabled');
+  });
+
+  it('should support isDisabled prop on tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" isDisabled>B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
   });
 
   it('should support selected state', async () => {
@@ -252,6 +290,11 @@ describe('Tabs', () => {
   });
 
   it('should support shouldForceMount', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
+
     let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
     let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
     expect(tabpanels).toHaveLength(3);
@@ -265,6 +308,7 @@ describe('Tabs', () => {
     expect(tabpanels[0]).toHaveAttribute('inert');
     expect(tabpanels[1]).not.toHaveAttribute('inert');
     expect(tabpanels[2]).toHaveAttribute('inert');
+    console.error = consoleError;
   });
 
   it('should support keyboardActivation=manual', () => {
@@ -312,5 +356,25 @@ describe('Tabs', () => {
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should render tab with aria-label', () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList>
+          <Tab id="a" aria-label="Tab A">A</Tab>
+          <Tab id="b" aria-label="Tab B">B</Tab>
+          <Tab id="c" aria-label="Tab C">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('aria-label', 'Tab A');
+    expect(tabs[1]).toHaveAttribute('aria-label', 'Tab B');
+    expect(tabs[2]).toHaveAttribute('aria-label', 'Tab C');
   });
 });

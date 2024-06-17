@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/toast",
-  "version": "3.0.0-beta.6",
+  "version": "3.0.0-beta.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,21 +36,22 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.14.3",
-    "@react-aria/i18n": "^3.8.4",
-    "@react-aria/toast": "3.0.0-beta.6",
-    "@react-aria/utils": "^3.21.1",
-    "@react-spectrum/button": "^3.14.1",
-    "@react-spectrum/utils": "^3.11.1",
-    "@react-stately/toast": "3.0.0-beta.1",
-    "@react-types/shared": "^3.21.0",
-    "@spectrum-icons/ui": "^3.6.1",
+    "@react-aria/focus": "^3.17.1",
+    "@react-aria/i18n": "^3.11.1",
+    "@react-aria/overlays": "^3.22.1",
+    "@react-aria/toast": "3.0.0-beta.12",
+    "@react-aria/utils": "^3.24.1",
+    "@react-spectrum/button": "^3.16.4",
+    "@react-spectrum/utils": "^3.11.7",
+    "@react-stately/toast": "3.0.0-beta.4",
+    "@react-types/shared": "^3.23.1",
+    "@spectrum-icons/ui": "^3.6.7",
     "@swc/helpers": "^0.5.0",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "3.0.0-alpha.1",
+    "@react-spectrum/test-utils-internal": "3.0.0-alpha.1",
     "@types/use-sync-external-store": "^0.0.3"
   },
   "peerDependencies": {

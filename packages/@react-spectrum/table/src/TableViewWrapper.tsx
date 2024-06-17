@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, DOMRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import type {AriaLabelingProps, DOMProps, DOMRef, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import type {ColumnSize, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
-import React, {Key, ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableView} from './TableView';
 import {TreeGridTableView} from './TreeGridTableView';

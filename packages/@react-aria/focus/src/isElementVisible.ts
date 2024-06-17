@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from '@react-aria/utils';
+
 function isStyleVisible(element: Element) {
-  if (!(element instanceof HTMLElement) && !(element instanceof SVGElement)) {
+  const windowObject = getOwnerWindow(element);
+  if (!(element instanceof windowObject.HTMLElement) && !(element instanceof windowObject.SVGElement)) {
     return false;
   }
 
@@ -24,7 +27,7 @@ function isStyleVisible(element: Element) {
   );
 
   if (isVisible) {
-    const {getComputedStyle} = element.ownerDocument.defaultView;
+    const {getComputedStyle} = element.ownerDocument.defaultView as unknown as Window;
     let {display: computedDisplay, visibility: computedVisibility} = getComputedStyle(element);
 
     isVisible = (
@@ -40,6 +43,8 @@ function isStyleVisible(element: Element) {
 function isAttributeVisible(element: Element, childElement?: Element) {
   return (
     !element.hasAttribute('hidden') &&
+    // Ignore HiddenSelect when tree walking.
+    !element.hasAttribute('data-react-aria-prevent-focus') &&
     (element.nodeName === 'DETAILS' &&
       childElement &&
       childElement.nodeName !== 'SUMMARY'
@@ -49,11 +54,11 @@ function isAttributeVisible(element: Element, childElement?: Element) {
 }
 
 /**
- * Adapted from https://github.com/testing-library/jest-dom and 
+ * Adapted from https://github.com/testing-library/jest-dom and
  * https://github.com/vuejs/vue-test-utils-next/.
  * Licensed under the MIT License.
  * @param element - Element to evaluate for display or visibility.
- */  
+ */
 export function isElementVisible(element: Element, childElement?: Element) {
   return (
     element.nodeName !== '#comment' &&

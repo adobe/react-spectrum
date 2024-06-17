@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, LinkDOMProps} from '@react-types/shared';
+import {CollectionBase, Key} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {forwardRefType, RenderProps, StyleProps} from './utils';
-import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
+import {forwardRefType, StyleProps} from './utils';
+import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -52,6 +52,7 @@ export class NodeValue<T> implements Node<T> {
   readonly firstChildKey: Key | null = null;
   readonly lastChildKey: Key | null = null;
   readonly props: any = {};
+  readonly render?: (node: Node<any>) => ReactElement;
 
   constructor(type: string, key: Key) {
     this.type = type;
@@ -77,6 +78,7 @@ export class NodeValue<T> implements Node<T> {
     node.firstChildKey = this.firstChildKey;
     node.lastChildKey = this.lastChildKey;
     node.props = this.props;
+    node.render = this.render;
     return node;
   }
 }
@@ -148,6 +150,10 @@ class BaseNode<T> {
   set parentNode(parentNode) {
     this._parentNode = parentNode;
     this.ownerDocument.markDirty(this);
+  }
+
+  get isConnected() {
+    return this.parentNode?.isConnected || false;
   }
 
   appendChild(child: ElementNode<T>) {
@@ -311,14 +317,15 @@ export class ElementNode<T> extends BaseNode<T> {
     node.lastChildKey = this.lastChild?.node.key ?? null;
   }
 
-  setProps<T extends Element>(obj: any, ref: ForwardedRef<T>, rendered?: any) {
+  setProps<E extends Element>(obj: any, ref: ForwardedRef<E>, rendered?: any, render?: (node: Node<T>) => ReactElement) {
     let node = this.ownerDocument.getMutableNode(this);
     let {value, textValue, id, ...props} = obj;
     props.ref = ref;
     node.props = props;
     node.rendered = rendered;
+    node.render = render;
     node.value = value;
-    node.textValue = textValue || (typeof rendered === 'string' ? rendered : '') || obj['aria-label'] || '';
+    node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
       if (this.hasSetProps) {
         throw new Error('Cannot change the id of an item');
@@ -515,6 +522,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.collectionMutated = true;
   }
 
+  get isConnected() {
+    return true;
+  }
+
   createElement(type: string) {
     return new ElementNode(type, this);
   }
@@ -570,7 +581,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   removeNode(node: ElementNode<T>) {
     for (let child of node) {
-      child.parentNode = null;
       this.removeNode(child);
     }
 
@@ -591,17 +601,17 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   updateCollection() {
     for (let element of this.dirtyNodes) {
-      if (element instanceof ElementNode && element.parentNode) {
+      if (element instanceof ElementNode && element.isConnected) {
         element.updateNode();
       }
     }
 
     this.dirtyNodes.clear();
 
-    if (this.mutatedNodes.size) {
+    if (this.mutatedNodes.size || this.collectionMutated) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
-        if (element.parentNode) {
+        if (element.isConnected) {
           collection.addNode(element.node);
         }
       }
@@ -642,17 +652,23 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children?: ReactNode | ((item: T) => ReactNode),
+  /** Values that should invalidate the item cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
   idScope?: Key,
-  addIdAndValue?: boolean
+  addIdAndValue?: boolean,
+  dependencies?: any[]
 }
 
 export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
-  let {children, items, idScope, addIdAndValue} = props;
-  let cache = useMemo(() => new WeakMap(), []);
+  let {children, items, idScope, addIdAndValue, dependencies = []} = props;
+
+  // Invalidate the cache whenever the parent value changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let cache = useMemo(() => new WeakMap(), dependencies);
   return useMemo(() => {
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];
@@ -660,23 +676,21 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
         let rendered = cache.get(item);
         if (!rendered) {
           rendered = children(item);
-          if (rendered.key == null) {
-            // @ts-ignore
-            let key = rendered.props.id ?? item.key ?? item.id;
-            // eslint-disable-next-line max-depth
-            if (key == null) {
-              throw new Error('Could not determine key for item');
-            }
-            // eslint-disable-next-line max-depth
-            if (idScope) {
-              key = idScope + ':' + key;
-            }
-            // TODO: only works if wrapped Item passes through id...
-            rendered = cloneElement(
-              rendered,
-              addIdAndValue ? {key, id: key, value: item} : {key}
-            );
+          // @ts-ignore
+          let key = rendered.props.id ?? item.key ?? item.id;
+          // eslint-disable-next-line max-depth
+          if (key == null) {
+            throw new Error('Could not determine key for item');
           }
+          // eslint-disable-next-line max-depth
+          if (idScope) {
+            key = idScope + ':' + key;
+          }
+          // Note: only works if wrapped Item passes through id...
+          rendered = cloneElement(
+            rendered,
+            addIdAndValue ? {key, id: key, value: item} : {key}
+          );
           cache.set(item, rendered);
         }
         res.push(rendered);
@@ -777,18 +791,6 @@ export function CollectionPortal<T extends object>(props: CollectionProps<T>) {
   return <>{useCollectionPortal(props)}</>;
 }
 
-/** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
-export function useShallowRender<P extends object, T extends Element>(Element: string, props: P, ref: ForwardedRef<T>): ReactElement | null {
-  let isShallow = useContext(ShallowRenderContext);
-  if (isShallow) {
-    // Elements cannot be re-parented, so the context will always be there.
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    return useSSRCollectionNode(Element, props, ref, 'children' in props ? props.children : null) ?? <></>;
-  }
-
-  return null;
-}
-
 export interface ItemRenderProps {
   /**
    * Whether the item is currently hovered with a mouse.
@@ -848,27 +850,22 @@ export interface ItemRenderProps {
   isDropTarget?: boolean
 }
 
-export function useCollectionItemRef<T extends Element>(props: any, ref: ForwardedRef<T>, rendered?: any) {
-  // Return a callback ref that sets the props object on the fake DOM node.
-  return useCallback((element) => {
-    element?.setProps(props, ref, rendered);
-  }, [props, ref, rendered]);
-}
-
-export function useSSRCollectionNode<T extends Element>(Type: string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode) {
+function useSSRCollectionNode<T extends Element>(Type: string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<T>) => ReactElement) {
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
   // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
   // Therefore we can create elements in our collection document during render so that they are in the
   // collection by the time we need to use the collection to render to the real DOM.
   // After hydration, we switch to client rendering using the portal.
-  let itemRef = useCollectionItemRef(props, ref, rendered);
+  let itemRef = useCallback((element: ElementNode<any> | null) => {
+    element?.setProps(props, ref, rendered, render);
+  }, [props, ref, rendered, render]);
   let parentNode = useContext(SSRContext);
   if (parentNode) {
     // Guard against double rendering in strict mode.
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
       element = parentNode.ownerDocument.createElement(Type);
-      element.setProps(props, ref, rendered);
+      element.setProps(props, ref, rendered, render);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
       parentNode.ownerDocument.nodesByProps.set(props, element);
@@ -883,48 +880,91 @@ export function useSSRCollectionNode<T extends Element>(Type: string, props: obj
   return <Type ref={itemRef}>{children}</Type>;
 }
 
-export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps>, LinkDOMProps {
-  /** The unique id of the item. */
-  id?: Key,
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
-  value?: T
-}
-
-function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
-  return useSSRCollectionNode('item', props, ref, props.children);
-}
-
-const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
-export {_Item as Item};
-
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps {
   /** The unique id of the section. */
   id?: Key,
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** Static child items or a function to render children. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** Values that should invalidate the item cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
-function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
-  let children = useCollectionChildren(props);
-  return useSSRCollectionNode('section', props, ref, null, children);
+interface SectionContextValue {
+  render: (props: SectionProps<any>, ref: ForwardedRef<HTMLElement>, section: Node<any>) => ReactElement
 }
 
-const _Section = /*#__PURE__*/ (forwardRef as forwardRefType)(Section);
-export {_Section as Section};
+export const SectionContext = createContext<SectionContextValue | null>(null);
+
+export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
+  let {render} = useContext(SectionContext)!;
+  return render(props, ref, section);
+});
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
-export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
-  let renderer = typeof props.children === 'function' ? props.children : null;
-  return (
-    <CollectionRendererContext.Provider value={renderer}>
-      {useCollectionChildren(props)}
-    </CollectionRendererContext.Provider>
-  );
+  props.dependencies = (ctx?.dependencies || []).concat(props.dependencies);
+  return <>{useCollectionChildren(props)}</>;
+}
+
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => JSX.Element) {
+  let Component = ({node}) => render(node.props, node.props.ref, node);
+  let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
+    let isShallow = useContext(ShallowRenderContext);
+    if (!isShallow) {
+      if (render.length >= 3) {
+        throw new Error(render.name + ' cannot be rendered outside a collection.');
+      }
+      return render(props, ref);
+    }
+
+    return useSSRCollectionNode(type, props, ref, 'children' in props ? props.children : null, null, node => (
+      <CollectionRendererContext.Provider value={useDefaultCollectionRenderer}>
+        <Component node={node} />
+      </CollectionRendererContext.Provider>
+    ));
+  });
+  // @ts-ignore
+  Result.displayName = render.name;
+  return Result;
+}
+
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => JSX.Element, useChildren: (props: P) => ReactNode = useCollectionChildren) {
+  let Component = ({node}) => render(node.props, node.props.ref, node);
+  let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
+    let children = useChildren(props);
+    return useSSRCollectionNode(type, props, ref, null, children, node => <Component node={node} />) ?? <></>;
+  });
+  // @ts-ignore
+  Result.displayName = render.name;
+  return Result;
+}
+
+export type CollectionRenderer = <T extends object>(collection: ICollection<Node<T>>, parent?: Node<T>) => ReactNode;
+const useDefaultCollectionRenderer: CollectionRenderer = (collection, parent) => {
+  return useCachedChildren({
+    items: parent ? collection.getChildren!(parent.key) : collection,
+    children(child) {
+      return child.render!(child);
+    }
+  });
+};
+
+export const CollectionRendererContext = createContext<CollectionRenderer>(useDefaultCollectionRenderer);
+
+export interface CollectionChildrenProps {
+  collection: ICollection<Node<object>>,
+  parent?: Node<object>
+}
+
+export function CollectionChildren(props: CollectionChildrenProps) {
+  let renderer = useContext(CollectionRendererContext);
+  return renderer(props.collection, props.parent);
 }
