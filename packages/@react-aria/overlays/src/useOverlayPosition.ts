@@ -283,7 +283,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         position: 'absolute',
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position.position,
-        maxHeight: position.maxHeight
+        maxHeight: position.maxHeight ?? '100vh'
       }
     },
     placement: position.placement,
