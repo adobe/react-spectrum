@@ -75,6 +75,10 @@ export class TableLayout<T> extends ListLayout<T> {
     super.validate(invalidationContext);
   }
 
+  // TODO: in the RAC case, we don't explicity accept loadingState on the TableBody, but note that if the user
+  // does happen to set loadingState="loading" or loadingState="loadingMore" coincidentally, the isLoading
+  // part of this code will trigger and the layout will reserve more room for the loading spinner which we actually only use
+  // in RSP
   protected buildCollection(): LayoutNode[] {
     // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
     let loadingState = this.collection.body.props.loadingState;
@@ -335,6 +339,12 @@ export class TableLayout<T> extends ListLayout<T> {
           children.push(layoutNode);
         }
       }
+    }
+
+    // TODO: perhaps make a separate buildLoader? Do we need to differentiate the layoutInfo information?
+    // I think the below is ok for now since we can just treat nested loaders/load more as rows
+    if (node.type === 'loader') {
+      height = this.rowHeight;
     }
 
     this.setChildHeights(children, height);

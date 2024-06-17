@@ -1304,7 +1304,9 @@ function RootDropIndicator() {
 }
 
 // TOOD: no props for now, maybe get rid of this? Might be good to keep it just in case
-export interface TableLoaderProps {}
+export interface TableLoaderProps extends StyleProps {
+  children?: ReactNode
+}
 
 export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
