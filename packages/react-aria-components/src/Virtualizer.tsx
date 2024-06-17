@@ -57,7 +57,7 @@ export function Virtualizer(props: VirtualizerProps) {
         onScrollEnd: state.endScrolling
       }, scrollRef!);
 
-      if (state.visibleViews.length === 0) {
+      if (state.contentSize.area === 0) {
         return null;
       }
 
