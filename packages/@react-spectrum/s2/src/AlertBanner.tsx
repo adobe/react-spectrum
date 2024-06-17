@@ -71,7 +71,6 @@ const content = style({
 
 const text = style({
   flexGrow: 1,
-  // marginY: size(18),
   marginEnd: 16,
   marginY: size(7) // combines with content margin to have edge-to-text margin of 18
 });
@@ -96,7 +95,6 @@ const icon = style({
 const button = style({
   marginEnd: 16,
   marginY: size(1) // combines with text margin to have text-button spacing of 8 (wrapped mode)
-  // marginY: 12
 });
 
 function AlertBanner(props: AlertBannerProps, ref: DOMRef<HTMLDivElement>) {
