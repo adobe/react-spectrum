@@ -11,6 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria/utils/src/scrollIntoView');
 import {
   act,
   fireEvent,
@@ -25,6 +26,7 @@ import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
+import {scrollIntoView} from '@react-aria/utils';
 import * as stories from '../stories/TreeGridTable.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -808,10 +810,9 @@ describe('TableView with expandable rows', function () {
       it('should scroll to a cell when it is focused', function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} disabledKeys={null} />);
         let body = (treegrid.getByRole('treegrid').childNodes[1] as HTMLElement);
-        expect(body.scrollTop).toBe(0);
 
         focusCell(treegrid, 'Row 9, Lvl 1, Foo');
-        expect(body.scrollTop).toBe(24);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should scroll to a nested row cell when it is focused off screen', function () {
@@ -820,13 +821,13 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
         act(() => cell.focus());
         expect(document.activeElement).toBe(cell);
-        expect(body.scrollTop).toBe(0);
 
         // When scrolling the focused item out of view, focus should remain on the item,
         // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
         body.scrollLeft = 1000;
         fireEvent.scroll(body);
+        act(() => jest.runAllTimers());
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(cell);
@@ -852,8 +853,8 @@ describe('TableView with expandable rows', function () {
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowRight');
-        expect(body.scrollTop).toBe(82);
         expect(document.activeElement).toBe(getCell(treegrid, 'Row 1, Lvl 3, Bar'));
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
     });
   });

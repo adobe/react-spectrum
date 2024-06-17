@@ -202,11 +202,11 @@ describe('Color', function () {
 
 
     let rgb = fc.tuple(fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}))
-      .map(([r, g, b]) => (['rgb', `rgb(${r}, ${g}, ${b})`, [r, g, b]]));
+      .map(([r, g, b]) => (['rgb' as ColorFormat, `rgb(${r}, ${g}, ${b})`, [r, g, b]]));
     let hsl = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
-      .map(([h, s, l]) => (['hsl', `hsl(${h}, ${s}%, ${l}%)`, [h, s, l]]));
+      .map(([h, s, l]) => (['hsl' as ColorFormat, `hsl(${h}, ${s}%, ${l}%)`, [h, s, l]]));
     let hsb = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
-      .map(([h, s, b]) => (['hsb', `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
+      .map(([h, s, b]) => (['hsb' as ColorFormat, `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
     let options = fc.record({
       colorSpace: fc.oneof(fc.constant('rgb'), fc.constant('hsl'), fc.constant('hsb')),
       color: fc.oneof(rgb, hsl, hsb)
@@ -232,6 +232,7 @@ describe('Color', function () {
     };
 
     it('can perform round trips', () => {
+      // @ts-ignore
       fc.assert(fc.property(options, ({colorSpace, color}: {colorSpace: ColorFormat, color: [string, string, number[]]}) => {
         let testColor = parseColor(color[1]);
         let convertedColor = testColor.toString(colorSpace);

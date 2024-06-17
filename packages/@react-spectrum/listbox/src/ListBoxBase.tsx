@@ -21,9 +21,9 @@ import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useContext, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -40,15 +40,15 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
   domProps?: HTMLAttributes<HTMLElement>,
   disallowEmptySelection?: boolean,
   shouldUseVirtualFocus?: boolean,
-  transitionDuration?: number,
   isLoading?: boolean,
+  showLoadingSpinner?: boolean,
   onLoadMore?: () => void,
   renderEmptyState?: () => ReactNode,
   onScroll?: () => void
 }
 
 /** @private */
-export function useListBoxLayout<T>(state: ListState<T>, isLoading: boolean): ListLayout<T> {
+export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
@@ -64,32 +64,23 @@ export function useListBoxLayout<T>(state: ListState<T>, isLoading: boolean): Li
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
-
-  useLayoutEffect(() => {
-    // Sync loading state into the layout.
-    if (layout.isLoading !== isLoading) {
-      layout.isLoading = isLoading;
-      layout.virtualizer?.relayoutNow();
-    }
-  }, [layout, isLoading]);
   return layout;
 }
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0, onScroll} = props;
+  let {layout, state, shouldFocusOnHover, shouldUseVirtualFocus, domProps = {}, isLoading, showLoadingSpinner = isLoading, onScroll, renderEmptyState} = props;
   let {listBoxProps} = useListBox({
     ...props,
     keyboardDelegate: layout,
     isVirtualized: true
   }, state, ref);
   let {styleProps} = useStyleProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/listbox');
 
   // This overrides collection view's renderWrapper to support hierarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
-  type View = ReusableView<Node<T>, ReactNode>;
-  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
+  type View = ReusableView<Node<T>, ReactElement>;
+  let renderWrapper = useCallback((parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     if (reusableView.viewType === 'section') {
       return (
         <ListBoxSection
@@ -112,10 +103,10 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         {reusableView.rendered}
       </VirtualizerItem>
     );
-  };
+  }, []);
 
   return (
-    <ListBoxContext.Provider value={state}>
+    <ListBoxContext.Provider value={{state, renderEmptyState, shouldFocusOnHover, shouldUseVirtualFocus}}>
       <FocusScope>
         <Virtualizer
           {...styleProps}
@@ -133,50 +124,23 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             )
           }
           layout={layout}
+          layoutOptions={useMemo(() => ({
+            isLoading: showLoadingSpinner
+          }), [showLoadingSpinner])}
           collection={state.collection}
           renderWrapper={renderWrapper}
-          transitionDuration={transitionDuration}
-          isLoading={props.isLoading}
+          isLoading={isLoading}
           onLoadMore={props.onLoadMore}
-          shouldUseVirtualFocus={shouldUseVirtualFocus}
           onScroll={onScroll}>
-          {(type, item: Node<T>) => {
+          {useCallback((type, item: Node<T>) => {
             if (type === 'item') {
-              return (
-                <ListBoxOption
-                  item={item}
-                  shouldSelectOnPressUp={shouldSelectOnPressUp}
-                  shouldFocusOnHover={focusOnPointerEnter}
-                  shouldUseVirtualFocus={shouldUseVirtualFocus} />
-              );
+              return <ListBoxOption item={item} />;
             } else if (type === 'loader') {
-              return (
-                // aria-selected isn't needed here since this option is not selectable.
-                // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                  <ProgressCircle
-                    isIndeterminate
-                    size="S"
-                    aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')}
-                    UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
-                </div>
-              );
+              return <LoadingState />;
             } else if (type === 'placeholder') {
-              let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
-              if (emptyState == null) {
-                return null;
-              }
-
-              return (
-                <div
-                  // aria-selected isn't needed here since this option is not selectable.
-                  // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                  role="option">
-                  {emptyState}
-                </div>
-              );
+              return <EmptyState />;
             }
-          }}
+          }, [])}
         </Virtualizer>
       </FocusScope>
     </ListBoxContext.Provider>
@@ -187,3 +151,36 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
 export {_ListBoxBase as ListBoxBase};
+
+function LoadingState() {
+  let {state} = useContext(ListBoxContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/listbox');
+  return (
+    // aria-selected isn't needed here since this option is not selectable.
+    // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+    <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+      <ProgressCircle
+        isIndeterminate
+        size="S"
+        aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')}
+        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+    </div>
+  );
+}
+
+function EmptyState() {
+  let {renderEmptyState} = useContext(ListBoxContext);
+  let emptyState = renderEmptyState ? renderEmptyState() : null;
+  if (emptyState == null) {
+    return null;
+  }
+
+  return (
+    <div
+      // aria-selected isn't needed here since this option is not selectable.
+      // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+      role="option">
+      {emptyState}
+    </div>
+  );
+}
