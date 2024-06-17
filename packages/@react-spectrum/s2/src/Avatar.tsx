@@ -22,7 +22,9 @@ export interface AvatarProps extends StyleProps, DOMProps {
   /** Text description of the avatar. */
   alt?: string,
   /** The image URL for the avatar. */
-  src?: string
+  src?: string,
+  /** The stroke color for the avatar. */
+  strokeColor?: 'white' | 'black'
 }
 
 export interface AvatarContextProps extends UnsafeStyles, DOMProps {
@@ -30,12 +32,23 @@ export interface AvatarContextProps extends UnsafeStyles, DOMProps {
   alt?: string,
   /** The image URL for the avatar. */
   src?: string,
+  /** The stroke color for the avatar. */
+  strokeColor?: 'white' | 'black',
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
 
 const imageStyles = style({
   borderRadius: 'full',
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'transparent',
+    strokeColor: {
+      white: 'gray-25',
+      black: 'gray-800'
+    }
+  },
   size: 20,
   disableTapHighlight: true
 }, getAllowedOverrides({height: true}));
@@ -48,6 +61,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   let {
     alt = '',
     src,
+    strokeColor,
     UNSAFE_style,
     UNSAFE_className = '',
     ...otherProps
@@ -60,7 +74,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
       ref={domRef}
       alt={alt}
       style={UNSAFE_style}
-      className={UNSAFE_className + imageStyles(null, props.styles)}
+      className={UNSAFE_className + imageStyles({strokeColor}, props.styles)}
       src={src} />
   );
 }

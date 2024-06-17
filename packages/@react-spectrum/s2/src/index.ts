@@ -14,6 +14,7 @@ export {ActionButton} from './ActionButton';
 export {ActionMenu} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
 export {Avatar} from './Avatar';
+export {AvatarGroup} from './AvatarGroup';
 export {Badge} from './Badge';
 export {Breadcrumbs, Breadcrumb} from './Breadcrumbs';
 export {Button, LinkButton} from './Button';
