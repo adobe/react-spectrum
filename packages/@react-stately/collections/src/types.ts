@@ -15,7 +15,7 @@ import {ReactElement, ReactNode} from 'react';
 
 export interface PartialNode<T> {
   type?: string,
-  key?: Key,
+  key?: Key | null,
   value?: T,
   element?: ReactElement,
   wrapper?: (element: ReactElement) => ReactElement,

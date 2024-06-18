@@ -91,7 +91,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
 
   getTextValue(key: Key): string {
     let item = this.getItem(key);
-    return item ? item.textValue : '';
+    return item ? item.textValue ?? '' : '';
   }
 }
 
@@ -383,7 +383,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
           throw new Error('Unsupported element type in TreeRow: ' + item.type);
       }
     }
-  });  
+  });
 
   return (
     <>

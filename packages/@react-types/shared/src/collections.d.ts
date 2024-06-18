@@ -165,11 +165,11 @@ export interface Node<T> {
   /** A unique key for the node. */
   key: Key,
   /** The object value the node was created from. */
-  value: T | null,
+  value: T | null | undefined,
   /** The level of depth this node is at in the hierarchy. */
   level: number,
   /** Whether this item has children, even if not loaded yet. */
-  hasChildNodes: boolean,
+  hasChildNodes?: boolean,
   /**
    * The loaded children of this node.
    * @deprecated Use `collection.getChildren(node.key)` instead.
@@ -177,8 +177,10 @@ export interface Node<T> {
   childNodes: Iterable<Node<T>>,
   /** The rendered contents of this node (e.g. JSX). */
   rendered: ReactNode,
-  /** A string value for this node, used for features like typeahead. */
-  textValue: string,
+  /** A string value for this node, used for features like typeahead.
+   * Sections do not need to have a textValue.
+   */
+  textValue?: string,
   /** An accessibility label for this node. */
   'aria-label'?: string,
   /** The index of this node within its parent. */
