@@ -20,7 +20,7 @@ import {useHover} from '@react-aria/interactions';
 import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';
 
-let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.') || React.version.startsWith('18.');
+let isOldReact = parseInt(React.version) <= 18;
 /**
  * Links allow users to navigate to a different location.
  * They can be presented inline inside a paragraph or as standalone text.

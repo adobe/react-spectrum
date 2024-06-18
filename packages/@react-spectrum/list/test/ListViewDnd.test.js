@@ -433,6 +433,7 @@ describe('ListView', function () {
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        // TODO: fix in strict mode, due to https://github.com/facebook/react/issues/29585
         if (isReact19) {
           expect(onDragEnd).toHaveBeenCalledTimes(2);
         } else {
