@@ -776,8 +776,6 @@ export const VirtualizedTableWithEmptyStateStory  = {
   name: 'Virtualized Table With Empty State'
 };
 
-// TODO: things to fix
-// it isn't rendering the load more spinner with a height
 const OnLoadMoreTableVirtualized = () => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {

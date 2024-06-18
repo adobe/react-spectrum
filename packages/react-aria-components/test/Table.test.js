@@ -1319,7 +1319,7 @@ describe('Table', () => {
     });
   });
 
-  describe('load more', () => {
+  describe('load more spinner', () => {
     let offsetHeight, scrollHeight;
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
@@ -1440,6 +1440,206 @@ describe('Table', () => {
       expect(rows).toHaveLength(2);
       expect(body).toHaveAttribute('data-empty', 'true');
       expect(rows[1]).toHaveTextContent('No results');
+    });
+  });
+
+  describe('async loading', function () {
+    let onLoadMore = jest.fn();
+    let items = [];
+    for (let i = 1; i <= 10; i++) {
+      items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+    }
+
+    let LoadMoreTable = ({onLoadMore, isLoading, scrollRef, scrollOffset, items}) => (
+      <ResizableTableContainer data-testid="scrollRegion">
+        <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
+          <TableHeader>
+            <Column isRowHeader>Foo</Column>
+            <Column>Bar</Column>
+          </TableHeader>
+          <TableBody items={items}>
+            {(item) => (
+              <Row>
+                <Cell>{item.foo}</Cell>
+                <Cell>{item.bar}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    );
+
+
+    afterEach(() => {
+      onLoadMore.mockRestore();
+    });
+
+    it('should fire onLoadMore when scrolling near the bottom', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} />);
+
+      let scrollView = tree.getByTestId('scrollRegion');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 50;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('doesn\'t call onLoadMore if it is already loading items', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} isLoading />);
+
+      let scrollView = tree.getByTestId('scrollRegion');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} />);
+
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+      render(<LoadMoreTable onLoadMore={onLoadMore} items={items} />);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    // TODO: this test doesn't work due to the TableBody not being rendered immediately, hence scrollRef.current is undef when
+    // we try to attach it via useEvent
+    // This could be remedied perhaps by moving the useLoadOnScroll call to TableBody internally and passing down the scrollRef and other load props via context from body.
+    // That would guarentee that the ref for the table body is defined at the time the hook renders. Stashed this change locally, to be discussed.
+    it.skip('accepts a user defined scrollRef', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+      let LoadMoreTableBodyScroll = ({onLoadMore, isLoading, scrollOffset, items}) => {
+        let scrollRef = React.useRef();
+        return (
+          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
+            <TableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+            </TableHeader>
+            <TableBody items={items} ref={scrollRef}>
+              {(item) => (
+                <Row>
+                  <Cell>{item.foo}</Cell>
+                  <Cell>{item.bar}</Cell>
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        );
+      };
+
+      let tree = render(<LoadMoreTableBodyScroll onLoadMore={onLoadMore} />);
+
+      let table = tree.getByRole('grid');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      table.scrollTop = 76;
+      fireEvent.scroll(table);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      let scrollView = tree.getAllByRole('rowgroup')[1];
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('allows the user to customize the scrollOffset required to trigger onLoadMore', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} scrollOffset={50} />);
+
+      let scrollView = tree.getByTestId('scrollRegion');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 50;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('works with virtualizer', function () {
+      let layout = new TableLayout({
+        rowHeight: 25
+      });
+
+      let items = [];
+      for (let i = 0; i < 6; i++) {
+        items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+      }
+
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 150);
+      jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
+        if (this.getAttribute('role') === 'grid') {
+          return 50;
+        }
+
+        return 25;
+      });
+
+      let {getByRole} = render(
+        <Virtualizer layout={layout}>
+          <Table aria-label="Load more table" onLoadMore={onLoadMore}>
+            <TableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item => (
+                <Row>
+                  <Cell>{item.foo}</Cell>
+                  <Cell>{item.bar}</Cell>
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        </Virtualizer>
+      );
+
+      let scrollView = getByRole('grid');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 50;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 });
