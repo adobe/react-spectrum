@@ -288,7 +288,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let renderWrapper = useCallback((parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     if (reusableView.viewType === 'rowgroup') {
       return (
-        <TableRowGroup 
+        <TableRowGroup
           key={reusableView.key}
           layoutInfo={reusableView.layoutInfo}
           parent={parent?.layoutInfo}
