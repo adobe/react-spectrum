@@ -123,6 +123,7 @@
           "./packages/@react-stately/combobox",
           "./packages/@react-stately/disclosure",
           "./packages/@react-stately/list",
+          "./packages/@react-stately/collection",
           "./packages/@react-stately/numberfield",
           "./packages/@react-stately/overlays",
           "./packages/@react-stately/pagination",
