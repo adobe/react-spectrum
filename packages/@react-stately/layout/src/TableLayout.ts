@@ -262,6 +262,7 @@ export class TableLayout<T> extends ListLayout<T> {
     layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
+    layoutInfo.allowOverflow = true;
 
     return {
       layoutInfo,
