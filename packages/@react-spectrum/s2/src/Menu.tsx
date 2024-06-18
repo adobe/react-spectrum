@@ -148,9 +148,6 @@ export let menuitem = style({
     }
   },
   position: 'relative',
-  zIndex: {
-    isFocused: 1
-  },
   // each menu item should take up the entire width, the subgrid will handle within the item
   gridColumnStart: 1,
   gridColumnEnd: -1,
