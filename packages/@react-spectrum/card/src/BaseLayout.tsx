@@ -56,7 +56,7 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
   validate(invalidationContext: InvalidationContext<CardViewLayoutOptions>) {
     this.collection = this.virtualizer.collection as GridCollection<T>;
     this.isLoading = invalidationContext.layoutOptions?.isLoading || false;
-    this.direction = invalidationContext.layoutOptions?.direction || 'rtl';
+    this.direction = invalidationContext.layoutOptions?.direction || 'ltr';
     this.buildCollection(invalidationContext);
 
     // Remove layout info that doesn't exist in new collection
