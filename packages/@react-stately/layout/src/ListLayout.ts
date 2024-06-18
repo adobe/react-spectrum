@@ -25,7 +25,8 @@ export type ListLayoutOptions<T> = {
   collator?: Intl.Collator,
   loaderHeight?: number,
   placeholderHeight?: number,
-  allowDisabledKeyFocus?: boolean
+  allowDisabledKeyFocus?: boolean,
+  forceSectionHeaders?: boolean
 };
 
 // A wrapper around LayoutInfo that supports hierarchy
@@ -59,6 +60,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
   protected estimatedRowHeight: number;
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
+  protected forceSectionHeaders: boolean;
   protected padding: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
@@ -88,6 +90,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
+    this.forceSectionHeaders = options.forceSectionHeaders;
     this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
     this.collator = options.collator;
@@ -310,7 +313,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements K
   buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let header = null;
-    if (node.rendered) {
+    if (node.rendered || this.forceSectionHeaders) {
       let headerNode = this.buildHeader(node, x, y);
       header = headerNode.layoutInfo;
       header.key += ':header';
