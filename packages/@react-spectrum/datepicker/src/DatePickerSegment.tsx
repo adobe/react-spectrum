@@ -62,7 +62,7 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
       })}
       style={segmentProps.style}
       data-testid={segment.type}>
-      {segment.isPlaceholder ? segment.placeholder : segment.text}kyle
+      {segment.isPlaceholder ? segment.placeholder : segment.text}
     </div>
   );
 }
