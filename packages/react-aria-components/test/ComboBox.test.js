@@ -17,7 +17,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
-  <ComboBox defaultInputValue="C" data-foo="bar" {...props}>
+  <ComboBox name="test-combobox" defaultInputValue="C" data-foo="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Input />
     <Button />
