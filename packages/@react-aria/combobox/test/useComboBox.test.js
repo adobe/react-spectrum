@@ -24,6 +24,9 @@ describe('useComboBox', function () {
   let toggleSpy = jest.fn();
   let event = (e) => ({
     ...e,
+    nativeEvent: {
+      isComposing: false
+    },
     preventDefault,
     stopPropagation
   });

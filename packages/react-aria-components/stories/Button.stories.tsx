@@ -11,7 +11,9 @@
  */
 
 import {Button} from 'react-aria-components';
-import React from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useEffect, useRef, useState} from 'react';
+import * as styles from './button-ripple.css';
 
 export default {
   title: 'React Aria Components'
@@ -22,3 +24,44 @@ export const ButtonExample = () => {
     <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
   );
 };
+
+export const RippleButtonExample = () => {
+  return (
+    <RippleButton data-testid="button-example">Press me</RippleButton>
+  );
+};
+
+function RippleButton(props) {
+  const [coords, setCoords] = useState({x: -1, y: -1});
+  const [isRippling, setIsRippling] = useState(false);
+
+  let timeout = useRef<ReturnType<typeof setTimeout>>();
+  let onPress = (e) => {
+    setCoords({x: e.x, y: e.y});
+    if (e.x !== -1 && e.y !== -1) {
+      setIsRippling(true);
+      timeout.current = setTimeout(() => setIsRippling(false), 300);
+    }
+  };
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  return (
+    <Button {...mergeProps(props, {onPress})} className={styles['ripple-button']}>
+      {isRippling ? (
+        <span
+          className={styles['ripple']}
+          style={{
+            left: coords.x,
+            top: coords.y
+          }} />
+      ) : (
+        ''
+      )}
+      <span className="content">{props.children}</span>
+    </Button>
+  );
+}

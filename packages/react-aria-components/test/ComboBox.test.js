@@ -264,10 +264,23 @@ describe('ComboBox', () => {
     let {getByRole} = render(<TestComboBox />);
 
     let button = getByRole('button');
-    await userEvent.click(button);
+    await user.click(button);
     let listbox = getByRole('listbox');
     expect(listbox).toBeInTheDocument();
     fireEvent.scroll(document.body);
     expect(listbox).not.toBeInTheDocument();
+  });
+
+  it('should not close on input scrolling for cursor placement', async () => {
+    let {getByRole} = render(<TestComboBox />);
+
+    let input = getByRole('combobox');
+    let button = getByRole('button');
+    await user.click(button);
+    let listbox = getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    expect(input).toHaveFocus();
+    fireEvent.scroll(input); // simulate what happens when the text is long and overflows
+    expect(listbox).toBeInTheDocument();
   });
 });
