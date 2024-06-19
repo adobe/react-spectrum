@@ -47,7 +47,10 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   , [props.disabledKeys]);
 
   let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
-  let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
+  let context = useMemo(
+    () => ({suppressTextValueWarning: props.suppressTextValueWarning}),
+    [props.suppressTextValueWarning]
+  );
 
   let collection = useCollection(props, factory, context);
 
@@ -57,44 +60,48 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   );
 
   // Reset focused key if that item is deleted from the collection.
-  const cachedCollection = useRef(null);
+  const cachedCollection = useRef< Collection<Node<T>> | null>(null);
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
-      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
+      const startItem = cachedCollection.current?.getItem(selectionState.focusedKey);
+      const cachedItemNodes = [...(cachedCollection.current?.getKeys() ?? [])].map(
         key => {
-          const itemNode = cachedCollection.current.getItem(key);
-          return itemNode.type === 'item' ? itemNode : null;
+          const itemNode = cachedCollection.current?.getItem(key);
+          return itemNode?.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
       const itemNodes = [...collection.getKeys()].map(
         key => {
           const itemNode = collection.getItem(key);
-          return itemNode.type === 'item' ? itemNode : null;
+          return itemNode?.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
       const diff = cachedItemNodes.length - itemNodes.length;
       let index = Math.min(
         (
           diff > 1 ?
-          Math.max(startItem.index - diff + 1, 0) :
-          startItem.index
+          Math.max((startItem?.index ?? 0) - diff + 1, 0) :
+          startItem?.index ?? 0
         ),
         itemNodes.length - 1);
-      let newNode:Node<T>;
+      let newNode:Node<T> | null = null;
       while (index >= 0) {
-        if (!selectionManager.isDisabled(itemNodes[index].key)) {
-          newNode = itemNodes[index];
-          break;
-        }
-        // Find next, not disabled item.
-        if (index < itemNodes.length - 1) {
-          index++;
-        // Otherwise, find previous, not disabled item.
-        } else {
-          if (index > startItem.index) {
-            index = startItem.index;
+        if (itemNodes[index]) {
+          if (!selectionManager.isDisabled(itemNodes[index]!.key)) {
+            newNode = itemNodes[index];
+            break;
           }
+          // Find next, not disabled item.
+          if (index < itemNodes.length - 1) {
+            index++;
+            // Otherwise, find previous, not disabled item.
+          } else {
+            if (index > (startItem?.index ?? 0)) {
+              index = startItem?.index ?? 0;
+            }
+            index--;
+          }
+        } else {
           index--;
         }
       }

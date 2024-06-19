@@ -36,7 +36,7 @@ export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
 export interface ComboBoxValidationValue {
   /** The selected key in the ComboBox. */
-  selectedKey: Key,
+  selectedKey: Key | null,
   /** The value of the ComboBox input. */
   inputValue: string
 }

@@ -41,7 +41,7 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
   let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key | null>(props.lastCompletedStep, props.defaultLastCompletedStep ?? null, props.onLastCompletedStepChange);
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
   const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
-  const selectedIdx = indexMap.get(selectedKey);
+  const selectedIdx = selectedKey != null ? indexMap.get(selectedKey) : 0;
 
   const isCompleted = useCallback((step: Key | null | undefined) => {
     if (step === undefined) {
@@ -71,7 +71,7 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
   useEffect(() => {
     // Ensure a step is always selected (in case no selected key was specified or if selected item was deleted from collection)
     let selectedKey: Key | null = state.selectedKey;
-    if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
+    if (state.selectionManager.isEmpty || selectedKey == null || !state.collection.getItem(selectedKey)) {
       selectedKey = findDefaultSelectedKey(state.collection, state.disabledKeys);
       if (selectedKey !== null) {
         state.selectionManager.replaceSelection(selectedKey);

@@ -15,7 +15,7 @@ import {TabListState} from '@react-stately/tabs';
 
 export const tabsIds = new WeakMap<TabListState<unknown>, string>();
 
-export function generateId<T>(state: TabListState<T>, key: Key, role: string) {
+export function generateId<T>(state: TabListState<T>, key: Key | null, role: string) {
   if (typeof key === 'string') {
     key = key.replace(/\s+/g, '');
   }
