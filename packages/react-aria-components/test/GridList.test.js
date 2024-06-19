@@ -334,6 +334,24 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(document.body);
   });
 
+  it('should support selectionMode="replace" with checkboxes', async () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple', selectionBehavior: 'replace'});
+    let items = getAllByRole('row');
+
+    await user.click(items[0]);
+    await user.click(items[1]);
+    
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+    expect(items[2]).toHaveAttribute('aria-selected', 'false');
+
+    await user.click(within(items[2]).getByRole('checkbox'));
+
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+    expect(items[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);
