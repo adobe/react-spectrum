@@ -29,7 +29,7 @@ export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from
 export {ColorThumb} from './ColorThumb';
 export {ColorWheel, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
-export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedContext} from './utils';
+export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedContext, HiddenContext} from './utils';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
@@ -128,7 +128,7 @@ export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps} from './useDragAndDrop';
-export type {ContextValue, SlotProps} from './utils';
+export type {ContextValue, SlotProps, forwardRefType} from './utils';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
