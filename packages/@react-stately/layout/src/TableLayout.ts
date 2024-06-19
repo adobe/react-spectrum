@@ -25,27 +25,28 @@ type TableLayoutOptions<T> = ListLayoutOptions<T> & {
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
-  lastCollection: TableCollection<T>;
+  lastCollection: TableCollection<T> | undefined;
   columnWidths: Map<Key, number> = new Map();
   stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
-  lastPersistedKeys: Set<Key> = null;
+  lastPersistedKeys: Set<Key> | null = null;
   persistedIndices: Map<Key, number[]> = new Map();
-  private disableSticky: boolean;
+  private disableSticky: boolean = false;
   columnLayout: TableColumnLayout<T>;
   controlledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
-  resizingColumn: Key | null;
+  resizingColumn: Key | null = null;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
-    this.collection = options.initialCollection;
+    this.collection = options.initialCollection; // should we be doing this in ListLayout?
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();
     this.columnLayout = options.columnLayout;
-    let [controlledColumns, uncontrolledColumns] = this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    let [controlledColumns, uncontrolledColumns] =
+      this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
     this.controlledColumns = controlledColumns;
     this.uncontrolledColumns = uncontrolledColumns;
     this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
@@ -57,16 +58,22 @@ export class TableLayout<T> extends ListLayout<T> {
       !this.lastCollection ||
       this.collection.columns.length !== this.lastCollection.columns.length ||
       this.collection.columns.some((c, i) =>
-        c.key !== this.lastCollection.columns[i].key ||
-        c.props.width !== this.lastCollection.columns[i].props.width ||
-        c.props.minWidth !== this.lastCollection.columns[i].props.minWidth ||
-        c.props.maxWidth !== this.lastCollection.columns[i].props.maxWidth
+        // safe to assert not null since it was checked above
+        c.key !== this.lastCollection!.columns[i].key ||
+        c.props.width !== this.lastCollection!.columns[i].props.width ||
+        c.props.minWidth !== this.lastCollection!.columns[i].props.minWidth ||
+        c.props.maxWidth !== this.lastCollection!.columns[i].props.maxWidth
       )
     );
   }
 
-  getResizerPosition(): Key {
-    return this.getLayoutInfo(this.resizingColumn)?.rect.maxX;
+  getResizerPosition(): number {
+    // we're relying on some weird quirk
+    // if (this.resizingColumn == null) {
+    //   return 0;
+    // }
+    // @ts-ignore
+    return this.getLayoutInfo(this.resizingColumn)?.rect.maxX ?? 0;
   }
 
   getColumnWidth(key: Key): number {
@@ -97,9 +104,16 @@ export class TableLayout<T> extends ListLayout<T> {
   // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
   updateResizedColumns(key: Key, width: number): Map<Key, ColumnSize> {
     let newControlled = new Map(Array.from(this.controlledColumns).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.uncontrolledWidths, key, width);
+    let newSizes = this.columnLayout.resizeColumnWidth(
+      this.virtualizer.visibleRect.width,
+      this.collection,
+      newControlled,
+      this.uncontrolledWidths,
+      key,
+      width
+    );
 
-    let map = new Map(Array.from(this.uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
+    let map = new Map(Array.from(this.uncontrolledColumns).map(([key]) => [key, newSizes.get(key)!]));
     map.set(key, width);
     this.uncontrolledWidths = map;
     // invalidate still uses setState, should happen at the same time the parent
@@ -125,7 +139,9 @@ export class TableLayout<T> extends ListLayout<T> {
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
       if (column.props.isDragButtonCell || column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
-        this.stickyColumnIndices.push(column.index);
+        if (column.index != null) {
+          this.stickyColumnIndices.push(column.index);
+        }
       }
     }
 
@@ -221,19 +237,19 @@ export class TableLayout<T> extends ListLayout<T> {
   // used to get the column widths when rendering to the DOM
   getRenderedColumnWidth(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
-    let colIndex = node.colIndex ?? node.index;
+    let colIndex = node.colIndex ?? node.index ?? 0;
     let width = 0;
     for (let i = colIndex; i < colIndex + colspan; i++) {
       let column = this.collection.columns[i];
-      if (column?.key != null) {
-        width += this.columnWidths.get(column.key);
+      if (column?.key != null && this.columnWidths.has(column.key)) {
+        width += this.columnWidths.get(column.key)!;
       }
     }
 
     return width;
   }
 
-  getEstimatedHeight(node: GridNode<T>, width: number, height: number, estimatedHeight: number) {
+  getEstimatedHeight(node: GridNode<T>, width: number, height: number | null | undefined, estimatedHeight: number | null | undefined) {
     let isEstimated = false;
 
     // If no explicit height is available, use an estimated height.
@@ -251,7 +267,7 @@ export class TableLayout<T> extends ListLayout<T> {
       }
     }
 
-    return {height, isEstimated};
+    return {height: height ?? 0, isEstimated};
   }
 
   buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
@@ -278,7 +294,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let width = 0;
     let children: LayoutNode[] = [];
     for (let [i, node] of [...this.collection].entries()) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? 0) + 1;
 
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
@@ -378,7 +394,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     this.setChildHeights(children, height);
 
-    rect.width = this.layoutInfos.get('header').rect.width;
+    rect.width = this.layoutInfos.get('header')?.rect.width ?? 0;
     rect.height = height + 1; // +1 for bottom border
 
     return {
@@ -407,7 +423,7 @@ export class TableLayout<T> extends ListLayout<T> {
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 for getDropTargetFromPoint)
     if (rect.height > 1) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1; // +1 for border
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? 0) + 1; // +1 for border
       rect.y = Math.floor(rect.y / rowHeight) * rowHeight;
       rect.height = Math.ceil(rect.height / rowHeight) * rowHeight;
     }
@@ -555,8 +571,8 @@ export class TableLayout<T> extends ListLayout<T> {
       let layoutInfo = this.layoutInfos.get(key);
 
       // Walk up ancestors so parents are also persisted if children are.
-      while (layoutInfo && layoutInfo.parentKey) {
-        let collectionNode = this.collection.getItem(layoutInfo.key);
+      while (layoutInfo && layoutInfo.parentKey && this.collection.getItem(layoutInfo.key)) {
+        let collectionNode = this.collection.getItem(layoutInfo.key)!;
         let indices = this.persistedIndices.get(layoutInfo.parentKey);
         if (!indices) {
           // stickyColumnIndices are always persisted along with any cells from persistedKeys.
@@ -564,9 +580,9 @@ export class TableLayout<T> extends ListLayout<T> {
           this.persistedIndices.set(layoutInfo.parentKey, indices);
         }
 
-        let index = this.layoutNodes.get(layoutInfo.key).index;
+        let index = this.layoutNodes.get(layoutInfo.key)?.index;
 
-        if (!indices.includes(index)) {
+        if (index != null && !indices.includes(index)) {
           indices.push(index);
         }
 
@@ -601,10 +617,10 @@ export class TableLayout<T> extends ListLayout<T> {
     y += this.virtualizer.visibleRect.y;
 
     // Offset for height of header row
-    y -= this.virtualizer.layout.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect.height;
+    y -= this.virtualizer.layout.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect.height ?? 0;
 
     // Custom variation of this.virtualizer.keyAtPoint that ignores body
-    let key: Key;
+    let key: Key | undefined = undefined;
     let point = new Point(x, y);
     let rectAtPoint = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.type === 'row');

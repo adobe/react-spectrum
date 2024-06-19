@@ -80,7 +80,7 @@ export class TableColumnLayout<T> {
     return this.columnMaxWidths.get(key) ?? 0;
   }
 
-  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, ColumnSize>, uncontrolledWidths: Map<Key, ColumnSize>, col = null, width: number): Map<Key, ColumnSize> {
+  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, ColumnSize>, uncontrolledWidths: Map<Key, ColumnSize>, col: Key | null = null, width: number): Map<Key, ColumnSize> {
     let prevColumnWidths = this.columnWidths;
     // resizing a column
     let resizeIndex = Infinity;
