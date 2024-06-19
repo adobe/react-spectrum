@@ -98,7 +98,7 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
-export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement | null>): MenuItemAria {
   let {
     id,
     key,

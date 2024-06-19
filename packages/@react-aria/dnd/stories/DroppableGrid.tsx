@@ -183,7 +183,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
   }, gridState, domRef);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let dropRef = React.useRef();
+  let dropRef = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);
@@ -233,8 +233,8 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
 });
 
 function CollectionItem({item, state, dropState, onPaste}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef(undefined);
+  let cellRef = React.useRef(undefined);
   let cellNode = [...item.childNodes][0];
 
   let {rowProps} = useGridRow({node: item}, state, rowRef);
@@ -243,7 +243,7 @@ function CollectionItem({item, state, dropState, onPaste}) {
     focusMode: 'cell'
   }, state, cellRef);
 
-  let dropIndicatorRef = React.useRef();
+  let dropIndicatorRef = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'item', key: item.key, dropPosition: 'on'}
   }, dropState, dropIndicatorRef);
@@ -274,7 +274,7 @@ function CollectionItem({item, state, dropState, onPaste}) {
 }
 
 function InsertionIndicator(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 

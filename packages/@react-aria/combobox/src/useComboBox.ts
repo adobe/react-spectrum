@@ -30,13 +30,13 @@ import {useTextField} from '@react-aria/textfield';
 
 export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the list box popover. */
-  popoverRef: RefObject<Element>,
+  popoverRef: RefObject<Element | null>,
   /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
+  listBoxRef: RefObject<HTMLElement | null>,
   /** The ref for the optional list box popup trigger button.  */
-  buttonRef?: RefObject<Element>,
+  buttonRef?: RefObject<Element | null>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }

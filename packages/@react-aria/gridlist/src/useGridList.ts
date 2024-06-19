@@ -82,7 +82,7 @@ export interface GridListAria {
  * @param state - State for the list, as returned by `useListState`.
  * @param ref - The ref attached to the list element.
  */
-export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): GridListAria {
+export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListAria {
   let {
     isVirtualized,
     keyboardDelegate,

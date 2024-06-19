@@ -72,7 +72,7 @@ export interface CalendarCellAria {
  * Provides the behavior and accessibility implementation for a calendar cell component.
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
+export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement | null>): CalendarCellAria {
   let {date, isDisabled} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');

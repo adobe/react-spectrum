@@ -713,7 +713,7 @@ export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResiz
 
 interface ColumnResizerContextValue {
   column: GridNode<unknown>,
-  triggerRef: RefObject<HTMLDivElement>
+  triggerRef: RefObject<HTMLDivElement | null>
 }
 
 const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
@@ -1150,7 +1150,7 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
 interface TableDropIndicatorProps extends DropIndicatorProps {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
   isDropTarget: boolean,
-  buttonRef: RefObject<HTMLDivElement>
+  buttonRef: RefObject<HTMLDivElement | null>
 }
 
 function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
@@ -1172,11 +1172,11 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
   });
 
   return (
-    <tr
+    (<tr
       {...filterDOMProps(props as any)}
       {...renderProps}
       role="row"
-      ref={ref as RefObject<HTMLTableRowElement>}
+      ref={ref as RefObject<HTMLTableRowElement | null>}
       data-drop-target={isDropTarget || undefined}>
       <td
         role="gridcell"
@@ -1185,7 +1185,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </td>
-    </tr>
+    </tr>)
   );
 }
 

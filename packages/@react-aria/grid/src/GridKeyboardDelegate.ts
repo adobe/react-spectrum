@@ -20,7 +20,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
   collection: C,
   disabledKeys: Set<Key>,
   disabledBehavior?: DisabledBehavior,
-  ref?: RefObject<HTMLElement>,
+  ref?: RefObject<HTMLElement | null>,
   direction: Direction,
   collator?: Intl.Collator,
   layout?: Layout<Node<T>>,
@@ -31,7 +31,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   collection: C;
   protected disabledKeys: Set<Key>;
   protected disabledBehavior: DisabledBehavior;
-  protected ref: RefObject<HTMLElement>;
+  protected ref: RefObject<HTMLElement | null>;
   protected direction: Direction;
   protected collator: Intl.Collator;
   protected layout: Layout<Node<T>>;

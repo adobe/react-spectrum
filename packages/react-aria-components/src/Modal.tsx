@@ -36,7 +36,7 @@ export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTrigger
 
 interface InternalModalContextValue {
   modalProps: DOMAttributes,
-  modalRef: RefObject<HTMLDivElement>,
+  modalRef: RefObject<HTMLDivElement | null>,
   isExiting: boolean,
   isDismissable?: boolean
 }
@@ -101,8 +101,8 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 interface ModalOverlayInnerProps extends ModalOverlayProps {
-  overlayRef: RefObject<HTMLDivElement>,
-  modalRef: RefObject<HTMLDivElement>,
+  overlayRef: RefObject<HTMLDivElement | null>,
+  modalRef: RefObject<HTMLDivElement | null>,
   state: OverlayTriggerState,
   isExiting: boolean
 }
