@@ -183,7 +183,7 @@ describe('NumberField', () => {
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 
-  it('supports pasting value in another format', async () => {
+  it('supports pasting value in another numbering system', async () => {
     let {getByRole, rerender} = render(<TestNumberField />);
     let input = getByRole('textbox');
     act(() => {
