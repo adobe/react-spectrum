@@ -15,8 +15,8 @@ interface ColorState {
 interface InternalColorThumbContextValue {
   state: ColorState,
   thumbProps: HTMLAttributes<HTMLElement>,
-  inputXRef: RefObject<HTMLInputElement>,
-  inputYRef?: RefObject<HTMLInputElement>,
+  inputXRef: RefObject<HTMLInputElement | null>,
+  inputYRef?: RefObject<HTMLInputElement | null>,
   xInputProps: InputHTMLAttributes<HTMLInputElement>,
   yInputProps?: InputHTMLAttributes<HTMLInputElement>,
   isDisabled?: boolean

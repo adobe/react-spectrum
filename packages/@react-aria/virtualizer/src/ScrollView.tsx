@@ -38,7 +38,7 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
+function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement | null>) {
   let {
     contentSize,
     onVisibleRectChange,
@@ -51,7 +51,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  let defaultRef = useRef();
+  let defaultRef = useRef(undefined);
   ref = ref || defaultRef;
   let state = useRef({
     scrollTop: 0,

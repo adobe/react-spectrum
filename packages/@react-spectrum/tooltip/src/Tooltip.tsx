@@ -30,7 +30,7 @@ let iconMap = {
 
 function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
   let {ref: overlayRef, arrowProps, state, arrowRef, ...tooltipProviderProps} = useContext(TooltipContext);
-  let defaultRef = useRef();
+  let defaultRef = useRef(undefined);
   overlayRef = overlayRef || defaultRef;
   props = mergeProps(props, tooltipProviderProps);
   let {

@@ -86,7 +86,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
 interface GridListInnerProps<T extends object> {
   props: GridListProps<T>,
   collection: Collection<Node<T>>,
-  gridListRef: RefObject<HTMLDivElement>
+  gridListRef: RefObject<HTMLDivElement | null>
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
@@ -422,7 +422,7 @@ function GridListDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedR
 interface GridListDropIndicatorProps extends DropIndicatorProps {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
   isDropTarget: boolean,
-  buttonRef: RefObject<HTMLDivElement>
+  buttonRef: RefObject<HTMLDivElement | null>
 }
 
 function GridListDropIndicator(props: GridListDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
@@ -443,16 +443,16 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
   });
 
   return (
-    <div
+    (<div
       {...renderProps}
       role="row"
-      ref={ref as RefObject<HTMLDivElement>}
+      ref={ref as RefObject<HTMLDivElement | null>}
       data-drop-target={isDropTarget || undefined}>
       <div role="gridcell">
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </div>
-    </div>
+    </div>)
   );
 }
 

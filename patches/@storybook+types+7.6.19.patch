@@ -1,0 +1,76 @@
+diff --git a/node_modules/@storybook/types/dist/index.d.ts b/node_modules/@storybook/types/dist/index.d.ts
+index 1df952a..227cfce 100644
+--- a/node_modules/@storybook/types/dist/index.d.ts
++++ b/node_modules/@storybook/types/dist/index.d.ts
+@@ -1,4 +1,4 @@
+-import { ReactElement, ReactNode, WeakValidationMap, ValidationMap, FC, PropsWithChildren } from 'react';
++import { ReactElement, ReactNode, FC, PropsWithChildren } from 'react';
+ import { FileSystemCache } from 'file-system-cache';
+ import { TransformOptions } from '@babel/core';
+ import { Router } from 'express';
+@@ -4518,7 +4518,7 @@ interface Addon_BaseType {
+      * The title of the addon.
+      * This can be a simple string, but it can also be a React.FunctionComponent or a React.ReactElement.
+      */
+-    title: FCWithoutChildren | ReactNode;
++    title: FC | ReactNode;
+     /**
+      * The type of the addon.
+      * @example Addon_TypesEnum.PANEL
+@@ -4567,19 +4567,7 @@ interface Addon_BaseType {
+      */
+     hidden?: boolean;
+ }
+-/**
+- * This is a copy of FC from react/index.d.ts, but has the PropsWithChildren type removed
+- * this is correct and more type strict, and future compatible with React.FC in React 18+
+- *
+- * @deprecated This type is deprecated and will be removed in 8.0. (assuming the manager uses React 18 is out by then)
+- */
+-interface FCWithoutChildren<P = {}> {
+-    (props: P, context?: any): ReactElement<any, any> | null;
+-    propTypes?: WeakValidationMap<P> | undefined;
+-    contextTypes?: ValidationMap<any> | undefined;
+-    defaultProps?: Partial<P> | undefined;
+-    displayName?: string | undefined;
+-}
++
+ interface Addon_PageType {
+     type: Addon_TypesEnum.experimental_PAGE;
+     /**
+@@ -4593,7 +4581,7 @@ interface Addon_PageType {
+     /**
+      * The title is used in mobile mode to represent the page in the navigation.
+      */
+-    title: FCWithoutChildren | string | ReactElement | ReactNode;
++    title: FC | string | ReactElement | ReactNode;
+     /**
+      * The main content of the addon, a function component without any props.
+      * Storybook will render your component always.
+@@ -4610,7 +4598,7 @@ interface Addon_PageType {
+      *   );
+      * };
+      */
+-    render: FCWithoutChildren;
++    render: FC;
+ }
+ interface Addon_WrapperType {
+     type: Addon_TypesEnum.PREVIEW;
+@@ -4640,7 +4628,7 @@ interface Addon_SidebarBottomType {
+     /**
+      * A React.FunctionComponent.
+      */
+-    render: FCWithoutChildren;
++    render: FC;
+ }
+ interface Addon_SidebarTopType {
+     type: Addon_TypesEnum.experimental_SIDEBAR_TOP;
+@@ -4651,7 +4639,7 @@ interface Addon_SidebarTopType {
+     /**
+      * A React.FunctionComponent.
+      */
+-    render: FCWithoutChildren;
++    render: FC;
+ }
+ type Addon_TypeBaseNames = Exclude<Addon_TypesEnum, Addon_TypesEnum.PREVIEW | Addon_TypesEnum.experimental_PAGE | Addon_TypesEnum.experimental_SIDEBAR_BOTTOM | Addon_TypesEnum.experimental_SIDEBAR_TOP>;
+ interface Addon_TypesMapping extends Record<Addon_TypeBaseNames, Addon_BaseType> {

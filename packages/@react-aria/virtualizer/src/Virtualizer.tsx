@@ -37,7 +37,7 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
 
 export const VirtualizerContext = createContext<VirtualizerState<any, any, any> | null>(null);
 
-function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, ref: RefObject<HTMLDivElement>) {
+function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, ref: RefObject<HTMLDivElement | null>) {
   let {
     children: renderView,
     renderWrapper,
@@ -54,7 +54,7 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
     ...otherProps
   } = props;
 
-  let fallbackRef = useRef<HTMLDivElement>();
+  let fallbackRef = useRef<HTMLDivElement>(undefined);
   ref = ref || fallbackRef;
 
   let state = useVirtualizerState({
@@ -96,7 +96,7 @@ interface VirtualizerOptions {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
+export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement | null>) {
   let {isLoading, onLoadMore} = props;
   let {setVisibleRect, virtualizer} = state;
 
@@ -150,7 +150,7 @@ export function useVirtualizer<T extends object, V extends ReactNode, W>(props: 
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Virtualizer = React.forwardRef(Virtualizer) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+const _Virtualizer = React.forwardRef(Virtualizer) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 export {_Virtualizer as Virtualizer};
 
 function defaultRenderWrapper<T extends object, V extends ReactNode>(
