@@ -28,8 +28,12 @@ export const Example = (args: any) => (
   <AlertBanner actionLabel="Action" onAction={action('onAction')} onDismiss={action('onDismiss')} {...args}>Your trial has expired.</AlertBanner>
 );
 
+export const WithotActionButton = (args: any) => (
+  <AlertBanner onDismiss={action('onDismiss')} {...args}>Your trial has expired.</AlertBanner>
+);
+
 export const LongText = (args: any) => (
   <AlertBanner actionLabel="Action" onAction={action('onAction')} onDismiss={action('onDismiss')} {...args}>
-    Neutral alert banner message that wraps to multiple lines. For example: Your trial has expired. Explain how to renew the trial.
+    Your trial of this software will expire in the upcoming days. Please contact your sales representative to renew your license to continue using the software without interruption.
   </AlertBanner>
 );

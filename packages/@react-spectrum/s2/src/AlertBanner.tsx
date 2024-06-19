@@ -22,14 +22,17 @@ import InfoCircle from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
 import {IconContext} from './Icon';
 import {Provider} from 'react-aria-components';
 import {useDOMRef} from '@react-spectrum/utils';
+import {CenterBaseline, centerBaseline} from './CenterBaseline';
 
 export interface AlertBannerProps extends DismissButtonProps {
   /** The content of the alert banner. */
-  children?: ReactNode,
+  children: ReactNode,
 
-  actionLabel: ReactNode,
+  /** The label of the action button. */
+  actionLabel?: ReactNode,
 
-  onAction: () => void,
+  /** The callback triggered when the action button is pressed. */
+  onAction?: () => void,
 
   /**
    * The variant changes the background color of the alert banner. When an alert banner has a semantic meaning, they should use the variant for semantic colors.
@@ -42,7 +45,7 @@ export interface AlertBannerProps extends DismissButtonProps {
 const banner = style({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'start',
   backgroundColor: {
     variant: {
       neutral: 'neutral-subdued',
@@ -56,12 +59,14 @@ const banner = style({
   boxSizing: 'border-box',
   paddingStart: 16, // spacing-300
   paddingEnd: 8, // spacing-100
-  minHeight: size(56),
+  minHeight: 56,
   width: size(832)
 }, getAllowedOverrides());
 
 const content = style({
   flexGrow: 1,
+  flexShrink: 1,
+  minWidth: 0,
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
@@ -71,6 +76,8 @@ const content = style({
 
 const text = style({
   flexGrow: 1,
+  flexShrink: 1,
+  minWidth: 0,
   marginEnd: 16,
   marginY: size(7) // combines with content margin to have edge-to-text margin of 18
 });
@@ -119,7 +126,10 @@ function AlertBanner(props: AlertBannerProps, ref: DOMRef<HTMLDivElement>) {
       className={banner({variant})}>
       <Provider
         values={[
-          [IconContext, {styles: icon}]
+          [IconContext, {
+            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            styles: icon
+          }]
         ]}>
         {Icon && <Icon aria-label={iconAlt} />}
         <div className={content}>
@@ -137,7 +147,9 @@ function AlertBanner(props: AlertBannerProps, ref: DOMRef<HTMLDivElement>) {
             </Button>
           )}
         </div>
-        <ClearButton onPress={onDismiss} style={{height: 32}} />
+        <CenterBaseline style={{marginTop: 12}}>
+          <ClearButton onPress={onDismiss} style={{height: 32}} />
+        </CenterBaseline>
       </Provider>
     </div>
   );
