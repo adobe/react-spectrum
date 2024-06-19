@@ -24,6 +24,8 @@ interface Symbols {
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
+const GROUPING_SYMBOLS_REGEX = /[,٬ .\u202f\u00a0]/g;
+const DECIMAL_SYMBOLS = '[.\u066b,]';
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -180,6 +182,31 @@ class NumberParserImpl {
   }
 
   sanitize(value: string) {
+    // Replace group and decimal symbols with the current locale's symbols
+    let groupSymbolMatch = value.match(GROUPING_SYMBOLS_REGEX);
+    let groupSymbol = groupSymbolMatch?.[0];
+    let decimalSymbol = value.match(new RegExp(groupSymbol ? DECIMAL_SYMBOLS.replace(groupSymbol, '') : DECIMAL_SYMBOLS, 'g'))?.[0];
+    if (
+      // If we have both a group and decimal symbol,
+      groupSymbol && decimalSymbol &&
+      // and they're not the same as the current locale's symbols, then we need to replace them.
+      (groupSymbol !== this.symbols.group || decimalSymbol !== this.symbols.decimal)
+      &&
+      // However, the decimal or group symbol can sometimes appear within a literal,
+      // for example in "bg-BG" the currency symbol is "щ.д.",
+      // so we need to check if it's actually a decimal or group.
+      !(
+        this.symbols.literals.test(value) &&
+        (
+          this.symbols.literals.toString().includes(decimalSymbol) ||
+          this.symbols.literals.toString().includes(groupSymbol)
+        )
+      )
+    ) {
+      value = replaceAll(value, groupSymbol, '');
+      value = replaceAll(value, decimalSymbol, this.symbols.decimal ?? '.');
+    }
+
     // Remove literals and whitespace, which are allowed anywhere in the string
     value = value.replace(this.symbols.literals, '');
 
