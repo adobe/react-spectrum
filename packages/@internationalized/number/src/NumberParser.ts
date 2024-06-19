@@ -204,7 +204,7 @@ class NumberParserImpl {
       )
     ) {
       value = replaceAll(value, groupSymbol, '');
-      value = replaceAll(value, decimalSymbol, this.symbols.decimal);
+      value = replaceAll(value, decimalSymbol, this.symbols.decimal ?? '.');
     }
 
     // Remove literals and whitespace, which are allowed anywhere in the string
