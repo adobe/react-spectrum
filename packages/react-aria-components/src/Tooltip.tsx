@@ -29,7 +29,7 @@ export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'ar
    *
    * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>,
+  triggerRef?: RefObject<Element | null>,
   /**
    * Whether the tooltip is currently performing an entry animation.
    */
@@ -116,7 +116,7 @@ function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: Forwar
 const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
 export {_Tooltip as Tooltip};
 
-function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement>}) {
+function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
 
   // Calculate the arrow size internally

@@ -693,7 +693,7 @@ describe('Table', () => {
       </Table>
     );
 
-    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // React 19 only calls render function once, vs twice in React 18, 17 and 16.
     // Every call should be the same, so just loop over them.
     expect(renderRow.mock.calls.length).toBeGreaterThanOrEqual(1);
     renderRow.mock.calls.forEach((call) => {

@@ -73,7 +73,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     shouldCloseOnBlur: false
   });
 
-  let buttonRef = useRef<HTMLElement>();
+  let buttonRef = useRef<HTMLElement>(undefined);
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
@@ -166,7 +166,7 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   className?: string
 }
 
-const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
+const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement | null>) {
   let {
     isQuiet,
     isDisabled,
@@ -207,13 +207,13 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
   }, ref);
 
   return (
-    <FocusRing
+    (<FocusRing
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...mergeProps(hoverProps, buttonProps)}
         aria-haspopup="dialog"
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref as RefObject<HTMLDivElement | null>}
         style={{...style, outline: 'none'}}
         className={
           classNames(
@@ -303,7 +303,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
         </div>
       </div>
-    </FocusRing>
+    </FocusRing>)
   );
 });
 
@@ -329,10 +329,10 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
-  let inputRef = useRef<HTMLInputElement>();
-  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
-  let popoverRef = useRef<HTMLDivElement>();
-  let listBoxRef = useRef<HTMLDivElement>();
+  let inputRef = useRef<HTMLInputElement>(undefined);
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>(undefined);
+  let popoverRef = useRef<HTMLDivElement>(undefined);
+  let listBoxRef = useRef<HTMLDivElement>(undefined);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let layout = useListBoxLayout(state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');

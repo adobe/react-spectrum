@@ -45,7 +45,7 @@ export function FocusRing(props: FocusRingProps) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing(props);
   let child = React.Children.only(children);
 
-  return React.cloneElement(child, mergeProps(child.props, {
+  return React.cloneElement(child, mergeProps(child.props as any, {
     ...focusProps,
     className: clsx({
       [focusClass || '']: isFocused,

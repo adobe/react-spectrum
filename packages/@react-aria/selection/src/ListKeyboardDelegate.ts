@@ -16,7 +16,7 @@ import {RefObject} from 'react';
 
 interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>,
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   collator?: Intl.Collator,
   layout?: 'stack' | 'grid',
   orientation?: Orientation,
@@ -29,13 +29,13 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
   private disabledBehavior: DisabledBehavior;
-  private ref: RefObject<HTMLElement>;
+  private ref: RefObject<HTMLElement | null>;
   private collator: Intl.Collator | undefined;
   private layout: 'stack' | 'grid';
   private orientation?: Orientation;
   private direction?: Direction;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator);
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator);
   constructor(options: ListKeyboardDelegateOptions<T>);
   constructor(...args: any[]) {
     if (args.length === 1) {

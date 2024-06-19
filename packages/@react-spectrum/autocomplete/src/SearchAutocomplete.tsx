@@ -196,7 +196,7 @@ let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(pr
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,
@@ -295,7 +295,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
   }, [isLoading, showLoading, inputValue]);
 
   return (
-    <FocusRing
+    (<FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -303,7 +303,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref as RefObject<HTMLDivElement | null>}
         style={style}
         className={
           classNames(
@@ -360,7 +360,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
           wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly ? clearButton : undefined}
           disableFocusRing />
       </div>
-    </FocusRing>
+    </FocusRing>)
   );
 }
 
