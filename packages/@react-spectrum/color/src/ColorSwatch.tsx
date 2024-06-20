@@ -11,7 +11,7 @@
  */
 
 import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
 import {ColorSwatchContext, useContextProps} from 'react-aria-components';
 import {DOMRef, StyleProps} from '@react-types/shared';
@@ -61,7 +61,7 @@ function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement
           // Red slash to indicate there is no selected color.
           : 'linear-gradient(to bottom right, transparent calc(50% - 2px), var(--spectrum-red-900) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)) no-repeat'
       }}
-      className={classNames(style({
+      className={styleProps.className + style({
         size: {
           size: {
             XS: 4,
@@ -84,7 +84,7 @@ function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement
         borderStyle: 'solid',
         boxSizing: 'border-box',
         forcedColorAdjust: 'none'
-      })({size, rounding}), styleProps.className)} />
+      })({size, rounding})} />
   );
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.
