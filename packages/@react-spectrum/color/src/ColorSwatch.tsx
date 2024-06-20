@@ -11,12 +11,12 @@
  */
 
 import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
 import {ColorSwatchContext, useContextProps} from 'react-aria-components';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import React, {createContext, forwardRef, JSX, ReactElement, useContext} from 'react';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 
 export interface SpectrumColorSwatchProps extends AriaColorSwatchProps, StyleProps {
   /**
