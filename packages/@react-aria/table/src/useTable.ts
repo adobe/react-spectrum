@@ -15,18 +15,17 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Layout} from '@react-stately/virtualizer';
+import {LayoutDelegate} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface AriaTableProps<T> extends GridProps {
+export interface AriaTableProps extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
-  layout?: Layout<Node<T>>
+  layoutDelegate?: LayoutDelegate
 }
 
 /**
@@ -37,11 +36,11 @@ export interface AriaTableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement | null>): GridAria {
+export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
-    layout
+    layoutDelegate
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -56,8 +55,8 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | Tre
     ref,
     direction,
     collator,
-    layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layout]);
+    layoutDelegate
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layoutDelegate]);
   let id = useId(props.id);
   gridIds.set(state, id);
 
