@@ -15,7 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent, RouterOptions, ValidationResult} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -38,7 +38,13 @@ export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'chil
   /** The ref for the optional list box popup trigger button.  */
   buttonRef?: RefObject<Element | null>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate
 }
 
 export interface ComboBoxAria<T> extends ValidationResult {
@@ -69,6 +75,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     inputRef,
     listBoxRef,
     keyboardDelegate,
+    layoutDelegate,
     // completionMode = 'suggest',
     shouldFocusWrap,
     isReadOnly,
@@ -90,10 +97,16 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
-  let delegate = useMemo(() =>
-    keyboardDelegate ||
-    new ListKeyboardDelegate(state.collection, state.disabledKeys, listBoxRef)
-  , [keyboardDelegate, state.collection, state.disabledKeys, listBoxRef]);
+  let {collection} = state;
+  let {disabledKeys} = state.selectionManager;
+  let delegate = useMemo(() => (
+    keyboardDelegate || new ListKeyboardDelegate({
+      collection,
+      disabledKeys,
+      ref: listBoxRef,
+      layoutDelegate
+    })
+  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, listBoxRef]);
 
   // Use useSelectableCollection to get the keyboard handlers to apply to the textfield
   let {collectionProps} = useSelectableCollection({

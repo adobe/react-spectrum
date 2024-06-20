@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Checkbox, CheckboxProps, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React from 'react';
+import React, {useMemo} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -392,3 +392,101 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
     </Checkbox>
   );
 };
+
+export function VirtualizedTable() {
+  let items: {id: number, foo: string, bar: string, baz: string}[] = [];
+  for (let i = 0; i < 1000; i++) {
+    items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  return (
+    <Virtualizer layout={layout}>
+      <Table aria-label="virtualized table" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+        <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+          <Column isRowHeader><strong>Foo</strong></Column>
+          <Column><strong>Bar</strong></Column>
+          <Column><strong>Baz</strong></Column>
+        </TableHeader>
+        <TableBody items={items}>
+          {item => (
+            <Row style={{width: 'inherit', height: 'inherit'}}>
+              <Cell>{item.foo}</Cell>
+              <Cell>{item.bar}</Cell>
+              <Cell>{item.baz}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </Virtualizer>
+  );
+}
+
+export function VirtualizedTableWithResizing() {
+  let items: {id: number, foo: string, bar: string, baz: string}[] = [];
+  for (let i = 0; i < 1000; i++) {
+    items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  return (
+    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+      <Virtualizer layout={layout}>
+        <Table aria-label="virtualized table">
+          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+            <MyColumn isRowHeader>Foo</MyColumn>
+            <MyColumn>Bar</MyColumn>
+            <MyColumn>Baz</MyColumn>
+          </TableHeader>
+          <TableBody items={items}>
+            {item => (
+              <Row style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>{item.foo}</Cell>
+                <Cell>{item.bar}</Cell>
+                <Cell>{item.baz}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    </ResizableTableContainer>
+  );
+}
+
+export function VirtualizedTableWithEmptyState() {
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  return (
+    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+      <Virtualizer layout={layout}>
+        <Table aria-label="virtualized table">
+          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+            <MyColumn isRowHeader>Foo</MyColumn>
+            <MyColumn>Bar</MyColumn>
+            <MyColumn>Baz</MyColumn>
+          </TableHeader>
+          <TableBody renderEmptyState={() => 'Empty'}>
+            <></>
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    </ResizableTableContainer>
+  );
+}

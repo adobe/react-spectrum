@@ -1,4 +1,4 @@
-import {Collection, Direction, DropTarget, DropTargetDelegate, Node, Orientation} from '@react-types/shared';
+import {Direction, DropTarget, DropTargetDelegate, Node, Orientation} from '@react-types/shared';
 import {RefObject} from 'react';
 
 interface ListDropTargetDelegateOptions {
@@ -30,13 +30,13 @@ interface ListDropTargetDelegateOptions {
 //                   direction. For grids, it is the secondary direction.
 
 export class ListDropTargetDelegate implements DropTargetDelegate {
-  private collection: Collection<Node<unknown>>;
+  private collection: Iterable<Node<unknown>>;
   private ref: RefObject<HTMLElement | null>;
   private layout: 'stack' | 'grid';
   private orientation: Orientation;
   private direction: Direction;
 
-  constructor(collection: Collection<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
+  constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
     this.collection = collection;
     this.ref = ref;
     this.layout = options?.layout || 'stack';
@@ -73,7 +73,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
-    if (this.collection.size === 0) {
+    if (this.collection[Symbol.iterator]().next().done) {
       return {type: 'root'};
     }
 

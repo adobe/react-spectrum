@@ -19,9 +19,9 @@ import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {useCollator} from '@react-aria/i18n';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
@@ -135,21 +135,21 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
     onDrop
   });
 
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = React.useMemo(() =>
     new ListLayout<unknown>({
       estimatedRowHeight: 32,
       padding: 8,
       loaderHeight: 40,
-      placeholderHeight: 32,
-      collator
+      placeholderHeight: 32
     })
-  , [collator]);
-
-  layout.collection = state.collection;
+  , []);
 
   let {collectionProps} = useDroppableCollection({
-    keyboardDelegate: layout,
+    keyboardDelegate: new ListKeyboardDelegate({
+      collection: state.collection,
+      ref: domRef,
+      layoutDelegate: layout
+    }),
     dropTargetDelegate: layout,
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop
@@ -158,7 +158,7 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
   let {listBoxProps} = useListBox({
     ...props,
     'aria-label': 'List',
-    keyboardDelegate: layout,
+    layoutDelegate: layout,
     isVirtualized: true
   }, state, domRef);
   let isDropTarget = dropState.isDropTarget({type: 'root'});

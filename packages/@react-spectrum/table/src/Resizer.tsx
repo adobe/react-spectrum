@@ -11,9 +11,10 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
-import React, {RefObject, useEffect, useState} from 'react';
+import React, {createContext, RefObject, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
@@ -47,9 +48,12 @@ const CURSORS = {
   e: getCursor(eCursor, 'e-resize')
 };
 
+export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
+
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | null>) {
   let {column, showResizer} = props;
-  let {isEmpty, layout, onFocusedResizer} = useTableContext();
+  let {isEmpty, onFocusedResizer} = useTableContext();
+  let layout = useContext(ResizeStateContext)!;
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object

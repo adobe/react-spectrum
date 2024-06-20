@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, DisabledBehavior, Key, KeyboardDelegate, Node} from '@react-types/shared';
+import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node} from '@react-types/shared';
+import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
-import {Layout, Rect} from '@react-stately/virtualizer';
 import {RefObject} from 'react';
 
-export interface GridKeyboardDelegateOptions<T, C> {
+export interface GridKeyboardDelegateOptions<C> {
   collection: C,
   disabledKeys: Set<Key>,
   disabledBehavior?: DisabledBehavior,
   ref?: RefObject<HTMLElement | null>,
   direction: Direction,
   collator?: Intl.Collator,
-  layout?: Layout<Node<T>>,
+  layoutDelegate?: LayoutDelegate,
   focusMode?: 'row' | 'cell'
 }
 
@@ -31,20 +31,18 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   collection: C;
   protected disabledKeys: Set<Key>;
   protected disabledBehavior: DisabledBehavior;
-  protected ref: RefObject<HTMLElement | null>;
   protected direction: Direction;
   protected collator: Intl.Collator;
-  protected layout: Layout<Node<T>>;
+  protected layoutDelegate: LayoutDelegate;
   protected focusMode;
 
-  constructor(options: GridKeyboardDelegateOptions<T, C>) {
+  constructor(options: GridKeyboardDelegateOptions<C>) {
     this.collection = options.collection;
     this.disabledKeys = options.disabledKeys;
     this.disabledBehavior = options.disabledBehavior || 'all';
-    this.ref = options.ref;
     this.direction = options.direction;
     this.collator = options.collator;
-    this.layout = options.layout;
+    this.layoutDelegate = options.layoutDelegate || new DOMLayoutDelegate(options.ref);
     this.focusMode = options.focusMode || 'row';
   }
 
@@ -276,66 +274,35 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
-  }
-
-  private getItemRect(key: Key): Rect {
-    if (this.layout) {
-      return this.layout.getLayoutInfo(key)?.rect;
-    }
-
-    let item = this.getItem(key);
-    if (item) {
-      return new Rect(item.offsetLeft, item.offsetTop, item.offsetWidth, item.offsetHeight);
-    }
-  }
-
-  private getPageHeight(): number {
-    if (this.layout) {
-      return this.layout.virtualizer?.visibleRect.height;
-    }
-
-    return this.ref?.current?.offsetHeight;
-  }
-
-  private getContentHeight(): number {
-    if (this.layout) {
-      return this.layout.getContentSize().height;
-    }
-
-    return this.ref?.current?.scrollHeight;
-  }
-
   getKeyPageAbove(key: Key) {
-    let itemRect = this.getItemRect(key);
+    let itemRect = this.layoutDelegate.getItemRect(key);
     if (!itemRect) {
       return null;
     }
 
-    let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
+    let pageY = Math.max(0, itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height);
 
     while (itemRect && itemRect.y > pageY) {
       key = this.getKeyAbove(key);
-      itemRect = this.getItemRect(key);
+      itemRect = this.layoutDelegate.getItemRect(key);
     }
 
     return key;
   }
 
   getKeyPageBelow(key: Key) {
-    let itemRect = this.getItemRect(key);
+    let itemRect = this.layoutDelegate.getItemRect(key);
 
     if (!itemRect) {
       return null;
     }
 
-    let pageHeight = this.getPageHeight();
-    let pageY = Math.min(this.getContentHeight(), itemRect.y + pageHeight);
+    let pageHeight = this.layoutDelegate.getVisibleRect().height;
+    let pageY = Math.min(this.layoutDelegate.getContentSize().height, itemRect.y + pageHeight);
 
-    while (itemRect && itemRect.maxY < pageY) {
+    while (itemRect && (itemRect.y + itemRect.height) < pageY) {
       let nextKey = this.getKeyBelow(key);
-      itemRect = this.getItemRect(nextKey);
+      itemRect = this.layoutDelegate.getItemRect(nextKey);
 
       // Guard against case where maxY of the last key is barely less than pageY due to rounding
       // and thus it attempts to set key to null

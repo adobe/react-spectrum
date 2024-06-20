@@ -11,12 +11,12 @@
  */
 import {AriaBreadcrumbsProps} from 'react-aria';
 import {Collection, Node} from 'react-stately';
-import {CollectionChildren, CollectionProps, createLeafComponent, useCollection} from './Collection';
+import {CollectionProps, CollectionRendererContext, createLeafComponent, useCollection} from './Collection';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {LinkContext} from './Link';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -47,6 +47,7 @@ interface BreadcrumbsInnerProps<T> {
 }
 
 function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: ref}: BreadcrumbsInnerProps<T>) {
+  let {CollectionRoot} = useContext(CollectionRendererContext);
   return (
     <ol
       ref={ref}
@@ -55,7 +56,7 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
       style={props.style}
       className={props.className ?? 'react-aria-Breadcrumbs'}>
       <BreadcrumbsContext.Provider value={props}>
-        <CollectionChildren collection={collection} />
+        <CollectionRoot collection={collection} />
       </BreadcrumbsContext.Provider>
     </ol>
   );
