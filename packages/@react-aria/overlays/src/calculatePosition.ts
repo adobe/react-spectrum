@@ -152,11 +152,8 @@ function getScroll(node: Element): Offset {
   return {
     top: node.scrollTop,
     left: node.scrollLeft,
-    // Use clientWidth/Height instead of scrollWidth/Height so we get consistent values when calculating the overlay width
-    // Previously, the absolutely positioned overlay arrow would contribute to the calculated scrollWidth if placed to the right/bottom of the overlay.
-    // but not if placed to the left/top because of negative scrolling doesn't contribute to the size.
-    width: node.clientWidth,
-    height: node.clientHeight
+    width: node.scrollWidth,
+    height: node.scrollHeight
   };
 }
 
