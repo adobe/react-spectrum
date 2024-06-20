@@ -15,7 +15,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
-import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaPositionProps extends PositionProps {
@@ -171,6 +171,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
     overlay.style.top = '';
     overlay.style.bottom = '';
+    overlay.style.left = '';
+    overlay.style.right = '';
+
     Object.keys(position.position).forEach(key => overlay.style[key] = position.position[key] + 'px');
     overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
 
@@ -193,21 +196,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   });
 
   // Update position when the target changes size (might need to flip).
-  // Don't call updatePosition if this is the first time the trigger is being observed by ResizeObserver, only
-  // call it if it is actually being resized.
-  let isFirstCall = useRef(true);
-  let update = useEffectEvent(() => {
-    if (isFirstCall.current) {
-      isFirstCall.current = false;
-      return;
-    }
-    updatePosition();
-  });
-
-  // Update position when the target changes size (might need to flip).
   useResizeObserver({
     ref: targetRef,
-    onResize: update
+    onResize: updatePosition
   });
 
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.

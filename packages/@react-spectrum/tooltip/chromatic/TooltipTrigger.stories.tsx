@@ -82,7 +82,7 @@ export const ContainerPadding50AtEdge: TooltipTriggerStory = {
   // anything less than 232px padding on the div will result in a flip, so this is how we can visually test container padding
   // this uses slightly less than the required padding so that we account for any rounding and have a stable test
   decorators: [(Story) => (
-    <div style={{width: '100%', padding: '230px'}}>
+    <div style={{width: '100%', padding: '222px'}}>
       <Story />
     </div>
   )]
