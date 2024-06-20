@@ -40,10 +40,8 @@ export default {
   },
   argTypes: {
     timeout: {
-      control: {
-        type: 'radio',
-        options: [null, 5000]
-      }
+      control: 'radio',
+      options: [null, 5000]
     }
   }
 };
