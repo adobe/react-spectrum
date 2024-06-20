@@ -45,7 +45,7 @@ export interface TableCellAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the cell element.
  */
-export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableCellAria {
+export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement | null>): TableCellAria {
   let {gridCellProps, isPressed} = useGridCell(props, state, ref);
 
   let columnKey = props.node.column.key;

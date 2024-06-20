@@ -47,7 +47,7 @@ interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOpti
 
 interface DragHooks {
   useDraggableCollectionState?: (props: DraggableCollectionStateOpts) => DraggableCollectionState,
-  useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) => void,
+  useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
   renderDragPreview?: (items: DragItem[]) => JSX.Element
@@ -55,9 +55,9 @@ interface DragHooks {
 
 interface DropHooks {
   useDroppableCollectionState?: (props: DroppableCollectionStateOptions) => DroppableCollectionState,
-  useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableCollectionResult,
-  useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableItemResult,
-  useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DropIndicatorAria,
+  useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableCollectionResult,
+  useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableItemResult,
+  useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria,
   renderDropIndicator?: (target: DropTarget) => JSX.Element,
   dropTargetDelegate?: DropTargetDelegate,
   ListDropTargetDelegate: typeof ListDropTargetDelegate
@@ -129,7 +129,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
         return useDroppableCollectionState({...props, ...options});
       };
       hooks.useDroppableItem = useDroppableItem;
-      hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
+      hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) {
         return useDroppableCollection({...props, ...options}, state, ref);
       };
       hooks.useDropIndicator = useDropIndicator;

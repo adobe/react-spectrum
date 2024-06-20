@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, ListLayout, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useMemo} from 'react';
 import styles from '../example/index.css';
 
 export default {
@@ -313,3 +313,19 @@ export const EmptyTree = (args: TreeProps<unknown>) => (
     )}
   </UNSTABLE_Tree>
 );
+
+export function VirtualizedTree(args) {
+  let layout = useMemo(() => {
+    return new ListLayout({
+      rowHeight: 30
+    });
+  }, []);
+
+  return (
+    <Virtualizer layout={layout}>
+      <TreeExampleDynamic {...args} />
+    </Virtualizer>
+  );
+}
+
+VirtualizedTree.story = TreeExampleDynamic.story;

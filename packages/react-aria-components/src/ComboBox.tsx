@@ -102,7 +102,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 interface ComboBoxInnerProps<T extends object> {
   props: ComboBoxProps<T>,
   collection: Collection<Node<T>>,
-  comboBoxRef: RefObject<HTMLDivElement>
+  comboBoxRef: RefObject<HTMLDivElement | null>
 }
 
 function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {
@@ -224,7 +224,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
     </Provider>
   );
 }
