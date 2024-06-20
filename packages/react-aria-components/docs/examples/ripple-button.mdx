@@ -47,7 +47,7 @@ function RippleButton(props) {
     setCoords({x: e.x, y: e.y});
     if (e.x !== -1 && e.y !== -1) {
       setIsRippling(true);
-      timeout.current = setTimeout(() => setIsRippling(false), 300);
+      timeout.current = setTimeout(() => setIsRippling(false), 600);
     }
   };
   useEffect(() => {
