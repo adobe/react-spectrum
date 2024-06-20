@@ -244,16 +244,8 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: FocusableRef<H
                 // better way to do this one? it's not actually half, they are
                 // [9, 4], [12, 6], [15, 8], [18, 8]
                 // also noticed that our measurement is including the border, making the padding too much
-                paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]',
-                width: {
-                  default: 208,
-                  size: {
-                    S: 192,
-                    L: 224,
-                    XL: 240
-                  }
-                }
-              })({size})}>
+                paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]'
+              })}>
               <InputContext.Consumer>
                 {ctx => (
                   <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
