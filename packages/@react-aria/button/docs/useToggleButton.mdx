@@ -83,7 +83,7 @@ import {useToggleButton} from '@react-aria/button';
 import {useToggleState} from '@react-stately/toggle';
 
 function ToggleButton(props) {
-  let ref = useRef();
+  let ref = useRef<HTMLButtonElement | null>(null);
   let state = useToggleState(props);
   let {buttonProps, isPressed} = useToggleButton(props, state, ref);
 

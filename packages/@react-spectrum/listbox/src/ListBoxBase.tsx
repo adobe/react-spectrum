@@ -26,7 +26,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useContext, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
@@ -48,9 +48,8 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
 }
 
 /** @private */
-export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
+export function useListBoxLayout<T>(): ListLayout<T> {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
     new ListLayout<T>({
       estimatedRowHeight: scale === 'large' ? 48 : 32,
@@ -58,21 +57,20 @@ export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       loaderHeight: 40,
       placeholderHeight: scale === 'large' ? 48 : 32,
-      collator
+      forceSectionHeaders: true,
+      enableEmptyState: true
     })
-  , [collator, scale]);
+  , [scale]);
 
-  layout.collection = state.collection;
-  layout.disabledKeys = state.disabledKeys;
   return layout;
 }
 
 /** @private */
-function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
+function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement | null>) {
   let {layout, state, shouldFocusOnHover, shouldUseVirtualFocus, domProps = {}, isLoading, showLoadingSpinner = isLoading, onScroll, renderEmptyState} = props;
   let {listBoxProps} = useListBox({
     ...props,
-    keyboardDelegate: layout,
+    layoutDelegate: layout,
     isVirtualized: true
   }, state, ref);
   let {styleProps} = useStyleProps(props);
@@ -113,7 +111,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           {...mergeProps(listBoxProps, domProps)}
           ref={ref}
           focusedKey={state.selectionManager.focusedKey}
-          autoFocus={!!props.autoFocus}
+          autoFocus={!!props.autoFocus || undefined}
           sizeToFit="height"
           scrollDirection="vertical"
           className={
@@ -149,7 +147,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 export {_ListBoxBase as ListBoxBase};
 
 function LoadingState() {

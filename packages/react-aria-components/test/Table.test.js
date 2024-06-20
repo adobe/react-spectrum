@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
@@ -181,6 +181,10 @@ describe('Table', () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should render with default classes', () => {
@@ -700,7 +704,7 @@ describe('Table', () => {
       </Table>
     );
 
-    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // React 19 only calls render function once, vs twice in React 18, 17 and 16.
     // Every call should be the same, so just loop over them.
     expect(renderRow.mock.calls.length).toBeGreaterThanOrEqual(1);
     renderRow.mock.calls.forEach((call) => {
@@ -793,6 +797,61 @@ describe('Table', () => {
 
     await user.keyboard('{ArrowDown}');
     expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+  });
+
+  it('should support virtualizer', async () => {
+    let layout = new TableLayout({
+      rowHeight: 25
+    });
+
+    let items = [];
+    for (let i = 0; i < 50; i++) {
+      items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+    }
+
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole, getAllByRole} = render(
+      <Virtualizer layout={layout}>
+        <Table aria-label="Test">
+          <TableHeader>
+            <Column isRowHeader>Foo</Column>
+            <Column>Bar</Column>
+          </TableHeader>
+          <TableBody items={items}>
+            {item => (
+              <Row>
+                <Cell>{item.foo}</Cell>
+                <Cell>{item.bar}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(8);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 0Bar 0', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 3Bar 3', 'Foo 4Bar 4', 'Foo 5Bar 5', 'Foo 6Bar 6']);
+    for (let row of rows) {
+      expect(row).toHaveAttribute('aria-rowindex');
+    }
+
+    let grid = getByRole('grid');
+    grid.scrollTop = 200;
+    fireEvent.scroll(grid);
+
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(8);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13']);
+
+    await user.tab();
+    await user.keyboard('{End}');
+
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(9);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
   });
 
   describe('drag and drop', () => {

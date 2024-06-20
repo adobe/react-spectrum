@@ -185,7 +185,7 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   return ctx;
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, ...contextProps} = ctx as any;
@@ -240,13 +240,13 @@ export function useSlot(): [RefCallback<Element>, boolean] {
   return [ref, hasSlot];
 }
 
-export function useEnterAnimation(ref: RefObject<HTMLElement>, isReady: boolean = true) {
+export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true) {
   let [isEntering, setEntering] = useState(true);
   useAnimation(ref, isEntering && isReady, useCallback(() => setEntering(false), []));
   return isEntering && isReady;
 }
 
-export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
+export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean) {
   // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
   // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
   let [isExiting, setExiting] = useState(false);
@@ -276,7 +276,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
   return isExiting;
 }
 
-function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
+function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void) {
   let prevAnimation = useRef<string | null>(null);
   if (isActive && ref.current) {
     // This is ok because we only read it in the layout effect below, immediately after the commit phase.
