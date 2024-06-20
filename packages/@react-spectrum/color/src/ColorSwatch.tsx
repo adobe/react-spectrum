@@ -84,7 +84,7 @@ function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement
         borderStyle: 'solid',
         boxSizing: 'border-box',
         forcedColorAdjust: 'none'
-      }), styleProps.className)({size, rounding})} />
+      })({size, rounding}), styleProps.className)} />
   );
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.
