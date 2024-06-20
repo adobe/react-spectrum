@@ -490,6 +490,7 @@ describe('ListView', function () {
     describe('PageDown', function () {
       it('should move focus to a row a page below when focus starts on a row', async function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
+        tree.getByRole('grid').style.overflow = 'auto'; // make ListKeyboardDelegate know we are scrollable
         await user.tab();
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
@@ -499,6 +500,7 @@ describe('ListView', function () {
 
       it('should move focus to a row a page below when focus starts in the row cell', async function () {
         let tree = renderListWithFocusables({items: manyItems});
+        tree.getByRole('grid').style.overflow = 'auto'; // make ListKeyboardDelegate know we are scrollable
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
         await user.click(start);

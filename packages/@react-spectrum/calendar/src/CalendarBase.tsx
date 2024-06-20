@@ -34,7 +34,7 @@ interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extend
   nextButtonProps: AriaButtonProps,
   prevButtonProps: AriaButtonProps,
   errorMessageProps: HTMLAttributes<HTMLElement>,
-  calendarRef: RefObject<HTMLDivElement>
+  calendarRef: RefObject<HTMLDivElement | null>
 }
 
 export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
