@@ -36,6 +36,7 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {Button} from 'react-aria-components';
 import {useEffect, useRef, useState} from 'react';
+import Airplane from '@spectrum-icons/workflow/Airplane';
 
 function RippleButton(props) {
   const [coords, setCoords] = useState({x: -1, y: -1});
@@ -46,7 +47,7 @@ function RippleButton(props) {
     setCoords({x: e.x, y: e.y});
     if (e.x !== -1 && e.y !== -1) {
       setIsRippling(true);
-      // timeout.current = setTimeout(() => setIsRippling(false), 300);
+      timeout.current = setTimeout(() => setIsRippling(false), 300);
     }
   };
   useEffect(() => {
@@ -55,45 +56,50 @@ function RippleButton(props) {
     };
   }, []);
 
-  console.log(coords)
   return (
-    <div className="bg-gradient-to-r from-teal-300 to-cyan-300 p-12 rounded-lg flex justify-center">
+    <div className="bg-gradient-to-r from-teal-300 to-cyan-500 p-12 rounded-lg flex justify-center">
       <Button
         onPress={onPress}
         className={`
-      relative
-      inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white
-      hover:bg-opacity-30 pressed:bg-opacity-40 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75`}>
+      relative overflow-hidden min-h-16
+      inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white
+      hover:bg-opacity-60 pressed:bg-opacity-70 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75`}>
       {isRippling ? (
         <div
           className="ripple"
           style={{
-            left: coords.x,
-            top: coords.y
+            left: coords.x - 15,
+            top: coords.y - 15
           }} />
         ) : (
           ''
         )}
-        <span className="content">{props.children}</span>
+        <span className="flex items-center gap-2">{props.children}</span>
       </Button>
     </div>
   )
 }
 
-<RippleButton>Try clicking me</RippleButton>
+<RippleButton><Airplane size="S" /> Book flight</RippleButton>
 ```
 ```css
 div.ripple {
   position: absolute;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   transform: scale(0);
   opacity: 1;
-  animation: ripple 6000ms linear;
-  background-color: rgba(255, 255, 255, 0.7);
+  animation: ripple 600ms linear;
+  background-color: rgba(255, 255, 255, .6);
 }
 @keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
   to {
-    transform: scale(4);
+    transform: scale(6);
     opacity: 0;
   }
 }
