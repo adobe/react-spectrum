@@ -965,7 +965,7 @@ export interface CollectionBranchProps {
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   collection: ICollection<Node<unknown>>,
   focusedKey?: Key | null,
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement | null>
 }
 
 export interface CollectionRenderer {

@@ -183,8 +183,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
 interface ResizableTableContainerContextValue {
   tableWidth: number,
-  tableRef: RefObject<HTMLTableElement>,
-  scrollRef: RefObject<HTMLElement>,
+  tableRef: RefObject<HTMLTableElement | null>,
+  scrollRef: RefObject<HTMLElement | null>,
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
   useTableColumnResizeState: typeof useTableColumnResizeState,
   onResizeStart?: (widths: Map<Key, ColumnSize>) => void,

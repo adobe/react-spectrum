@@ -55,7 +55,7 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
 const ScrollViewForwardRef = React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
-export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement>) {
+export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>) {
   let {
     contentSize,
     onVisibleRectChange,
