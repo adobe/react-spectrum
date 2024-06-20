@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, GridList, GridListItem, GridListItemProps, ListLayout, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, GridList, GridListItem, GridListItemProps, ListLayout, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {GridLayout} from '@react-spectrum/card';
 import React, {useMemo} from 'react';
@@ -49,12 +49,17 @@ const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}
-      style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+      style={{display: 'flex', alignItems: 'center', gap: 8}}
       className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
         focused: isFocused,
         selected: isSelected,
         hovered: isHovered
-      })} />
+      })}>
+      {({selectionMode}) => (<>
+        {selectionMode !== 'none' ? <MyCheckbox slot="selection" /> : null}
+        {props.children as any}
+      </>)}
+    </GridListItem>
   );
 };
 
@@ -70,8 +75,35 @@ GridListExample.story = {
     keyboardNavigationBehavior: {
       control: 'radio',
       options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
     }
   }
+};
+
+const MyCheckbox = ({children, ...props}: CheckboxProps) => {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => (
+        <>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              {isIndeterminate
+                ? <rect x={1} y={7.5} width={15} height={3} />
+                : <polyline points="1 9 7 14 15 4" />}
+            </svg>
+          </div>
+          {children}
+        </>
+      )}
+    </Checkbox>
+  );
 };
 
 export function VirtualizedGridList() {

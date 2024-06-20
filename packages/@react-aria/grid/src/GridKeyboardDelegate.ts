@@ -20,7 +20,7 @@ export interface GridKeyboardDelegateOptions<C> {
   collection: C,
   disabledKeys: Set<Key>,
   disabledBehavior?: DisabledBehavior,
-  ref?: RefObject<HTMLElement>,
+  ref?: RefObject<HTMLElement | null>,
   direction: Direction,
   collator?: Intl.Collator,
   layoutDelegate?: LayoutDelegate,

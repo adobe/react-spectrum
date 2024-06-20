@@ -25,7 +25,7 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
 export function VirtualizerItem(props: VirtualizerItemProps) {
   let {className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
-  let ref = useRef();
+  let ref = useRef(undefined);
   useVirtualizerItem({
     layoutInfo,
     virtualizer,

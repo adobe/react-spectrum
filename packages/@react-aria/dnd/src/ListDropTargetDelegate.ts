@@ -31,12 +31,12 @@ interface ListDropTargetDelegateOptions {
 
 export class ListDropTargetDelegate implements DropTargetDelegate {
   private collection: Iterable<Node<unknown>>;
-  private ref: RefObject<HTMLElement>;
+  private ref: RefObject<HTMLElement | null>;
   private layout: 'stack' | 'grid';
   private orientation: Orientation;
   private direction: Direction;
 
-  constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement>, options?: ListDropTargetDelegateOptions) {
+  constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
     this.collection = collection;
     this.ref = ref;
     this.layout = options?.layout || 'stack';

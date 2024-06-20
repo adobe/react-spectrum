@@ -43,7 +43,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
 interface BreadcrumbsInnerProps<T> {
   props: BreadcrumbsProps<T>,
   collection: Collection<Node<T>>,
-  breadcrumbsRef: RefObject<HTMLOListElement>
+  breadcrumbsRef: RefObject<HTMLOListElement | null>
 }
 
 function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: ref}: BreadcrumbsInnerProps<T>) {

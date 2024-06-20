@@ -149,7 +149,7 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
   collection: BaseCollection<T>,
-  treeRef: RefObject<HTMLDivElement>
+  treeRef: RefObject<HTMLDivElement | null>
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {

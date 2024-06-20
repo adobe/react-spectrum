@@ -39,7 +39,7 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement>) {
+function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
   ref = useObjectRef(ref);
   let {scrollViewProps, contentProps} = useScrollView(props, ref);
 

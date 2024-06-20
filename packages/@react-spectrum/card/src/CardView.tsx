@@ -187,8 +187,8 @@ function InternalCard(props) {
   let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
   let layoutType = layout.layoutType;
-  let rowRef = useRef();
-  let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let rowRef = useRef(undefined);
+  let cellRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
   let unwrappedRef = useUnwrapDOMRef(cellRef);
 
   let {rowProps: gridRowProps} = useGridRow({

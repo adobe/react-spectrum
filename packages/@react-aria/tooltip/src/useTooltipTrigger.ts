@@ -34,7 +34,7 @@ export interface TooltipTriggerAria {
  * Provides the behavior and accessibility implementation for a tooltip trigger, e.g. a button
  * that shows a description when focused or hovered.
  */
-export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement>) : TooltipTriggerAria {
+export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement | null>) : TooltipTriggerAria {
   let {
     isDisabled,
     trigger

@@ -36,7 +36,7 @@ export interface AriaTableProps extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,

@@ -199,7 +199,7 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
 
 function CollectionItem({item}) {
   let {state, dropState} = React.useContext(Context);
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {optionProps} = useOption({
     key: item.key,
     isSelected: state.selectionManager.isSelected(item.key),
@@ -228,7 +228,7 @@ function CollectionItem({item}) {
 
 function InsertionIndicator(props) {
   let {dropState} = React.useContext(Context);
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator(props, dropState, ref);
 
   // If aria-hidden, we are either not in a drag session or the drop target is invalid.
@@ -260,7 +260,7 @@ function InsertionIndicator(props) {
 
 function RootDropIndicator() {
   let {dropState} = React.useContext(Context);
-  let dropRef = React.useRef();
+  let dropRef = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);

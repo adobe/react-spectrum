@@ -214,7 +214,7 @@ export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | '
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: RefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -230,7 +230,7 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
     index,
-    trackRef: trackRef as RefObject<HTMLDivElement>,
+    trackRef: trackRef as RefObject<HTMLDivElement | null>,
     inputRef,
     label
   }, state);

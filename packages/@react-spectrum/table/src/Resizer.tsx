@@ -36,7 +36,7 @@ function getCursor(svg: string, fallback: string) {
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<HTMLDivElement | null>,
   onResizeStart: (widths: Map<Key, ColumnSize>) => void,
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void
@@ -50,7 +50,7 @@ const CURSORS = {
 
 export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
+function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | null>) {
   let {column, showResizer} = props;
   let {isEmpty, onFocusedResizer} = useTableContext();
   let layout = useContext(ResizeStateContext)!;

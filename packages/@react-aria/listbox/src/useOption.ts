@@ -86,7 +86,7 @@ export interface AriaOptionProps {
  * @param props - Props for the option.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<FocusableElement>): OptionAria {
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<FocusableElement | null>): OptionAria {
   let {
     key
   } = props;
