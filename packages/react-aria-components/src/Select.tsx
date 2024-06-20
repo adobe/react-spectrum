@@ -128,6 +128,8 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
+  let scrollRef = useRef(null);
+
   return (
     <>
       {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
@@ -153,10 +155,11 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           [PopoverContext, {
             trigger: 'Select',
             triggerRef: buttonRef,
+            scrollRef,
             placement: 'bottom start',
             style: {'--trigger-width': buttonWidth} as React.CSSProperties
           }],
-          [ListBoxContext, menuProps],
+          [ListBoxContext, {...menuProps, ref: scrollRef}],
           [ListStateContext, state],
           [TextContext, {
             slots: {

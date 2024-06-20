@@ -151,12 +151,12 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       this.lastValidRect = this.validRect;
       this.validRect = this.validRect.union(rect);
       this.rootNodes = this.buildCollection();
-    } else {
-      // Ensure all of the persisted keys are available.
-      for (let key of this.virtualizer.persistedKeys) {
-        if (this.ensureLayoutInfo(key)) {
-          break;
-        }
+    }
+    
+    // Ensure all of the persisted keys are available.
+    for (let key of this.virtualizer.persistedKeys) {
+      if (this.ensureLayoutInfo(key)) {
+        return;
       }
     }
   }
@@ -165,7 +165,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     // If the layout info wasn't found, it might be outside the bounds of the area that we've
     // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
     // Compute the full layout and try again.
-    if (!this.layoutInfos.has(key) && this.validRect.area < this.contentSize.area && this.lastCollection) {
+    if (!this.layoutInfos.has(key) && this.validRect.area < this.contentSize.area) {
       this.lastValidRect = this.validRect;
       this.validRect = new Rect(0, 0, Infinity, Infinity);
       this.rootNodes = this.buildCollection();
@@ -196,6 +196,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     if (this.invalidateEverything) {
       this.lastValidRect = this.validRect;
       this.validRect = this.virtualizer.visibleRect.copy();
+      this.layoutInfos.clear();
+      this.layoutNodes.clear();
     }
 
     this.rootNodes = this.buildCollection();
