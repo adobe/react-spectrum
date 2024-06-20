@@ -19,14 +19,14 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -34,7 +34,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -42,7 +42,7 @@ executors:
 
   rsp-xlarge-nodeupdate:
     docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -121,7 +121,7 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
-  install-canary:
+  install-19:
     executor: rsp-large
     steps:
       - checkout
@@ -134,12 +134,12 @@ jobs:
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-canary --cache-folder ~/.cache/yarn
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-19 --cache-folder ~/.cache/yarn
 
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
   test-ssr:
     executor: rsp-xlarge
@@ -199,11 +199,11 @@ jobs:
           command: |
             yarn test:ssr
 
-  test-ssr-canary:
+  test-ssr-19:
     executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test ssr
@@ -258,12 +258,12 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  test-canary:
+  test-19:
     parallelism: 3
     executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run: mkdir ~/junit
 
@@ -272,10 +272,10 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-canary.xml" yarn test ${TESTFILES}
+            JEST_JUNIT_OUTPUT_NAME="junit-19.xml" yarn test ${TESTFILES}
 
       - run:
-          command: cp junit-canary.xml ~/junit/
+          command: cp junit-19.xml ~/junit/
           when: always
       - store_test_results:
           path: ~/junit
@@ -412,20 +412,20 @@ jobs:
           paths:
             - '*/storybook-17/'
 
-  storybook-canary:
+  storybook-19:
     executor: rsp-large
     steps:
       - restore_cache:
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: build storybook-canary
-          command: make storybook-canary
+          name: build storybook-19
+          command: make storybook-19
 
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/storybook-canary/'
+            - '*/storybook-19/'
 
   docs:
     executor: rsp-xlarge
@@ -547,7 +547,7 @@ workflows:
       - install
       - install-16
       - install-17
-      - install-canary
+      - install-19
       - test-ssr:
           requires:
             - install
@@ -566,6 +566,12 @@ workflows:
       - test-17:
           requires:
             - install-17
+      - test-19:
+          requires:
+            - install-19
+      - test-ssr-19:
+          requires:
+            - install-19
       - test-esm:
           requires:
             - install
@@ -603,9 +609,9 @@ workflows:
       - storybook-17:
           requires:
             - install-17
-      - storybook-canary:
+      - storybook-19:
           requires:
-            - install-canary
+            - install-19
       - docs:
           requires:
             - install
@@ -628,7 +634,7 @@ workflows:
             - storybook
             - storybook-16
             - storybook-17
-            - storybook-canary
+            - storybook-19
             - docs
       - deploy-verdaccio:
           requires:

@@ -4190,7 +4190,7 @@ export let tableTests = () => {
       );
 
       let body = tree.getAllByRole('rowgroup')[1];
-      let scrollView = body.parentNode.parentNode;
+      let scrollView = body;
 
       let rows = within(body).getAllByRole('row');
       expect(rows).toHaveLength(34); // each row is 41px tall. table is 1000px tall. 25 rows fit. + 1/3 overscan

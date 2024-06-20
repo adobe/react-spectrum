@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
+import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
@@ -57,7 +57,7 @@ const EXPANSION_KEYS = {
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement | null>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
@@ -67,7 +67,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior} = listMap.get(state);
+  let {onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -139,56 +139,60 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     switch (e.key) {
       case 'ArrowLeft': {
-        // Find the next focusable element within the row.
-        let focusable = direction === 'rtl'
-          ? walker.nextNode() as FocusableElement
-          : walker.previousNode() as FocusableElement;
+        if (keyboardNavigationBehavior === 'arrow') {
+          // Find the next focusable element within the row.
+          let focusable = direction === 'rtl'
+            ? walker.nextNode() as FocusableElement
+            : walker.previousNode() as FocusableElement;
 
-        if (focusable) {
-          e.preventDefault();
-          e.stopPropagation();
-          focusSafely(focusable);
-          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
-        } else {
-          // If there is no next focusable child, then return focus back to the row
-          e.preventDefault();
-          e.stopPropagation();
-          if (direction === 'rtl') {
-            focusSafely(ref.current);
-            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+          if (focusable) {
+            e.preventDefault();
+            e.stopPropagation();
+            focusSafely(focusable);
+            scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
-            walker.currentNode = ref.current;
-            let lastElement = last(walker);
-            if (lastElement) {
-              focusSafely(lastElement);
-              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
+            // If there is no next focusable child, then return focus back to the row
+            e.preventDefault();
+            e.stopPropagation();
+            if (direction === 'rtl') {
+              focusSafely(ref.current);
+              scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+            } else {
+              walker.currentNode = ref.current;
+              let lastElement = last(walker);
+              if (lastElement) {
+                focusSafely(lastElement);
+                scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
+              }
             }
           }
         }
         break;
       }
       case 'ArrowRight': {
-        let focusable = direction === 'rtl'
-          ? walker.previousNode() as FocusableElement
-          : walker.nextNode() as FocusableElement;
+        if (keyboardNavigationBehavior === 'arrow') {
+          let focusable = direction === 'rtl'
+            ? walker.previousNode() as FocusableElement
+            : walker.nextNode() as FocusableElement;
 
-        if (focusable) {
-          e.preventDefault();
-          e.stopPropagation();
-          focusSafely(focusable);
-          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
-        } else {
-          e.preventDefault();
-          e.stopPropagation();
-          if (direction === 'ltr') {
-            focusSafely(ref.current);
-            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+          if (focusable) {
+            e.preventDefault();
+            e.stopPropagation();
+            focusSafely(focusable);
+            scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
           } else {
-            walker.currentNode = ref.current;
-            let lastElement = last(walker);
-            if (lastElement) {
-              focusSafely(lastElement);
-              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
+            e.preventDefault();
+            e.stopPropagation();
+            if (direction === 'ltr') {
+              focusSafely(ref.current);
+              scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+            } else {
+              walker.currentNode = ref.current;
+              let lastElement = last(walker);
+              if (lastElement) {
+                focusSafely(lastElement);
+                scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
+              }
             }
           }
         }
@@ -207,6 +211,18 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           );
         }
         break;
+      case 'Tab': {
+        if (keyboardNavigationBehavior === 'tab') {
+          // If there is another focusable element within this item, stop propagation so the tab key
+          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          walker.currentNode = document.activeElement;
+          let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
+          if (next) {
+            e.stopPropagation();
+          }
+        }
+      }
     }
   };
 
@@ -226,7 +242,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
+  let syntheticLinkProps = useSyntheticLinkProps(node.props);
+  let linkProps = itemStates.hasAction ? syntheticLinkProps : {};
   // TODO: re-add when we get translations and fix this for iOS VO
   // let rowAnnouncement;
   // if (onAction) {

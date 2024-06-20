@@ -26,7 +26,7 @@ export function InsertionIndicator(props: InsertionIndicatorProps) {
   let {dropState, dragAndDropHooks} = useTableContext();
   const {target, rowProps} = props;
 
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 

@@ -11,14 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, CollectionRenderer, CollectionRendererContext} from '../src/Collection';
-import {Header, ListBox, ListBoxItem, ListBoxProps, Section, Separator, Text, useDragAndDrop} from 'react-aria-components';
-import {ListLayout} from '@react-stately/layout';
+import {Collection} from '../src/Collection';
+import {GridLayout} from '@react-spectrum/card';
+import {Header, ListBox, ListBoxItem, ListBoxProps, ListLayout, Section, Separator, Text, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
-import React, {useContext, useMemo} from 'react';
+import React, {useMemo} from 'react';
+import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
-import {Virtualizer, VirtualizerContext} from '@react-aria/virtualizer';
 
 export default {
   title: 'React Aria Components'
@@ -238,8 +238,16 @@ export function VirtualizedListBox() {
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
+
+  let layout = useMemo(() => {
+    return new ListLayout({
+      rowHeight: 25,
+      estimatedHeadingHeight: 26
+    });
+  }, []);
+
   return (
-    <VirtualizedCollection>
+    <Virtualizer layout={layout}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
           <Section className={styles.group}>
@@ -250,52 +258,44 @@ export function VirtualizedListBox() {
           </Section>
         )}
       </ListBox>
-    </VirtualizedCollection>
+    </Virtualizer>
   );
 }
 
-function VirtualizedCollection({children}) {
-  return (
-    <CollectionRendererContext.Provider value={VirtualizedCollectionRenderer}>
-      {children}
-    </CollectionRendererContext.Provider>
-  );
-}
-
-const VirtualizedCollectionRenderer: CollectionRenderer = (collection, parent) => {
-  if (parent) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    let virtualizer = useContext(VirtualizerContext)!;
-    return virtualizer.virtualizer.getChildren(parent.key);
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export function VirtualizedListBoxEmpty() {
   let layout = useMemo(() => {
     return new ListLayout({
-      estimatedRowHeight: 32,
-      estimatedHeadingHeight: 26,
-      padding: 4,
-      loaderHeight: 40,
-      placeholderHeight: 32
-      // collator
+      rowHeight: 25,
+      estimatedHeadingHeight: 26
     });
   }, []);
 
   return (
-    <Virtualizer
-      sizeToFit="height"
-      scrollDirection="vertical"
-      layout={layout}
-      style={{height: 'inherit'}}
-      collection={collection}>
-      {(type, item) => {
-        switch (type) {
-          case 'placeholder':
-            return null;
-          default:
-            return item.render!(item);
-        }
-      }}
+    <Virtualizer layout={layout}>
+      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
+        <></>
+      </ListBox>
     </Virtualizer>
   );
-};
+}
+
+export function VirtualizedListBoxGrid() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new GridLayout({
+      minItemSize: new Size(40, 40)
+    });
+  }, []);
+
+  return (
+    <Virtualizer layout={layout}>
+      <ListBox className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
+        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+      </ListBox>
+    </Virtualizer>
+  );
+}

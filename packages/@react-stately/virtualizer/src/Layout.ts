@@ -11,7 +11,7 @@
  */
 
 import {InvalidationContext} from './types';
-import {Key} from '@react-types/shared';
+import {Key, LayoutDelegate} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
 import {Size} from './Size';
@@ -30,7 +30,7 @@ import {Virtualizer} from './Virtualizer';
  * @see {@link getVisibleLayoutInfos}
  * @see {@link getLayoutInfo}
  */
-export abstract class Layout<T extends object, O = any> {
+export abstract class Layout<T extends object, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
   virtualizer: Virtualizer<T, any, any>;
 
@@ -77,4 +77,12 @@ export abstract class Layout<T extends object, O = any> {
    * Updates the size of the given item.
    */
   updateItemSize?(key: Key, size: Size): boolean;
+
+  getItemRect(key: Key): Rect {
+    return this.getLayoutInfo(key)?.rect;
+  }
+
+  getVisibleRect(): Rect {
+    return this.virtualizer.visibleRect;
+  }
 }

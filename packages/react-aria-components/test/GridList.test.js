@@ -11,7 +11,18 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Checkbox, DropIndicator, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
+import {
+  Button,
+  Checkbox,
+  DropIndicator,
+  GridList,
+  GridListContext,
+  GridListItem,
+  ListLayout,
+  RouterProvider,
+  useDragAndDrop,
+  Virtualizer
+} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -49,6 +60,7 @@ describe('GridList', () => {
 
   afterEach(() => {
     act(() => {jest.runAllTimers();});
+    jest.clearAllMocks();
   });
 
   it('should render with default classes', () => {
@@ -294,6 +306,99 @@ describe('GridList', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should support grid layout', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" layout="grid">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should support selectionMode="replace" with checkboxes', async () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple', selectionBehavior: 'replace'});
+    let items = getAllByRole('row');
+
+    await user.click(items[0]);
+    await user.click(items[1]);
+    
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+    expect(items[2]).toHaveAttribute('aria-selected', 'false');
+
+    await user.click(within(items[2]).getByRole('checkbox'));
+
+    expect(items[0]).toHaveAttribute('aria-selected', 'false');
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+    expect(items[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should support virtualizer', async () => {
+    let layout = new ListLayout({
+      rowHeight: 25
+    });
+
+    let items = [];
+    for (let i = 0; i < 50; i++) {
+      items.push({id: i, name: 'Item ' + i});
+    }
+
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole, getAllByRole} = render(
+      <Virtualizer layout={layout}>
+        <GridList aria-label="Test" items={items}>
+          {item => <GridListItem>{item.name}</GridListItem>}
+        </GridList>
+      </Virtualizer>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(7);
+    expect(rows.map(r => r.textContent)).toEqual(['Item 0', 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
+    for (let row of rows) {
+      expect(row).toHaveAttribute('aria-rowindex');
+    }
+
+    let grid = getByRole('grid');
+    grid.scrollTop = 200;
+    fireEvent.scroll(grid);
+    
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(8);
+    expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);
+
+    await user.tab();
+    await user.keyboard('{End}');
+
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(9);
+    expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);
@@ -490,6 +595,23 @@ describe('GridList', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <GridList aria-label="listview">
+              <GridListItem href="/foo" routerOptions={{foo: 'bar'}}>One</GridListItem>
+            </GridList>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
     });
   });
