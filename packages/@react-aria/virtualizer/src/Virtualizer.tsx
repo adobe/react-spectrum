@@ -12,9 +12,10 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import React, {createContext, HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
+import {useLoadOnScroll} from '@react-aria/loading';
 import {VirtualizerItem} from './VirtualizerItem';
 
 interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
@@ -98,48 +99,21 @@ interface VirtualizerOptions {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement | null>) {
   let {isLoading, onLoadMore} = props;
-  let {setVisibleRect, virtualizer} = state;
+  let {setVisibleRect} = state;
+  let scrollOffset = ref.current?.clientHeight;
 
-  // Handle scrolling, and call onLoadMore when nearing the bottom.
-  let isLoadingRef = useRef(isLoading);
-  let prevProps = useRef(props);
+  // TODO: The ref previously provided was the table's ref. That ref didn't actually do anything in the old implementation
+  // but now the ref provided to useVirtualizer MUST be the scrollable ref so its a breaking change kinda?
+  // TODO: Also, now that we use ref.currnet.clientHeight/scrollHeight/etc instead of relying on the rect to figure out if we should load more
+  // this will break peoples tests since they need to mock scrollHeight to simulate the virtualizer's total contents height...
+  let {scrollViewProps: {onScroll}} = useLoadOnScroll({isLoading, onLoadMore, scrollOffset}, ref);
+
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setVisibleRect(rect);
+    onScroll();
+  }, [setVisibleRect, onScroll]);
 
-    if (!isLoadingRef.current && onLoadMore) {
-      let scrollOffset = virtualizer.contentSize.height - rect.height * 2;
-      if (rect.y > scrollOffset) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-  }, [onLoadMore, setVisibleRect, virtualizer]);
-
-  let lastContentSize = useRef(0);
-  useLayoutEffect(() => {
-    // Only update isLoadingRef if props object actually changed,
-    // not if a local state change occurred.
-    let wasLoading = isLoadingRef.current;
-    if (props !== prevProps.current) {
-      isLoadingRef.current = isLoading;
-      prevProps.current = props;
-    }
-
-    let shouldLoadMore = !isLoadingRef.current
-      && onLoadMore
-      && state.contentSize.height > 0
-      && state.contentSize.height <= state.virtualizer.visibleRect.height
-      // Only try loading more if the content size changed, or if we just finished
-      // loading and still have room for more items.
-      && (wasLoading || state.contentSize.height !== lastContentSize.current);
-
-    if (shouldLoadMore) {
-      isLoadingRef.current = true;
-      onLoadMore();
-    }
-    lastContentSize.current = state.contentSize.height;
-  }, [state.contentSize, state.virtualizer, isLoading, onLoadMore, props]);
-
+  // TODO: would've liked it if I didn't have to preseve these and just attach onScroll directly to the scroll ref but it would be breaking.
   return {
     virtualizerProps: {},
     scrollViewProps: {

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useCallback, useRef} from 'react';
-import {useEvent, useLayoutEffect} from '@react-aria/utils';
+import {RefObject, useCallback, useMemo, useRef} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface LoadOnScrollProps {
   /** Whether data is currently being loaded. */
@@ -26,7 +26,15 @@ export interface LoadOnScrollProps {
   scrollOffset?: number
 }
 
-export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLElement | null>) {
+// TODO: discuss if it would be ok to just attach event to ref...
+interface LoadOnScrollAria {
+  /** Props for the scrollable region. */
+  scrollViewProps: {
+    onScroll: () => void
+  }
+}
+
+export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLElement | null>): LoadOnScrollAria {
   let {isLoading, onLoadMore, scrollOffset = 25} = props;
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
@@ -71,7 +79,10 @@ export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLEle
     lastContentSize.current = ref.current?.scrollHeight || 0;
   }, [isLoading, onLoadMore, props, ref]);
 
-  // TODO: figure I'd just attach to ref here, no need to return onScroll. However if this need to replace useVirtualizer 1:1, then I can
-  // make it return onScroll and attach it to the ref outside
-  useEvent(ref, 'scroll', onScroll);
+
+  return useMemo(() => ({
+    scrollViewProps: {
+      onScroll
+    }
+  }), [onScroll]);
 }

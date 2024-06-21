@@ -837,7 +837,13 @@ describe('ListBox', function () {
         items.push({name: 'Test ' + i});
       }
       // total height if all are rendered would be about 100 * 48px = 4800px
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return 4800;
+        }
 
+        return 48;
+      });
       let {getByRole} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
@@ -867,6 +873,7 @@ describe('ListBox', function () {
       act(() => jest.runAllTimers());
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {

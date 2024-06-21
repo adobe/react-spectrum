@@ -8,7 +8,7 @@ import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableP
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -346,7 +346,8 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     onLoadMore,
     scrollOffset
   }), [isLoading, onLoadMore, scrollOffset]);
-  useLoadOnScroll(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
+  let {scrollViewProps: {onScroll}} = useLoadOnScroll(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
+  useEvent(scrollRef || tableContainerContext?.scrollRef || ref, 'scroll', onScroll);
 
   let {gridProps} = useTable({
     ...props,
