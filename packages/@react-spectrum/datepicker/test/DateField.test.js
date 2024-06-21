@@ -37,7 +37,7 @@ function render(el) {
   };
 }
 
-describe.skip('DateField', function () {
+describe('DateField', function () {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
