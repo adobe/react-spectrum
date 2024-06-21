@@ -160,14 +160,10 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
           <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments-hiddenWidth')}>
             <DatePickerField
               {...startFieldProps}
-              data-testid="start-date"
-              isQuiet={props.isQuiet}
               inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
             <DateRangeDash isHiddenWidth />
             <DatePickerField
               {...endFieldProps}
-              data-testid="end-date"
-              isQuiet={props.isQuiet}
               inputClassName={classNames(
                 styles,
                 'spectrum-Datepicker-endField',

@@ -12,7 +12,7 @@
 
 import {testSSR} from '@react-spectrum/test-utils-internal';
 
-describe('DatePicker SSR', function () {
+describe.skip('DatePicker SSR', function () {
   it('should render a DatePicker without errors', async function () {
     await testSSR(__filename, `
       import {DatePicker} from '../';

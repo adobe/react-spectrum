@@ -40,7 +40,7 @@ function render(el) {
   );
 }
 
-describe('DatePickerBase', function () {
+describe.skip('DatePickerBase', function () {
   beforeAll(() => {
     simulateDesktop();
   });

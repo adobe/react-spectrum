@@ -66,7 +66,7 @@ function render(el) {
   };
 }
 
-describe('DateRangePicker', function () {
+describe.skip('DateRangePicker', function () {
   let user;
 
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()

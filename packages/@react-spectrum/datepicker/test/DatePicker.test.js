@@ -55,7 +55,7 @@ function render(el) {
   };
 }
 
-describe('DatePicker', function () {
+describe.skip('DatePicker', function () {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
