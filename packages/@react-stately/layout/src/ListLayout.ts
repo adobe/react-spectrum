@@ -74,8 +74,10 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
   protected loaderHeight: number;
   protected placeholderHeight: number;
   protected enableEmptyState: boolean;
-  protected lastValidRect: Rect;
+  /** The rectangle containing currently valid layout infos. */
   protected validRect: Rect;
+  /** The rectangle of requested layout infos so far. */
+  protected requestedRect: Rect;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -98,8 +100,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
-    this.lastValidRect = new Rect();
     this.validRect = new Rect();
+    this.requestedRect = new Rect();
     this.contentSize = new Size();
   }
 
@@ -147,9 +149,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       return;
     }
 
-    if (!this.validRect.containsRect(rect)) {
-      this.lastValidRect = this.validRect;
-      this.validRect = this.validRect.union(rect);
+    if (!this.requestedRect.containsRect(rect)) {
+      this.requestedRect = this.requestedRect.union(rect);
       this.rootNodes = this.buildCollection();
     } else {
       // Ensure all of the persisted keys are available.
@@ -165,11 +166,10 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     // If the layout info wasn't found, it might be outside the bounds of the area that we've
     // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
     // Compute the full layout and try again.
-    if (!this.layoutInfos.has(key) && this.validRect.area < this.contentSize.area && this.lastCollection) {
-      this.lastValidRect = this.validRect;
-      this.validRect = new Rect(0, 0, Infinity, Infinity);
+    if (!this.layoutInfos.has(key) && this.requestedRect.area < this.contentSize.area && this.lastCollection) {
+      this.requestedRect = new Rect(0, 0, Infinity, Infinity);
       this.rootNodes = this.buildCollection();
-      this.validRect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);
+      this.requestedRect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);
       return true;
     }
 
@@ -194,8 +194,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     // Otherwise we can reuse cached layout infos outside the current visible rect.
     this.invalidateEverything = this.shouldInvalidateEverything(invalidationContext);
     if (this.invalidateEverything) {
-      this.lastValidRect = this.validRect;
-      this.validRect = this.virtualizer.visibleRect.copy();
+      this.requestedRect = this.virtualizer.visibleRect.copy();
     }
 
     this.rootNodes = this.buildCollection();
@@ -217,6 +216,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
     this.invalidateEverything = false;
+    this.validRect = this.requestedRect.copy();
   }
 
   protected buildCollection(): LayoutNode[] {
@@ -227,7 +227,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
 
       // Skip rows before the valid rectangle unless they are already cached.
-      if (node.type === 'item' && y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+      if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
         skipped++;
         continue;
@@ -237,7 +237,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
 
-      if (node.type === 'item' && y > this.validRect.maxY) {
+      if (node.type === 'item' && y > this.requestedRect.maxY) {
         y += (this.collection.size - (nodes.length + skipped)) * rowHeight;
         break;
       }
@@ -272,8 +272,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       cached &&
       cached.node === node &&
       y === (cached.header || cached.layoutInfo).rect.y &&
-      cached.layoutInfo.rect.intersects(this.lastValidRect) &&
-      cached.validRect.containsRect(cached.layoutInfo.rect.intersection(this.validRect))
+      cached.layoutInfo.rect.intersects(this.validRect) &&
+      cached.validRect.containsRect(cached.layoutInfo.rect.intersection(this.requestedRect))
     );
   }
 
@@ -327,7 +327,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
 
       // Skip rows before the valid rectangle unless they are already cached.
-      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+      if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
         skipped++;
         continue;
@@ -337,7 +337,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       y = layoutNode.layoutInfo.rect.maxY;
       children.push(layoutNode);
 
-      if (y > this.validRect.maxY) {
+      if (y > this.requestedRect.maxY) {
         // Estimate the remaining height for rows that we don't need to layout right now.
         y += ([...getChildNodes(node, this.collection)].length - (children.length + skipped)) * rowHeight;
         break;
@@ -350,7 +350,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       header,
       layoutInfo,
       children,
-      validRect: layoutInfo.rect.intersection(this.validRect)
+      validRect: layoutInfo.rect.intersection(this.requestedRect)
     };
   }
 
@@ -387,7 +387,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return {
       layoutInfo: header,
       children: [],
-      validRect: header.rect.intersection(this.validRect)
+      validRect: header.rect.intersection(this.requestedRect)
     };
   }
 
@@ -444,6 +444,13 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       newLayoutInfo.rect.height = size.height;
       this.layoutInfos.set(key, newLayoutInfo);
 
+      // Items after this layoutInfo will need to be repositioned to account for the new height.
+      // Adjust the validRect so that only items above remain valid.
+      this.validRect.height = Math.min(this.validRect.height, layoutInfo.rect.y - this.validRect.y);
+
+      // The requestedRect also needs to be adjusted to account for the height difference.
+      this.requestedRect.height += newLayoutInfo.rect.height - layoutInfo.rect.height;
+
       // Invalidate layout for this layout node and all parents
       this.updateLayoutNode(key, layoutInfo, newLayoutInfo);
 
@@ -462,8 +469,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
   private updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
     let n = this.layoutNodes.get(key);
     if (n) {
-      // Invalidate by reseting validRect.
-      n.validRect = new Rect();
+      // Invalidate by intersecting the validRect of this node with the overall validRect.
+      n.validRect = n.validRect.intersection(this.validRect);
 
       // Replace layout info in LayoutNode
       if (n.header === oldLayoutInfo) {
