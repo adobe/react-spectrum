@@ -58,7 +58,7 @@ interface ContextProps {
 
 interface Router {
   navigate: (path: string, routerOptions: RouterOptions | undefined) => void,
-  useHref?: (href: Href) => string
+  useHref?: (href: Href, routerOptions: RouterOptions | undefined) => string
 }
 
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
