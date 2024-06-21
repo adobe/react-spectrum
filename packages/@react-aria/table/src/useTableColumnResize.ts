@@ -43,7 +43,7 @@ export interface AriaTableColumnResizeProps<T> {
    * focus will be returned there when resizing is done. If it isn't provided, it is assumed that the resizer is
    * visible at all time and keyboard resizing is started via pressing Enter on the resizer and not on focus.
    * */
-  triggerRef?: RefObject<FocusableElement>,
+  triggerRef?: RefObject<FocusableElement | null>,
   /** If resizing is disabled. */
   isDisabled?: boolean,
   /** Called when resizing starts. */
@@ -60,7 +60,7 @@ export interface AriaTableColumnResizeProps<T> {
  * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement | null>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let id = useId();

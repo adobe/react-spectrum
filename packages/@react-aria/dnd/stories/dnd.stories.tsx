@@ -279,7 +279,7 @@ export function Draggable({isDisabled = false}) {
     }
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {buttonProps} = useButton({elementType: 'div'}, ref);
 
   return (
@@ -296,7 +296,7 @@ export function Draggable({isDisabled = false}) {
 }
 
 export function Droppable({type, children, actionId = ''}: any) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     onDropEnter: action(`onDropEnter${actionId}`),
@@ -330,7 +330,7 @@ export function Droppable({type, children, actionId = ''}: any) {
 
 function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropProps, isDropTarget} = useDrop({
     ref: unwrapDOMRef(ref),
     onDropActivate() {
@@ -472,8 +472,8 @@ function DraggableCollection(props) {
 }
 
 function DraggableCollectionItem({item, state, dragState, onCut}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef(undefined);
+  let cellRef = React.useRef(undefined);
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
@@ -493,7 +493,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
     onCut: () => onCut(dragState.getKeysForDrag(item.key))
   });
 
-  let buttonRef = React.useRef();
+  let buttonRef = React.useRef(undefined);
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'

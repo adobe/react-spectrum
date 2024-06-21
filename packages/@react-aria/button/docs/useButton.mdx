@@ -68,7 +68,7 @@ import {useButton} from '@react-aria/button';
 import {useRef} from 'react';
 
 function Button(props) {
-  let ref = useRef();
+  let ref = useRef<HTMLButtonElement | null>(null);
   let {buttonProps} = useButton(props, ref);
   let {children} = props;
 
@@ -97,7 +97,7 @@ touch screen support.
 ```tsx example
 function Button(props) {
   let {children} = props;
-  let ref = useRef();
+  let ref = useRef<HTMLButtonElement | null>(null);
   let {buttonProps, isPressed} = useButton({
     ...props,
     elementType: 'span'

@@ -26,7 +26,7 @@ import {ValidationResult} from '@react-types/shared';
  * @param state - State for the checkbox, as returned by `useCheckboxGroupState`.
  * @param inputRef - A ref for the HTML input element.
  */
-export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: CheckboxGroupState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
+export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: CheckboxGroupState, inputRef: RefObject<HTMLInputElement | null>): CheckboxAria {
   const toggleState = useToggleState({
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isSelected: state.isSelected(props.value),

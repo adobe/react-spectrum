@@ -50,7 +50,7 @@ function LiteralSegment({segment}: LiteralSegmentProps) {
 }
 
 function EditableSegment({segment, state}: DatePickerSegmentProps) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   // In the ternary for the isPlaceholder case, the ` || segment.text` is to include the timezone in the hidden placeholder for width.

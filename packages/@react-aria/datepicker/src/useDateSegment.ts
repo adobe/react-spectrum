@@ -31,7 +31,7 @@ export interface DateSegmentAria {
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement | null>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale} = useLocale();
   let displayNames = useDisplayNames();
