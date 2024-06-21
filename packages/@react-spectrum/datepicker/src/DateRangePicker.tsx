@@ -137,24 +137,46 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}
           disableFocusRing>
-          <DatePickerField
-            {...startFieldProps}
-            data-testid="start-date"
-            isQuiet={props.isQuiet}
-            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
-          <DateRangeDash />
-          <DatePickerField
-            {...endFieldProps}
-            data-testid="end-date"
-            isQuiet={props.isQuiet}
-            inputClassName={classNames(
-              styles,
-              'spectrum-Datepicker-endField',
-              classNames(
-                datepickerStyles,
-                'react-spectrum-Datepicker-endField'
-              )
-            )} />
+          <div className={classNames(datepickerStyles, 'react-spectrum-Datefield-segments')}>
+            <DatePickerField
+              {...startFieldProps}
+              data-testid="start-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
+            <DateRangeDash />
+            <DatePickerField
+              {...endFieldProps}
+              data-testid="end-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(
+                styles,
+                'spectrum-Datepicker-endField',
+                classNames(
+                  datepickerStyles,
+                  'react-spectrum-Datepicker-endField'
+                )
+              )} />
+          </div>
+          <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments-hiddenWidth')}>
+            <DatePickerField
+              {...startFieldProps}
+              data-testid="start-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
+            <DateRangeDash isHiddenWidth />
+            <DatePickerField
+              {...endFieldProps}
+              data-testid="end-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(
+                styles,
+                'spectrum-Datepicker-endField',
+                classNames(
+                  datepickerStyles,
+                  'react-spectrum-Datepicker-endField'
+                )
+              )} />
+          </div>
         </Input>
         <DialogTrigger
           type="popover"
@@ -215,12 +237,18 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   );
 }
 
-function DateRangeDash() {
+function DateRangeDash(props) {
   return (
     <div
       aria-hidden="true"
       data-testid="date-range-dash"
-      className={classNames(datepickerStyles, 'react-spectrum-Datepicker-rangeDash')} />
+      className={classNames(
+        datepickerStyles,
+        'react-spectrum-Datepicker-rangeDash',
+        {
+          'is-hiddenWidth': props.isHiddenWidth
+        }
+      )} />
   );
 }
 

@@ -12,6 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {createCalendar} from '@internationalized/date';
+import {DateFieldState, useDateFieldState} from '@react-stately/datepicker';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDateFieldProps} from '@react-types/datepicker';
@@ -20,11 +21,28 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import React, {ReactElement, useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
-import {useDateFieldState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText} from './utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export function DateFieldHiddenWidth(props: {state: DateFieldState}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={classNames(datepickerStyles, 'react-spectrum-Datepicker-hiddenWidth')}>
+      {props.state.segments.map((segment, i) => {
+        let hiddenSegment = {...segment, isPlaceholder: true};
+        return (
+          <DatePickerSegment
+            key={i + '_hidden'}
+            segment={hiddenSegment}
+            state={props.state} />
+        );
+      })}
+    </span>
+  );
+}
 
 function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -83,15 +101,18 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
         autoFocus={autoFocus}
         validationState={validationState}
         className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
-        {state.segments.map((segment, i) =>
-          (<DatePickerSegment
-            key={i}
-            segment={segment}
-            state={state}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired} />)
-        )}
+        <div className={classNames(datepickerStyles, 'react-spectrum-Datefield-segments')}>
+          {state.segments.map((segment, i) =>
+            (<DatePickerSegment
+              key={i}
+              segment={segment}
+              state={state}
+              isDisabled={isDisabled}
+              isReadOnly={isReadOnly}
+              isRequired={isRequired} />)
+          )}
+        </div>
+        <DateFieldHiddenWidth state={state} />
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>

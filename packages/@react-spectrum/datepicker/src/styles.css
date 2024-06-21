@@ -62,6 +62,7 @@
 }
 
 .react-spectrum-Datepicker-inputContents {
+  position: relative;
   display: flex;
   align-items: center;
   height: 100%;
@@ -82,10 +83,49 @@
   }
 }
 
-.react-spectrum-Datepicker-segments {
+.react-spectrum-Datepicker-segments,
+.react-spectrum-Datefield-segments,
+.react-spectrum-Datepicker-segments-hiddenWidth {
   display: flex;
   align-items: center;
 }
+
+.react-spectrum-Datepicker-segments, .react-spectrum-Datefield-segments {
+  position: absolute;
+
+  .react-spectrum-Datepicker-startField, .react-spectrum-Datepicker-endField {
+    &.react-spectrum-Datepicker-segments {
+      position: unset;
+    }
+  }
+
+  .react-spectrum-Datepicker-startField, .react-spectrum-Datepicker-endField {
+    + .react-spectrum-Datepicker-hiddenWidth {
+      display: none;
+    }
+  }
+}
+
+.react-spectrum-Datepicker-segments-hiddenWidth {
+  .react-spectrum-Datepicker-startField, .react-spectrum-Datepicker-endField {
+    display: none;
+  }
+
+  .react-spectrum-Datepicker-rangeDash.is-hiddenWidth {
+    padding-inline-start: var(--spectrum-global-dimension-size-100);
+    padding-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+}
+
+.react-spectrum-Datepicker-hiddenWidth, .react-spectrum-Datepicker-rangeDash.is-hiddenWidth {
+  display: flex;
+  width: 100%;
+  z-index: -1;
+  text-align: center;
+  visibility: hidden;
+  height: 0;
+}
+
 
 .react-spectrum-Datepicker-literal {
   white-space: pre;
@@ -116,7 +156,6 @@
 
   .react-spectrum-DatePicker-placeholder {
     text-align: center;
-    font-style: italic;
     pointer-events: none;
   }
 }

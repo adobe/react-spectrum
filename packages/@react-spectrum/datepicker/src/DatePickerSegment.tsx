@@ -52,6 +52,8 @@ function LiteralSegment({segment}: LiteralSegmentProps) {
 function EditableSegment({segment, state}: DatePickerSegmentProps) {
   let ref = useRef();
   let {segmentProps} = useDateSegment(segment, state, ref);
+
+  // In the ternary for the isPlaceholder case, the ` || segment.text` is to include the timezone in the hidden placeholder for width.
   return (
     <div
       {...segmentProps}
@@ -62,7 +64,7 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
       })}
       style={segmentProps.style}
       data-testid={segment.type}>
-      {segment.isPlaceholder ? <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span> : segment.text}
+      {segment.isPlaceholder ? <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder || segment.text}</span> : segment.text}
     </div>
   );
 }
