@@ -43,7 +43,7 @@ export interface SearchFieldAria extends ValidationResult {
 export function useSearchField(
   props: AriaSearchFieldProps,
   state: SearchFieldState,
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement | null>
 ): SearchFieldAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
   let {

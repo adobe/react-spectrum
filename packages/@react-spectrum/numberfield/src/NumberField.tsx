@@ -116,7 +116,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 interface NumberFieldInputProps extends SpectrumNumberFieldProps {
   groupProps: HTMLAttributes<HTMLDivElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   incrementProps: AriaButtonProps,
   decrementProps: AriaButtonProps,
   className?: string,

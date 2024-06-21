@@ -16,7 +16,7 @@ import React, {useCallback, useRef, useState} from 'react';
 import {Switch} from 'react-aria-components';
 
 export function SwitchAnimation() {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let [isAnimating, setAnimating] = useState(false);
   let [isSelected, setSelected] = useState(true);
 

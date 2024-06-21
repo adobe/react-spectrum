@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Checkbox, Collection, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent} from '../';
+import {Button, Checkbox, Collection, ListLayout, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, Virtualizer} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -383,6 +383,40 @@ describe('Tree', () => {
     expect(row2).not.toHaveAttribute('data-selected');
     expect(onSelectionChange).toHaveBeenCalledTimes(2);
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['projects']));
+  });
+
+  it('should support virtualizer', async () => {
+    let layout = new ListLayout({
+      rowHeight: 25
+    });
+
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole, getAllByRole} = render(
+      <Virtualizer layout={layout}>
+        <DynamicTree />
+      </Virtualizer>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(7);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Projects', 'Project 1', 'Project 2', 'Project 2A', 'Project 2B', 'Project 2C', 'Project 3']);
+
+    let tree = getByRole('treegrid');
+    tree.scrollTop = 200;
+    fireEvent.scroll(tree);
+    
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(8);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A']);
+  
+    await user.tab();
+    await user.keyboard('{End}');
+
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(9);
+    expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A', 'Reports 2']);
   });
 
   describe('general interactions', () => {

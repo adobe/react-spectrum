@@ -1950,22 +1950,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/is-prop-valid@npm:^0.8.2":
-  version: 0.8.8
-  resolution: "@emotion/is-prop-valid@npm:0.8.8"
-  dependencies:
-    "@emotion/memoize": "npm:0.7.4"
-  checksum: 10c0/f6be625f067c7fa56a12a4edaf090715616dc4fc7803c87212831f38c969350107b9709b1be54100e53153b18d9fa068eb4bf4f9ac66a37a8edf1bac9b64e279
-  languageName: node
-  linkType: hard
-
-"@emotion/memoize@npm:0.7.4":
-  version: 0.7.4
-  resolution: "@emotion/memoize@npm:0.7.4"
-  checksum: 10c0/b2376548fc147b43afd1ff005a80a1a025bd7eb4fb759fdb23e96e5ff290ee8ba16628a332848d600fb91c3cdc319eee5395fa33d8875e5d5a8c4ce18cddc18e
-  languageName: node
-  linkType: hard
-
 "@emotion/use-insertion-effect-with-fallbacks@npm:^1.0.0":
   version: 1.0.1
   resolution: "@emotion/use-insertion-effect-with-fallbacks@npm:1.0.1"
@@ -5515,8 +5499,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5533,8 +5517,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5545,7 +5529,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     aria-hidden: "npm:^1.2.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5563,8 +5547,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5579,7 +5563,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5595,7 +5579,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5614,8 +5598,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5635,7 +5619,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5657,8 +5641,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5682,8 +5666,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5710,8 +5694,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5726,8 +5710,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5746,8 +5730,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5767,7 +5751,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     clsx: "npm:^2.0.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5781,7 +5765,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5798,14 +5782,13 @@ __metadata:
     "@react-stately/collections": "npm:^3.10.7"
     "@react-stately/grid": "npm:^3.8.7"
     "@react-stately/selection": "npm:^3.15.1"
-    "@react-stately/virtualizer": "npm:^3.7.1"
     "@react-types/checkbox": "npm:^3.8.1"
     "@react-types/grid": "npm:^3.2.6"
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5825,8 +5808,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5843,7 +5826,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5856,7 +5839,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5868,7 +5851,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5881,7 +5864,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     use-sync-external-store: "npm:^1.2.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5896,7 +5879,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5914,8 +5897,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5945,8 +5928,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5959,7 +5942,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -5979,8 +5962,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6008,8 +5991,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6021,7 +6004,7 @@ __metadata:
     "@react-stately/pagination": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6044,7 +6027,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6063,7 +6046,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6080,7 +6063,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6103,8 +6086,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6120,8 +6103,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6133,7 +6116,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6151,7 +6134,7 @@ __metadata:
     "@react-types/slider": "npm:^3.7.3"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6166,8 +6149,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6177,7 +6160,7 @@ __metadata:
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6192,8 +6175,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6206,7 +6189,7 @@ __metadata:
     "@react-types/switch": "npm:^3.5.3"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6224,15 +6207,14 @@ __metadata:
     "@react-stately/collections": "npm:^3.10.7"
     "@react-stately/flags": "npm:^3.0.3"
     "@react-stately/table": "npm:^3.11.8"
-    "@react-stately/virtualizer": "npm:^3.7.1"
     "@react-types/checkbox": "npm:^3.8.1"
     "@react-types/grid": "npm:^3.2.6"
     "@react-types/shared": "npm:^3.23.1"
     "@react-types/table": "npm:^3.9.5"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6249,8 +6231,8 @@ __metadata:
     "@react-types/tabs": "npm:^3.3.7"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6269,8 +6251,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6283,7 +6265,7 @@ __metadata:
     "@testing-library/react": ^13.0.0 || ^14.0.0
     "@testing-library/user-event": ^13.0.0 || ^14.0.0
     jest: ^27.0.0
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6301,7 +6283,7 @@ __metadata:
     "@react-types/textfield": "npm:^3.9.3"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6318,7 +6300,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6333,7 +6315,7 @@ __metadata:
     "@react-types/checkbox": "npm:^3.8.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6347,7 +6329,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6363,7 +6345,7 @@ __metadata:
     "@react-types/tooltip": "npm:^3.4.9"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6380,8 +6362,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6395,7 +6377,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     clsx: "npm:^2.0.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6410,8 +6392,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6424,7 +6406,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6894,7 +6876,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7388,8 +7370,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     clsx: "npm:^2.0.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7527,8 +7509,8 @@ __metadata:
     "@react-aria/utils": "npm:^3.24.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7662,8 +7644,8 @@ __metadata:
   peerDependencies:
     "@testing-library/react": ^15.0.0
     "@testing-library/user-event": ^14.4.3
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7678,7 +7660,7 @@ __metadata:
     "@testing-library/react": ^15.0.0
     "@testing-library/user-event": ^13.0.0 || ^14.0.0
     jest: ^27.0.0
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7731,7 +7713,7 @@ __metadata:
     "@react-types/provider": "npm:^3.8.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7743,7 +7725,7 @@ __metadata:
     "@react-types/provider": "npm:^3.8.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7756,7 +7738,7 @@ __metadata:
     "@react-types/provider": "npm:^3.8.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7768,7 +7750,7 @@ __metadata:
     "@react-types/provider": "npm:^3.8.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7857,7 +7839,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     clsx: "npm:^2.0.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7888,7 +7870,7 @@ __metadata:
     "@react-types/well": "npm:^3.3.9"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7902,7 +7884,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7916,7 +7898,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7927,7 +7909,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7946,7 +7928,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7964,7 +7946,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7975,7 +7957,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7992,7 +7974,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8004,7 +7986,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8023,7 +8005,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8037,7 +8019,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8053,7 +8035,7 @@ __metadata:
     "@react-types/table": "npm:^3.9.5"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8067,7 +8049,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8080,7 +8062,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8094,7 +8076,7 @@ __metadata:
     "@react-types/numberfield": "npm:^3.8.3"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8106,7 +8088,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.8.7"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8118,7 +8100,7 @@ __metadata:
     "@react-types/pagination": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8132,7 +8114,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8144,7 +8126,7 @@ __metadata:
     "@react-types/searchfield": "npm:^3.5.5"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8159,7 +8141,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8172,7 +8154,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8185,7 +8167,7 @@ __metadata:
     "@react-types/slider": "npm:^3.7.3"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8198,7 +8180,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8216,7 +8198,7 @@ __metadata:
     "@react-types/table": "npm:^3.9.5"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8229,7 +8211,7 @@ __metadata:
     "@react-types/tabs": "npm:^3.3.7"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8241,7 +8223,7 @@ __metadata:
     "@types/use-sync-external-store": "npm:^0.0.3"
     use-sync-external-store: "npm:^1.2.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8253,7 +8235,7 @@ __metadata:
     "@react-types/checkbox": "npm:^3.8.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8265,7 +8247,7 @@ __metadata:
     "@react-types/tooltip": "npm:^3.4.9"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8279,7 +8261,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8289,7 +8271,7 @@ __metadata:
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8301,7 +8283,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8311,7 +8293,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8321,7 +8303,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8331,7 +8313,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8343,7 +8325,7 @@ __metadata:
     "@react-types/searchfield": "npm:^3.5.5"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8353,7 +8335,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8363,7 +8345,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8374,7 +8356,7 @@ __metadata:
     "@react-types/link": "npm:^3.5.5"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8384,7 +8366,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8394,7 +8376,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8405,7 +8387,7 @@ __metadata:
     "@internationalized/date": "npm:^3.5.4"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8417,7 +8399,7 @@ __metadata:
     "@react-types/provider": "npm:^3.8.1"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8427,7 +8409,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8438,7 +8420,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@react-types/slider": "npm:^3.7.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8448,7 +8430,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8459,7 +8441,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.8.7"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8472,7 +8454,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.8.7"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8483,7 +8465,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.8.7"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8493,7 +8475,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8503,7 +8485,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8513,7 +8495,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8523,7 +8505,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8533,7 +8515,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8543,7 +8525,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8553,7 +8535,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8563,7 +8545,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8586,7 +8568,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8597,7 +8579,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.8.7"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8607,7 +8589,7 @@ __metadata:
   dependencies:
     "@react-types/progress": "npm:^3.5.4"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8617,7 +8599,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8627,7 +8609,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8637,7 +8619,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8647,7 +8629,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8657,7 +8639,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8667,7 +8649,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8678,7 +8660,7 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     "@react-types/textfield": "npm:^3.9.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8688,7 +8670,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8698,7 +8680,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8706,7 +8688,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8717,7 +8699,7 @@ __metadata:
     "@react-stately/virtualizer": "npm:^3.7.1"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8727,7 +8709,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8737,7 +8719,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8747,7 +8729,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8758,7 +8740,7 @@ __metadata:
     "@react-types/grid": "npm:^3.2.6"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8768,7 +8750,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8778,7 +8760,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8788,7 +8770,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8799,7 +8781,7 @@ __metadata:
     "@react-types/overlays": "npm:^3.8.7"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8809,7 +8791,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8819,7 +8801,7 @@ __metadata:
   dependencies:
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -10617,13 +10599,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
-  version: 15.7.3
-  resolution: "@types/prop-types@npm:15.7.3"
-  checksum: 10c0/511aac811bfdba9dd1c463d6e502d852bb2196048cf861fbf48a97d883dd32c1c44ad2127a18dbb49733d9ad0aafd445d673eb50d5547ca843106835f67b5877
-  languageName: node
-  linkType: hard
-
 "@types/q@npm:^1.5.1":
   version: 1.5.4
   resolution: "@types/q@npm:1.5.4"
@@ -10645,22 +10620,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.3.0":
-  version: 18.3.0
-  resolution: "@types/react-dom@npm:18.3.0"
+"@types/react-dom@npm:types-react-dom@19.0.0-rc.0":
+  version: 19.0.0-rc.0
+  resolution: "types-react-dom@npm:19.0.0-rc.0"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/6c90d2ed72c5a0e440d2c75d99287e4b5df3e7b011838cdc03ae5cd518ab52164d86990e73246b9d812eaf02ec351d74e3b4f5bd325bf341e13bf980392fd53b
+  checksum: 10c0/a05f48aec358142f167f4765ed25e4a8185926fe24421c6f0e9af7bbd3029055e01198a300543621c7dd0c045ac84a536e71a74b3ad6d5d95300e4584ab8a0aa
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.3.0":
-  version: 18.3.3
-  resolution: "@types/react@npm:18.3.3"
+"@types/react@npm:types-react@19.0.0-rc.0":
+  version: 19.0.0-rc.0
+  resolution: "types-react@npm:19.0.0-rc.0"
   dependencies:
-    "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/fe455f805c5da13b89964c3d68060cebd43e73ec15001a68b34634604a78140e6fc202f3f61679b9d809dde6d7a7c2cb3ed51e0fd1462557911db09879b55114
+  checksum: 10c0/b8c035f3f6354b2b1e24473ec2fb981afab9db726177755cdc6a610f607e8d89ca2297f4a80be1464013aa073a5496627fa0a0125f60af12daa769ad508cf3ea
   languageName: node
   linkType: hard
 
@@ -17820,24 +17794,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.16.4":
-  version: 10.16.4
-  resolution: "framer-motion@npm:10.16.4"
+"framer-motion@npm:^11.3.0-alpha.0":
+  version: 11.3.0-alpha.0
+  resolution: "framer-motion@npm:11.3.0-alpha.0"
   dependencies:
-    "@emotion/is-prop-valid": "npm:^0.8.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
+    "@emotion/is-prop-valid": "*"
     react: ^18.0.0
     react-dom: ^18.0.0
-  dependenciesMeta:
+  peerDependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  peerDependenciesMeta:
     react:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/a50f2124fbb585ec0a73d8ba7538cef3fb5deec463ae813d7e15c0893aa55d2f0919d432a33770cab38a1df81fa2c7e29a4834f2ba6e3713bc9c29dd6a98f3af
+  checksum: 10c0/9ae2dab7ebfcaf2f4c1e277094b07f8ed405ce38055665937eddaaac1f70749234dd1500beeaa5cd3582373f2e1ea78fd7b07beb359066bf7085a2eb177bf4f3
   languageName: node
   linkType: hard
 
@@ -27960,10 +27933,13 @@ __metadata:
     "@react-aria/toolbar": "npm:3.0.0-beta.5"
     "@react-aria/tree": "npm:3.0.0-alpha.1"
     "@react-aria/utils": "npm:^3.24.1"
+    "@react-aria/virtualizer": "npm:^3.10.1"
     "@react-stately/color": "npm:^3.6.1"
+    "@react-stately/layout": "npm:^3.13.9"
     "@react-stately/menu": "npm:^3.7.1"
     "@react-stately/table": "npm:^3.11.8"
     "@react-stately/utils": "npm:^3.10.1"
+    "@react-stately/virtualizer": "npm:^3.7.1"
     "@react-types/color": "npm:3.0.0-beta.25"
     "@react-types/form": "npm:^3.7.4"
     "@react-types/grid": "npm:^3.2.6"
@@ -27975,8 +27951,8 @@ __metadata:
     react-stately: "npm:^3.31.1"
     use-sync-external-store: "npm:^1.2.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -28023,8 +27999,8 @@ __metadata:
     "@react-aria/visually-hidden": "npm:^3.8.12"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -28226,8 +28202,8 @@ __metadata:
     "@testing-library/jest-dom": "npm:^5.16.5"
     "@testing-library/react": "npm:^15.0.0"
     "@testing-library/user-event": "npm:^14.5.2"
-    "@types/react": "npm:^18.3.0"
-    "@types/react-dom": "npm:^18.3.0"
+    "@types/react": "npm:types-react@19.0.0-rc.0"
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
     "@types/storybook__react": "npm:^4.0.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.5"
     "@typescript-eslint/parser": "npm:^6.7.5"
@@ -28262,7 +28238,7 @@ __metadata:
     eslint-plugin-rulesdir: "npm:^0.2.2"
     fast-check: "npm:^2.19.0"
     fast-glob: "npm:^3.1.0"
-    framer-motion: "npm:^10.16.4"
+    framer-motion: "npm:^11.3.0-alpha.0"
     fs-extra: "npm:^10.0.0"
     full-icu: "npm:^1.3.0"
     glob-promise: "npm:^6.0.5"
@@ -28345,7 +28321,7 @@ __metadata:
     "@react-stately/tree": "npm:^3.8.1"
     "@react-types/shared": "npm:^3.23.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 

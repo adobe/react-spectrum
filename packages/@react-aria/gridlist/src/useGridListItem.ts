@@ -57,7 +57,7 @@ const EXPANSION_KEYS = {
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement | null>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
