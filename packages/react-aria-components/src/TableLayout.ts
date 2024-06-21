@@ -15,9 +15,6 @@ import {LayoutOptionsDelegate} from './Virtualizer';
 import {TableColumnResizeStateContext} from './Table';
 import {useContext, useMemo} from 'react';
 
- // TODO: this has options like loaderHeight that doesn't actually affect anything. Should we hide that somehow (would need to change the extend)?
- // The loader height for the empty + loading case is set to the table height, and the loader for the loadMore case
- // (and eventual section loading case) is equal to the rowHeight
 export class TableLayout<T> extends BaseTableLayout<T> implements LayoutOptionsDelegate<TableLayoutProps> {
   // Invalidate the layout whenever the column widths change.
   useLayoutOptions() {

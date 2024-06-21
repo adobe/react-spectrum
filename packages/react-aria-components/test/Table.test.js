@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import React, {useMemo, useState} from 'react';
@@ -1522,7 +1522,9 @@ describe('Table', () => {
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
-      render(<LoadMoreTable onLoadMore={onLoadMore} items={items} />);
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} isLoading items={items} />);
+      tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} items={items} />);
+
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
