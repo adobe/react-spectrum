@@ -26,7 +26,7 @@ export interface LoadOnScrollProps {
   scrollOffset?: number
 }
 
-export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLElement>) {
+export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLElement | null>) {
   let {isLoading, onLoadMore, scrollOffset = 25} = props;
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.

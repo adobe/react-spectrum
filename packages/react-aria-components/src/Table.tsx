@@ -322,6 +322,8 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   isLoading?: boolean,
   onLoadMore?: () => void,
   scrollOffset?: number,
+  // TODO: keep this for now since we might need it for the body, but eventually perhaps we could just do tableContainerContext?.scrollRef || table ref if it turns out we
+  // don't need the body to be scrollable
   scrollRef?: RefObject<HTMLElement>
 }
 

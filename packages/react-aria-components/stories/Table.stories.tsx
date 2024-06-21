@@ -553,7 +553,7 @@ const OnLoadMoreTable = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>();
+  let scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     // TODO: but why typescript?
@@ -613,7 +613,7 @@ const OnLoadMoreTableBodyScroll = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLTableSectionElement>();
+  let scrollRef = useRef<HTMLTableSectionElement>(null);
   return (
     <Table
       aria-label="Load more table"
