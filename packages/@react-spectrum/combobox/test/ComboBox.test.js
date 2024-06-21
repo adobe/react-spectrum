@@ -2122,8 +2122,8 @@ describe('ComboBox', function () {
 
         return 40;
       });
-      // scrollHeight is for useVirutalizerItem to mock its getSize()
-      scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 32);
+      // scrollHeight is now mocking the virtualizer's total content height
+      scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 104);
     });
     afterEach(() => {
       clientHeightSpy.mockRestore();

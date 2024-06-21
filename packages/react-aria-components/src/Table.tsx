@@ -8,12 +8,13 @@ import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableP
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useLoadOnScroll} from '@react-aria/loading';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -312,7 +313,18 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks,
+  // TODO: finalize these
+  // Perhaps we should make isLoading be loadingKeys for the eventual section/nested rows loading case
+  // Or should it follow the loadingState api we have for our async hook
+  // TODO: should the below be loadMoreOptions? These are just passed to the hook and making a prop that takes in a object containing the
+  // options might be easier to adjust in the future
+  isLoading?: boolean,
+  onLoadMore?: () => void,
+  scrollOffset?: number,
+  // TODO: keep this for now since we might need it for the body, but eventually perhaps we could just do tableContainerContext?.scrollRef || table ref if it turns out we
+  // don't need the body to be scrollable
+  scrollRef?: RefObject<HTMLElement>
 }
 
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
@@ -328,13 +340,20 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, scrollRef, dragAndDropHooks} = props;
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    scrollOffset
+  }), [isLoading, onLoadMore, scrollOffset]);
+  let {scrollViewProps: {onScroll}} = useLoadOnScroll(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
+  useEvent(scrollRef || tableContainerContext?.scrollRef || ref, 'scroll', onScroll);
+
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
     isVirtualized
   }, state, ref);
-
-  let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -847,7 +866,6 @@ const _ColumnResizer = forwardRef(ColumnResizer);
 export {_ColumnResizer as ColumnResizer};
 
 export interface TableBodyRenderProps {
-  // TODO: I wonder if this should also be true if the table only has the loading row. I figure we should keep loading and empty state as separate states
   /**
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
@@ -869,6 +887,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
   let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
@@ -891,9 +910,19 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   if (collection.size === 0 && props.renderEmptyState && state) {
     let TR = useElementType('tr');
     let TD = useElementType('td');
+
+    let rowProps = {};
+    let rowHeaderProps = {};
+    if (isVirtualized) {
+      rowProps['aria-rowindex'] = state.collection.headerRows.length + 1;
+      rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+    } else {
+      rowHeaderProps['colSpan'] = collection.columnCount;
+    }
+
     emptyState = (
-      <TR role="row">
-        <TD role="gridcell" colSpan={collection.columnCount}>
+      <TR role="row" {...rowProps}>
+        <TD role="rowheader" {...rowHeaderProps}>
           {props.renderEmptyState(renderValues)}
         </TD>
       </TR>
@@ -1278,10 +1307,13 @@ function RootDropIndicator() {
 }
 
 // TOOD: no props for now, maybe get rid of this? Might be good to keep it just in case
-export interface TableLoaderProps {}
+export interface TableLoaderProps extends StyleProps {
+  children?: ReactNode
+}
 
 export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let numColumns = state.collection.columns.length;
   let renderProps = useRenderProps({
     ...props,
@@ -1290,20 +1322,29 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
     defaultClassName: 'react-aria-TableLoader',
     values: null
   });
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let rowProps = {};
+  let rowHeaderProps = {};
 
-  // TODO: add aria attributes when we add virtualizer
-  // Note that the level, etc may need to be adjusted since this isn't a "item" and thus doesn't get the same level calulation handling
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+  } else {
+    rowHeaderProps['colSpan'] = numColumns;
+  }
+
   return (
     <>
-      <tr
+      <TR
         role="row"
         ref={ref}
-        {...mergeProps(filterDOMProps(props as any))}
+        {...mergeProps(filterDOMProps(props as any), rowProps)}
         {...renderProps}>
-        <td role="rowheader" colSpan={numColumns}>
+        <TD role="rowheader" {...rowHeaderProps}>
           {renderProps.children}
-        </td>
-      </tr>
+        </TD>
+      </TR>
     </>
   );
 });

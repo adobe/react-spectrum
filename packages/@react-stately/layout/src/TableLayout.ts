@@ -18,7 +18,7 @@ import {LayoutNode, ListLayout, ListLayoutOptions, ListLayoutProps} from './List
 import {TableCollection} from '@react-types/table';
 import {TableColumnLayout} from '@react-stately/table';
 
-export interface TableLayoutOptions<T> extends ListLayoutOptions<T> {
+export interface TableLayoutOptions<T> extends Omit<ListLayoutOptions<T>, 'loaderHeight'> {
   scrollContainer?: 'table' | 'body'
 }
 
@@ -45,7 +45,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   private columnsChanged(newCollection: TableCollection<T>, oldCollection: TableCollection<T> | null) {
-    return !oldCollection || 
+    return !oldCollection ||
       newCollection.columns !== oldCollection.columns &&
       newCollection.columns.length !== oldCollection.columns.length ||
       newCollection.columns.some((c, i) =>
@@ -75,6 +75,10 @@ export class TableLayout<T> extends ListLayout<T> {
     super.validate(invalidationContext);
   }
 
+  // TODO: in the RAC case, we don't explicity accept loadingState on the TableBody, but note that if the user
+  // does happen to set loadingState="loading" or loadingState="loadingMore" coincidentally, the isLoading
+  // part of this code will trigger and the layout will reserve more room for the loading spinner which we actually only use
+  // in RSP
   protected buildCollection(): LayoutNode[] {
     // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
     let loadingState = this.collection.body.props.loadingState;
@@ -299,6 +303,7 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'headerrow':
         return this.buildHeaderRow(node, x, y);
       case 'item':
+      case 'loader':
         return this.buildRow(node, x, y);
       case 'column':
       case 'placeholder':
@@ -334,6 +339,12 @@ export class TableLayout<T> extends ListLayout<T> {
           children.push(layoutNode);
         }
       }
+    }
+
+    // TODO: perhaps make a separate buildLoader? Do we need to differentiate the layoutInfo information?
+    // I think the below is ok for now since we can just treat nested loaders/load more as rows
+    if (node.type === 'loader') {
+      height = this.rowHeight;
     }
 
     this.setChildHeights(children, height);

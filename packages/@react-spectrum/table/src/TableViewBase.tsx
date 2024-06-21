@@ -574,7 +574,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     onLoadMore
   }), [otherProps.tabIndex, focusedKey, isLoading, onLoadMore]);
 
-  let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, domRef);
+  let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, bodyRef);
   let onVisibleRectChangeMemo = useCallback(rect => {
     setTableWidth(rect.width);
     onVisibleRectChange(rect);
