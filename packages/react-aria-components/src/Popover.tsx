@@ -31,7 +31,7 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
    * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>,
+  triggerRef?: RefObject<Element | null>,
   /**
    * Whether the popover is currently performing an entry animation.
    */
@@ -147,7 +147,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
     arrowSize: arrowWidth
   }, state);
 
-  let ref = props.popoverRef as RefObject<HTMLDivElement>;
+  let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
   let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,

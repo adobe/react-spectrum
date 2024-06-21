@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {ListLayoutOptions, LayoutNode} from './ListLayout';
+export type {ListLayoutOptions, ListLayoutProps, LayoutNode} from './ListLayout';
+export type {TableLayoutOptions, TableLayoutProps} from './TableLayout';
 export {ListLayout} from './ListLayout';
 export {TableLayout} from './TableLayout';

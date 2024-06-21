@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {createPortal} from 'react-dom';
 import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
-import {render as ReactDOMRender} from 'react-dom';
 import {useInteractOutside} from '../';
 
 function Example(props) {
@@ -225,11 +225,7 @@ describe('useInteractOutside (iframes)', function () {
   });
 
   const IframeExample = (props) => {
-    React.useEffect(() => {
-      ReactDOMRender(<Example {...props} />, iframeRoot);
-    }, [props]);
-
-    return null;
+    return createPortal(<Example {...props} />, iframeRoot);
   };
 
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.

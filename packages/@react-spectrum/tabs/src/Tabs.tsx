@@ -68,8 +68,8 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
   } = props;
 
   let domRef = useDOMRef(ref);
-  let tablistRef = useRef<HTMLDivElement>();
-  let wrapperRef = useRef<HTMLDivElement>();
+  let tablistRef = useRef<HTMLDivElement>(undefined);
+  let wrapperRef = useRef<HTMLDivElement>(undefined);
 
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
@@ -161,7 +161,7 @@ function Tab<T>(props: TabProps<T>) {
   let {item, state} = props;
   let {key, rendered} = item;
 
-  let ref = useRef<any>();
+  let ref = useRef<any>(undefined);
   let {tabProps, isSelected, isDisabled} = useTab({key}, state, ref);
 
   let {hoverProps, isHovered} = useHover({

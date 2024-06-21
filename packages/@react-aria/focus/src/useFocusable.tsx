@@ -32,7 +32,7 @@ interface FocusableContextValue extends FocusableProviderProps {
 
 let FocusableContext = React.createContext<FocusableContextValue | null>(null);
 
-function useFocusableContext(ref: RefObject<FocusableElement>): FocusableContextValue {
+function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
   useSyncRef(context, ref);
 
@@ -70,7 +70,7 @@ export interface FocusableAria {
 /**
  * Used to make an element focusable and capable of auto focus.
  */
-export function useFocusable(props: FocusableOptions, domRef: RefObject<FocusableElement>): FocusableAria {
+export function useFocusable(props: FocusableOptions, domRef: RefObject<FocusableElement | null>): FocusableAria {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);

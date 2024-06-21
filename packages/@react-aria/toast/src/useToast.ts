@@ -42,7 +42,7 @@ export interface ToastAria {
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
+export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement | null>): ToastAria {
   let {
     key,
     timer,

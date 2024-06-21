@@ -68,7 +68,7 @@ function getVisibleMonths(scale) {
 }
 
 export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
-  let domRef = useRef();
+  let domRef = useRef(undefined);
   useImperativeHandle(ref, () => ({
     ...createDOMRef(domRef),
     focus() {
