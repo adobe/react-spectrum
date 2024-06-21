@@ -276,7 +276,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ...ariaProps,
       ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
       tabIndex: itemProps.tabIndex != null ? -1 : undefined,
-      onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick: (e: React.MouseEvent<HTMLElement>) => {
         pressProps.onClick?.(e);
 
         // If a custom router is provided, prevent default and forward if this link should client navigate.
