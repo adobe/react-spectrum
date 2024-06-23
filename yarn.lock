@@ -124,8 +124,8 @@ __metadata:
     "@react-types/shared": "npm:^3.23.1"
     client-only: "npm:^0.0.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6429,8 +6429,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6456,8 +6456,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6484,8 +6484,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6521,8 +6521,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6538,7 +6538,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6555,7 +6555,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6579,8 +6579,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6605,7 +6605,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6622,7 +6622,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6650,8 +6650,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6679,8 +6679,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6704,7 +6704,7 @@ __metadata:
     react-aria-components: "npm:^1.2.1"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6735,8 +6735,8 @@ __metadata:
     react-aria-components: "npm:^1.2.1"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6772,8 +6772,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6795,8 +6795,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6828,8 +6828,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6860,8 +6860,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6891,8 +6891,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6947,7 +6947,7 @@ __metadata:
     react-aria-components: "npm:^1.2.1"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6960,7 +6960,7 @@ __metadata:
     react-aria-components: "npm:^1.2.1"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6977,7 +6977,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -6992,7 +6992,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7009,7 +7009,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7025,7 +7025,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7044,7 +7044,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7064,7 +7064,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7082,7 +7082,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7098,7 +7098,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7116,7 +7116,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7152,8 +7152,8 @@ __metadata:
     react-transition-group: "npm:^4.4.5"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7182,8 +7182,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7216,8 +7216,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7234,7 +7234,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7263,8 +7263,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7284,8 +7284,8 @@ __metadata:
     react-transition-group: "npm:^4.4.5"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7305,7 +7305,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7334,8 +7334,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7352,7 +7352,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7392,7 +7392,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7414,7 +7414,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7435,7 +7435,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7457,7 +7457,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7473,7 +7473,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7496,8 +7496,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7535,7 +7535,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7573,8 +7573,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7600,8 +7600,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7627,8 +7627,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7677,7 +7677,7 @@ __metadata:
     react-aria-components: "npm:^1.2.1"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7701,7 +7701,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7775,8 +7775,8 @@ __metadata:
     use-sync-external-store: "npm:^1.2.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7799,8 +7799,8 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7823,8 +7823,8 @@ __metadata:
     react-aria-components: "npm:^1.2.1"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7855,7 +7855,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8557,8 +8557,8 @@ __metadata:
     "@react-spectrum/list": "npm:^3.7.10"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8953,7 +8953,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8968,7 +8968,7 @@ __metadata:
     fs-extra: "npm:^10.0.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8982,7 +8982,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -8996,7 +8996,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -9010,7 +9010,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 

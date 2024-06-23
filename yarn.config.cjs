@@ -21,7 +21,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
         } else {
-          dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0');
+          dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0');
         }
       }
     }
