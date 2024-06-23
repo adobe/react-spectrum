@@ -40,10 +40,8 @@ export default {
   },
   argTypes: {
     timeout: {
-      control: {
-        type: 'radio',
-        options: [null, 5000]
-      }
+      control: 'radio',
+      options: [null, 5000]
     }
   }
 };
@@ -350,7 +348,7 @@ function IframeExample() {
 }
 
 function MainLandmark(props) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
 }

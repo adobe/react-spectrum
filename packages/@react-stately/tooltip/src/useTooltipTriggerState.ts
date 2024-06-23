@@ -45,7 +45,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let {delay = TOOLTIP_DELAY, closeDelay = TOOLTIP_COOLDOWN} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
   let id = useMemo(() => `${++tooltipId}`, []);
-  let closeTimeout = useRef<ReturnType<typeof setTimeout>>();
+  let closeTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   let closeCallback = useRef<() => void>(close);
 
   let ensureTooltipEntry = () => {

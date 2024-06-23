@@ -33,7 +33,7 @@ interface ClampedMoveProps {
 }
 
 function useClampedMove(props: ClampedMoveProps) {
-  let currentPosition = useRef<IPosition | null>();
+  let currentPosition = useRef<IPosition | null>(undefined);
 
   let {getCurrentState, onMoveTo, onMoveStart, onMoveEnd, reverseX = false, reverseY = false} = props;
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
+import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
@@ -57,7 +57,7 @@ const EXPANSION_KEYS = {
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement | null>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
@@ -242,7 +242,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
+  let syntheticLinkProps = useSyntheticLinkProps(node.props);
+  let linkProps = itemStates.hasAction ? syntheticLinkProps : {};
   // TODO: re-add when we get translations and fix this for iOS VO
   // let rowAnnouncement;
   // if (onAction) {

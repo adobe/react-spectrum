@@ -25,7 +25,7 @@ export interface ToastRegionAria {
  * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement>): ToastRegionAria {
+export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement | null>): ToastRegionAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
   let {landmarkProps} = useLandmark({
     role: 'region',

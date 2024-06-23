@@ -41,7 +41,7 @@ export interface PressProps extends PressEvents {
 
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
-  ref?: RefObject<Element>
+  ref?: RefObject<Element | null>
 }
 
 interface PressState {
