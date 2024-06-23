@@ -37,7 +37,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@internationalized/date": "^3.5.4",
     "@internationalized/string": "^3.2.3",
     "@react-aria/color": "3.0.0-beta.33",
@@ -48,8 +47,6 @@
     "@react-aria/tree": "3.0.0-alpha.1",
     "@react-aria/utils": "^3.24.1",
     "@react-aria/virtualizer": "^3.10.1",
-    "@react-spectrum/progress": "^3.7.7",
-    "@react-spectrum/utils": "^3.11.7",
     "@react-stately/color": "^3.6.1",
     "@react-stately/layout": "^3.13.9",
     "@react-stately/menu": "^3.7.1",
