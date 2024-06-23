@@ -7131,6 +7131,7 @@ __metadata:
     "@react-aria/gridlist": "npm:^3.8.1"
     "@react-aria/i18n": "npm:^3.11.1"
     "@react-aria/interactions": "npm:^3.21.3"
+    "@react-aria/selection": "npm:^3.18.1"
     "@react-aria/utils": "npm:^3.24.1"
     "@react-aria/virtualizer": "npm:^3.10.1"
     "@react-aria/visually-hidden": "npm:^3.8.12"
