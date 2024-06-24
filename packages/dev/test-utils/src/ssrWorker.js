@@ -30,6 +30,9 @@ let {SSRProvider} = require('@react-aria/ssr');
 
 http.createServer((req, res) => {
   let body = '';
+  req.on('clientError', (err, socket) => {
+    console.log(err)
+  });
   req.on('data', chunk => {
     body += chunk;
   });
