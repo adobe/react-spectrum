@@ -45,7 +45,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   private columnsChanged(newCollection: TableCollection<T>, oldCollection: TableCollection<T> | null) {
-    return !oldCollection || 
+    return !oldCollection ||
       newCollection.columns !== oldCollection.columns &&
       newCollection.columns.length !== oldCollection.columns.length ||
       newCollection.columns.some((c, i) =>
@@ -152,7 +152,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.setChildHeights(columns, height);
 
     rect.height = height;
-    rect.width = x;
+    rect.width = Math.max(this.virtualizer.visibleRect.width, x);
 
     return {
       layoutInfo: row,
