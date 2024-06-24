@@ -7551,6 +7551,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.11.1"
     "@react-aria/interactions": "npm:^3.21.3"
     "@react-aria/overlays": "npm:^3.22.1"
+    "@react-aria/selection": "npm:^3.18.1"
     "@react-aria/table": "npm:^3.14.1"
     "@react-aria/utils": "npm:^3.24.1"
     "@react-aria/virtualizer": "npm:^3.10.1"
