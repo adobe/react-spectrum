@@ -30,9 +30,6 @@ let {SSRProvider} = require('@react-aria/ssr');
 
 http.createServer((req, res) => {
   let body = '';
-  req.on('clientError', (err, socket) => {
-    console.log(err)
-  });
   req.on('data', chunk => {
     body += chunk;
   });
@@ -49,10 +46,8 @@ http.createServer((req, res) => {
     let html;
     try {
       // Evaluate the code, and render the resulting JSX element to HTML.
-      let now = Date.now();
       let element = evaluate(parsed.source, parsed.filename);
       html = ReactDOMServer.renderToString(React.createElement(SSRProvider, undefined, element));
-      console.log('Rendered in', Date.now() - now, 'ms');
     } catch (err) {
       errors.push(err.stack);
     }
