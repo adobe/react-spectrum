@@ -19,7 +19,7 @@ import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -123,7 +123,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
 const _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
 
-function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   let state = useContext(ListStateContext);
   return state
     ? <TagListInner props={props} forwardedRef={ref} />
