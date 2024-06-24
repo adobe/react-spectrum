@@ -195,7 +195,7 @@ class NumberParserImpl {
       let integerPart: string;
       let parsedIntegerPart: number;
       let decimalPart;
-      if (groupSymbolMatch?.length > 0 && abs.length - groupSymbolMatch.length > this.options.minimumIntegerDigits) {
+      if (groupSymbolMatch && groupSymbolMatch.length > 0 && abs.length - groupSymbolMatch.length > this.options.minimumIntegerDigits) {
         integerPart = abs.slice(0, abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]));
         decimalPart = abs.slice(abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]) + 1, abs.length);
         integerPart = integerPart.replace(GROUPING_SYMBOLS_REGEX, '');
