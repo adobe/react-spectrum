@@ -109,15 +109,27 @@ const inputButton = style({
   marginStart: 'text-to-control',
   aspectRatio: 'square',
   flexShrink: 0,
-  transition: 'default',
+  transition: {
+    default: 'default',
+    forcedColors: 'none'
+  },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonText',
+      isHovered: 'Highlight',
+      isOpen: 'Highlight',
+      isDisabled: 'GrayText'
+    }
   },
   color: {
     default: 'neutral',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'ButtonFace'
+    }
   }
 });
 

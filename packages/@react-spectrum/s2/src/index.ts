@@ -40,6 +40,7 @@ export {InlineAlert} from './InlineAlert';
 export {Link} from './Link';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger} from './Menu';
 export {Meter} from './Meter';
+export {NumberField} from './NumberField';
 export {Picker, PickerItem, PickerSection} from './Picker';
 export {ProgressBar} from './ProgressBar';
 export {ProgressCircle} from './ProgressCircle';

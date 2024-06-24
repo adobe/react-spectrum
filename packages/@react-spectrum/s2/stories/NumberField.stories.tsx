@@ -11,20 +11,54 @@
  */
 
 import {NumberField} from '../src/NumberField';
-
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {Button, Form} from '../src';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {
   component: NumberField,
   parameters: {
     layout: 'centered'
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;
+type Story = StoryObj<typeof NumberField>;
 
-export const Example = (args: any) => <NumberField {...args} />;
+export const Example: Story = {
+  render: (args) => (
+    <NumberField {...args} />
+  ),
+  args: {
+    label: 'Quantity'
+  }
+};
 
-Example.args = {
-  label: 'Cookies'
+export const Collapsed: Story = {
+  render: (args) => (
+    <NumberField {...args} isCollapsed />
+  )
+};
+
+export const Validation = (args: any) => (
+  <Form>
+    <NumberField {...args} />
+    <Button type="submit" variant="primary">Submit</Button>
+  </Form>
+);
+Validation.args = {
+  label: 'Quantity',
+  isRequired: true
+};
+
+export const CustomWidth = (args: any) => <NumberField {...args} styles={style({width: 384})} />;
+
+CustomWidth.args = {
+  label: 'Large quantity'
+};
+CustomWidth.parameters = {
+  docs: {
+    disable: true
+  }
 };
