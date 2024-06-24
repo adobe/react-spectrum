@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Collection} from '../src/Collection';
 import {GridLayout} from '@react-spectrum/card';
-import {Header, ListBox, ListBoxItem, ListBoxProps, ListLayout, Section, Separator, Text, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
