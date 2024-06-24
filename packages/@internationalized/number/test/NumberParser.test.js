@@ -233,7 +233,7 @@ describe('NumberParser', function () {
 
       // skipping until we can reliably run it, until then, it's good to run manually
       // track counter examples below
-      it.skip('should fully reverse NumberFormat', function () {
+      it('should fully reverse NumberFormat', function () {
         fc.assert(
           fc.property(
             inputsArb,
@@ -242,7 +242,11 @@ describe('NumberParser', function () {
               const parser = new NumberParser(locale, opts);
 
               const formattedOnce = formatter.format(adjustedNumberForFractions);
-              expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+              const roundTrip = formatter.format(parser.parse(formattedOnce));
+              if (roundTrip !== formattedOnce) {
+                console.warn({formattedOnce, roundTrip, adjustedNumberForFractions, locale, opts});
+              }
+              expect(roundTrip).toBe(formattedOnce);
             }
           )
         );
@@ -264,7 +268,7 @@ describe('NumberParser', function () {
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
       // See Bug https://github.com/nodejs/node/issues/49919
-      it.skip('formatted units keep their number', () => {
+      it('formatted units keep their number', () => {
         let locale = 'da-DK';
         let options = {
           style: 'unit',

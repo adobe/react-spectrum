@@ -24,8 +24,9 @@ interface Symbols {
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
-const GROUPING_SYMBOLS_REGEX = /[,٬ .\u202f\u00a0]/g;
-const DECIMAL_SYMBOLS = '[.\u066b,]';
+// eslint-disable-next-line no-irregular-whitespace
+const GROUPING_SYMBOLS_REGEX = /[,٬ .  ]/gu;
+const NUMERALS_REGEX = /[0123456789]|[٠١٬٢٣٤٬٥٦٧٬٨٩]|[〇一,二三四,五六七,八九]/gu;
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -182,59 +183,59 @@ class NumberParserImpl {
   }
 
   sanitize(value: string) {
-    // Replace group and decimal symbols with the current locale's symbols
-    let groupSymbolMatch = value.match(GROUPING_SYMBOLS_REGEX);
-    let groupSymbol = groupSymbolMatch?.[0];
-    let decimalSymbol = value.match(new RegExp(groupSymbol ? DECIMAL_SYMBOLS.replace(groupSymbol, '') : DECIMAL_SYMBOLS, 'g'))?.[0];
-    if (
-      // If we have both a group and decimal symbol,
-      groupSymbol && decimalSymbol &&
-      // and they're not the same as the current locale's symbols, then we need to replace them.
-      (groupSymbol !== this.symbols.group || decimalSymbol !== this.symbols.decimal)
-      &&
-      // However, the decimal or group symbol can sometimes appear within a literal,
-      // for example in "bg-BG" the currency symbol is "щ.д.",
-      // so we need to check if it's actually a decimal or group.
-      !(
-        this.symbols.literals.test(value) &&
-        (
-          this.symbols.literals.toString().includes(decimalSymbol) ||
-          this.symbols.literals.toString().includes(groupSymbol)
-        )
-      )
-    ) {
-      value = replaceAll(value, groupSymbol, '');
-      value = replaceAll(value, decimalSymbol, this.symbols.decimal ?? '.');
+    let sanitizedValue = value.trim();
+
+    let numeralMatches = sanitizedValue.match(NUMERALS_REGEX);
+    if (numeralMatches) {
+      let beforeAbs = sanitizedValue.slice(0, sanitizedValue.indexOf(numeralMatches[0]));
+      let afterAbs = sanitizedValue.slice(sanitizedValue.lastIndexOf(numeralMatches[numeralMatches.length - 1]) + 1);
+      let abs = sanitizedValue.slice(sanitizedValue.indexOf(numeralMatches[0]), sanitizedValue.lastIndexOf(numeralMatches[numeralMatches.length - 1]) + 1);
+      // Replace group and decimal symbols with the current locale's symbols
+      let groupSymbolMatch = abs.match(GROUPING_SYMBOLS_REGEX);
+      let integerPart: string;
+      let parsedIntegerPart: number;
+      let decimalPart;
+      if (groupSymbolMatch && groupSymbolMatch.length > 0 && abs.length - groupSymbolMatch.length > this.options.minimumIntegerDigits) {
+        integerPart = abs.slice(0, abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]));
+        decimalPart = abs.slice(abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]) + 1, abs.length);
+        integerPart = integerPart.replace(GROUPING_SYMBOLS_REGEX, '');
+        parsedIntegerPart = parseInt(integerPart, 10);
+        if (!isNaN(parsedIntegerPart)) {
+          integerPart = parsedIntegerPart.toString();
+        }
+        abs = `${integerPart ?? ''}${integerPart === '0' || groupSymbolMatch?.[groupSymbolMatch.length - 1] !== groupSymbolMatch?.[0] ? this.symbols.decimal : groupSymbolMatch[groupSymbolMatch.length - 1]}${decimalPart ?? ''}`;
+      }
+      sanitizedValue = `${beforeAbs}${abs}${afterAbs}`;
     }
 
     // Remove literals and whitespace, which are allowed anywhere in the string
-    value = value.replace(this.symbols.literals, '');
+    sanitizedValue = sanitizedValue.replace(this.symbols.literals, '');
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
     if (this.symbols.minusSign) {
-      value = value.replace('-', this.symbols.minusSign);
+      sanitizedValue = sanitizedValue.replace('-', this.symbols.minusSign);
     }
 
     // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
     // instead they use the , (44) character or apparently the (1548) character.
     if (this.options.numberingSystem === 'arab') {
       if (this.symbols.decimal) {
-        value = value.replace(',', this.symbols.decimal);
-        value = value.replace(String.fromCharCode(1548), this.symbols.decimal);
+        sanitizedValue = sanitizedValue.replace(',', this.symbols.decimal);
+        sanitizedValue = sanitizedValue.replace(String.fromCharCode(1548), this.symbols.decimal);
       }
       if (this.symbols.group) {
-        value = replaceAll(value, '.', this.symbols.group);
+        sanitizedValue = replaceAll(sanitizedValue, '.', this.symbols.group);
       }
     }
 
     // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
     // so allow 'period' as a group char and replace it with a space
     if (this.options.locale === 'fr-FR') {
-      value = replaceAll(value, '.', String.fromCharCode(8239));
+      sanitizedValue = replaceAll(sanitizedValue, '.', String.fromCharCode(8239));
     }
 
-    return value;
+    return sanitizedValue;
   }
 
   isValidPartialNumber(value: string, minValue: number = -Infinity, maxValue: number = Infinity): boolean {
