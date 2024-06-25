@@ -16,13 +16,13 @@ import {getAllowedOverrides} from './style-utils' with { type: 'macro' };
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
 import {Button} from './Button';
-import {ClearButton} from './ClearButton';
 import AlertTriangle from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
 import InfoCircle from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
 import {IconContext} from './Icon';
 import {Provider} from 'react-aria-components';
 import {useDOMRef} from '@react-spectrum/utils';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
+import {CloseButton} from './CloseButton';
 
 export interface AlertBannerProps extends DismissButtonProps {
   /** The content of the alert banner. */
@@ -71,7 +71,7 @@ const content = style({
   flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'end',
-  marginY: size(11)
+  marginY: size(12)
 });
 
 const text = style({
@@ -79,7 +79,7 @@ const text = style({
   flexShrink: 1,
   minWidth: 0,
   marginEnd: 16,
-  marginY: size(7) // combines with content margin to have edge-to-text margin of 18
+  marginY: size(6) // combines with content margin to have edge-to-text margin of 18
 });
 
 let ICONS = {
@@ -88,10 +88,14 @@ let ICONS = {
   neutral: undefined
 };
 
+const baseHeight = {
+  height: 56
+} as const;
+
 const icon = style({
+  ...baseHeight,
   flexShrink: 0,
   alignSelf: 'start',
-  marginTop: size(18),
   marginEnd: size(9), // text-to-visual-300
   '--iconPrimary': {
     type: 'fill',
@@ -100,8 +104,7 @@ const icon = style({
 });
 
 const button = style({
-  marginEnd: 16,
-  marginY: size(1) // combines with text margin to have text-button spacing of 8 (wrapped mode)
+  marginEnd: 16
 });
 
 function AlertBanner(props: AlertBannerProps, ref: DOMRef<HTMLDivElement>) {
@@ -132,11 +135,12 @@ function AlertBanner(props: AlertBannerProps, ref: DOMRef<HTMLDivElement>) {
           }]
         ]}>
         {Icon && <Icon aria-label={iconAlt} />}
-        <div className={content}>
-          <div className={text}>
-            {children}
-          </div>
-          {actionLabel && onAction && (
+        <CenterBaseline className={style({display: 'flex', flexGrow: 1, flexShrink: 1})}>
+          <div className={content}>
+            <div className={text}>
+              {children}
+            </div>
+            {actionLabel && onAction && (
             <Button
               variant="primary"
               staticColor="white"
@@ -146,9 +150,10 @@ function AlertBanner(props: AlertBannerProps, ref: DOMRef<HTMLDivElement>) {
               {actionLabel}
             </Button>
           )}
-        </div>
-        <CenterBaseline style={{marginTop: 12}}>
-          <ClearButton onPress={onDismiss} style={{height: 32}} />
+          </div>
+        </CenterBaseline>
+        <CenterBaseline className={style(baseHeight)}>
+          <CloseButton onPress={onDismiss} staticColor="white" />
         </CenterBaseline>
       </Provider>
     </div>

@@ -28,7 +28,7 @@ export const Example = (args: any) => (
   <AlertBanner actionLabel="Action" onAction={action('onAction')} onDismiss={action('onDismiss')} {...args}>Your trial has expired.</AlertBanner>
 );
 
-export const WithotActionButton = (args: any) => (
+export const WithoutActionButton = (args: any) => (
   <AlertBanner onDismiss={action('onDismiss')} {...args}>Your trial has expired.</AlertBanner>
 );
 

@@ -82,14 +82,14 @@ const styles = style({
 }, getAllowedOverrides());
 
 function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
-  let {UNSAFE_style, UNSAFE_className = ''} = props;
+  let {UNSAFE_style, UNSAFE_className = '', staticColor} = props;
   let domRef = useFocusableRef(ref);
   return (
     <Button
       {...props}
       ref={domRef}
       style={pressScale(domRef, UNSAFE_style)}
-      className={renderProps => UNSAFE_className + styles(renderProps, props.styles)}>
+      className={renderProps => UNSAFE_className + styles({...renderProps, staticColor}, props.styles)}>
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
