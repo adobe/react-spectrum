@@ -778,6 +778,46 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
     walker.currentNode = opts.from;
   }
 
+  // Preserve the original nextNode and previousNode methods
+  const originalNextNode = walker.nextNode.bind(walker);
+  const originalPreviousNode = walker.previousNode.bind(walker);
+
+  walker.nextNode = function () {
+    let nextElement = originalNextNode();
+    if (!nextElement && scope && scope.length > 0) {
+      let currentShadowHost = scope[0].getRootNode().host;
+      let nextShadowHost = currentShadowHost?.nextElementSibling;
+      while (nextShadowHost) {
+        if (nextShadowHost.shadowRoot) {
+          let nextShadowScope = Array.from(nextShadowHost.shadowRoot.querySelectorAll('*')).filter(isFocusable);
+          if (nextShadowScope.length > 0) {
+            return nextShadowScope[0];
+          }
+        }
+        nextShadowHost = nextShadowHost.nextElementSibling;
+      }
+    }
+    return nextElement;
+  };
+
+  walker.previousNode = function () {
+    let previousElement = originalPreviousNode();
+    if (!previousElement && scope && scope.length > 0) {
+      let currentShadowHost = scope[0].getRootNode().host;
+      let previousShadowHost = currentShadowHost?.previousElementSibling;
+      while (previousShadowHost) {
+        if (previousShadowHost.shadowRoot) {
+          let previousShadowScope = Array.from(previousShadowHost.shadowRoot.querySelectorAll('*')).filter(isFocusable);
+          if (previousShadowScope.length > 0) {
+            return previousShadowScope[previousShadowScope.length - 1];
+          }
+        }
+        previousShadowHost = previousShadowHost.previousElementSibling;
+      }
+    }
+    return previousElement;
+  };
+
   return walker;
 }
 
