@@ -785,7 +785,8 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
   walker.nextNode = function () {
     let nextElement = originalNextNode();
     if (!nextElement && scope && scope.length > 0) {
-      let currentShadowHost = scope[0].getRootNode().host;
+      const currentShadowRoot = scope[0].getRootNode();
+      let currentShadowHost = currentShadowRoot instanceof ShadowRoot ? currentShadowRoot.host : null;
       let nextShadowHost = currentShadowHost?.nextElementSibling;
       while (nextShadowHost) {
         if (nextShadowHost.shadowRoot) {
@@ -803,7 +804,8 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
   walker.previousNode = function () {
     let previousElement = originalPreviousNode();
     if (!previousElement && scope && scope.length > 0) {
-      let currentShadowHost = scope[0].getRootNode().host;
+      const currentShadowRoot = scope[0].getRootNode();
+      let currentShadowHost = currentShadowRoot instanceof ShadowRoot ? currentShadowRoot.host : null;
       let previousShadowHost = currentShadowHost?.previousElementSibling;
       while (previousShadowHost) {
         if (previousShadowHost.shadowRoot) {
