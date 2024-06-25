@@ -11,7 +11,6 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {DateFieldHiddenWidth} from './DateField';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
@@ -74,18 +73,15 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         autoFocus={autoFocus}
         validationState={validationState}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
-        <div className={classNames(datepickerStyles, 'react-spectrum-Datefield-segments')}>
-          {state.segments.map((segment, i) =>
-            (<DatePickerSegment
-              key={i}
-              segment={segment}
-              state={state}
-              isDisabled={isDisabled}
-              isReadOnly={isReadOnly}
-              isRequired={isRequired} />)
-          )}
-        </div>
-        <DateFieldHiddenWidth state={state} />
+        {state.segments.map((segment, i) =>
+          (<DatePickerSegment
+            key={i}
+            segment={segment}
+            state={state}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired} />)
+        )}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
