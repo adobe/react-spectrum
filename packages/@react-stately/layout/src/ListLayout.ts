@@ -82,7 +82,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
 
   getLayoutInfo(key: Key) {
     this.ensureLayoutInfo(key);
-    return this.layoutNodes.get(key)?.layoutInfo;
+    return this.layoutNodes.get(key)?.layoutInfo || null;
   }
 
   getVisibleLayoutInfos(rect: Rect) {
