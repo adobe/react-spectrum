@@ -116,7 +116,6 @@
 
   .react-spectrum-DatePicker-placeholder {
     text-align: center;
-    font-style: italic;
     pointer-events: none;
   }
 }
