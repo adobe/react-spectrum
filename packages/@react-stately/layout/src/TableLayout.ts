@@ -152,7 +152,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.setChildHeights(columns, height);
 
     rect.height = height;
-    rect.width = Math.max(this.virtualizer.visibleRect.width, x);
+    rect.width = x;
 
     return {
       layoutInfo: row,

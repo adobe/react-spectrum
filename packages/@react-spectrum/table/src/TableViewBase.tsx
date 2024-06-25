@@ -695,7 +695,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
 function useStyle(layoutInfo: LayoutInfo, parent: LayoutInfo | null) {
   let {direction} = useLocale();
   let style = layoutInfoToStyle(layoutInfo, direction, parent);
-  if (style.overflow === 'hidden') {
+  if (style.overflow === 'clip') {
     style.overflow = 'visible'; // needed to support position: sticky
   }
   return style;
