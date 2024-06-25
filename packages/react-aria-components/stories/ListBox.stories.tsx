@@ -229,22 +229,35 @@ ListBoxGrid.story = {
   }
 };
 
-export function VirtualizedListBox() {
+function generateRandomString(minLength: number, maxLength: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return result;
+}
+
+export function VirtualizedListBox({variableHeight}) {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
     for (let i = 0; i < 100; i++) {
-      items.push({id: `item_${s}_${i}`, name: `Item ${i}`});
+      const l = (s * 5) + i + 10;
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
 
   let layout = useMemo(() => {
     return new ListLayout({
-      rowHeight: 25,
+      [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
       estimatedHeadingHeight: 26
     });
-  }, []);
+  }, [variableHeight]);
 
   return (
     <Virtualizer layout={layout}>
@@ -261,6 +274,10 @@ export function VirtualizedListBox() {
     </Virtualizer>
   );
 }
+
+VirtualizedListBox.args = {
+  variableHeight: false
+};
 
 export function VirtualizedListBoxEmpty() {
   let layout = useMemo(() => {
