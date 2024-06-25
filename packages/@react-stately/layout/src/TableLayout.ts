@@ -241,7 +241,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
 
       // Skip rows before the valid rectangle unless they are already cached.
-      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+      if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
         skipped++;
         continue;
@@ -254,7 +254,7 @@ export class TableLayout<T> extends ListLayout<T> {
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
 
-      if (y > this.validRect.maxY) {
+      if (y > this.requestedRect.maxY) {
         // Estimate the remaining height for rows that we don't need to layout right now.
         y += (this.collection.size - (skipped + children.length)) * rowHeight;
         break;
@@ -294,7 +294,7 @@ export class TableLayout<T> extends ListLayout<T> {
     return {
       layoutInfo,
       children,
-      validRect: layoutInfo.rect.intersection(this.validRect)
+      validRect: layoutInfo.rect.intersection(this.requestedRect)
     };
   }
 
@@ -323,7 +323,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let height = 0;
     for (let [i, child] of [...getChildNodes(node, this.collection)].entries()) {
       if (child.type === 'cell') {
-        if (x > this.validRect.maxX) {
+        if (x > this.requestedRect.maxX) {
           // Adjust existing cached layoutInfo to ensure that it is out of view.
           // This can happen due to column resizing.
           let layoutNode = this.layoutNodes.get(child.key);
@@ -355,7 +355,7 @@ export class TableLayout<T> extends ListLayout<T> {
     return {
       layoutInfo,
       children,
-      validRect: rect.intersection(this.validRect)
+      validRect: rect.intersection(this.requestedRect)
     };
   }
 

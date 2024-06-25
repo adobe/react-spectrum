@@ -1,0 +1,15 @@
+diff --git a/node_modules/ast-types/lib/main.d.ts b/node_modules/ast-types/lib/main.d.ts
+index 9b54fef..5c38539 100644
+--- a/node_modules/ast-types/lib/main.d.ts
++++ b/node_modules/ast-types/lib/main.d.ts
+@@ -1,7 +1,7 @@
+-import { ASTNode, Type, AnyType, Field } from "./types";
+-import { NodePath } from "./node-path";
++import { ASTNode, type Type, AnyType, Field } from "./types";
++import { type NodePath } from "./node-path";
+ import { namedTypes } from "./gen/namedTypes";
+-import { builders } from "./gen/builders";
++import { type builders } from "./gen/builders";
+ import { Visitor } from "./gen/visitor";
+ declare const astNodesAreEquivalent: {
+     (a: any, b: any, problemPath?: any): boolean;
