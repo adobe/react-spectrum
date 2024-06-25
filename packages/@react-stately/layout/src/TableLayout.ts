@@ -14,34 +14,24 @@ import {DropTarget, Key} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
-import {LayoutNode, ListLayout, ListLayoutOptions, ListLayoutProps} from './ListLayout';
+import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';
 import {TableColumnLayout} from '@react-stately/table';
 
-export interface TableLayoutOptions<T> extends ListLayoutOptions<T> {
-  scrollContainer?: 'table' | 'body'
-}
-
-export interface TableLayoutProps extends ListLayoutProps {
+export interface TableLayoutProps {
   columnWidths?: Map<Key, number>
 }
 
-export class TableLayout<T> extends ListLayout<T> {
-  collection: TableCollection<T>;
-  lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number>;
-  stickyColumnIndices: number[];
-  isLoading = false;
-  lastPersistedKeys: Set<Key> = null;
-  persistedIndices: Map<Key, number[]> = new Map();
-  scrollContainer: 'table' | 'body';
-  private disableSticky: boolean;
+export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> extends ListLayout<T, O> {
+  protected collection: TableCollection<T>;
+  private columnWidths: Map<Key, number>;
+  private stickyColumnIndices: number[];
+  private lastPersistedKeys: Set<Key> = null;
+  private persistedIndices: Map<Key, number[]> = new Map();
 
-  constructor(options: TableLayoutOptions<T>) {
+  constructor(options: ListLayoutOptions) {
     super(options);
-    this.scrollContainer = options.scrollContainer || 'table';
     this.stickyColumnIndices = [];
-    this.disableSticky = this.checkChrome105();
   }
 
   private columnsChanged(newCollection: TableCollection<T>, oldCollection: TableCollection<T> | null) {
@@ -56,7 +46,7 @@ export class TableLayout<T> extends ListLayout<T> {
       );
   }
 
-  validate(invalidationContext: InvalidationContext<TableLayoutProps>): void {
+  validate(invalidationContext: InvalidationContext<O>): void {
     let newCollection = this.virtualizer.collection as TableCollection<T>;
 
     // If columnWidths were provided via layoutOptions, update those.
@@ -76,21 +66,19 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   protected buildCollection(): LayoutNode[] {
-    // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
-    let loadingState = this.collection.body.props.loadingState;
-    this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
     this.stickyColumnIndices = [];
 
     for (let column of this.collection.columns) {
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
-      if (column.props.isDragButtonCell || column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
+      if (this.isStickyColumn(column) || this.collection.rowHeaderColumnKeys.has(column.key)) {
         this.stickyColumnIndices.push(column.index);
       }
     }
 
-    let header = this.buildColumnHeader();
-    let body = this.buildBody(this.scrollContainer === 'body' ? 0 : header.layoutInfo.rect.height);
+    let header = this.buildTableHeader();
+    this.layoutNodes.set(header.layoutInfo.key, header);
+    let body = this.buildBody(header.layoutInfo.rect.height);
     this.lastPersistedKeys = null;
 
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
@@ -101,7 +89,7 @@ export class TableLayout<T> extends ListLayout<T> {
     ];
   }
 
-  private buildColumnHeader(): LayoutNode {
+  protected buildTableHeader(): LayoutNode {
     let rect = new Rect(0, 0, 0, 0);
     let layoutInfo = new LayoutInfo('header', this.collection.head?.key ?? 'header', rect);
     layoutInfo.isSticky = true;
@@ -122,8 +110,6 @@ export class TableLayout<T> extends ListLayout<T> {
     rect.width = width;
     rect.height = y;
 
-    this.layoutInfos.set(layoutInfo.key, layoutInfo);
-
     return {
       layoutInfo,
       children,
@@ -131,7 +117,7 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
-  private buildHeaderRow(headerRow: GridNode<T>, x: number, y: number): LayoutNode {
+  protected buildHeaderRow(headerRow: GridNode<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(0, y, 0, 0);
     let row = new LayoutInfo('headerrow', headerRow.key, rect);
 
@@ -166,8 +152,6 @@ export class TableLayout<T> extends ListLayout<T> {
       if (child.layoutInfo.rect.height !== height) {
         // Need to copy the layout info before we mutate it.
         child.layoutInfo = child.layoutInfo.copy();
-        this.layoutInfos.set(child.layoutInfo.key, child.layoutInfo);
-
         child.layoutInfo.rect.height = height;
       }
     }
@@ -209,15 +193,18 @@ export class TableLayout<T> extends ListLayout<T> {
     return {height, isEstimated};
   }
 
-  private buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
+  protected getEstimatedRowHeight(): number {
+    return this.rowHeight ?? this.estimatedRowHeight;
+  }
+
+  protected buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
     let width = this.getRenderedColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
+    layoutInfo.isSticky = this.isStickyColumn(node);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
-    layoutInfo.allowOverflow = true;
 
     return {
       layoutInfo,
@@ -225,7 +212,13 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
-  private buildBody(y: number): LayoutNode {
+  // For subclasses.
+  // eslint-disable-next-line
+  protected isStickyColumn(node: GridNode<T>) {
+    return false;
+  }
+
+  protected buildBody(y: number): LayoutNode {
     let rect = new Rect(0, y, 0, 0);
     let layoutInfo = new LayoutInfo('rowgroup', this.collection.body.key, rect);
 
@@ -233,9 +226,8 @@ export class TableLayout<T> extends ListLayout<T> {
     let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
+    let rowHeight = this.getEstimatedRowHeight();
     for (let [i, node] of [...getChildNodes(this.collection.body, this.collection)].entries()) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
-
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -257,35 +249,12 @@ export class TableLayout<T> extends ListLayout<T> {
       }
     }
 
-    if (this.isLoading) {
-      // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
-      let rect = new Rect(40,  Math.max(y, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
-      let loader = new LayoutInfo('loader', 'loader', rect);
-      loader.parentKey = layoutInfo.key;
-      loader.isSticky = !this.disableSticky && children.length === 0;
-      this.layoutInfos.set('loader', loader);
-      children.push({layoutInfo: loader, validRect: loader.rect});
-      y = loader.rect.maxY;
-      width = Math.max(width, rect.width);
-    } else if (children.length === 0) {
-      if (this.enableEmptyState) {
-        let rect = new Rect(40, Math.max(y, 40), this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
-        let empty = new LayoutInfo('empty', 'empty', rect);
-        empty.parentKey = layoutInfo.key;
-        empty.isSticky = !this.disableSticky;
-        this.layoutInfos.set('empty', empty);
-        children.push({layoutInfo: empty, validRect: empty.rect});
-        y = empty.rect.maxY;
-        width = Math.max(width, rect.width);
-      } else {
-        y = this.virtualizer.visibleRect.maxY;
-      }
+    if (children.length === 0) {
+      y = this.virtualizer.visibleRect.maxY;
     }
 
     rect.width = width;
     rect.height = y - startY;
-
-    this.layoutInfos.set(layoutInfo.key, layoutInfo);
 
     return {
       layoutInfo,
@@ -310,7 +279,7 @@ export class TableLayout<T> extends ListLayout<T> {
     }
   }
 
-  private buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
+  protected buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(x, y, 0, 0);
     let layoutInfo = new LayoutInfo('row', node.key, rect);
 
@@ -338,8 +307,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
     this.setChildHeights(children, height);
 
-    rect.width = this.layoutInfos.get(this.collection.head?.key ?? 'header').rect.width;
-    rect.height = height + 1; // +1 for bottom border
+    rect.width = this.layoutNodes.get(this.collection.head?.key ?? 'header').layoutInfo.rect.width;
+    rect.height = height;
 
     return {
       layoutInfo,
@@ -348,12 +317,12 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
-  private buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
+  protected buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
     let width = this.getRenderedColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
+    layoutInfo.isSticky = this.isStickyColumn(node);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -367,7 +336,7 @@ export class TableLayout<T> extends ListLayout<T> {
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 for getDropTargetFromPoint)
     if (rect.height > 1) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1; // +1 for border
+      let rowHeight = this.getEstimatedRowHeight();
       rect.y = Math.floor(rect.y / rowHeight) * rowHeight;
       rect.height = Math.ceil(rect.height / rowHeight) * rowHeight;
     }
@@ -508,7 +477,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     // Build a map of parentKey => indices of children to persist.
     for (let key of this.virtualizer.persistedKeys) {
-      let layoutInfo = this.layoutInfos.get(key);
+      let layoutInfo = this.layoutNodes.get(key)?.layoutInfo;
 
       // Walk up ancestors so parents are also persisted if children are.
       while (layoutInfo && layoutInfo.parentKey) {
@@ -526,31 +495,13 @@ export class TableLayout<T> extends ListLayout<T> {
           indices.push(index);
         }
 
-        layoutInfo = this.layoutInfos.get(layoutInfo.parentKey);
+        layoutInfo = this.layoutNodes.get(layoutInfo.parentKey)?.layoutInfo;
       }
     }
 
     for (let indices of this.persistedIndices.values()) {
       indices.sort((a, b) => a - b);
     }
-  }
-
-  // Checks if Chrome version is 105 or greater
-  private checkChrome105() {
-    if (typeof window === 'undefined' || window.navigator == null) {
-      return false;
-    }
-
-    let isChrome105;
-    if (window.navigator['userAgentData']) {
-      isChrome105 = window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) === 105);
-    } else {
-      let regex = /Chrome\/(\d+)/;
-      let matches = regex.exec(window.navigator.userAgent);
-      isChrome105 = matches && matches.length >= 2 && Number(matches[1]) === 105;
-    }
-
-    return isChrome105;
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
