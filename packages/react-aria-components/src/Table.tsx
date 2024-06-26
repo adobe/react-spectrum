@@ -1052,6 +1052,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
     let TR = useElementType('tr');
     let TD = useElementType('td');
+    let keyAfter = state.collection.getKeyAfter(item?.key);
 
     return (
       <>
@@ -1102,7 +1103,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
         </TR>
-        {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
+        {dragAndDropHooks?.useDropIndicator && (keyAfter == null || state.collection.getItem(keyAfter)?.type !== 'item') &&
           renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
         }
       </>

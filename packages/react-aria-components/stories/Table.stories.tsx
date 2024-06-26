@@ -20,7 +20,8 @@ import {UNSTABLE_TableLoader} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components',
+  excludeStories: ['DndTable']
 };
 
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
@@ -238,10 +239,12 @@ interface FileItem {
 interface DndTableProps {
   initialItems: FileItem[],
   'aria-label': string,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  isLoadingMore?: boolean,
+  onSelectionChange?: (keys) => void
 }
 
-const DndTable = (props: DndTableProps) => {
+export const DndTable = (props: DndTableProps) => {
   let list = useListData({
     initialItems: props.initialItems
   });
@@ -312,7 +315,10 @@ const DndTable = (props: DndTableProps) => {
       aria-label={props['aria-label']}
       selectionMode="multiple"
       selectedKeys={list.selectedKeys}
-      onSelectionChange={list.setSelectedKeys}
+      onSelectionChange={(keys) => {
+        props.onSelectionChange?.(keys);
+        list.setSelectedKeys(keys);
+      }}
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
@@ -322,15 +328,18 @@ const DndTable = (props: DndTableProps) => {
         <Column>Type</Column>
       </TableHeader>
       <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
-        {item => (
-          <Row>
-            <Cell><Button slot="drag">≡</Button></Cell>
-            <Cell><MyCheckbox slot="selection" /></Cell>
-            <Cell>{item.id}</Cell>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-          </Row>
+        <Collection items={list.items}>
+          {item => (
+            <Row>
+              <Cell><Button slot="drag">≡</Button></Cell>
+              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>{item.id}</Cell>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+            </Row>
           )}
+        </Collection>
+        {props.isLoadingMore && <MyTableLoader />}
       </TableBody>
     </Table>
   );
@@ -338,13 +347,15 @@ const DndTable = (props: DndTableProps) => {
 
 type DndTableExampleProps = {
   isDisabledFirstTable?: boolean,
-  isDisabledSecondTable?: boolean
+  isDisabledSecondTable?: boolean,
+  isLoadingMore?: boolean
 }
 
 export const DndTableExample = (props: DndTableExampleProps) => {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DndTable
+        isLoadingMore={props.isLoadingMore}
         initialItems={[
         {id: '1', type: 'file', name: 'Adobe Photoshop'},
         {id: '2', type: 'file', name: 'Adobe XD'},
@@ -356,6 +367,7 @@ export const DndTableExample = (props: DndTableExampleProps) => {
         aria-label="First Table"
         isDisabled={props.isDisabledFirstTable} />
       <DndTable
+        isLoadingMore={props.isLoadingMore}
         initialItems={[
         {id: '7', type: 'folder', name: 'Pictures'},
         {id: '8', type: 'file', name: 'Adobe Fresco'},
@@ -372,7 +384,8 @@ export const DndTableExample = (props: DndTableExampleProps) => {
 
 DndTableExample.args = {
   isDisabledFirstTable: false,
-  isDisabledSecondTable: false
+  isDisabledSecondTable: false,
+  isLoadingMore: false
 };
 
 const MyCheckbox = ({children, ...props}: CheckboxProps) => {

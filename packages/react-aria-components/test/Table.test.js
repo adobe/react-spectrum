@@ -13,6 +13,7 @@
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
+import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -1321,6 +1322,11 @@ describe('Table', () => {
 
   describe('load more spinner', () => {
     let offsetHeight, scrollHeight;
+    let DndTable = stories.DndTable;
+    let initialItems = [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'}
+    ];
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
       offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
@@ -1440,6 +1446,70 @@ describe('Table', () => {
       expect(rows).toHaveLength(2);
       expect(body).toHaveAttribute('data-empty', 'true');
       expect(rows[1]).toHaveTextContent('No results');
+    });
+
+    it('should not include the loader in the selection when selecting all/deselecting all', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoadingMore onSelectionChange={onSelectionChange} />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      let loader = rows[3];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      let selectAll = getAllByRole('checkbox')[0];
+      expect(selectAll).toHaveAttribute('aria-label', 'Select All');
+
+      await user.click(selectAll);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+
+      let checkbox = getAllByRole('checkbox')[2];
+      await user.click(checkbox);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1']));
+    });
+
+    it('should not crash when dragging over the loader', async () => {
+      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoadingMore />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      expect(rows[1]).toHaveTextContent('Adobe Photoshop');
+      let loader = rows[3];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      let dragButton = getAllByRole('button')[0];
+      expect(dragButton).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
+      await user.tab();
+      await user.keyboard('{Right}');
+      expect(document.activeElement).toBe(dragButton);
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      rows = getAllByRole('row');
+
+      // There should be 4 rows aka the drag indicator rows (1 for before the first row, between the two rows, and after the last row) + the original dragged row
+      expect(rows).toHaveLength(4);
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Adobe Photoshop');
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      rows = getAllByRole('row');
+
+      let dragCell = within(rows[1]).getAllByRole('rowheader')[0];
+
+      let dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      let dropTarget = rows[2];
+      fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 80}));
+      fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 80}));
+      fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+      act(() => jest.runAllTimers());
+
+      rows = getAllByRole('row');
+      expect(rows[2]).toHaveTextContent('Adobe Photoshop');
     });
   });
 
