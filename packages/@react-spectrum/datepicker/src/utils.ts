@@ -88,7 +88,7 @@ export function useTextWidth(segments) {
     }
 
     let totalCharacters = segments.reduce((total, segment) => total + (segment.placeholder || segment.text).length, 0);
-    //setWidth(`calc(${totalCharacters - dividerCount}em + ${dividerCount}ch)`);
+    // setWidth(`calc(${totalCharacters - dividerCount}em + ${dividerCount}ch)`);
     // the longer the string the more character padding is needed
     // setWidth((totalCharacters / 2 + (Math.floor(totalCharacters / 10) || 1)) + 'em');
     setWidth((totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2)) + 'ch');
