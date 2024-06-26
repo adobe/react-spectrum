@@ -204,7 +204,7 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
       mergedProps.style = (renderProps) => {
         let contextStyle = typeof contextProps.style === 'function' ? contextProps.style(renderProps) : contextProps.style;
         let defaultStyle = {...renderProps.defaultStyle, ...contextStyle};
-        let style = typeof props.style === 'function' 
+        let style = typeof props.style === 'function'
           ? props.style({...renderProps, defaultStyle})
           : props.style;
         return {...defaultStyle, ...style};
@@ -359,8 +359,8 @@ export function Hidden(props: {children: ReactNode}) {
 
 // Creates a component that forwards its ref and returns null if it is in a <Hidden> subtree.
 // Note: this function is handled specially in the documentation generator. If you change it, you'll need to update DocsTransformer as well.
-export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => React.ReactElement | null): (props: P & React.RefAttributes<T>) => React.ReactElement | null {
-  let Wrapper = (props: P, ref: React.Ref<T>) => {
+export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T | null>) => React.ReactElement | null): (props: P & React.RefAttributes<T | null>) => React.ReactElement | null {
+  let Wrapper = (props: P, ref: React.Ref<T | null>) => {
     let isHidden = useContext(HiddenContext);
     if (isHidden) {
       return null;
