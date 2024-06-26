@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -1254,6 +1254,34 @@ describe('Table', () => {
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
+    });
+  });
+
+  describe('with pointer events', () => {
+    installPointerEvent();
+
+    it('should show checkboxes on long press', async () => {
+      let {getAllByRole} = renderTable({
+        tableProps: {
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onRowAction: () => {}
+        }
+      });
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).queryByRole('checkbox');
+        expect(checkbox).toBeNull();
+      }
+
+      let row = getAllByRole('row')[1];
+      triggerLongPress(row);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).queryByRole('checkbox');
+        expect(checkbox).toBeInTheDocument();
+      }
     });
   });
 });

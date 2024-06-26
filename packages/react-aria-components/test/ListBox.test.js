@@ -18,11 +18,13 @@ import {
   Header, Heading,
   ListBox,
   ListBoxContext,
-  ListBoxItem, ListLayout, Modal,
+  ListBoxItem, 
+  UNSTABLE_ListLayout as ListLayout, 
+  Modal,
   Section,
   Text,
   useDragAndDrop,
-  Virtualizer
+  UNSTABLE_Virtualizer as Virtualizer
 } from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
