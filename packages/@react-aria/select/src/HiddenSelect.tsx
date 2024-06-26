@@ -48,12 +48,28 @@ export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
   selectRef?: RefObject<HTMLSelectElement | null>
 }
 
+interface ContainerProps extends React.HTMLAttributes<HTMLElement> {
+  'data-react-aria-prevent-focus': true,
+  'data-a11y-ignore': 'aria-hidden-focus'
+}
+
+export interface HiddenSelectAria {
+  /** Props for the container element. */
+  containerProps: ContainerProps,
+
+  /** Props for the hidden input element. */
+  inputProps: React.InputHTMLAttributes<HTMLInputElement>,
+
+  /** Props for the hidden select element. */
+  selectProps: React.SelectHTMLAttributes<HTMLSelectElement>
+}
+
 /**
  * Provides the behavior and accessibility implementation for a hidden `<select>` element, which
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement | null>) {
+export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement | null>): HiddenSelectAria {
   let data = selectData.get(state) || {};
   let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
