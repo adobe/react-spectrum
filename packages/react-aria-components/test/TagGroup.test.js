@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, TagProps, Text} from '../';
 import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+import {useListData} from '@react-stately/data';
+import {ForwardedRef} from 'types-react';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
   <TagGroup data-testid="group" {...tagGroupProps}>
@@ -350,5 +352,47 @@ describe('TagGroup', () => {
         expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
     });
+  });
+  it.only('if we cannot restore focus to next, then restore to previous', async () => {
+    function MyTagGroup(props) {
+      const fruitsList = useListData({
+        initialItems: [
+          {id: 2, name: 'Grape'},
+          {id: 3, name: 'Plum'},
+          {id: 4, name: 'Watermelon'}
+        ]
+      });
+      return (
+        <TagGroup
+          data-testid="group"
+          aria-label="Fruits"
+          items={fruitsList.items}
+          selectionMode="multiple"
+          disabledKeys={[2, 3]}
+          onRemove={(keys) => fruitsList.remove(...keys)}
+        >
+          <TagList items={fruitsList.items}>
+            {(item) => <MyTag item={item}>{item.name}</MyTag>}
+          </TagList>
+        </TagGroup>
+      );
+    }
+    function MyTag({children, item, ...props}) {
+      return (
+        <Tag textValue={item.name} {...props}>
+          {({isDisabled}) => (
+            <>
+              {children}
+              <Button slot="remove" isDisabled={isDisabled} aria-label={'remove'} />
+            </>
+          )}
+        </Tag>
+      );
+    }
+    let {getByRole} = render(<MyTagGroup />);
+    let grid = getByRole('grid');
+    await user.tab();
+    await user.keyboard('{Backspace}');
+    expect(grid).toHaveFocus();
   });
 });
