@@ -352,7 +352,7 @@ describe('TagGroup', () => {
       });
     });
   });
-  it('if we cannot restore focus to next, then restore to previous', async () => {
+  it('if we cannot restore focus to next, then restore to previous but do not try focusing next again', async () => {
     function MyTagGroup(props) {
       const fruitsList = useListData({
         initialItems: [
