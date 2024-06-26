@@ -196,10 +196,15 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       e.preventDefault();
       let pastedText = e.clipboardData?.getData?.('text/plain')?.trim() ?? '';
       let value = state.parseValueInAnySupportedLocale(pastedText);
+      console.log('we got a number? ', value, pastedText)
       if (!isNaN(value)) {
         let reformattedValue = numberFormatter.format(value);
+        console.log('validating', reformattedValue);
         if (state.validate(reformattedValue)) {
+          console.log('going to set the input value', value)
           state.setInputValue(reformattedValue);
+          state.commit(); // should we be doing this?
+          state.commitValidation();
           if (reformattedValue !== pastedText) {
             announce(stringFormatter.format('pastedValue', {value: reformattedValue}), 'polite');
           }

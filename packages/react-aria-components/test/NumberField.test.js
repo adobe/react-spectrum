@@ -12,8 +12,11 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import fc from 'fast-check';
+import messages from '../intl/*.json';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+import {NumberParser} from '@internationalized/number';
 
 let TestNumberField = (props) => (
   <NumberField defaultValue={1024} minValue={0} data-foo="bar" {...props}>
@@ -221,5 +224,107 @@ describe('NumberField', () => {
 
     await userEvent.paste('1.000');
     expect(input).toHaveValue('$1.00', 'Ambiguous value should be parsed using the current locale');
+  });
+
+  // for some reason hu-HU isn't supported in jsdom/node
+  let locales = Object.keys(messages).filter(locale => locale !== 'hu-HU');
+  describe.only('round trips', function () {
+    // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
+    // But for the moment they are not properly supported
+    const localesArb = fc.constantFrom(...locales);
+    const styleOptsArb = fc.oneof(
+      {withCrossShrink: true},
+      fc.record({style: fc.constant('decimal')}),
+      // 'percent' should be part of the possible options, but for the moment it fails for some tests
+      fc.record({style: fc.constant('percent')}),
+      fc.record(
+        {
+          style: fc.constant('currency'),
+          currency: fc.constantFrom('USD', 'EUR', 'CNY', 'JPY'),
+          currencyDisplay: fc.constantFrom('symbol', 'code', 'name')
+        },
+        {requiredKeys: ['style', 'currency']}
+      ),
+      fc.record(
+        {style: fc.constant('unit'), unit: fc.constantFrom('inch', 'liter', 'kilometer-per-hour')},
+        {requiredKeys: ['style', 'unit']}
+      )
+    );
+    const genericOptsArb = fc.record({
+      localeMatcher: fc.constantFrom('best fit', 'lookup'),
+      unitDisplay: fc.constantFrom('narrow', 'short', 'long'),
+      useGrouping: fc.boolean(),
+      minimumIntegerDigits: fc.integer({min: 1, max: 21}),
+      minimumFractionDigits: fc.integer({min: 0, max: 20}),
+      maximumFractionDigits: fc.integer({min: 0, max: 20}),
+      minimumSignificantDigits: fc.integer({min: 1, max: 21}),
+      maximumSignificantDigits: fc.integer({min: 1, max: 21})
+    }, {requiredKeys: []});
+
+    // We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
+    // and stay in the domain of legit values.
+    const DOUBLE_MIN = Number.EPSILON;
+    const valueArb = fc.tuple(
+      fc.constantFrom(1, -1),
+      fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
+    ).map(([sign, value]) => sign * value);
+
+    const inputsArb = fc.tuple(valueArb, localesArb, styleOptsArb, genericOptsArb)
+      .map(([d, locale, styleOpts, genericOpts]) => ({d, opts: {...styleOpts, ...genericOpts}, locale}))
+      .filter(({opts}) => opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits)
+      .filter(({opts}) => opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits)
+      .map(({d, opts, locale}) => {
+        if (opts.style === 'percent') {
+          opts.minimumFractionDigits = opts.minimumFractionDigits > 18 ? 18 : opts.minimumFractionDigits;
+          opts.maximumFractionDigits = opts.maximumFractionDigits > 18 ? 18 : opts.maximumFractionDigits;
+        }
+        return {d, opts, locale};
+      })
+      .map(({d, opts, locale}) => {
+        let adjustedNumberForFractions = d;
+        if (Math.abs(d) < 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
+          adjustedNumberForFractions = d * (10 ** (opts.minimumFractionDigits || 2));
+        } else if (Math.abs(d) > 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
+          adjustedNumberForFractions = d / (10 ** (opts.minimumFractionDigits || 2));
+        }
+        return {adjustedNumberForFractions, opts, locale};
+      });
+
+    it('should fully reverse NumberFormat', async function () {
+      let onChange = jest.fn((val) => console.log(val));
+      let {getByRole} = render(<TestNumberField onChange={onChange} />);
+      await fc.assert(
+        fc.asyncProperty(
+          inputsArb,
+          fc.scheduler({act}),
+          async function ({adjustedNumberForFractions, locale, opts}, s) {
+            s.scheduleSequence([{
+              builder: async () => {
+                const formatter = new Intl.NumberFormat(locale, opts);
+                const parser = new NumberParser(locale, opts);
+
+                const formattedOnce = formatter.format(adjustedNumberForFractions);
+                let input = getByRole('textbox');
+                console.log('input?', input.outerHTML)
+                act(() => {
+                  input.focus();
+                  input.setSelectionRange(0, input.value.length);
+                });
+                console.log('gonna paste', formattedOnce)
+                await userEvent.paste(formattedOnce);
+                console.log('after paste')
+              }, label: `entering ${adjustedNumberForFractions}`
+            }]);
+            // Assert
+            while (s.count() !== 0) {
+              await s.waitOne();
+              console.log('mock call', onChange.mock.calls)
+              expect(onChange).toHaveBeenLastCalledWith(adjustedNumberForFractions);
+            }
+          }
+        ),
+        {numRuns: 1000, timeout: 1000}
+      );
+    });
   });
 });
