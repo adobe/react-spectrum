@@ -26,7 +26,7 @@ const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 // eslint-disable-next-line no-irregular-whitespace
 const GROUPING_SYMBOLS_REGEX = /[,٬ .  ]/gu;
-const NUMERALS_REGEX = /[0123456789]|[٠١٬٢٣٤٬٥٦٧٬٨٩]|[〇一,二三四,五六七,八九]/gu;
+const NUMERALS_REGEX = /[0123456789]|[٠١٢٣٤٥٦٧٨٩]|[〇一二三四五六七八九]/gu;
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -194,7 +194,7 @@ class NumberParserImpl {
       let groupSymbolMatch = abs.match(GROUPING_SYMBOLS_REGEX);
       let integerPart: string;
       let parsedIntegerPart: number;
-      let decimalPart;
+      let decimalPart: string;
       if (groupSymbolMatch && groupSymbolMatch.length > 0 && abs.length - groupSymbolMatch.length > this.options.minimumIntegerDigits) {
         integerPart = abs.slice(0, abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]));
         decimalPart = abs.slice(abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]) + 1, abs.length);
