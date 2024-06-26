@@ -15,7 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
-import {useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider} from '@react-spectrum/provider';
 
@@ -76,4 +76,23 @@ export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
     }
   }));
   return domRef;
+}
+
+export function useTextWidth(segments) {
+  const [width, setWidth] = useState('auto');
+
+  useEffect(() => {
+    // pickers don't support segments yet
+    if (!segments) {
+      return;
+    }
+
+    let totalCharacters = segments.reduce((total, segment) => total + (segment.placeholder || segment.text).length, 0);
+    //setWidth(`calc(${totalCharacters - dividerCount}em + ${dividerCount}ch)`);
+    // the longer the string the more character padding is needed
+    // setWidth((totalCharacters / 2 + (Math.floor(totalCharacters / 10) || 1)) + 'em');
+    setWidth((totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2)) + 'ch');
+  }, [segments]);
+
+  return width;
 }

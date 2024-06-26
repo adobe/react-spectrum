@@ -19,6 +19,7 @@ import React, {useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {useTextWidth} from './utils';
 
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
   inputClassName?: string,
@@ -43,9 +44,10 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
 
   let inputRef = useRef();
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
+  let minWidth = useTextWidth(state.segments);
 
   return (
-    <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
+    <div {...fieldProps} style={{minWidth: minWidth}} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
         (<DatePickerSegment
           key={i}
