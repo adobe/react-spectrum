@@ -15,9 +15,45 @@ import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
 import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
+
+function useTextWidth(segments) {
+  const [width, setWidth] = useState('auto');
+
+  useEffect(() => {
+    // pickers don't support segments yet
+    if (!segments) {
+      return;
+    }
+
+    // Create a temporary element with styles outside of layout
+    const tempEl = document.createElement('div');
+    Object.assign(tempEl.style, {
+      position: 'absolute',
+      visibility: 'hidden',
+      height: 'auto',
+      width: 'auto',
+      whiteSpace: 'nowrap'
+    });
+
+    // add each segment to the temp element
+    segments.forEach(segment => {
+      let segmentSpan = document.createElement('span');
+      segmentSpan.textContent = segment.placeholder || segment.text;
+      tempEl.appendChild(segmentSpan);
+    });
+
+    // add parent to dom and get it's width
+    document.body.appendChild(tempEl);
+    setWidth(tempEl.offsetWidth);
+    document.body.removeChild(tempEl);
+  }, [segments]);
+
+  return width;
+}
+
 
 function Input(props, ref) {
   let inputRef = useRef(null);
@@ -30,8 +66,11 @@ function Input(props, ref) {
     fieldProps,
     className,
     style,
-    disableFocusRing
+    disableFocusRing,
+    segments
   } = props;
+
+  let minWidth = useTextWidth(segments);
 
   // Reserve padding for the error icon when the width of the input is unconstrained.
   // When constrained, don't reserve space because adding it only when invalid will
@@ -124,7 +163,11 @@ function Input(props, ref) {
   return (
     <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
       <div role="presentation" className={inputClass}>
-        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
+        <div
+          role="presentation"
+          style={{minWidth: minWidth + 'px'}}
+          className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')}
+          ref={mergeRefs(ref, inputRef)}>
           {children}
         </div>
       </div>
