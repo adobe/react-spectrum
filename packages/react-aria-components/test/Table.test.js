@@ -1450,7 +1450,7 @@ describe('Table', () => {
 
     it('should not include the loader in the selection when selecting all/deselecting all', async () => {
       let onSelectionChange = jest.fn();
-      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoadingMore onSelectionChange={onSelectionChange} />);
+      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoading onSelectionChange={onSelectionChange} />);
 
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(4);
@@ -1469,7 +1469,7 @@ describe('Table', () => {
     });
 
     it('should not crash when dragging over the loader', async () => {
-      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoadingMore />);
+      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoading />);
 
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(4);

@@ -240,7 +240,7 @@ interface DndTableProps {
   initialItems: FileItem[],
   'aria-label': string,
   isDisabled?: boolean,
-  isLoadingMore?: boolean,
+  isLoading?: boolean,
   onSelectionChange?: (keys) => void
 }
 
@@ -327,7 +327,7 @@ export const DndTable = (props: DndTableProps) => {
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
       </TableHeader>
-      <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
+      <TableBody items={list.items} renderEmptyState={() => renderEmptyLoader({isLoading: props.isLoading, tableWidth: 200})}>
         <Collection items={list.items}>
           {item => (
             <Row>
@@ -339,7 +339,7 @@ export const DndTable = (props: DndTableProps) => {
             </Row>
           )}
         </Collection>
-        {props.isLoadingMore && <MyTableLoader />}
+        {props.isLoading && list.items.length > 0 && <MyTableLoader />}
       </TableBody>
     </Table>
   );
@@ -348,14 +348,14 @@ export const DndTable = (props: DndTableProps) => {
 type DndTableExampleProps = {
   isDisabledFirstTable?: boolean,
   isDisabledSecondTable?: boolean,
-  isLoadingMore?: boolean
+  isLoading?: boolean
 }
 
 export const DndTableExample = (props: DndTableExampleProps) => {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DndTable
-        isLoadingMore={props.isLoadingMore}
+        isLoading={props.isLoading}
         initialItems={[
         {id: '1', type: 'file', name: 'Adobe Photoshop'},
         {id: '2', type: 'file', name: 'Adobe XD'},
@@ -367,7 +367,7 @@ export const DndTableExample = (props: DndTableExampleProps) => {
         aria-label="First Table"
         isDisabled={props.isDisabledFirstTable} />
       <DndTable
-        isLoadingMore={props.isLoadingMore}
+        isLoading={props.isLoading}
         initialItems={[
         {id: '7', type: 'folder', name: 'Pictures'},
         {id: '8', type: 'file', name: 'Adobe Fresco'},
@@ -385,7 +385,7 @@ export const DndTableExample = (props: DndTableExampleProps) => {
 DndTableExample.args = {
   isDisabledFirstTable: false,
   isDisabledSecondTable: false,
-  isLoadingMore: false
+  isLoading: false
 };
 
 const MyCheckbox = ({children, ...props}: CheckboxProps) => {
