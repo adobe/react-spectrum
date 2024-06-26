@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, RouterProvider, Tag, TagGroup, TagList, TagProps, Text} from '../';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
 import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import userEvent from '@testing-library/user-event';
 import {useListData} from '@react-stately/data';
-import {ForwardedRef} from 'types-react';
+import userEvent from '@testing-library/user-event';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
   <TagGroup data-testid="group" {...tagGroupProps}>
@@ -353,7 +352,7 @@ describe('TagGroup', () => {
       });
     });
   });
-  it.only('if we cannot restore focus to next, then restore to previous', async () => {
+  it('if we cannot restore focus to next, then restore to previous', async () => {
     function MyTagGroup(props) {
       const fruitsList = useListData({
         initialItems: [
@@ -369,8 +368,7 @@ describe('TagGroup', () => {
           items={fruitsList.items}
           selectionMode="multiple"
           disabledKeys={[2, 3]}
-          onRemove={(keys) => fruitsList.remove(...keys)}
-        >
+          onRemove={(keys) => fruitsList.remove(...keys)}>
           <TagList items={fruitsList.items}>
             {(item) => <MyTag item={item}>{item.name}</MyTag>}
           </TagList>
