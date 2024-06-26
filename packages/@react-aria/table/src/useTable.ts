@@ -15,7 +15,7 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {LayoutDelegate} from '@react-types/shared';
+import {Key, LayoutDelegate, Rect, Size} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
@@ -25,7 +25,23 @@ import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i
 
 export interface AriaTableProps extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate,
+  /** @deprecated - Use layoutDelegate instead. */
+  layout?: DeprecatedLayout
+}
+
+interface DeprecatedLayout {
+  getLayoutInfo(key: Key): DeprecatedLayoutInfo,
+  getContentSize(): Size,
+  virtualizer: DeprecatedVirtualizer
+}
+
+interface DeprecatedLayoutInfo {
+  rect: Rect
+}
+
+interface DeprecatedVirtualizer {
+  visibleRect: Rect
 }
 
 /**
@@ -40,7 +56,8 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   let {
     keyboardDelegate,
     isVirtualized,
-    layoutDelegate
+    layoutDelegate,
+    layout
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -55,8 +72,9 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
     ref,
     direction,
     collator,
-    layoutDelegate
-  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layoutDelegate]);
+    layoutDelegate,
+    layout
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layoutDelegate, layout]);
   let id = useId(props.id);
   gridIds.set(state, id);
 

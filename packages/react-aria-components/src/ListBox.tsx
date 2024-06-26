@@ -11,8 +11,8 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {CollectionDocumentContext, CollectionPortal, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, SectionContext, SectionProps} from './Collection';
+import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -79,9 +79,7 @@ export const ListStateContext = createContext<ListState<any> | null>(null);
 
 function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
-  let isHidden = useContext(HiddenContext);
   let state = useContext(ListStateContext);
-  let document = useContext(CollectionDocumentContext);
 
   // The structure of ListBox is a bit strange because it needs to work inside other components like ComboBox and Select.
   // Those components render two copies of their children so that the collection can be built even when the popover is closed.
@@ -89,27 +87,21 @@ function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTM
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
 
-  if (document) {
-    return <CollectionPortal {...props} />;
-  }
-
   if (state) {
-    return isHidden ? null : <ListBoxInner state={state} props={props} listBoxRef={ref} />;
+    return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
 
-  return <StandaloneListBox props={props} listBoxRef={ref} />;
+  return (
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => <StandaloneListBox props={props} listBoxRef={ref} collection={collection} />}
+    </CollectionBuilder>
+  );
 }
 
-function StandaloneListBox({props, listBoxRef}) {
-  let {portal, collection} = useCollection(props);
+function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let state = useListState(props);
-  return (
-    <>
-      {portal}
-      <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />
-    </>
-  );
+  return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
 }
 
 /**

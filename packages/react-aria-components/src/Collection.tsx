@@ -11,10 +11,10 @@
  */
 import {CollectionBase, DropTargetDelegate, Key, LayoutDelegate} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {forwardRefType, StyleProps} from './utils';
+import {forwardRefType, Hidden, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
@@ -274,7 +274,7 @@ class BaseNode<T> {
  * A mutable element node in the fake DOM tree. It owns an immutable
  * Collection Node which is copied on write.
  */
-export class ElementNode<T> extends BaseNode<T> {
+class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
   private _index: number = 0;
@@ -503,7 +503,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
  */
-export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
+class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
@@ -709,16 +709,41 @@ export function useCollectionChildren<T extends object>(props: CachedChildrenOpt
 }
 
 const ShallowRenderContext = createContext(false);
+const CollectionDocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
 
-interface CollectionResult<C> {
-  portal: ReactNode,
-  collection: C
+export interface CollectionBuilderProps<C extends BaseCollection<object>> {
+  content: ReactNode,
+  children: (collection: C) => ReactNode,
+  createCollection?: () => C
 }
 
-export function useCollection<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, initialCollection?: C): CollectionResult<C> {
-  let {collection, document} = useCollectionDocument<T, C>(initialCollection);
-  let portal = useCollectionPortal<T, C>(props, document);
-  return {portal, collection};
+export function CollectionBuilder<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>) {
+  // If a document was provided above us, we're already in a hidden tree. Just render the content.
+  let doc = useContext(CollectionDocumentContext);
+  if (doc) {
+    return props.content;
+  }
+
+  // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
+  // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
+
+  // This is fine. CollectionDocumentContext never changes after mounting.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let {collection, document} = useCollectionDocument(props.createCollection);
+  return (
+    <>
+      <Hidden>
+        <CollectionDocumentContext.Provider value={document}>
+          {props.content}
+        </CollectionDocumentContext.Provider>
+      </Hidden>
+      <CollectionInner render={props.children} collection={collection} />
+    </>
+  );
+}
+
+function CollectionInner({collection, render}) {
+  return render(collection);
 }
 
 interface CollectionDocumentResult<T, C extends BaseCollection<T>> {
@@ -747,10 +772,10 @@ const useSyncExternalStore = typeof React['useSyncExternalStore'] === 'function'
   ? React['useSyncExternalStore']
   : useSyncExternalStoreFallback;
 
-export function useCollectionDocument<T extends object, C extends BaseCollection<T>>(initialCollection?: C): CollectionDocumentResult<T, C> {
+function useCollectionDocument<T extends object, C extends BaseCollection<T>>(createCollection?: () => C): CollectionDocumentResult<T, C> {
   // The document instance is mutable, and should never change between renders.
   // useSyncExternalStore is used to subscribe to updates, which vends immutable Collection objects.
-  let document = useMemo(() => new Document<T, C>(initialCollection || new BaseCollection() as C), [initialCollection]);
+  let [document] = useState(() => new Document<T, C>(createCollection?.() || new BaseCollection() as C));
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => {
     let collection = document.getCollection();
@@ -779,27 +804,6 @@ export function useCollectionDocument<T extends object, C extends BaseCollection
 }
 
 const SSRContext = createContext<BaseNode<any> | null>(null);
-export const CollectionDocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
-
-export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document?: Document<T, C>): ReactNode {
-  let ctx = useContext(CollectionDocumentContext);
-  let doc = document ?? ctx!;
-  let children = useCollectionChildren(props);
-  let wrappedChildren = useMemo(() => (
-    <ShallowRenderContext.Provider value>
-      {children}
-    </ShallowRenderContext.Provider>
-  ), [children]);
-  // During SSR, we render the content directly, and append nodes to the document during render.
-  // The collection children return null so that nothing is actually rendered into the HTML.
-  return useIsSSR()
-    ? <SSRContext.Provider value={doc}>{wrappedChildren}</SSRContext.Provider>
-    : createPortal(wrappedChildren, doc as unknown as Element);
-}
-
-export function CollectionPortal<T extends object>(props: CollectionProps<T>) {
-  return <>{useCollectionPortal(props)}</>;
-}
 
 export interface ItemRenderProps {
   /**
@@ -919,7 +923,30 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   props.dependencies = (ctx?.dependencies || []).concat(props.dependencies);
-  return <>{useCollectionChildren(props)}</>;
+  let children = useCollectionChildren(props);
+
+  let doc = useContext(CollectionDocumentContext);
+  if (doc) {
+    return <CollectionRoot>{children}</CollectionRoot>;
+  }
+
+  return <>{children}</>;
+}
+
+function CollectionRoot({children}) {
+  let doc = useContext(CollectionDocumentContext);
+  let wrappedChildren = useMemo(() => (
+    <CollectionDocumentContext.Provider value={null}>
+      <ShallowRenderContext.Provider value>
+        {children}
+      </ShallowRenderContext.Provider>
+    </CollectionDocumentContext.Provider>
+  ), [children]);
+  // During SSR, we render the content directly, and append nodes to the document during render.
+  // The collection children return null so that nothing is actually rendered into the HTML.
+  return useIsSSR()
+    ? <SSRContext.Provider value={doc}>{wrappedChildren}</SSRContext.Provider>
+    : createPortal(wrappedChildren, doc as unknown as Element);
 }
 
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => JSX.Element): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
@@ -976,7 +1003,7 @@ export interface CollectionRenderer {
   CollectionBranch: React.ComponentType<CollectionBranchProps>
 }
 
-const DefaultCollectionRenderer: CollectionRenderer = {
+export const DefaultCollectionRenderer: CollectionRenderer = {
   CollectionRoot({collection}) {
     return useCachedChildren({
       items: collection,

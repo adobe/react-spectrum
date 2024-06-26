@@ -12,10 +12,10 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, useCollection} from './Collection';
+import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
@@ -74,18 +74,17 @@ export const GridListContext = createContext<ContextValue<GridListProps<any>, HT
 function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
-  let {collection, portal} = useCollection(props);
+
   return (
-    <>
-      {portal}
-      <GridListInner props={props} collection={collection} gridListRef={ref} />
-    </>
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
+    </CollectionBuilder>
   );
 }
 
 interface GridListInnerProps<T extends object> {
   props: GridListProps<T>,
-  collection: Collection<Node<T>>,
+  collection: ICollection<Node<object>>,
   gridListRef: RefObject<HTMLDivElement | null>
 }
 
