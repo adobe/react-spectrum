@@ -47,15 +47,9 @@ export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
   /** A ref to the hidden `<select>` element. */
   selectRef?: RefObject<HTMLSelectElement | null>
 }
-
-interface ContainerProps extends React.HTMLAttributes<HTMLElement> {
-  'data-react-aria-prevent-focus': true,
-  'data-a11y-ignore': 'aria-hidden-focus'
-}
-
 export interface HiddenSelectAria {
   /** Props for the container element. */
-  containerProps: ContainerProps,
+  containerProps: React.HTMLAttributes<HTMLElement>,
 
   /** Props for the hidden input element. */
   inputProps: React.InputHTMLAttributes<HTMLInputElement>,
@@ -104,7 +98,9 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
     containerProps: {
       ...visuallyHiddenProps,
       'aria-hidden': true,
+      // @ts-ignore
       ['data-react-aria-prevent-focus']: true,
+      // @ts-ignore
       ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {
