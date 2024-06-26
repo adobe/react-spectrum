@@ -139,4 +139,4 @@ export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollection
 export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
 export type {Color, ColorSpace, ColorFormat} from '@react-types/color';
-export type {ListLayoutOptions, TableLayoutOptions} from '@react-stately/layout';
+export type {ListLayoutOptions} from '@react-stately/layout';

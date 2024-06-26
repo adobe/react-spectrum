@@ -837,14 +837,14 @@ describe('Table', () => {
     
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
-    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13']);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14']);
 
     await user.tab();
     await user.keyboard('{End}');
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
-    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14', 'Foo 49Bar 49']);
   });
 
   describe('drag and drop', () => {

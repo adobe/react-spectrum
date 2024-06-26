@@ -48,8 +48,8 @@ import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumTableProps} from './TableViewWrapper';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableLayout} from '@react-stately/layout';
 import {TableState, TreeGridState, useTableColumnResizeState} from '@react-stately/table';
+import {TableViewLayout} from './TableViewLayout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -113,7 +113,7 @@ export interface TableContextValue<T> {
   dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
-  layout: TableLayout<T>,
+  layout: TableViewLayout<T>,
   headerRowHovered: boolean,
   isInResizeMode: boolean,
   setIsInResizeMode: (val: boolean) => void,
@@ -185,7 +185,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let bodyRef = useRef<HTMLDivElement>(undefined);
 
   let density = props.density || 'regular';
-  let layout = useMemo(() => new TableLayout({
+  let layout = useMemo(() => new TableViewLayout({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
     rowHeight: props.overflowMode === 'wrap'
       ? null
@@ -198,9 +198,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       : DEFAULT_HEADER_HEIGHT[scale],
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
-      : null,
-    scrollContainer: 'body',
-    enableEmptyState: true
+      : null
   }),
     // don't recompute when state.collection changes, only used for initial value
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -494,7 +492,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
 
 interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
   tableState: TableState<T>,
-  layout: TableLayout<T>,
+  layout: TableViewLayout<T>,
   collection: TableCollection<T>,
   focusedKey: Key | null,
   renderView: (type: string, content: GridNode<T>) => ReactElement,

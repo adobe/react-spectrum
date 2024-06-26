@@ -74,9 +74,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     position: layoutInfo.isSticky ? 'sticky' : 'absolute',
     // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
     display: layoutInfo.isSticky ? 'inline-block' : undefined,
-    // Use clip instead of hidden to avoid creating an implicit generic container in the accessibility tree in Firefox.
-    // Hidden still allows programmatic scrolling whereas clip does not.
-    overflow: layoutInfo.allowOverflow ? 'visible' : 'clip',
+    overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,

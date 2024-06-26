@@ -14,66 +14,48 @@ import {Collection, DropTarget, DropTargetDelegate, Key, Node} from '@react-type
 import {getChildNodes} from '@react-stately/collections';
 import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 
-export type ListLayoutOptions<T> = {
-  /** The height of a row in px. */
+export interface ListLayoutOptions {
+  /** The fixed height of a row in px. */
   rowHeight?: number,
+  /** The estimated height of a row, when row heights are variable. */
   estimatedRowHeight?: number,
+  /** The fixed height of a section header in px. */
   headingHeight?: number,
-  estimatedHeadingHeight?: number,
-  padding?: number,
-  indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
-  loaderHeight?: number,
-  placeholderHeight?: number,
-  forceSectionHeaders?: boolean,
-  enableEmptyState?: boolean
-};
+  /** The estimated height of a section header, when the height is variable. */
+  estimatedHeadingHeight?: number
+}
 
 // A wrapper around LayoutInfo that supports hierarchy
 export interface LayoutNode {
   node?: Node<unknown>,
   layoutInfo: LayoutInfo,
-  header?: LayoutInfo,
   children?: LayoutNode[],
   validRect: Rect,
   index?: number
 }
 
-export interface ListLayoutProps {
-  isLoading?: boolean
-}
-
 const DEFAULT_HEIGHT = 48;
 
 /**
- * The ListLayout class is an implementation of a virtualizer {@link Layout}
- * it is used for creating lists and lists with indented sub-lists.
- *
+ * The ListLayout class is an implementation of a virtualizer {@link Layout}.
  * To configure a ListLayout, you can use the properties to define the
  * layouts and/or use the method for defining indentation.
  * The {@link ListKeyboardDelegate} extends the existing virtualizer
  * delegate with an additional method to do this (it uses the same delegate object as
  * the virtualizer itself).
  */
-export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements DropTargetDelegate {
+export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTargetDelegate {
   protected rowHeight: number;
   protected estimatedRowHeight: number;
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
-  protected forceSectionHeaders: boolean;
-  protected padding: number;
-  protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
-  protected layoutInfos: Map<Key, LayoutInfo>;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected collection: Collection<Node<T>>;
-  protected isLoading: boolean;
-  protected lastWidth: number;
-  protected lastCollection: Collection<Node<T>>;
+  private lastCollection: Collection<Node<T>>;
+  private lastWidth: number;
   protected rootNodes: LayoutNode[];
-  protected invalidateEverything: boolean;
-  protected loaderHeight: number;
-  protected placeholderHeight: number;
-  protected enableEmptyState: boolean;
+  private invalidateEverything: boolean;
   /** The rectangle containing currently valid layout infos. */
   protected validRect: Rect;
   /** The rectangle of requested layout infos so far. */
@@ -83,19 +65,12 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
    * Creates a new ListLayout with options. See the list of properties below for a description
    * of the options that can be provided.
    */
-  constructor(options: ListLayoutOptions<T> = {}) {
+  constructor(options: ListLayoutOptions = {}) {
     super();
     this.rowHeight = options.rowHeight;
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
-    this.forceSectionHeaders = options.forceSectionHeaders;
-    this.padding = options.padding || 0;
-    this.indentationForItem = options.indentationForItem;
-    this.loaderHeight = options.loaderHeight;
-    this.placeholderHeight = options.placeholderHeight;
-    this.enableEmptyState = options.enableEmptyState || false;
-    this.layoutInfos = new Map();
     this.layoutNodes = new Map();
     this.rootNodes = [];
     this.lastWidth = 0;
@@ -107,7 +82,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
 
   getLayoutInfo(key: Key) {
     this.ensureLayoutInfo(key);
-    return this.layoutInfos.get(key)!;
+    return this.layoutNodes.get(key)?.layoutInfo || null;
   }
 
   getVisibleLayoutInfos(rect: Rect) {
@@ -129,9 +104,6 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       for (let node of nodes) {
         if (this.isVisible(node, rect)) {
           res.push(node.layoutInfo);
-          if (node.header) {
-            res.push(node.header);
-          }
 
           if (node.children) {
             addNodes(node.children);
@@ -166,7 +138,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     // If the layout info wasn't found, it might be outside the bounds of the area that we've
     // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
     // Compute the full layout and try again.
-    if (!this.layoutInfos.has(key) && this.requestedRect.area < this.contentSize.area && this.lastCollection) {
+    if (!this.layoutNodes.has(key) && this.requestedRect.area < this.contentSize.area && this.lastCollection) {
       this.requestedRect = new Rect(0, 0, Infinity, Infinity);
       this.rootNodes = this.buildCollection();
       this.requestedRect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);
@@ -176,19 +148,18 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     return false;
   }
 
-  private isVisible(node: LayoutNode, rect: Rect) {
-    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || this.virtualizer.isPersistedKey(node.layoutInfo.key);
+  protected isVisible(node: LayoutNode, rect: Rect) {
+    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer.isPersistedKey(node.layoutInfo.key);
   }
 
-  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<ListLayoutProps>) {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
     return invalidationContext.sizeChanged;
   }
 
-  validate(invalidationContext: InvalidationContext<ListLayoutProps>) {
+  validate(invalidationContext: InvalidationContext<O>) {
     this.collection = this.virtualizer.collection;
-    this.isLoading = invalidationContext.layoutOptions?.isLoading || false;
 
     // Reset valid rect if we will have to invalidate everything.
     // Otherwise we can reuse cached layout infos outside the current visible rect.
@@ -205,8 +176,6 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
         if (!this.collection.getItem(key)) {
           let layoutNode = this.layoutNodes.get(key);
           if (layoutNode) {
-            this.layoutInfos.delete(layoutNode.layoutInfo.key);
-            this.layoutInfos.delete(layoutNode.header?.key);
             this.layoutNodes.delete(key);
           }
         }
@@ -219,12 +188,11 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     this.validRect = this.requestedRect.copy();
   }
 
-  protected buildCollection(): LayoutNode[] {
-    let y = this.padding;
+  protected buildCollection(y = 0): LayoutNode[] {
     let skipped = 0;
     let nodes = [];
     for (let node of this.collection) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+      let rowHeight = this.rowHeight ?? this.estimatedRowHeight;
 
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
@@ -243,25 +211,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       }
     }
 
-    if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
-        this.loaderHeight ?? this.virtualizer.visibleRect.height);
-      let loader = new LayoutInfo('loader', 'loader', rect);
-      this.layoutInfos.set('loader', loader);
-      nodes.push({layoutInfo: loader});
-      y = loader.rect.maxY;
-    }
-
-    if (nodes.length === 0 && this.enableEmptyState) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
-        this.placeholderHeight ?? this.virtualizer.visibleRect.height);
-      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
-      this.layoutInfos.set('placeholder', placeholder);
-      nodes.push({layoutInfo: placeholder});
-      y = placeholder.rect.maxY;
-    }
-
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.padding);
+    this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
     return nodes;
   }
 
@@ -271,7 +221,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       !this.invalidateEverything &&
       cached &&
       cached.node === node &&
-      y === (cached.header || cached.layoutInfo).rect.y &&
+      y === cached.layoutInfo.rect.y &&
       cached.layoutInfo.rect.intersects(this.validRect) &&
       cached.validRect.containsRect(cached.layoutInfo.rect.intersection(this.requestedRect))
     );
@@ -286,11 +236,6 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     layoutNode.node = node;
 
     layoutNode.layoutInfo.parentKey = parentKey ?? null;
-    this.layoutInfos.set(layoutNode.layoutInfo.key, layoutNode.layoutInfo);
-    if (layoutNode.header) {
-      this.layoutInfos.set(layoutNode.header.key, layoutNode.header);
-    }
-
     this.layoutNodes.set(node.key, layoutNode);
     return layoutNode;
   }
@@ -306,17 +251,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     }
   }
 
-  private buildSection(node: Node<T>, x: number, y: number): LayoutNode {
+  protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
-    let header = null;
-    if (node.rendered || this.forceSectionHeaders) {
-      let headerNode = this.buildSectionHeader(node, x, y);
-      header = headerNode.layoutInfo;
-      header.key += ':header';
-      header.parentKey = node.key;
-      y += header.rect.height;
-    }
-
     let rect = new Rect(0, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
@@ -347,14 +283,13 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     rect.height = y - startY;
 
     return {
-      header,
       layoutInfo,
       children,
       validRect: layoutInfo.rect.intersection(this.requestedRect)
     };
   }
 
-  private buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
+  protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.headingHeight;
     let isEstimated = false;
@@ -365,7 +300,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       // Mark as estimated if the size of the overall virtualizer changed,
       // or the content of the item changed.
       let previousLayoutNode = this.layoutNodes.get(node.key);
-      let previousLayoutInfo = previousLayoutNode?.header || previousLayoutNode?.layoutInfo;
+      let previousLayoutInfo = previousLayoutNode?.layoutInfo;
       if (previousLayoutInfo) {
         let curNode = this.collection.getItem(node.key);
         let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
@@ -391,7 +326,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
     };
   }
 
-  private buildItem(node: Node<T>, x: number, y: number): LayoutNode {
+  protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
@@ -415,14 +350,8 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       rectHeight = DEFAULT_HEIGHT;
     }
 
-    if (typeof this.indentationForItem === 'function') {
-      x += this.indentationForItem(this.collection, node.key) || 0;
-    }
-
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    // allow overflow so the focus ring/selection ring can extend outside to overlap with the adjacent items borders
-    layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo,
@@ -431,18 +360,19 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
   }
 
   updateItemSize(key: Key, size: Size) {
-    let layoutInfo = this.layoutInfos.get(key);
+    let layoutNode = this.layoutNodes.get(key);
     // If no layoutInfo, item has been deleted/removed.
-    if (!layoutInfo) {
+    if (!layoutNode) {
       return false;
     }
 
+    let layoutInfo = layoutNode.layoutInfo;
     layoutInfo.estimatedSize = false;
     if (layoutInfo.rect.height !== size.height) {
       // Copy layout info rather than mutating so that later caches are invalidated.
       let newLayoutInfo = layoutInfo.copy();
       newLayoutInfo.rect.height = size.height;
-      this.layoutInfos.set(key, newLayoutInfo);
+      layoutNode.layoutInfo = newLayoutInfo;
 
       // Items after this layoutInfo will need to be repositioned to account for the new height.
       // Adjust the validRect so that only items above remain valid.
@@ -473,9 +403,7 @@ export class ListLayout<T> extends Layout<Node<T>, ListLayoutProps> implements D
       n.validRect = n.validRect.intersection(this.validRect);
 
       // Replace layout info in LayoutNode
-      if (n.header === oldLayoutInfo) {
-        n.header = newLayoutInfo;
-      } else if (n.layoutInfo === oldLayoutInfo) {
+      if (n.layoutInfo === oldLayoutInfo) {
         n.layoutInfo = newLayoutInfo;
       }
     }
