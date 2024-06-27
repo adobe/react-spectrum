@@ -15,7 +15,7 @@ import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {MutableRefObject, RefObject, useContext} from 'react';
 
 interface DOMPropsResponderProps extends DOMAttributes {
-  ref?: RefObject<Element>
+  ref?: RefObject<Element | null>
 }
 
 interface IDOMPropsResponderContext extends DOMAttributes {

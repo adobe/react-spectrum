@@ -17,7 +17,7 @@ export class OverscanManager {
   private startTime = 0;
   private velocity = new Point(0, 0);
   private visibleRect = new Rect();
-  
+
   setVisibleRect(rect: Rect) {
     let time = performance.now() - this.startTime;
     if (time < 500) {

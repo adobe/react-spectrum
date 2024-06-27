@@ -490,6 +490,7 @@ describe('ListView', function () {
     describe('PageDown', function () {
       it('should move focus to a row a page below when focus starts on a row', async function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
+        tree.getByRole('grid').style.overflow = 'auto'; // make ListKeyboardDelegate know we are scrollable
         await user.tab();
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
@@ -499,6 +500,7 @@ describe('ListView', function () {
 
       it('should move focus to a row a page below when focus starts in the row cell', async function () {
         let tree = renderListWithFocusables({items: manyItems});
+        tree.getByRole('grid').style.overflow = 'auto'; // make ListKeyboardDelegate know we are scrollable
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
         await user.click(start);
@@ -1662,6 +1664,30 @@ describe('ListView', function () {
         expect(navigate).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
       });
+    });
+  });
+
+  describe('height 0', () => {
+
+    it('should render and not infinite loop', function () {
+      offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 0);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 0);
+      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 0);
+      let tree = render(
+        <ListView
+          width="250px"
+          height="60px"
+          aria-label="List"
+          data-testid="test"
+          items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+          {item => <Item>{item.name}</Item>}
+        </ListView>
+      );
+      let grid = tree.getByRole('grid');
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(grid.firstChild).toBeEmptyDOMElement();
     });
   });
 });

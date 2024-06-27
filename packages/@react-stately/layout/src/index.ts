@@ -10,5 +10,6 @@
  * governing permissions and limitations under the License.
  */
 export type {ListLayoutOptions, LayoutNode} from './ListLayout';
+export type {TableLayoutProps} from './TableLayout';
 export {ListLayout} from './ListLayout';
 export {TableLayout} from './TableLayout';

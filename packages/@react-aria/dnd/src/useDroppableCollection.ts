@@ -67,7 +67,7 @@ const DROP_POSITIONS_RTL: DropPosition[] = ['after', 'on', 'before'];
  * Handles drop interactions for a collection component, with support for traditional mouse and touch
  * based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
-export function useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult {
+export function useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DroppableCollectionResult {
   let localState = useRef({
     props,
     state,
