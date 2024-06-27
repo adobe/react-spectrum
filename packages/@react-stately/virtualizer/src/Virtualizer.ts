@@ -318,7 +318,7 @@ export class Virtualizer<T extends object, V> {
     return Array.from(this._rootView.children);
   }
 
-  getView(key: Key): ReusableView<T, V> | undefined {
+  getVisibleView(key: Key): ReusableView<T, V> | undefined {
     return this._visibleViews.get(key);
   }
 

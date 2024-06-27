@@ -77,7 +77,7 @@ export function Virtualizer(props: VirtualizerProps) {
     },
     CollectionBranch({parent, renderDropIndicator}) {
       let virtualizer = useContext(VirtualizerContext);
-      let parentView = virtualizer!.virtualizer.getView(parent.key)!;
+      let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
       return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
     }
   }), [layout]);
