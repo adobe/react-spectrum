@@ -16,7 +16,8 @@ import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, useState} from 'react';
+import {RefObject} from '@react-types/shared';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
@@ -140,7 +141,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
       setArrowWidth(arrowRef.current.getBoundingClientRect().width);
     }
   }, [state.isOpen, arrowRef]);
-  
+
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8,

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Key} from '@react-types/shared';
+import {Collection, Key, RefObject} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import React, {createContext, HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
+import React, {createContext, HTMLAttributes, ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 

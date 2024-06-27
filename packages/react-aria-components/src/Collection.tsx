@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, DropTargetDelegate, Key, LayoutDelegate} from '@react-types/shared';
+import {CollectionBase, DropTargetDelegate, Key, LayoutDelegate, RefObject} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {forwardRefType, Hidden, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
@@ -795,7 +795,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   useLayoutEffect(() => {
     document.isMounted = true;
     return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by 
+      // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
       document.isMounted = false;
     };

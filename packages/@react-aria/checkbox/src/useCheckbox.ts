@@ -11,12 +11,12 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
+import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
 import {useFormValidationState} from '@react-stately/form';
 import {useToggle} from '@react-aria/toggle';
-import {ValidationResult} from '@react-types/shared';
 
 export interface CheckboxAria extends ValidationResult {
   /** Props for the label wrapper element. */

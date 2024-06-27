@@ -11,8 +11,8 @@
  */
 
 import {AriaAccordionProps} from '@react-types/accordion';
-import {ButtonHTMLAttributes, RefObject} from 'react';
-import {DOMAttributes, Node} from '@react-types/shared';
+import {ButtonHTMLAttributes} from 'react';
+import {DOMAttributes, Node, RefObject} from '@react-types/shared';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';

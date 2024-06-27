@@ -17,8 +17,8 @@ import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContex
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeaderContext} from './Header';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import {HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
