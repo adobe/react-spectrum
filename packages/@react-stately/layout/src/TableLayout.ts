@@ -65,10 +65,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     super.validate(invalidationContext);
   }
 
-  // TODO: in the RAC case, we don't explicity accept loadingState on the TableBody, but note that if the user
-  // does happen to set loadingState="loading" or loadingState="loadingMore" coincidentally, the isLoading
-  // part of this code will trigger and the layout will reserve more room for the loading spinner which we actually only use
-  // in RSP
   protected buildCollection(): LayoutNode[] {
     this.stickyColumnIndices = [];
 
