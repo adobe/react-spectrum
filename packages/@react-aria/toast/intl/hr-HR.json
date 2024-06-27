@@ -1,4 +1,4 @@
 {
   "close": "Zatvori",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{broj, množina, jedna {# notification} ostale {# notifications}}."
 }

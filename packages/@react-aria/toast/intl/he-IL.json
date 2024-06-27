@@ -1,4 +1,4 @@
 {
   "close": "סגור",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{,לספור ברבים.אחד את השני {# notification} other {# notifications}}."
 }
