@@ -77,7 +77,7 @@ export {Virtualizer as UNSTABLE_Virtualizer} from './Virtualizer';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
-export {ListLayout as UNSTABLE_ListLayout} from '@react-stately/layout';
+export {ListLayout as UNSTABLE_ListLayout, GridLayout as UNSTABLE_GridLayout} from '@react-stately/layout';
 
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
@@ -141,4 +141,4 @@ export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollection
 export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
 export type {Color, ColorSpace, ColorFormat} from '@react-types/color';
-export type {ListLayoutOptions} from '@react-stately/layout';
+export type {ListLayoutOptions, GridLayoutOptions} from '@react-stately/layout';

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {GridLayout} from '@react-spectrum/card';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
+import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -55,7 +55,8 @@ const MyGridListItem = (props: GridListItemProps) => {
         selected: isSelected,
         hovered: isHovered
       })}>
-      {({selectionMode}) => (<>
+      {({selectionMode, allowsDragging}) => (<>
+        {allowsDragging && <Button slot="drag">≡</Button>}
         {selectionMode !== 'none' ? <MyCheckbox slot="selection" /> : null}
         {props.children as any}
       </>)}
@@ -118,9 +119,35 @@ export function VirtualizedGridList() {
     });
   }, []);
 
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
   return (
     <Virtualizer layout={layout}>
-      <GridList className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={items}>
+      <GridList 
+        className={styles.menu}
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks}
+        style={{height: 400}}
+        aria-label="virtualized listbox"
+        items={list.items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
     </Virtualizer>
