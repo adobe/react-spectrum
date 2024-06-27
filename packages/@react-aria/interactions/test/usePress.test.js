@@ -3625,20 +3625,22 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressup',
           target: el,
           pointerType: 'mouse',
@@ -3646,8 +3648,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3655,12 +3657,12 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'press',
           target: el,
           pointerType: 'mouse',
@@ -3668,7 +3670,7 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        }
+        })
       ]);
     });
 
@@ -3683,20 +3685,22 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3704,11 +3708,11 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        }
+        })
       ]);
 
       events = [];
@@ -3718,7 +3722,7 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
@@ -3726,12 +3730,12 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3739,12 +3743,12 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
@@ -3752,12 +3756,12 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressup',
           target: el,
           pointerType: 'mouse',
@@ -3765,8 +3769,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3774,12 +3778,12 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'press',
           target: el,
           pointerType: 'mouse',
@@ -3787,7 +3791,7 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        }
+        })
       ]);
     });
 
@@ -3800,20 +3804,22 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointercancel', {pointerId: 1, pointerType: 'mouse'}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3821,11 +3827,11 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        }
+        })
       ]);
     });
 
@@ -3838,20 +3844,22 @@ describe('usePress', function () {
       fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3859,11 +3867,11 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        }
+        })
       ]);
     });
 
@@ -3877,20 +3885,22 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3898,11 +3908,11 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        }
+        })
       ]);
     });
 
@@ -3915,20 +3925,22 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', ctrlKey: true, clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: true,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: true
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressup',
           target: el,
           pointerType: 'mouse',
@@ -3936,8 +3948,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -3945,12 +3957,12 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'presschange',
           pressed: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'press',
           target: el,
           pointerType: 'mouse',
@@ -3958,7 +3970,7 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        }
+        })
       ]);
     });
 
@@ -4037,16 +4049,18 @@ describe('usePress', function () {
 
       fireEvent.click(el);
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'pressup',
           target: el,
           pointerType: 'virtual',
@@ -4054,8 +4068,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'virtual',
@@ -4063,8 +4077,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'press',
           target: el,
           pointerType: 'virtual',
@@ -4072,7 +4086,7 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        }
+        })
       ]);
     });
 
@@ -4086,16 +4100,18 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'pressup',
           target: el,
           pointerType: 'mouse',
@@ -4103,8 +4119,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -4112,8 +4128,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'press',
           target: el,
           pointerType: 'mouse',
@@ -4121,7 +4137,7 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        }
+        })
       ]);
 
       uaMock.mockRestore();
@@ -4140,16 +4156,18 @@ describe('usePress', function () {
       // Virtual pointer event sets pointerType and onClick handles the rest
       fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
       expect(events).toEqual([
-        {
+        expect.objectContaining({
           type: 'pressstart',
           target: el,
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false,
-          altKey: false
-        },
-        {
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
           type: 'pressup',
           target: el,
           pointerType: 'virtual',
@@ -4157,8 +4175,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pressend',
           target: el,
           pointerType: 'virtual',
@@ -4166,8 +4184,8 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'press',
           target: el,
           pointerType: 'virtual',
@@ -4175,7 +4193,7 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
-        }
+        })
       ]);
     });
 
