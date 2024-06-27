@@ -22,10 +22,10 @@ import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate} from '@react-aria/selection';
-import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
+import {ListViewLayout} from './ListViewLayout';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {JSX, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
@@ -70,7 +70,7 @@ interface ListViewContextValue<T> {
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
-  layout: ListLayout<T>,
+  layout: ListViewLayout<T>,
   loadingState: LoadingState,
   renderEmptyState?: () => JSX.Element
 }
@@ -94,16 +94,12 @@ const ROW_HEIGHTS = {
 
 function useListLayout<T>(state: ListState<T>, density: SpectrumListViewProps<T>['density'], overflowMode: SpectrumListViewProps<T>['overflowMode']) {
   let {scale} = useProvider();
-  let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
-    new ListLayout<T>({
-      estimatedRowHeight: ROW_HEIGHTS[density][scale],
-      padding: 0,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
-      enableEmptyState: true
+    new ListViewLayout<T>({
+      estimatedRowHeight: ROW_HEIGHTS[density][scale]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [scale, density, isEmpty, overflowMode]);
+    , [scale, density, overflowMode]);
 
   return layout;
 }

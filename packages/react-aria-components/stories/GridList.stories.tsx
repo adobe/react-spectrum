@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, GridList, GridListItem, GridListItemProps, ListLayout, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {GridLayout} from '@react-spectrum/card';
 import React, {useMemo} from 'react';

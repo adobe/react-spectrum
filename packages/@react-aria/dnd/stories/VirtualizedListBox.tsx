@@ -137,10 +137,7 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
 
   let layout = React.useMemo(() =>
     new ListLayout<unknown>({
-      estimatedRowHeight: 32,
-      padding: 8,
-      loaderHeight: 40,
-      placeholderHeight: 32
+      estimatedRowHeight: 32
     })
   , []);
 
