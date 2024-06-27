@@ -20,14 +20,8 @@ import {useCallback, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {Virtualizer} from './Virtualizer';
 
-interface VirtualizerProps<T extends object, V, W, O> {
+interface VirtualizerProps<T extends object, V, O> {
   renderView(type: string, content: T): V,
-  renderWrapper(
-    parent: ReusableView<T, V> | null,
-    reusableView: ReusableView<T, V>,
-    children: ReusableView<T, V>[],
-    renderChildren: (views: ReusableView<T, V>[]) => W[]
-  ): W,
   layout: Layout<T>,
   collection: Collection<T>,
   onVisibleRectChange(rect: Rect): void,
@@ -35,29 +29,28 @@ interface VirtualizerProps<T extends object, V, W, O> {
   layoutOptions?: O
 }
 
-export interface VirtualizerState<T extends object, V, W> {
-  visibleViews: W[],
+export interface VirtualizerState<T extends object, V> {
+  visibleViews: ReusableView<T, V>[],
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
-  virtualizer: Virtualizer<T, V, W>,
+  virtualizer: Virtualizer<T, V>,
   isScrolling: boolean,
   startScrolling: () => void,
   endScrolling: () => void
 }
 
-export function useVirtualizerState<T extends object, V, W, O = any>(opts: VirtualizerProps<T, V, W, O>): VirtualizerState<T, V, W> {
+export function useVirtualizerState<T extends object, V, O = any>(opts: VirtualizerProps<T, V, O>): VirtualizerState<T, V> {
   let [visibleRect, setVisibleRect] = useState(new Rect(0, 0, 0, 0));
   let [isScrolling, setScrolling] = useState(false);
   let [invalidationContext, setInvalidationContext] = useState<InvalidationContext>({});
   let visibleRectChanged = useRef(false);
-  let [virtualizer] = useState(() => new Virtualizer<T, V, W>({
+  let [virtualizer] = useState(() => new Virtualizer<T, V>({
     setVisibleRect(rect) {
       setVisibleRect(rect);
       visibleRectChanged.current = true;
     },
     // TODO: should changing these invalidate the entire cache?
     renderView: opts.renderView,
-    renderWrapper: opts.renderWrapper,
     invalidate: setInvalidationContext
   }));
 
