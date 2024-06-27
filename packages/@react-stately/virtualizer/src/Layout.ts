@@ -66,7 +66,7 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    * Should be implemented by subclasses.
    * @param key The key of the LayoutInfo to retrieve.
    */
-  abstract getLayoutInfo(key: Key): LayoutInfo;
+  abstract getLayoutInfo(key: Key): LayoutInfo | null;
 
   /**
    * Returns size of the content. By default, it returns collectionView's size.

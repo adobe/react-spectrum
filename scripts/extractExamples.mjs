@@ -108,7 +108,7 @@ import ReactDOM from 'react-dom/client';
 
 fs.writeFileSync(`${distDir}/tsconfig.json`, `{
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",
