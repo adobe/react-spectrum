@@ -189,41 +189,25 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
     let layoutInfo = this.getLayoutInfo(target.key);
     let rect: Rect;
-    if (target.dropPosition === 'before') {
+    if (this.numColumns === 1) {
       // Flip from vertical to horizontal if only one column is visible.
-      if (this.numColumns === 1) {
-        rect = new Rect(
-          layoutInfo.rect.x,
-          layoutInfo.rect.y - this.minSpace.height / 2 - this.dropIndicatorThickness / 2,
-          layoutInfo.rect.width,
-          this.dropIndicatorThickness
-        );
-      } else {
-        rect = new Rect(
-          layoutInfo.rect.x - this.horizontalSpacing / 2 - this.dropIndicatorThickness / 2,
-          layoutInfo.rect.y,
-          this.dropIndicatorThickness,
-          layoutInfo.rect.height
-        );
-      }
-    } else if (target.dropPosition === 'after') {
-      if (this.numColumns === 1) {
-        rect = new Rect(
-          layoutInfo.rect.x,
-          layoutInfo.rect.maxY + this.minSpace.height / 2 - this.dropIndicatorThickness / 2,
-          layoutInfo.rect.width,
-          this.dropIndicatorThickness
-        );
-      } else {
-        rect = new Rect(
-          layoutInfo.rect.maxX + this.horizontalSpacing / 2 - this.dropIndicatorThickness / 2,
-          layoutInfo.rect.y,
-          this.dropIndicatorThickness,
-          layoutInfo.rect.height
-        );
-      }
+      rect = new Rect(
+        layoutInfo.rect.x,
+        target.dropPosition === 'before' 
+          ? layoutInfo.rect.y - this.minSpace.height / 2 - this.dropIndicatorThickness / 2
+          : layoutInfo.rect.maxY + this.minSpace.height / 2 - this.dropIndicatorThickness / 2,
+        layoutInfo.rect.width,
+        this.dropIndicatorThickness
+      );
     } else {
-      rect = layoutInfo.rect;
+      rect = new Rect(
+        target.dropPosition === 'before' 
+          ? layoutInfo.rect.x - this.horizontalSpacing / 2 - this.dropIndicatorThickness / 2 
+          : layoutInfo.rect.maxX + this.horizontalSpacing / 2 - this.dropIndicatorThickness / 2,
+        layoutInfo.rect.y,
+        this.dropIndicatorThickness,
+        layoutInfo.rect.height
+      );
     }
 
     return new LayoutInfo('dropIndicator', target.key + ':' + target.dropPosition, rect);
