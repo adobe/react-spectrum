@@ -42,7 +42,7 @@ export interface RadioProps extends FocusableProps {
    * The value of the radio button, used when submitting an HTML form.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio#Value).
    */
-  value: string,
+  value: string | number,
   /**
    * The label for the Radio. Accepts any renderable node.
    */
