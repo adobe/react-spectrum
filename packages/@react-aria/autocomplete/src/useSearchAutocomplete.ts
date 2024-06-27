@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
 import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes, KeyboardDelegate, ValidationResult} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, LayoutDelegate, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useComboBox} from '@react-aria/combobox';
@@ -43,7 +43,13 @@ export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocomplete
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement | null>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate
 }
 
 /**
@@ -58,6 +64,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     inputRef,
     listBoxRef,
     keyboardDelegate,
+    layoutDelegate,
     onSubmit = () => {},
     onClear,
     onKeyDown,
@@ -98,6 +105,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     {
       ...otherProps,
       keyboardDelegate,
+      layoutDelegate,
       popoverRef,
       listBoxRef,
       inputRef,

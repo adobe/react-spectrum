@@ -334,14 +334,14 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let popoverRef = useRef<HTMLDivElement>(undefined);
   let listBoxRef = useRef<HTMLDivElement>(undefined);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
 
   let {inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       // completionMode,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
       listBoxRef,

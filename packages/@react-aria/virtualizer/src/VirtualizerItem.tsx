@@ -17,7 +17,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
-  parent?: LayoutInfo,
+  parent?: LayoutInfo | null,
   className?: string,
   children: ReactNode
 }

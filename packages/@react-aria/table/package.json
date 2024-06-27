@@ -32,7 +32,6 @@
     "@react-stately/collections": "^3.10.7",
     "@react-stately/flags": "^3.0.3",
     "@react-stately/table": "^3.11.8",
-    "@react-stately/virtualizer": "^3.7.1",
     "@react-types/checkbox": "^3.8.1",
     "@react-types/grid": "^3.2.6",
     "@react-types/shared": "^3.23.1",
