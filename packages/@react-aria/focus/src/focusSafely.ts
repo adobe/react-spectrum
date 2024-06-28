@@ -26,10 +26,10 @@ export function focusSafely(element: FocusableElement) {
   // from off the screen.
   const ownerDocument = getRootNode(element);
   if (getInteractionModality() === 'virtual') {
-    let lastFocusedElement = ownerDocument.activeElement;
+    let lastFocusedElement = ownerDocument?.activeElement;
     runAfterTransition(() => {
       // If focus did not move and the element is still in the document, focus it.
-      if (ownerDocument.activeElement === lastFocusedElement && element.isConnected) {
+      if (ownerDocument?.activeElement === lastFocusedElement && element.isConnected) {
         focusWithoutScrolling(element);
       }
     });

@@ -64,7 +64,7 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
     // focus handler already moved focus somewhere else.
 
     const ownerDocument = getRootNode(e.target);
-    const activeElement = ownerDocument instanceof  ShadowRoot ? getDeepActiveElement() : ownerDocument.activeElement;
+    const activeElement = ownerDocument instanceof  ShadowRoot ? getDeepActiveElement() : ownerDocument?.activeElement;
     if (e.target === e.currentTarget && activeElement === e.target) {
       if (onFocusProp) {
         onFocusProp(e);

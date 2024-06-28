@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from 'react-dom/test-utils';
 import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useRef} from 'react';
 import ReactDOM, {createPortal, render as ReactDOMRender} from 'react-dom';
@@ -574,8 +573,6 @@ describe('useInteractOutside shadow DOM extended tests', function () {
     const {cleanup} = createShadowRootAndRender(
       <App onInteractOutside={onInteractOutside} includeDynamicElement />
     );
-
-    act(() => {jest.runAllTimers();});
 
     const dynamicEl = document.getElementById('dynamic-outside');
     fireEvent.mouseDown(dynamicEl);
