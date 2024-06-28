@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes size 1`] = `
+"import { ColorWheel } from "@react/experimental-s2";
+
+<ColorWheel defaultValue="hsl(30, 100%, 50%)" />"
+`;

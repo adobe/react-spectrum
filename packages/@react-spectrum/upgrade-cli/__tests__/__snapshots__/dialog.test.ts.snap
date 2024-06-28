@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Moves close function from DialogTrigger to Dialog 1`] = `
+"import { DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react/experimental-s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <Dialog>{close => <>
+      <Heading>Test</Heading>
+
+      <Content>Content</Content>
+    </>}</Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Removes divider 1`] = `
+"import { Dialog, Heading, Content, Divider } from "@react/experimental-s2";
+
+<Dialog>
+  <Heading>Test</Heading>
+
+  <Content>Content</Content>
+</Dialog>"
+`;
+
+exports[`bails when it cannot move the close function 1`] = `
+"import { DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react/experimental-s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  // TODO(S2-upgrade): update this dialog to move the close function inside
+  {(close) => 
+    <ReusableDialog />}
+</DialogTrigger>"
+`;

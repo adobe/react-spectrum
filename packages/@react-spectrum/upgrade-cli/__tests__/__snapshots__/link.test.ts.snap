@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Change variant=overBackground to staticColor=white 1`] = `
+"import { Link } from "@react/experimental-s2";
+let variant = 'overBackground';
+let props = {variant: 'overBackground'};
+<div>
+  <Link staticColor="white" href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    The missing link.
+  </Link>
+  <Link staticColor={"white"} href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    The missing link.
+  </Link>
+  <Link // TODO(S2-upgrade): Prop variant could not be automatically updated because variant could not be followed.
+  variant={variant} href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    The missing link.
+  </Link>
+  <Link href="https://www.imdb.com/title/tt6348138/" target="_blank" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    The missing link.
+  </Link>
+</div>"
+`;

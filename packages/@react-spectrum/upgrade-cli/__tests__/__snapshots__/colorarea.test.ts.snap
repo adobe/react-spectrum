@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes size 1`] = `
+"import { ColorArea } from "@react/experimental-s2";
+
+<ColorArea defaultValue="#7f0000" />"
+`;

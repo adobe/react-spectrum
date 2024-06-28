@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renames variants 1`] = `
+"import { ProgressBar } from "@react/experimental-s2";
+<div>
+  <ProgressBar staticColor="white"/>
+</div>"
+`;
