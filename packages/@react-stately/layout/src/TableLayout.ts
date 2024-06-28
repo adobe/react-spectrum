@@ -46,7 +46,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       );
   }
 
-  validate(invalidationContext: InvalidationContext<O>): void {
+  update(invalidationContext: InvalidationContext<O>): void {
     let newCollection = this.virtualizer.collection as TableCollection<T>;
 
     // If columnWidths were provided via layoutOptions, update those.
@@ -62,7 +62,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       invalidationContext.sizeChanged = true;
     }
 
-    super.validate(invalidationContext);
+    super.update(invalidationContext);
   }
 
   protected buildCollection(): LayoutNode[] {
