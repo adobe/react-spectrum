@@ -25,7 +25,9 @@ export interface LayoutOptionsDelegate<O> {
 interface ILayout<O> extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {}
 
 export interface VirtualizerProps {
+  /** The child collection to virtualize (e.g. ListBox, GridList, or Table). */
   children: ReactNode,
+  /** The layout object that determines the position and size of the visible elements. */
   layout: ILayout<any>
 }
 
@@ -37,7 +39,7 @@ export function Virtualizer(props: VirtualizerProps) {
     isVirtualized: true,
     layoutDelegate: layout,
     dropTargetDelegate: layout.getDropTargetFromPoint ? layout as DropTargetDelegate : undefined,
-    CollectionRoot({collection, focusedKey, scrollRef, renderDropIndicator}) {
+    CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicator}) {
       let layoutOptions = layout.useLayoutOptions?.();
       let state = useVirtualizerState({
         layout,
@@ -52,7 +54,7 @@ export function Virtualizer(props: VirtualizerProps) {
             element.scrollTop = rect.y;
           }
         },
-        persistedKeys: useMemo(() => focusedKey != null ? new Set([focusedKey]) : new Set(), [focusedKey]),
+        persistedKeys,
         layoutOptions
       });
 

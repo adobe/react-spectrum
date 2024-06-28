@@ -13,7 +13,7 @@
 import {AriaLabelingProps, forwardRefType, Key, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext} from './Collection';
+import {CollectionProps, CollectionRendererContext, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
@@ -231,7 +231,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
       ref={objectRef}
       {...renderProps}
       data-orientation={orientation || undefined}>
-      <CollectionRoot collection={state.collection} focusedKey={state.selectionManager.focusedKey} />
+      <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
     </div>
   );
 }

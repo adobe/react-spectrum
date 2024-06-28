@@ -162,7 +162,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return invalidationContext.sizeChanged;
   }
 
-  validate(invalidationContext: InvalidationContext<O>) {
+  update(invalidationContext: InvalidationContext<O>) {
     this.collection = this.virtualizer.collection;
 
     // Reset valid rect if we will have to invalidate everything.

@@ -186,7 +186,13 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let focusedKey = selectionManager.focusedKey;
   if (dropState?.target?.type === 'item') {
     focusedKey = dropState.target.key;
+    if (dropState.target.dropPosition === 'after') {
+      // Normalize to the "before" drop position since we only render those in the DOM.
+      focusedKey = state.collection.getKeyAfter(focusedKey) ?? focusedKey;
+    }
   }
+
+  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 
   // wait for layout to get accurate measurements
   let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
@@ -214,7 +220,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
             isLoading={isLoading}
             onLoadMore={onLoadMore}
             ref={domRef}
-            focusedKey={focusedKey}
+            persistedKeys={persistedKeys}
             scrollDirection="vertical"
             className={
               classNames(

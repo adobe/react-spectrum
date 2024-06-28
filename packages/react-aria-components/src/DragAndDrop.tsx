@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget} from 'react-aria';
+import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from 'react-aria';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState, DroppableCollectionState, MultipleSelectionManager} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
 import type {RenderProps} from './utils';
 
 export interface DragAndDropContextValue {
@@ -62,9 +62,19 @@ export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, drop
   return dragAndDropHooks?.useDropIndicator ? fn : undefined;
 }
 
-export function useDndAwareFocusedKey(selectionManager: MultipleSelectionManager, dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState) {
-  // Use drop target key during drag sessions so virtualizer persisted keys enable keyboard navigation to work correctly.
-  return dragAndDropHooks?.isVirtualDragging?.() && dropState?.target?.type === 'item'
-    ? dropState.target.key
-    : selectionManager.focusedKey;
+export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState) {
+  // Persist the focused key and the drop target key.
+  let focusedKey = selectionManager.focusedKey;
+  let dropTargetKey: Key | null = null;
+  if (dragAndDropHooks?.isVirtualDragging?.() && dropState?.target?.type === 'item') {
+    dropTargetKey = dropState.target.key;
+    if (dropState.target.dropPosition === 'after') {
+      // Normalize to the "before" drop position since we only render those to the DOM.
+      dropTargetKey = dropState.collection.getKeyAfter(dropTargetKey) ?? dropTargetKey;
+    }
+  }
+
+  return useMemo(() => {
+    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+  }, [focusedKey, dropTargetKey]);
 }

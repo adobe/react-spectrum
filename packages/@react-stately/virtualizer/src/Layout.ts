@@ -52,7 +52,7 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    * Called by the virtualizer before {@link getVisibleLayoutInfos}
    * or {@link getLayoutInfo} are called.
    */
-  validate(invalidationContext: InvalidationContext<O>) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  update(invalidationContext: InvalidationContext<O>) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
   /**
    * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.

@@ -12,7 +12,7 @@
 import {CollectionBase, DropTargetDelegate, ItemDropTarget, Key, LayoutDelegate} from '@react-types/shared';
 import {createBranchComponent, useCachedChildren} from '@react-aria/collections';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
-import React, {createContext, ForwardedRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext} from 'react';
+import React, {createContext, ForwardedRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useMemo} from 'react';
 import {StyleProps} from './utils';
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
@@ -104,23 +104,35 @@ export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends
 });
 
 export interface CollectionBranchProps {
+  /** The collection of items to render. */
   collection: ICollection<Node<unknown>>,
+  /** The parent node of the items to render. */
   parent: Node<unknown>,
+  /** A function that renders a drop indicator between items. */
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
+  /** The collection of items to render. */
   collection: ICollection<Node<unknown>>,
-  focusedKey?: Key | null,
+  /** A set of keys for items that should always be persisted in the DOM. */
+  persistedKeys?: Set<Key> | null,
+  /** A ref to the scroll container for the collection. */
   scrollRef?: RefObject<HTMLElement | null>,
+  /** A function that renders a drop indicator between items. */
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
 export interface CollectionRenderer {
+  /** Whether this is a virtualized collection. */
   isVirtualized?: boolean,
+  /** A delegate object that provides layout information for items in the collection. */
   layoutDelegate?: LayoutDelegate,
+  /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate,
+  /** A component that renders the root collection items. */
   CollectionRoot: React.ComponentType<CollectionRootProps>,
+   /** A component that renders the child collection items. */
   CollectionBranch: React.ComponentType<CollectionBranchProps>
 }
 
@@ -160,3 +172,7 @@ function useCollectionRender(
 }
 
 export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);
+
+export function usePersistedKeys(focusedKey: Key) {
+  return useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+}

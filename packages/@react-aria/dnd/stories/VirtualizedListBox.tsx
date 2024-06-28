@@ -21,7 +21,7 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {ListLayout} from '@react-stately/layout';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
@@ -159,6 +159,8 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
     isVirtualized: true
   }, state, domRef);
   let isDropTarget = dropState.isDropTarget({type: 'root'});
+  let focusedKey = dropState.target?.type === 'item' ? dropState.target.key : state.selectionManager.focusedKey;
+  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 
   return (
     <Context.Provider value={{state, dropState}}>
@@ -170,7 +172,7 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
         scrollDirection="vertical"
         layout={layout}
         collection={state.collection}
-        focusedKey={dropState.target?.type === 'item' ? dropState.target.key : state.selectionManager.focusedKey}>
+        persistedKeys={persistedKeys}>
         {(type, item) => (
           <>
             {state.collection.getKeyBefore(item.key) == null &&

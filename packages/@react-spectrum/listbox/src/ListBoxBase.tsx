@@ -100,6 +100,9 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     );
   }, []);
 
+  let focusedKey = state.selectionManager.focusedKey;
+  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+
   return (
     <ListBoxContext.Provider value={{state, renderEmptyState, shouldFocusOnHover, shouldUseVirtualFocus}}>
       <FocusScope>
@@ -107,7 +110,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           {...styleProps}
           {...mergeProps(listBoxProps, domProps)}
           ref={ref}
-          focusedKey={state.selectionManager.focusedKey}
+          persistedKeys={persistedKeys}
           autoFocus={!!props.autoFocus || undefined}
           sizeToFit="height"
           scrollDirection="vertical"

@@ -14,7 +14,7 @@ import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@reac
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, NodeValue, useCachedChildren} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -241,7 +241,10 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           values={[
             [UNSTABLE_TreeStateContext, state]
           ]}>
-          <CollectionRoot collection={state.collection} focusedKey={state.selectionManager.focusedKey} scrollRef={ref} />
+          <CollectionRoot
+            collection={state.collection}
+            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+            scrollRef={ref} />
         </Provider>
         {emptyState}
       </div>
