@@ -13,36 +13,30 @@
 import {RefObject, useCallback, useMemo, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export interface LoadOnScrollProps {
+export interface LoadMoreProps {
   /** Whether data is currently being loaded. */
   isLoading?: boolean,
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom.  */
   onLoadMore?: () => void,
-  // TODO: decide on default here
   /**
-   * The amount of offset (in pixels) from the bottom of your scrollable region that should trigger load more.
-   * @default 25
+   * The amount of offset from the bottom of your scrollable region that should trigger load more.
+   * Uses a percentage value relative to the scroll body's client height. Load more is then triggered
+   * when your current scroll position's distance from the bottom of the currently loaded list of items is less than
+   * or equal to the provided value. (e.g. 1 = 100% of the scroll region's height).
+   * @default 1
    */
   scrollOffset?: number
 }
 
-// TODO: discuss if it would be ok to just attach event to ref...
-interface LoadOnScrollAria {
-  /** Props for the scrollable region. */
-  scrollViewProps: {
-    onScroll: () => void
-  }
-}
-
-export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLElement | null>): LoadOnScrollAria {
-  let {isLoading, onLoadMore, scrollOffset = 25} = props;
+export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>) {
+  let {isLoading, onLoadMore, scrollOffset = 1} = props;
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
   let isLoadingRef = useRef(isLoading);
   let prevProps = useRef(props);
   let onScroll = useCallback(() => {
     if (ref.current && !isLoadingRef.current && onLoadMore) {
-      let shouldLoadMore = ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight < scrollOffset;
+      let shouldLoadMore = ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight < ref.current.clientHeight * scrollOffset;
 
       if (shouldLoadMore) {
         isLoadingRef.current = true;
@@ -79,7 +73,9 @@ export function useLoadOnScroll(props: LoadOnScrollProps, ref: RefObject<HTMLEle
     lastContentSize.current = ref.current?.scrollHeight || 0;
   }, [isLoading, onLoadMore, props, ref]);
 
-
+  // TODO: some of the RSP tests async loading tests actually fail when attaching the scroll event directly to the ref
+  // not entirely sure why....... It seems like RSP Virtualizer calls onScroll when the rect changes? Will need to dig some more
+  // useEvent(ref, 'scroll', onScroll);
   return useMemo(() => ({
     scrollViewProps: {
       onScroll

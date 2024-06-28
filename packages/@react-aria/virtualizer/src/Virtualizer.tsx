@@ -12,10 +12,9 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLoadMore} from '@react-aria/utils';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
-import {useLoadOnScroll} from '@react-aria/loading';
 import {VirtualizerItem} from './VirtualizerItem';
 
 type RenderWrapper<T extends object, V> = (
@@ -93,17 +92,20 @@ interface VirtualizerOptions {
   onLoadMore?: () => void
 }
 
+// TODO: will delete useVirtualizer and directly call it in RSP
+// First need to debug why attaching it directly to the ref causes a couple of async tests to fail...
+// Specifically https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/listbox/test/ListBox.test.js#L872,
+// https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/combobox/test/ComboBox.test.js#L2134
+// https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/combobox/test/ComboBox.test.js#L2182
+// and https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/table/test/Table.test.js#L4213
+// For the most part, I think some of these tests need to updated so the loadmore call sets is loading to true to avoid multiple loads and/or the scrollHeight mocks
+// needs to be updated to simulate the addition of more items when the load more call finishes. Will update later
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V>, ref: RefObject<HTMLElement | null>) {
   let {isLoading, onLoadMore} = props;
   let {setVisibleRect} = state;
-  let scrollOffset = ref.current?.clientHeight;
 
-  // TODO: The ref previously provided was the table's ref. That ref didn't actually do anything in the old implementation
-  // but now the ref provided to useVirtualizer MUST be the scrollable ref so its a breaking change kinda?
-  // TODO: Also, now that we use ref.currnet.clientHeight/scrollHeight/etc instead of relying on the rect to figure out if we should load more
-  // this will break peoples tests since they need to mock scrollHeight to simulate the virtualizer's total contents height...
-  let {scrollViewProps: {onScroll}} = useLoadOnScroll({isLoading, onLoadMore, scrollOffset}, ref);
+  let {scrollViewProps: {onScroll}} = useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setVisibleRect(rect);

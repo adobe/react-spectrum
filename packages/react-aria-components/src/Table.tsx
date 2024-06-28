@@ -9,13 +9,12 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useLoadMore, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {useLoadOnScroll} from '@react-aria/loading';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -380,7 +379,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     onLoadMore,
     scrollOffset
   }), [isLoading, onLoadMore, scrollOffset]);
-  let {scrollViewProps: {onScroll}} = useLoadOnScroll(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
+  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
   useEvent(scrollRef || tableContainerContext?.scrollRef || ref, 'scroll', onScroll);
 
   let {gridProps} = useTable({
