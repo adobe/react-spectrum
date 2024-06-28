@@ -230,6 +230,7 @@ See the [useTreeData](../react-stately/useTreeData.html) docs for more details.
 
 ```tsx
 import {useTreeData} from '@react-stately/data';
+import { Button, FieldError, Form, Input, Label, TextField } from 'react-aria-components';
 
 let tree = useTreeData({
   initialItems: [
@@ -257,17 +258,33 @@ let tree = useTreeData({
 function addPerson(name) {
   tree.append('People', {name});
 }
+const  onSubmit= e => {
+        e.preventDefault();
+        let data = Object.fromEntries(new FormData(e.currentTarget));
+        addPerson(data.personName)
+      }
 
-<ListBox items={tree.items}>
-  {node =>
-    <Section id={section.name} items={node.children}>
-      <Header>{section.name}</Header>
-      <Collection items={section.children}>
-        {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
-      </Collection>
-    </Section>
-  }
-</ListBox>
+<>
+  <ListBox items={tree.items}>
+    {node =>
+      <Section id={section.name} items={node.children}>
+        <Header>{section.name}</Header>
+        <Collection items={section.children}>
+          {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+        </Collection>
+      </Section>
+    }
+  </ListBox>
+
+  <Form onSubmit={onSubmit}>
+    <TextField name="personName" isRequired>
+      <Label>Person Name</Label>
+      <Input />
+      <FieldError />
+    </TextField>
+    <Button type="submit">Submit</Button>
+  </Form>
+</>
 ```
 
 Note that `useTreeData` is a utility hook, not a requirement. You can use any state management library to manage collection items.
