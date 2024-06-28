@@ -14,7 +14,7 @@ import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@reac
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, NodeValue, useCachedChildren} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, ItemRenderProps, useClearCollectionRenderer} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -289,7 +289,11 @@ export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('conte
     children: props.children,
     values
   });
-  return useClearCollectionRenderer(renderProps.children);
+  return (
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+      {renderProps.children}
+    </CollectionRendererContext.Provider>
+  );
 });
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);

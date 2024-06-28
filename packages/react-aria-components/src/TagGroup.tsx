@@ -13,7 +13,7 @@
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, ItemRenderProps, useClearCollectionRenderer} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
@@ -254,9 +254,10 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
               slots: {
                 remove: removeButtonProps
               }
-            }]
+            }],
+            [CollectionRendererContext, DefaultCollectionRenderer]
           ]}>
-          {useClearCollectionRenderer(renderProps.children)}
+          {renderProps.children}
         </Provider>
       </div>
     </div>

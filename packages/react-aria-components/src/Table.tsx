@@ -3,7 +3,7 @@ import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, cr
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {CollectionProps, CollectionRendererContext, ItemRenderProps, useClearCollectionRenderer} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
@@ -730,9 +730,13 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       data-resizing={isResizing || undefined}
       data-allows-sorting={column.props.allowsSorting || undefined}
       data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
-      <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
-        {useClearCollectionRenderer(renderProps.children)}
-      </ColumnResizerContext.Provider>
+      <Provider
+        values={[
+          [ColumnResizerContext, {column, triggerRef: ref}],
+          [CollectionRendererContext, DefaultCollectionRenderer]
+        ]}>
+        {renderProps.children}
+      </Provider>
     </TH>
   );
 });
@@ -1181,7 +1185,9 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
-      {useClearCollectionRenderer(renderProps.children)}
+      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+        {renderProps.children}
+      </CollectionRendererContext.Provider>
     </TD>
   );
 });

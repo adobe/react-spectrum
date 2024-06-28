@@ -13,7 +13,7 @@ import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicat
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, ItemRenderProps, useClearCollectionRenderer} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
@@ -393,9 +393,10 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
                 slots: {
                   description: descriptionProps
                 }
-              }]
+              }],
+              [CollectionRendererContext, DefaultCollectionRenderer]
             ]}>
-            {useClearCollectionRenderer(renderProps.children)}
+            {renderProps.children}
           </Provider>
         </div>
       </div>

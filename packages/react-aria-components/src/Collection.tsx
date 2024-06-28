@@ -103,20 +103,6 @@ export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends
   return render(props, ref, section);
 });
 
-export function useClearCollectionRenderer(children: ReactNode) {
-  // Clear the collection renderer at leaf components if it is not already the default.
-  let ctx = useContext(CollectionRendererContext);
-  if (ctx !== DefaultCollectionRenderer) {
-    return (
-      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
-        {children}
-      </CollectionRendererContext.Provider>
-    );
-  }
-
-  return children;
-}
-
 export interface CollectionBranchProps {
   collection: ICollection<Node<unknown>>,
   parent: Node<unknown>,
