@@ -550,11 +550,10 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     getDefaultMinWidth
   }, tableState);
 
-  let state = useVirtualizerState<object, ReactNode, ReactNode>({
+  let state = useVirtualizerState<GridNode<unknown>, ReactNode>({
     layout,
     collection,
     renderView,
-    renderWrapper,
     onVisibleRectChange(rect) {
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
@@ -623,6 +622,8 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     scrollPadding = columnResizeState.getColumnWidth(firstColumn.key);
   }
 
+  let visibleViews = renderChildren(null, state.visibleViews, renderWrapper);
+
   return (
     <VirtualizerContext.Provider value={resizingColumn}>
       <FocusScope>
@@ -641,7 +642,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
             }}
             ref={headerRef}>
             <ResizeStateContext.Provider value={columnResizeState}>
-              {state.visibleViews[0]}
+              {visibleViews[0]}
             </ResizeStateContext.Provider>
           </div>
           <ScrollView
@@ -679,7 +680,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
             onScrollStart={state.startScrolling}
             onScrollEnd={state.endScrolling}
             onScroll={onScroll}>
-            {state.visibleViews[1]}
+            {visibleViews[1]}
             <div
               className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
               style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: columnResizeState.resizingColumn ? 'block' : 'none'}} />
@@ -688,6 +689,17 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
       </FocusScope>
     </VirtualizerContext.Provider>
   );
+}
+
+function renderChildren<T extends object>(parent: View | null, views: View[], renderWrapper: TableVirtualizerProps<T>['renderWrapper']) {
+  return views.map(view => {
+    return renderWrapper(
+      parent,
+      view,
+      view.children ? Array.from(view.children) : [],
+      childViews => renderChildren(view, childViews, renderWrapper)
+    );
+  });
 }
 
 function useStyle(layoutInfo: LayoutInfo, parent: LayoutInfo | null) {
