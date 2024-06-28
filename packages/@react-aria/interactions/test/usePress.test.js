@@ -21,9 +21,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
+  let {elementType: ElementType = 'div', draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
+  return <ElementType {...pressProps} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
 }
 
 function pointerEvent(type, opts) {
