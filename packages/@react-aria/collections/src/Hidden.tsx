@@ -13,7 +13,7 @@
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {useIsSSR} from 'react-aria';
+import {useIsSSR} from '@react-aria/ssr';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered

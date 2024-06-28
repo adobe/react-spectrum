@@ -14,11 +14,10 @@ import {BaseCollection} from './BaseCollection';
 import {BaseNode, Document, ElementNode} from './Document';
 import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
-import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {useIsSSR} from 'react-aria';
+import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
