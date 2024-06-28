@@ -18,6 +18,8 @@ import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} fro
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
+import {useTextWidth} from './utils';
+
 
 function Input(props, ref) {
   let inputRef = useRef(null);
@@ -30,8 +32,11 @@ function Input(props, ref) {
     fieldProps,
     className,
     style,
-    disableFocusRing
+    disableFocusRing,
+    segments
   } = props;
+
+  let minWidth = useTextWidth(segments);
 
   // Reserve padding for the error icon when the width of the input is unconstrained.
   // When constrained, don't reserve space because adding it only when invalid will
@@ -124,7 +129,11 @@ function Input(props, ref) {
   return (
     <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
       <div role="presentation" className={inputClass}>
-        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
+        <div
+          role="presentation"
+          style={{minWidth: minWidth}}
+          className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')}
+          ref={mergeRefs(ref, inputRef)}>
           {children}
         </div>
       </div>

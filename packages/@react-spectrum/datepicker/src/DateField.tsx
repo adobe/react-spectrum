@@ -82,6 +82,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
         isQuiet={isQuiet}
         autoFocus={autoFocus}
         validationState={validationState}
+        segments={state.segments}
         className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment
