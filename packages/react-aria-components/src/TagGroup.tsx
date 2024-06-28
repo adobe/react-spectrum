@@ -12,10 +12,11 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps} from './Collection';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, ItemRenderProps, useClearCollectionRenderer} from './Collection';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
@@ -255,7 +256,7 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
               }
             }]
           ]}>
-          {renderProps.children}
+          {useClearCollectionRenderer(renderProps.children)}
         </Provider>
       </div>
     </div>

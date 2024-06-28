@@ -12,7 +12,7 @@
 
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from './Collection';
+import {createLeafComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ElementType, ForwardedRef} from 'react';
 
