@@ -6,7 +6,8 @@ import {CheckboxContext} from './RSPContexts';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
-import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
@@ -478,7 +479,10 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}>
-          <CollectionRoot collection={collection} focusedKey={selectionManager.focusedKey} scrollRef={tableContainerContext?.scrollRef ?? ref} />
+          <CollectionRoot
+            collection={collection}
+            scrollRef={tableContainerContext?.scrollRef ?? ref}
+            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)} />
         </ElementType>
       </FocusScope>
       {dragPreview}
@@ -928,7 +932,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
       ref={ref}
       data-empty={collection.size === 0 || undefined}>
       {isDroppable && <RootDropIndicator />}
-      <CollectionBranch collection={collection} parent={collection.body} />
+      <CollectionBranch
+        collection={collection}
+        parent={collection.body}
+        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       {emptyState}
     </TBody>
   );
@@ -1011,7 +1018,6 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       }, dropState, dropIndicatorRef);
     }
 
-    let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
     let dragButtonRef = useRef<HTMLButtonElement>(null);
     useEffect(() => {
       if (dragState && !dragButtonRef.current) {
@@ -1045,9 +1051,6 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     
     return (
       <>
-        {dragAndDropHooks?.useDropIndicator &&
-          renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
-        }
         {dropIndicator && !dropIndicator.isHidden && (
           <TR role="row" style={{height: 0}}>
             <TD role="gridcell" colSpan={state.collection.columnCount} style={{padding: 0}}>
@@ -1092,9 +1095,6 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
         </TR>
-        {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
-          renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
-        }
       </>
     );
   },

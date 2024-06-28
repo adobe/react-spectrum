@@ -11,7 +11,7 @@
  */
 
 import {InvalidationContext} from './types';
-import {Key, LayoutDelegate} from '@react-types/shared';
+import {ItemDropTarget, Key, LayoutDelegate} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
 import {Size} from './Size';
@@ -32,7 +32,7 @@ import {Virtualizer} from './Virtualizer';
  */
 export abstract class Layout<T extends object, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
-  virtualizer: Virtualizer<T, any, any>;
+  virtualizer: Virtualizer<T, any>;
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -77,6 +77,11 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    * Updates the size of the given item.
    */
   updateItemSize?(key: Key, size: Size): boolean;
+
+  /**
+   * Returns a LayoutInfo for the given drop target.
+   */
+  getDropTargetLayoutInfo?(target: ItemDropTarget): LayoutInfo;
 
   getItemRect(key: Key): Rect {
     return this.getLayoutInfo(key)?.rect;
