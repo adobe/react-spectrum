@@ -14,10 +14,11 @@ import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, rende
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
 import * as stories from '../stories/Table.stories';
+import {useEvent, useLoadMore} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -1520,25 +1521,35 @@ describe('Table', () => {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
     }
 
-    let LoadMoreTable = ({onLoadMore, isLoading, scrollRef, scrollOffset, items}) => (
-      <ResizableTableContainer data-testid="scrollRegion">
-        <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
-          <TableHeader>
-            <Column isRowHeader>Foo</Column>
-            <Column>Bar</Column>
-          </TableHeader>
-          <TableBody items={items}>
-            {(item) => (
-              <Row>
-                <Cell>{item.foo}</Cell>
-                <Cell>{item.bar}</Cell>
-              </Row>
-            )}
-          </TableBody>
-        </Table>
-      </ResizableTableContainer>
-    );
+    function LoadMoreTable({onLoadMore, isLoading, scrollOffset, items}) {
+      let scrollRef = useRef(null);
+      let memoedLoadMoreProps = useMemo(() => ({
+        isLoading,
+        onLoadMore,
+        scrollOffset
+      }), [isLoading, onLoadMore, scrollOffset]);
+      let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
+      useEvent(scrollRef, 'scroll', onScroll);
 
+      return (
+        <ResizableTableContainer data-testid="scrollRegion" ref={scrollRef}>
+          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
+            <TableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {(item) => (
+                <Row>
+                  <Cell>{item.foo}</Cell>
+                  <Cell>{item.bar}</Cell>
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+    }
 
     afterEach(() => {
       onLoadMore.mockRestore();
@@ -1647,7 +1658,7 @@ describe('Table', () => {
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
 
-      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} scrollOffset={50} />);
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} scrollOffset={2} />);
 
       let scrollView = tree.getByTestId('scrollRegion');
       expect(onLoadMore).toHaveBeenCalledTimes(0);
@@ -1660,13 +1671,37 @@ describe('Table', () => {
     });
 
     it('works with virtualizer', function () {
-      let layout = new TableLayout({
-        rowHeight: 25
-      });
-
       let items = [];
       for (let i = 0; i < 6; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+      }
+      function VirtualizedTableLoad() {
+        let layout = new TableLayout({
+          rowHeight: 25
+        });
+
+        let scrollRef = useRef(null);
+        let {scrollViewProps: {onScroll}} = useLoadMore({onLoadMore}, scrollRef);
+        useEvent(scrollRef, 'scroll', onScroll);
+
+        return (
+          <Virtualizer layout={layout}>
+            <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
+              <TableHeader>
+                <Column isRowHeader>Foo</Column>
+                <Column>Bar</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item => (
+                  <Row>
+                    <Cell>{item.foo}</Cell>
+                    <Cell>{item.bar}</Cell>
+                  </Row>
+                )}
+              </TableBody>
+            </Table>
+          </Virtualizer>
+        );
       }
 
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 150);
@@ -1679,24 +1714,7 @@ describe('Table', () => {
         return 25;
       });
 
-      let {getByRole} = render(
-        <Virtualizer layout={layout}>
-          <Table aria-label="Load more table" onLoadMore={onLoadMore}>
-            <TableHeader>
-              <Column isRowHeader>Foo</Column>
-              <Column>Bar</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item => (
-                <Row>
-                  <Cell>{item.foo}</Cell>
-                  <Cell>{item.bar}</Cell>
-                </Row>
-              )}
-            </TableBody>
-          </Table>
-        </Virtualizer>
-      );
+      let {getByRole} = render(<VirtualizedTableLoad />);
 
       let scrollView = getByRole('grid');
       expect(onLoadMore).toHaveBeenCalledTimes(0);

@@ -58,6 +58,8 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
 
     // TODO: this actually calls loadmore twice in succession on intial load because after the first load
     // the scrollable element hasn't yet recieved its new height with the newly loaded items... Because of RAC collection needing two renders?
+    // Using ref.current.clientElementCount doesn't work either because the scrollable body may be the Table resize container (which contains the table, header and body: 3 children always)
+    // or the Table (which contains the header and body so 2 children) or the virtualizer in RSP (just contains the rows so has a variable count)
     let shouldLoadMore = ref?.current
       && !isLoadingRef.current
       && onLoadMore
@@ -65,7 +67,6 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
       // Only try loading more if the content size changed, or if we just finished
       // loading and still have room for more items.
       && (wasLoading || ref.current.scrollHeight !== lastContentSize.current);
-
     if (shouldLoadMore) {
       isLoadingRef.current = true;
       onLoadMore?.();

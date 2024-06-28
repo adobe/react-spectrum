@@ -9,7 +9,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useEvent, useLayoutEffect, useLoadMore, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -313,18 +313,7 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks,
-  // TODO: finalize these
-  // Perhaps we should make isLoading be loadingKeys for the eventual section/nested rows loading case
-  // Or should it follow the loadingState api we have for our async hook
-  // TODO: should the below be loadMoreOptions? These are just passed to the hook and making a prop that takes in a object containing the
-  // options might be easier to adjust in the future
-  isLoading?: boolean,
-  onLoadMore?: () => void,
-  scrollOffset?: number,
-  // TODO: keep this for now since we might need it for the body, but eventually perhaps we could just do tableContainerContext?.scrollRef || table ref if it turns out we
-  // don't need the body to be scrollable
-  scrollRef?: RefObject<HTMLElement>
+  dragAndDropHooks?: DragAndDropHooks
 }
 
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
@@ -373,15 +362,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
-  let {isLoading, onLoadMore, scrollOffset, scrollRef, dragAndDropHooks} = props;
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading,
-    onLoadMore,
-    scrollOffset
-  }), [isLoading, onLoadMore, scrollOffset]);
-  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef || tableContainerContext?.scrollRef || ref);
-  useEvent(scrollRef || tableContainerContext?.scrollRef || ref, 'scroll', onScroll);
-
+  let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,

@@ -18,6 +18,7 @@ import React, {RefObject, useMemo, useRef} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoader} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
+import {useEvent, useLoadMore} from '@react-aria/utils';
 
 export default {
   title: 'React Aria Components',
@@ -567,11 +568,17 @@ const OnLoadMoreTable = () => {
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLDivElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: isLoading,
+    onLoadMore: list.loadMore
+  }), [isLoading, list.loadMore]);
+  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
+  useEvent(scrollRef, 'scroll', onScroll);
 
   return (
     // TODO: but why typescript?
     <ResizableTableContainer ref={scrollRef as RefObject<HTMLDivElement>} style={{height: 150, width: 400, overflow: 'auto'}}>
-      <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore} scrollRef={scrollRef as RefObject<HTMLDivElement>}>
+      <Table aria-label="Load more table">
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
           <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
@@ -627,13 +634,15 @@ const OnLoadMoreTableBodyScroll = () => {
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLTableSectionElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: isLoading,
+    onLoadMore: list.loadMore
+  }), [isLoading, list.loadMore]);
+  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
+  useEvent(scrollRef, 'scroll', onScroll);
+
   return (
-    <Table
-      aria-label="Load more table"
-      isLoading={isLoading}
-      onLoadMore={list.loadMore}
-      // TODO: but why typescript?
-      scrollRef={scrollRef as RefObject<HTMLTableSectionElement>}>
+    <Table aria-label="Load more table">
       <TableHeader style={{display: 'block'}}>
         <Column id="name" isRowHeader>Name</Column>
         <Column id="height">Height</Column>
@@ -839,11 +848,84 @@ const OnLoadMoreTableVirtualized = () => {
   }, []);
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+  let scrollRef = useRef<HTMLTableElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: isLoading,
+    onLoadMore: list.loadMore
+  }), [isLoading, list.loadMore]);
+  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
+  useEvent(scrollRef, 'scroll', onScroll);
 
   return (
-    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
+    <Virtualizer layout={layout}>
+      <Table aria-label="Load more table virtualized" ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+        <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+          <Column id="name" isRowHeader>Name</Column>
+          <Column id="height">Height</Column>
+          <Column id="mass">Mass</Column>
+          <Column id="birth_year">Birth Year</Column>
+        </TableHeader>
+        <MyTableBody
+          renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
+          isLoadingMore={list.loadingState === 'loadingMore'}
+          rows={list.items}>
+          {(item) => (
+            <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.height}</Cell>
+              <Cell>{item.mass}</Cell>
+              <Cell>{item.birth_year}</Cell>
+            </Row>
+          )}
+        </MyTableBody>
+      </Table>
+    </Virtualizer>
+  );
+};
+
+export const OnLoadMoreTableStoryVirtualized  = {
+  render: OnLoadMoreTableVirtualized,
+  name: 'Virtualized Table with async loading'
+};
+
+const OnLoadMoreTableVirtualizedResizeWrapper = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  let layout = useMemo(() => {
+    return new TableLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+  let scrollRef = useRef<HTMLDivElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: isLoading,
+    onLoadMore: list.loadMore
+  }), [isLoading, list.loadMore]);
+  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
+  useEvent(scrollRef, 'scroll', onScroll);
+
+  return (
+    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
       <Virtualizer layout={layout}>
-        <Table aria-label="Load more table virtualized" isLoading={isLoading} onLoadMore={list.loadMore}>
+        <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <Column id="name" isRowHeader>Name</Column>
             <Column id="height">Height</Column>
@@ -869,7 +951,7 @@ const OnLoadMoreTableVirtualized = () => {
   );
 };
 
-export const OnLoadMoreTableStoryVirtualized  = {
-  render: OnLoadMoreTableVirtualized,
-  name: 'Virtualized Table with async loading'
+export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
+  render: OnLoadMoreTableVirtualizedResizeWrapper,
+  name: 'Virtualized Table with async loading, resizable table container wrapper'
 };
