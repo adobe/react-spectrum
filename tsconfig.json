@@ -27,11 +27,7 @@
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "skipLibCheck": false,
     "strict": false,
     "plugins": [
@@ -144,6 +140,7 @@
           "./packages/@react-types/numberfield",
           "./packages/@react-types/progress",
           "./packages/@react-types/searchfield",
+          "./packages/@react-types/radio",
           "./packages/@react-types/shared",
           "./packages/@react-types/statuslight",
           "./packages/@react-types/tabs",
