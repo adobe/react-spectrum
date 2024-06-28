@@ -1812,7 +1812,6 @@ describe('FocusScope with Shadow DOM', function () {
 
   /**
    * Test case: https://github.com/adobe/react-spectrum/issues/1472
-   * sandbox example: https://codesandbox.io/p/sandbox/vigilant-hofstadter-3wf4i?file=%2Fsrc%2Findex.js%3A28%2C30
    */
   it('should autofocus and lock tab navigation inside shadow DOM', async function () {
     const {shadowRoot, shadowHost} = createShadowRoot();
