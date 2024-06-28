@@ -776,7 +776,7 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
     walker.currentNode = opts.from;
   }
 
-  if (root instanceof ShadowRoot) {
+  if (doc instanceof ShadowRoot) {
     const originalNextNode = walker.nextNode.bind(walker);
     const originalPreviousNode = walker.previousNode.bind(walker);
     walker.nextNode = getNextShadowNode(originalNextNode, scope);
