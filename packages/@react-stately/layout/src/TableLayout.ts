@@ -237,7 +237,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
       let layoutNode = this.buildChild(node, 0, y, layoutInfo.key);
       layoutNode.layoutInfo.parentKey = layoutInfo.key;
-      layoutNode.index = i;
+      layoutNode.index = children.length;
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
@@ -299,7 +299,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
           let layoutNode = this.buildChild(child, x, y, layoutInfo.key);
           x = layoutNode.layoutInfo.rect.maxX;
           height = Math.max(height, layoutNode.layoutInfo.rect.height);
-          layoutNode.index = i;
+          layoutNode.index = children.length;
           children.push(layoutNode);
         }
       }
