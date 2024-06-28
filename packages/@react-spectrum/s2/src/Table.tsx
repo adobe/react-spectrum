@@ -37,7 +37,9 @@ import {
   DragAndDropOptions as AriaDragAndDropOptions,
   DropIndicator,
   DropTarget,
-  UNSTABLE_TableLoader
+  UNSTABLE_TableLoader,
+  UNSTABLE_Virtualizer,
+  UNSTABLE_TableLayout
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -50,6 +52,8 @@ import Chevron from '../ui-icons/Chevron';
 import {IconContext} from './Icon';
 import {ColumnSize} from '@react-types/table';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
+import {LoadingState} from '@react-types/shared';
+import { mergeStyles } from '../style/runtime';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -75,6 +79,7 @@ interface S2TableProps {
    * @default 'regular'
    */
   density?: 'compact' | 'spacious' | 'regular',
+  // TODO: update with virtualizer where wrap changes the layout to estimated
   /**
    * Sets the overflow behavior for the cell contents.
    * @default 'truncate'
@@ -82,9 +87,6 @@ interface S2TableProps {
   overflowMode?: 'wrap' | 'truncate',
   /** How selection should be displayed. */
   selectionStyle?: 'checkbox' | 'highlight',
-  /** Whether the items are currently loading. */
-  isLoading?: boolean,
-
   // TODO: the below are copied from Spectrum Table props.
   // TODO: will we contine with onAction or rename to onRowAction like it is in RAC?
   /** Handler that is called when a user performs an action on a row. */
@@ -104,10 +106,13 @@ interface S2TableProps {
    * Handler that is called after a user performs a column resize.
    * Can be used to store the widths of columns for another future session.
    */
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
+  /** The current loading state of the table. */
+  loadingState?: LoadingState
 }
 
 // TODO: audit the props and get omit stuff we don't want from the RAC props
+// TODO: loadMore and loadingState are now on the Table instead of on the TableBody, do we
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
@@ -118,12 +123,14 @@ const tableWrapper = style({
   width: '[300px]'
 });
 
+// TODO: will need focus styles and stuff which will use the TableRenderProps here
 const table = style<TableRenderProps>({
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
   borderSpacing: 0,
-  fontFamily: 'sans'
+  fontFamily: 'sans',
+  overflow: 'auto'
 }, getAllowedOverrides({height: true}));
 
 
@@ -182,6 +189,30 @@ let dragBadge = style({
   fontFamily: 'sans'
 });
 
+// component-height-100
+const DEFAULT_HEADER_HEIGHT = {
+  medium: 32,
+  large: 40
+};
+
+const ROW_HEIGHTS = {
+  compact: {
+    medium: 32, // table-row-height-medium-compact (aka component-height-100)
+    large: 40
+  },
+  regular: {
+    medium: 40, // table-row-height-medium-regular
+    large: 50
+  },
+  spacious: {
+    medium: 48,  // table-row-height-medium-spacious
+    large: 60
+  }
+};
+
+// TODO: v3 had min widths for hide header columns, but RAC table's useTableColumnResizeState
+// call that happens internally doesn't accept options for that.
+
 export function Table(props: TableProps) {
   let {
     UNSAFE_style,
@@ -191,7 +222,7 @@ export function Table(props: TableProps) {
     overflowMode = 'truncate',
     selectionStyle = 'checkbox',
     styles,
-    isLoading,
+    loadingState,
     onResize,
     onResizeEnd,
     onResizeStart,
@@ -214,19 +245,39 @@ export function Table(props: TableProps) {
   }
 
   let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
-  let context = useMemo(() => ({isQuiet, density, overflowMode, selectionStyle, isLoading, columnsResizable}), [isQuiet, density, overflowMode, selectionStyle, isLoading, columnsResizable]);
-  // TODO: memo the values provided to the context
+  let context = useMemo(() => ({isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable}), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable]);
+
+  // TODO: will need a way to get "mobile" to set large scale
+  let layout = useMemo(() => {
+    return new UNSTABLE_TableLayout({
+      rowHeight: overflowMode === 'wrap'
+        ? undefined
+        : ROW_HEIGHTS[density]['medium'],
+      estimatedRowHeight: overflowMode === 'wrap'
+      ? ROW_HEIGHTS[density]['medium']
+      : undefined,
+      headingHeight: overflowMode === 'wrap'
+        ? undefined
+        : DEFAULT_HEADER_HEIGHT['medium'],
+      estimatedHeadingHeight: overflowMode === 'wrap'
+        ? DEFAULT_HEADER_HEIGHT['medium']
+        : undefined
+    });
+  }, [overflowMode, density]);
+
   let baseTable = (
-    <InternalTableContext.Provider value={context}>
-      <AriaTable
-        style={UNSAFE_style}
-        className={renderProps => (UNSAFE_className || '') + table({
-          ...renderProps
-        }, styles)}
-        selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-        dragAndDropHooks={dragAndDropHooks}
-        {...otherProps} />
-    </InternalTableContext.Provider>
+    <UNSTABLE_Virtualizer layout={layout}>
+      <InternalTableContext.Provider value={context}>
+        <AriaTable
+          style={UNSAFE_style}
+          className={renderProps => (UNSAFE_className || '') + table({
+            ...renderProps
+          }, styles)}
+          selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+          dragAndDropHooks={dragAndDropHooks}
+          {...otherProps} />
+      </InternalTableContext.Provider>
+    </UNSTABLE_Virtualizer>
   );
 
   if (columnsResizable) {
@@ -236,8 +287,19 @@ export function Table(props: TableProps) {
       // TODO: also the current styling cuts off the table body border/outline. Even with additional padding to compensate for this, the rest of the body is still
       // out of view since the container itself is the scrollable region instead of the body itself. Not sure how to actually style it so that we get the
       // body outline visible at all times (can't make the container have the outline since that goes around the columns too)
-      <ResizableTableContainer onResize={onResize} onResizeEnd={onResizeEnd} onResizeStart={onResizeStart} className={tableWrapper}>
-        {baseTable}
+      <ResizableTableContainer onResize={onResize} onResizeEnd={onResizeEnd} onResizeStart={onResizeStart} className={mergeStyles(tableWrapper, styles)}>
+        <UNSTABLE_Virtualizer layout={layout}>
+          <InternalTableContext.Provider value={context}>
+            <AriaTable
+              style={UNSAFE_style}
+              className={renderProps => (UNSAFE_className || '') + table({
+                ...renderProps
+              })}
+              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+              dragAndDropHooks={dragAndDropHooks}
+              {...otherProps} />
+          </InternalTableContext.Provider>
+        </UNSTABLE_Virtualizer>
       </ResizableTableContainer>
     );
   }
@@ -275,23 +337,23 @@ const centeredWrapper = style({
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
+  // TODO: grab loading state from top level table
   let {items, renderEmptyState, children} = props;
   let tableVisualOptions = useContext(InternalTableContext);
+  let {loadingState} = tableVisualOptions;
   let emptyRender;
   let renderer = children;
-  let loader = (
+  let loadMoreSpinner = (
     <UNSTABLE_TableLoader>
-      {/* @ts-ignore need to update type in RAC */}
-      {({isTableEmpty}) => (
-        <div className={centeredWrapper}>
-          <ProgressCircle
-            isIndeterminate
-            // TODO: needs intl translation
-            aria-label={isTableEmpty ? 'loading' : 'loading more'} />
-        </div>
-      )}
+      <div className={centeredWrapper}>
+        <ProgressCircle
+          isIndeterminate
+          // TODO: needs intl translation
+          aria-label="loading more" />
+      </div>
     </UNSTABLE_TableLoader>
   );
+
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
   // the loader. Otherwise it is a static renderer and thus we can simply add the table loader after
   if (typeof children === 'function' && items) {
@@ -300,23 +362,32 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
         <Collection items={items}>
           {children}
         </Collection>
-        {tableVisualOptions.isLoading && loader}
+        {loadingState === 'loadingMore' && loadMoreSpinner}
       </>
     );
   } else {
     renderer = (
       <>
         {children}
-        {tableVisualOptions.isLoading && loader}
+        {loadingState === 'loadingMore' && loadMoreSpinner}
       </>
     );
   }
 
-  if (renderEmptyState != null) {
+  if (renderEmptyState != null && loadingState !== 'loading') {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
         {/* @ts-ignore TODO figure out why it is complaining tahat this is possibly undefined */}
         {renderEmptyState(props)}
+      </div>
+    );
+  } else if (loadingState === 'loading') {
+    emptyRender = () => (
+      <div className={centeredWrapper}>
+        <ProgressCircle
+          isIndeterminate
+          // TODO: needs intl translation
+          aria-label="loading" />
       </div>
     );
   }
@@ -329,7 +400,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
       })}
       {...props}
       renderEmptyState={emptyRender}
-      dependencies={[tableVisualOptions.isLoading]}>
+      dependencies={[loadingState]}>
       {renderer}
     </AriaTableBody>
   );
@@ -350,7 +421,7 @@ const cellFocus = style({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineOffset: '[-2px]', // Maybe can use space?
+  outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
   borderRadius: 'sm'
@@ -358,7 +429,8 @@ const cellFocus = style({
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
   let {isFocusVisible} = props;
-  return <span className={cellFocus({isFocusVisible})} />;
+  // return <span className={cellFocus({isFocusVisible})} />;
+  return null;
 }
 
 const columnStyles = style({
@@ -386,7 +458,8 @@ const columnStyles = style({
   position: 'relative',
   fontSize: 'control',
   fontFamily: 'sans',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  display: 'flex'
   // TODO: right now in quiet, we are missing the top horizontal line separator between the columns and the first row
   // I could add this via border but that would introduce a shift in positioning and unfortunately can't use a negative margin on a th element
   // borderColor: 'gray-200',
@@ -435,6 +508,16 @@ export function Column(props: ColumnProps) {
   );
 }
 
+const columnContent = style({
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  minWidth: 0,
+  overflow: 'hidden',
+  display: 'inline-block',
+  alignItems: 'center',
+  width: 'full'
+});
+
 // TODO combine the ColumnContents and the ResizableColumnContents further so they share the same sort stuff
 interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
 
@@ -442,7 +525,7 @@ function ColumnContents(props: ColumnContentProps) {
   let {allowsSorting, sortDirection, children} = props;
 
   return (
-    <div className={style({display: 'flex', alignItems: 'center'})}>
+    <div className={columnContent}>
       {allowsSorting && (
         <Provider
           values={[
@@ -487,7 +570,7 @@ const resizableMenuButtonWrapper = style({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineOffset: '[-2px]', // Maybe can use space?
+  outlineOffset: -2, // Maybe can use space?
   outlineWidth: 2,
   outlineColor: 'focus-ring',
   borderRadius: 'sm'
@@ -640,17 +723,24 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
   );
 }
 
+const tableHeader = style({
+  height: 'full',
+  width: 'full'
+});
+
+// TODO: the width of the select checkbox with the virtualizer is too wide because it allocates the same amount of room
+// as it does for other columns, will need to pass in getDefaultWidth/getDefaultMinWidth to RAC Table
 const selectAllCheckbox = style({
-  marginX: 16, // table-edge-to-content
-  marginY: centerPadding()
+  marginX: 16 // table-edge-to-content
 });
 
 const selectAllCheckboxColumn = style({
   padding: 0,
-  height: 32, // table-row-height-medium-compact
+  height: 'full',
   borderRadius: 'sm',
   outlineStyle: 'none',
-  position: 'relative'
+  position: 'relative',
+  alignContent: 'center'
 });
 
 export function TableHeader<T extends object>(
@@ -659,7 +749,7 @@ export function TableHeader<T extends object>(
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
-    <AriaTableHeader>
+    <AriaTableHeader className={tableHeader}>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && (
         <AriaColumn className={selectAllCheckboxColumn}>
@@ -712,6 +802,7 @@ const cell = style<CellRenderProps & S2TableProps>({
     isPressed: 'gray-900', // neutral-content-color-down
     isFocusVisible: 'gray-900' // neutral-content-color-key-focus
   },
+  // TODO: might need to remove these when virtualized?
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
   // when they probably should
   paddingTop: {
@@ -728,19 +819,37 @@ const cell = style<CellRenderProps & S2TableProps>({
       compact: '[9px]' // table-row-bottom-to-text-medium-compact
     }
   },
-  fontSize: 'control'
+  fontSize: 'control',
+  alignContent: 'center',
+  display: 'flex'
 });
 
 const checkboxCellStyle = style({
   ...commonCellStyles,
-  paddingY: centerPadding()
+  alignContent: 'center',
+  height: 'full'
 });
 
 // TODO: placeholder styles until we confirm the design
 const dragButtonCellStyle = style({
   ...commonCellStyles,
   paddingX: 4,
-  paddingY: centerPadding()
+  alignContent: 'center',
+  height: 'full'
+});
+
+// TODO: fix for overflow mode wrap, might need another div inbetween
+const cellContent = style({
+  whiteSpace: {
+    default: 'nowrap',
+    overflowMode: {
+      wrap: 'normal'
+    }
+  },
+  textOverflow: 'ellipsis',
+  minWidth: 0,
+  overflow: 'hidden',
+  width: 'auto'
 });
 
 export function Cell(props: CellProps) {
@@ -756,7 +865,7 @@ export function Cell(props: CellProps) {
       {({isFocusVisible}) => (
         <>
           <CellFocusRing isFocusVisible={isFocusVisible} />
-          {children}
+          <span className={cellContent({...tableVisualOptions})}>{children}</span>
         </>
       )}
     </AriaCell>
@@ -805,15 +914,8 @@ const row = style<RowRenderProps & S2TableProps>({
       default: 'transparent'
     }
   },
-  // TODO: will need to handle overflow mode wrap
-  height: {
-    default: 40, // table-row-height-medium-regular
-    density: {
-      spacious: 48, // table-row-height-medium-spacious
-      compact: 32 // table-row-height-medium-compact
-    }
-  },
   outlineStyle: 'none',
+  // TODO: need to fix the row outlines
   // TODO: rough implementation for now, ideally this would just be the row outline or something.
   // will need to update the color to actually be a HCM style (Highlight)
   // TODO: for the overlapping issues, can do the same thing I did for ListView where I did 4 inset box shadows, one for each side
@@ -858,7 +960,7 @@ const dragButton = style({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineOffset: '[-2px]', // Maybe can use space?
+  outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
   borderRadius: 'sm'

@@ -47,7 +47,7 @@ const meta: Meta<typeof Table> = {
 export default meta;
 
 const StaticTable = (args: any) => (
-  <Table aria-label="Files" {...args}>
+  <Table aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
@@ -319,8 +319,7 @@ export const EmptyState = {
 export const LoadingStateNoItems = {
   render: EmptyStateTable,
   args: {
-    ...Example.args,
-    isLoading: true
+    ...Example.args
   },
   name: 'loading state, no items'
 };
@@ -328,8 +327,7 @@ export const LoadingStateNoItems = {
 export const LoadingStateWithItems = {
   render: DynamicTable,
   args: {
-    ...Example.args,
-    isLoading: true
+    ...Example.args
   },
   name: 'loading state, has items'
 };
@@ -337,11 +335,67 @@ export const LoadingStateWithItems = {
 export const LoadingStateWithItemsStatic = {
   render: StaticTable,
   args: {
-    ...Example.args,
-    isLoading: true
+    ...Example.args
   },
   name: 'loading state, static items'
 };
+
+
+// TODO: add after virtualization
+// interface Character {
+//   name: string,
+//   height: number,
+//   mass: number,
+//   birth_year: number
+// }
+
+// const OnLoadMoreTable = () => {
+//   let list = useAsyncList<Character>({
+//     async load({signal, cursor}) {
+//       if (cursor) {
+//         cursor = cursor.replace(/^http:\/\//i, 'https://');
+//       }
+
+//       // Slow down load so progress circle can appear
+//       await new Promise(resolve => setTimeout(resolve, 4000));
+//       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+//       let json = await res.json();
+//       return {
+//         items: json.results,
+//         cursor: json.next
+//       };
+//     }
+//   });
+
+//   return (
+//     <Table aria-label="Load more table" loadingState={list.loadingState} onLoadMore={list.loadMore}>
+//       <TableHeader>
+//         <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
+//         <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
+//         <Column id="mass" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Mass</Column>
+//         <Column id="birth_year" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Birth Year</Column>
+//       </TableHeader>
+//       <TableBody
+//         items={list.items}>
+//         {(item) => (
+//           <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
+//             <Cell>{item.name}</Cell>
+//             <Cell>{item.height}</Cell>
+//             <Cell>{item.mass}</Cell>
+//             <Cell>{item.birth_year}</Cell>
+//           </Row>
+//         )}
+//       </TableBody>
+//     </Table>
+//   );
+// };
+
+// export const OnLoadMoreTableStory  = {
+//   render: OnLoadMoreTable,
+//   name: 'onLoadMore table'
+// };
+
+
 
 export const Sorting = {
   ...Example,
