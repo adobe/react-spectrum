@@ -113,9 +113,9 @@ export interface Color {
   getHueName(locale: string): string
 }
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color>, 'onChange'>, InputBase, Validation<Color>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color | null) => void
+  onChange?: (color: Color) => void
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {
@@ -123,7 +123,7 @@ export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps,
   isWheelDisabled?: boolean
 }
 
-export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color>, SpectrumLabelableProps, StyleProps {
   /**
    * The color channel that this field edits. If not provided, 
    * the color is edited as a hex value.

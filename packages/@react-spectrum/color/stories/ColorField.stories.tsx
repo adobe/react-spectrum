@@ -151,8 +151,8 @@ export const ContextualHelpStory: ColorFieldStory = {
 };
 
 function ControlledColorField(props: SpectrumColorFieldProps) {
-  let [color, setColor] = useState<string | Color | null | undefined>(props.value);
-  let onChange = (color: Color | null) => {
+  let [color, setColor] = useState<string | Color>(props.value);
+  let onChange = (color: Color) => {
     setColor(color);
     if (props.onChange) { props.onChange(color); }
   };
