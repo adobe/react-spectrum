@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Ref} from 'react';
+import {ReactNode, Ref, RefAttributes} from 'react';
 
 export interface DOMRefValue<T extends HTMLElement = HTMLElement> {
   UNSAFE_getDOMNode(): T
@@ -22,3 +22,10 @@ export interface FocusableRefValue<T extends HTMLElement = HTMLElement, D extend
 
 export type DOMRef<T extends HTMLElement = HTMLElement> = Ref<DOMRefValue<T>>;
 export type FocusableRef<T extends HTMLElement = HTMLElement> = Ref<FocusableRefValue<T>>;
+
+// Override forwardRef types so generics work.
+declare function forwardRef<T, P = {}>(
+  render: (props: P, ref: Ref<T>) => ReactNode | null
+): (props: P & RefAttributes<T>) => ReactNode | null;
+
+export type forwardRefType = typeof forwardRef;

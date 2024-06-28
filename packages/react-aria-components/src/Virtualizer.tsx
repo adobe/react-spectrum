@@ -129,7 +129,7 @@ function renderDropIndicatorWrapper(
   dropPosition: DropPosition,
   renderDropIndicator: (target: ItemDropTarget) => ReactNode
 ) {
-  let target: DropTarget = {type: 'item', key: reusableView.layoutInfo!.key, dropPosition};
+  let target: DropTarget = {type: 'item', key: reusableView.content.key, dropPosition};
   let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);

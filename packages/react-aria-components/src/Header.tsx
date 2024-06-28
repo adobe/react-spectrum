@@ -11,7 +11,7 @@
  */
 
 import {ContextValue, useContextProps} from './utils';
-import {createLeafComponent} from './Collection';
+import {createLeafComponent} from '@react-aria/collections';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});

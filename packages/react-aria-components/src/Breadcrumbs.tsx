@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 import {AriaBreadcrumbsProps} from 'react-aria';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent} from './Collection';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext} from './Collection';
+import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
+import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';

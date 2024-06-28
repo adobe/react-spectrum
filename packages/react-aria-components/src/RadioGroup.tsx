@@ -11,10 +11,11 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';

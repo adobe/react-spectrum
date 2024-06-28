@@ -11,12 +11,14 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {forwardRefType} from '@react-types/shared';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef, useState} from 'react';
+import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
@@ -84,7 +86,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
-  let isHidden = useContext(HiddenContext);
+  let isHidden = useIsHidden();
 
   // If we are in a hidden tree, we still need to preserve our children.
   if (isHidden) {
