@@ -70,6 +70,7 @@ export {
   endOfYear,
   getMinimumMonthInYear,
   getMinimumDayInMonth,
+  eachMonthOfInterval,
   getWeeksInMonth,
   minDate,
   maxDate,

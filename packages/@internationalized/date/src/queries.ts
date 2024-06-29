@@ -180,6 +180,25 @@ export function getMinimumDayInMonth(date: AnyCalendarDate) {
   return 1;
 }
 
+/** Returns an array of the start dates of each month within the specified date interval. */
+export function eachMonthOfInterval(start: DateValue, end: DateValue): DateValue[] {
+  const startDate = startOfMonth(start).set({hour: 0, minute: 0});
+  const endDate = endOfMonth(end).set({hour: 0, minute: 0});
+
+  if (startDate.compare(endDate) > 0) {
+    throw new Error('The start date must be before the end date.');
+  }
+
+  function collectDates(currentDate: DateValue, endDate: DateValue): DateValue[] {
+    if (currentDate.compare(endDate) > 0) {
+      return [];
+    }
+    return [currentDate, ...collectDates(startOfMonth(currentDate.add({months: 1})), endDate)];
+  }
+
+  return collectDates(startDate.add({months: 1}), endDate);
+}
+
 /** Returns the first date of the week for the given date and locale. */
 export function startOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
 export function startOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
@@ -245,6 +264,7 @@ export function minDate<A extends DateValue, B extends DateValue>(a?: A | null, 
 
   return a || b;
 }
+
 
 /** Returns the greater of the two provider dates. */
 export function maxDate<A extends DateValue, B extends DateValue>(a?: A | null, b?: B | null): A | B | null | undefined {
