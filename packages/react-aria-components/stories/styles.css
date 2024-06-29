@@ -387,3 +387,10 @@
     height: 100%;
   }
 }
+
+:global(.react-aria-CalendarCell) {
+  &[data-unavailable] {
+    text-decoration: line-through;
+    color: red;
+  }
+}

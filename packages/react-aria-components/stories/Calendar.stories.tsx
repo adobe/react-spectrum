@@ -37,7 +37,7 @@ function Footer() {
 }
 
 export const CalendarExample = () => (
-  <Calendar style={{width: 220}}>
+  <Calendar style={{width: 220}} isDateUnavailable={d => d.day === 15}>
     <div style={{display: 'flex', alignItems: 'center'}}>
       <Button slot="previous">&lt;</Button>
       <Heading style={{flex: 1, textAlign: 'center'}} />
