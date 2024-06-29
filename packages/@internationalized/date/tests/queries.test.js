@@ -12,6 +12,8 @@
 
 import {
   CalendarDate,
+  CalendarDateTime,
+  eachMonthOfInterval,
   endOfMonth,
   endOfWeek,
   endOfYear,
@@ -291,6 +293,47 @@ describe('queries', function () {
   describe('getMinimumDayInMonth', function () {
     it('returns the minimum day in a month', function () {
       expect(getMinimumDayInMonth(new CalendarDate(2020, 2, 3))).toBe(1);
+    });
+  });
+
+  describe('eachMonthOfInterval', function () {
+    it('should return the start dates of each month within the specified interval', function () {
+      const start = new CalendarDate(2024, 2, 6);
+      const end = new CalendarDate(2024, 5, 20);
+      const result = eachMonthOfInterval(start, end);
+
+      expect(result).toEqual([
+        new CalendarDate(2024, 3, 1),
+        new CalendarDate(2024, 4, 1),
+        new CalendarDate(2024, 5, 1)
+      ]);
+    });
+
+    it('should throw an error if the start date is after the end date', function () {
+      const start = new CalendarDate(2024, 8, 10);
+      const end = new CalendarDate(2024, 2, 6);
+
+      expect(() => eachMonthOfInterval(start, end)).toThrow('The start date must be before the end date.');
+    });
+
+    it('should return an empty array if the start and end dates are in the same month', function () {
+      const start = new CalendarDate(2024, 2, 6);
+      const end = new CalendarDate(2024, 2, 28);
+      const result = eachMonthOfInterval(start, end);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle intervals that span multiple years', function () {
+      const start = new CalendarDateTime(2023, 11, 15, 9, 20);
+      const end =  new CalendarDateTime(2024, 2, 10, 9, 20);
+      const result = eachMonthOfInterval(start, end);
+
+      expect(result).toEqual([
+        new CalendarDateTime(2023, 12, 1, 0, 0),
+        new CalendarDateTime(2024, 1, 1, 0, 0),
+        new CalendarDateTime(2024, 2, 1, 0, 0)
+      ]);
     });
   });
 

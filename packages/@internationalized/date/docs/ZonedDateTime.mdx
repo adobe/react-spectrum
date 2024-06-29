@@ -475,6 +475,20 @@ startOfWeek(date, 'en-US'); // 2022-01-30T09:45[America/Los_Angeles]
 startOfWeek(date, 'fr-FR'); // 2022-01-31T09:45[America/Los_Angeles]
 ```
 
+### Each month of interval
+
+The <TypeLink links={docs.links} type={docs.exports.eachMonthOfInterval} /> function returns an array of the start dates of each month within the specified date interval. The function ensures that the start date is before the end date and initializes the hours and minutes to 0 for each start date returned within the interval.
+
+```tsx
+import {eachMonthOfInterval, CalendarDateTime} from '@internationalized/date';
+
+let start = new CalendarDateTime(2023, 11, 15, 9, 20);
+let end = new CalendarDateTime(2024, 2, 10, 9, 0);
+
+eachMonthOfInterval(start, end); 
+// => [ 2023-12-01T00:00, 2024-01-01T00:00, 2024-02-01T00:00 ]
+```
+
 ### Day of week
 
 The <TypeLink links={docs.links} type={docs.exports.getDayOfWeek} /> function returns the day of the week for the given date and locale. Days are numbered from zero to six, where zero is the first day of the week in the given locale. For example, in the United States, the first day of the week is Sunday, but in France it is Monday.
