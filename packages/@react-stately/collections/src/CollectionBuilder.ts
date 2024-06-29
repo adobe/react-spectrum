@@ -107,8 +107,29 @@ export class CollectionBuilder<T extends object> {
 
     // If there's an element with a getCollectionNode function on its type, then it's a supported component.
     // Call this function to get a partial node, and recursively build a full node from there.
-    if (React.isValidElement(element)) {
+    if (React.isValidElement<{children: CollectionElement<T>[]}>(element)) {
       let type = element.type as any;
+
+      if (type === React.Fragment) {
+        let items = React.Children.map(element.props.children, child => child);
+
+        let index = partialNode.index;
+
+        for (let item of items) {
+          let nodes = this.getFullNode({
+            element: item,
+            index: index
+          }, {});
+
+          for (let node of nodes) {
+            index++;
+            yield node;
+          }
+        }
+
+        return;
+      }
+
       if (typeof type !== 'function' && typeof type.getCollectionNode !== 'function') {
         let name = typeof element.type === 'function' ? element.type.name : element.type;
         throw new Error(`Unknown element <${name}> in collection.`);
