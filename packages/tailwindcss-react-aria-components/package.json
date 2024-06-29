@@ -16,7 +16,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "peerDependencies": {
-    "tailwindcss": ">=3.0.0 || insiders"
+    "tailwindcss": "*"
   },
   "devDependencies": {
     "postcss": "^7.0.0",

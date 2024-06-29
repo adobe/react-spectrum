@@ -8,10 +8,12 @@ build-storybook.log
 coverage
 dist
 junit.xml
+.yarn/install-state.gz
 node_modules
 npm-debug.log
 public
 storybook-static
 test-reports.xml
+storage
 packages/dev/storybook-builder-parcel/iframe.html
 packages/dev/storybook-builder-parcel/preview.js

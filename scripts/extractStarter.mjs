@@ -281,7 +281,7 @@ function generateStory(filename, imports, code, skipImports = false) {
 
   let name = basename(filename, '.mdx');
   code = imports + `
-import type { Meta } from '@storybook/react';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ${name}> = {
   component: ${name},

@@ -70,7 +70,8 @@ import {
   Well,
   DialogContainer,
   Avatar,
-  TagGroup
+  TagGroup,
+  InlineAlert
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
@@ -83,7 +84,6 @@ import {
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
-import {InlineAlert} from '@react-spectrum/inlinealert'
 import { SubmenuTrigger } from "@react-spectrum/menu";
 
 let nestedItems = [
