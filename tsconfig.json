@@ -107,6 +107,7 @@
           "./packages/@react-stately/calendar",
           "./packages/@react-stately/checkbox",
           "./packages/@react-stately/color",
+          "./packages/@react-stately/collection",
           "./packages/@react-stately/numberfield",
           "./packages/@react-stately/overlays",
           "./packages/@react-stately/pagination",
