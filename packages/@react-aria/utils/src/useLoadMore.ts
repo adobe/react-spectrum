@@ -11,7 +11,8 @@
  */
 
 import {RefObject, useCallback, useMemo, useRef} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+// eslint-disable-next-line rulesdir/useLayoutEffectRule
+import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreProps {
   /** Whether data is currently being loaded. */
