@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Färgrutor",
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Välj en artikel",
-  "tableResizer": "Storleksändrare"
+  "tableResizer": "Storleksändrare",
+  "pending": "väntande"
 }

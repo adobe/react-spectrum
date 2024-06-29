@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Värimallit",
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Valitse kohde",
-  "tableResizer": "Koon muuttaja"
+  "tableResizer": "Koon muuttaja",
+  "pending": "odottaa"
 }

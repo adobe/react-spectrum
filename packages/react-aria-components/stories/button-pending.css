@@ -1,0 +1,38 @@
+@keyframes load {
+  99% {
+    visibility: hidden;
+  }
+
+  100% {
+    visibility: visible;
+  }
+}
+
+@keyframes hidden {
+  99% {
+    visibility: visible;
+  }
+
+  100% {
+    visibility: hidden;
+  }
+}
+
+.button {
+  position: relative;
+}
+
+.spinner {
+  position: absolute;
+  top: 0;
+  animation: 1s load;
+  animation-fill-mode: forwards;
+
+  visibility: hidden;
+}
+
+.pending {
+  animation: 1s hidden;
+  animation-fill-mode: forwards;
+  visibility: visible;
+}
