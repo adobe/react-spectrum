@@ -26224,9 +26224,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel-resolver-storybook@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master":
+"parcel-resolver-storybook@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master":
   version: 1.0.0
-  resolution: "parcel-resolver-storybook@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
+  resolution: "parcel-resolver-storybook@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
   dependencies:
     "@parcel/node-resolver-core": "npm:^3.1.2"
     "@parcel/plugin": "npm:^2.10.2"
@@ -27921,6 +27921,7 @@ __metadata:
     "@internationalized/date": "npm:^3.5.4"
     "@internationalized/string": "npm:^3.2.3"
     "@react-aria/color": "npm:3.0.0-beta.33"
+    "@react-aria/dnd": "npm:^3.6.1"
     "@react-aria/focus": "npm:^3.17.1"
     "@react-aria/interactions": "npm:^3.21.3"
     "@react-aria/menu": "npm:^3.14.1"
@@ -28250,7 +28251,7 @@ __metadata:
     nyc: "npm:^10.2.0"
     p-queue: "npm:^6.2.1"
     parcel: "npm:2.0.0-dev.1599"
-    parcel-resolver-storybook: "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
+    parcel-resolver-storybook: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
     patch-package: "npm:^6.2.0"
     plop: "npm:^2.4.0"
     postcss: "npm:^8.4.24"
@@ -28270,9 +28271,9 @@ __metadata:
     sharp: "npm:^0.31.2"
     sinon: "npm:^7.3.1"
     storybook: "npm:^7.6.19"
-    storybook-builder-parcel: "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master"
+    storybook-builder-parcel: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master"
     storybook-dark-mode: "npm:^3.0.3"
-    storybook-react-parcel: "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master"
+    storybook-react-parcel: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master"
     tailwind-variants: "npm:^0.1.18"
     tailwindcss: "npm:^3.4.0"
     tailwindcss-animate: "npm:^1.0.7"
@@ -30445,9 +30446,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-builder-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master":
+"storybook-builder-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master":
   version: 0.0.0
-  resolution: "storybook-builder-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master"
+  resolution: "storybook-builder-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master"
   dependencies:
     "@storybook/core-common": "npm:7.6.4"
     http-proxy-middleware: "npm:^2.0.6"
@@ -30482,9 +30483,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-react-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master":
+"storybook-react-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master":
   version: 0.0.0
-  resolution: "storybook-react-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master"
+  resolution: "storybook-react-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master"
   checksum: 10c0/0d66d15a51e49bbd8939f2caf4fd5df5a5d2f6cc6d98468d16c9bf034cc0668f3b1af90c2fb2dd21a508c90113bb967cd94472cbe88ec08339b35c18c0bd74ce
   languageName: node
   linkType: hard

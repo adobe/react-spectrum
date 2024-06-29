@@ -37,12 +37,12 @@ import {Size} from './Size';
  * to render elements for each layout info. The virtualizer manages a set of {@link ReusableView} objects,
  * which are reused as the user scrolls by swapping their content with cached elements returned by the delegate.
  */
-export class Virtualizer<T extends object, V, W> {
+export class Virtualizer<T extends object, V> {
   /**
    * The virtualizer delegate. The delegate is used by the virtualizer
    * to create and configure views.
    */
-  delegate: VirtualizerDelegate<T, V, W>;
+  delegate: VirtualizerDelegate<T, V>;
 
   /** The current content of the virtualizer. */
   readonly collection: Collection<T>;
@@ -62,7 +62,7 @@ export class Virtualizer<T extends object, V, W> {
   private _invalidationContext: InvalidationContext | null;
   private _overscanManager: OverscanManager;
 
-  constructor(delegate: VirtualizerDelegate<T, V, W>) {
+  constructor(delegate: VirtualizerDelegate<T, V>) {
     this.delegate = delegate;
     this.contentSize = new Size;
     this.visibleRect = new Rect;
@@ -242,7 +242,7 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   /** Performs layout and updates visible views as needed. */
-  render(opts: VirtualizerRenderOptions<T>): W[] {
+  render(opts: VirtualizerRenderOptions<T>): ReusableView<T, V>[] {
     let mutableThis: Mutable<this> = this;
     let needsLayout = false;
     let offsetChanged = false;
@@ -315,21 +315,11 @@ export class Virtualizer<T extends object, V, W> {
       this.updateSubviews();
     }
 
-    return this.getChildren(null);
+    return Array.from(this._rootView.children);
   }
 
-  getChildren(key: Key | null): W[] {
-    let parent = key == null ? this._rootView : this._visibleViews.get(key);
-    let renderChildren = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]) => views.map(view => {
-      return this.delegate.renderWrapper(
-        parent,
-        view,
-        view.children ? Array.from(view.children) : [],
-        childViews => renderChildren(view, childViews)
-      );
-    });
-
-    return renderChildren(parent, Array.from(parent.children));
+  getVisibleView(key: Key): ReusableView<T, V> | undefined {
+    return this._visibleViews.get(key);
   }
 
   invalidate(context: InvalidationContext) {
