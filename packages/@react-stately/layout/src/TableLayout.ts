@@ -35,7 +35,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   }
 
   private columnsChanged(newCollection: TableCollection<T>, oldCollection: TableCollection<T> | null) {
-    return !oldCollection || 
+    return !oldCollection ||
       newCollection.columns !== oldCollection.columns &&
       newCollection.columns.length !== oldCollection.columns.length ||
       newCollection.columns.some((c, i) =>
@@ -274,6 +274,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         return this.buildColumn(node, x, y);
       case 'cell':
         return this.buildCell(node, x, y);
+      case 'loader':
+        return this.buildLoader(node, x, y);
       default:
         throw new Error('Unknown node type ' + node.type);
     }

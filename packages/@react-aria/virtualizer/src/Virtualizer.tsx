@@ -12,7 +12,7 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useLoadMore} from '@react-aria/utils';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
@@ -92,51 +92,27 @@ interface VirtualizerOptions {
   onLoadMore?: () => void
 }
 
+// TODO: will delete useVirtualizer and directly call it in RSP
+// First need to debug why attaching it directly to the ref causes a couple of async tests to fail...
+// Specifically https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/listbox/test/ListBox.test.js#L872,
+// https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/combobox/test/ComboBox.test.js#L2134
+// https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/combobox/test/ComboBox.test.js#L2182
+// and https://github.com/adobe/react-spectrum/blob/b46d23b9919eaec8ab1f621b52beced82e88b6ca/packages/%40react-spectrum/table/test/Table.test.js#L4213
+// For the most part, I think some of these tests need to updated so the loadmore call sets is loading to true to avoid multiple loads and/or the scrollHeight mocks
+// needs to be updated to simulate the addition of more items when the load more call finishes. Will update later
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V>, ref: RefObject<HTMLElement | null>) {
   let {isLoading, onLoadMore} = props;
-  let {setVisibleRect, virtualizer} = state;
+  let {setVisibleRect} = state;
 
-  // Handle scrolling, and call onLoadMore when nearing the bottom.
-  let isLoadingRef = useRef(isLoading);
-  let prevProps = useRef(props);
+  let {scrollViewProps: {onScroll}} = useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
+
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setVisibleRect(rect);
+    onScroll();
+  }, [setVisibleRect, onScroll]);
 
-    if (!isLoadingRef.current && onLoadMore) {
-      let scrollOffset = virtualizer.contentSize.height - rect.height * 2;
-      if (rect.y > scrollOffset) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-  }, [onLoadMore, setVisibleRect, virtualizer]);
-
-  let lastContentSize = useRef(0);
-  useLayoutEffect(() => {
-    // Only update isLoadingRef if props object actually changed,
-    // not if a local state change occurred.
-    let wasLoading = isLoadingRef.current;
-    if (props !== prevProps.current) {
-      isLoadingRef.current = isLoading;
-      prevProps.current = props;
-    }
-
-    let shouldLoadMore = !isLoadingRef.current
-      && onLoadMore
-      && state.contentSize.height > 0
-      && state.contentSize.height <= state.virtualizer.visibleRect.height
-      // Only try loading more if the content size changed, or if we just finished
-      // loading and still have room for more items.
-      && (wasLoading || state.contentSize.height !== lastContentSize.current);
-
-    if (shouldLoadMore) {
-      isLoadingRef.current = true;
-      onLoadMore();
-    }
-    lastContentSize.current = state.contentSize.height;
-  }, [state.contentSize, state.virtualizer, isLoading, onLoadMore, props]);
-
+  // TODO: would've liked it if I didn't have to preseve these and just attach onScroll directly to the scroll ref but it would be breaking.
   return {
     virtualizerProps: {},
     scrollViewProps: {

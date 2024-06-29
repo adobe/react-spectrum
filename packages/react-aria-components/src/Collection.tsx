@@ -795,7 +795,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   useLayoutEffect(() => {
     document.isMounted = true;
     return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by 
+      // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
       document.isMounted = false;
     };
@@ -927,10 +927,22 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
 
   let doc = useContext(CollectionDocumentContext);
   if (doc) {
-    return <CollectionRoot>{children}</CollectionRoot>;
+    // TODO: operates off the assumption that dependencies set on a higher level Collection should propagate down
+    // Makes it simpler for someone to setup nested Tree loaders (only need to set dependency at top level Collection instead of remembering to propagate it to every instance of Collection)
+    // TODO: With the refactor to Collections, I can either apply the CollectionContext.Provider here or in Tree
+    // itself in the content passed to CollectionBuilder. Feels like here is more appropriate so we don't need to remember to do this for each component.
+    return (
+      <CollectionContext.Provider value={{dependencies: props.dependencies}}>
+        <CollectionRoot>{children}</CollectionRoot>
+      </CollectionContext.Provider>
+    );
   }
 
-  return <>{children}</>;
+  return (
+    <CollectionContext.Provider value={{dependencies: props.dependencies}}>
+      {children}
+    </CollectionContext.Provider>
+  );
 }
 
 function CollectionRoot({children}) {
@@ -1029,11 +1041,12 @@ function useCollectionRender(
       }
 
       let key = node.key;
+      let keyAfter = collection.getKeyAfter(key);
       return (
         <>
           {renderDropIndicator({type: 'item', key, dropPosition: 'before'})}
           {rendered}
-          {collection.getKeyAfter(key) == null && renderDropIndicator({type: 'item', key, dropPosition: 'after'})}
+          {((keyAfter == null || collection.getItem(keyAfter)?.type !== 'item')) && renderDropIndicator({type: 'item', key, dropPosition: 'after'})}
         </>
       );
     }
