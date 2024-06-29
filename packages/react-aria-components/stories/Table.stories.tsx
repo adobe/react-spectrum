@@ -16,7 +16,7 @@ import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
 import React, {RefObject, useMemo, useRef} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TableLoader} from '../src/Table';
+import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
 import {useEvent, useLoadMore} from '@react-aria/utils';
 
@@ -340,7 +340,7 @@ export const DndTable = (props: DndTableProps) => {
             </Row>
           )}
         </Collection>
-        {props.isLoading && list.items.length > 0 && <MyTableLoader />}
+        {props.isLoading && list.items.length > 0 && <MyTableLoadingIndicator />}
       </TableBody>
     </Table>
   );
@@ -408,14 +408,14 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-const MyTableLoader = ({tableWidth = 400}) => {
+const MyTableLoadingIndicator = ({tableWidth = 400}) => {
   return (
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
-    <UNSTABLE_TableLoader style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>
+    <UNSTABLE_TableLoadingIndicator style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>
       <span>
         Load more spinner
       </span>
-    </UNSTABLE_TableLoader>
+    </UNSTABLE_TableLoadingIndicator>
   );
 };
 
@@ -426,7 +426,7 @@ function MyTableBody(props) {
       <Collection items={rows}>
         {children}
       </Collection>
-      {isLoadingMore && <MyTableLoader tableWidth={tableWidth} />}
+      {isLoadingMore && <MyTableLoadingIndicator tableWidth={tableWidth} />}
     </TableBody>
   );
 }
@@ -465,7 +465,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.isLoadingMore && <MyTableLoader />}
+      {props.isLoadingMore && <MyTableLoadingIndicator />}
     </>
   );
 }
@@ -538,7 +538,7 @@ export const RenderEmptyStateStory  = {
   args: {
     isLoading: false
   },
-  name: 'Empty/Loading Table rendered with TableLoader collection element'
+  name: 'Empty/Loading Table rendered with TableLoadingIndicator collection element'
 };
 
 interface Character {
@@ -664,7 +664,7 @@ const OnLoadMoreTableBodyScroll = () => {
             </Row>
           )}
         </Collection>
-        {list.loadingState === 'loadingMore' && <MyTableLoader />}
+        {list.loadingState === 'loadingMore' && <MyTableLoadingIndicator />}
       </TableBody>
     </Table>
   );

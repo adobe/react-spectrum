@@ -268,13 +268,14 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       case 'headerrow':
         return this.buildHeaderRow(node, x, y);
       case 'item':
-      case 'loader':
         return this.buildRow(node, x, y);
       case 'column':
       case 'placeholder':
         return this.buildColumn(node, x, y);
       case 'cell':
         return this.buildCell(node, x, y);
+      case 'loader':
+        return this.buildLoader(node, x, y);
       default:
         throw new Error('Unknown node type ' + node.type);
     }
@@ -304,12 +305,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
           children.push(layoutNode);
         }
       }
-    }
-
-    // TODO: perhaps make a separate buildLoader? Do we need to differentiate the layoutInfo information?
-    // I think the below is ok for now since we can just treat nested loaders/load more as rows
-    if (node.type === 'loader') {
-      height = this.rowHeight;
     }
 
     this.setChildHeights(children, height);

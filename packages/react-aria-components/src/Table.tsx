@@ -1307,11 +1307,11 @@ function RootDropIndicator() {
 }
 
 // TOOD: no props for now, maybe get rid of this? Might be good to keep it just in case
-export interface TableLoaderProps extends StyleProps {
+export interface TableLoadingIndicatorProps extends StyleProps {
   children?: ReactNode
 }
 
-export const UNSTABLE_TableLoader = createLeafComponent('loader', function TableLoader<T extends object>(props: TableLoaderProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let numColumns = state.collection.columns.length;
@@ -1319,7 +1319,7 @@ export const UNSTABLE_TableLoader = createLeafComponent('loader', function Table
     ...props,
     id: undefined,
     children: item.rendered,
-    defaultClassName: 'react-aria-TableLoader',
+    defaultClassName: 'react-aria-TableLoadingIndicator',
     values: null
   });
   let TR = useElementType('tr');
