@@ -43,7 +43,6 @@
     "@react-aria/dnd": "^3.6.1",
     "@react-aria/focus": "^3.17.1",
     "@react-aria/interactions": "^3.21.3",
-    "@react-aria/loading": "3.0.0-alpha.1",
     "@react-aria/menu": "^3.14.1",
     "@react-aria/toolbar": "3.0.0-beta.5",
     "@react-aria/tree": "3.0.0-alpha.1",
