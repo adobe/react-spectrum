@@ -47,10 +47,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   , [props.disabledKeys]);
 
   let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
-  let context = useMemo(
-    () => ({suppressTextValueWarning: props.suppressTextValueWarning}),
-    [props.suppressTextValueWarning]
-  );
+  let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
   let collection = useCollection(props, factory, context);
 
@@ -60,13 +57,13 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   );
 
   // Reset focused key if that item is deleted from the collection.
-  const cachedCollection = useRef< Collection<Node<T>> | null>(null);
+  const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      const startItem = cachedCollection.current?.getItem(selectionState.focusedKey);
-      const cachedItemNodes = [...(cachedCollection.current?.getKeys() ?? [])].map(
+    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey) && cachedCollection.current) {
+      const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
+      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
         key => {
-          const itemNode = cachedCollection.current?.getItem(key);
+          const itemNode = cachedCollection.current!.getItem(key);
           return itemNode?.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
@@ -76,32 +73,30 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
           return itemNode?.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
-      const diff = cachedItemNodes.length - itemNodes.length;
+      const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
       let index = Math.min(
         (
           diff > 1 ?
           Math.max((startItem?.index ?? 0) - diff + 1, 0) :
           startItem?.index ?? 0
         ),
-        itemNodes.length - 1);
+        (itemNodes?.length ?? 0) - 1);
       let newNode:Node<T> | null = null;
+      let isReverseSearching = false;
       while (index >= 0) {
-        if (itemNodes[index]) {
-          if (!selectionManager.isDisabled(itemNodes[index]!.key)) {
-            newNode = itemNodes[index];
-            break;
-          }
-          // Find next, not disabled item.
-          if (index < itemNodes.length - 1) {
-            index++;
-            // Otherwise, find previous, not disabled item.
-          } else {
-            if (index > (startItem?.index ?? 0)) {
-              index = startItem?.index ?? 0;
-            }
-            index--;
-          }
+        if (!selectionManager.isDisabled(itemNodes[index].key)) {
+          newNode = itemNodes[index];
+          break;
+        }
+        // Find next, not disabled item.
+        if (index < itemNodes.length - 1 && !isReverseSearching) {
+          index++;
+        // Otherwise, find previous, not disabled item.
         } else {
+          isReverseSearching = true;
+          if (index > (startItem?.index ?? 0)) {
+            index = (startItem?.index ?? 0);
+          }
           index--;
         }
       }

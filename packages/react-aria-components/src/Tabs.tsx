@@ -12,10 +12,10 @@
 
 import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, Node, TabListState, useTabListState} from 'react-stately';
-import {CollectionDocumentContext, CollectionPortal, CollectionProps, CollectionRendererContext, createLeafComponent, useCollectionDocument} from './Collection';
-import {ContextValue, createHideableComponent, forwardRefType, Hidden, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent} from './Collection';
+import {ContextValue, createHideableComponent, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, RefObject, useContext, useMemo} from 'react';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
@@ -119,7 +119,6 @@ export const TabListStateContext = createContext<TabListState<object> | null>(nu
 
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
-  let {collection, document} = useCollectionDocument();
   let {children, orientation = 'horizontal'} = props;
   children = useMemo(() => (
     typeof children === 'function'
@@ -128,22 +127,15 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   ), [children, orientation]);
 
   return (
-    <>
-      {/* Render a hidden copy of the children so that we can build the collection before constructing the state.
-        * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
-      <Hidden>
-        <CollectionDocumentContext.Provider value={document}>
-          {children}
-        </CollectionDocumentContext.Provider>
-      </Hidden>
-      <TabsInner props={props} collection={collection} tabsRef={ref} />
-    </>
+    <CollectionBuilder content={children}>
+      {collection => <TabsInner props={props} collection={collection} tabsRef={ref} />}
+    </CollectionBuilder>
   );
 }
 
 interface TabsInnerProps {
   props: TabsProps,
-  collection: Collection<Node<any>>,
+  collection: ICollection<Node<any>>,
   tabsRef: RefObject<HTMLDivElement | null>
 }
 
@@ -195,10 +187,10 @@ const _Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(Tabs);
 export {_Tabs as Tabs};
 
 function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
-  let document = useContext(CollectionDocumentContext);
-  return document
-    ? <CollectionPortal {...props} />
-    : <TabListInner props={props} forwardedRef={ref} />;
+  let state = useContext(TabListStateContext);
+  return state
+    ? <TabListInner props={props} forwardedRef={ref} />
+    : <Collection {...props} />;
 }
 
 interface TabListInnerProps<T> {

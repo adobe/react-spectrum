@@ -42,14 +42,14 @@ export const ColorPickerExample = (args) => {
           </select>
         </label>
         <div style={{display: 'flex', gap: 4, width: 192}}>
-          {format === 'hex' 
+          {format === 'hex'
             ? (
               <ColorField style={{display: 'flex', flexDirection: 'column'}}>
                 <Label>Hex</Label>
                 <Input />
               </ColorField>
             ) : getColorChannels(format).map(channel => (
-              <ColorField key={channel} colorSpace={format === 'hex' ? 'rgb' : format} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+              <ColorField key={channel} colorSpace={format} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
                 <Label />
                 <Input style={{width: '100%', boxSizing: 'border-box'}} />
               </ColorField>

@@ -12,8 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection} from '../src/Collection';
-import {GridLayout} from '@react-spectrum/card';
-import {Header, ListBox, ListBoxItem, ListBoxProps, ListLayout, Section, Separator, Text, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -229,22 +228,35 @@ ListBoxGrid.story = {
   }
 };
 
-export function VirtualizedListBox() {
+function generateRandomString(minLength: number, maxLength: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return result;
+}
+
+export function VirtualizedListBox({variableHeight}) {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
     for (let i = 0; i < 100; i++) {
-      items.push({id: `item_${s}_${i}`, name: `Item ${i}`});
+      const l = (s * 5) + i + 10;
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
 
   let layout = useMemo(() => {
     return new ListLayout({
-      rowHeight: 25,
+      [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
       estimatedHeadingHeight: 26
     });
-  }, []);
+  }, [variableHeight]);
 
   return (
     <Virtualizer layout={layout}>
@@ -261,6 +273,10 @@ export function VirtualizedListBox() {
     </Virtualizer>
   );
 }
+
+VirtualizedListBox.args = {
+  variableHeight: false
+};
 
 export function VirtualizedListBoxEmpty() {
   let layout = useMemo(() => {
@@ -279,6 +295,56 @@ export function VirtualizedListBoxEmpty() {
   );
 }
 
+export function VirtualizedListBoxDnd() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new ListLayout({
+      rowHeight: 25
+    });
+  }, []);
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
+  return (
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer layout={layout}>
+        <ListBox 
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={list.items}
+          dragAndDropHooks={dragAndDropHooks}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+}
+
 export function VirtualizedListBoxGrid() {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
@@ -287,15 +353,46 @@ export function VirtualizedListBoxGrid() {
 
   let layout = useMemo(() => {
     return new GridLayout({
-      minItemSize: new Size(40, 40)
+      minItemSize: new Size(80, 80),
+      maxItemSize: new Size(100, 100)
     });
   }, []);
 
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
   return (
-    <Virtualizer layout={layout}>
-      <ListBox className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
-        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-      </ListBox>
-    </Virtualizer>
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer layout={layout}>
+        <ListBox
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          layout="grid"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={list.items}
+          dragAndDropHooks={dragAndDropHooks}>
+          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
   );
 }
