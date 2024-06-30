@@ -11,8 +11,7 @@
  */
 
 import {AriaBreadcrumbItemProps} from '@react-types/breadcrumbs';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {RefObject} from 'react';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {useLink} from '@react-aria/link';
 
 export interface BreadcrumbItemAria {

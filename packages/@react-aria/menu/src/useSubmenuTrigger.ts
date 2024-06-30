@@ -13,9 +13,9 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
-import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent} from '@react-types/shared';
-import {RefObject, useCallback, useRef} from 'react';
+import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
 import type {SubmenuTriggerState} from '@react-stately/menu';
+import {useCallback, useRef} from 'react';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';

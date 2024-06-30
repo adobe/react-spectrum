@@ -12,7 +12,8 @@
 
 import {AriaToggleProps} from '@react-types/checkbox';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';

@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {GridRowProps} from '@react-aria/grid';
-import {RefObject} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState} from '@react-stately/table';
 

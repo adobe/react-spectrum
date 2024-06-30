@@ -12,8 +12,9 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {mergeProps, useEffectEvent} from '@react-aria/utils';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject} from '@react-types/shared';
 import {TextFieldAria, useTextField} from './useTextField';
+import {useEffect, useRef} from 'react';
 
 interface FormattedTextFieldState {
   validate: (val: string) => boolean,

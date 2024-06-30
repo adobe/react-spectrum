@@ -11,10 +11,10 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, RefObject} from '@react-types/shared';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {RefObject, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
 export interface OverlayTriggerProps {

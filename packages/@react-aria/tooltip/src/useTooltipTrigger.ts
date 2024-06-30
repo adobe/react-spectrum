@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getInteractionModality, isFocusVisible, useHover} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
-import {RefObject, useEffect, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useEffect, useRef} from 'react';
 import {useFocusable} from '@react-aria/focus';
 
 export interface TooltipTriggerAria {

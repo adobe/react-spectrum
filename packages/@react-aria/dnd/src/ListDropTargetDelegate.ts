@@ -1,5 +1,4 @@
-import {Direction, DropTarget, DropTargetDelegate, Node, Orientation} from '@react-types/shared';
-import {RefObject} from 'react';
+import {Direction, DropTarget, DropTargetDelegate, Node, Orientation, RefObject} from '@react-types/shared';
 
 interface ListDropTargetDelegateOptions {
   /**

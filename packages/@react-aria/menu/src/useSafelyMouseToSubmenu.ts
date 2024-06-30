@@ -1,4 +1,6 @@
-import {RefObject, useEffect, useRef, useState} from 'react';
+
+import {RefObject} from '@react-types/shared';
+import {useEffect, useRef, useState} from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useResizeObserver} from '@react-aria/utils';
 

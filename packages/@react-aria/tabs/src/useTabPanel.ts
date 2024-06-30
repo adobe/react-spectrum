@@ -11,10 +11,9 @@
  */
 
 import {AriaTabPanelProps} from '@react-types/tabs';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {generateId} from './utils';
 import {mergeProps, useLabels} from '@react-aria/utils';
-import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
 import {useHasTabbableChild} from '@react-aria/focus';
 

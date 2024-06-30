@@ -12,9 +12,10 @@
 
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
+import {RefObject} from '@react-types/shared';
 import {useFocusable} from '@react-aria/focus';
 import {useFormValidation} from '@react-aria/form';
 import {usePress} from '@react-aria/interactions';

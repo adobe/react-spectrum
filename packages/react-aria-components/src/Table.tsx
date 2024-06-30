@@ -1,4 +1,4 @@
-import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {BaseCollection, Collection, CollectionBuilder, CollectionContext, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollectionChildren} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -13,7 +13,7 @@ import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, 
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -549,7 +549,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
         }
       }, [])
     });
-  
+
     let THead = useElementType('thead');
     let {rowGroupProps} = useTableRowGroup();
     return (
@@ -1048,7 +1048,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
     let TR = useElementType('tr');
     let TD = useElementType('td');
-    
+
     return (
       <>
         {dropIndicator && !dropIndicator.isHidden && (
