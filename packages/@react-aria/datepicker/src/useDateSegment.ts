@@ -12,7 +12,6 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
@@ -23,7 +22,7 @@ import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
-  segmentProps: React.HTMLAttributes<HTMLDivElement>;
+  segmentProps: React.HTMLAttributes<HTMLDivElement>
 }
 
 /**
