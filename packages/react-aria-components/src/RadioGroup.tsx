@@ -103,7 +103,7 @@ export interface RadioRenderProps {
    */
   isInvalid: boolean,
   /**
-   * Whether the checkbox is required.
+   * Whether the radio is required.
    * @selector [data-required]
    */
   isRequired: boolean
@@ -181,6 +181,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
     ...removeDataAttributes<RadioProps>(props),
+    excludeFromTabOrder: state.excludeFromTabOrder,
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, inputRef);

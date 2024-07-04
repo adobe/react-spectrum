@@ -80,15 +80,19 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
   let tabIndex: number | undefined = -1;
-  if (state.selectedValue != null) {
-    if (state.selectedValue === value) {
+  if (interactions.tabIndex) {
+    tabIndex = interactions.tabIndex;
+  } else {
+    if (state.selectedValue != null) {
+      if (state.selectedValue === value) {
+        tabIndex = 0;
+      }
+    } else if (state.lastFocusedValue === value || state.lastFocusedValue == null) {
       tabIndex = 0;
     }
-  } else if (state.lastFocusedValue === value || state.lastFocusedValue == null) {
-    tabIndex = 0;
-  }
-  if (isDisabled) {
-    tabIndex = undefined;
+    if (isDisabled) {
+      tabIndex = undefined;
+    }
   }
 
   let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;

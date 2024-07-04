@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   AriaValidationProps,
   DOMProps,
+  FocusableDOMProps,
   FocusableProps,
   FocusEvents,
   HelpTextProps,
@@ -54,7 +55,7 @@ export interface RadioProps extends FocusableProps {
   isDisabled?: boolean
 }
 
-export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps, FocusableDOMProps {}
 export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps, SpectrumHelpTextProps {
   /**
    * The Radio(s) contained within the RadioGroup.
@@ -67,5 +68,5 @@ export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLa
   isEmphasized?: boolean
 }
 
-export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps {}
+export interface AriaRadioProps extends RadioProps, DOMProps, FocusableDOMProps, AriaLabelingProps {}
 export interface SpectrumRadioProps extends AriaRadioProps, StyleProps {}
