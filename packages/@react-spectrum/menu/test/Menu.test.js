@@ -684,6 +684,47 @@ describe('Menu', function () {
       expect(onAction).toHaveBeenCalledWith('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
+
+    it('should support onAction on menu and menu items', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let onAction = jest.fn();
+      let itemAction = jest.fn();
+      let flatItems = [
+        {name: 'One'},
+        {name: 'Two'},
+        {name: 'Three'}
+      ];
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu aria-label="menu" items={flatItems} onAction={onAction}>
+            {item => <Item key={item.name} onAction={itemAction}>{item.name}</Item>}
+          </Menu>
+        </Provider>
+      );
+
+      act(() => {jest.runAllTimers();});
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      await user.click(item1);
+      expect(onAction).toHaveBeenCalledWith('One');
+      expect(itemAction).toHaveBeenCalledTimes(1);
+
+      await user.click(item2);
+      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(itemAction).toHaveBeenCalledTimes(2);
+
+
+      await user.click(item3);
+      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(itemAction).toHaveBeenCalledTimes(3);
+    });
   });
 
   it('supports complex menu items with aria-labelledby and aria-describedby', function () {

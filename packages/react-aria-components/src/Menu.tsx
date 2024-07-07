@@ -303,7 +303,10 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
-  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({...props, id, key: item.key}, state, ref);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Exclude onAction to ensure it is received within item.props in useMenuItem.
+  let {onAction, ...rest} = props;
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({...rest, id, key: item.key}, state, ref);
 
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
