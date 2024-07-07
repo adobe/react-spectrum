@@ -268,7 +268,23 @@ describe('GridList', () => {
     );
     let items = getAllByRole('row');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on list and list items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" onAction={onAction}>
+        <GridListItem id="cat" onAction={itemAction}>Cat</GridListItem>
+        <GridListItem id="dog">Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledWith('cat');
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support empty state', () => {

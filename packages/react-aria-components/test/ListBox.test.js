@@ -479,7 +479,23 @@ describe('ListBox', () => {
     );
     let items = getAllByRole('option');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on list ans list items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test" onAction={onAction}>
+        <ListBoxItem id="cat" onAction={itemAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledWith('cat');
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support empty state', () => {

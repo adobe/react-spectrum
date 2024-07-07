@@ -127,7 +127,6 @@ function MenuPopup(props) {
               key={item.key}
               item={item}
               state={state}
-              onAction={props.onAction}
               onClose={props.onClose} />
           ))}
         </ul>
@@ -137,14 +136,13 @@ function MenuPopup(props) {
   );
 }
 
-function MenuItem({item, state, onAction, onClose}) {
+function MenuItem({item, state, onClose}) {
   // Get props for the menu item element
   let ref = React.useRef(undefined);
   let {menuItemProps} = useMenuItem(
     {
       key: item.key,
       isDisabled: item.isDisabled,
-      onAction,
       onClose
     },
     state,
