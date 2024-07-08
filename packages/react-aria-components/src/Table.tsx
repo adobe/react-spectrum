@@ -911,10 +911,9 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   });
 
   let emptyState;
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
   if (collection.size === 0 && props.renderEmptyState && state) {
-    let TR = useElementType('tr');
-    let TD = useElementType('td');
-
     let rowProps = {};
     let rowHeaderProps = {};
     if (isVirtualized) {
