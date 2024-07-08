@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps} from '@react-types/radio';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
+import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
@@ -52,10 +52,7 @@ export interface RadioGroupState extends FormValidationState {
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string | null): void,
-
-  /** Whether the radio group is excluded from the sequential tab order. */
-  excludeFromTabOrder?: boolean
+  setLastFocusedValue(value: string | null): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -65,7 +62,7 @@ let i = 0;
  * Provides state management for a radio group component. Provides a name for the group,
  * and manages selection and focus state.
  */
-export function useRadioGroupState(props: AriaRadioGroupProps): RadioGroupState  {
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue ?? null, props.onChange);
@@ -96,7 +93,6 @@ export function useRadioGroupState(props: AriaRadioGroupProps): RadioGroupState 
     isReadOnly: props.isReadOnly || false,
     isRequired: props.isRequired || false,
     validationState: props.validationState || (isInvalid ? 'invalid' : null),
-    isInvalid,
-    excludeFromTabOrder: props.excludeFromTabOrder
+    isInvalid
   };
 }

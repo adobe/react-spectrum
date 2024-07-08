@@ -518,4 +518,16 @@ describe('RadioGroup', () => {
     expect(inputRef.current).toBe(radio);
     expect(contextInputRef.current).toBe(radio);
   });
+
+  it('should support excluding from tab order', () => {
+    let {getByRole} = render(
+      <RadioGroup excludeFromTabOrder>
+        <Label>Test</Label>
+        <Radio value="a">A</Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+
+    expect(radio).toHaveAttribute('tabindex', '-1');
+  });
 });

@@ -147,4 +147,11 @@ describe('Link', () => {
     await user.click(link);
     expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
   });
+
+  it('should support excluding from tab order', () => {
+    let {getByRole} = render(<Link excludeFromTabOrder href="test">Test</Link>);
+    let link = getByRole('link');
+
+    expect(link).toHaveAttribute('tabindex', '-1');
+  });
 });

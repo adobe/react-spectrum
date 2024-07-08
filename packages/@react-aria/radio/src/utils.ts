@@ -16,7 +16,8 @@ interface RadioGroupData {
   name: string,
   descriptionId: string | undefined,
   errorMessageId: string | undefined,
-  validationBehavior: 'aria' | 'native'
+  validationBehavior: 'aria' | 'native',
+  excludeFromTabOrder?: boolean
 }
 
 export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();

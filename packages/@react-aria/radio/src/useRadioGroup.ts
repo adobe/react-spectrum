@@ -44,7 +44,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     isRequired,
     isDisabled,
     orientation = 'vertical',
-    validationBehavior = 'aria'
+    validationBehavior = 'aria',
+    excludeFromTabOrder
   } = props;
   let {direction} = useLocale();
 
@@ -128,7 +129,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     name: groupName,
     descriptionId: descriptionProps.id,
     errorMessageId: errorMessageProps.id,
-    validationBehavior
+    validationBehavior,
+    excludeFromTabOrder: excludeFromTabOrder
   });
 
   return {

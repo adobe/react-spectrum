@@ -74,7 +74,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     }
   });
 
-  let {focusableProps} = useFocusable(mergeProps(props, {
+  let {name, descriptionId, errorMessageId, validationBehavior, excludeFromTabOrder} = radioGroupData.get(state)!;
+  let {focusableProps} = useFocusable(mergeProps({...props, excludeFromTabOrder}, {
     onFocus: () => state.setLastFocusedValue(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
@@ -95,7 +96,6 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     }
   }
 
-  let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
   useFormValidation({validationBehavior}, state, ref);
 
