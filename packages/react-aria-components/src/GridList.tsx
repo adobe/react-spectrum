@@ -14,7 +14,8 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
@@ -227,7 +228,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
-          <CollectionRoot collection={collection} focusedKey={selectionManager.focusedKey} scrollRef={ref} />
+          <CollectionRoot
+            collection={collection}
+            scrollRef={ref}
+            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)}
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -326,7 +331,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
     }
   });
 
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
   let dragButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current) {
@@ -343,9 +347,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
 
   return (
     <>
-      {dragAndDropHooks?.useDropIndicator &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
-      }
       {dropIndicator && !dropIndicator.isHidden &&
         <div role="row" style={{position: 'absolute'}}>
           <div role="gridcell">
@@ -397,9 +398,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
           </Provider>
         </div>
       </div>
-      {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
-      }
     </>
   );
 });
@@ -447,7 +445,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
   });
 
   return (
-    (<div
+    <div
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLDivElement | null>}
@@ -456,7 +454,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </div>
-    </div>)
+    </div>
   );
 }
 

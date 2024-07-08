@@ -22,7 +22,7 @@ let KEY = 0;
  */
 export class ReusableView<T extends object, V> {
   /** The Virtualizer this view is a part of. */
-  virtualizer: Virtualizer<T, V, unknown>;
+  virtualizer: Virtualizer<T, V>;
 
   /** The LayoutInfo this view is currently representing. */
   layoutInfo: LayoutInfo | null;
@@ -39,7 +39,7 @@ export class ReusableView<T extends object, V> {
   children: Set<ReusableView<T, V>>;
   reusableViews: Map<string, ReusableView<T, V>[]>;
 
-  constructor(virtualizer: Virtualizer<T, V, unknown>) {
+  constructor(virtualizer: Virtualizer<T, V>) {
     this.virtualizer = virtualizer;
     this.key = ++KEY;
     this.parent = null;

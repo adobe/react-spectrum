@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DropTarget, Key} from '@react-types/shared';
+import {DropTarget, ItemDropTarget, Key} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
@@ -508,9 +508,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
 
-    // Offset for height of header row
-    y -= this.virtualizer.layout.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect.height;
-
     // Custom variation of this.virtualizer.keyAtPoint that ignores body
     let key: Key;
     let point = new Point(x, y);
@@ -553,5 +550,11 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     }
 
     return target;
+  }
+
+  getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    let layoutInfo = super.getDropTargetLayoutInfo(target);
+    layoutInfo.parentKey = this.collection.body.key;
+    return layoutInfo;
   }
 }

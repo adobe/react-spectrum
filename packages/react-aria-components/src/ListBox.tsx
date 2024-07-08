@@ -13,7 +13,8 @@
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeaderContext} from './Header';
@@ -245,7 +246,11 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {render: ListBoxSection}]
           ]}>
-          <CollectionRoot collection={collection} focusedKey={selectionManager.focusedKey} scrollRef={listBoxRef} />
+          <CollectionRoot
+            collection={collection}
+            scrollRef={listBoxRef}
+            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)}
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -256,6 +261,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
 
 function ListBoxSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
   let state = useContext(ListStateContext)!;
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
@@ -276,7 +282,10 @@ function ListBoxSection<T extends object>(props: SectionProps<T>, ref: Forwarded
       {...renderProps}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
-        <CollectionBranch collection={state.collection} parent={section} />
+        <CollectionBranch
+          collection={state.collection}
+          parent={section}
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       </HeaderContext.Provider>
     </section>
   );
@@ -351,8 +360,6 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
     }
   });
 
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
-
   useEffect(() => {
     if (!item.textValue) {
       console.warn('A `textValue` prop is required for <ListBoxItem> elements with non-plain text children in order to support accessibility features such as type to select.');
@@ -362,40 +369,32 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
   let ElementType: React.ElementType = props.href ? 'a' : 'div';
 
   return (
-    <>
-      {dragAndDropHooks?.useDropIndicator &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
-      }
-      <ElementType
-        {...mergeProps(optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
-        {...renderProps}
-        ref={ref}
-        data-allows-dragging={!!dragState || undefined}
-        data-selected={states.isSelected || undefined}
-        data-disabled={states.isDisabled || undefined}
-        data-hovered={isHovered || undefined}
-        data-focused={states.isFocused || undefined}
-        data-focus-visible={states.isFocusVisible || undefined}
-        data-pressed={states.isPressed || undefined}
-        data-dragging={isDragging || undefined}
-        data-drop-target={droppableItem?.isDropTarget || undefined}
-        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-        <Provider
-          values={[
-            [TextContext, {
-              slots: {
-                label: labelProps,
-                description: descriptionProps
-              }
-            }]
-          ]}>
-          {renderProps.children}
-        </Provider>
-      </ElementType>
-      {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
-      }
-    </>
+    <ElementType
+      {...mergeProps(optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+      {...renderProps}
+      ref={ref}
+      data-allows-dragging={!!dragState || undefined}
+      data-selected={states.isSelected || undefined}
+      data-disabled={states.isDisabled || undefined}
+      data-hovered={isHovered || undefined}
+      data-focused={states.isFocused || undefined}
+      data-focus-visible={states.isFocusVisible || undefined}
+      data-pressed={states.isPressed || undefined}
+      data-dragging={isDragging || undefined}
+      data-drop-target={droppableItem?.isDropTarget || undefined}
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+      <Provider
+        values={[
+          [TextContext, {
+            slots: {
+              label: labelProps,
+              description: descriptionProps
+            }
+          }]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </ElementType>
   );
 });
 
@@ -438,13 +437,13 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   });
 
   return (
-    (<div
+    <div
       {...dropIndicatorProps}
       {...renderProps}
       // eslint-disable-next-line
       role="option"
       ref={ref as RefObject<HTMLDivElement | null>}
-      data-drop-target={isDropTarget || undefined} />)
+      data-drop-target={isDropTarget || undefined} />
   );
 }
 

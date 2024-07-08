@@ -11,10 +11,12 @@
  */
 
 import {CollectionRenderer, CollectionRendererContext} from './Collection';
-import {DropTargetDelegate, Node} from '@react-types/shared';
-import {Layout, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import React, {ReactNode, useContext, useMemo} from 'react';
-import {useScrollView, VirtualizerContext, VirtualizerItem} from '@react-aria/virtualizer';
+import {DropPosition, DropTarget, DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
+import React, {createContext, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
+
+type View = ReusableView<Node<unknown>, ReactNode>;
 
 export interface LayoutOptionsDelegate<O> {
   useLayoutOptions?(): O
@@ -27,13 +29,15 @@ export interface VirtualizerProps {
   layout: ILayout<any>
 }
 
+const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
+
 export function Virtualizer(props: VirtualizerProps) {
   let {children, layout} = props;
   let renderer: CollectionRenderer = useMemo(() => ({
     isVirtualized: true,
     layoutDelegate: layout,
     dropTargetDelegate: layout.getDropTargetFromPoint ? layout as DropTargetDelegate : undefined,
-    CollectionRoot({collection, focusedKey, scrollRef}) {
+    CollectionRoot({collection, focusedKey, scrollRef, renderDropIndicator}) {
       let layoutOptions = layout.useLayoutOptions?.();
       let state = useVirtualizerState({
         layout,
@@ -41,10 +45,12 @@ export function Virtualizer(props: VirtualizerProps) {
         renderView: (type, item) => {
           return item?.render?.(item);
         },
-        renderWrapper,
         onVisibleRectChange(rect) {
-          scrollRef!.current!.scrollLeft = rect.x;
-          scrollRef!.current!.scrollTop = rect.y;
+          let element = scrollRef?.current;
+          if (element) {
+            element.scrollLeft = rect.x;
+            element.scrollTop = rect.y;
+          }
         },
         persistedKeys: useMemo(() => focusedKey != null ? new Set([focusedKey]) : new Set(), [focusedKey]),
         layoutOptions
@@ -64,16 +70,17 @@ export function Virtualizer(props: VirtualizerProps) {
       return (
         <div {...contentProps}>
           <VirtualizerContext.Provider value={state}>
-            {state.visibleViews}
+            {renderChildren(null, state.visibleViews, renderDropIndicator)}
           </VirtualizerContext.Provider>
         </div>
       );
     },
-    CollectionBranch({parent}) {
+    CollectionBranch({parent, renderDropIndicator}) {
       let virtualizer = useContext(VirtualizerContext);
-      return virtualizer!.virtualizer.getChildren(parent.key);
+      let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
+      return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
     }
-  }), [layout]);  
+  }), [layout]);
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
@@ -82,11 +89,16 @@ export function Virtualizer(props: VirtualizerProps) {
   );
 }
 
-function renderWrapper<T extends object, V extends ReactNode>(
-  parent: ReusableView<T, V> | null,
-  reusableView: ReusableView<T, V>
-) {
-  return (
+function renderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget) => ReactNode) {
+  return children.map(view => renderWrapper(parent, view, renderDropIndicator));
+}
+
+function renderWrapper(
+  parent: View | null,
+  reusableView: View,
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+): ReactElement {
+  let rendered = (
     <VirtualizerItem
       key={reusableView.key}
       layoutInfo={reusableView.layoutInfo!}
@@ -95,4 +107,41 @@ function renderWrapper<T extends object, V extends ReactNode>(
       {reusableView.rendered}
     </VirtualizerItem>
   );
+
+  let {collection, layout} = reusableView.virtualizer;
+  let {key, type} = reusableView.content;
+  if (type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
+    rendered = (
+      <React.Fragment key={reusableView.key}>
+        {renderDropIndicatorWrapper(parent, reusableView, 'before', renderDropIndicator)}
+        {rendered}
+        {collection.getKeyAfter(key) == null && renderDropIndicatorWrapper(parent, reusableView, 'after', renderDropIndicator)}
+      </React.Fragment>
+    );
+  }
+
+  return rendered;
+}
+
+function renderDropIndicatorWrapper(
+  parent: View | null,
+  reusableView: View,
+  dropPosition: DropPosition,
+  renderDropIndicator: (target: ItemDropTarget) => ReactNode
+) {
+  let target: DropTarget = {type: 'item', key: reusableView.layoutInfo!.key, dropPosition};
+  let indicator = renderDropIndicator(target);
+  if (indicator) {
+    let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);
+    indicator = (
+      <VirtualizerItem
+        layoutInfo={layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}>
+        {indicator}
+      </VirtualizerItem>
+    );
+  }
+  
+  return indicator;
 }

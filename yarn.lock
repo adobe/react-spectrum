@@ -18207,9 +18207,9 @@ param-case@^2.1.0:
   dependencies:
     no-case "^2.2.0"
 
-"parcel-resolver-storybook@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master":
+"parcel-resolver-storybook@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master#90d8e09608eecbfdde28cc9cb5d944e12a6df4af"
+  resolved "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master#90d8e09608eecbfdde28cc9cb5d944e12a6df4af"
   dependencies:
     "@parcel/node-resolver-core" "^3.1.2"
     "@parcel/plugin" "^2.10.2"
@@ -21193,9 +21193,9 @@ store2@^2.14.2:
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.14.3.tgz#24077d7ba110711864e4f691d2af941ec533deb5"
   integrity sha512-4QcZ+yx7nzEFiV4BMLnr/pRa5HYzNITX2ri0Zh6sT9EyQHbBHacC6YigllUPU9X3D0f/22QCgfokpKs52YRrUg==
 
-"storybook-builder-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master":
+"storybook-builder-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master":
   version "0.0.0"
-  resolved "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#e6f9a68d3dd880f2742180ade807004a0704f2de"
+  resolved "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#e6f9a68d3dd880f2742180ade807004a0704f2de"
   dependencies:
     "@storybook/core-common" "7.6.4"
     http-proxy-middleware "^2.0.6"
@@ -21214,9 +21214,9 @@ storybook-dark-mode@^3.0.3:
     fast-deep-equal "^3.1.3"
     memoizerific "^1.11.3"
 
-"storybook-react-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master":
+"storybook-react-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master":
   version "0.0.0"
-  resolved "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master#62f43a0d93b9d92fff924e08cfd36665eb3245a5"
+  resolved "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master#62f43a0d93b9d92fff924e08cfd36665eb3245a5"
 
 storybook@^7.6.19:
   version "7.6.19"

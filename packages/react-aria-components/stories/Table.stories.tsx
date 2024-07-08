@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Checkbox, CheckboxProps, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
@@ -406,17 +406,41 @@ export function VirtualizedTable() {
     });
   }, []);
 
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).foo}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
   return (
     <Virtualizer layout={layout}>
-      <Table aria-label="virtualized table" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+      <Table aria-label="virtualized table" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks} style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+          <Column width={30} minWidth={0} />
+          <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
           <Column isRowHeader><strong>Foo</strong></Column>
           <Column><strong>Bar</strong></Column>
           <Column><strong>Baz</strong></Column>
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody items={list.items}>
           {item => (
             <Row style={{width: 'inherit', height: 'inherit'}}>
+              <Cell><Button slot="drag">≡</Button></Cell>
+              <Cell><MyCheckbox slot="selection" /></Cell>
               <Cell>{item.foo}</Cell>
               <Cell>{item.bar}</Cell>
               <Cell>{item.baz}</Cell>

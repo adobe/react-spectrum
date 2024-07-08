@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, DropTargetDelegate, Key, LayoutDelegate} from '@react-types/shared';
+import {CollectionBase, DropTargetDelegate, ItemDropTarget, Key, LayoutDelegate} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {forwardRefType, Hidden, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
@@ -986,13 +986,15 @@ export function createBranchComponent<T extends object, P extends {children?: an
 
 export interface CollectionBranchProps {
   collection: ICollection<Node<unknown>>,
-  parent: Node<unknown>
+  parent: Node<unknown>,
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   collection: ICollection<Node<unknown>>,
   focusedKey?: Key | null,
-  scrollRef?: RefObject<HTMLElement | null>
+  scrollRef?: RefObject<HTMLElement | null>,
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 }
 
 export interface CollectionRenderer {
@@ -1004,22 +1006,38 @@ export interface CollectionRenderer {
 }
 
 export const DefaultCollectionRenderer: CollectionRenderer = {
-  CollectionRoot({collection}) {
-    return useCachedChildren({
-      items: collection,
-      children(child) {
-        return child.render!(child);
-      }
-    });
+  CollectionRoot({collection, renderDropIndicator}) {
+    return useCollectionRender(collection, null, renderDropIndicator);
   },
-  CollectionBranch({collection, parent}) {
-    return useCachedChildren({
-      items: collection.getChildren!(parent.key),
-      children(child) {
-        return child.render!(child);
-      }
-    });
+  CollectionBranch({collection, parent, renderDropIndicator}) {
+    return useCollectionRender(collection, parent, renderDropIndicator);
   }
 };
+
+function useCollectionRender(
+  collection: ICollection<Node<unknown>>,
+  parent: Node<unknown> | null,
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+) {
+  return useCachedChildren({
+    items: parent ? collection.getChildren!(parent.key) : collection,
+    dependencies: [renderDropIndicator],
+    children(node) {
+      let rendered = node.render!(node);
+      if (!renderDropIndicator || node.type !== 'item') {
+        return rendered;
+      }
+
+      let key = node.key;
+      return (
+        <>
+          {renderDropIndicator({type: 'item', key, dropPosition: 'before'})}
+          {rendered}
+          {collection.getKeyAfter(key) == null && renderDropIndicator({type: 'item', key, dropPosition: 'after'})}
+        </>
+      );
+    }
+  });
+}
 
 export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);

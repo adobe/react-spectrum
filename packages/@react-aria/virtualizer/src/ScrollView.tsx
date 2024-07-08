@@ -243,6 +243,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       style
     },
     contentProps: {
+      role: 'presentation',
       style: innerStyle
     }
   };

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropTarget, DropTargetDelegate, Key, Node} from '@react-types/shared';
+import {Collection, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 
@@ -22,7 +22,9 @@ export interface ListLayoutOptions {
   /** The fixed height of a section header in px. */
   headingHeight?: number,
   /** The estimated height of a section header, when the height is variable. */
-  estimatedHeadingHeight?: number
+  estimatedHeadingHeight?: number,
+  /** The thickness of the drop indicator. */
+  dropIndicatorThickness?: number
 }
 
 // A wrapper around LayoutInfo that supports hierarchy
@@ -49,6 +51,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   protected estimatedRowHeight: number;
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
+  protected dropIndicatorThickness: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected collection: Collection<Node<T>>;
@@ -71,6 +74,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
+    this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
     this.layoutNodes = new Map();
     this.rootNodes = [];
     this.lastWidth = 0;
@@ -446,5 +450,19 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     }
 
     return target;
+  }
+
+  getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    let layoutInfo = this.getLayoutInfo(target.key);
+    let rect: Rect;
+    if (target.dropPosition === 'before') {
+      rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+    } else if (target.dropPosition === 'after') {
+      rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);
+    } else {
+      rect = layoutInfo.rect;
+    }
+
+    return new LayoutInfo('dropIndicator', target.key + ':' + target.dropPosition, rect);
   }
 }

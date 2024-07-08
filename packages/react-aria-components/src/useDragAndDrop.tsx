@@ -40,8 +40,8 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useMemo} from 'react';
-import {RenderProps} from './utils';
+import {isVirtualDragging} from '@react-aria/dnd';
+import {JSX, RefObject, useMemo} from 'react';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
 
@@ -50,7 +50,8 @@ interface DragHooks {
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
-  renderDragPreview?: (items: DragItem[]) => JSX.Element
+  renderDragPreview?: (items: DragItem[]) => JSX.Element,
+  isVirtualDragging?: () => boolean
 }
 
 interface DropHooks {
@@ -122,6 +123,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       hooks.useDraggableItem = useDraggableItem;
       hooks.DragPreview = DragPreview;
       hooks.renderDragPreview = renderDragPreview;
+      hooks.isVirtualDragging = isVirtualDragging;
     }
 
     if (isDroppable) {
@@ -145,38 +147,3 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
     dragAndDropHooks
   };
 }
-
-export const DropIndicatorContext = createContext<DropIndicatorContextValue | null>(null);
-
-export interface DropIndicatorRenderProps {
-  /**
-   * Whether the drop indicator is currently the active drop target.
-   * @selector [data-drop-target]
-   */
-  isDropTarget: boolean
-}
-
-export interface DropIndicatorProps extends AriaDropIndicatorProps, RenderProps<DropIndicatorRenderProps> {}
-
-interface DropIndicatorContextValue {
-  render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
-}
-
-function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
-  let {render} = useContext(DropIndicatorContext)!;
-  return <>{render(props, ref)}</>;
-}
-
-/**
- * A DropIndicator is rendered between items in a collection to indicate where dropped data will be inserted.
- */
-const _DropIndicator = forwardRef(DropIndicator);
-export {_DropIndicator as DropIndicator};
-
-export interface DragAndDropContextValue {
-  dragAndDropHooks?: DragAndDropHooks,
-  dragState?: DraggableCollectionState,
-  dropState?: DroppableCollectionState
-}
-
-export const DragAndDropContext = createContext<DragAndDropContextValue>({});

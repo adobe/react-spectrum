@@ -171,6 +171,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
     overlay.style.top = '';
     overlay.style.bottom = '';
+    overlay.style.left = '';
+    overlay.style.right = '';
+
     Object.keys(position.position).forEach(key => overlay.style[key] = position.position[key] + 'px');
     overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
 
