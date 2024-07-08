@@ -27,7 +27,11 @@
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
     "skipLibCheck": false,
     "strict": false,
     "plugins": [
@@ -166,5 +170,6 @@
     "packages/dev/optimize-locales-plugin",
     "packages/@react-spectrum/s2/s2wf-icons",
     "packages/@react-spectrum/s2/icon.d.ts"
+    "packages/dev/optimize-locales-plugin"
   ]
 }
