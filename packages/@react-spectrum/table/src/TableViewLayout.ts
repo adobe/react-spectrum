@@ -1,3 +1,15 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+import {DropTarget} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {LayoutInfo, Rect} from '@react-stately/virtualizer';
 import {LayoutNode, TableLayout} from '@react-stately/layout';
@@ -65,5 +77,11 @@ export class TableViewLayout<T> extends TableLayout<T> {
 
   protected isStickyColumn(node: GridNode<T>) {
     return node.props?.isDragButtonCell || node.props?.isSelectionCell;
+  }
+
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
+    // Offset for height of header row
+    y -= this.virtualizer.layout.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect.height;
+    return super.getDropTargetFromPoint(x, y, isValidDropTarget);
   }
 }
