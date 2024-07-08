@@ -18,7 +18,7 @@ import React, {RefObject, useMemo, useRef} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
-import {useEvent, useLoadMore} from '@react-aria/utils';
+import {useLoadMore} from '@react-aria/utils';
 
 export default {
   title: 'React Aria Components',
@@ -572,8 +572,7 @@ const OnLoadMoreTable = () => {
     isLoading: isLoading,
     onLoadMore: list.loadMore
   }), [isLoading, list.loadMore]);
-  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
-  useEvent(scrollRef, 'scroll', onScroll);
+  useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
     // TODO: but why typescript?
@@ -638,8 +637,7 @@ const OnLoadMoreTableBodyScroll = () => {
     isLoading: isLoading,
     onLoadMore: list.loadMore
   }), [isLoading, list.loadMore]);
-  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
-  useEvent(scrollRef, 'scroll', onScroll);
+  useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
     <Table aria-label="Load more table">
@@ -853,8 +851,7 @@ const OnLoadMoreTableVirtualized = () => {
     isLoading: isLoading,
     onLoadMore: list.loadMore
   }), [isLoading, list.loadMore]);
-  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
-  useEvent(scrollRef, 'scroll', onScroll);
+  useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
     <Virtualizer layout={layout}>
@@ -919,8 +916,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
     isLoading: isLoading,
     onLoadMore: list.loadMore
   }), [isLoading, list.loadMore]);
-  let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
-  useEvent(scrollRef, 'scroll', onScroll);
+  useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
     <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>

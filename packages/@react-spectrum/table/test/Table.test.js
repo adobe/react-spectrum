@@ -4213,8 +4213,13 @@ export let tableTests = () => {
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 1000);
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
       let onLoadMoreSpy = jest.fn();
+      let onLoadMore = () => {
+        onLoadMoreSpy();
+        scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 2000);
+      };
 
       let TableMock = (props) => (
         <TableView aria-label="Table">
@@ -4222,7 +4227,7 @@ export let tableTests = () => {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+          <TableBody items={props.items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
                 {key => <Cell>{row[key]}</Cell>}
@@ -4235,6 +4240,7 @@ export let tableTests = () => {
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
       expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
   });
 

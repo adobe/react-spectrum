@@ -266,11 +266,6 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(x, y, 0, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
-    // TODO: this makes the width of loader rect properly adapt to Table's horizontal size
-    // I can overwrite this in tablelayout if need be, but I don't think this is really a problem here
-    // since a list's visibleRect.width is always equal to the contentSize width? Maybe not true for a horizontal
-    // stack though, the loader would probably need to be the height of the virtualizer rect and the width equal to the
-    // the specified loaderWidth instead...
     rect.width = this.virtualizer.contentSize.width;
     rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight;
 

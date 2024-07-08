@@ -104,13 +104,11 @@ interface VirtualizerOptions {
 export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V>, ref: RefObject<HTMLElement | null>) {
   let {isLoading, onLoadMore} = props;
   let {setVisibleRect} = state;
-
-  let {scrollViewProps: {onScroll}} = useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setVisibleRect(rect);
-    onScroll();
-  }, [setVisibleRect, onScroll]);
+  }, [setVisibleRect]);
 
   // TODO: would've liked it if I didn't have to preseve these and just attach onScroll directly to the scroll ref but it would be breaking.
   return {

@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useCallback, useMemo, useRef} from 'react';
+import {RefObject, useCallback, useRef} from 'react';
+import {useEvent} from './useEvent';
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
 import {useLayoutEffect} from './useLayoutEffect';
 
@@ -43,15 +44,12 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
         isLoadingRef.current = true;
         onLoadMore();
       }
-
     }
   }, [onLoadMore, ref, scrollOffset]);
 
-  let lastContentSize = useRef(0);
   useLayoutEffect(() => {
     // Only update isLoadingRef if props object actually changed,
     // not if a local state change occurred.
-    let wasLoading = isLoadingRef.current;
     if (props !== prevProps.current) {
       isLoadingRef.current = isLoading;
       prevProps.current = props;
@@ -64,23 +62,17 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     let shouldLoadMore = ref?.current
       && !isLoadingRef.current
       && onLoadMore
-      && ref.current.clientHeight === ref.current.scrollHeight
-      // Only try loading more if the content size changed, or if we just finished
-      // loading and still have room for more items.
-      && (wasLoading || ref.current.scrollHeight !== lastContentSize.current);
+      && ref.current.clientHeight === ref.current.scrollHeight;
+
     if (shouldLoadMore) {
       isLoadingRef.current = true;
       onLoadMore?.();
     }
-    lastContentSize.current = ref.current?.scrollHeight || 0;
+
   }, [isLoading, onLoadMore, props, ref]);
 
-  // TODO: some of the RSP tests async loading tests actually fail when attaching the scroll event directly to the ref
-  // not entirely sure why....... It seems like RSP Virtualizer calls onScroll when the rect changes? Will need to dig some more
-  // useEvent(ref, 'scroll', onScroll);
-  return useMemo(() => ({
-    scrollViewProps: {
-      onScroll
-    }
-  }), [onScroll]);
+  // TODO: maybe this should still just return scroll props?
+  // Test against case where the ref isn't defined when this is called
+  // Think this was a problem when trying to attach to the scrollable body of the table in OnLoadMoreTableBodyScroll
+  useEvent(ref, 'scroll', onScroll);
 }

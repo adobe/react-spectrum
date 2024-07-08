@@ -18,7 +18,7 @@ import React, {useMemo, useRef, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
 import * as stories from '../stories/Table.stories';
-import {useEvent, useLoadMore} from '@react-aria/utils';
+import {useLoadMore} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -1528,8 +1528,7 @@ describe('Table', () => {
         onLoadMore,
         scrollOffset
       }), [isLoading, onLoadMore, scrollOffset]);
-      let {scrollViewProps: {onScroll}} = useLoadMore(memoedLoadMoreProps, scrollRef);
-      useEvent(scrollRef, 'scroll', onScroll);
+      useLoadMore(memoedLoadMoreProps, scrollRef);
 
       return (
         <ResizableTableContainer data-testid="scrollRegion" ref={scrollRef}>
@@ -1681,8 +1680,7 @@ describe('Table', () => {
         });
 
         let scrollRef = useRef(null);
-        let {scrollViewProps: {onScroll}} = useLoadMore({onLoadMore}, scrollRef);
-        useEvent(scrollRef, 'scroll', onScroll);
+        useLoadMore({onLoadMore}, scrollRef);
 
         return (
           <Virtualizer layout={layout}>

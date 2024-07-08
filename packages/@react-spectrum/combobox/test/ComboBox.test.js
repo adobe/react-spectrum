@@ -173,12 +173,13 @@ let secondCallFilterItems = [
 
 function getFilterItems() {
   return Promise.resolve({
-    items: initialFilterItems
+    items: initialFilterItems,
+    cursor: '1'
   });
 }
 
 function mockSecondCall() {
-  return new Promise(resolve => setTimeout(() => resolve({items: secondCallFilterItems}), 1500));
+  return new Promise(resolve => setTimeout(() => resolve({items: secondCallFilterItems, cursor: '2'}), 1500));
 }
 
 let load;
@@ -2123,7 +2124,7 @@ describe('ComboBox', function () {
         return 40;
       });
       // scrollHeight is now mocking the virtualizer's total content height
-      scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 104);
+      scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
     });
     afterEach(() => {
       clientHeightSpy.mockRestore();
@@ -2132,6 +2133,17 @@ describe('ComboBox', function () {
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     });
     it('onLoadMore is called on initial open', async () => {
+      load = jest
+        .fn()
+        .mockImplementationOnce(() => {
+          return getFilterItems();
+        })
+        .mockImplementationOnce(() => {
+          // Update scrollable body height to simulate 2nd load
+          scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
+          return mockSecondCall();
+        })
+        .mockImplementationOnce(mockSecondCall);
       let {getByRole} = render(
         <Provider theme={theme}>
           <AsyncComboBox />
@@ -2162,8 +2174,7 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onLoadMore).toHaveBeenCalledTimes(1);
-      expect(load).toHaveBeenCalledTimes(1);
-
+      expect(load).toHaveBeenCalledTimes(2);
       // close menu
       act(() => {combobox.blur();});
       // raf from virtualizer relayout
@@ -2180,6 +2191,19 @@ describe('ComboBox', function () {
     });
 
     it('onLoadMore is not called on when previously opened', async () => {
+      load = jest
+      .fn()
+      .mockImplementationOnce(() => {
+        return getFilterItems();
+      })
+      .mockImplementationOnce(() => {
+        // Update scrollable body height to simulate 2nd load
+        scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
+        return mockSecondCall();
+      })
+      .mockImplementationOnce(() => {
+        return new Promise(resolve => setTimeout(() => resolve({items: secondCallFilterItems, cursor: '3'}), 1500));
+      });
       let {getByRole} = render(
         <Provider theme={theme}>
           <AsyncComboBox />
@@ -2209,6 +2233,7 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      expect(load).toHaveBeenCalledTimes(2);
 
       // close menu
       act(() => {combobox.blur();});
@@ -2228,9 +2253,7 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      clientHeightSpy.mockRestore();
-      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
-      // reopen menu
+      // reopen menu, don't modify height mocks to simulate the same total content size and old listbox height
       await user.click(button);
       await act(async () => {
         // advance to open state from Transition
@@ -2238,7 +2261,6 @@ describe('ComboBox', function () {
       });
       listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
       // onLoadMore queued by previous timer, run it now
@@ -2247,7 +2269,7 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
       expect(onLoadMore).toHaveBeenCalledTimes(1);
-      expect(load).toHaveBeenCalledTimes(1);
+      expect(load).toHaveBeenCalledTimes(2);
 
       // close menu
       act(() => {combobox.blur();});
