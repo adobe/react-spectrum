@@ -184,15 +184,18 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   }, state, domRef);
 
   let focusedKey = selectionManager.focusedKey;
+  let dropTargetKey: Key | null = null;
   if (dropState?.target?.type === 'item') {
-    focusedKey = dropState.target.key;
+    dropTargetKey = dropState.target.key;
     if (dropState.target.dropPosition === 'after') {
       // Normalize to the "before" drop position since we only render those in the DOM.
-      focusedKey = state.collection.getKeyAfter(focusedKey) ?? focusedKey;
+      dropTargetKey = state.collection.getKeyAfter(dropTargetKey) ?? dropTargetKey;
     }
   }
 
-  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+  let persistedKeys = useMemo(() => {
+    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+  }, [focusedKey, dropTargetKey]);
 
   // wait for layout to get accurate measurements
   let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);

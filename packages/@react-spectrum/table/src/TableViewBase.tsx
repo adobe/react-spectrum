@@ -404,16 +404,19 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   let focusedKey = state.selectionManager.focusedKey;
+  let dropTargetKey: Key | null = null;
   if (dropState?.target?.type === 'item') {
-    focusedKey = dropState.target.key;
-    if (dropState.target.dropPosition === 'before' && focusedKey !== state.collection.getFirstKey()) {
+    dropTargetKey = dropState.target.key;
+    if (dropState.target.dropPosition === 'before' && dropTargetKey !== state.collection.getFirstKey()) {
       // Normalize to the "after" drop position since we only render those in the DOM.
       // The exception to this is for the first row in the table, where we also render the "before" position.
-      focusedKey = state.collection.getKeyBefore(focusedKey);
+      dropTargetKey = state.collection.getKeyBefore(dropTargetKey);
     }
   }
 
-  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+  let persistedKeys = useMemo(() => {
+    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+  }, [focusedKey, dropTargetKey]);
 
   let mergedProps = mergeProps(
     isTableDroppable && droppableCollection?.collectionProps,
