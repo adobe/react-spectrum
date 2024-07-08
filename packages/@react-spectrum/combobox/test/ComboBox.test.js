@@ -2143,7 +2143,9 @@ describe('ComboBox', function () {
           scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
           return mockSecondCall();
         })
-        .mockImplementationOnce(mockSecondCall);
+        .mockImplementationOnce(() => {
+          return new Promise(resolve => setTimeout(() => resolve({items: secondCallFilterItems, cursor: '3'}), 1500));
+        });
       let {getByRole} = render(
         <Provider theme={theme}>
           <AsyncComboBox />
@@ -2188,6 +2190,9 @@ describe('ComboBox', function () {
       act(() => {jest.advanceTimersToNextTimer();});
 
       expect(listbox).not.toBeInTheDocument();
+      await act(async () => {
+        jest.runAllTimers();
+      });
     });
 
     it('onLoadMore is not called on when previously opened', async () => {
@@ -2273,6 +2278,9 @@ describe('ComboBox', function () {
 
       // close menu
       act(() => {combobox.blur();});
+      await act(async () => {
+        jest.runAllTimers();
+      });
     });
   });
 
