@@ -19,12 +19,6 @@ function detectPackageManager() {
   return null;
 }
 
-async function isPackageInstalled(packageName: string) {
-  let packageJsonPath = path.join(process.cwd(), 'package.json');
-  let packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-  return packageJson.dependencies?.[packageName] || packageJson.devDependencies?.[packageName];
-}
-
 function hasPackageJson() {
   return fs.existsSync(path.join(process.cwd(), 'package.json'));
 }

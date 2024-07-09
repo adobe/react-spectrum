@@ -232,6 +232,7 @@ function removeProp(path: NodePath<t.JSXElement>, options: RemovePropOptions) {
           ) {
             if (t.isIdentifier(path.node.value.expression)) {
               // @ts-ignore
+              // eslint-disable-next-line max-depth
               if (path.node.comments && [...path.node.comments].some((comment) => comment.value.includes('could not be automatically'))) {
                 return;
               }
