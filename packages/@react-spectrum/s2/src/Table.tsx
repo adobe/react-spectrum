@@ -54,6 +54,7 @@ import {ColumnSize} from '@react-types/table';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {LoadingState} from '@react-types/shared';
 import { mergeStyles } from '../style/runtime';
+import { useIsMobileDevice } from './utils';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -116,7 +117,7 @@ interface S2TableProps {
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
-let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean}>({});
+let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale}>({});
 
 const tableWrapper = style({
   overflow: 'auto',
@@ -168,8 +169,8 @@ let dragCellPreview = style({
   paddingBottom: {
     default: '[12px]', // table-row-bottom-to-text-medium-spacious
     density: {
-      spacious: '[16px]', // table-row-bottom-to-text-medium-spacious
-      compact: '[9px]' // table-row-bottom-to-text-medium-compact
+      spacious: '[15px]', // table-row-bottom-to-text-medium-spacious
+      compact: '[8px]' // table-row-bottom-to-text-medium-compact
     }
   },
   // TODO: fontSize control doesn't work here for some reason
@@ -210,9 +211,11 @@ const ROW_HEIGHTS = {
   }
 };
 
+type Scale = 'large' | 'medium';
+
 // TODO: v3 had min widths for hide header columns, but RAC table's useTableColumnResizeState
 // call that happens internally doesn't accept options for that.
-
+// TODO: left/right keyboard navigation doesn't wrap properly, takes one extra press to fully wrap
 export function Table(props: TableProps) {
   let {
     UNSAFE_style,
@@ -245,25 +248,33 @@ export function Table(props: TableProps) {
   }
 
   let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
-  let context = useMemo(() => ({isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable}), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable]);
-
-  // TODO: will need a way to get "mobile" to set large scale
+  // TODO: perhaps just make a useScale
+  let scale = (useIsMobileDevice() ? 'large' : 'medium') as Scale;
+  let context = useMemo(() => ({
+    isQuiet,
+    density,
+    overflowMode,
+    selectionStyle,
+    loadingState,
+    columnsResizable,
+    scale
+  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale]);
   let layout = useMemo(() => {
     return new UNSTABLE_TableLayout({
       rowHeight: overflowMode === 'wrap'
         ? undefined
-        : ROW_HEIGHTS[density]['medium'],
+        : ROW_HEIGHTS[density][scale],
       estimatedRowHeight: overflowMode === 'wrap'
-      ? ROW_HEIGHTS[density]['medium']
+      ? ROW_HEIGHTS[density][scale]
       : undefined,
       headingHeight: overflowMode === 'wrap'
         ? undefined
-        : DEFAULT_HEADER_HEIGHT['medium'],
+        : DEFAULT_HEADER_HEIGHT[scale],
       estimatedHeadingHeight: overflowMode === 'wrap'
-        ? DEFAULT_HEADER_HEIGHT['medium']
+        ? DEFAULT_HEADER_HEIGHT[scale]
         : undefined
     });
-  }, [overflowMode, density]);
+  }, [overflowMode, density, scale]);
 
   let baseTable = (
     <UNSTABLE_Virtualizer layout={layout}>
@@ -429,8 +440,8 @@ const cellFocus = style({
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
   let {isFocusVisible} = props;
-  // return <span className={cellFocus({isFocusVisible})} />;
-  return null;
+  return <span className={cellFocus({isFocusVisible})} />;
+  // return null;
 }
 
 const columnStyles = style({
@@ -728,10 +739,14 @@ const tableHeader = style({
   width: 'full'
 });
 
-// TODO: the width of the select checkbox with the virtualizer is too wide because it allocates the same amount of room
-// as it does for other columns, will need to pass in getDefaultWidth/getDefaultMinWidth to RAC Table
 const selectAllCheckbox = style({
-  marginX: 16 // table-edge-to-content
+  marginStart: 16, // table-edge-to-content, same between mobile and desktop
+  marginEnd: {
+    default: 8,
+    scale: {
+      large: 14
+    }
+  }
 });
 
 const selectAllCheckboxColumn = style({
@@ -746,25 +761,26 @@ const selectAllCheckboxColumn = style({
 export function TableHeader<T extends object>(
   {columns, children}: TableHeaderProps<T>
 ) {
+  let {scale} = useContext(InternalTableContext);
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-
   return (
     <AriaTableHeader className={tableHeader}>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && (
-        <AriaColumn className={selectAllCheckboxColumn}>
+        // TODO: width for this column is taken from v3, designs don't have DnD specified yet
+        <AriaColumn width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
           {({isFocusVisible}) => <CellFocusRing isFocusVisible={isFocusVisible} />}
         </AriaColumn>
       )}
       {selectionBehavior === 'toggle' && (
-        <AriaColumn className={selectAllCheckboxColumn}>
+        <AriaColumn width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
           {({isFocusVisible}) => (
             <>
               {selectionMode === 'single' &&
                 <CellFocusRing isFocusVisible={isFocusVisible} />
               }
               {selectionMode === 'multiple' &&
-                <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
+                <Checkbox isEmphasized styles={selectAllCheckbox({scale})} slot="selection" />
               }
             </>
           )}
@@ -806,7 +822,7 @@ const cell = style<CellRenderProps & S2TableProps>({
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
   // when they probably should
   paddingTop: {
-    default: '[11px]', // table-row-top-to-text-medium-regular
+    default: '[10px]', // table-row-top-to-text-medium-regular
     density: {
       spacious: '[15px]', // table-row-top-to-text-medium-spacious
       compact: '[6px]' // table-row-top-to-text-medium-compact
@@ -815,8 +831,8 @@ const cell = style<CellRenderProps & S2TableProps>({
   paddingBottom: {
     default: '[12px]', // table-row-bottom-to-text-medium-spacious
     density: {
-      spacious: '[16px]', // table-row-bottom-to-text-medium-spacious
-      compact: '[9px]' // table-row-bottom-to-text-medium-compact
+      spacious: '[15px]', // table-row-bottom-to-text-medium-spacious
+      compact: '[8px]' // table-row-bottom-to-text-medium-compact
     }
   },
   fontSize: 'control',
@@ -826,6 +842,13 @@ const cell = style<CellRenderProps & S2TableProps>({
 
 const checkboxCellStyle = style({
   ...commonCellStyles,
+  paddingStart: 16,
+  paddingEnd: {
+    default: 8,
+    scale: {
+      large: 14
+    }
+  },
   alignContent: 'center',
   height: 'full'
 });
@@ -987,7 +1010,7 @@ export function Row<T extends object>(
         </Cell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-        <Cell className={checkboxCellStyle}>
+        <Cell className={checkboxCellStyle({scale: tableVisualOptions.scale})}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>
       )}
