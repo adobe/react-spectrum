@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement} from '@react-types/shared';
+import {AriaLabelingProps, FocusableElement, forwardRefType} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
