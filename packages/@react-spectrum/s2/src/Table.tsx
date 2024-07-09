@@ -37,14 +37,14 @@ import {
   DragAndDropOptions as AriaDragAndDropOptions,
   DropIndicator,
   DropTarget,
-  UNSTABLE_TableLoader,
+  UNSTABLE_TableLoadingIndicator,
   UNSTABLE_Virtualizer,
   UNSTABLE_TableLayout
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
-import {lightDark, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, ReactNode, useContext, useMemo, useRef} from 'react';
 import {ProgressCircle} from './ProgressCircle';
 import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
@@ -55,6 +55,7 @@ import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {LoadingState} from '@react-types/shared';
 import { mergeStyles } from '../style/runtime';
 import { useIsMobileDevice } from './utils';
+import {useLoadMore} from '@react-aria/utils';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -109,7 +110,9 @@ interface S2TableProps {
    */
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
   /** The current loading state of the table. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState,
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
+  onLoadMore?: () => any
 }
 
 // TODO: audit the props and get omit stuff we don't want from the RAC props
@@ -121,7 +124,7 @@ let InternalTableContext = createContext<TableProps & {columnsResizable?: boolea
 
 const tableWrapper = style({
   overflow: 'auto',
-  width: '[300px]'
+  width: 'full'
 });
 
 // TODO: will need focus styles and stuff which will use the TableRenderProps here
@@ -129,9 +132,15 @@ const table = style<TableRenderProps>({
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
-  borderSpacing: 0,
   fontFamily: 'sans',
-  overflow: 'auto'
+  overflow: 'auto',
+  backgroundSize: 'auto',
+  backgroundRepeat: 'no-repeat',
+  // TODO: Note that this makes the height of the background image NOT scale down. However, if we modify the viewBox/rect y instead we can't get a consistent offset from the top of the wrapper...
+  backgroundPosition: '[0px 32px]',
+  // TODO: this approach would need the y adjust with respect with how tall the row header is (also if there werew nested columns too..). The colors would also need to adjust, so probably move this into the table component so we can calculate these?
+  // Need to change the radius as well, background color, and appearance if this is quiet/etc
+  backgroundImage: `url('data:image/svg+xml,<svg preserveAspectRatio="none" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="398" height="352" rx="8" fill="transparent" stroke="black" /></svg>')`
 }, getAllowedOverrides({height: true}));
 
 
@@ -160,17 +169,17 @@ let dragRowPreview = style({
 // TODO: same style as from cell, combine later
 let dragCellPreview = style({
   paddingTop: {
-    default: '[11px]', // table-row-top-to-text-medium-regular
+    default: size(11), // table-row-top-to-text-medium-regular
     density: {
-      spacious: '[15px]', // table-row-top-to-text-medium-spacious
-      compact: '[6px]' // table-row-top-to-text-medium-compact
+      spacious: size(15), // table-row-top-to-text-medium-spacious
+      compact: size(6) // table-row-top-to-text-medium-compact
     }
   },
   paddingBottom: {
-    default: '[12px]', // table-row-bottom-to-text-medium-spacious
+    default: size(12), // table-row-bottom-to-text-medium-spacious
     density: {
-      spacious: '[15px]', // table-row-bottom-to-text-medium-spacious
-      compact: '[8px]' // table-row-bottom-to-text-medium-compact
+      spacious: size(15), // table-row-bottom-to-text-medium-spacious
+      compact: size(8) // table-row-bottom-to-text-medium-compact
     }
   },
   // TODO: fontSize control doesn't work here for some reason
@@ -215,7 +224,6 @@ type Scale = 'large' | 'medium';
 
 // TODO: v3 had min widths for hide header columns, but RAC table's useTableColumnResizeState
 // call that happens internally doesn't accept options for that.
-// TODO: left/right keyboard navigation doesn't wrap properly, takes one extra press to fully wrap
 export function Table(props: TableProps) {
   let {
     UNSAFE_style,
@@ -226,6 +234,7 @@ export function Table(props: TableProps) {
     selectionStyle = 'checkbox',
     styles,
     loadingState,
+    onLoadMore,
     onResize,
     onResizeEnd,
     onResizeStart,
@@ -276,10 +285,20 @@ export function Table(props: TableProps) {
     });
   }, [overflowMode, density, scale]);
 
+
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let scrollRef = useRef(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: isLoading,
+    onLoadMore
+  }), [isLoading, onLoadMore]);
+  useLoadMore(memoedLoadMoreProps, scrollRef);
+
   let baseTable = (
     <UNSTABLE_Virtualizer layout={layout}>
       <InternalTableContext.Provider value={context}>
         <AriaTable
+          ref={scrollRef}
           style={UNSAFE_style}
           className={renderProps => (UNSAFE_className || '') + table({
             ...renderProps
@@ -297,8 +316,9 @@ export function Table(props: TableProps) {
       // Right now I've just hard coded the width
       // TODO: also the current styling cuts off the table body border/outline. Even with additional padding to compensate for this, the rest of the body is still
       // out of view since the container itself is the scrollable region instead of the body itself. Not sure how to actually style it so that we get the
-      // body outline visible at all times (can't make the container have the outline since that goes around the columns too)
-      <ResizableTableContainer onResize={onResize} onResizeEnd={onResizeEnd} onResizeStart={onResizeStart} className={mergeStyles(tableWrapper, styles)}>
+      // body outline visible at all times (can't make the container have the outline since that goes around the columns too).
+      // Did an additional attempt using a background image but that didn't work that well due to finiky scaling/positioning depending on the Table's size...
+      <ResizableTableContainer ref={scrollRef} onResize={onResize} onResizeEnd={onResizeEnd} onResizeStart={onResizeStart} className={mergeStyles(tableWrapper, styles)}>
         <UNSTABLE_Virtualizer layout={layout}>
           <InternalTableContext.Provider value={context}>
             <AriaTable
@@ -320,22 +340,26 @@ export function Table(props: TableProps) {
 
 // TODO: will need focus styles for when it is focused due to empty state
 // styles for root drop target
-const tableBody = style<TableBodyRenderProps & S2TableProps>({
-  backgroundColor: {
-    default: 'gray-25',
-    isQuiet: 'transparent'
-  },
-  outlineColor: 'gray-300',
-  outlineWidth: {
-    default: 1,
-    isQuiet: 0
-  },
-  outlineStyle: 'solid',
-  borderRadius: {
-    default: 'default',
-    isQuiet: 'none'
-  }
-});
+// TODO: with the virtualization, the styles applied here go on a 0 height div..., for now I'm trying a background image since the table body
+// is the child of the virutalizer wrapper that contains ALL the rows, so it is hard to size it to the actual user applied height of the table...
+// If we do go with the background image approach, we will need to have that background image change its background color and border when focused for
+// root drop or empty state focus...
+// const tableBody = style<TableBodyRenderProps & S2TableProps>({
+//   backgroundColor: {
+//     default: 'gray-25',
+//     isQuiet: 'transparent'
+//   },
+//   outlineColor: 'gray-300',
+//   outlineWidth: {
+//     default: 1,
+//     isQuiet: 0
+//   },
+//   outlineStyle: 'solid',
+//   borderRadius: {
+//     default: 'default',
+//     isQuiet: 'none'
+//   }
+// });
 
 const centeredWrapper = style({
   display: 'flex',
@@ -348,25 +372,26 @@ const centeredWrapper = style({
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
-  // TODO: grab loading state from top level table
   let {items, renderEmptyState, children} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   let {loadingState} = tableVisualOptions;
   let emptyRender;
   let renderer = children;
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoader>
+    <UNSTABLE_TableLoadingIndicator>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           // TODO: needs intl translation
           aria-label="loading more" />
       </div>
-    </UNSTABLE_TableLoader>
+    </UNSTABLE_TableLoadingIndicator>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
   // the loader. Otherwise it is a static renderer and thus we can simply add the table loader after
+  // TODO: this assumes that the user isn't providing their children in some wrapper though and/or isn't doing a map of children
+  // (though I guess they wouldn't provide items then so the check for this is still valid in the latter case)...
   if (typeof children === 'function' && items) {
     renderer = (
       <>
@@ -405,10 +430,11 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
   return (
     <AriaTableBody
-      className={renderProps => tableBody({
-        ...renderProps,
-        ...tableVisualOptions
-      })}
+      // TODO: removed in favor of the background image
+      // className={renderProps => tableBody({
+      //   ...renderProps,
+      //   ...tableVisualOptions
+      // })}
       {...props}
       renderEmptyState={emptyRender}
       dependencies={[loadingState]}>
@@ -417,11 +443,6 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   );
 }
 
-// TODO: what should the focus ring for the column look like? flush with the top row's outline? Right now it overlaps the body's border.
-// Additionally, the cell specific styles in the design show that the focus ring sits on top of the 1px gray row bottom border (same with the blue left hand indicator)
-// but the table playground design example shows that the blue selection box takes over .5px of that border?
-// TODO: The border radius on this focus ring doesn't match with the 7px border radius of the table body, meaning it won't be flush when the user is keyboard focused on
-// a cell at the end of the table. Clarify with Spectrum design
 const cellFocus = style({
   position: 'absolute',
   top: 0,
@@ -435,7 +456,7 @@ const cellFocus = style({
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: 'sm'
+  borderRadius: size(6)
 });
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
@@ -457,11 +478,11 @@ const columnStyles = style({
   },
   // TODO: would be nice to not have to hard code these
   paddingTop: {
-    default: '[7px]',  // table-column-header-row-top-to-text-medium
+    default: size(7),  // table-column-header-row-top-to-text-medium
     isColumResizable: 0
   },
   paddingBottom: {
-    default: '[8px]', // table-column-header-row-top-to-text-medium
+    default: size(8), // table-column-header-row-top-to-text-medium
     isColumResizable: 0
   },
   textAlign: 'start',
@@ -496,6 +517,9 @@ export function Column(props: ColumnProps) {
   let isColumResizable = columnsResizable && isResizable;
 
   return (
+    // TODO: the column has a width applied on it directly in Table even though the virtualized wrapper div already has a width
+    // This messes up the sizing because the padding is also applied on this element. Will need to see if removing it     style = {...style, width: layoutState.getColumnWidth(column.key)};
+    // is appropriate
     <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
@@ -569,8 +593,8 @@ const resizableMenuButtonWrapper = style({
   alignItems: 'center',
   // TODO: same styles from columnStyles, consolidate later
   paddingX: 16,
-  paddingTop: '[7px]', // table-column-header-row-top-to-text-medium
-  paddingBottom: '[8px]', // table-column-header-row-top-to-text-medium
+  paddingTop: size(7), // table-column-header-row-top-to-text-medium
+  paddingBottom: size(8), // table-column-header-row-top-to-text-medium
   backgroundColor: 'transparent',
   borderStyle: 'none',
   fontSize: 'control',
@@ -592,7 +616,7 @@ const resizerHandleContainer = style({
   height: 'full',
   position: 'absolute',
   top: 0,
-  right: '[-6px]',
+  right: size(-6),
   cursor: {
     default: 'none',
     resizableDirection: {
@@ -622,9 +646,9 @@ const resizerHandle = style({
     isResizing: 'focus-ring'
   },
   height: 'full',
-  width: '[2px]',
+  width: size(2),
   position: 'absolute',
-  left: '[5px]'
+  left: size(5)
 });
 
 const sortIcon = style({
@@ -654,7 +678,7 @@ const chevronIcon = style({
 const nubbin = style({
   position: 'absolute',
   top: 0,
-  left: '[-2px]',
+  left: size(-2),
   width: 16,
   height: 16
 });
@@ -903,11 +927,12 @@ export function Cell(props: CellProps) {
 // TODO: will also need to curve the first and last row, how to do this?
 // ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
 const row = style<RowRenderProps & S2TableProps>({
+  height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
   backgroundImage: {
     // TODO: will need the proper blue from tokens
-    isFocusVisible: 'linear-gradient(to right, blue 0 4px, transparent 4px)'
+    isFocusVisible: 'linear-gradient(to right, blue 0 3px, transparent 3px)'
   },
   backgroundColor: {
     default: 'gray-25',
@@ -952,7 +977,7 @@ const row = style<RowRenderProps & S2TableProps>({
     default: '[inset 0 -1px 0 0 gray]',
     // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
     // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
-    isSelected: '[inset 0 0 0 2px blue]',
+    isSelected: '[inset 0 0 0 1px blue]',
     forcedColors: {
       default: '[inset 0 -1px 0 0 black]',
       isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
@@ -970,8 +995,8 @@ const row = style<RowRenderProps & S2TableProps>({
 
 // TODO: temp styles, roughly mimics v3
 const dragButton = style({
-  width: '[13px]',
-  height: '[20px]',
+  width: size(13),
+  height: size(20),
   padding: 0,
   position: 'relative',
   display: 'flex',

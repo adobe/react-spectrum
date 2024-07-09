@@ -17,7 +17,7 @@ import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
-import {useListData} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -93,7 +93,7 @@ let items = [
 ];
 
 const DynamicTable = (args: any) => (
-  <Table aria-label="Dynamic table" {...args}>
+  <Table aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
       {(column) => (
         <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
@@ -130,6 +130,7 @@ function renderEmptyState() {
   );
 }
 
+// TODO: fix this story
 const EmptyStateTable = (args: any) => (
   <Table aria-label="Empty state" {...args} styles={style({height: '[400px]', width: '[400px]'})}>
     <TableHeader columns={columns}>
@@ -263,7 +264,7 @@ const SortableResizableTable = (args: any) => {
   };
 
   return (
-    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange}>
+    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 320})}>
       <TableHeader columns={sortResizeColumns}>
         {(column) => (
           <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable}>{column.name}</Column>
@@ -339,63 +340,62 @@ export const LoadingStateWithItemsStatic = {
   },
   name: 'loading state, static items'
 };
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
 
+const OnLoadMoreTable = (args: any) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
 
-// TODO: add after virtualization
-// interface Character {
-//   name: string,
-//   height: number,
-//   mass: number,
-//   birth_year: number
-// }
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
 
-// const OnLoadMoreTable = () => {
-//   let list = useAsyncList<Character>({
-//     async load({signal, cursor}) {
-//       if (cursor) {
-//         cursor = cursor.replace(/^http:\/\//i, 'https://');
-//       }
+  return (
+    // TODO: figure why it is complaining about passing in a height via styles. Will only appear if args is removed
+    <Table {...args} aria-label="Load more table" loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: 320, height: 320})}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="height">Height</Column>
+        <Column id="mass">Mass</Column>
+        <Column id="birth_year">Birth Year</Column>
+      </TableHeader>
+      <TableBody
+        items={list.items}>
+        {(item) => (
+          <Row id={item.name}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.height}</Cell>
+            <Cell>{item.mass}</Cell>
+            <Cell>{item.birth_year}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
 
-//       // Slow down load so progress circle can appear
-//       await new Promise(resolve => setTimeout(resolve, 4000));
-//       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
-//       let json = await res.json();
-//       return {
-//         items: json.results,
-//         cursor: json.next
-//       };
-//     }
-//   });
-
-//   return (
-//     <Table aria-label="Load more table" loadingState={list.loadingState} onLoadMore={list.loadMore}>
-//       <TableHeader>
-//         <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
-//         <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
-//         <Column id="mass" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Mass</Column>
-//         <Column id="birth_year" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Birth Year</Column>
-//       </TableHeader>
-//       <TableBody
-//         items={list.items}>
-//         {(item) => (
-//           <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
-//             <Cell>{item.name}</Cell>
-//             <Cell>{item.height}</Cell>
-//             <Cell>{item.mass}</Cell>
-//             <Cell>{item.birth_year}</Cell>
-//           </Row>
-//         )}
-//       </TableBody>
-//     </Table>
-//   );
-// };
-
-// export const OnLoadMoreTableStory  = {
-//   render: OnLoadMoreTable,
-//   name: 'onLoadMore table'
-// };
-
-
+export const OnLoadMoreTableStory  = {
+  render: OnLoadMoreTable,
+  args: {
+    ...Example.args
+  },
+  name: 'async loading table'
+};
 
 export const Sorting = {
   ...Example,
