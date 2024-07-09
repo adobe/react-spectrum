@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node} from '@react-types/shared';
+import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, Size} from '@react-types/shared';
 import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
@@ -24,6 +24,8 @@ export interface GridKeyboardDelegateOptions<C> {
   direction: Direction,
   collator?: Intl.Collator,
   layoutDelegate?: LayoutDelegate,
+  /** @deprecated - Use layoutDelegate instead. */
+  layout?: DeprecatedLayout,
   focusMode?: 'row' | 'cell'
 }
 
@@ -42,7 +44,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.disabledBehavior = options.disabledBehavior || 'all';
     this.direction = options.direction;
     this.collator = options.collator;
-    this.layoutDelegate = options.layoutDelegate || new DOMLayoutDelegate(options.ref);
+    this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref));
     this.focusMode = options.focusMode || 'row';
   }
 
@@ -354,5 +356,40 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     return null;
+  }
+}
+
+/* Backward compatibility for old Virtualizer Layout interface. */
+interface DeprecatedLayout {
+  getLayoutInfo(key: Key): DeprecatedLayoutInfo,
+  getContentSize(): Size,
+  virtualizer: DeprecatedVirtualizer
+}
+
+interface DeprecatedLayoutInfo {
+  rect: Rect
+}
+
+interface DeprecatedVirtualizer {
+  visibleRect: Rect
+}
+
+class DeprecatedLayoutDelegate implements LayoutDelegate {
+  layout: DeprecatedLayout;
+
+  constructor(layout: DeprecatedLayout) {
+    this.layout = layout;
+  }
+
+  getContentSize(): Size {
+    return this.layout.getContentSize();
+  }
+
+  getItemRect(key: Key): Rect | null {
+    return this.layout.getLayoutInfo(key)?.rect || null;
+  }
+
+  getVisibleRect(): Rect {
+    return this.layout.virtualizer.visibleRect;
   }
 }

@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Checkbox, Collection, ListLayout, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, Virtualizer} from '../';
+import {Button, Checkbox, Collection, UNSTABLE_ListLayout as ListLayout, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

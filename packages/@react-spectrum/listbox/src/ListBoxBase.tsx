@@ -17,9 +17,9 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
+import {ListBoxLayout} from './ListBoxLayout';
 import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
-import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -31,7 +31,7 @@ import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabelingProps, StyleProps {
-  layout: ListLayout<T>,
+  layout: ListBoxLayout<T>,
   state: ListState<T>,
   autoFocus?: boolean | FocusStrategy,
   shouldFocusWrap?: boolean,
@@ -48,17 +48,14 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
 }
 
 /** @private */
-export function useListBoxLayout<T>(): ListLayout<T> {
+export function useListBoxLayout<T>(): ListBoxLayout<T> {
   let {scale} = useProvider();
   let layout = useMemo(() =>
-    new ListLayout<T>({
+    new ListBoxLayout<T>({
       estimatedRowHeight: scale === 'large' ? 48 : 32,
       estimatedHeadingHeight: scale === 'large' ? 33 : 26,
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
-      loaderHeight: 40,
-      placeholderHeight: scale === 'large' ? 48 : 32,
-      forceSectionHeaders: true,
-      enableEmptyState: true
+      placeholderHeight: scale === 'large' ? 48 : 32
     })
   , [scale]);
 

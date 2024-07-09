@@ -11,15 +11,16 @@
  */
 
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
-import {BaseCollection, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, Expandable, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, NodeValue, useCachedChildren} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -136,19 +137,17 @@ export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(nu
 function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
-  let {collection, portal} = useCollection(props);
 
   return (
-    <>
-      {portal}
-      <TreeInner props={props} collection={collection} treeRef={ref} />
-    </>
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => <TreeInner props={props} collection={collection} treeRef={ref} />}
+    </CollectionBuilder>
   );
 }
 
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
-  collection: BaseCollection<T>,
+  collection: ICollection<unknown>,
   treeRef: RefObject<HTMLDivElement | null>
 }
 
@@ -290,7 +289,11 @@ export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('conte
     children: props.children,
     values
   });
-  return renderProps.children as JSX.Element;
+  return (
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+      {renderProps.children}
+    </CollectionRendererContext.Provider>
+  );
 });
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);

@@ -3,7 +3,7 @@
     // we can explicitly declare `any`, but we don't want to infer `any`
     "noImplicitAny": false,
     // maybe bump to 'esNext'?
-    "target": "es6",
+    "target": "es2018",
     // allows react jsx in tsx files
     "jsx": "react",
     // Eventually turn off, one we have no more assumed default exports.
@@ -41,6 +41,7 @@
           "./packages/@react-aria/l",
           "./packages/@react-aria/meter",
           "./packages/@react-aria/color",
+          "./packages/@react-aria/collections",
           "./packages/@react-aria/dialog",
           "./packages/@react-aria/e",
           "./packages/@react-aria/f",

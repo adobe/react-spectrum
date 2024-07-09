@@ -18,10 +18,10 @@ import {
   GridList,
   GridListContext,
   GridListItem,
-  ListLayout,
+  UNSTABLE_ListLayout as ListLayout,
   RouterProvider,
   useDragAndDrop,
-  Virtualizer
+  UNSTABLE_Virtualizer as Virtualizer
 } from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
