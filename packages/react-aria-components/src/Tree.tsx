@@ -280,8 +280,6 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-// TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
-// having those
 export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
@@ -302,7 +300,6 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   textValue: string,
   /** An accessibility label for this tree item. */
   'aria-label'?: string,
-  // TODO: made this required since the user needs to pass Content at least
   /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
   children: ReactNode
 }
@@ -437,7 +434,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
   );
 });
 
-export interface TreeLoaderRenderProps {
+export interface TreeLoadingIndicatorRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -445,9 +442,9 @@ export interface TreeLoaderRenderProps {
   level: number
 }
 
-export interface TreeLoaderProps extends RenderProps<TreeLoaderRenderProps> {}
+export interface TreeLoaderProps extends RenderProps<TreeLoadingIndicatorRenderProps>, StyleRenderProps<TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoader = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(UNSTABLE_TreeStateContext);
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore

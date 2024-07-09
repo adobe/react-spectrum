@@ -70,7 +70,7 @@ export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {UNSTABLE_TreeLoader, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
+export {UNSTABLE_TreeLoadingIndicator, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer as UNSTABLE_Virtualizer} from './Virtualizer';

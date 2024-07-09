@@ -1305,7 +1305,6 @@ function RootDropIndicator() {
   );
 }
 
-// TOOD: no props for now, maybe get rid of this? Might be good to keep it just in case
 export interface TableLoadingIndicatorProps extends StyleProps {
   children?: ReactNode
 }

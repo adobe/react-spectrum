@@ -575,8 +575,7 @@ const OnLoadMoreTable = () => {
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
-    // TODO: but why typescript?
-    <ResizableTableContainer ref={scrollRef as RefObject<HTMLDivElement>} style={{height: 150, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
       <Table aria-label="Load more table">
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
