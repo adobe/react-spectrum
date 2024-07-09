@@ -25,6 +25,7 @@ let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: FocusableElement,
+  preventFocusOnDrop?: boolean,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
@@ -512,9 +513,10 @@ class DragSession {
       });
     }
 
-    if (this.currentDropTarget) {
+    if (this.currentDropTarget && !this.currentDropTarget.preventFocusOnDrop) {
       // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
       // This corrects state such as whether focus ring should appear.
+      // useDroppableCollection handles this itself, so this is only for standalone drop zones.
       document.activeElement.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 

@@ -218,10 +218,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   let droppingState = useRef<DroppingState>(null);
   let updateFocusAfterDrop = useCallback(() => {
     let {state} = localState;
-    if (
-      droppingState.current &&
-      state.selectionManager.isFocused
-    ) {
+    if (droppingState.current) {
       let {
         target,
         collection: prevCollection,
@@ -290,16 +287,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         setInteractionModality('keyboard');
       }
 
-      clearTimeout(droppingState.current.timeout);
-      droppingState.current = null;
+      state.selectionManager.setFocused(true);
     }
   }, [localState]);
 
   let onDrop = useCallback((e: DropEvent, target: DropTarget) => {
     let {state} = localState;
-
-    // Focus the collection.
-    state.selectionManager.setFocused(true);
     
     // Save some state of the collection/selection before the drop occurs so we can compare later.
     droppingState.current = {
@@ -327,6 +320,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     // update the focused key here.
     droppingState.current.timeout = setTimeout(() => {
       updateFocusAfterDrop();
+      droppingState.current = null;
     }, 50);
   }, [localState, defaultOnDrop, ref, updateFocusAfterDrop]);
 
@@ -498,6 +492,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     return DragManager.registerDropTarget({
       element: ref.current,
+      preventFocusOnDrop: true,
       getDropOperation(types, allowedOperations) {
         if (localState.state.target) {
           let {draggingKeys} = globalDndState;
