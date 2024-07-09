@@ -74,16 +74,17 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     }
   });
 
-  let {name, descriptionId, errorMessageId, validationBehavior, excludeFromTabOrder} = radioGroupData.get(state)!;
-  let {focusableProps} = useFocusable(mergeProps({...props, excludeFromTabOrder}, {
+  let {focusableProps} = useFocusable(mergeProps(props, {
     onFocus: () => state.setLastFocusedValue(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
+  let {name, descriptionId, errorMessageId, validationBehavior, excludeFromTabOrder} = radioGroupData.get(state)!;
+
+  // A radio should only be tabbable if it's the currently selected value or if no value has been selected yet in the group.
   let tabIndex: number | undefined = -1;
-  if (interactions.tabIndex) {
-    tabIndex = interactions.tabIndex;
-  } else {
+
+  if (!excludeFromTabOrder && !isDisabled) {
     if (state.selectedValue != null) {
       if (state.selectedValue === value) {
         tabIndex = 0;
@@ -91,9 +92,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     } else if (state.lastFocusedValue === value || state.lastFocusedValue == null) {
       tabIndex = 0;
     }
-    if (isDisabled) {
-      tabIndex = undefined;
-    }
+  } else if (isDisabled) {
+    tabIndex = undefined;
   }
 
   useFormReset(ref, state.selectedValue, state.setSelectedValue);

@@ -530,4 +530,40 @@ describe('RadioGroup', () => {
 
     expect(radio).toHaveAttribute('tabindex', '-1');
   });
+
+  it('should unset the tabIndex for group disabled', () => {
+    let {getByRole} = render(
+      <RadioGroup isDisabled excludeFromTabOrder>
+        <Label>Test</Label>
+        <Radio value="a">A</Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+
+    expect(radio).not.toHaveAttribute('tabindex');
+  });
+
+  it('should unset the tabIndex for radio disabled', () => {
+    let {getByRole} = render(
+      <RadioGroup excludeFromTabOrder>
+        <Label>Test</Label>
+        <Radio isDisabled value="a">A</Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+
+    expect(radio).not.toHaveAttribute('tabindex');
+  });
+
+  it('should exclude the radio from tab order even if selected', () => {
+    let {getByRole} = render(
+      <RadioGroup excludeFromTabOrder value="a">
+        <Label>Test</Label>
+        <Radio value="a">A</Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+
+    expect(radio).toHaveAttribute('tabindex', '-1');
+  });
 });

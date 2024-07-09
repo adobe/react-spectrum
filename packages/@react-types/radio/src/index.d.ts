@@ -68,5 +68,5 @@ export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLa
   isEmphasized?: boolean
 }
 
-export interface AriaRadioProps extends RadioProps, DOMProps, FocusableDOMProps, AriaLabelingProps {}
+export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps {}
 export interface SpectrumRadioProps extends AriaRadioProps, StyleProps {}
