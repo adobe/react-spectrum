@@ -303,6 +303,7 @@ describe('queries', function () {
       const result = eachMonthOfInterval(start, end);
 
       expect(result).toEqual([
+        new CalendarDate(2024, 2, 1),
         new CalendarDate(2024, 3, 1),
         new CalendarDate(2024, 4, 1),
         new CalendarDate(2024, 5, 1)
@@ -316,12 +317,14 @@ describe('queries', function () {
       expect(() => eachMonthOfInterval(start, end)).toThrow('The start date must be before the end date.');
     });
 
-    it('should return an empty array if the start and end dates are in the same month', function () {
+    it('should return the start date of the month if the start and end dates are in the same month', function () {
       const start = new CalendarDate(2024, 2, 6);
       const end = new CalendarDate(2024, 2, 28);
       const result = eachMonthOfInterval(start, end);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual([
+        new CalendarDate(2024, 2, 1)
+      ]);
     });
 
     it('should handle intervals that span multiple years', function () {
@@ -330,6 +333,7 @@ describe('queries', function () {
       const result = eachMonthOfInterval(start, end);
 
       expect(result).toEqual([
+        new CalendarDateTime(2023, 11, 1, 0, 0),
         new CalendarDateTime(2023, 12, 1, 0, 0),
         new CalendarDateTime(2024, 1, 1, 0, 0),
         new CalendarDateTime(2024, 2, 1, 0, 0)

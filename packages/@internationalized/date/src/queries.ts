@@ -196,7 +196,7 @@ export function eachMonthOfInterval(start: DateValue, end: DateValue): DateValue
     return [currentDate, ...collectDates(startOfMonth(currentDate.add({months: 1})), endDate)];
   }
 
-  return collectDates(startDate.add({months: 1}), endDate);
+  return collectDates(startDate, endDate);
 }
 
 /** Returns the first date of the week for the given date and locale. */
