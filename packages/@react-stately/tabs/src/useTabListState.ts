@@ -69,11 +69,13 @@ function findDefaultSelectedKey<T>(collection: Collection<T> | null, disabledKey
   if (collection) {
     selectedKey = collection.getFirstKey();
     // loop over tabs until we find one that isn't disabled and select that
-    while (disabledKeys.has(selectedKey) && selectedKey !== collection.getLastKey()) {
+    // @ts-ignore
+    while ((disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey !== collection.getLastKey()) {
       selectedKey = collection.getKeyAfter(selectedKey);
     }
     // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
-    if (disabledKeys.has(selectedKey) && selectedKey === collection.getLastKey()) {
+    // @ts-ignore
+    if ((disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey === collection.getLastKey()) {
       selectedKey = collection.getFirstKey();
     }
   }
