@@ -12,6 +12,7 @@
 
 export {ActionButton} from './ActionButton';
 export {ActionMenu} from './ActionMenu';
+export {AlertDialog} from './AlertDialog';
 export {Avatar} from './Avatar';
 export {Badge} from './Badge';
 export {Breadcrumbs, Breadcrumb} from './Breadcrumbs';
@@ -61,6 +62,7 @@ export {FileTrigger} from 'react-aria-components';
 
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionMenuProps} from './ActionMenu';
+export type {AlertDialogProps} from './AlertDialog';
 export type {AvatarProps} from './Avatar';
 export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {BadgeProps} from './Badge';
