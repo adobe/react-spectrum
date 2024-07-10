@@ -70,15 +70,18 @@ export function MenuTrigger(props: MenuTriggerProps) {
     onResize: onResize
   });
 
+  let scrollRef = useRef(null);
+
   return (
     <Provider
       values={[
-        [MenuContext, menuProps],
+        [MenuContext, {...menuProps, ref: scrollRef}],
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'MenuTrigger',
           triggerRef: ref,
+          scrollRef,
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
