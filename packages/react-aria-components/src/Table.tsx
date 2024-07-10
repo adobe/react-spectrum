@@ -711,7 +711,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
 
   let style = renderProps.style;
   if (layoutState) {
-    style = {...style, width: isVirtualized ? null : layoutState.getColumnWidth(column.key)};
+    style = {...style, width: isVirtualized ? undefined : layoutState.getColumnWidth(column.key)};
   }
 
   let TH = useElementType('th');
