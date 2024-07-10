@@ -24,9 +24,22 @@ interface Symbols {
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
-// eslint-disable-next-line no-irregular-whitespace
-const GROUPING_SYMBOLS_REGEX = /[,٬ .  ]/gu;
-const NUMERALS_REGEX = /[0123456789]|[٠١٢٣٤٥٦٧٨٩]|[〇一二三四五六七八九]/gu;
+const MINUS_SIGN_SYMBOLS = '\u002D\u2212';
+const MINUS_SIGN_REGEX = new RegExp(`[${MINUS_SIGN_SYMBOLS}]`, 'g');
+const AMBIGUOUS_SYMBOLS = ',.';
+const ARABIC_THOUSANDS_SEPARATOR = '\u066C';
+const ARABIC_DECIMAL_SEPARATOR = '\u066B';
+const LRM_RLM_REGEX = /[\u200E\u200F]/g;
+const GROUPING_SYMBOLS = `${AMBIGUOUS_SYMBOLS} \u00A0\u202F${ARABIC_THOUSANDS_SEPARATOR}\u2019`;
+const GROUPING_SYMBOLS_REGEX = new RegExp(`[${GROUPING_SYMBOLS}]`, 'g');
+const DECIMAL_SYMBOLS = `${AMBIGUOUS_SYMBOLS}${ARABIC_DECIMAL_SEPARATOR}`;
+const DECIMAL_SYMBOLS_REGEX = new RegExp(`[${DECIMAL_SYMBOLS}]`, 'g');
+const NUMERALS_LATN = '0123456789';
+const NUMERALS_ARAB = '٠١٢٣٤٥٦٧٨٩';
+const NUMERALS_ARAB_REGEX = new RegExp(`[${NUMERALS_ARAB}]`, 'gu');
+const NUMERALS_HANIDEC = '〇一二三四五六七八九';
+const NUMERALS_HANIDEC_REGEX = new RegExp(`[${NUMERALS_HANIDEC}]`, 'gu');
+const NUMERALS_REGEX = new RegExp(`[${NUMERALS_LATN}]|[${NUMERALS_ARAB}]|[${NUMERALS_HANIDEC}]`, 'gu');
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -158,8 +171,12 @@ class NumberParserImpl {
       }
     }
 
+    // Remove LRM and RLM characters, which are used in some locales to control text direction.
+    fullySanitizedValue = fullySanitizedValue?.replace(LRM_RLM_REGEX, '');
+
     let newValue = fullySanitizedValue ? +fullySanitizedValue : NaN;
     if (isNaN(newValue)) {
+      // console.log('Failed to parse number:', {value, fullySanitizedValue, locale: this.locale, options: this.options, symbols: this.symbols});
       return NaN;
     }
 
@@ -186,24 +203,73 @@ class NumberParserImpl {
     let sanitizedValue = value.trim();
 
     let numeralMatches = sanitizedValue.match(NUMERALS_REGEX);
-    if (numeralMatches) {
-      let beforeAbs = sanitizedValue.slice(0, sanitizedValue.indexOf(numeralMatches[0]));
-      let afterAbs = sanitizedValue.slice(sanitizedValue.lastIndexOf(numeralMatches[numeralMatches.length - 1]) + 1);
-      let abs = sanitizedValue.slice(sanitizedValue.indexOf(numeralMatches[0]), sanitizedValue.lastIndexOf(numeralMatches[numeralMatches.length - 1]) + 1);
+    if (numeralMatches && this.options.numberingSystem !== 'arab') {
+      let firstNumeralMatch = numeralMatches[0];
+      let lastNumeralMatch = numeralMatches[numeralMatches.length - 1];
+      let beforeAbs = sanitizedValue.slice(0, sanitizedValue.indexOf(firstNumeralMatch));
+      let afterAbs = sanitizedValue.slice(sanitizedValue.lastIndexOf(lastNumeralMatch) + 1);
+      let abs = sanitizedValue.slice(sanitizedValue.indexOf(firstNumeralMatch), sanitizedValue.lastIndexOf(lastNumeralMatch) + 1);
+
       // Replace group and decimal symbols with the current locale's symbols
+      let decimalSymbolMatch = abs.match(DECIMAL_SYMBOLS_REGEX);
       let groupSymbolMatch = abs.match(GROUPING_SYMBOLS_REGEX);
       let integerPart: string;
-      let parsedIntegerPart: number;
       let decimalPart: string;
-      if (groupSymbolMatch && groupSymbolMatch.length > 0 && abs.length - groupSymbolMatch.length > this.options.minimumIntegerDigits) {
-        integerPart = abs.slice(0, abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]));
-        decimalPart = abs.slice(abs.indexOf(groupSymbolMatch[groupSymbolMatch.length - 1]) + 1, abs.length);
+      if (decimalSymbolMatch) {
+        let firstDecimalSymbol = decimalSymbolMatch[0];
+        let lastDecimalSymbol = decimalSymbolMatch[decimalSymbolMatch.length - 1];
+        integerPart = abs.slice(0, abs.lastIndexOf(lastDecimalSymbol));
+        decimalPart = abs.slice(abs.lastIndexOf(lastDecimalSymbol) + 1, abs.length);
         integerPart = integerPart.replace(GROUPING_SYMBOLS_REGEX, '');
-        parsedIntegerPart = parseInt(integerPart, 10);
-        if (!isNaN(parsedIntegerPart)) {
-          integerPart = parsedIntegerPart.toString();
+        let isArabic = NUMERALS_ARAB_REGEX.test(abs);
+        let isHanidec = NUMERALS_HANIDEC_REGEX.test(abs);
+        if (isArabic) {
+          // Replace Arabic numerals with Latin numerals,
+          // then parse the integer part to remove leading zeros,
+          // and finally replace Latin numerals with Arabic numerals.
+          integerPart = (
+            parseInt(
+              integerPart
+              .replace(NUMERALS_ARAB_REGEX, (d) => NUMERALS_ARAB.indexOf(d).toString()),
+              10
+            ).toString()
+            .replace(NUMERALS_REGEX, (d) => NUMERALS_ARAB.split('')[parseInt(d, 10)])
+          );
+        } else if (isHanidec) {
+          // Replace Hanidec numerals with Latin numerals,
+          // then parse the integer part to remove leading zeros,
+          // and finally replace Latin numerals with Hanidec numerals.
+          integerPart = (
+            parseInt(
+              integerPart
+              .replace(NUMERALS_HANIDEC_REGEX, (d) => NUMERALS_HANIDEC.indexOf(d).toString()),
+              10
+            ).toString()
+            .replace(NUMERALS_REGEX, (d) => NUMERALS_HANIDEC.split('')[parseInt(d, 10)])
+          );
+        } else {
+          integerPart = parseInt(integerPart, 10).toString();
         }
-        abs = `${integerPart ?? ''}${integerPart === '0' || groupSymbolMatch?.[groupSymbolMatch.length - 1] !== groupSymbolMatch?.[0] ? this.symbols.decimal : groupSymbolMatch[groupSymbolMatch.length - 1]}${decimalPart ?? ''}`;
+        let decimalSymbol = decimalSymbolMatch.length > 1 && lastDecimalSymbol === firstDecimalSymbol ? '' : lastDecimalSymbol;
+        if (decimalSymbol !== '') {
+          if (this.symbols.decimal &&
+            lastDecimalSymbol !== this.symbols.decimal &&
+            !isArabic &&
+            !isHanidec &&
+            (
+              integerPart.length > 3 ||
+              integerPart === '0' ||
+              (firstDecimalSymbol === this.symbols.decimal && lastDecimalSymbol === this.symbols.group) ||
+              (decimalSymbolMatch.length === 1 && decimalPart.length > 3)
+            )
+          ) {
+            decimalSymbol = this.symbols.decimal;
+          }
+        }
+
+        abs = `${integerPart ?? ''}${decimalSymbol}${decimalPart ?? ''}`;
+      } else if (groupSymbolMatch) {
+        abs = parseInt(abs.replace(GROUPING_SYMBOLS_REGEX, ''), 10).toString();
       }
       sanitizedValue = `${beforeAbs}${abs}${afterAbs}`;
     }
@@ -214,7 +280,7 @@ class NumberParserImpl {
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
     if (this.symbols.minusSign) {
-      sanitizedValue = sanitizedValue.replace('-', this.symbols.minusSign);
+      sanitizedValue = sanitizedValue.replace(MINUS_SIGN_REGEX, this.symbols.minusSign);
     }
 
     // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
