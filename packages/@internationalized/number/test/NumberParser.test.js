@@ -45,7 +45,7 @@ describe('NumberParser', function () {
 
     it('should support negative numbers with different minus signs', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('-10')).toBe(-10);
-      expect(new NumberParser('en-US', {style: 'decimal'}).parse('\u221210')).toBe(NaN);
+      expect(new NumberParser('en-US', {style: 'decimal'}).parse('\u221210')).toBe(-10);
 
       expect(new NumberParser('fi-FI', {style: 'decimal'}).parse('-10')).toBe(-10);
       expect(new NumberParser('fi-FI', {style: 'decimal'}).parse('\u221210')).toBe(-10);
@@ -240,13 +240,18 @@ describe('NumberParser', function () {
             function ({adjustedNumberForFractions, locale, opts}) {
               const formatter = new Intl.NumberFormat(locale, opts);
               const parser = new NumberParser(locale, opts);
+              const altParser = new NumberParser('en-US', opts);
 
               const formattedOnce = formatter.format(adjustedNumberForFractions);
-              const roundTrip = formatter.format(parser.parse(formattedOnce));
-              if (roundTrip !== formattedOnce) {
-                console.warn({formattedOnce, roundTrip, adjustedNumberForFractions, locale, opts});
-              }
+              const parsed = parser.parse(formattedOnce);
+              const altParsed = altParser.parse(formattedOnce);
+
+              const roundTrip = formatter.format(parsed);
               expect(roundTrip).toBe(formattedOnce);
+
+              if (parsed !== altParsed || roundTrip !== formattedOnce) {
+                console.log({formattedOnce, roundTrip, [locale]: parsed, 'en-US': altParsed, adjustedNumberForFractions, opts});
+              }
             }
           )
         );
@@ -331,8 +336,8 @@ describe('NumberParser', function () {
     it('should support negative numbers with different minus signs', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(false);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(true);
 
       expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
