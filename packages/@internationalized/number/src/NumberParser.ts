@@ -164,9 +164,9 @@ class NumberParserImpl {
       // extra step for rounding percents to what our formatter would output
       let options = {
         ...this.options,
-        style: 'decimal',
-        minimumFractionDigits: Math.min(this.options.minimumFractionDigits + 2, 20),
-        maximumFractionDigits: Math.min(this.options.maximumFractionDigits + 2, 20)
+        style: 'decimal' as const,
+        minimumFractionDigits: Math.min((this.options.minimumFractionDigits ?? 0) + 2, 20),
+        maximumFractionDigits: Math.min((this.options.maximumFractionDigits ?? 0) + 2, 20)
       };
       return (new NumberParser(this.locale, options)).parse(new NumberFormatter(this.locale, options).format(newValue));
     }

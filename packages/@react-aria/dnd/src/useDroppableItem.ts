@@ -32,7 +32,7 @@ export interface DroppableItemResult {
 /**
  * Handles drop interactions for an item within a collection component.
  */
-export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
+export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
   let droppableCollectionRef = getDroppableCollectionRef(state);
   useEffect(() => {

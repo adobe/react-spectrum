@@ -41,7 +41,7 @@ export interface TableColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
+export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement | null>): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
   // if there are no focusable children, the column header will focus the cell

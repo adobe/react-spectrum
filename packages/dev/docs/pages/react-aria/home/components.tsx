@@ -76,7 +76,7 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
   );
 }
 
-export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: RefObject<HTMLDivElement>) => {
+export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: RefObject<HTMLDivElement | null>) => {
   return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:!bg-[Highlight] forced-colors:!mix-blend-normal" {...props} />;
 });
 

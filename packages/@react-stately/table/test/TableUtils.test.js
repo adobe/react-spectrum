@@ -114,9 +114,7 @@ describe('TableUtils', () => {
       expect(columns).toStrictEqual(new Map([['name', 100], ['type', 100], ['height', 150], ['weight', 150], ['level', 500]]));
 
       let resizedColumns = layout.resizeColumnWidth(
-        1000,
         collection,
-        new Map([['name', '1fr'], ['type', '1fr'], ['level', '5fr']]),
         new Map([['height', 150], ['weight', 150]]),
         'height',
         200
@@ -132,9 +130,7 @@ describe('TableUtils', () => {
       expect(columns).toStrictEqual(new Map([['name', 100], ['type', 100], ['height', 200], ['weight', 150], ['level', 450]]));
 
       resizedColumns = layout.resizeColumnWidth(
-        1000,
         collection,
-        new Map([['name', 100], ['type', 100], ['level', '5fr']]),
         new Map([['height', 200], ['weight', 150]]),
         'type',
         50
@@ -164,9 +160,7 @@ describe('TableUtils', () => {
       expect(columns).toStrictEqual(new Map([['name', 100], ['type', 100], ['height', 150], ['weight', 150], ['level', 500]]));
 
       let resizedColumns = layout.resizeColumnWidth(
-        1000,
         collection,
-        new Map([['name', '1fr'], ['type', '1fr'], ['level', '5fr']]),
         new Map([['height', 150], ['weight', 150]]),
         'height',
         1000
@@ -197,9 +191,7 @@ describe('TableUtils', () => {
       expect(columns).toStrictEqual(new Map([['name', 100], ['type', 100], ['height', 150], ['weight', 150], ['level', 500]]));
 
       let resizedColumns = layout.resizeColumnWidth(
-        1000,
         collection,
-        new Map([['name', '1fr'], ['type', '1fr'], ['level', '5fr']]),
         new Map([['height', 150], ['weight', 150]]),
         'level',
         400

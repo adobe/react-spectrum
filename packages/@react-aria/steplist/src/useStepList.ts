@@ -25,7 +25,7 @@ export interface StepListAria {
   listProps: HTMLAttributes<HTMLElement>
 }
 
-export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement>): StepListAria {
+export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement | null>): StepListAria {
   let {
     'aria-label': ariaLabel
   } = props;

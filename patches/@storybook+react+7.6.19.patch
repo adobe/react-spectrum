@@ -1,0 +1,13 @@
+diff --git a/node_modules/@storybook/react/dist/index.d.ts b/node_modules/@storybook/react/dist/index.d.ts
+index 4d065a3..e2d4c50 100644
+--- a/node_modules/@storybook/react/dist/index.d.ts
++++ b/node_modules/@storybook/react/dist/index.d.ts
+@@ -2,7 +2,7 @@ import * as _storybook_types from '@storybook/types';
+ import { Addon_ClientStoryApi, Addon_Loadable, Args, ComponentAnnotations, AnnotatedStoryFn, ArgsStoryFn, ArgsFromMeta, StoryAnnotations, DecoratorFunction, StrictArgs, LoaderFunction, StoryContext as StoryContext$1, ProjectAnnotations, StoryAnnotationsOrFn, Store_CSFExports, StoriesWithPartialProps } from '@storybook/types';
+ export { ArgTypes, Args, Parameters, StrictArgs } from '@storybook/types';
+ import { R as ReactRenderer } from './types-0fc72a6d.js';
+-import { ComponentType, ComponentProps, JSXElementConstructor } from 'react';
++import { ComponentType, ComponentProps, JSXElementConstructor, JSX } from 'react';
+ import { Simplify, SetOptional } from 'type-fest';
+ 
+ interface ClientApi extends Addon_ClientStoryApi<ReactRenderer['storyResult']> {

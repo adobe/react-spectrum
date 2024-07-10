@@ -275,3 +275,21 @@ describe('Slider', () => {
     expect(onChange).toHaveBeenCalled();
   });
 });
+
+it('should support input ref', () => {
+  let inputRef = React.createRef();
+
+  let {getByRole} = render(
+    <Slider>
+      <Label>Test</Label>
+      <SliderOutput />
+      <SliderTrack>
+        <SliderThumb inputRef={inputRef} />
+      </SliderTrack>
+    </Slider>
+  );
+
+  let group = getByRole('group');
+  let thumbInput = group.querySelector('input');
+  expect(inputRef.current).toBe(thumbInput);
+});

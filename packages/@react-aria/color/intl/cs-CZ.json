@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Výběr barvy",
-  "twoDimensionalSlider": "2D posuvník",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "barevný vzorek",
+  "transparent": "průhledný",
+  "twoDimensionalSlider": "2D posuvník"
 }

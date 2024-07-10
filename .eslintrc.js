@@ -51,7 +51,7 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/chromatic-fc/**', '**/__tests__/**'],
     rules: {
       'rsp-rules/no-react-key': [ERROR],
       'rsp-rules/act-events-test': ERROR,

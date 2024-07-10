@@ -59,6 +59,9 @@ governing permissions and limitations under the License.
   display: flex;
   flex: 0 0 auto;
   align-items: flex-start;
+  padding-inline-start: var(--spectrum-toast-padding-right);
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
 
   .spectrum-Button,
   .spectrum-ClearButton {
@@ -79,11 +82,4 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
   column-gap: var(--spectrum-toast-content-padding-right);
   padding-inline-end: var(--spectrum-toast-content-padding-right);
-
-  & + .spectrum-Toast-buttons {
-    padding-inline-start: var(--spectrum-toast-padding-right);
-
-    border-inline-start-width: 1px;
-    border-inline-start-style: solid;
-  }
 }

@@ -140,11 +140,13 @@ interface ToastProps<T> extends AriaToastProps<T> {
 
 function Toast<T extends React.ReactNode>({state, ...props}: ToastProps<T>) {
   let ref = React.useRef(null);
-  let {toastProps, titleProps, closeButtonProps} = useToast(props, state, ref);
+  let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(props, state, ref);
 
   return (
     <div {...toastProps} ref={ref} className="toast">
-      <div {...titleProps}>{props.toast.content}</div>
+      <div {...contentProps}>
+        <div {...titleProps}>{props.toast.content}</div>
+      </div>
       <Button {...closeButtonProps}>x</Button>
     </div>
   );

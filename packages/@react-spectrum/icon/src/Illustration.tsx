@@ -23,7 +23,7 @@ export interface IllustrationProps extends DOMProps, AriaLabelingProps, StylePro
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement,
+  children: ReactElement<any>,
   /**
    * A slot to place the illustration in.
    * @default 'illustration'

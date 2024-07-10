@@ -12,16 +12,8 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, createContext, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {useIsSSR} from 'react-aria';
-
-// Override forwardRef types so generics work.
-declare function forwardRef<T, P = {}>(
-  render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
-): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
-
-export type forwardRefType = typeof forwardRef;
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -185,7 +177,7 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   return ctx;
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, ...contextProps} = ctx as any;
@@ -240,13 +232,13 @@ export function useSlot(): [RefCallback<Element>, boolean] {
   return [ref, hasSlot];
 }
 
-export function useEnterAnimation(ref: RefObject<HTMLElement>, isReady: boolean = true) {
+export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true) {
   let [isEntering, setEntering] = useState(true);
   useAnimation(ref, isEntering && isReady, useCallback(() => setEntering(false), []));
   return isEntering && isReady;
 }
 
-export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
+export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean) {
   // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
   // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
   let [isExiting, setExiting] = useState(false);
@@ -276,7 +268,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
   return isExiting;
 }
 
-function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
+function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void) {
   let prevAnimation = useRef<string | null>(null);
   if (isActive && ref.current) {
     // This is ok because we only read it in the layout effect below, immediately after the commit phase.
@@ -308,69 +300,6 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
       }
     }
   }, [ref, isActive, onEnd]);
-}
-
-// React doesn't understand the <template> element, which doesn't have children like a normal element.
-// It will throw an error during hydration when it expects the firstChild to contain content rendered
-// on the server, when in reality, the browser will have placed this inside the `content` document fragment.
-// This monkey patches the firstChild property for our special hidden template elements to work around this error.
-// See https://github.com/facebook/react/issues/19932
-if (typeof HTMLTemplateElement !== 'undefined') {
-  const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
-  Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
-    configurable: true,
-    enumerable: true,
-    get: function () {
-      if (this.dataset.reactAriaHidden) {
-        return this.content.firstChild;
-      } else {
-        return getFirstChild.call(this);
-      }
-    }
-  });
-}
-
-export const HiddenContext = createContext<boolean>(false);
-
-// Portal to nowhere
-const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFragment() : null;
-
-export function Hidden(props: {children: ReactNode}) {
-  let isHidden = useContext(HiddenContext);
-  let isSSR = useIsSSR();
-  if (isHidden) {
-    // Don't hide again if we are already hidden.
-    return <>{props.children}</>;
-  }
-
-  let children = (
-    <HiddenContext.Provider value>
-      {props.children}
-    </HiddenContext.Provider>
-  );
-
-  // In SSR, portals are not supported by React. Instead, render into a <template>
-  // element, which the browser will never display to the user. In addition, the
-  // content is not part of the DOM tree, so it won't affect ids or other accessibility attributes.
-  return isSSR
-    ? <template data-react-aria-hidden>{children}</template>
-    : ReactDOM.createPortal(children, hiddenFragment!);
-}
-
-// Creates a component that forwards its ref and returns null if it is in a <Hidden> subtree.
-// Note: this function is handled specially in the documentation generator. If you change it, you'll need to update DocsTransformer as well.
-export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => React.ReactElement | null): (props: P & React.RefAttributes<T>) => React.ReactElement | null {
-  let Wrapper = (props: P, ref: React.Ref<T>) => {
-    let isHidden = useContext(HiddenContext);
-    if (isHidden) {
-      return null;
-    }
-
-    return fn(props, ref);
-  };
-  // @ts-ignore - for react dev tools
-  Wrapper.displayName = fn.displayName || fn.name;
-  return (React.forwardRef as forwardRefType)(Wrapper);
 }
 
 /**

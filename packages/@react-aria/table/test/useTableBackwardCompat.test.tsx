@@ -49,8 +49,8 @@ function Table(props) {
     ...otherProps,
     showSelectionCheckboxes: otherProps.selectionMode === 'multiple'
   });
-  let ref = useRef();
-  let bodyRef = useRef();
+  let ref = useRef(undefined);
+  let bodyRef = useRef(undefined);
   let {collection} = state;
   let {gridProps} = useTable({...otherProps, scrollRef: bodyRef}, state, ref);
 

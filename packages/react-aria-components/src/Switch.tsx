@@ -11,8 +11,9 @@
  */
 
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {forwardRefType} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 

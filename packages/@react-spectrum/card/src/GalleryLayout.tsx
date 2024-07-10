@@ -139,7 +139,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     let y = this.margin;
     let availableWidth = visibleWidth - this.margin * 2;
 
-    // If avaliable width is not greater than 0, skip node layout calculations
+    // If available width is not greater than 0, skip node layout calculations
     if (availableWidth > 0) {
       // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
       let ratios = [];
@@ -220,7 +220,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
       if (this.isLoading) {
         let loaderY = y;
         let loaderHeight = 60;
-        // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
+        // If there aren't any items, make loader take all available room and remove margin from y calculation
         // so it doesn't scroll
         if (this.collection.size === 0) {
           loaderY = 0;

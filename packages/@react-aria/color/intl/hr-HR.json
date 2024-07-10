@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Odabir boje",
-  "twoDimensionalSlider": "2D klizač",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "uzorak boje",
+  "transparent": "transparentno",
+  "twoDimensionalSlider": "2D klizač"
 }

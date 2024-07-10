@@ -16,7 +16,7 @@ import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
-import {Horizontal} from '../chromatic/HorizontalCard.chromatic';
+import {Horizontal} from '../chromatic/HorizontalCard.stories';
 import {Image} from '@react-spectrum/image';
 import React from 'react';
 

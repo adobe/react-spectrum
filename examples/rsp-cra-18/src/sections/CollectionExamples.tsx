@@ -1,5 +1,4 @@
-import {ActionMenu, Flex, Divider, Item, ListBox, ListView, MenuTrigger, Menu, ActionButton, TableBody, TableView, Row, Cell, TableHeader, Column, TagGroup} from '@adobe/react-spectrum';
-import {SubmenuTrigger} from "@react-spectrum/menu";
+import {ActionMenu, Flex, Divider, Item, ListBox, ListView, MenuTrigger, Menu, SubmenuTrigger, ActionButton, TableBody, TableView, Row, Cell, TableHeader, Column, TagGroup} from '@adobe/react-spectrum';
 
 export default function CollectionExamples(){
     return (

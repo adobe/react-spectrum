@@ -66,7 +66,7 @@ export const selectData = new WeakMap<SelectState<any>, SelectData>();
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement>): SelectAria<T> {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement | null>): SelectAria<T> {
   let {
     keyboardDelegate,
     isDisabled,

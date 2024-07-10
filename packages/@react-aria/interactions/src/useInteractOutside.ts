@@ -19,7 +19,7 @@ import {getOwnerDocument, useEffectEvent} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 
 export interface InteractOutsideProps {
-  ref: RefObject<Element>,
+  ref: RefObject<Element | null>,
   onInteractOutside?: (e: PointerEvent) => void,
   onInteractOutsideStart?: (e: PointerEvent) => void,
   /** Whether the interact outside events should be disabled. */

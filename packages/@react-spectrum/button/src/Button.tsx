@@ -114,11 +114,24 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
     ariaLive = 'off';
   }
+
+  let isPendingProps = isPending ? {
+    onClick: (e) => {
+      if (e.currentTarget instanceof HTMLButtonElement) {
+        e.preventDefault();
+      }
+    }
+  } : {
+    // no-op. 
+    // Not sure why, but TypeScript wouldn't allow to have an empty object `{}`.
+    onClick: () => {}
+  };
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <Element
         {...styleProps}
-        {...mergeProps(buttonProps, hoverProps, focusProps)}
+        {...mergeProps(buttonProps, hoverProps, focusProps, isPendingProps)}
         id={buttonId}
         ref={domRef}
         data-variant={variant}

@@ -334,6 +334,19 @@ The `className` and `style` props also accept functions which receive states for
 <Link className={({isCurrent}) => isCurrent ? 'bg-gray-700' : 'bg-gray-600'} />
 ```
 
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a link for all the breadcrumb items except the current one.
+
+```jsx
+<Breadcrumbs items={items}>
+  {(item) => (
+    <Breadcrumb>
+      {({isCurrent}) => isCurrent ? <strong>{item.label}</strong> : <Link>{item.label}</Link>}
+    </Breadcrumb>
+  )}
+</Breadcrumbs>
+```
+
+
 The states, selectors, and render props for all components used in `Breadcrumbs` are documented below.
 
 ### Breadcrumbs
@@ -342,7 +355,9 @@ The states, selectors, and render props for all components used in `Breadcrumbs`
 
 ### Breadcrumb
 
-A `Breadcrumb` can be targeted with the `.react-aria-Breadcrumb` CSS selector, or by overriding with a custom `className`. It is rendered as an `<li>` element, and should contain a `<Link>`. It may also include another element such as a [separator icon](#separator-icons).
+A `Breadcrumb` can be targeted with the `.react-aria-Breadcrumb` CSS selector, or by overriding with a custom `className`. It is rendered as an `<li>` element, and should contain a `<Link>`. It may also include another element such as a [separator icon](#separator-icons). Breadcrumb support the following states and render props:
+
+<StateTable properties={docs.exports.BreadcrumbRenderProps.properties} />
 
 ### Link
 

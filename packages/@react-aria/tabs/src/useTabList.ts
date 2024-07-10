@@ -31,7 +31,7 @@ export interface TabListAria {
  * Provides the behavior and accessibility implementation for a tab list.
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
+export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<T>, ref: RefObject<HTMLElement | null>): TabListAria {
   let {
     orientation = 'horizontal',
     keyboardActivation = 'automatic'

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, ListBox, OverlayArrow, Popover, Select, SelectValue} from 'react-aria-components';
+import {Button, Label, ListBox, UNSTABLE_ListLayout as ListLayout, OverlayArrow, Popover, Select, SelectValue, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -78,6 +78,26 @@ export const SelectManyItems = () => (
       <ListBox items={manyItems} className={styles.menu}>
         {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
       </ListBox>
+    </Popover>
+  </Select>
+);
+
+export const VirtualizedSelect = () => (
+  <Select>
+    <Label style={{display: 'block'}}>Test</Label>
+    <Button>
+      <SelectValue />
+      <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+    </Button>
+    <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
+      <Virtualizer layout={new ListLayout({rowHeight: 25})}>
+        <ListBox items={manyItems} className={styles.menu}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
     </Popover>
   </Select>
 );

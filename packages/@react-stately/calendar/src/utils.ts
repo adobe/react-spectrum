@@ -21,12 +21,12 @@ import {
 } from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 
-export function isInvalid(date: DateValue, minValue: DateValue, maxValue: DateValue) {
+export function isInvalid(date: DateValue, minValue?: DateValue | null, maxValue?: DateValue | null) {
   return (minValue != null && date.compare(minValue) < 0) ||
     (maxValue != null && date.compare(maxValue) > 0);
 }
 
-export function alignCenter(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue, maxValue?: DateValue) {
+export function alignCenter(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null) {
   let halfDuration: DateDuration = {};
   for (let key in duration) {
     halfDuration[key] = Math.floor(duration[key] / 2);
@@ -39,7 +39,7 @@ export function alignCenter(date: CalendarDate, duration: DateDuration, locale: 
   return constrainStart(date, aligned, duration, locale, minValue, maxValue);
 }
 
-export function alignStart(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue, maxValue?: DateValue) {
+export function alignStart(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null) {
   // align to the start of the largest unit
   let aligned = date;
   if (duration.years) {
@@ -53,16 +53,16 @@ export function alignStart(date: CalendarDate, duration: DateDuration, locale: s
   return constrainStart(date, aligned, duration, locale, minValue, maxValue);
 }
 
-export function alignEnd(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue, maxValue?: DateValue) {
+export function alignEnd(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null) {
   let d = {...duration};
   // subtract 1 from the smallest unit
-  if (duration.days) {
+  if (d.days) {
     d.days--;
-  } else if (duration.weeks) {
+  } else if (d.weeks) {
     d.weeks--;
-  } else if (duration.months) {
+  } else if (d.months) {
     d.months--;
-  } else if (duration.years) {
+  } else if (d.years) {
     d.years--;
   }
 
@@ -75,38 +75,50 @@ export function constrainStart(
   aligned: CalendarDate,
   duration: DateDuration,
   locale: string,
-  minValue: DateValue,
-  maxValue: DateValue) {
+  minValue?: DateValue | null,
+  maxValue?: DateValue | null) {
   if (minValue && date.compare(minValue) >= 0) {
-    aligned = maxDate(
+    let newDate = maxDate(
       aligned,
       alignStart(toCalendarDate(minValue), duration, locale)
     );
+    if (newDate) {
+      aligned = newDate;
+    }
   }
 
   if (maxValue && date.compare(maxValue) <= 0) {
-    aligned = minDate(
+    let newDate = minDate(
       aligned,
       alignEnd(toCalendarDate(maxValue), duration, locale)
     );
+    if (newDate) {
+      aligned = newDate;
+    }
   }
 
   return aligned;
 }
 
-export function constrainValue(date: CalendarDate, minValue: DateValue, maxValue: DateValue) {
+export function constrainValue(date: CalendarDate, minValue?: DateValue | null, maxValue?: DateValue | null) {
   if (minValue) {
-    date = maxDate(date, toCalendarDate(minValue));
+    let newDate = maxDate(date, toCalendarDate(minValue));
+    if (newDate) {
+      date = newDate;
+    }
   }
 
   if (maxValue) {
-    date = minDate(date, toCalendarDate(maxValue));
+    let newDate = minDate(date, toCalendarDate(maxValue));
+    if (newDate) {
+      date = newDate;
+    }
   }
 
   return date;
 }
 
-export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable: (date: CalendarDate) => boolean) {
+export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable?: (date: CalendarDate) => boolean): CalendarDate | null {
   if (!isDateUnavailable) {
     return date;
   }
@@ -118,4 +130,5 @@ export function previousAvailableDate(date: CalendarDate, minValue: DateValue, i
   if (date.compare(minValue) >= 0) {
     return date;
   }
+  return null;
 }

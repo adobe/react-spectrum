@@ -517,3 +517,32 @@ function Demo(props) {
     </ListView>
   );
 }
+
+const manyItems = [];
+for (let i = 0; i < 500; i++) {manyItems.push({key: i, name: `item ${i}`});}
+
+function DisplayNoneComponent(args) {
+  const [isDisplay, setIsDisplay] = useState(false);
+
+  return (
+    <>
+      <Button variant="primary" onPress={() => setIsDisplay(prev => !prev)}>Toggle ListView display</Button>
+      <div style={!isDisplay ? {display: 'none'} : null}>
+        <ListView aria-label="Many items" items={manyItems} width="300px" height="200px" {...args}>
+          {(item: any) => (
+            <Item key={item.key} textValue={item.name}>
+              <Text>
+                {item.name}
+              </Text>
+            </Item>
+          )}
+        </ListView>
+      </div>
+    </>
+  );
+}
+
+export const DisplayNone: ListViewStory = {
+  render: (args) => <DisplayNoneComponent {...args} />,
+  name: 'display: none with many items'
+};

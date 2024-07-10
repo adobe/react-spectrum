@@ -1,4 +1,4 @@
 {
   "close": "닫기",
-  "notifications": "알림"
+  "notifications": "{count, plural, one {# notification} other {# notifications}}."
 }

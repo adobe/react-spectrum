@@ -473,7 +473,7 @@ function App() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
         name="name"
@@ -500,7 +500,7 @@ function App() {
         )}
       />
       <Button type="submit">Submit</Button>
-    </form>
+    </Form>
   );
 }
 ```

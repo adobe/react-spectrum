@@ -49,6 +49,17 @@ export function getColorChannels(colorSpace: ColorSpace) {
   }
 }
 
+/**
+ * Returns the hue value normalized to the range of 0 to 360.
+ */
+export function normalizeHue(hue: number) {
+  if (hue === 360) {
+    return hue;
+  }
+
+  return ((hue % 360) + 360) % 360;
+}
+
 // Lightness threshold between orange and brown.
 const ORANGE_LIGHTNESS_THRESHOLD = 0.68;
 // Lightness threshold between pure yellow and "yellow green".
@@ -109,9 +120,9 @@ abstract class Color implements IColor {
 
   getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes {
     let {xChannel, yChannel} = xyChannels;
-    let xCh = xChannel || this.getColorChannels().find(c => c !== yChannel);
-    let yCh = yChannel || this.getColorChannels().find(c => c !== xCh);
-    let zCh = this.getColorChannels().find(c => c !== xCh && c !== yCh);
+    let xCh = xChannel || this.getColorChannels().find(c => c !== yChannel)!;
+    let yCh = yChannel || this.getColorChannels().find(c => c !== xCh)!;
+    let zCh = this.getColorChannels().find(c => c !== xCh && c !== yCh)!;
 
     return {xChannel: xCh, yChannel: yCh, zChannel: zCh};
   }
@@ -145,7 +156,7 @@ abstract class Color implements IColor {
     } else if (c >= 0.15) {
       chroma = 'vibrant';
     }
-    
+
     if (l < 0.3) {
       lightness = 'very dark';
     } else if (l < MAX_DARK_LIGHTNESS) {
@@ -234,7 +245,7 @@ class RGBColor extends Color {
   }
 
   static parse(value: string) {
-    let colors = [];
+    let colors: Array<number | undefined> = [];
     // matching #rgb, #rgba, #rrggbb, #rrggbbaa
     if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
       const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value).slice(1).split('');
@@ -248,7 +259,12 @@ class RGBColor extends Color {
     const match = value.match(/^rgba?\((.*)\)$/);
     if (match?.[1]) {
       colors = match[1].split(',').map(value => Number(value.trim()));
-      colors = colors.map((num, i) => clamp(num, 0, i < 3 ? 255 : 1));
+      colors = colors.map((num, i) => {
+        return clamp(num ?? 0, 0, i < 3 ? 255 : 1);
+      });
+    }
+    if (colors[0] === undefined || colors[1] === undefined || colors[2] === undefined) {
+      return undefined;
     }
 
     return colors.length < 3 ? undefined : new RGBColor(colors[0], colors[1], colors[2], colors[3] ?? 1);
@@ -360,6 +376,7 @@ class RGBColor extends Color {
           hue = (blue - red) / chroma + 2;
           break;
         case blue:
+        default:
           hue = (red - green) / chroma + 4;
           break;
       }
@@ -432,10 +449,10 @@ class HSBColor extends Color {
   }
 
   static parse(value: string): HSBColor | void {
-    let m: RegExpMatchArray | void;
+    let m: RegExpMatchArray | null;
     if ((m = value.match(HSB_REGEX))) {
       const [h, s, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
-      return new HSBColor(mod(h, 360), clamp(s, 0, 100), clamp(b, 0, 100), clamp(a ?? 1, 0, 1));
+      return new HSBColor(normalizeHue(h), clamp(s, 0, 100), clamp(b, 0, 100), clamp(a ?? 1, 0, 1));
     }
   }
 
@@ -565,20 +582,16 @@ class HSBColor extends Color {
 // - hsla(X, X%, X%, X)
 const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
-function mod(n, m) {
-  return ((n % m) + m) % m;
-}
-
 class HSLColor extends Color {
   constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
     super();
   }
 
   static parse(value: string): HSLColor | void {
-    let m: RegExpMatchArray | void;
+    let m: RegExpMatchArray | null;
     if ((m = value.match(HSL_REGEX))) {
       const [h, s, l, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim().replace('%', '')));
-      return new HSLColor(mod(h, 360), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
+      return new HSLColor(normalizeHue(h), clamp(s, 0, 100), clamp(l, 0, 100), clamp(a ?? 1, 0, 1));
     }
   }
 

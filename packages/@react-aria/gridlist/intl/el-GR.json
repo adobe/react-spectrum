@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "η σειρά έχει δράση",
+  "hasLinkAnnouncement": "η σειρά έχει σύνδεσμο: {link}"
 }

@@ -14,7 +14,7 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
   let {dropState, dragAndDropHooks} = useContext(ListViewContext);
   const {target, isPresentationOnly} = props;
 
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 

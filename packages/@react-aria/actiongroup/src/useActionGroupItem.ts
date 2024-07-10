@@ -31,7 +31,7 @@ const BUTTON_ROLES = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: ListState<T>, ref?: RefObject<FocusableElement>): ActionGroupItemAria {
+export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: ListState<T>, ref?: RefObject<FocusableElement | null>): ActionGroupItemAria {
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]

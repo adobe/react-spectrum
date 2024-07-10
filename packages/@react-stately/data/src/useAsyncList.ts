@@ -12,7 +12,7 @@
 
 import {createListActions, ListData, ListState} from './useListData';
 import {Key, LoadingState, Selection, SortDescriptor} from '@react-types/shared';
-import {Reducer, useEffect, useReducer, useRef} from 'react';
+import {useEffect, useReducer, useRef} from 'react';
 
 export interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
@@ -276,7 +276,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     initialFilterText = ''
   } = options;
 
-  let [data, dispatch] = useReducer<Reducer<AsyncListState<T, C>, Action<T, C>>>(reducer, {
+  let [data, dispatch] = useReducer<AsyncListState<T, C>, [Action<T, C>]>(reducer, {
     state: 'idle',
     error: null,
     items: [],

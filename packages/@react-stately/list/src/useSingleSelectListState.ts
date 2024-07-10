@@ -30,7 +30,7 @@ export interface SingleSelectListState<T> extends ListState<T> {
   setSelectedKey(key: Key | null): void,
 
   /** The value of the currently selected item. */
-  readonly selectedItem: Node<T>
+  readonly selectedItem: Node<T> | null
 }
 
 /**

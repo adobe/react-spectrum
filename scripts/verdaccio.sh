@@ -107,6 +107,7 @@ then
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
   yarn install
+  yarn test
 
   # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
   VERDACCIO=true yarn build | tee next-build-stats.txt

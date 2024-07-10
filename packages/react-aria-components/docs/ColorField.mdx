@@ -217,7 +217,7 @@ A ColorField accepts either a color string or <TypeLink links={docs.links} type=
 By default, `ColorField` is uncontrolled. You can set a default value using the `defaultValue` prop.
 
 ```tsx example
-<MyColorField defaultValue="#7f007f" />
+<MyColorField label="Color" defaultValue="#7f007f" />
 ```
 
 ### Controlled
@@ -233,7 +233,7 @@ function Example() {
   let [color, setColor] = React.useState(parseColor('#7f007f'));
   return (
     <>
-      <MyColorField value={color} onChange={setColor} />
+      <MyColorField label="Color" value={color} onChange={setColor} />
       <p>Current color value: {color.toString('hex')}</p>
     </>
   );

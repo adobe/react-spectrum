@@ -26,40 +26,54 @@ function testPlatform(re: RegExp) {
     : false;
 }
 
-export function isMac() {
+function cached(fn: () => boolean) {
+  if (process.env.NODE_ENV === 'test') {
+    return fn;
+  }
+  
+  let res: boolean | null = null;
+  return () => {
+    if (res == null) {
+      res = fn();
+    }
+    return res;
+  };
+}
+
+export const isMac = cached(function () {
   return testPlatform(/^Mac/i);
-}
+});
 
-export function isIPhone() {
+export const isIPhone = cached(function () {
   return testPlatform(/^iPhone/i);
-}
+});
 
-export function isIPad() {
+export const isIPad = cached(function () {
   return testPlatform(/^iPad/i) ||
     // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
     (isMac() && navigator.maxTouchPoints > 1);
-}
+});
 
-export function isIOS() {
+export const isIOS = cached(function () {
   return isIPhone() || isIPad();
-}
+});
 
-export function isAppleDevice() {
+export const isAppleDevice = cached(function () {
   return isMac() || isIOS();
-}
+});
 
-export function isWebKit() {
+export const isWebKit = cached(function () {
   return testUserAgent(/AppleWebKit/i) && !isChrome();
-}
+});
 
-export function isChrome() {
+export const isChrome = cached(function () {
   return testUserAgent(/Chrome/i);
-}
+});
 
-export function isAndroid() {
+export const isAndroid = cached(function () {
   return testUserAgent(/Android/i);
-}
+});
 
-export function isFirefox() {
+export const isFirefox = cached(function () {
   return testUserAgent(/Firefox/i);
-}
+});

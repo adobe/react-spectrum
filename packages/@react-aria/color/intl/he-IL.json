@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "בוחר הצבעים",
-  "twoDimensionalSlider": "מחוון דו מימדי",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "דוגמית צבע",
+  "transparent": "שקוף",
+  "twoDimensionalSlider": "מחוון דו מימדי"
 }

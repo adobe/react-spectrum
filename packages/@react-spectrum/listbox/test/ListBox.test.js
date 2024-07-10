@@ -850,7 +850,7 @@ describe('ListBox', function () {
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
-      expect(options.length).toBe(5); // each row is 48px tall, listbox is 200px. 5 rows fit.
+      expect(options.length).toBe(6); // each row is 48px tall, listbox is 200px. 5 rows fit. + 1/3 overscan
 
       listbox.scrollTop = 250;
       fireEvent.scroll(listbox);
@@ -893,7 +893,12 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      let isReact19 = parseInt(React.version, 10) >= 19;
+      if (isReact19) {
+        expect(onLoadMore).toHaveBeenCalledTimes(2);
+      } else {
+        expect(onLoadMore).toHaveBeenCalledTimes(1);
+      }
     });
   });
 

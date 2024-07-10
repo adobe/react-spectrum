@@ -14,6 +14,7 @@ export {useSelectableCollection} from './useSelectableCollection';
 export {useSelectableItem} from './useSelectableItem';
 export {useSelectableList} from './useSelectableList';
 export {ListKeyboardDelegate} from './ListKeyboardDelegate';
+export {DOMLayoutDelegate} from './DOMLayoutDelegate';
 export {useTypeSelect} from './useTypeSelect';
 
 export type {AriaSelectableCollectionOptions, SelectableCollectionAria} from './useSelectableCollection';

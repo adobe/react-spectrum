@@ -43,12 +43,20 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     throw new Error('useColorSliderState requires a value or defaultValue');
   }
 
-  let [colorValue, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
+  if (value) {
+    value = normalizeColor(value);
+  }
+  if (defaultValue) {
+    defaultValue = normalizeColor(defaultValue);
+  }
+  // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we throw an error
+  let [colorValue, setColor] = useControlledState<Color>(value as Color, defaultValue as Color, onChange);
   let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
   let sliderState = useSliderState({
     ...color.getChannelRange(channel),
     ...otherProps,
-    // Unused except in getThumbValueLabel, which is overridden below. null to appease TypeScript.
+    // Unused except in getThumbValueLabel, which is overridden below. null to localize the TypeScript error for ignoring.
+    // @ts-ignore
     numberFormatter: null,
     value: color.getChannelValue(channel),
     onChange(v) {

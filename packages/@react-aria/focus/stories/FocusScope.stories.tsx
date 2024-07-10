@@ -24,7 +24,6 @@ interface StoryProps {
 
 const meta: Meta<StoryProps> = {
   title: 'FocusScope',
-  component: FocusScope,
   parameters: {
     description: {
       data: 'Should not be able to click or navigate back into inputs from previous "dialogs".'

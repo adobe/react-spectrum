@@ -37,7 +37,8 @@ import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
-let isReact18 = parseInt(React.version, 10) >= 18;
+let isReact18 = parseInt(React.version, 10) === 18;
+let isReact19 = parseInt(React.version, 10) === 19;
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
@@ -428,10 +429,16 @@ describe('ListView', function () {
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
+
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        // TODO: fix in strict mode, due to https://github.com/facebook/react/issues/29585
+        if (isReact19) {
+          expect(onDragEnd).toHaveBeenCalledTimes(2);
+        } else {
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+        }
 
         act(() => jest.runAllTimers());
 
@@ -473,10 +480,18 @@ describe('ListView', function () {
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 150}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-        expect(onDrop).toHaveBeenCalledTimes(1);
+        if (isReact19) {
+          expect(onDrop).toHaveBeenCalledTimes(1);
+        } else {
+          expect(onDrop).toHaveBeenCalledTimes(1);
+        }
 
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 150}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        if (isReact19) {
+          expect(onDragEnd).toHaveBeenCalledTimes(2);
+        } else {
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+        }
 
         act(() => jest.runAllTimers());
 

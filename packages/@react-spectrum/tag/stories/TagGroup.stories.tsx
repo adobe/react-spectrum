@@ -242,7 +242,7 @@ export const EmptyState: TagGroupStory = {
       {[]}
     </TagGroup>
   ),
-  storyName: 'Empty state'
+  name: 'Empty state'
 };
 
 export const CustomEmptyState: TagGroupStory = {
@@ -250,7 +250,7 @@ export const CustomEmptyState: TagGroupStory = {
   args: {
     renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
   },
-  storyName: 'Custom empty state'
+  name: 'Custom empty state'
 };
 
 function OnRemoveExample(props) {

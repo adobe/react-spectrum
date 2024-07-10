@@ -22,6 +22,9 @@ describe('useSearchAutocomplete', function () {
   let stopPropagation = jest.fn();
   let event = (e) => ({
     ...e,
+    nativeEvent: {
+      isComposing: false
+    },
     preventDefault,
     stopPropagation
   });

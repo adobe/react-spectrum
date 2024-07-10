@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, createHideableComponent, useContextProps} from './utils';
+import {ContextValue, useContextProps} from './utils';
+import {createHideableComponent} from '@react-aria/collections';
 import React, {createContext, ForwardedRef, LabelHTMLAttributes} from 'react';
 
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {

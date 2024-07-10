@@ -24,7 +24,7 @@ export function Grid(props) {
     })
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {gridProps} = useGrid({
     'aria-label': 'Grid',
     focusMode: gridFocusMode
@@ -44,8 +44,8 @@ export function Grid(props) {
 }
 
 function Row({state, item, focusMode}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef(undefined);
+  let cellRef = React.useRef(undefined);
   let cellNode = [...item.childNodes][0];
   let {rowProps} = useGridRow({node: item}, state, rowRef);
   let {gridCellProps} = useGridCell({

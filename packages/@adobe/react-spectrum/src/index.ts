@@ -40,7 +40,7 @@ export {LabeledValue} from '@react-spectrum/labeledvalue';
 export {Link} from '@react-spectrum/link';
 export {ListBox} from '@react-spectrum/listbox';
 export {ListView} from '@react-spectrum/list';
-export {ActionMenu, Menu, MenuTrigger, SubmenuTrigger} from '@react-spectrum/menu';
+export {ActionMenu, ContextualHelpTrigger, Menu, MenuTrigger, SubmenuTrigger} from '@react-spectrum/menu';
 export {Meter} from '@react-spectrum/meter';
 export {NumberField} from '@react-spectrum/numberfield';
 export {Picker} from '@react-spectrum/picker';

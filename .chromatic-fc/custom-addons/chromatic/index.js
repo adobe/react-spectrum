@@ -1,5 +1,5 @@
 import {expressThemes, locales, scales, themes} from '../../constants';
-import {makeDecorator} from '@storybook/addons';
+import {makeDecorator} from '@storybook/preview-api';
 import {Provider, View} from '@adobe/react-spectrum';
 import React, {useEffect} from 'react';
 import './disableAnimations.css';

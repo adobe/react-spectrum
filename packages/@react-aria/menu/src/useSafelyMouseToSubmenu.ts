@@ -4,9 +4,9 @@ import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
-  menuRef: RefObject<Element>,
+  menuRef: RefObject<Element | null>,
   /** Ref for the submenu. */
-  submenuRef: RefObject<Element>,
+  submenuRef: RefObject<Element | null>,
   /** Whether the submenu is open. */
   isOpen: boolean,
   /** Whether this feature is disabled. */
@@ -24,12 +24,12 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let {menuRef, submenuRef, isOpen, isDisabled} = options;
-  let prevPointerPos = useRef<{x: number, y: number} | undefined>();
-  let submenuRect = useRef<DOMRect | undefined>();
+  let prevPointerPos = useRef<{x: number, y: number} | undefined>(undefined);
+  let submenuRect = useRef<DOMRect | undefined>(undefined);
   let lastProcessedTime = useRef<number>(0);
-  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>();
-  let autoCloseTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
-  let submenuSide = useRef<'left' | 'right' | undefined>();
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let autoCloseTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let submenuSide = useRef<'left' | 'right' | undefined>(undefined);
   let movementsTowardsSubmenuCount = useRef<number>(2);
   let [preventPointerEvents, setPreventPointerEvents] = useState(false);
 

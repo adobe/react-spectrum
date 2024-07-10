@@ -64,7 +64,7 @@ import {useLandmark} from '@react-aria/landmark';
 import {useRef} from 'react';
 
 function Navigation(props) {
-  let ref = useRef();
+  let ref = useRef<HTMLElement | null>(null);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
   return (
     <nav ref={ref} {...props} {...landmarkProps}>
@@ -74,7 +74,7 @@ function Navigation(props) {
 }
 
 function Region(props) {
-  let ref = useRef();
+  let ref = useRef<HTMLElement | null>(null);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
   return (
     <article ref={ref} {...props} {...landmarkProps}>
@@ -84,7 +84,7 @@ function Region(props) {
 }
 
 function Search(props) {
-  let ref = useRef();
+  let ref = useRef<HTMLFormElement | null>(null);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
     <form ref={ref} {...props} {...landmarkProps}>

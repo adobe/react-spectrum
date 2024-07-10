@@ -13,7 +13,7 @@
 import {RefObject, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export function useHasChild(query: string, ref: RefObject<HTMLElement>) {
+export function useHasChild(query: string, ref: RefObject<HTMLElement | null>) {
   let [hasChild, setHasChild] = useState(true);
   useLayoutEffect(() => {
     setHasChild(!!(ref.current && ref.current.querySelector(query)));

@@ -35,11 +35,11 @@ export interface ColorAreaAria {
 
 export interface AriaColorAreaOptions extends AriaColorAreaProps {
   /** A ref to the input that represents the x axis of the color area. */
-  inputXRef: RefObject<HTMLInputElement>,
+  inputXRef: RefObject<HTMLInputElement | null>,
   /** A ref to the input that represents the y axis of the color area. */
-  inputYRef: RefObject<HTMLInputElement>,
+  inputYRef: RefObject<HTMLInputElement | null>,
   /** A ref to the color area containing element. */
-  containerRef: RefObject<Element>
+  containerRef: RefObject<Element | null>
 }
 
 /**
@@ -63,7 +63,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let {direction, locale} = useLocale();
 
   let [focusedInput, setFocusedInput] = useState<'x' | 'y' | null>(null);
-  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement> = inputXRef) => {
+  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement | null> = inputXRef) => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }

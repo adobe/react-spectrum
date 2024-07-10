@@ -36,7 +36,7 @@ export interface TabAria {
 export function useTab<T>(
   props: AriaTabProps,
   state: TabListState<T>,
-  ref: RefObject<FocusableElement>
+  ref: RefObject<FocusableElement | null>
 ): TabAria {
   let {key, isDisabled: propsDisabled, shouldSelectOnPressUp} = props;
   let {selectionManager: manager, selectedKey} = state;

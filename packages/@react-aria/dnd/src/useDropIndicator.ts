@@ -41,7 +41,7 @@ export interface DropIndicatorAria {
 /**
  * Handles drop interactions for a target within a droppable collection.
  */
-export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
+export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DropIndicatorAria {
   let {target} = props;
   let {collection} = state;
 

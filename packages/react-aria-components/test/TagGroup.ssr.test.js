@@ -42,6 +42,7 @@ describe('TagGroup SSR', function () {
       // Assert that server rendered stuff into the HTML.
       let options = screen.getAllByRole('row');
       expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
+      expect(screen.getByRole('grid')).toBeInTheDocument();
     });
 
     // Assert that hydrated UI matches what we expect.

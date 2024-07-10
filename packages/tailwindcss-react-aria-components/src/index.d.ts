@@ -1,4 +1,4 @@
-declare function plugin(options?: Partial<{ className: string, target: 'modern' | 'legacy' }>): {
+declare function plugin(options?: Partial<{ prefix: string }>): {
   handler: () => void
 }
 

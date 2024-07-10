@@ -18,7 +18,7 @@ import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 export interface UIIconProps extends DOMProps, AriaLabelingProps, StyleProps {
-  children: ReactElement,
+  children: ReactElement<any>,
   slot?: string,
   /**
    * Indicates whether the element is exposed to an accessibility API.

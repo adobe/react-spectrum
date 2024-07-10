@@ -12,6 +12,7 @@
 
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Meter} from '../';
+import {NumberFormatOptions} from '@internationalized/number';
 import React from 'react';
 
 type MeterStory = ComponentStoryObj<typeof Meter>;
@@ -19,7 +20,7 @@ type MeterStory = ComponentStoryObj<typeof Meter>;
 const formatOptions = {
   style: 'currency',
   currency: 'JPY'
-};
+} satisfies NumberFormatOptions;
 
 export default {
   title: 'Meter',

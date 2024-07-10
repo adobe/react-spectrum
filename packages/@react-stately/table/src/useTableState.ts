@@ -13,7 +13,7 @@
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection, TableBodyProps, TableHeaderProps} from '@react-types/table';
 import {Key, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
-import {MultipleSelectionStateProps} from '@react-stately/selection';
+import {MultipleSelectionState, MultipleSelectionStateProps} from '@react-stately/selection';
 import {ReactElement, useCallback, useMemo, useState} from 'react';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -52,7 +52,9 @@ export interface TableStateProps<T> extends MultipleSelectionStateProps, Sortabl
   /** Whether the row drag button should be displayed.
    * @private
    */
-  showDragButtons?: boolean
+  showDragButtons?: boolean,
+  /** @private - do not use unless you know what you're doing. */
+  UNSAFE_selectionState?: MultipleSelectionState
 }
 
 const OPPOSITE_SORT_DIRECTION = {

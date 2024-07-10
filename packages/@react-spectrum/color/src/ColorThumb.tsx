@@ -28,7 +28,7 @@ interface ColorThumbProps extends DOMProps {
   className?: string,
   children?: ReactElement,
   style?: CSSProperties,
-  containerRef?: RefObject<HTMLElement>
+  containerRef?: RefObject<HTMLElement | null>
 }
 
 function ColorThumb(props: ColorThumbProps) {

@@ -144,7 +144,7 @@ function Table(props) {
     showSelectionCheckboxes: selectionMode === 'multiple' && selectionBehavior !== 'replace'
   });
 
-  let ref = useRef();
+  let ref = useRef<HTMLTableElement | null>(null);
   let {collection} = state;
   let {gridProps} = useTable(props, state, ref);
 
@@ -206,7 +206,7 @@ row, but there could be multiple in the case of nested columns. See the [example
 import {useTableHeaderRow} from '@react-aria/table';
 
 function TableHeaderRow({item, state, children}) {
-  let ref = useRef();
+  let ref = useRef<HTMLTableRowElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
   return (
@@ -237,7 +237,7 @@ the cell is navigated to with the keyboard.
 import {useTableColumnHeader} from '@react-aria/table';
 
 function TableColumnHeader({column, state}) {
-  let ref = useRef();
+  let ref = useRef<HTMLTableCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
@@ -281,7 +281,7 @@ hook to render a focus ring when the user navigates to the row with the keyboard
 import {useTableRow} from '@react-aria/table';
 
 function TableRow({item, children, state}) {
-  let ref = useRef();
+  let ref = useRef<HTMLTableRowElement | null>(null);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps, isPressed} = useTableRow({
     node: item
@@ -321,7 +321,7 @@ object.
 import {useTableCell} from '@react-aria/table';
 
 function TableCell({cell, state}) {
-  let ref = useRef();
+  let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -395,7 +395,7 @@ import {useTableSelectionCheckbox} from '@react-aria/table';
 import {Checkbox} from 'your-component-library';
 
 function TableCheckboxCell({cell, state}) {
-  let ref = useRef();
+  let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
 
@@ -423,7 +423,7 @@ import {useTableSelectAllCheckbox} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function TableSelectAllCell({column, state}) {
-  let ref = useRef();
+  let ref = useRef<HTMLTableCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
@@ -494,7 +494,7 @@ import {useToggleState} from '@react-stately/toggle';
 import {useCheckbox} from '@react-aria/checkbox';
 
 function Checkbox(props) {
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLInputElement | null>(null);
   let state = useToggleState(props);
   let {inputProps} = useCheckbox(props, state, ref);
   return <input {...inputProps} ref={ref} style={props.style} />;
@@ -892,8 +892,8 @@ import {useTableColumnResizeState} from '@react-stately/table';
 
 function ResizableColumnsTable(props) {
   let state = useTableState(props);
-  let scrollRef = useRef();
-  let ref = useRef();
+  let scrollRef = useRef<HTMLDivElement | null>(null);
+  let ref = useRef<HTMLTableElement | null>(null);
   let {collection} = state;
   let {gridProps} = useTable(
     {
@@ -998,7 +998,7 @@ import {Button} from 'your-component-library';
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
   let allowsResizing = column.props.allowsResizing;
-  let ref = useRef(null);
+  let ref = useRef<HTMLTableCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
 
   return (
@@ -1063,7 +1063,7 @@ The `Button` component is used in the above example to represent the table colum
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = useRef(null);
+  let ref = useRef<HTMLButtonElement | null>(null);
   let {focusProps, isFocusVisible} = useFocusRing();
   let {buttonProps} = useButton(props, ref);
   return <button {...mergeProps(buttonProps, focusProps)} ref={ref} className={`${props.className} ${isFocusVisible ? 'focus' : ''}`}>{props.children}</button>;
@@ -1085,7 +1085,7 @@ import {useTableColumnResize} from '@react-aria/table';
 
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
-  let ref = useRef(null);
+  let ref = useRef<HTMLInputElement | null>(null);
   let {resizerProps, inputProps, isResizing} = useTableColumnResize({
     column,
     'aria-label': 'Resizer',

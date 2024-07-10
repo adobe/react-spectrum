@@ -32,7 +32,7 @@ function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement
         }
       </div>
       <div className={style({display: 'flex', gap: 4})()}>
-        <Picker 
+        <Picker
           aria-label={formatter.format('colorFormat')}
           isQuiet
           width="size-700"
@@ -47,7 +47,7 @@ function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement
         {format === 'hex'
           ? <ColorField isQuiet width="size-1000" aria-label={formatter.format('hex')} />
           : getColorChannels(format).map(channel => (
-            <ColorField key={channel} colorSpace={format === 'hex' ? 'rgb' : format} channel={channel} isQuiet width="size-400" flex UNSAFE_style={{'--spectrum-textfield-min-width': 0} as CSSProperties} />
+            <ColorField key={channel} colorSpace={format} channel={channel} isQuiet width="size-400" flex UNSAFE_style={{'--spectrum-textfield-min-width': 0} as CSSProperties} />
           ))}
         {!props.hideAlphaChannel &&
           <ColorField channel="alpha" isQuiet width="size-400" flex UNSAFE_style={{'--spectrum-textfield-min-width': 0} as CSSProperties} />}

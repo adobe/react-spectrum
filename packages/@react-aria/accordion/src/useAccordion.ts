@@ -34,7 +34,7 @@ export interface AccordionItemAria {
   regionProps: DOMAttributes
 }
 
-export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement>): AccordionItemAria {
+export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): AccordionItemAria {
   let {item} = props;
   let buttonId = useId();
   let regionId = useId();
@@ -65,7 +65,7 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
   };
 }
 
-export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement>): AccordionAria {
+export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement | null>): AccordionAria {
   let {listProps} = useSelectableList({
     ...props,
     ...state,

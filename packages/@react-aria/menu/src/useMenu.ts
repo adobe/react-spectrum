@@ -46,7 +46,7 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement | null>): MenuAria {
   let {
     shouldFocusWrap = true,
     onKeyDown,

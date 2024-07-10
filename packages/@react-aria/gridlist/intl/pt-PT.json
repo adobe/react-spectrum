@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "linha com ação",
+  "hasLinkAnnouncement": "linha com ligação: {link}"
 }

@@ -50,9 +50,9 @@ export function useSubmenuTriggerContext(): SubmenuTriggerContextValue {
 export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   popoverContainer?: HTMLElement,
-  trayContainerRef?: RefObject<HTMLElement>,
-  menu?: RefObject<HTMLDivElement>,
-  submenu?: RefObject<HTMLDivElement>,
+  trayContainerRef?: RefObject<HTMLElement | null>,
+  menu?: RefObject<HTMLDivElement | null>,
+  submenu?: RefObject<HTMLDivElement | null>,
   rootMenuTriggerState?: RootMenuTriggerState
 }
 

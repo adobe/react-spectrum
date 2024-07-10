@@ -146,9 +146,10 @@ function openSyntheticLink(target: Element, modifiers: Modifiers) {
   getSyntheticLink(target, link => openLink(link, modifiers));
 }
 
-export function getSyntheticLinkProps(props: LinkDOMProps) {
+export function useSyntheticLinkProps(props: LinkDOMProps) {
+  let router = useRouter();
   return {
-    'data-href': props.href,
+    'data-href': props.href ? router.useHref(props.href) : undefined,
     'data-target': props.target,
     'data-rel': props.rel,
     'data-download': props.download,

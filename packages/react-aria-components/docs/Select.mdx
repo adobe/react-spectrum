@@ -833,6 +833,36 @@ function Example() {
 }
 ```
 
+## Customizing SelectValue
+
+Select passes the rendered children of the selected item in the render props of the `SelectValue` as well as if the placeholder should be showing. You can use this to customize the value displayed in the Select.
+
+```tsx example
+<Select>
+  <Label>Favorite Animal</Label>
+  <Button>
+    {/*- begin highlight -*/}
+    <SelectValue>
+      {({defaultChildren, isPlaceholder}) => {
+        return isPlaceholder ? <><b>Animal</b> selection</> : defaultChildren;
+      }}
+    </SelectValue>
+    {/*- end highlight -*/}
+    <span aria-hidden="true">▼</span>
+  </Button>
+  <Popover>
+    <ListBox>
+      <ListBoxItem>Aardvark</ListBoxItem>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
+      <ListBoxItem>Panda</ListBoxItem>
+      <ListBoxItem>Snake</ListBoxItem>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
 ## Props
 
 ### Select
@@ -995,7 +1025,7 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 
 ### SelectValue
 
-A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `SelectValue` can be targeted with the `.react-aria-SelectValue` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.SelectValueRenderProps.properties} />
 

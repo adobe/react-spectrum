@@ -47,7 +47,7 @@ interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
 interface ArrowProps {
   arrowProps: PopoverAria['arrowProps'],
   isLandscape: boolean,
-  arrowRef?: RefObject<SVGSVGElement>,
+  arrowRef?: RefObject<SVGSVGElement | null>,
   primary: number,
   secondary: number,
   borderDiagonal: number
@@ -85,7 +85,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
+const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement | null>) => {
   let {
     children,
     isOpen,
@@ -166,7 +166,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   );
 });
 
-function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement>) {
+function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement | null>) {
   let [borderRadius, setBorderRadius] = useState(0);
   useLayoutEffect(() => {
     if (popoverRef.current) {

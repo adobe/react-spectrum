@@ -28,7 +28,7 @@ export interface StepListItemAria {
   stepStateText?: String
 }
 
-export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement>): StepListItemAria {
+export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement | null>): StepListItemAria {
   const {key} = props;
   let {selectionManager: manager, selectedKey} = state;
 

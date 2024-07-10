@@ -333,7 +333,7 @@ describe('Breadcrumbs', function () {
     expect(onAction).toHaveBeenCalledWith('Folder 1');
 
     // menu item
-    expect(item1[1]).not.toHaveAttribute('role');
+    expect(item1[1]).toHaveAttribute('role', 'none');
     await user.click(item1[1]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
   });

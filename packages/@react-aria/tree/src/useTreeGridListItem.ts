@@ -42,7 +42,7 @@ export interface TreeGridListItemAria extends GridListItemAria {
  * @param state - State of the parent list, as returned by `useTreeState`.
  * @param ref - The ref attached to the row element.
  */
-export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement>): TreeGridListItemAria {
+export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement | null>): TreeGridListItemAria {
   let {node} = props;
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;

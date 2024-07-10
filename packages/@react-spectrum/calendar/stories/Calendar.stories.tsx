@@ -202,14 +202,16 @@ function Example(props) {
   let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
-  let pref = preferences.find(p => p.locale === locale);
+  let pref = preferences.find(p => p.locale === locale)!;
   let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
-  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
+  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p!.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
     setLocale(locale);
     let pref = preferences.find(p => p.locale === locale);
-    setCalendar(pref.ordering.split(' ')[0]);
+    if (pref) {
+      setCalendar(pref.ordering.split(' ')[0]);
+    }
   };
 
   return (
@@ -220,14 +222,14 @@ function Example(props) {
         </Picker>
         <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
           <Section title="Preferred" items={preferredCalendars}>
-            {item => <Item>{item.name}</Item>}
+            {item => <Item>{item!.name}</Item>}
           </Section>
           <Section title="Other" items={otherCalendars}>
             {item => <Item>{item.name}</Item>}
           </Section>
         </Picker>
       </Flex>
-      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
+      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars![0]!.key ? '-u-ca-' + calendar : '')}>
         <View maxWidth="100vw" padding="size-10" overflow="auto">
           <Calendar {...props} />
         </View>
