@@ -13,7 +13,7 @@
 import {Collection, Key} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
+import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -29,7 +29,7 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   renderWrapper?: RenderWrapper<T, V>,
   layout: Layout<T, O>,
   collection: Collection<T>,
-  focusedKey?: Key,
+  persistedKeys?: Set<Key> | null,
   sizeToFit?: 'width' | 'height',
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
   isLoading?: boolean,
@@ -49,7 +49,7 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
     isLoading,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onLoadMore,
-    focusedKey,
+    persistedKeys,
     layoutOptions,
     ...otherProps
   } = props;
@@ -65,7 +65,7 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
       ref.current.scrollLeft = rect.x;
       ref.current.scrollTop = rect.y;
     },
-    persistedKeys: useMemo(() => focusedKey != null ? new Set([focusedKey]) : new Set(), [focusedKey]),
+    persistedKeys,
     layoutOptions
   });
 

@@ -14,7 +14,7 @@
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
+import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
@@ -225,7 +225,10 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null]
           ]}>
-          <CollectionRoot collection={collection} focusedKey={state.selectionManager.focusedKey} scrollRef={ref} />
+          <CollectionRoot
+            collection={collection}
+            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+            scrollRef={ref} />
         </Provider>
       </div>
       <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
