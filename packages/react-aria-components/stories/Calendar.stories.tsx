@@ -20,14 +20,14 @@ export default {
 function Footer() {
   const state = useContext(CalendarStateContext);
   const setValue = state?.setValue;
-  
+
   return (
     <div>
-      <Button 
-        slot={null} 
+      <Button
+        slot={null}
         className="reset-button"
         onPress={() => {
-          // reset value 
+          // reset value
           setValue?.(null);
         }}>
         Reset value
@@ -36,18 +36,34 @@ function Footer() {
   );
 }
 
-export const CalendarExample = () => (
-  <Calendar style={{width: 220}} isDateUnavailable={d => d.day === 15}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <CalendarGrid style={{width: '100%'}}>
-      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-    </CalendarGrid>
-  </Calendar>
-);
+export const CalendarExample = {
+  render: (args) => (
+    <Calendar style={{width: 220}} isDateUnavailable={d => d.day === 15} {...args}>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <Button slot="previous">&lt;</Button>
+        <Heading style={{flex: 1, textAlign: 'center'}}/>
+        <Button slot="next">&gt;</Button>
+      </div>
+      <CalendarGrid style={{width: '100%'}}>
+        {date => (
+          <CalendarCell
+            date={date}
+            style={({isSelected, isOutsideMonth}) => ({
+              display: isOutsideMonth ? 'none' : '',
+              textAlign: 'center',
+              cursor: 'default',
+              background: isSelected ? 'blue' : ''
+            })} />
+        )}
+      </CalendarGrid>
+    </Calendar>
+  ),
+  parameters: {
+    description: {
+      data: 'Every 15th day of the month is disabled to demonstrate that you cannot select it.'
+    }
+  }
+};
 
 export const CalendarResetValue = () => (
   <Calendar style={{width: 220}}>
