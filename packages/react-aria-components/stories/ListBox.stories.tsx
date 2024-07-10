@@ -344,7 +344,7 @@ export function VirtualizedListBoxDnd() {
   );
 }
 
-export function VirtualizedListBoxGrid() {
+export function VirtualizedListBoxGrid({minSize, maxSize}) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -352,10 +352,10 @@ export function VirtualizedListBoxGrid() {
 
   let layout = useMemo(() => {
     return new GridLayout({
-      minItemSize: new Size(80, 80),
-      maxItemSize: new Size(100, 100)
+      minItemSize: new Size(minSize, minSize),
+      maxItemSize: new Size(maxSize, maxSize)
     });
-  }, []);
+  }, [minSize, maxSize]);
 
   let list = useListData({
     initialItems: items
@@ -395,3 +395,8 @@ export function VirtualizedListBoxGrid() {
     </div>
   );
 }
+
+VirtualizedListBoxGrid.args = {
+  minSize: 80,
+  maxSize: 100
+};
