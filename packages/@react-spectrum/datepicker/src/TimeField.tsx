@@ -72,7 +72,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         isQuiet={isQuiet}
         autoFocus={autoFocus}
         validationState={validationState}
-        segments={state.segments}
+        state={state}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment

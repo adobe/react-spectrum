@@ -36,7 +36,7 @@ function Input(props, ref) {
     segments
   } = props;
 
-  let minWidth = useTextWidth(segments);
+  let minWidth = useTextWidth(props.state, segments);
 
   // Reserve padding for the error icon when the width of the input is unconstrained.
   // When constrained, don't reserve space because adding it only when invalid will

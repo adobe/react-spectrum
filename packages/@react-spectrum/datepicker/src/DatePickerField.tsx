@@ -44,10 +44,9 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
 
   let inputRef = useRef(undefined);
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
-  let minWidth = useTextWidth(state.segments);
 
   return (
-    <div {...fieldProps} style={{minWidth: minWidth}} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
+    <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
         (<DatePickerSegment
           key={i}

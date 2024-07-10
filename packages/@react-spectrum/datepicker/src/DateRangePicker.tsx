@@ -136,7 +136,8 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
           validationState={validationState}
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}
-          disableFocusRing>
+          disableFocusRing
+          state={state}>
           <DatePickerField
             {...startFieldProps}
             data-testid="start-date"

@@ -13,7 +13,7 @@ import {createDOMRef} from '@react-spectrum/utils';
 import {createFocusManager} from '@react-aria/focus';
 import {FocusableRef} from '@react-types/shared';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
 import {useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -78,21 +78,36 @@ export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
   return domRef;
 }
 
-export function useTextWidth(segments) {
-  const [width, setWidth] = useState('auto');
+// Passing in segments because state and state.segments don't always
+// cause the useEffect to run when the segments change.
+export function useTextWidth(state, segments) {
+  let [width, setWidth] = useState('auto');
+  let locale = useLocale()?.locale;
 
   useEffect(() => {
-    // pickers don't support segments yet
-    if (!segments) {
-      return;
+    let totalCharacters = 0;
+    if (state && !state.segments) {
+      if (state.value?.start && state.value?.end) {
+        let {start, end} = state.formatValue(locale, {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'});
+        // adding characters for the seperator
+        totalCharacters = start?.length + end?.length + 3;
+      } else {
+        let {start, end} = state.formatPlaceholder(locale, {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'});
+        // adding characters for the seperator
+        totalCharacters = start?.length + end?.length + 3;
+      }
+    } else if (state?.segments) {
+      totalCharacters = state.segments.reduce((total, segment) => total + (segment.placeholder || segment.text).length, 0);
     }
 
-    let totalCharacters = segments.reduce((total, segment) => total + (segment.placeholder || segment.text).length, 0);
-    // setWidth(`calc(${totalCharacters - dividerCount}em + ${dividerCount}ch)`);
-    // the longer the string the more character padding is needed
-    // setWidth((totalCharacters / 2 + (Math.floor(totalCharacters / 10) || 1)) + 'em');
-    setWidth((totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2)) + 'ch');
-  }, [segments]);
+    // Always need a minimum of 2 characters for extra width.
+    // Proporitionally strings need about one exta character for every five
+    // characters in a string.
+    let newWidth = (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2)) + 'ch';
+    if (width === 'auto' || newWidth !== width) {
+      setWidth(newWidth);
+    }
+  }, [state, segments, width, locale]);
 
   return width;
 }
