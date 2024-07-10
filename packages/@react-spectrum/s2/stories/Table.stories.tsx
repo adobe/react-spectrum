@@ -130,7 +130,6 @@ function renderEmptyState() {
   );
 }
 
-// TODO: fix this story
 const EmptyStateTable = (args: any) => (
   <Table aria-label="Empty state" {...args} styles={style({height: '[400px]', width: '[400px]'})}>
     <TableHeader columns={columns}>
@@ -314,7 +313,10 @@ export const Dynamic = {
 };
 
 export const EmptyState = {
-  render: EmptyStateTable
+  render: EmptyStateTable,
+  args: {
+    ...Example.args
+  }
 };
 
 export const LoadingStateNoItems = {
