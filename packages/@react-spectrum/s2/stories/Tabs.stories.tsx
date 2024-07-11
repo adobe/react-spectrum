@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Tabs, TabList, Tab, TabPanel} from '../src/Tabs';
+import Edit from '../s2wf-icons/assets/svg/S2_Icon_Edit_20_N.svg';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import type {Meta} from '@storybook/react';
-import {Tab, TabList, TabPanel} from 'react-aria-components';
-
-import {Tabs} from '../src/Tabs';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -27,9 +27,47 @@ export default meta;
 export const Example = (args: any) => (
   <Tabs {...args}>
     <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="FoR"><Edit />Founding of Rome</Tab>
       <Tab id="MaR">Monarchy and Republic</Tab>
       <Tab id="Emp">Empire</Tab>
+    </TabList>
+    <TabPanel id="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </TabPanel>
+    <TabPanel id="MaR">
+      Senatus Populusque Romanus.
+    </TabPanel>
+    <TabPanel id="Emp">
+      Alea jacta est.
+    </TabPanel>
+  </Tabs>
+);
+
+export const Disabled = (args: any) => (
+  <Tabs {...args} >
+    <TabList aria-label="History of Ancient Rome">
+      <Tab id="FoR"><Edit />Founding of Rome</Tab>
+      <Tab isDisabled id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList>
+    <TabPanel id="FoR">
+      Arma virumque cano, Troiae qui primus ab oris.
+    </TabPanel>
+    <TabPanel id="MaR">
+      Senatus Populusque Romanus.
+    </TabPanel>
+    <TabPanel id="Emp">
+      Alea jacta est.
+    </TabPanel>
+  </Tabs>
+);
+
+export const Icons = (args: any) => (
+  <Tabs {...args} styles={style({width: 320})}>
+    <TabList aria-label="History of Ancient Rome">
+      <Tab id="FoR"><Edit /></Tab>
+      <Tab id="MaR"><Edit /></Tab>
+      <Tab id="Emp"><Edit /></Tab>
     </TabList>
     <TabPanel id="FoR">
       Arma virumque cano, Troiae qui primus ab oris.
