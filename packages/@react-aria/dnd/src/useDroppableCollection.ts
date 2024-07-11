@@ -57,6 +57,9 @@ interface DroppingState {
   collection: Collection<Node<unknown>>,
   focusedKey: Key,
   selectedKeys: Set<Key>,
+  target: DropTarget,
+  draggingKeys: Set<Key>,
+  isInternal: boolean,
   timeout: ReturnType<typeof setTimeout>
 }
 
@@ -213,26 +216,93 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   });
 
   let droppingState = useRef<DroppingState>(null);
+  let updateFocusAfterDrop = useCallback(() => {
+    let {state} = localState;
+    if (droppingState.current) {
+      let {
+        target,
+        collection: prevCollection,
+        selectedKeys: prevSelectedKeys,
+        focusedKey: prevFocusedKey,
+        isInternal,
+        draggingKeys
+      } = droppingState.current;
+      
+      // If an insert occurs during a drop, we want to immediately select these items to give
+      // feedback to the user that a drop occurred. Only do this if the selection didn't change
+      // since the drop started so we don't override if the user or application did something.
+      if (
+        state.collection.size > prevCollection.size &&
+        state.selectionManager.isSelectionEqual(prevSelectedKeys)
+      ) {
+        let newKeys = new Set<Key>();
+        for (let key of state.collection.getKeys()) {
+          if (!prevCollection.getItem(key)) {
+            newKeys.add(key);
+          }
+        }
+
+        state.selectionManager.setSelectedKeys(newKeys);
+
+        // If the focused item didn't change since the drop occurred, also focus the first
+        // inserted item. If selection is disabled, then also show the focus ring so there
+        // is some indication that items were added.
+        if (state.selectionManager.focusedKey === prevFocusedKey) {
+          let first = newKeys.keys().next().value;
+          let item = state.collection.getItem(first);
+
+          // If this is a cell, focus the parent row.
+          if (item?.type === 'cell') {
+            first = item.parentKey;
+          }
+
+          state.selectionManager.setFocusedKey(first);
+
+          if (state.selectionManager.selectionMode === 'none') {
+            setInteractionModality('keyboard');
+          }
+        }
+      } else if (
+        state.selectionManager.focusedKey === prevFocusedKey &&
+        isInternal &&
+        target.type === 'item' &&
+        target.dropPosition !== 'on' &&
+        draggingKeys.has(state.collection.getItem(prevFocusedKey)?.parentKey)
+      ) {
+        // Focus row instead of cell when reordering.
+        state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey).parentKey);
+        setInteractionModality('keyboard');
+      } else if (
+        state.selectionManager.focusedKey === prevFocusedKey &&
+        target.type === 'item' && 
+        target.dropPosition === 'on' && 
+        state.collection.getItem(target.key) != null
+      ) {
+        // If focus didn't move already (e.g. due to an insert), and the user dropped on an item,
+        // focus that item and show the focus ring to give the user feedback that the drop occurred.
+        // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
+        state.selectionManager.setFocusedKey(target.key);
+        setInteractionModality('keyboard');
+      } else if (!state.selectionManager.isSelected(state.selectionManager.focusedKey)) {
+        setInteractionModality('keyboard');
+      }
+
+      state.selectionManager.setFocused(true);
+    }
+  }, [localState]);
+
   let onDrop = useCallback((e: DropEvent, target: DropTarget) => {
     let {state} = localState;
-
-    // Focus the collection.
-    state.selectionManager.setFocused(true);
-
+    
     // Save some state of the collection/selection before the drop occurs so we can compare later.
-    let focusedKey = state.selectionManager.focusedKey;
-
-    // If parent key was dragged, we want to use it instead (i.e. focus row instead of cell after dropping)
-    if (globalDndState.draggingKeys.has(state.collection.getItem(focusedKey)?.parentKey)) {
-      focusedKey = state.collection.getItem(focusedKey).parentKey;
-      state.selectionManager.setFocusedKey(focusedKey);
-    }
-
     droppingState.current = {
       timeout: null,
-      focusedKey,
+      focusedKey: state.selectionManager.focusedKey,
       collection: state.collection,
-      selectedKeys: state.selectionManager.selectedKeys
+      selectedKeys: state.selectionManager.selectedKeys,
+      draggingKeys: globalDndState.draggingKeys,
+      isInternal: isInternalDropOperation(ref),
+      target
     };
 
     let onDropFn = localState.props.onDrop || defaultOnDrop;
@@ -246,26 +316,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     });
 
     // Wait for a short time period after the onDrop is called to allow the data to be read asynchronously
-    // and for React to re-render. If an insert occurs during this time, it will be selected/focused below.
-    // If items are not "immediately" inserted by the onDrop handler, the application will need to handle
-    // selecting and focusing those items themselves.
+    // and for React to re-render. If the collection didn't already change during this time (handled below),
+    // update the focused key here.
     droppingState.current.timeout = setTimeout(() => {
-      // If focus didn't move already (e.g. due to an insert), and the user dropped on an item,
-      // focus that item and show the focus ring to give the user feedback that the drop occurred.
-      // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
-      let {state} = localState;
-
-      if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
-        state.selectionManager.setFocusedKey(target.key);
-        state.selectionManager.setFocused(true);
-        setInteractionModality('keyboard');
-      } else if (!state.selectionManager.isSelected(focusedKey)) {
-        setInteractionModality('keyboard');
-      }
-
+      updateFocusAfterDrop();
       droppingState.current = null;
     }, 50);
-  }, [localState, defaultOnDrop]);
+  }, [localState, defaultOnDrop, ref, updateFocusAfterDrop]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -277,44 +334,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   }, []);
 
   useLayoutEffect(() => {
-    // If an insert occurs during a drop, we want to immediately select these items to give
-    // feedback to the user that a drop occurred. Only do this if the selection didn't change
-    // since the drop started so we don't override if the user or application did something.
-    if (
-      droppingState.current &&
-      state.selectionManager.isFocused &&
-      state.collection.size > droppingState.current.collection.size &&
-      state.selectionManager.isSelectionEqual(droppingState.current.selectedKeys)
-    ) {
-      let newKeys = new Set<Key>();
-      for (let key of state.collection.getKeys()) {
-        if (!droppingState.current.collection.getItem(key)) {
-          newKeys.add(key);
-        }
-      }
-
-      state.selectionManager.setSelectedKeys(newKeys);
-
-      // If the focused item didn't change since the drop occurred, also focus the first
-      // inserted item. If selection is disabled, then also show the focus ring so there
-      // is some indication that items were added.
-      if (state.selectionManager.focusedKey === droppingState.current.focusedKey) {
-        let first = newKeys.keys().next().value;
-        let item = state.collection.getItem(first);
-
-        // If this is a cell, focus the parent row.
-        if (item?.type === 'cell') {
-          first = item.parentKey;
-        }
-
-        state.selectionManager.setFocusedKey(first);
-
-        if (state.selectionManager.selectionMode === 'none') {
-          setInteractionModality('keyboard');
-        }
-      }
-
-      droppingState.current = null;
+    // If the collection changed after a drop, update the focused key.
+    if (droppingState.current && state.collection !== droppingState.current.collection) {
+      updateFocusAfterDrop();
     }
   });
 
@@ -470,6 +492,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     return DragManager.registerDropTarget({
       element: ref.current,
+      preventFocusOnDrop: true,
       getDropOperation(types, allowedOperations) {
         if (localState.state.target) {
           let {draggingKeys} = globalDndState;

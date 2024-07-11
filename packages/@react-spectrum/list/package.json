@@ -54,6 +54,7 @@
     "@react-stately/collections": "^3.10.7",
     "@react-stately/layout": "^3.13.9",
     "@react-stately/list": "^3.10.5",
+    "@react-stately/virtualizer": "^3.7.1",
     "@react-types/grid": "^3.2.6",
     "@react-types/shared": "^3.23.1",
     "@spectrum-icons/ui": "^3.6.7",

@@ -71,7 +71,7 @@ function ReorderableGrid(props) {
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
   let gridState = useGridState({
     selectionMode: 'multiple',
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -87,7 +87,7 @@ function ReorderableGrid(props) {
           childNodes: []
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
