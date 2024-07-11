@@ -188,6 +188,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [PopoverContext, {
           ref: popoverRef,
           triggerRef: inputRef,
+          scrollRef: listBoxRef,
           placement: 'bottom start',
           isNonModal: true,
           trigger: 'ComboBox',

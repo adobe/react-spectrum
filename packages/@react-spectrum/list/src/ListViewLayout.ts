@@ -20,9 +20,9 @@ interface ListViewLayoutProps {
 export class ListViewLayout<T> extends ListLayout<T, ListViewLayoutProps> {
   private isLoading: boolean = false;
 
-  validate(invalidationContext: InvalidationContext<ListViewLayoutProps>): void {
+  update(invalidationContext: InvalidationContext<ListViewLayoutProps>): void {
     this.isLoading = invalidationContext.layoutOptions?.isLoading || false;
-    super.validate(invalidationContext);
+    super.update(invalidationContext);
   }
 
   protected buildCollection(): LayoutNode[] {

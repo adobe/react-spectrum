@@ -158,6 +158,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
+  let scrollRef = useRef(null);
+
   return (
     <Provider
       values={[
@@ -170,10 +172,11 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [PopoverContext, {
           trigger: 'Select',
           triggerRef: buttonRef,
+          scrollRef,
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }],
-        [ListBoxContext, menuProps],
+        [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],
         [TextContext, {
           slots: {
