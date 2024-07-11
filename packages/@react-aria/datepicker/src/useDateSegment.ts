@@ -12,7 +12,6 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
@@ -23,7 +22,7 @@ import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
-  segmentProps: DOMAttributes
+  segmentProps: React.HTMLAttributes<HTMLDivElement>
 }
 
 /**
@@ -375,7 +374,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
-      autoCapitalize: isEditable ? 'off' : undefined,
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,

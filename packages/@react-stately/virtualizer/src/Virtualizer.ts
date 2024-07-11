@@ -147,8 +147,8 @@ export class Virtualizer<T extends object, V> {
   }
 
   private relayout(context: InvalidationContext = {}) {
-    // Validate the layout
-    this.layout.validate(context);
+    // Update the layout
+    this.layout.update(context);
     (this as Mutable<this>).contentSize = this.layout.getContentSize();
 
     // Constrain scroll position.

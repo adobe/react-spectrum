@@ -12,10 +12,11 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps} from './Collection';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
@@ -156,6 +157,8 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
     values: renderValues
   });
 
+  let persistedKeys = usePersistedKeys(state.selectionManager.focusedKey);
+
   return (
     <div
       {...mergeProps(gridProps, focusProps)}
@@ -166,7 +169,7 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-focus-visible={isFocusVisible || undefined}>
       {state.collection.size === 0 && props.renderEmptyState 
         ? props.renderEmptyState(renderValues) 
-        : <CollectionRoot collection={state.collection} focusedKey={state.selectionManager.focusedKey} />}
+        : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
     </div>
   );
 }
@@ -253,7 +256,8 @@ export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, f
               slots: {
                 remove: removeButtonProps
               }
-            }]
+            }],
+            [CollectionRendererContext, DefaultCollectionRenderer]
           ]}>
           {renderProps.children}
         </Provider>

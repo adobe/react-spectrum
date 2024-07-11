@@ -46,7 +46,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       );
   }
 
-  validate(invalidationContext: InvalidationContext<O>): void {
+  update(invalidationContext: InvalidationContext<O>): void {
     let newCollection = this.virtualizer.collection as TableCollection<T>;
 
     // If columnWidths were provided via layoutOptions, update those.
@@ -62,7 +62,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       invalidationContext.sizeChanged = true;
     }
 
-    super.validate(invalidationContext);
+    super.update(invalidationContext);
   }
 
   protected buildCollection(): LayoutNode[] {
@@ -227,7 +227,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let width = 0;
     let children: LayoutNode[] = [];
     let rowHeight = this.getEstimatedRowHeight();
-    for (let [i, node] of [...getChildNodes(this.collection.body, this.collection)].entries()) {
+    for (let node of getChildNodes(this.collection.body, this.collection)) {
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -237,7 +237,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
       let layoutNode = this.buildChild(node, 0, y, layoutInfo.key);
       layoutNode.layoutInfo.parentKey = layoutInfo.key;
-      layoutNode.index = i;
+      layoutNode.index = children.length;
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
@@ -285,7 +285,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
     let children: LayoutNode[] = [];
     let height = 0;
-    for (let [i, child] of [...getChildNodes(node, this.collection)].entries()) {
+    for (let child of getChildNodes(node, this.collection)) {
       if (child.type === 'cell') {
         if (x > this.requestedRect.maxX) {
           // Adjust existing cached layoutInfo to ensure that it is out of view.
@@ -299,7 +299,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
           let layoutNode = this.buildChild(child, x, y, layoutInfo.key);
           x = layoutNode.layoutInfo.rect.maxX;
           height = Math.max(height, layoutNode.layoutInfo.rect.height);
-          layoutNode.index = i;
+          layoutNode.index = children.length;
           children.push(layoutNode);
         }
       }
