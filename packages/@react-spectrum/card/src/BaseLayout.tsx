@@ -53,7 +53,7 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
     this.margin = options.margin || 24;
   }
 
-  validate(invalidationContext: InvalidationContext<CardViewLayoutOptions>) {
+  update(invalidationContext: InvalidationContext<CardViewLayoutOptions>) {
     this.collection = this.virtualizer.collection as GridCollection<T>;
     this.isLoading = invalidationContext.layoutOptions?.isLoading || false;
     this.direction = invalidationContext.layoutOptions?.direction || 'ltr';

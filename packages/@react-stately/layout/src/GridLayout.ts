@@ -61,7 +61,7 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
   }
 
-  validate(): void {
+  update(): void {
     let visibleWidth = this.virtualizer.visibleRect.width;
 
     // The max item width is always the entire viewport.
@@ -83,7 +83,7 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     itemWidth = Math.max(this.minItemSize.width, Math.min(maxItemWidth, itemWidth));
 
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - this.minItemSize.width) / (maxItemWidth - this.minItemSize.width));
+    let t = ((itemWidth - this.minItemSize.width) / Math.max(1, maxItemWidth - this.minItemSize.width));
     let itemHeight = this.minItemSize.height +  Math.floor((maxItemHeight - this.minItemSize.height) * t);
     itemHeight = Math.max(this.minItemSize.height, Math.min(maxItemHeight, itemHeight));
     this.itemSize = new Size(itemWidth, itemHeight);

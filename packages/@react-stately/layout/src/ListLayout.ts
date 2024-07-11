@@ -128,12 +128,12 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     if (!this.requestedRect.containsRect(rect)) {
       this.requestedRect = this.requestedRect.union(rect);
       this.rootNodes = this.buildCollection();
-    } else {
-      // Ensure all of the persisted keys are available.
-      for (let key of this.virtualizer.persistedKeys) {
-        if (this.ensureLayoutInfo(key)) {
-          break;
-        }
+    }
+    
+    // Ensure all of the persisted keys are available.
+    for (let key of this.virtualizer.persistedKeys) {
+      if (this.ensureLayoutInfo(key)) {
+        return;
       }
     }
   }
@@ -162,7 +162,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return invalidationContext.sizeChanged;
   }
 
-  validate(invalidationContext: InvalidationContext<O>) {
+  update(invalidationContext: InvalidationContext<O>) {
     this.collection = this.virtualizer.collection;
 
     // Reset valid rect if we will have to invalidate everything.
@@ -170,6 +170,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.invalidateEverything = this.shouldInvalidateEverything(invalidationContext);
     if (this.invalidateEverything) {
       this.requestedRect = this.virtualizer.visibleRect.copy();
+      this.layoutNodes.clear();
     }
 
     this.rootNodes = this.buildCollection();

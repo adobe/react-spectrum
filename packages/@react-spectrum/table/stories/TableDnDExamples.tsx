@@ -29,7 +29,7 @@ let columnsWithOutRowHeader = [
   {name: 'IP Address', key: 'ip_address'}
 ];
 
-let items = [
+export let items = [
   {id: 'a', first_name: 'Vin', last_name: 'Charlet', email: 'vcharlet0@123-reg.co.uk', ip_address: '18.45.175.130', department: 'Services', job_title: 'Analog Circuit Design manager'},
   {id: 'b', first_name: 'Lexy', last_name: 'Maddison', email: 'lmaddison1@xinhuanet.com', ip_address: '238.210.151.48', department: 'Research and Development', job_title: 'Analog Circuit Design manager'},
   {id: 'c', first_name: 'Robbi', last_name: 'Persence', email: 'rpersence2@hud.gov', ip_address: '130.2.120.99', department: 'Business Development', job_title: 'Analog Circuit Design manager'},
@@ -115,7 +115,7 @@ export function DragWithoutRowHeaderExample(props?)  {
 export function ReorderExample(props) {
   let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
   let list = useListData({
-    initialItems: items,
+    initialItems: (props.items as typeof items) || items,
     getKey: item => item.id
   });
 
