@@ -25,7 +25,7 @@ interface VirtualizerProps<T extends object, V, O> {
   layout: Layout<T>,
   collection: Collection<T>,
   onVisibleRectChange(rect: Rect): void,
-  persistedKeys?: Set<Key>,
+  persistedKeys?: Set<Key> | null,
   layoutOptions?: O
 }
 

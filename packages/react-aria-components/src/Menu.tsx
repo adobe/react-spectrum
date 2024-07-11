@@ -13,11 +13,12 @@
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
+import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {HeaderContext} from './Header';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
@@ -69,15 +70,18 @@ export function MenuTrigger(props: MenuTriggerProps) {
     onResize: onResize
   });
 
+  let scrollRef = useRef(null);
+
   return (
     <Provider
       values={[
-        [MenuContext, menuProps],
+        [MenuContext, {...menuProps, ref: scrollRef}],
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'MenuTrigger',
           triggerRef: ref,
+          scrollRef,
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
@@ -221,7 +225,10 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null]
           ]}>
-          <CollectionRoot collection={collection} focusedKey={state.selectionManager.focusedKey} scrollRef={ref} />
+          <CollectionRoot
+            collection={collection}
+            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+            scrollRef={ref} />
         </Provider>
       </div>
       <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />

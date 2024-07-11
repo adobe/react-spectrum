@@ -36,7 +36,7 @@ export class TableViewLayout<T> extends TableLayout<T> {
 
     if (this.isLoading) {
       // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
-      let rect = new Rect(40, 40, (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
+      let rect = new Rect(40, Math.max(layoutInfo.rect.maxY, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = layoutInfo.key;
       loader.isSticky = children.length === 0;
