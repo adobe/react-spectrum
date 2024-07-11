@@ -13,16 +13,16 @@
 import {Tabs as RACTabs, TabsProps as AriaTabsProps, TabList as RACTabList, TabListProps as AriaTabListProps, Tab as RACTab, TabProps as AriaTabProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, Provider, TabListStateContext} from 'react-aria-components';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode, createContext, useContext, forwardRef, useRef, RefObject, useEffect, useState, useCallback, useLayoutEffect} from 'react';
+import {ReactNode, createContext, useContext, forwardRef, useRef, useEffect, useState, useCallback, useLayoutEffect} from 'react';
 import {IconContext} from './Icon';
-import {Text} from './Content';
+// import {Text} from './Content';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {DOMRef, Collection, Key} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, StyleProps { // is height a style prop we want to allow for tabs?
-  children?: ReactNode
+  children?: ReactNode,
   density?: 'compact' | 'regular'
 }
 
@@ -30,14 +30,14 @@ interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'
   children?: ReactNode
 }
 
-interface TabList<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>{
-  children?: ReactNode
-}
+// interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>{
+//   children?: ReactNode
+// }
 
-export function TabPanel(props: AriaTabPanelProps){
+export function TabPanel(props: AriaTabPanelProps) {
   return (
-    <AriaTabPanel {...props} className={style({marginTop: 4, color: 'neutral'})}/>
-  )
+    <AriaTabPanel {...props} className={style({marginTop: 4, color: 'neutral'})} />
+  );
 }
 
 const tab = style({
@@ -46,7 +46,7 @@ const tab = style({
   color: {
     default: 'neutral-subdued',
     isSelected: 'neutral',
-    isHovered: 'hover',
+    isHovered: 'neutral-subdued',
     isDisabled: 'disabled'
   },
   borderRadius: 'sm',
@@ -59,7 +59,7 @@ const tab = style({
   },
   alignItems: 'center',
   position: 'relative'
-})
+});
 
 const icon = style({
   paddingX: 4,
@@ -76,14 +76,14 @@ export function Tab(props: TabProps) {
     <RACTab 
       {...props}
       className={renderProps => tab({...renderProps, density})}>
-        <Provider
-          values={[
-            [IconContext, {styles: icon}]
-          ]}>
-          {props.children}
-        </Provider>
+      <Provider
+        values={[
+          [IconContext, {styles: icon}]
+        ]}>
+        {props.children}
+      </Provider>
     </RACTab>
-  )
+  );
 }
 
 const tablist = style({
@@ -107,7 +107,7 @@ const tablist = style({
     }
   },
   borderColor: 'gray-400'
-})
+});
 
 const selectedIndicator = style({
   position: 'absolute',
@@ -129,7 +129,7 @@ const selectedIndicator = style({
   borderRadius: 'lg',
   borderWidth: '[1px]',
   boxSizing: 'border-box'
-})
+});
 
 function isAllTabsDisabled<T>(collection: Collection<T> | null, disabledKeys: Set<Key>) {
   let selectedKey = null;
@@ -164,7 +164,7 @@ export function TabList<T extends object>(props: AriaTabListProps<T>) {
 
   useEffect(() => {    
     if (tablistRef?.current) {
-      let tab: HTMLElement | null = tablistRef.current.querySelector(`[role=tab][data-selected=true]`);
+      let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
 
       if (tab != null) {
         setSelectedTab(tab);
@@ -193,9 +193,9 @@ export function TabList<T extends object>(props: AriaTabListProps<T>) {
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, density})} />
       {/* how to do this without raw? */}
-      <div style={{width: selectedTab?.offsetWidth, transform: `translateX(${offsetStyle}px)`}} className={selectedIndicator({isDisabled}) + ' ' + raw('transition: transform 130ms ease-in-out 0s, width 130ms ease-in-out 0s')}/>
+      <div style={{width: selectedTab?.offsetWidth, transform: `translateX(${offsetStyle}px)`}} className={selectedIndicator({isDisabled}) + ' ' + raw('transition: transform 130ms ease-in-out 0s, width 130ms ease-in-out 0s')} />
     </div>
-  )
+  );
 }
 
 const tabs = style({
@@ -203,10 +203,10 @@ const tabs = style({
   fontFamily: 'sans',
   flexDirection: {
     orientation: {
-      horizontal: 'column',
+      horizontal: 'column'
     }
   }
-}, getAllowedOverrides())
+}, getAllowedOverrides());
 
 const TabsInternalContext = createContext<TabsProps>({});
 
