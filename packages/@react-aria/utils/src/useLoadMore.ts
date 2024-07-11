@@ -27,11 +27,13 @@ export interface LoadMoreProps {
    * or equal to the provided value. (e.g. 1 = 100% of the scroll region's height).
    * @default 1
    */
-  scrollOffset?: number
+  scrollOffset?: number,
+  /** The data currently loaded. */
+  items?: any[]
 }
 
 export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>) {
-  let {isLoading, onLoadMore, scrollOffset = 1} = props;
+  let {isLoading, onLoadMore, scrollOffset = 1, items} = props;
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
   let isLoadingRef = useRef(isLoading);
@@ -47,6 +49,7 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     }
   }, [onLoadMore, ref, scrollOffset]);
 
+  let lastItems = useRef(items);
   useLayoutEffect(() => {
     // Only update isLoadingRef if props object actually changed,
     // not if a local state change occurred.
@@ -55,13 +58,13 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
       prevProps.current = props;
     }
 
-    // TODO: this actually calls loadmore twice in succession on intial load because after the first load
-    // the scrollable element hasn't yet recieved its new height with the newly loaded items... Because of RAC collection needing two renders?
-    // Using ref.current.clientElementCount doesn't work either because the scrollable body may be the Table resize container (which contains the table, header and body: 3 children always)
-    // or the Table (which contains the header and body so 2 children) or the virtualizer in RSP (just contains the rows so has a variable count)
+    // TODO: Eventually this hook will move back into RAC during which we will accept the collection as a option to this hook.
+    // We will only load more if the collection has changed after the last load to prevent multiple onLoadMore from being called
+    // while the data from the last onLoadMore is being processed by RAC collection.
     let shouldLoadMore = ref?.current
       && !isLoadingRef.current
       && onLoadMore
+      && (!items || items !== lastItems.current)
       && ref.current.clientHeight === ref.current.scrollHeight;
 
     if (shouldLoadMore) {
@@ -69,6 +72,7 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
       onLoadMore?.();
     }
 
+    lastItems.current = items;
   }, [isLoading, onLoadMore, props, ref]);
 
   // TODO: maybe this should still just return scroll props?

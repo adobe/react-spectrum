@@ -570,8 +570,9 @@ const OnLoadMoreTable = () => {
   let scrollRef = useRef<HTMLDivElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: isLoading,
-    onLoadMore: list.loadMore
-  }), [isLoading, list.loadMore]);
+    onLoadMore: list.loadMore,
+    items: list.items
+  }), [isLoading, list.loadMore, list.items]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
@@ -634,8 +635,9 @@ const OnLoadMoreTableBodyScroll = () => {
   let scrollRef = useRef<HTMLTableSectionElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: isLoading,
-    onLoadMore: list.loadMore
-  }), [isLoading, list.loadMore]);
+    onLoadMore: list.loadMore,
+    items: list.items
+  }), [isLoading, list.loadMore, list.items]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
@@ -848,8 +850,9 @@ const OnLoadMoreTableVirtualized = () => {
   let scrollRef = useRef<HTMLTableElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: isLoading,
-    onLoadMore: list.loadMore
-  }), [isLoading, list.loadMore]);
+    onLoadMore: list.loadMore,
+    items: list.items
+  }), [isLoading, list.loadMore, list.items]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
@@ -913,8 +916,9 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
   let scrollRef = useRef<HTMLDivElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: isLoading,
-    onLoadMore: list.loadMore
-  }), [isLoading, list.loadMore]);
+    onLoadMore: list.loadMore,
+    items: list.items
+  }), [isLoading, list.loadMore, list.items]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
