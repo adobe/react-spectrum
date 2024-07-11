@@ -19,9 +19,9 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import React, {ReactElement, useRef} from 'react';
+import {useDateCharacterWidth, useFocusManagerRef, useFormatHelpText} from './utils';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
-import {useFocusManagerRef, useFormatHelpText} from './utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -61,6 +61,8 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
 
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
+  let characterCount = useDateCharacterWidth(state) + 'ch';
+
   return (
     <Field
       {...props}
@@ -82,7 +84,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
         isQuiet={isQuiet}
         autoFocus={autoFocus}
         validationState={validationState}
-        state={state}
+        minWidth={characterCount}
         className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment

@@ -11,9 +11,9 @@
  */
 
 
-import {createCalendar, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
-import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
+import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
@@ -71,8 +71,8 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
   isInvalid: boolean,
   /** Formats the selected range using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
-  /** Formats the placeholder value using the given options. */
-  formatPlaceholder(locale: string, fieldOptions: FieldOptions): {start: string, end: string}
+  /** Gets a formatter based on state's props. */
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 /**
@@ -299,40 +299,10 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
         end: endFormatter.format(endDate)
       };
     },
-    formatPlaceholder(locale, fieldOptions) {
-      let calendarString = (new DateFormatter(locale)).resolvedOptions().calendar;
-      let calendar = createCalendar(calendarString);
-
-      let startPlaceholder = createPlaceholderDate(controlledValue?.start || null, granularity, calendar, defaultTimeZone);
-      let endPlaceholder = createPlaceholderDate(controlledValue?.end || null, granularity, calendar, defaultTimeZone);
-
-      let startTimeZone = 'timeZone' in startPlaceholder ? startPlaceholder.timeZone : undefined;
-      let endTimeZone = 'timeZone' in endPlaceholder ? endPlaceholder.timeZone : undefined;
-      let startGranularity = props.granularity || (startPlaceholder && 'minute' in startPlaceholder ? 'minute' : 'day');
-      let endGranularity = props.granularity || (endPlaceholder && 'minute' in endPlaceholder ? 'minute' : 'day');
-
-      let startFormatter = new DateFormatter(locale, getFormatOptions(fieldOptions, {
-        granularity: startGranularity,
-        timeZone: startTimeZone,
-        hideTimeZone: props.hideTimeZone,
-        hourCycle: props.hourCycle
-      }));
-      let endFormatter = new DateFormatter(locale, getFormatOptions(fieldOptions, {
-        granularity: endGranularity,
-        timeZone: endTimeZone,
-        hideTimeZone: props.hideTimeZone,
-        hourCycle: props.hourCycle
-      }));
-
-      let startDate = startPlaceholder.toDate(startTimeZone || 'UTC');
-      let startFormatted = startFormatter.format(startDate);
-      let endDate = endPlaceholder.toDate(startTimeZone || 'UTC');
-      let endFormatted = endFormatter.format(endDate);
-
-      return {
-        start: startFormatted,
-        end: endFormatted
-      };
+    getDateFormatter(locale, formatOptions: FormatterOptions) {
+      let newOptions = {...formatOpts, ...formatOptions};
+      let newFormatOptions = getFormatOptions({}, newOptions);
+      return new DateFormatter(locale, newFormatOptions);
     }
   };
 }

@@ -122,7 +122,7 @@ export function getRangeValidationResult(
 }
 
 export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;
-interface FormatterOptions {
+export interface FormatterOptions {
   timeZone?: string,
   hideTimeZone?: boolean,
   granularity?: DatePickerProps<any>['granularity'],

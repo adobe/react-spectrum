@@ -18,7 +18,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
-import {useFocusManagerRef} from './utils';
+import {useDateCharacterWidth, useFocusManagerRef} from './utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -52,6 +52,8 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
 
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
+  let characterCount = useDateCharacterWidth(state) + 'ch';
+
   return (
     <Field
       {...props}
@@ -72,7 +74,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         isQuiet={isQuiet}
         autoFocus={autoFocus}
         validationState={validationState}
-        state={state}
+        minWidth={characterCount}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment

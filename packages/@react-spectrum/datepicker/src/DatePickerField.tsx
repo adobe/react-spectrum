@@ -19,7 +19,6 @@ import React, {useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
-import {useTextWidth} from './utils';
 
 interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
   inputClassName?: string,

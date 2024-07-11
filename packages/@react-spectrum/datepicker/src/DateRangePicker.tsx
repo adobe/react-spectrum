@@ -29,9 +29,9 @@ import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
+import {useDateCharacterWidth, useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
-import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
@@ -112,6 +112,9 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   let visibleMonths = useVisibleMonths(maxVisibleMonths);
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
+  // Multiplying by two for the two dates, adding one character for the dash, and then the dash left and right padding
+  let characterCount = `calc(${useDateCharacterWidth(state) * 2 + 1}ch + 2 * var(--spectrum-global-dimension-size-100))`;
+
   return (
     <Field
       {...props}
@@ -137,7 +140,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}
           disableFocusRing
-          state={state}>
+          minWidth={characterCount}>
           <DatePickerField
             {...startFieldProps}
             data-testid="start-date"

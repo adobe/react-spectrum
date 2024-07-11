@@ -39,6 +39,15 @@
 
 .react-spectrum-Datepicker-field .react-spectrum-DateField-Input {
   line-height: var(--spectrum-body-4-text-line-height);
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+
+  &::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+    display: none;
+  }
 }
 
 /* specificity war with .spectrum-Field--positionSide etc. */
@@ -65,15 +74,6 @@
   display: flex;
   align-items: center;
   height: 100%;
-  overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-
-  &::-webkit-scrollbar { /* WebKit */
-    width: 0;
-    height: 0;
-    display: none;
-  }
 }
 
 .react-spectrum-Datepicker-rangeDash {

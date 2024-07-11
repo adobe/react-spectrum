@@ -15,7 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
-import {useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import {useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider} from '@react-spectrum/provider';
 
@@ -78,36 +78,15 @@ export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
   return domRef;
 }
 
-// Passing in segments because state and state.segments don't always
-// cause the useEffect to run when the segments change.
-export function useTextWidth(state, segments) {
-  let [width, setWidth] = useState('auto');
+export function useDateCharacterWidth(state) {
   let locale = useLocale()?.locale;
+  let currentDate = new Date();
+  let formatedDate = state.getDateFormatter(locale, {shouldForceLeadingZeros: true}).format(currentDate, locale);
+  let totalCharacters =  formatedDate.length;
 
-  useEffect(() => {
-    let totalCharacters = 0;
-    if (state && !state.segments) {
-      if (state.value?.start && state.value?.end) {
-        let {start, end} = state.formatValue(locale, {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'});
-        // adding characters for the seperator
-        totalCharacters = start?.length + end?.length + 3;
-      } else {
-        let {start, end} = state.formatPlaceholder(locale, {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'});
-        // adding characters for the seperator
-        totalCharacters = start?.length + end?.length + 3;
-      }
-    } else if (state?.segments) {
-      totalCharacters = state.segments.reduce((total, segment) => total + (segment.placeholder || segment.text).length, 0);
-    }
-
-    // Always need a minimum of 2 characters for extra width.
-    // Proporitionally strings need about one exta character for every five
-    // characters in a string.
-    let newWidth = (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2)) + 'ch';
-    if (width === 'auto' || newWidth !== width) {
-      setWidth(newWidth);
-    }
-  }, [state, segments, width, locale]);
-
-  return width;
+  // The max of two is for times with only hours.
+  // As the length of a date grows we need to proportionally increase the width.
+  // We use the characts with 'ch' and months and time dashes are wider and this
+  // accomates for that.
+  return (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2));
 }
