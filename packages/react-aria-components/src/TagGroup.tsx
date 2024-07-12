@@ -167,8 +167,8 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState 
-        ? props.renderEmptyState(renderValues) 
+      {state.collection.size === 0 && props.renderEmptyState
+        ? props.renderEmptyState(renderValues)
         : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
     </div>
   );

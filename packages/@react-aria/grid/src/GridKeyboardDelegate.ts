@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, Size} from '@react-types/shared';
+import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, RefObject, Size} from '@react-types/shared';
 import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
-import {RefObject} from 'react';
 
 export interface GridKeyboardDelegateOptions<C> {
   collection: C,

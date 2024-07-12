@@ -10,8 +10,8 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
-import React, {createContext, RefObject, useContext, useEffect, useState} from 'react';
+import {Key, RefObject} from '@react-types/shared';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {TableColumnResizeState} from '@react-stately/table';
