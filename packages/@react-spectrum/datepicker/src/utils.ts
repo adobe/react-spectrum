@@ -78,7 +78,7 @@ export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
   return domRef;
 }
 
-export function useDateCharacterWidth(state) {
+export function useFormattedDateWidth(state) {
   let locale = useLocale()?.locale;
   let currentDate = new Date();
   let formatedDate = state.getDateFormatter(locale, {shouldForceLeadingZeros: true}).format(currentDate, locale);
@@ -86,7 +86,7 @@ export function useDateCharacterWidth(state) {
 
   // The max of two is for times with only hours.
   // As the length of a date grows we need to proportionally increase the width.
-  // We use the characts with 'ch' and months and time dashes are wider and this
-  // accommodates for that.
+  // We use the character count with 'ch' units and add extra padding to accomate for
+  // dates with months and time dashes, which are wider characters.
   return (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2));
 }
