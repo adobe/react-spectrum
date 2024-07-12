@@ -921,16 +921,18 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   if (collection.size === 0 && props.renderEmptyState && state) {
     let rowProps = {};
     let rowHeaderProps = {};
+    let style = {};
     if (isVirtualized) {
       rowProps['aria-rowindex'] = state.collection.headerRows.length + 1;
       rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+      style = {display: 'contents'};
     } else {
       rowHeaderProps['colSpan'] = collection.columnCount;
     }
 
     emptyState = (
-      <TR role="row" {...rowProps}>
-        <TD role="rowheader" {...rowHeaderProps}>
+      <TR role="row" {...rowProps} style={style}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
           {props.renderEmptyState(renderValues)}
         </TD>
       </TR>
@@ -1321,10 +1323,12 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
   let TD = useElementType('td');
   let rowProps = {};
   let rowHeaderProps = {};
+  let style = {};
 
   if (isVirtualized) {
     rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
     rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+    style = {display: 'contents'};
   } else {
     rowHeaderProps['colSpan'] = numColumns;
   }
@@ -1336,7 +1340,7 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
         ref={ref}
         {...mergeProps(filterDOMProps(props as any), rowProps)}
         {...renderProps}>
-        <TD role="rowheader" {...rowHeaderProps}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
           {renderProps.children}
         </TD>
       </TR>

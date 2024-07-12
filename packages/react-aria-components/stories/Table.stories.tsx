@@ -411,6 +411,8 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
 const MyTableLoadingIndicator = ({tableWidth = 400}) => {
   return (
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
+    // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
+    // making the layoutInfo for the table body have allowOverflow
     <UNSTABLE_TableLoadingIndicator style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>
       <span>
         Load more spinner
