@@ -79,6 +79,7 @@
 .react-spectrum-Datepicker-inputSized {
   display: flex;
   height: 100%;
+  align-items: center;
 }
 
 .react-spectrum-Datepicker-rangeDash {
