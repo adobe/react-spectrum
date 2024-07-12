@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, Tag, TagGroup, TagGroupProps, TagList, TagProps} from 'react-aria-components';
+import {Label, Tag, TagGroup, TagGroupProps, TagList, TagProps} from 'react-aria-components';
 import React from 'react';
 
 export default {
