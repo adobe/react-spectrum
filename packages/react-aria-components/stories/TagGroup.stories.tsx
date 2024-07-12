@@ -18,13 +18,13 @@ export default {
 };
 
 export const TagGroupExample = (props: TagGroupProps) => (
-  <TagGroup {...props} disabledKeys={new Set([2])} onRemove={console.log}>
+  <TagGroup {...props}>
     <Label>Categories</Label>
     <TagList style={{display: 'flex', gap: 4}}>
-      <MyTag id={1} href="https://nytimes.com">News</MyTag>
-      <MyTag id={2}>Travel</MyTag>
-      <MyTag id={3}>Gaming</MyTag>
-      <MyTag id={4}>Shopping</MyTag>
+      <MyTag href="https://nytimes.com">News</MyTag>
+      <MyTag>Travel</MyTag>
+      <MyTag>Gaming</MyTag>
+      <MyTag>Shopping</MyTag>
     </TagList>
   </TagGroup>
 );
@@ -53,9 +53,6 @@ function MyTag(props: TagProps) {
   return (
     <Tag
       {...props}
-      style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})}>
-      {props.children}
-      <Button slot="remove">x</Button>
-    </Tag>
+      style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />
   );
 }
