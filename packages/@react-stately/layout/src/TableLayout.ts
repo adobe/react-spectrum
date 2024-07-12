@@ -113,7 +113,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     return {
       layoutInfo,
       children,
-      validRect: layoutInfo.rect
+      validRect: layoutInfo.rect,
+      node: this.collection.head
     };
   }
 
@@ -143,7 +144,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     return {
       layoutInfo: row,
       children: columns,
-      validRect: rect
+      validRect: rect,
+      node: headerRow
     };
   }
 
@@ -208,7 +210,9 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
     return {
       layoutInfo,
-      validRect: layoutInfo.rect
+      children: [],
+      validRect: layoutInfo.rect,
+      node
     };
   }
 
@@ -259,7 +263,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     return {
       layoutInfo,
       children,
-      validRect: layoutInfo.rect.intersection(this.requestedRect)
+      validRect: layoutInfo.rect.intersection(this.requestedRect),
+      node: this.collection.body
     };
   }
 
@@ -294,6 +299,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
           if (layoutNode) {
             layoutNode.layoutInfo.rect.x = x;
             x += layoutNode.layoutInfo.rect.width;
+          } else {
+            break;
           }
         } else {
           let layoutNode = this.buildChild(child, x, y, layoutInfo.key);
@@ -313,7 +320,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     return {
       layoutInfo,
       children,
-      validRect: rect.intersection(this.requestedRect)
+      validRect: rect.intersection(this.requestedRect),
+      node
     };
   }
 
@@ -328,7 +336,9 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
 
     return {
       layoutInfo,
-      validRect: rect
+      children: [],
+      validRect: rect,
+      node
     };
   }
 

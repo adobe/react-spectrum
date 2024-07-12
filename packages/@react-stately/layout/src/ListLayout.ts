@@ -238,7 +238,6 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     }
 
     let layoutNode = this.buildNode(node, x, y);
-    layoutNode.node = node;
 
     layoutNode.layoutInfo.parentKey = parentKey ?? null;
     this.layoutNodes.set(node.key, layoutNode);
@@ -290,7 +289,8 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return {
       layoutInfo,
       children,
-      validRect: layoutInfo.rect.intersection(this.requestedRect)
+      validRect: layoutInfo.rect.intersection(this.requestedRect),
+      node
     };
   }
 
@@ -327,7 +327,8 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return {
       layoutInfo: header,
       children: [],
-      validRect: header.rect.intersection(this.requestedRect)
+      validRect: header.rect.intersection(this.requestedRect),
+      node
     };
   }
 
@@ -360,7 +361,9 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo,
-      validRect: layoutInfo.rect
+      children: [],
+      validRect: layoutInfo.rect,
+      node
     };
   }
 
