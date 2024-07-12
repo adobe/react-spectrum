@@ -15,9 +15,9 @@ import {CheckboxAria, useCheckbox} from './useCheckbox';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DEFAULT_VALIDATION_RESULT, privateValidationStateProp, useFormValidationState} from '@react-stately/form';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject, ValidationResult} from '@react-types/shared';
+import {useEffect, useRef} from 'react';
 import {useToggleState} from '@react-stately/toggle';
-import {ValidationResult} from '@react-types/shared';
 
 /**
  * Provides the behavior and accessibility implementation for a checkbox component contained within a checkbox group.

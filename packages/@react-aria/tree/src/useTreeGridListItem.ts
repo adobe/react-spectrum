@@ -12,11 +12,10 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react-aria/gridlist';
-import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid} from '@react-aria/utils';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
