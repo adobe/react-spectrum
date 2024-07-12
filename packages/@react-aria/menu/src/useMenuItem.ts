@@ -136,10 +136,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       item.props.onAction();
     }
 
-    if (props.onAction) {
-      props.onAction(key);
-    } else if (data.onAction) {
-      data.onAction(key);
+    if (data.onAction) {
+      // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
+      let onAction = data.onAction;
+      onAction(key);
     }
 
     if (e.target instanceof HTMLAnchorElement) {
