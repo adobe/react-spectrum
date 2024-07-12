@@ -87,6 +87,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
+      isDisabled: state.disabledKeys.has(item.key) || item.props.isDisabled,
       id: buttonId,
       onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
       excludeFromTabOrder: true
