@@ -39,7 +39,8 @@ import {
   DropTarget,
   UNSTABLE_TableLoadingIndicator,
   UNSTABLE_Virtualizer,
-  UNSTABLE_TableLayout
+  UNSTABLE_TableLayout,
+  TableStateContext
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -56,6 +57,7 @@ import {LoadingState} from '@react-types/shared';
 import { mergeStyles } from '../style/runtime';
 import { useIsMobileDevice } from './utils';
 import {useLoadMore} from '@react-aria/utils';
+import {raw} from '../style/style-macro' with {type: 'macro'};
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -368,7 +370,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let emptyRender;
   let renderer = children;
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator>
+    <UNSTABLE_TableLoadingIndicator className={style({height: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
@@ -423,7 +425,10 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
   return (
     <AriaTableBody
-      className={style({height: 'full'})}
+      // TODO: super scuffed way of making the last row have a curved radius. Ideally would just have access to the collection or have a data
+      // attribute set in RAC.... The problem with this is that all the rows aren't rendered so it will curve an intermidate row's bottom left border
+      // as you scroll...
+      className={style({height: 'full'}) + ' ' + raw('&> :last-of-type { border-bottom-left-radius: 6px; }')}
       {...props}
       renderEmptyState={emptyRender}
       dependencies={[loadingState]}>
@@ -745,7 +750,8 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
 
 const tableHeader = style({
   height: 'full',
-  width: 'full'
+  width: 'full',
+  backgroundColor: 'base'
 });
 
 const selectAllCheckbox = style({
@@ -1016,7 +1022,8 @@ export function Row<T extends object>(
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      })}
+        // TODO: remove in favor of a better method
+      }) + ' ' + raw('border-radius: inherit; ')}
       {...otherProps}>
       {allowsDragging && (
         <Cell className={dragButtonCellStyle}>
