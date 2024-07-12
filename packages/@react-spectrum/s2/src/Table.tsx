@@ -128,19 +128,26 @@ const tableWrapper = style({
 });
 
 // TODO: will need focus styles and stuff which will use the TableRenderProps here
-const table = style<TableRenderProps>({
+const table = style<TableRenderProps & S2TableProps>({
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
   fontFamily: 'sans',
   overflow: 'auto',
-  backgroundSize: 'auto',
-  backgroundRepeat: 'no-repeat',
-  // TODO: Note that this makes the height of the background image NOT scale down. However, if we modify the viewBox/rect y instead we can't get a consistent offset from the top of the wrapper...
-  backgroundPosition: '[0px 32px]',
-  // TODO: this approach would need the y adjust with respect with how tall the row header is (also if there werew nested columns too..). The colors would also need to adjust, so probably move this into the table component so we can calculate these?
-  // Need to change the radius as well, background color, and appearance if this is quiet/etc
-  backgroundImage: `url('data:image/svg+xml,<svg preserveAspectRatio="none" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="398" height="352" rx="8" fill="transparent" stroke="black" /></svg>')`
+  backgroundColor: {
+    default: 'gray-25',
+    isQuiet: 'transparent'
+  },
+  outlineColor: 'gray-300',
+  outlineWidth: {
+    default: 1,
+    isQuiet: 0
+  },
+  outlineStyle: 'solid',
+  borderRadius: {
+    default: size(6),
+    isQuiet: 'none'
+  }
 }, getAllowedOverrides({height: true}));
 
 
@@ -294,6 +301,11 @@ export function Table(props: TableProps) {
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
+
+  // TODO: Ideally I'd always use the ResizableTableContainer for consistency. However, a potential problem is that we'll need
+  // to make the outline of the table change colors depending on if it gets focused, but if the Resizable table container is present, the table
+  // is actaully the height of all the contents hence the outline needs to be placed on the ResizableTableContainer div. That div doesn't have the same render
+  // props as the Table and thus we might not be able to change the outline color on focus properly...
   let baseTable = (
     <UNSTABLE_Virtualizer layout={layout}>
       <InternalTableContext.Provider value={context}>
@@ -301,7 +313,8 @@ export function Table(props: TableProps) {
           ref={scrollRef}
           style={UNSAFE_style}
           className={renderProps => (UNSAFE_className || '') + table({
-            ...renderProps
+            ...renderProps,
+            isQuiet
           }, styles)}
           selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
           dragAndDropHooks={dragAndDropHooks}
@@ -312,18 +325,18 @@ export function Table(props: TableProps) {
 
   if (columnsResizable) {
     baseTable = (
-      // TODO: should the styles the user provides go right on this container instead of on the Table itself? Is there anyway we could split these out?
-      // Right now I've just hard coded the width
-      // TODO: also the current styling cuts off the table body border/outline. Even with additional padding to compensate for this, the rest of the body is still
-      // out of view since the container itself is the scrollable region instead of the body itself. Not sure how to actually style it so that we get the
-      // body outline visible at all times (can't make the container have the outline since that goes around the columns too).
-      // Did an additional attempt using a background image but that didn't work that well due to finiky scaling/positioning depending on the Table's size...
-      <ResizableTableContainer ref={scrollRef} onResize={onResize} onResizeEnd={onResizeEnd} onResizeStart={onResizeStart} className={mergeStyles(tableWrapper, styles)}>
+      // TODO: for now we are going with the approach of making the outline go around the whole table
+      <ResizableTableContainer
+        ref={scrollRef}
+        onResize={onResize}
+        onResizeEnd={onResizeEnd}
+        onResizeStart={onResizeStart}
+        className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
+        style={UNSAFE_style}>
         <UNSTABLE_Virtualizer layout={layout}>
           <InternalTableContext.Provider value={context}>
             <AriaTable
-              style={UNSAFE_style}
-              className={renderProps => (UNSAFE_className || '') + table({
+              className={renderProps => table({
                 ...renderProps
               })}
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
@@ -337,29 +350,6 @@ export function Table(props: TableProps) {
 
   return baseTable;
 }
-
-// TODO: will need focus styles for when it is focused due to empty state
-// styles for root drop target
-// TODO: with the virtualization, the styles applied here go on a 0 height div..., for now I'm trying a background image since the table body
-// is the child of the virutalizer wrapper that contains ALL the rows, so it is hard to size it to the actual user applied height of the table...
-// If we do go with the background image approach, we will need to have that background image change its background color and border when focused for
-// root drop or empty state focus...
-// const tableBody = style<TableBodyRenderProps & S2TableProps>({
-  // backgroundColor: {
-  //   default: 'gray-25',
-  //   isQuiet: 'transparent'
-  // },
-  // outlineColor: 'gray-300',
-  // outlineWidth: {
-  //   default: 1,
-  //   isQuiet: 0
-  // },
-  // outlineStyle: 'solid',
-  // borderRadius: {
-  //   default: 'default',
-  //   isQuiet: 'none'
-  // }
-// });
 
 const centeredWrapper = style({
   display: 'flex',
@@ -433,10 +423,6 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
   return (
     <AriaTableBody
-      // className={renderProps => tableBody({
-      //   ...renderProps,
-      //   ...tableVisualOptions
-      // })}
       className={style({height: 'full'})}
       {...props}
       renderEmptyState={emptyRender}
@@ -481,11 +467,12 @@ const columnStyles = style({
   },
   // TODO: would be nice to not have to hard code these
   paddingTop: {
-    default: size(7),  // table-column-header-row-top-to-text-medium
+    default: size(6),  // table-column-header-row-top-to-text-medium
     isColumResizable: 0
   },
   paddingBottom: {
-    default: size(8), // table-column-header-row-top-to-text-medium
+    // TODO: currently set to 7 so the newly added border below isn't cut off, should be 8
+    default: size(7), // table-column-header-row-top-to-text-medium
     isColumResizable: 0
   },
   textAlign: 'start',
@@ -494,18 +481,13 @@ const columnStyles = style({
   fontSize: 'control',
   fontFamily: 'sans',
   fontWeight: 'bold',
-  display: 'flex'
-  // TODO: right now in quiet, we are missing the top horizontal line separator between the columns and the first row
-  // I could add this via border but that would introduce a shift in positioning and unfortunately can't use a negative margin on a th element
-  // borderColor: 'gray-200',
-  // borderXWidth: 0,
-  // borderTopWidth: 0,
-  // borderBottomWidth: {
-  //   isQuiet: 1
-  // },
-  // borderStyle: {
-  //   isQuiet: 'solid'
-  // }
+  display: 'flex',
+  // TODO: this border isn't perfect because it is flush with the first row's blue selected outline and the text is 17.5px instead of 18px
+  borderColor: 'gray-300',
+  borderXWidth: 0,
+  borderTopWidth: 0,
+  borderBottomWidth: 1,
+  borderStyle: 'solid'
 });
 
 export interface ColumnProps extends RACColumnProps {
@@ -778,11 +760,16 @@ const selectAllCheckbox = style({
 
 const selectAllCheckboxColumn = style({
   padding: 0,
-  height: 'full',
-  borderRadius: 'sm',
+  // TODO: this needs to be full - 1 but adding a .5 for now so it matches the other columns, will need to figure out why the text elements are 17.5px
+  height: '[calc(100% - 1.5px)]',
   outlineStyle: 'none',
   position: 'relative',
-  alignContent: 'center'
+  alignContent: 'center',
+  borderColor: 'gray-300',
+  borderXWidth: 0,
+  borderTopWidth: 0,
+  borderBottomWidth: 1,
+  borderStyle: 'solid'
 });
 
 export function TableHeader<T extends object>(
