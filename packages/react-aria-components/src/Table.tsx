@@ -918,16 +918,17 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let emptyState;
   let TR = useElementType('tr');
   let TD = useElementType('td');
+  let numColumns = collection.columnCount;
   if (collection.size === 0 && props.renderEmptyState && state) {
     let rowProps = {};
     let rowHeaderProps = {};
     let style = {};
     if (isVirtualized) {
-      rowProps['aria-rowindex'] = state.collection.headerRows.length + 1;
-      rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+      rowProps['aria-rowindex'] = collection.headerRows.length + 1;
+      rowHeaderProps['aria-colspan'] = numColumns;
       style = {display: 'contents'};
     } else {
-      rowHeaderProps['colSpan'] = collection.columnCount;
+      rowHeaderProps['colSpan'] = numColumns;
     }
 
     emptyState = (
@@ -1312,6 +1313,7 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let numColumns = state.collection.columns.length;
+
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -1327,7 +1329,7 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
 
   if (isVirtualized) {
     rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
-    rowHeaderProps['aria-colspan'] = state.collection.columnCount;
+    rowHeaderProps['aria-colspan'] = numColumns;
     style = {display: 'contents'};
   } else {
     rowHeaderProps['colSpan'] = numColumns;
