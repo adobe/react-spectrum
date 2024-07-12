@@ -78,6 +78,7 @@
 
 .react-spectrum-Datepicker-inputSized {
   display: flex;
+  overflow-y: visible;
 }
 
 .react-spectrum-Datepicker-rangeDash {
