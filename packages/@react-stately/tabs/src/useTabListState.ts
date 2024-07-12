@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Key} from '@react-types/shared';
+import {Collection, CollectionStateBase, Key, Node} from '@react-types/shared';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
 import {useEffect, useRef} from 'react';
@@ -64,16 +64,16 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   };
 }
 
-function findDefaultSelectedKey<T>(collection: Collection<T> | null, disabledKeys: Set<Key>) {
+function findDefaultSelectedKey<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
   let selectedKey = null;
   if (collection) {
     selectedKey = collection.getFirstKey();
     // loop over tabs until we find one that isn't disabled and select that
-    while (disabledKeys.has(selectedKey) && selectedKey !== collection.getLastKey()) {
+    while ((disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey !== collection.getLastKey()) {
       selectedKey = collection.getKeyAfter(selectedKey);
     }
     // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
-    if (disabledKeys.has(selectedKey) && selectedKey === collection.getLastKey()) {
+    if ((disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey === collection.getLastKey()) {
       selectedKey = collection.getFirstKey();
     }
   }
