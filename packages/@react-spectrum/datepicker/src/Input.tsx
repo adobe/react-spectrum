@@ -126,10 +126,14 @@ function Input(props, ref) {
       <div role="presentation" className={inputClass}>
         <div
           role="presentation"
-          style={{minWidth: props.minWidth}}
           className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')}
           ref={mergeRefs(ref, inputRef)}>
-          {children}
+          <div
+            role="presentation"
+            className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputSized')}
+            style={{minWidth: props.minWidth}}>
+            {children}
+          </div>
         </div>
       </div>
       {validationIcon}
