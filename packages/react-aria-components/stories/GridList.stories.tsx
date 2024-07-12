@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, GridList, GridListItem, GridListItemProps} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import React from 'react';
+import React, {useMemo} from 'react';
+import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
+import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -47,12 +49,18 @@ const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}
-      style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+      style={{display: 'flex', alignItems: 'center', gap: 8}}
       className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
         focused: isFocused,
         selected: isSelected,
         hovered: isHovered
-      })} />
+      })}>
+      {({selectionMode, allowsDragging}) => (<>
+        {allowsDragging && <Button slot="drag">≡</Button>}
+        {selectionMode !== 'none' ? <MyCheckbox slot="selection" /> : null}
+        {props.children as any}
+      </>)}
+    </GridListItem>
   );
 };
 
@@ -68,6 +76,101 @@ GridListExample.story = {
     keyboardNavigationBehavior: {
       control: 'radio',
       options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
     }
   }
 };
+
+const MyCheckbox = ({children, ...props}: CheckboxProps) => {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => (
+        <>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              {isIndeterminate
+                ? <rect x={1} y={7.5} width={15} height={3} />
+                : <polyline points="1 9 7 14 15 4" />}
+            </svg>
+          </div>
+          {children}
+        </>
+      )}
+    </Checkbox>
+  );
+};
+
+export function VirtualizedGridList() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new ListLayout({
+      rowHeight: 25
+    });
+  }, []);
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
+  return (
+    <Virtualizer layout={layout}>
+      <GridList 
+        className={styles.menu}
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks}
+        style={{height: 400}}
+        aria-label="virtualized listbox"
+        items={list.items}>
+        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+      </GridList>
+    </Virtualizer>
+  );
+}
+
+export function VirtualizedGridListGrid() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new GridLayout({
+      minItemSize: new Size(40, 40)
+    });
+  }, []);
+
+  return (
+    <Virtualizer layout={layout}>
+      <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
+        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+      </GridList>
+    </Virtualizer>
+  );
+}

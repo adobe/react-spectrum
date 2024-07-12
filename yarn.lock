@@ -1374,18 +1374,6 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@emotion/is-prop-valid@^0.8.2":
-  version "0.8.8"
-  resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
-  integrity sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==
-  dependencies:
-    "@emotion/memoize" "0.7.4"
-
-"@emotion/memoize@0.7.4":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.4.tgz#19bf0f5af19149111c40d98bb0cf82119f5d9eeb"
-  integrity sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==
-
 "@emotion/use-insertion-effect-with-fallbacks@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@emotion/use-insertion-effect-with-fallbacks/-/use-insertion-effect-with-fallbacks-1.0.1.tgz#08de79f54eb3406f9daaf77c76e35313da963963"
@@ -5746,11 +5734,6 @@
   resolved "https://registry.yarnpkg.com/@types/pretty-hrtime/-/pretty-hrtime-1.0.1.tgz#72a26101dc567b0d68fd956cf42314556e42d601"
   integrity sha512-VjID5MJb1eGKthz2qUerWT8+R4b9N+CHvGCzg9fn4kWZgaF9AhdYikQio3R7wV8YY1NsQKPaCwKz1Yff+aHNUQ==
 
-"@types/prop-types@*":
-  version "15.7.3"
-  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
-  integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
-
 "@types/q@^1.5.1":
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
@@ -5771,19 +5754,18 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.7.tgz#50ae4353eaaddc04044279812f52c8c65857dbcb"
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
 
-"@types/react-dom@^18.0.0", "@types/react-dom@^18.3.0":
-  version "18.3.0"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.3.0.tgz#0cbc818755d87066ab6ca74fbedb2547d74a82b0"
-  integrity sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg==
+"@types/react-dom@^18.0.0", "@types/react-dom@npm:types-react-dom@19.0.0-rc.0":
+  version "19.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/types-react-dom/-/types-react-dom-19.0.0-rc.0.tgz#ab6ac12f4885c7cc6d722f3f7822543f9cc5fd23"
+  integrity sha512-wGlQSD6H6EeCxhH+dSip1cPcCU7nNTOwHEr29rjiNtGkUPlmEofOizoQaPMEqQH2V76ME3NLvBDLGajRu3xZOw==
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16", "@types/react@^18.3.0":
-  version "18.3.0"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.0.tgz#2e6ac50dea2f68f774b20f1bd536ef82365cd64a"
-  integrity sha512-DiUcKjzE6soLyln8NNZmyhcQjVv+WsUIFSqetMN0p8927OztKT4VTfFTqsbAi5oAGIcgOmOajlfBqyptDDjZRw==
+"@types/react@*", "@types/react@>=16", "@types/react@npm:types-react@19.0.0-rc.0":
+  version "19.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/types-react/-/types-react-19.0.0-rc.0.tgz#27957fab5b2999a4ed4ae92e87adfdbd593ea5a4"
+  integrity sha512-JFd3qtgXZ+EdHht8WXMPSF231brd6Bu4yLKqyo0JjpzhmjYxJptT6TBh/xFqOhx+ee2Nagj7Ttkh5F/jc49TVQ==
   dependencies:
-    "@types/prop-types" "*"
     csstype "^3.0.2"
 
 "@types/semver@^7.3.4":
@@ -6814,13 +6796,6 @@ ast-types-flow@^0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/ast-types-flow/-/ast-types-flow-0.0.7.tgz#f70b735c6bca1a5c9c22d982c3e39e7feba3bdad"
   integrity sha1-9wtzXGvKGlycItmCw+Oef+ujva0=
-
-ast-types@0.14.2:
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.14.2.tgz#600b882df8583e3cd4f2df5fa20fa83759d4bdfd"
-  integrity sha512-O0yuUDnZeQDL+ncNGlJ78BiO4jnYI3bvMsD5prT0/nsgijG/LpNBIr63gTjVTNsiGkgQhiyCShTgxt8oXOrklA==
-  dependencies:
-    tslib "^2.0.1"
 
 ast-types@^0.16.1:
   version "0.16.1"
@@ -11411,14 +11386,12 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-framer-motion@^10.16.4:
-  version "10.16.4"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.16.4.tgz#30279ef5499b8d85db3a298ee25c83429933e9f8"
-  integrity sha512-p9V9nGomS3m6/CALXqv6nFGMuFOxbWsmaOrdmhyQimMIlLl3LC7h7l86wge/Js/8cRu5ktutS/zlzgR7eBOtFA==
+framer-motion@^11.3.0-alpha.0:
+  version "11.3.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-11.3.0-alpha.0.tgz#23247c48bafecb72618685b6f73fcfe47e2da2f2"
+  integrity sha512-te1kex5A1/E8DYTlBoR4O7GLx2ALKzgd2uMHb1cD9FaBYY18Xyk9kAtv8JsvAwWTimuFMNH/y9bBr97+pVmlPA==
   dependencies:
     tslib "^2.4.0"
-  optionalDependencies:
-    "@emotion/is-prop-valid" "^0.8.2"
 
 fresh@0.5.2, fresh@^0.5.2:
   version "0.5.2"
@@ -18234,9 +18207,9 @@ param-case@^2.1.0:
   dependencies:
     no-case "^2.2.0"
 
-"parcel-resolver-storybook@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master":
+"parcel-resolver-storybook@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master":
   version "1.0.0"
-  resolved "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master#90d8e09608eecbfdde28cc9cb5d944e12a6df4af"
+  resolved "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master#90d8e09608eecbfdde28cc9cb5d944e12a6df4af"
   dependencies:
     "@parcel/node-resolver-core" "^3.1.2"
     "@parcel/plugin" "^2.10.2"
@@ -19789,14 +19762,15 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
-recast@^0.20:
-  version "0.20.5"
-  resolved "https://registry.yarnpkg.com/recast/-/recast-0.20.5.tgz#8e2c6c96827a1b339c634dd232957d230553ceae"
-  integrity sha512-E5qICoPoNL4yU0H0NoBDntNB0Q5oMSNh9usFctYniLBluTthi3RsQVBXIJNbApOlvSwW/RGxIuokPcAc59J5fQ==
+recast@^0.23:
+  version "0.23.9"
+  resolved "https://registry.yarnpkg.com/recast/-/recast-0.23.9.tgz#587c5d3a77c2cfcb0c18ccce6da4361528c2587b"
+  integrity sha512-Hx/BGIbwj+Des3+xy5uAtAbdCyqK9y9wbBcDFDYanLS9JnMqf7OeF87HQwUimE87OEc72mr6tkKUKMBBL+hF9Q==
   dependencies:
-    ast-types "0.14.2"
+    ast-types "^0.16.1"
     esprima "~4.0.0"
     source-map "~0.6.1"
+    tiny-invariant "^1.3.3"
     tslib "^2.0.1"
 
 recast@^0.23.1, recast@^0.23.3:
@@ -21219,9 +21193,9 @@ store2@^2.14.2:
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.14.3.tgz#24077d7ba110711864e4f691d2af941ec533deb5"
   integrity sha512-4QcZ+yx7nzEFiV4BMLnr/pRa5HYzNITX2ri0Zh6sT9EyQHbBHacC6YigllUPU9X3D0f/22QCgfokpKs52YRrUg==
 
-"storybook-builder-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master":
+"storybook-builder-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master":
   version "0.0.0"
-  resolved "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#e6f9a68d3dd880f2742180ade807004a0704f2de"
+  resolved "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#e6f9a68d3dd880f2742180ade807004a0704f2de"
   dependencies:
     "@storybook/core-common" "7.6.4"
     http-proxy-middleware "^2.0.6"
@@ -21240,9 +21214,9 @@ storybook-dark-mode@^3.0.3:
     fast-deep-equal "^3.1.3"
     memoizerific "^1.11.3"
 
-"storybook-react-parcel@https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master":
+"storybook-react-parcel@https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master":
   version "0.0.0"
-  resolved "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master#62f43a0d93b9d92fff924e08cfd36665eb3245a5"
+  resolved "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master#62f43a0d93b9d92fff924e08cfd36665eb3245a5"
 
 storybook@^7.6.19:
   version "7.6.19"
@@ -22402,10 +22376,10 @@ typescript-strict-plugin@^2.0.0:
     ora "^5.4.1"
     yargs "^16.2.0"
 
-typescript@^5.3.3:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.3.tgz#b3ce6ba258e72e6305ba66f5c9b452aaee3ffe37"
-  integrity sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==
+typescript@^5.5.0:
+  version "5.5.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.2.tgz#c26f023cb0054e657ce04f72583ea2d85f8d0507"
+  integrity sha512-NcRtPEOsPFFWjobJEtfihkLCZCXZt/os3zf8nTxjVH3RvTSxjrCamJpbExGvYOF+tFHc3pA65qpdwPbzjohhew==
 
 ua-parser-js@0.7.17:
   version "0.7.17"

@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {createPortal} from 'react-dom';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
@@ -23,11 +23,7 @@ describe('FocusScope', function () {
   let user;
 
   const IframeExample = ({children}) => {
-    React.useEffect(() => {
-      ReactDOM.render(<>{children}</>, iframeRoot);
-    }, [children]);
-
-    return null;
+    return createPortal(<>{children}</>, iframeRoot);
   };
 
   beforeAll(() => {

@@ -12,17 +12,30 @@
 
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {BaseCollection, CollectionChildren, CollectionProps, createBranchComponent, createLeafComponent, ItemRenderProps, SectionContext, SectionProps, useCollection} from './Collection';
-import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
+import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {HeaderContext} from './Header';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactElement,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -57,15 +70,18 @@ export function MenuTrigger(props: MenuTriggerProps) {
     onResize: onResize
   });
 
+  let scrollRef = useRef(null);
+
   return (
     <Provider
       values={[
-        [MenuContext, menuProps],
+        [MenuContext, {...menuProps, ref: scrollRef}],
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'MenuTrigger',
           triggerRef: ref,
+          scrollRef,
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
@@ -89,7 +105,7 @@ export interface SubmenuTriggerProps {
   delay?: number
 }
 
-const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement>} | null>(null);
+const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>} | null>(null);
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
@@ -97,6 +113,7 @@ const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElemen
  * @version alpha
  */
 export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigger', (props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+  let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
@@ -125,7 +142,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           ...popoverProps
         }]
       ]}>
-      <CollectionChildren collection={state.collection} parent={item} />
+      <CollectionBranch collection={state.collection} parent={item} />
       {props.children[1]}
     </Provider>
   );
@@ -135,21 +152,19 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
-  let {portal, collection} = useCollection(props);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
-    <>
-      {collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
-      {portal}
-    </>
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
+    </CollectionBuilder>
   );
 }
 
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
-  collection: BaseCollection<T>,
-  menuRef: RefObject<HTMLDivElement>
+  collection: ICollection<Node<object>>,
+  menuRef: RefObject<HTMLDivElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
@@ -159,7 +174,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     children: undefined
   });
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
-  let {menuProps} = useMenu(props, state, ref);
+  let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
+  let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContext = useContext(PopoverContext)!;
 
@@ -209,7 +225,10 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null]
           ]}>
-          <CollectionChildren collection={collection} />
+          <CollectionRoot
+            collection={collection}
+            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+            scrollRef={ref} />
         </Provider>
       </div>
       <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
@@ -225,6 +244,7 @@ export {_Menu as Menu};
 
 function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
   let state = useContext(MenuStateContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
@@ -244,7 +264,7 @@ function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef
       {...renderProps}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
-        <CollectionChildren collection={state.collection} parent={section} />
+        <CollectionBranch collection={state.collection} parent={section} />
       </HeaderContext.Provider>
     </section>
   );

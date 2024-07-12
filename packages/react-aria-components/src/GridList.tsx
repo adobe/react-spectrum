@@ -12,12 +12,14 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {CollectionChildren, CollectionProps, createLeafComponent, ItemRenderProps, useCollection} from './Collection';
-import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropHooks} from './useDragAndDrop';
+import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -74,23 +76,23 @@ export const GridListContext = createContext<ContextValue<GridListProps<any>, HT
 function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
-  let {collection, portal} = useCollection(props);
+
   return (
-    <>
-      {portal}
-      <GridListInner props={props} collection={collection} gridListRef={ref} />
-    </>
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
+    </CollectionBuilder>
   );
 }
 
 interface GridListInnerProps<T extends object> {
   props: GridListProps<T>,
-  collection: Collection<Node<T>>,
-  gridListRef: RefObject<HTMLDivElement>
+  collection: ICollection<Node<object>>,
+  gridListRef: RefObject<HTMLDivElement | null>
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
+  let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let state = useListState({
     ...props,
     collection,
@@ -107,16 +109,18 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       ref,
       disabledKeys,
       disabledBehavior,
+      layoutDelegate,
       layout,
       direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, collator, direction]);
+  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...props,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
-    keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior
+    keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
+    isVirtualized
   }, state, ref);
 
   let selectionManager = state.selectionManager;
@@ -166,7 +170,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       disabledBehavior: selectionManager.disabledBehavior,
       ref
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref, {layout, direction});
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -225,7 +229,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
           {isListDroppable && <RootDropIndicator />}
-          <CollectionChildren collection={collection} />
+          <CollectionRoot
+            collection={collection}
+            scrollRef={ref}
+            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
+            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -266,10 +274,12 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
-      shouldSelectOnPressUp: !!dragState
+      shouldSelectOnPressUp: !!dragState,
+      isVirtualized
     },
     state,
     ref
@@ -322,7 +332,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
     }
   });
 
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
   let dragButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current) {
@@ -339,9 +348,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
 
   return (
     <>
-      {dragAndDropHooks?.useDropIndicator &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
-      }
       {dropIndicator && !dropIndicator.isHidden &&
         <div role="row" style={{position: 'absolute'}}>
           <div role="gridcell">
@@ -387,15 +393,13 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
                 slots: {
                   description: descriptionProps
                 }
-              }]
+              }],
+              [CollectionRendererContext, DefaultCollectionRenderer]
             ]}>
             {renderProps.children}
           </Provider>
         </div>
       </div>
-      {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
-      }
     </>
   );
 });
@@ -422,7 +426,7 @@ function GridListDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedR
 interface GridListDropIndicatorProps extends DropIndicatorProps {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
   isDropTarget: boolean,
-  buttonRef: RefObject<HTMLDivElement>
+  buttonRef: RefObject<HTMLDivElement | null>
 }
 
 function GridListDropIndicator(props: GridListDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
@@ -446,7 +450,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
     <div
       {...renderProps}
       role="row"
-      ref={ref as RefObject<HTMLDivElement>}
+      ref={ref as RefObject<HTMLDivElement | null>}
       data-drop-target={isDropTarget || undefined}>
       <div role="gridcell">
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />

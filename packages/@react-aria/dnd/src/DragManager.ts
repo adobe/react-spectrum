@@ -13,7 +13,6 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
-import {flushSync} from 'react-dom';
 import {getDragModality, getTypes} from './utils';
 import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
@@ -26,6 +25,7 @@ let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: FocusableElement,
+  preventFocusOnDrop?: boolean,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
@@ -513,19 +513,11 @@ class DragSession {
       });
     }
 
-    // Blur and re-focus the drop target so that the focus ring appears.
-    if (this.currentDropTarget) {
-      // Since we cancel all focus events in drag sessions, refire blur to make sure state gets updated so drag target doesn't think it's still focused
-      // i.e. When you from one list to another during a drag session, we need the blur to fire on the first list after the drag.
-      if (!this.dragTarget.element.contains(this.currentDropTarget.element)) {
-        this.dragTarget.element.dispatchEvent(new FocusEvent('blur'));
-        this.dragTarget.element.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-      }
-      // Re-focus the focusedKey upon reorder. This requires a React rerender between blurring and focusing.
-      flushSync(() => {
-        this.currentDropTarget.element.blur();
-      });
-      this.currentDropTarget.element.focus();
+    if (this.currentDropTarget && !this.currentDropTarget.preventFocusOnDrop) {
+      // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+      // This corrects state such as whether focus ring should appear.
+      // useDroppableCollection handles this itself, so this is only for standalone drop zones.
+      document.activeElement.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 
     this.setCurrentDropTarget(null);

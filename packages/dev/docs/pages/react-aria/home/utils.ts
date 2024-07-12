@@ -66,7 +66,7 @@ function sleep(ms: number) {
   };
 }
 
-export function useIntersectionObserver(ref: RefObject<HTMLElement>, onIntersect: () => Function | void) {
+export function useIntersectionObserver(ref: RefObject<HTMLElement | null>, onIntersect: () => Function | void) {
   useEffect(() => {
     let element = ref.current;
     if (!element) {

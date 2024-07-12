@@ -893,7 +893,12 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      let isReact19 = parseInt(React.version, 10) >= 19;
+      if (isReact19) {
+        expect(onLoadMore).toHaveBeenCalledTimes(2);
+      } else {
+        expect(onLoadMore).toHaveBeenCalledTimes(1);
+      }
     });
   });
 

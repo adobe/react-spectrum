@@ -33,7 +33,7 @@ export interface AriaSelectableCollectionOptions {
   /**
    * The ref attached to the element representing the collection.
    */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
@@ -80,7 +80,7 @@ export interface AriaSelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement>,
+  scrollRef?: RefObject<HTMLElement | null>,
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.
@@ -404,7 +404,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    if (manager.isFocused && manager.focusedKey != null && manager.focusedKey !== lastFocusedKey.current && scrollRef?.current) {
+    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef?.current) {
       let modality = getInteractionModality();
       let element = ref.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (!element) {

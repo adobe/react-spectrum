@@ -39,17 +39,22 @@
   "dependencies": {
     "@internationalized/date": "^3.5.4",
     "@internationalized/string": "^3.2.3",
+    "@react-aria/collections": "3.0.0-alpha.1",
     "@react-aria/color": "3.0.0-beta.33",
+    "@react-aria/dnd": "^3.6.1",
     "@react-aria/focus": "^3.17.1",
     "@react-aria/interactions": "^3.21.3",
     "@react-aria/menu": "^3.14.1",
     "@react-aria/toolbar": "3.0.0-beta.5",
     "@react-aria/tree": "3.0.0-alpha.1",
     "@react-aria/utils": "^3.24.1",
+    "@react-aria/virtualizer": "^3.10.1",
     "@react-stately/color": "^3.6.1",
+    "@react-stately/layout": "^3.13.9",
     "@react-stately/menu": "^3.7.1",
     "@react-stately/table": "^3.11.8",
     "@react-stately/utils": "^3.10.1",
+    "@react-stately/virtualizer": "^3.7.1",
     "@react-types/color": "3.0.0-beta.25",
     "@react-types/form": "^3.7.4",
     "@react-types/grid": "^3.2.6",
@@ -62,8 +67,8 @@
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   },
   "publishConfig": {
     "access": "public"
