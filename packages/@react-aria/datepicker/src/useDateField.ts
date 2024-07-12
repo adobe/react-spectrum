@@ -149,7 +149,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name: props.name,
-    value: state.value?.toString() || ''
+    value: state.value?.toString() || '',
+    disabled: props.isDisabled
   };
 
   if (props.validationBehavior === 'native') {
