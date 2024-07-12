@@ -30,7 +30,7 @@ import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressProvider, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
@@ -180,7 +180,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         triggerRef={unwrappedTriggerRef}
         label={label}
         name={name} />
-      <PressResponder {...mergeProps(hoverProps, triggerProps)}>
+      <PressProvider {...mergeProps(hoverProps, triggerProps)}>
         <FieldButton
           ref={triggerRef}
           isActive={state.isOpen}
@@ -220,7 +220,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           }
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
         </FieldButton>
-      </PressResponder>
+      </PressProvider>
       {state.collection.size === 0 ? null : overlay}
     </div>
   );

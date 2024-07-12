@@ -20,7 +20,7 @@ export {useDialog} from '@react-aria/dialog';
 export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from '@react-aria/dnd';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable, FocusableProvider} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
-export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress} from '@react-aria/interactions';
+export {PressProvider, useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress} from '@react-aria/interactions';
 export {useField, useLabel} from '@react-aria/label';
 export {useGridList, useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
 export {useLink} from '@react-aria/link';

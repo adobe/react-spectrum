@@ -16,7 +16,7 @@ import {forwardRefType} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressProvider} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
@@ -58,9 +58,9 @@ export function DialogTrigger(props: DialogTriggerProps) {
         [DialogContext, overlayProps],
         [PopoverContext, {trigger: 'DialogTrigger', triggerRef: buttonRef}]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressProvider {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
         {props.children}
-      </PressResponder>
+      </PressProvider>
     </Provider>
   );
 }

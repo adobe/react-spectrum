@@ -22,7 +22,7 @@ import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
-import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
+import {PressProvider, useHover, useInteractOutside} from '@react-aria/interactions';
 import React, {
   createContext,
   ForwardedRef,
@@ -86,9 +86,9 @@ export function MenuTrigger(props: MenuTriggerProps) {
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
+      <PressProvider {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
         {props.children}
-      </PressResponder>
+      </PressProvider>
     </Provider>
   );
 }

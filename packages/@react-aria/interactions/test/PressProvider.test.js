@@ -11,7 +11,7 @@
  */
 
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Pressable, PressResponder} from '../';
+import {Pressable, PressProvider} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -20,11 +20,11 @@ describe('PressResponder', function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let {getByRole} = render(
-      <PressResponder onPress={onPress}>
+      <PressProvider onPress={onPress}>
         <div>
           <Pressable><button>Button</button></Pressable>
         </div>
-      </PressResponder>
+      </PressProvider>
     );
 
     let button = getByRole('button');
@@ -36,11 +36,11 @@ describe('PressResponder', function () {
   it('should handle forward refs to nested pressable children', function () {
     let ref = React.createRef();
     let {getByRole} = render(
-      <PressResponder ref={ref}>
+      <PressProvider ref={ref}>
         <div>
           <Pressable><button>Button</button></Pressable>
         </div>
-      </PressResponder>
+      </PressProvider>
     );
 
     let button = getByRole('button');
@@ -50,11 +50,11 @@ describe('PressResponder', function () {
   it('should warn if there is no pressable child', function () {
     let warn = jest.spyOn(global.console, 'warn').mockImplementation();
     render(
-      <PressResponder>
+      <PressProvider>
         <div>
           <button>Button</button>
         </div>
-      </PressResponder>
+      </PressProvider>
     );
 
     expect(warn).toHaveBeenCalledTimes(1);
@@ -64,11 +64,11 @@ describe('PressResponder', function () {
   it('should not warn if there is a pressable child', function () {
     let warn = jest.spyOn(global.console, 'warn').mockImplementation();
     render(
-      <PressResponder>
+      <PressProvider>
         <div>
           <Pressable><button>Button</button></Pressable>
         </div>
-      </PressResponder>
+      </PressProvider>
     );
 
     expect(warn).not.toHaveBeenCalled();
@@ -80,13 +80,13 @@ describe('PressResponder', function () {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let {getByRole} = render(
-      <PressResponder>
+      <PressProvider>
         <div>
           <Pressable onPress={onPress}>
             <button onClick={onClick}>Button</button>
           </Pressable>
         </div>
-      </PressResponder>
+      </PressProvider>
     );
 
     let button = getByRole('button');

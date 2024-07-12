@@ -32,7 +32,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import Paste from '@spectrum-icons/workflow/Paste';
-import {PressResponder} from '@react-aria/interactions';
+import {PressProvider} from '@react-aria/interactions';
 import React, {useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
@@ -340,9 +340,9 @@ function DialogButton({children}) {
 
   return (
     <DialogTrigger isDismissable isOpen={isOpen} onOpenChange={setOpen}>
-      <PressResponder {...dropProps} isPressed={isDropTarget}>
+      <PressProvider {...dropProps} isPressed={isDropTarget}>
         <ActionButton ref={ref}>Open dialog</ActionButton>
-      </PressResponder>
+      </PressProvider>
       {children}
     </DialogTrigger>
   );

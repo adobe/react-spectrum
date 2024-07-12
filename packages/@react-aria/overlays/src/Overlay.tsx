@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClearPressResponder} from '@react-aria/interactions';
+import {ClearPressProvider} from '@react-aria/interactions';
 import {FocusScope} from '@react-aria/focus';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -71,9 +71,9 @@ export function Overlay(props: OverlayProps) {
 
   contents = (
     <OverlayContext.Provider value={contextValue}>
-      <ClearPressResponder>
+      <ClearPressProvider>
         {contents}
-      </ClearPressResponder>
+      </ClearPressProvider>
     </OverlayContext.Provider>
   );
 
