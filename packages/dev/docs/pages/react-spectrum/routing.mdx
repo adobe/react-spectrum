@@ -278,7 +278,7 @@ To use [TanStack Router](https://tanstack.com/router) with React Spectrum, rende
 import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
 import {Provider, defaultTheme} from '@adobe/react-spectrum';
 
-declare module 'react-aria-components' {
+declare module '@adobe/react-spectrum' {
   interface RouterConfig {
     href: ToOptions['to'];
     routerOptions: Omit<NavigateOptions, keyof ToOptions>;
