@@ -359,7 +359,7 @@ describe('GridList', () => {
 
     await user.click(items[0]);
     await user.click(items[1]);
-    
+
     expect(items[0]).toHaveAttribute('aria-selected', 'false');
     expect(items[1]).toHaveAttribute('aria-selected', 'true');
     expect(items[2]).toHaveAttribute('aria-selected', 'false');
@@ -402,7 +402,7 @@ describe('GridList', () => {
     let grid = getByRole('grid');
     grid.scrollTop = 200;
     fireEvent.scroll(grid);
-    
+
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
     expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);

@@ -18,8 +18,8 @@ import {
   Header, Heading,
   ListBox,
   ListBoxContext,
-  ListBoxItem, 
-  UNSTABLE_ListLayout as ListLayout, 
+  ListBoxItem,
+  UNSTABLE_ListLayout as ListLayout,
   Modal,
   Section,
   Text,
@@ -741,11 +741,11 @@ describe('ListBox', () => {
     let listbox = getByRole('listbox');
     listbox.scrollTop = 200;
     fireEvent.scroll(listbox);
-    
+
     options = getAllByRole('option');
     expect(options).toHaveLength(8);
     expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);
-  
+
     await user.tab();
     await user.keyboard('{End}');
 

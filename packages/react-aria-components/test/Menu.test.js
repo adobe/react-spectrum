@@ -360,7 +360,7 @@ describe('Menu', () => {
   });
 
   it('should support onAction on items', async () => {
-    let onAction = jest.fn(); 
+    let onAction = jest.fn();
     let {getAllByRole} = render(
       <Menu aria-label="Test">
         <MenuItem id="cat" onAction={onAction}>Cat</MenuItem>
@@ -374,7 +374,7 @@ describe('Menu', () => {
   });
 
   it('should support onAction on menu and menu items', async () => {
-    let onAction = jest.fn(); 
+    let onAction = jest.fn();
     let itemAction = jest.fn();
     let {getAllByRole} = render(
       <Menu aria-label="Test" onAction={onAction}>

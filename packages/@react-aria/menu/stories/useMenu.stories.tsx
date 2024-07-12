@@ -33,8 +33,8 @@ export const DoubleMenuFiresOnInteractOutside = {
         This should just be there to show that onInteractOutside fires when clicking on another
         trigger.
       </div>
-      <MenuButton label="Actions">
-        <Item key="copy">Copy</Item>
+      <MenuButton label="Actions" onAction={() => console.log('onAction Menu')}>
+        <Item key="copy" onAction={() => console.log('onAction MenuItem')}>Copy</Item>
         <Item key="cut">Cut</Item>
         <Item key="paste">Paste</Item>
       </MenuButton>
@@ -127,7 +127,8 @@ function MenuPopup(props) {
               key={item.key}
               item={item}
               state={state}
-              onClose={props.onClose} />
+              onClose={props.onClose}
+              onAction={props.onAction} />
           ))}
         </ul>
         <DismissButton onDismiss={props.onClose} />
@@ -136,13 +137,14 @@ function MenuPopup(props) {
   );
 }
 
-function MenuItem({item, state, onClose}) {
+function MenuItem({item, state, onAction, onClose}) {
   // Get props for the menu item element
   let ref = React.useRef(undefined);
   let {menuItemProps} = useMenuItem(
     {
       key: item.key,
       isDisabled: item.isDisabled,
+      onAction,
       onClose
     },
     state,

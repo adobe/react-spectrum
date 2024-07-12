@@ -311,8 +311,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
 
-  // Exclude onAction to ensure it is received within item.props in useMenuItem.
-  delete props.onAction;
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({...props, id, key: item.key}, state, ref);
 
   let {isFocusVisible, focusProps} = useFocusRing();
