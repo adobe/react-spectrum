@@ -64,7 +64,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   /** Formats the selected value using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): string,
   /** Gets a formatter based on state's props. */
-  getDateFormatter(ocale: string, formatOptions: FormatterOptions): DateFormatter
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 /**

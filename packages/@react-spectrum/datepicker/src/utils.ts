@@ -87,6 +87,6 @@ export function useDateCharacterWidth(state) {
   // The max of two is for times with only hours.
   // As the length of a date grows we need to proportionally increase the width.
   // We use the characts with 'ch' and months and time dashes are wider and this
-  // accomates for that.
+  // accommodates for that.
   return (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2));
 }

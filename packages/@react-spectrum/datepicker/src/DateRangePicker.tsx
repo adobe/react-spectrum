@@ -112,7 +112,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   let visibleMonths = useVisibleMonths(maxVisibleMonths);
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
-  // Multiplying by two for the two dates, adding one character for the dash, and then the dash left and right padding
+  // Multiplying by two for the two dates, adding one character for the dash, and then the padding around the dash
   let characterCount = `calc(${useDateCharacterWidth(state) * 2 + 1}ch + 2 * var(--spectrum-global-dimension-size-100))`;
 
   return (
