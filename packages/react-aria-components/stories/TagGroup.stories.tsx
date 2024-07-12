@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Tag, TagGroup, TagGroupProps, TagList, TagProps} from 'react-aria-components';
+import {Button, Label, Tag, TagGroup, TagGroupProps, TagList, TagProps} from 'react-aria-components';
 import React from 'react';
 
 export default {
@@ -18,13 +18,13 @@ export default {
 };
 
 export const TagGroupExample = (props: TagGroupProps) => (
-  <TagGroup {...props}>
+  <TagGroup {...props} disabledKeys={new Set([2])} onRemove={console.log}>
     <Label>Categories</Label>
     <TagList style={{display: 'flex', gap: 4}}>
-      <MyTag href="https://nytimes.com">News</MyTag>
-      <MyTag>Travel</MyTag>
-      <MyTag>Gaming</MyTag>
-      <MyTag>Shopping</MyTag>
+      <MyTag id={1} href="https://nytimes.com">News</MyTag>
+      <MyTag id={2}>Travel</MyTag>
+      <MyTag id={3}>Gaming</MyTag>
+      <MyTag id={4}>Shopping</MyTag>
     </TagList>
   </TagGroup>
 );
@@ -50,5 +50,12 @@ TagGroupExample.argTypes = {
 };
 
 function MyTag(props: TagProps) {
-  return <Tag {...props} style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />;
+  return (
+    <Tag
+      {...props}
+      style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})}>
+      {props.children}
+      <Button slot="remove">x</Button>
+    </Tag>
+  );
 }
