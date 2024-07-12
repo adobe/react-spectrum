@@ -12,13 +12,14 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -231,7 +232,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
           <CollectionRoot
             collection={collection}
             scrollRef={ref}
-            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)}
+            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
@@ -392,7 +393,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
                 slots: {
                   description: descriptionProps
                 }
-              }]
+              }],
+              [CollectionRendererContext, DefaultCollectionRenderer]
             ]}>
             {renderProps.children}
           </Provider>

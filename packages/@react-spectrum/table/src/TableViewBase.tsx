@@ -404,9 +404,19 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   let focusedKey = state.selectionManager.focusedKey;
+  let dropTargetKey: Key | null = null;
   if (dropState?.target?.type === 'item') {
-    focusedKey = dropState.target.key;
+    dropTargetKey = dropState.target.key;
+    if (dropState.target.dropPosition === 'before' && dropTargetKey !== state.collection.getFirstKey()) {
+      // Normalize to the "after" drop position since we only render those in the DOM.
+      // The exception to this is for the first row in the table, where we also render the "before" position.
+      dropTargetKey = state.collection.getKeyBefore(dropTargetKey);
+    }
   }
+
+  let persistedKeys = useMemo(() => {
+    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+  }, [focusedKey, dropTargetKey]);
 
   let mergedProps = mergeProps(
     isTableDroppable && droppableCollection?.collectionProps,
@@ -462,7 +472,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         tableState={state}
         layout={layout}
         collection={state.collection}
-        focusedKey={focusedKey}
+        persistedKeys={persistedKeys}
         renderView={renderView}
         renderWrapper={renderWrapper}
         onVisibleRectChange={onVisibleRectChange}
@@ -494,7 +504,7 @@ interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
   tableState: TableState<T>,
   layout: TableViewLayout<T>,
   collection: TableCollection<T>,
-  focusedKey: Key | null,
+  persistedKeys: Set<Key> | null,
   renderView: (type: string, content: GridNode<T>) => ReactElement,
   renderWrapper?: (
     parent: View | null,
@@ -513,7 +523,7 @@ interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
 function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
-  let {tableState, layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
+  let {tableState, layout, collection, persistedKeys, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
   let {direction} = useLocale();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -558,7 +568,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    persistedKeys: useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]),
+    persistedKeys,
     layoutOptions: useMemo(() => ({
       columnWidths: columnResizeState.columnWidths
     }), [columnResizeState.columnWidths])
@@ -566,10 +576,10 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
 
   let memoedVirtualizerProps = useMemo(() => ({
     tabIndex: otherProps.tabIndex,
-    focusedKey,
+    persistedKeys,
     isLoading,
     onLoadMore
-  }), [otherProps.tabIndex, focusedKey, isLoading, onLoadMore]);
+  }), [otherProps.tabIndex, persistedKeys, isLoading, onLoadMore]);
 
   let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, domRef);
   let onVisibleRectChangeMemo = useCallback(rect => {

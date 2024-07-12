@@ -404,7 +404,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    if (manager.isFocused && manager.focusedKey != null && manager.focusedKey !== lastFocusedKey.current && scrollRef?.current) {
+    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef?.current) {
       let modality = getInteractionModality();
       let element = ref.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (!element) {
