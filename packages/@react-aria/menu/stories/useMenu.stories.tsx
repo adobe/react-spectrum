@@ -33,8 +33,8 @@ export const DoubleMenuFiresOnInteractOutside = {
         This should just be there to show that onInteractOutside fires when clicking on another
         trigger.
       </div>
-      <MenuButton label="Actions" onAction={() => console.log('onAction Menu')}>
-        <Item key="copy" onAction={() => console.log('onAction MenuItem')}>Copy</Item>
+      <MenuButton label="Actions">
+        <Item key="copy">Copy</Item>
         <Item key="cut">Cut</Item>
         <Item key="paste">Paste</Item>
       </MenuButton>
