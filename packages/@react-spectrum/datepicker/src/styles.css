@@ -68,6 +68,7 @@
   overflow-x: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  overflow-y: visible; /* For Express theme */
 
   &::-webkit-scrollbar { /* WebKit */
     width: 0;
@@ -78,7 +79,6 @@
 
 .react-spectrum-Datepicker-inputSized {
   display: flex;
-  overflow-y: visible;
 }
 
 .react-spectrum-Datepicker-rangeDash {
