@@ -57,7 +57,7 @@ export interface FormProps extends AriaLabelingProps {
    */
   autoComplete?: 'off' | 'on',
   /**
-   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
@@ -89,7 +89,6 @@ export interface SpectrumFormProps extends FormProps, DOMProps, StyleProps, Omit
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required
    * or invalid via ARIA.
-   * @default 'aria'
    */
   validationBehavior?: 'aria' | 'native'
 }
