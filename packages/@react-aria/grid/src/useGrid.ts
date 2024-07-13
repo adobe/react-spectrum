@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {RefObject, useCallback, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';

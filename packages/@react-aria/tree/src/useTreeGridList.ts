@@ -13,9 +13,9 @@
 import {AriaGridListOptions, AriaGridListProps, GridListProps, useGridList} from '@react-aria/gridlist';
 import {
   DOMAttributes,
-  KeyboardDelegate
+  KeyboardDelegate,
+  RefObject
 } from '@react-types/shared';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 
 export interface TreeGridListProps<T> extends GridListProps<T> {}

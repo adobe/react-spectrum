@@ -13,9 +13,9 @@
 import {AriaSliderProps, AriaSliderThumbProps, HoverEvents, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
 export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps {

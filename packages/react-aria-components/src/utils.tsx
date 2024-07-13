@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 export const DEFAULT_SLOT = Symbol('default');
@@ -196,7 +196,7 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
       mergedProps.style = (renderProps) => {
         let contextStyle = typeof contextProps.style === 'function' ? contextProps.style(renderProps) : contextProps.style;
         let defaultStyle = {...renderProps.defaultStyle, ...contextStyle};
-        let style = typeof props.style === 'function' 
+        let style = typeof props.style === 'function'
           ? props.style({...renderProps, defaultStyle})
           : props.style;
         return {...defaultStyle, ...style};
