@@ -24,10 +24,10 @@ export interface ColorFieldState extends FormValidationState {
    */
   readonly inputValue: string,
   /**
-   * The currently parsed color value, or null if the field is empty.
+   * The currently parsed color value.
    * Updated based on the `inputValue` as the user types.
    */
-  readonly colorValue: Color | null,
+  readonly colorValue: Color,
   /** Sets the current text value of the input. */
   setInputValue(value: string): void,
   /**
@@ -72,7 +72,7 @@ export function useColorFieldState(
 
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, setColorValue] = useControlledState<Color | null>(initialValue!, initialDefaultValue!, onChange);
+  let [colorValue, setColorValue] = useControlledState<Color>(initialValue!, initialDefaultValue!, onChange);
   let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
 
   let validation = useFormValidationState({
@@ -80,7 +80,7 @@ export function useColorFieldState(
     value: colorValue
   });
 
-  let safelySetColorValue = (newColor: Color | null) => {
+  let safelySetColorValue = (newColor: Color) => {
     if (!colorValue || !newColor) {
       setColorValue(newColor);
       return;
@@ -108,9 +108,9 @@ export function useColorFieldState(
   }, [inputValue]);
 
   let commit = () => {
-    // Set to empty state if input value is empty
+    // Set to initial state if input value is empty
     if (!inputValue.length) {
-      safelySetColorValue(null);
+      safelySetColorValue(initialValue!);
       if (value === undefined || colorValue === null) {
         setInputValue('');
       } else {
