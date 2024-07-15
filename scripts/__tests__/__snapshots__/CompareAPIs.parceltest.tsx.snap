@@ -288,6 +288,53 @@ exports[`Compare API interface merging merges properties when extending with nes
 
 exports[`Compare API interface merging other packages merges properties when extending with generics from other modules 1`] = `
 "
+ packages/@react-types/shared/src/dom.d.ts:RouterConfig
+  
+#### packages/@react-types/shared/src/dom.d.ts:RouterConfig
+-
+-interface RouterConfig {
+-
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/dom.d.ts:Href
+  
+#### packages/@react-types/shared/src/dom.d.ts:Href
+-type Href = {
+-  RouterConfig extends {
+-href: infer [object Object]
+-} ? H : string
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/dom.d.ts:RouterOptions
+  
+#### packages/@react-types/shared/src/dom.d.ts:RouterOptions
+-type RouterOptions = {
+-  RouterConfig extends {
+-routerOptions: infer [object Object]
+-} ? O : never
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
  packages/@react-types/shared/src/collections.d.ts:ItemProps
   
 #### packages/@react-types/shared/src/collections.d.ts:ItemProps
@@ -299,12 +346,14 @@ exports[`Compare API interface merging other packages merges properties when ext
 -aria-label?: string
 -childItems?: Iterable<T>
 -hasChildItems?: boolean
--href?: string
+-href?: Href
+-hrefLang?: string
 -target?: HTMLAttributeAnchorTarget
 -rel?: string
 -download?: boolean | string
 -ping?: string
 -referrerPolicy?: HTMLAttributeReferrerPolicy
+-routerOptions?: RouterOptions
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -476,7 +525,10 @@ it changed:
   
 #### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
 changed by:
-- packages/@react-types/shared/src/collections.d.ts:ItemProps
+- packages/@react-types/shared/src/dom.d.ts:RouterConfig
+ packages/@react-types/shared/src/dom.d.ts:Href
+ packages/@react-types/shared/src/dom.d.ts:RouterOptions
+ packages/@react-types/shared/src/collections.d.ts:ItemProps
  packages/@react-types/shared/src/collections.d.ts:ItemElement
  packages/@react-types/shared/src/collections.d.ts:ItemRenderer
  packages/@react-types/shared/src/collections.d.ts:SectionProps
@@ -509,7 +561,7 @@ changed by:
 +  label?: ReactNode
 +  onAction?: () => void
 +  onRemove?: (Set<Key>) => void
-+  onSelectionChange?: (Selection) => any
++  onSelectionChange?: (Selection) => void
 +  selectedKeys?: 'all' | Iterable<Key>
 +  selectionBehavior?: SelectionBehavior
 +  selectionMode?: SelectionMode
