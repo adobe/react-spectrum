@@ -10,10 +10,11 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
-import React, {RefObject, useEffect, useState} from 'react';
+import {Key, RefObject} from '@react-types/shared';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
@@ -35,7 +36,7 @@ function getCursor(svg: string, fallback: string) {
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<HTMLDivElement | null>,
   onResizeStart: (widths: Map<Key, ColumnSize>) => void,
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void
@@ -47,9 +48,12 @@ const CURSORS = {
   e: getCursor(eCursor, 'e-resize')
 };
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
+export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
+
+function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | null>) {
   let {column, showResizer} = props;
-  let {isEmpty, layout, onFocusedResizer} = useTableContext();
+  let {isEmpty, onFocusedResizer} = useTableContext();
+  let layout = useContext(ResizeStateContext)!;
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object

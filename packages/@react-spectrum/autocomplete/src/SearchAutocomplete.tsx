@@ -100,12 +100,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       validate: useCallback(v => validate?.(v.inputValue), [validate])
     }
   );
-  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
+  let layout = useListBoxLayout();
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
       ...props,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef,
@@ -179,6 +179,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           state={state}
           shouldUseVirtualFocus
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
+          showLoadingSpinner={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(searchAutocompleteStyles, 'no-results')}>
@@ -195,7 +196,7 @@ let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(pr
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,
@@ -294,7 +295,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
   }, [isLoading, showLoading, inputValue]);
 
   return (
-    <FocusRing
+    (<FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -302,7 +303,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref as RefObject<HTMLDivElement | null>}
         style={style}
         className={
           classNames(
@@ -359,7 +360,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
           wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly ? clearButton : undefined}
           disableFocusRing />
       </div>
-    </FocusRing>
+    </FocusRing>)
   );
 }
 

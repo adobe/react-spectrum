@@ -69,9 +69,9 @@ export default PackageLocalizedStrings;
 
     index += `});
 
-function LocalizedStringProvider({locale, dictionary: dict = dictionary}) {
+function LocalizedStringProvider({locale, dictionary: dict = dictionary, nonce}) {
   let strings = dict.getStringsForLocale(locale);
-  return createElement(PackageLocalizationProvider, {locale, strings});
+  return createElement(PackageLocalizationProvider, {locale, strings, nonce});
 }
 
 function getLocalizationScript(locale, dict = dictionary) {
@@ -126,7 +126,8 @@ import type {LocalizedStringDictionary} from '@internationalized/string';
 
 interface LocalizedStringProviderProps {
   locale: string,
-  dictionary?: LocalizedStringDictionary
+  dictionary?: LocalizedStringDictionary,
+  nonce?: string
 }
 
 export declare function LocalizedStringProvider(props: LocalizedStringProviderProps): React.JSX.Element;

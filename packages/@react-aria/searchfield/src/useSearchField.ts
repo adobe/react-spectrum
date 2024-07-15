@@ -13,8 +13,8 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {chain} from '@react-aria/utils';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
+import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SearchFieldState} from '@react-stately/searchfield';
@@ -43,13 +43,13 @@ export interface SearchFieldAria extends ValidationResult {
 export function useSearchField(
   props: AriaSearchFieldProps,
   state: SearchFieldState,
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement | null>
 ): SearchFieldAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
   let {
     isDisabled,
     isReadOnly,
-    onSubmit = () => {},
+    onSubmit,
     onClear,
     type = 'search'
   } = props;
@@ -57,7 +57,7 @@ export function useSearchField(
   let onKeyDown = (e) => {
     const key = e.key;
 
-    if (key === 'Enter') {
+    if (key === 'Enter' && (isDisabled || isReadOnly)) {
       e.preventDefault();
     }
 
@@ -65,7 +65,10 @@ export function useSearchField(
       return;
     }
 
-    if (key === 'Enter') {
+    // for backward compatibility;
+    // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
+    if (key === 'Enter' && onSubmit) {
+      e.preventDefault();
       onSubmit(state.value);
     }
 

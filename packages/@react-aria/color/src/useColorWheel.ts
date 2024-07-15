@@ -12,9 +12,9 @@
 
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
-import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -39,7 +39,7 @@ export interface ColorWheelAria {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
+export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement | null>): ColorWheelAria {
   let {
     isDisabled,
     innerRadius,

@@ -2082,3 +2082,5 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+export {Performance} from './Performance';
