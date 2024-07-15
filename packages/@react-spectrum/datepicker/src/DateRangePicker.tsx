@@ -31,7 +31,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
-import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
+import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
@@ -112,6 +112,9 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   let visibleMonths = useVisibleMonths(maxVisibleMonths);
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
+  // Multiplying by two for the two dates, adding one character for the dash, and then the padding around the dash
+  let approximateWidth = `calc(${useFormattedDateWidth(state) * 2 + 1}ch + 2 * var(--spectrum-global-dimension-size-100))`;
+
   return (
     <Field
       {...props}
@@ -136,7 +139,8 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
           validationState={validationState}
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}
-          disableFocusRing>
+          disableFocusRing
+          minWidth={approximateWidth}>
           <DatePickerField
             {...startFieldProps}
             data-testid="start-date"

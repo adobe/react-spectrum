@@ -284,8 +284,6 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-// TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
-// having those
 export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
@@ -310,7 +308,6 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   textValue: string,
   /** An accessibility label for this tree item. */
   'aria-label'?: string,
-  // TODO: made this required since the user needs to pass Content at least
   /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
   children: ReactNode
 }
@@ -388,6 +385,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
         }
         // Skip item since we don't render the nested rows as children of the parent row, the flattened collection
         // will render them each as siblings instead
+        case 'loader':
         case 'item':
           return <></>;
         default:
@@ -444,6 +442,55 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
   );
 });
 
+export interface TreeLoadingIndicatorRenderProps {
+  /**
+   * What level the tree item has within the tree.
+   * @selector [data-level]
+   */
+  level: number
+}
+
+export interface TreeLoaderProps extends RenderProps<TreeLoadingIndicatorRenderProps>, StyleRenderProps<TreeLoadingIndicatorRenderProps> {}
+
+export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(UNSTABLE_TreeStateContext);
+  // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
+  // @ts-ignore
+  let {rowProps} = useTreeGridListItem({node: item}, state, ref);
+  let level = rowProps['aria-level'] || 1;
+
+  let ariaProps = {
+    'aria-level': rowProps['aria-level'],
+    'aria-posinset': rowProps['aria-posinset'],
+    'aria-setsize': rowProps['aria-setsize']
+  };
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-TreeLoader',
+    values: {
+      level
+    }
+  });
+
+  return (
+    <>
+      <div
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any), ariaProps)}
+        {...renderProps}
+        data-level={level}>
+        <div role="gridcell" aria-colindex={1}>
+          {renderProps.children}
+        </div>
+      </div>
+    </>
+  );
+});
+
 function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
   if (!expanded) {
     return new Set<Key>();
@@ -470,7 +517,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   let flattenedRows: Node<T>[] = [];
 
   let visitNode = (node: Node<T>) => {
-    if (node.type === 'item') {
+    if (node.type === 'item' || node.type === 'loader') {
       let parentKey = node?.parentKey;
       let clone = {...node};
       if (parentKey != null) {
@@ -480,6 +527,13 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         if (hasContentNode) {
           clone.index = node?.index != null ? node?.index - 1 : 0;
         }
+
+        // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibiling rows
+        // (Collection only increments the level if it is a "item" type node).
+        if (node.type === 'loader') {
+          clone.level = node.level + 1;
+        }
+
         keyMap.set(clone.key, clone as NodeValue<T>);
       } else {
         keyMap.set(node.key, node as NodeValue<T>);

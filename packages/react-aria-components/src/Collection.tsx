@@ -160,11 +160,12 @@ function useCollectionRender(
       }
 
       let key = node.key;
+      let keyAfter = collection.getKeyAfter(key);
       return (
         <>
           {renderDropIndicator({type: 'item', key, dropPosition: 'before'})}
           {rendered}
-          {collection.getKeyAfter(key) == null && renderDropIndicator({type: 'item', key, dropPosition: 'after'})}
+          {((keyAfter == null || collection.getItem(keyAfter)?.type !== 'item')) && renderDropIndicator({type: 'item', key, dropPosition: 'after'})}
         </>
       );
     }

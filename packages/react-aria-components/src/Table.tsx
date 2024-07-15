@@ -363,13 +363,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
+  let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
     isVirtualized
   }, state, ref);
-
-  let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -712,7 +711,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
 
   let style = renderProps.style;
   if (layoutState) {
-    style = {...style, width: layoutState.getColumnWidth(column.key)};
+    style = {...style, width: isVirtualized ? undefined : layoutState.getColumnWidth(column.key)};
   }
 
   let TH = useElementType('th');
@@ -897,6 +896,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
   let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
@@ -916,12 +916,24 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   });
 
   let emptyState;
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let numColumns = collection.columnCount;
   if (collection.size === 0 && props.renderEmptyState && state) {
-    let TR = useElementType('tr');
-    let TD = useElementType('td');
+    let rowProps = {};
+    let rowHeaderProps = {};
+    let style = {};
+    if (isVirtualized) {
+      rowProps['aria-rowindex'] = collection.headerRows.length + 1;
+      rowHeaderProps['aria-colspan'] = numColumns;
+      style = {display: 'contents'};
+    } else {
+      rowHeaderProps['colSpan'] = numColumns;
+    }
+
     emptyState = (
-      <TR role="row">
-        <TD role="gridcell" colSpan={collection.columnCount}>
+      <TR role="row" {...rowProps} style={style}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
           {props.renderEmptyState(renderValues)}
         </TD>
       </TR>
@@ -1104,6 +1116,10 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     );
   },
   props => {
+    if (props.id == null && typeof props.children === 'function') {
+      console.warn('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    }
+
     let dependencies = [props.value].concat(props.dependencies);
     return (
       <Collection dependencies={dependencies} items={props.columns} idScope={props.id}>
@@ -1288,3 +1304,48 @@ function RootDropIndicator() {
     </TR>
   );
 }
+
+export interface TableLoadingIndicatorProps extends StyleProps {
+  children?: ReactNode
+}
+
+export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+  let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  let numColumns = state.collection.columns.length;
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-TableLoadingIndicator',
+    values: null
+  });
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let rowProps = {};
+  let rowHeaderProps = {};
+  let style = {};
+
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowHeaderProps['aria-colspan'] = numColumns;
+    style = {display: 'contents'};
+  } else {
+    rowHeaderProps['colSpan'] = numColumns;
+  }
+
+  return (
+    <>
+      <TR
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any), rowProps)}
+        {...renderProps}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
+          {renderProps.children}
+        </TD>
+      </TR>
+    </>
+  );
+});
