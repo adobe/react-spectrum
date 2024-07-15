@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {RefObject, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
