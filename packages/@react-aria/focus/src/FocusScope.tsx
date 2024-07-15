@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement} from '@react-types/shared';
+import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {getOwnerDocument, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 export interface FocusScopeProps {
   /** The contents of the focus scope. */

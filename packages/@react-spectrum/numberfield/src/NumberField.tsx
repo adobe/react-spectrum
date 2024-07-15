@@ -13,11 +13,11 @@
 import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, RefObject} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
-import React, {HTMLAttributes, InputHTMLAttributes, Ref, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, Ref, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';

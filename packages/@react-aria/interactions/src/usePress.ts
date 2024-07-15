@@ -17,9 +17,9 @@
 
 import {chain, focusWithoutScrolling, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents, RefObject} from '@react-types/shared';
 import {PressResponderContext} from './context';
-import {RefObject, TouchEvent as RTouchEvent, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {TouchEvent as RTouchEvent, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */

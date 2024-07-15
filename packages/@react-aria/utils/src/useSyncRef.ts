@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, RefObject} from 'react';
+import {MutableRefObject} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useLayoutEffect} from './';
 
 interface ContextValue<T> {
