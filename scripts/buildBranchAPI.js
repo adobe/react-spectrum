@@ -112,8 +112,9 @@ async function build() {
   fs.copySync(path.join(projectDir, 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {dereference: true});
   fs.copySync(path.join(projectDir, '.parcelrc'), path.join(dir, '.parcelrc'), {dereference: true});
   fs.copySync(path.join(projectDir, 'tsconfig.json'), path.join(dir, 'tsconfig.json'), {dereference: true});
-  // Delete test-utils from copied packages since we don't expose anything from there
+  // Delete test-utils from copied packages, they aren't part of our public api at this point
   fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
+  fs.removeSync(path.join(dir, 'packages', '@react-aria', 'test-utils'));
 
   // Only copy relevant patches
   let patches = fs.readdirSync(path.join(projectDir, 'patches'), {dereference: true});
@@ -127,7 +128,7 @@ async function build() {
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
-    if (!p.includes('spectrum-css') && !p.includes('example-theme') && !p.includes('dev/')) {
+    if (!p.includes('spectrum-css') && !p.includes('example-theme') && !p.includes('dev/') && !p.includes('test-utils')) {
       let json = JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p)), 'utf8');
 
       if (json.name in excludeList) {
