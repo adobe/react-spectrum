@@ -12,10 +12,10 @@
 
 import {ariaHideOutside} from './ariaHideOutside';
 import {AriaOverlayProps, useOverlay} from './useOverlay';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {RefObject, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
 

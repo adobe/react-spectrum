@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getCellId} from './utils';
 import {GridNode} from '@react-types/grid';
-import {RefObject} from 'react';
 import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 

@@ -12,13 +12,13 @@
 
 import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, StyleProps} from '@react-types/shared';
+import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
 

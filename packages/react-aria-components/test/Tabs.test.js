@@ -204,6 +204,39 @@ describe('Tabs', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('finds the first non-disabled tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a" isDisabled>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[0]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('selects first tab if all tabs are disabled', async () => {
+    let {getByRole} = renderTabs({}, {}, {isDisabled: true});
+    await user.tab();
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let tabpanel = getByRole('tabpanel');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabpanel);
+  });
+
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
