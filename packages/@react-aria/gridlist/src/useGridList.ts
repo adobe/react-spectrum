@@ -19,12 +19,12 @@ import {
   Key,
   KeyboardDelegate,
   LayoutDelegate,
-  MultipleSelection
+  MultipleSelection,
+  RefObject
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';

@@ -12,9 +12,9 @@
 
 import {AriaSliderProps} from '@react-types/slider';
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
-import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
+import React, {LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
