@@ -41,13 +41,15 @@ export interface ComboBoxValidationValue {
   inputValue: string
 }
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'onSelectionChange'>, InputBase, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
   items?: Iterable<T>,
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key | null) => void,
   /** The value of the ComboBox input (controlled). */
   inputValue?: string,
   /** The default value of the ComboBox input (uncontrolled). */

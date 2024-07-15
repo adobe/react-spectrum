@@ -11,12 +11,12 @@
  */
 
 import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
-import {DOMAttributes} from '@react-types/shared';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {DOMAttributes, forwardRefType, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
 
 export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps {
   /**
@@ -36,7 +36,7 @@ export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTrigger
 
 interface InternalModalContextValue {
   modalProps: DOMAttributes,
-  modalRef: RefObject<HTMLDivElement>,
+  modalRef: RefObject<HTMLDivElement | null>,
   isExiting: boolean,
   isDismissable?: boolean
 }
@@ -78,6 +78,7 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
     isEntering,
     isExiting,
     UNSTABLE_portalContainer,
+    shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
@@ -90,7 +91,8 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
       onOpenChange={onOpenChange}
       isEntering={isEntering}
       isExiting={isExiting}
-      UNSTABLE_portalContainer={UNSTABLE_portalContainer}>
+      UNSTABLE_portalContainer={UNSTABLE_portalContainer}
+      shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}>
       <ModalContent {...otherProps} modalRef={ref}>
         {children}
       </ModalContent>
@@ -99,8 +101,8 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 interface ModalOverlayInnerProps extends ModalOverlayProps {
-  overlayRef: RefObject<HTMLDivElement>,
-  modalRef: RefObject<HTMLDivElement>,
+  overlayRef: RefObject<HTMLDivElement | null>,
+  modalRef: RefObject<HTMLDivElement | null>,
   state: OverlayTriggerState,
   isExiting: boolean
 }

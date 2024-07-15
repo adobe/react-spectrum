@@ -183,7 +183,7 @@ export default function Home() {
             <MenuTrigger>
               <ActionButton>Menu Trigger</ActionButton>
               <Menu>
-                <Item href="/foo">Link to /foo</Item>
+                <Item href="/foo" routerOptions={{scroll: false}}>Link to /foo</Item>
                 <Item>Cut</Item>
                 <Item>Copy</Item>
                 <Item>Paste</Item>

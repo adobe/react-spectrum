@@ -112,6 +112,8 @@ async function build() {
   fs.copySync(path.join(projectDir, 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {dereference: true});
   fs.copySync(path.join(projectDir, '.parcelrc'), path.join(dir, '.parcelrc'), {dereference: true});
   fs.copySync(path.join(projectDir, 'tsconfig.json'), path.join(dir, 'tsconfig.json'), {dereference: true});
+  // Delete test-utils from copied packages since we don't expose anything from there
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
 
   // Only copy relevant patches
   let patches = fs.readdirSync(path.join(projectDir, 'patches'), {dereference: true});

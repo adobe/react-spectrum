@@ -11,8 +11,9 @@
  */
 
 import {getFocusableTreeWalker} from './FocusScope';
-import {RefObject, useState} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useState} from 'react';
 
 interface AriaHasTabbableChildOptions {
   isDisabled?: boolean
@@ -27,7 +28,7 @@ interface AriaHasTabbableChildOptions {
  * Returns whether an element has a tabbable child, and updates as children change.
  * @private
  */
-export function useHasTabbableChild(ref: RefObject<Element>, options?: AriaHasTabbableChildOptions): boolean {
+export function useHasTabbableChild(ref: RefObject<Element | null>, options?: AriaHasTabbableChildOptions): boolean {
   let isDisabled = options?.isDisabled;
   let [hasTabbableChild, setHasTabbableChild] = useState(false);
 

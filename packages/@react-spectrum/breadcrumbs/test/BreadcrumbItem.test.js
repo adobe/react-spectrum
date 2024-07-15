@@ -11,8 +11,9 @@
  */
 
 import {BreadcrumbItem} from '../src/BreadcrumbItem';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {render, triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 // v3 component
 describe('BreadcrumbItem', function () {
@@ -30,21 +31,23 @@ describe('BreadcrumbItem', function () {
     expect(breadcrumbItem).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Handles disabled', () => {
+  it('Handles disabled', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPressSpy = jest.fn();
     let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} isDisabled >Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
     expect(breadcrumbItem.tabIndex).toBe(-1);
     expect(breadcrumbItem).toHaveAttribute('aria-disabled', 'true');
-    triggerPress(breadcrumbItem);
+    await user.click(breadcrumbItem);
     expect(onPressSpy).toHaveBeenCalledTimes(0);
   });
 
-  it('Handles onPress', () => {
+  it('Handles onPress', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPressSpy = jest.fn();
     let {getByText} = render(<BreadcrumbItem onPress={onPressSpy} >Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');
-    triggerPress(breadcrumbItem);
+    await user.click(breadcrumbItem);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 

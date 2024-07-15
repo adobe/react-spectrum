@@ -954,11 +954,11 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
-Within a DatePicker, the popover will have the `data-trigger="DatePicker"` attribute, which can be used to define date picker-specific styles.
+Within a DatePicker, the popover will have the `data-trigger="DatePicker"` attribute, which can be used to define date picker-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the input group.
 
 ```css render=false
 .react-aria-Popover[data-trigger=DatePicker] {
-  /* ... */
+  width: var(--trigger-width);
 }
 ```
 

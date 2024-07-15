@@ -7,7 +7,7 @@
   fill: var(--spectrum-global-color-static-white);
 }
 .spectrum-ColorLoupe-inner-checker {
-  fill: var(--spectrum-global-color-static-gray-500);
+  fill: #e6e6e6;
 }
 
 @media (forced-colors: active) {

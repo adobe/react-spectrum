@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Form, Input, Label, TextField} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-describe('TextField', () => {
+describe('Form', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -74,5 +74,108 @@ describe('TextField', () => {
 
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(true);
+  });
+
+  it('should use validationBehavior="native" by default', async () => {
+    function Test() {
+      return (
+        <Form data-testid="form">
+          <TextField name="name" isRequired>
+            <Label>Name</Label>
+            <Input />
+            <FieldError />
+          </TextField>
+          <Button type="submit">Submit</Button>
+        </Form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+
+    let form = getByTestId('form');
+    expect(form).toHaveClass('react-aria-Form');
+    expect(form).not.toHaveAttribute('novalidate');
+
+    let input = getByRole('textbox');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
+  });
+
+  it('supports validationBehavior="aria"', async () => {
+    function Test() {
+      return (
+        <Form data-testid="form" validationBehavior="aria">
+          <TextField name="name" isRequired>
+            <Label>Name</Label>
+            <Input />
+            <FieldError />
+          </TextField>
+          <Button type="submit">Submit</Button>
+        </Form>
+      );
+    }
+
+
+    let {getByTestId, getByRole} = render(<Test />);
+
+    let form = getByTestId('form');
+    expect(form).toHaveClass('react-aria-Form');
+    expect(form).toHaveAttribute('novalidate');
+
+    let input = getByRole('textbox');
+    expect(input).not.toHaveAttribute('required');
+    expect(input).toHaveAttribute('aria-required');
+  });
+
+  it('Form element\'s validationBehavior="aria" should override Form\'s default validationBehavior="native"', async () => {
+    function Test() {
+      return (
+        <Form data-testid="form">
+          <TextField name="name" isRequired validationBehavior="aria">
+            <Label>Name</Label>
+            <Input />
+            <FieldError />
+          </TextField>
+          <Button type="submit">Submit</Button>
+        </Form>
+      );
+    }
+
+
+    let {getByTestId, getByRole} = render(<Test />);
+
+    let form = getByTestId('form');
+    expect(form).toHaveClass('react-aria-Form');
+    expect(form).not.toHaveAttribute('novalidate');
+
+    let input = getByRole('textbox');
+    expect(input).not.toHaveAttribute('required');
+    expect(input).toHaveAttribute('aria-required');
+  });
+
+  it('Form element\'s validationBehavior="native" should override Form\'s validationBehavior="aria"', async () => {
+    function Test() {
+      return (
+        <Form data-testid="form" validationBehavior="aria">
+          <TextField name="name" isRequired validationBehavior="native">
+            <Label>Name</Label>
+            <Input />
+            <FieldError />
+          </TextField>
+          <Button type="submit">Submit</Button>
+        </Form>
+      );
+    }
+
+
+    let {getByTestId, getByRole} = render(<Test />);
+
+    let form = getByTestId('form');
+    expect(form).toHaveClass('react-aria-Form');
+    expect(form).toHaveAttribute('novalidate');
+
+    let input = getByRole('textbox');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
   });
 });

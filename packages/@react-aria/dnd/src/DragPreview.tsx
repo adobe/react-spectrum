@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {DragItem, DragPreviewRenderer} from '@react-types/shared';
+import {DragItem, DragPreviewRenderer, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import React, {JSX, RefObject, useImperativeHandle, useRef, useState} from 'react';
+import React, {JSX, useImperativeHandle, useRef, useState} from 'react';
 
 export interface DragPreviewProps {
   children: (items: DragItem[]) => JSX.Element
 }
 
-function DragPreview(props: DragPreviewProps, ref: RefObject<DragPreviewRenderer>) {
+function DragPreview(props: DragPreviewProps, ref: RefObject<DragPreviewRenderer | null>) {
   let render = props.children;
   let [children, setChildren] = useState<JSX.Element>(null);
   let domRef = useRef(null);

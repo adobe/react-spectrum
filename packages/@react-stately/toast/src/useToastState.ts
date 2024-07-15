@@ -142,7 +142,7 @@ export class ToastQueue<T> {
       this.queue[i++].animation = 'queued';
     }
 
-    this.updateVisibleToasts();
+    this.updateVisibleToasts({action: 'add'});
     return toastKey;
   }
 
@@ -157,23 +157,32 @@ export class ToastQueue<T> {
       this.queue.splice(index, 1);
     }
 
-    this.updateVisibleToasts();
+    this.updateVisibleToasts({action: 'close', key});
   }
 
   /** Removes a toast from the visible toasts after an exiting animation. */
   remove(key: string) {
-    this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
-    this.updateVisibleToasts();
+    this.updateVisibleToasts({action: 'remove', key});
   }
 
-  private updateVisibleToasts() {
+  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
+    let {action, key} = options;
     let toasts = this.queue.slice(0, this.maxVisibleToasts);
-    if (this.hasExitAnimation) {
+
+    if (action === 'add' && this.hasExitAnimation) {
       let prevToasts: QueuedToast<T>[] = this.visibleToasts
         .filter(t => !toasts.some(t2 => t.key === t2.key))
         .map(t => ({...t, animation: 'exiting'}));
-
       this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
+    } else if (action === 'close' && this.hasExitAnimation) {
+      // Cause a rerender to happen for exit animation
+      this.visibleToasts = this.visibleToasts.map(t => {
+        if (t.key !== key) {
+          return t;
+        } else {
+          return {...t, animation: 'exiting'};
+        }
+      });
     } else {
       this.visibleToasts = toasts;
     }

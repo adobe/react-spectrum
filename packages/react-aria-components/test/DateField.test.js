@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, Label, Text} from '../';
 import React from 'react';
@@ -257,5 +257,63 @@ describe('DateField', () => {
     await user.tab();
     expect(getDescription()).not.toContain('Constraints not satisfied');
     expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should use controlled validation first', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <DateField name="date" isRequired isInvalid={false}>
+          <Label>Birth Date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FieldError />
+        </DateField>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should focus previous segment when backspacing on an empty date segment', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+  
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    expect(document.activeElement).toBe(segments[2]);
+
+    // Press backspace to delete '2024'
+    for (let i = 0; i < 4; i++) {
+      await user.keyboard('{backspace}');
+    }
+    expect(document.activeElement).toBe(segments[2]);
+    await user.keyboard('{backspace}');
+    expect(document.activeElement).toBe(segments[1]);
+
+    // Press backspace to delete '31'
+    for (let i = 0; i < 2; i++) {
+      await user.keyboard('{backspace}');
+    }
+    expect(document.activeElement).toBe(segments[1]);
+    await user.keyboard('{backspace}');
+    expect(document.activeElement).toBe(segments[0]);
   });
 });

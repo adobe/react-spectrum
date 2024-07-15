@@ -10,16 +10,24 @@
  * governing permissions and limitations under the License.
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
+import {CheckboxContext} from './RSPContexts';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
-import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useContext} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: MutableRefObject<HTMLInputElement>
+}
 
 export interface CheckboxGroupRenderProps {
   /**
@@ -106,15 +114,17 @@ export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useCheckboxGroupState({
     ...props,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
   let [labelRef, label] = useSlot();
   let {groupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useCheckboxGroup({
     ...props,
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state);
 
   let renderProps = useRenderProps({
@@ -157,12 +167,16 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   );
 }
 
-export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
-
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
-  [props, ref] = useContextProps(props, ref, CheckboxContext);
-  let inputRef = useRef<HTMLInputElement>(null);
+  let {
+    inputRef: userProvidedInputRef = null,
+    ...otherProps
+  } = props;
+  [props, ref] = useContextProps(otherProps, ref, CheckboxContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let groupState = useContext(CheckboxGroupStateContext);
+  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
@@ -178,7 +192,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
     : useCheckbox({
       ...props,
       children: typeof props.children === 'function' ? true : props.children,
-      validationBehavior: props.validationBehavior ?? 'native'
+      validationBehavior
     // eslint-disable-next-line react-hooks/rules-of-hooks
     }, useToggleState(props), inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();

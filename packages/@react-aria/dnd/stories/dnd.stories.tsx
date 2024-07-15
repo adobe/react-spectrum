@@ -250,7 +250,12 @@ export const MultipleCollectionDropTargets = {
 
 export const Reorderable = () => <ReorderableGridExample />;
 
-export function Draggable() {
+export const DraggableDisabled = {
+  render: () => <Draggable isDisabled />,
+  name: 'Draggable isDisabled'
+};
+
+export function Draggable({isDisabled = false}) {
   let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
@@ -262,7 +267,8 @@ export function Draggable() {
     },
     onDragStart: action('onDragStart'),
     // onDragMove: action('onDragMove'),
-    onDragEnd: action('onDragEnd')
+    onDragEnd: action('onDragEnd'),
+    isDisabled
   });
 
   let {clipboardProps} = useClipboard({
@@ -273,7 +279,7 @@ export function Draggable() {
     }
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {buttonProps} = useButton({elementType: 'div'}, ref);
 
   return (
@@ -290,7 +296,7 @@ export function Draggable() {
 }
 
 export function Droppable({type, children, actionId = ''}: any) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     onDropEnter: action(`onDropEnter${actionId}`),
@@ -324,7 +330,7 @@ export function Droppable({type, children, actionId = ''}: any) {
 
 function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropProps, isDropTarget} = useDrop({
     ref: unwrapDOMRef(ref),
     onDropActivate() {
@@ -342,7 +348,7 @@ function DialogButton({children}) {
   );
 }
 
-function DraggableCollectionExample() {
+function DraggableCollectionExample(props) {
   let list = useListData({
     initialItems: [
       {id: 'foo', type: 'folder', text: 'Foo'},
@@ -362,7 +368,7 @@ function DraggableCollectionExample() {
   };
 
   return (
-    <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd} onCut={onCut}>
+    <DraggableCollection items={list.items} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onDragEnd={onDragEnd} onCut={onCut} isDisabled={props.isDisabled}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -374,12 +380,13 @@ function DraggableCollectionExample() {
 }
 
 function DraggableCollection(props) {
+  let {isDisabled} = props;
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState(props);
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -395,11 +402,12 @@ function DraggableCollection(props) {
           childNodes: []
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   let preview = useRef(null);
   let dragState = useDraggableCollectionState({
+    isDisabled,
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
     getItems(keys) {
@@ -464,8 +472,8 @@ function DraggableCollection(props) {
 }
 
 function DraggableCollectionItem({item, state, dragState, onCut}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef(undefined);
+  let cellRef = React.useRef(undefined);
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
@@ -485,7 +493,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
     onCut: () => onCut(dragState.getKeysForDrag(item.key))
   });
 
-  let buttonRef = React.useRef();
+  let buttonRef = React.useRef(undefined);
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'
@@ -517,3 +525,35 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
     </div>
   );
 }
+
+export const DraggableEnabledDisabledControl = {
+  render: (args) => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample {...args} />
+      <DroppableListBoxExample />
+    </Flex>
+  ),
+  name: 'Draggable Enable/Disable control',
+  argTypes: {
+    isDisabled: {
+      control: 'boolean',
+      defaultValue: true
+    }
+  }
+};
+
+export const DroppableEnabledDisabledControl = {
+  render: (args) => (
+    <Flex direction="row" gap="size-200" alignItems="center" wrap>
+      <DraggableCollectionExample />
+      <DroppableListBoxExample {...args} />
+    </Flex>
+  ),
+  name: 'Droppable Enable/Disable control',
+  argTypes: {
+    isDisabled: {
+      control: 'boolean',
+      defaultValue: true
+    }
+  }
+};

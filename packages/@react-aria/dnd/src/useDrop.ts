@@ -11,17 +11,17 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
+import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
 import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
   /** A ref for the droppable element. */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
@@ -47,7 +47,11 @@ export interface DropOptions {
    * Whether the item has an explicit focusable drop affordance to initiate accessible drag and drop mode.
    * If true, the dropProps will omit these event handlers, and they will be applied to dropButtonProps instead.
    */
-  hasDropButton?: boolean
+  hasDropButton?: boolean,
+  /**
+   * Whether the drop target is disabled. If true, the drop target will not accept any drops.
+   */
+  isDisabled?: boolean
 }
 
 export interface DropResult {
@@ -57,7 +61,6 @@ export interface DropResult {
   isDropTarget: boolean,
   /** Props for the explicit drop button affordance, if any. */
   dropButtonProps?: AriaButtonProps
-  
 }
 
 const DROP_ACTIVATE_TIMEOUT = 800;
@@ -67,7 +70,7 @@ const DROP_ACTIVATE_TIMEOUT = 800;
  * based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
 export function useDrop(options: DropOptions): DropResult {
-  let {hasDropButton} = options;
+  let {hasDropButton, isDisabled} = options;
   let [isDropTarget, setDropTarget] = useState(false);
   let state = useRef({
     x: 0,
@@ -311,23 +314,34 @@ export function useDrop(options: DropOptions): DropResult {
   });
 
   let {ref} = options;
-  useLayoutEffect(() => DragManager.registerDropTarget({
-    element: ref.current,
-    getDropOperation: getDropOperationKeyboard,
-    onDropEnter(e) {
-      setDropTarget(true);
-      onDropEnter(e);
-    },
-    onDropExit(e) {
-      setDropTarget(false);
-      onDropExit(e);
-    },
-    onDrop: onKeyboardDrop,
-    onDropActivate
-  }), [ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
+  useLayoutEffect(() => {
+    if (isDisabled) {
+      return;
+    }
+    return DragManager.registerDropTarget({
+      element: ref.current,
+      getDropOperation: getDropOperationKeyboard,
+      onDropEnter(e) {
+        setDropTarget(true);
+        onDropEnter(e);
+      },
+      onDropExit(e) {
+        setDropTarget(false);
+        onDropExit(e);
+      },
+      onDrop: onKeyboardDrop,
+      onDropActivate
+    });
+  }, [isDisabled, ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
 
   let {dropProps} = useVirtualDrop();
-  
+  if (isDisabled) {
+    return {
+      dropProps: {},
+      dropButtonProps: {isDisabled: true},
+      isDropTarget: false
+    };
+  }
   return {
     dropProps: {
       ...(!hasDropButton && dropProps),

@@ -26,6 +26,7 @@ const labelablePropNames = new Set([
 // See LinkDOMProps in dom.d.ts.
 const linkPropNames = new Set([
   'href',
+  'hrefLang',
   'target',
   'rel',
   'download',

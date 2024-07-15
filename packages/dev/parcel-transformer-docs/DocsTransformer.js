@@ -31,7 +31,7 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods', 'importAttributes']
     });
 
     let exports = {};
@@ -143,6 +143,10 @@ module.exports = new Transformer({
 
       if (isReactForwardRef(path)) {
         return processExport(path.get('arguments.0'), node);
+      }
+
+      if (isCollectionComponent(path)) {
+        return processExport(path.get('arguments.1'), node);
       }
 
       if (path.isClassDeclaration()) {
@@ -700,6 +704,13 @@ module.exports = new Transformer({
 
     function isReactForwardRef(path) {
       return isReactCall(path, 'forwardRef') || (path.isCallExpression() && path.get('callee').isIdentifier({name: 'createHideableComponent'}));
+    }
+
+    function isCollectionComponent(path) {
+      return path.isCallExpression() && t.isIdentifier(path.node.callee) && (
+        path.node.callee.name === 'createLeafComponent' ||
+        path.node.callee.name === 'createBranchComponent'
+      );
     }
 
     function isReactCall(path, name, module = 'react') {

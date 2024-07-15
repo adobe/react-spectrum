@@ -58,7 +58,7 @@ function DraggableCollection(props) {
   let state = useListState(props);
   let gridState = useGridState({
     selectionMode: 'multiple',
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -74,7 +74,7 @@ function DraggableCollection(props) {
           childNodes: []
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   let preview = useRef(null);
@@ -141,8 +141,8 @@ function DraggableCollection(props) {
 }
 
 function DraggableCollectionItem({item, state, dragState}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef(undefined);
+  let cellRef = React.useRef(undefined);
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
@@ -155,7 +155,7 @@ function DraggableCollectionItem({item, state, dragState}) {
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
-  let buttonRef = React.useRef();
+  let buttonRef = React.useRef(undefined);
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'

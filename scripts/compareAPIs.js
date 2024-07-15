@@ -539,6 +539,7 @@ ${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
   if (value.type === 'variable') {
     return `${value.name}: ${processType(value.typeAnnotation)}`;
   }
+
   console.log('unknown type', value);
   return 'unknown type';
 }

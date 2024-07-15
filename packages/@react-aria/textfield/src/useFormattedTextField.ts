@@ -12,8 +12,9 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {mergeProps, useEffectEvent} from '@react-aria/utils';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject} from '@react-types/shared';
 import {TextFieldAria, useTextField} from './useTextField';
+import {useEffect, useRef} from 'react';
 
 interface FormattedTextFieldState {
   validate: (val: string) => boolean,
@@ -28,7 +29,7 @@ function supportsNativeBeforeInputEvent() {
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
-export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement>): TextFieldAria {
+export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement | null>): TextFieldAria {
   // All browsers implement the 'beforeinput' event natively except Firefox
   // (currently behind a flag as of Firefox 84). React's polyfill does not
   // run in all cases that the native event fires, e.g. when deleting text.
@@ -46,6 +47,9 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
       case 'historyRedo':
         // Explicitly allow undo/redo. e.data is null in this case, but there's no need to validate,
         // because presumably the input would have already been validated previously.
+        return;
+      case 'insertLineBreak':
+        // Explicitly allow "insertLineBreak" event, to allow onSubmit for "enter" key. e.data is null in this case.
         return;
       case 'deleteContent':
       case 'deleteByCut':

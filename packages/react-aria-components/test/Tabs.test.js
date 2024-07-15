@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
@@ -141,6 +141,7 @@ describe('Tabs', () => {
     await user.tab();
     expect(document.activeElement).toBe(tab);
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
+    expect(tab).toHaveAttribute('data-focused', 'true');
     expect(tab).toHaveClass('focus');
 
     await user.tab();
@@ -179,6 +180,61 @@ describe('Tabs', () => {
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
     expect(tab).toHaveClass('disabled');
+  });
+
+  it('should support isDisabled prop on tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" isDisabled>B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('finds the first non-disabled tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a" isDisabled>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[0]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('selects first tab if all tabs are disabled', async () => {
+    let {getByRole} = renderTabs({}, {}, {isDisabled: true});
+    await user.tab();
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let tabpanel = getByRole('tabpanel');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabpanel);
   });
 
   it('should support selected state', async () => {
@@ -267,6 +323,11 @@ describe('Tabs', () => {
   });
 
   it('should support shouldForceMount', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
+
     let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
     let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
     expect(tabpanels).toHaveLength(3);
@@ -280,6 +341,7 @@ describe('Tabs', () => {
     expect(tabpanels[0]).toHaveAttribute('inert');
     expect(tabpanels[1]).not.toHaveAttribute('inert');
     expect(tabpanels[2]).toHaveAttribute('inert');
+    console.error = consoleError;
   });
 
   it('should support keyboardActivation=manual', () => {

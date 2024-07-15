@@ -12,18 +12,21 @@
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {Collection, Node, SelectState, useSelectState} from 'react-stately';
+import {CollectionBuilder} from '@react-aria/collections';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ItemRenderProps} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 
 export interface SelectRenderProps {
@@ -66,12 +69,42 @@ export const SelectStateContext = createContext<SelectState<unknown> | null>(nul
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
-  let {collection, document} = useCollectionDocument();
+  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  let content = useMemo(() => (
+    typeof children === 'function'
+      ? children({
+        isOpen: false,
+        isDisabled,
+        isInvalid,
+        isRequired,
+        isFocused: false,
+        isFocusVisible: false,
+        defaultChildren: null
+      })
+      : children
+  ), [children, isDisabled, isInvalid, isRequired]);
+
+  return (
+    <CollectionBuilder content={content}>
+      {collection => <SelectInner props={props} collection={collection} selectRef={ref} />}
+    </CollectionBuilder>
+  );
+}
+
+interface SelectInnerProps<T extends object> {
+  props: SelectProps<T>,
+  selectRef: ForwardedRef<HTMLDivElement>,
+  collection: Collection<Node<T>>
+}
+
+function SelectInner<T extends object>({props, selectRef: ref, collection}: SelectInnerProps<T>) {
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useSelectState({
     ...props,
     collection,
     children: undefined,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
@@ -90,7 +123,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   } = useSelect({
     ...removeDataAttributes(props),
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state, buttonRef);
 
   // Make menu width match input + button
@@ -125,64 +158,53 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
+  let scrollRef = useRef(null);
+
   return (
-    <>
-      {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
-        * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
-      <Hidden>
-        <Provider
-          values={[
-            [SelectContext, props],
-            [SelectStateContext, state],
-            [CollectionDocumentContext, document]
-          ]}>
-          {renderProps.children}
-        </Provider>
-      </Hidden>
-      <Provider
-        values={[
-          [SelectContext, props],
-          [SelectStateContext, state],
-          [SelectValueContext, valueProps],
-          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-          [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
-          [OverlayTriggerStateContext, state],
-          [PopoverContext, {
-            trigger: 'Select',
-            triggerRef: buttonRef,
-            placement: 'bottom start',
-            style: {'--trigger-width': buttonWidth} as React.CSSProperties
-          }],
-          [ListBoxContext, menuProps],
-          [ListStateContext, state],
-          [TextContext, {
-            slots: {
-              description: descriptionProps,
-              errorMessage: errorMessageProps
-            }
-          }],
-          [FieldErrorContext, validation]
-        ]}>
-        <div
-          {...DOMProps}
-          {...renderProps}
-          {...focusProps}
-          ref={ref}
-          slot={props.slot || undefined}
-          data-focused={state.isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-open={state.isOpen || undefined}
-          data-disabled={props.isDisabled || undefined}
-          data-invalid={validation.isInvalid || undefined}
-          data-required={props.isRequired || undefined} />
-        <HiddenSelect
-          state={state}
-          triggerRef={buttonRef}
-          label={label}
-          name={props.name}
-          isDisabled={props.isDisabled} />
-      </Provider>
-    </>
+    <Provider
+      values={[
+        [SelectContext, props],
+        [SelectStateContext, state],
+        [SelectValueContext, valueProps],
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {
+          trigger: 'Select',
+          triggerRef: buttonRef,
+          scrollRef,
+          placement: 'bottom start',
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties
+        }],
+        [ListBoxContext, {...menuProps, ref: scrollRef}],
+        [ListStateContext, state],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }],
+        [FieldErrorContext, validation]
+      ]}>
+      <div
+        {...DOMProps}
+        {...renderProps}
+        {...focusProps}
+        ref={ref}
+        slot={props.slot || undefined}
+        data-focused={state.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-open={state.isOpen || undefined}
+        data-disabled={props.isDisabled || undefined}
+        data-invalid={validation.isInvalid || undefined}
+        data-required={props.isRequired || undefined} />
+      <HiddenSelect
+        state={state}
+        triggerRef={buttonRef}
+        label={label}
+        name={props.name}
+        isDisabled={props.isDisabled} />
+    </Provider>
   );
 }
 
@@ -215,7 +237,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
   let selectedItem = state.selectedKey != null
     ? state.collection.getItem(state.selectedKey)
     : null;
-  let rendered = selectedItem?.rendered;
+  let rendered = selectedItem?.props.children;
   if (typeof rendered === 'function') {
     // If the selected item has a function as a child, we need to call it to render to React.JSX.
     let fn = rendered as (s: ItemRenderProps) => ReactNode;

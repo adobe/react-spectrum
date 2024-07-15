@@ -11,8 +11,7 @@
  */
 
 import {AriaBreadcrumbItemProps} from '@react-types/breadcrumbs';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {RefObject} from 'react';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {useLink} from '@react-aria/link';
 
 export interface BreadcrumbItemAria {
@@ -24,7 +23,7 @@ export interface BreadcrumbItemAria {
  * Provides the behavior and accessibility implementation for an in a breadcrumbs component.
  * See `useBreadcrumbs` for details about breadcrumbs.
  */
-export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<FocusableElement>): BreadcrumbItemAria {
+export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<FocusableElement | null>): BreadcrumbItemAria {
   let {
     isCurrent,
     isDisabled,

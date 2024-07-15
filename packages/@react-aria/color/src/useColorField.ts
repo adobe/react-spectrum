@@ -12,8 +12,9 @@
 
 import {AriaColorFieldProps} from '@react-types/color';
 import {ColorFieldState} from '@react-stately/color';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {
-  HTMLAttributes,
+  InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
   useCallback,
@@ -24,13 +25,16 @@ import {privateValidationStateProp} from '@react-stately/form';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
-import {ValidationResult} from '@react-types/shared';
 
 export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: HTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the text field's description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the text field's error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -40,7 +44,7 @@ export interface ColorFieldAria extends ValidationResult {
 export function useColorField(
   props: AriaColorFieldProps,
   state: ColorFieldState,
-  ref: RefObject<HTMLInputElement>
+  ref: RefObject<HTMLInputElement | null>
 ): ColorFieldAria {
   let {
     isDisabled,
@@ -100,17 +104,17 @@ export function useColorField(
     }
   };
 
-  let {inputProps, ...otherProps} = useFormattedTextField(
-    mergeProps(props, {
-      id: inputId,
-      value: inputValue,
-      defaultValue: undefined,
-      validate: undefined,
-      [privateValidationStateProp]: state,
-      type: 'text',
-      autoComplete: 'off',
-      onChange
-    }), state, ref);
+  let {inputProps, ...otherProps} = useFormattedTextField({
+    ...props,
+    id: inputId,
+    value: inputValue,
+    defaultValue: undefined,
+    validate: undefined,
+    [privateValidationStateProp]: state,
+    type: 'text',
+    autoComplete: 'off',
+    onChange
+  }, state, ref);
 
   inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
     role: 'textbox',

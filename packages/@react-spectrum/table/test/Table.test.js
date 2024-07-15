@@ -11,13 +11,14 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils';
+jest.mock('@react-aria/utils/src/scrollIntoView');
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {composeStories} from '@storybook/testing-react';
+import {composeStories} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -25,9 +26,11 @@ import {Divider} from '@react-spectrum/divider';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {scrollIntoView} from '@react-aria/utils';
 import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -1499,6 +1502,31 @@ export let tableTests = () => {
         </>
       );
 
+      let renderWithPicker = () => render(
+        <>
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column>Foo</Column>
+              <Column>Bar</Column>
+              <Column>baz</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
+                <Cell textValue="Search engine">
+                  <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
+                    <Item key="Yahoo">Yahoo</Item>
+                    <Item key="Google">Google</Item>
+                    <Item key="DuckDuckGo">DuckDuckGo</Item>
+                  </Picker>
+                </Cell>
+                <Cell>Baz 1</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        </>
+      );
+
       it('should retain focus on the pressed child', async function () {
         let tree = renderFocusable();
         let switchToPress = tree.getAllByRole('switch')[2];
@@ -1627,6 +1655,19 @@ export let tableTests = () => {
         fireEvent.keyUp(after, {key: 'Tab'});
 
         expect(document.activeElement).toBe(baz1);
+      });
+
+      it('should not trap focus when navigating through a cell with a picker using the arrow keys', function () {
+        let tree = renderWithPicker();
+        focusCell(tree, 'Baz 1');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByRole('button'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByRole('switch'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getByRole('button'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[1]);
       });
 
       it('should move focus after the table when tabbing', async function () {
@@ -1781,10 +1822,9 @@ export let tableTests = () => {
       it('should scroll to a cell when it is focused', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
-        expect(body.scrollTop).toBe(0);
 
         focusCell(tree, 'Baz 25');
-        expect(body.scrollTop).toBe(24);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should scroll to a cell when it is focused off screen', function () {
@@ -1801,6 +1841,7 @@ export let tableTests = () => {
         body.scrollTop = 1000;
         body.scrollLeft = 1000;
         fireEvent.scroll(body);
+        act(() => jest.runAllTimers());
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(cell);
@@ -1820,8 +1861,8 @@ export let tableTests = () => {
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
-        expect(body.scrollTop).toBe(164);
         expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should not scroll when a column header receives focus', function () {
@@ -1840,7 +1881,7 @@ export let tableTests = () => {
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
         expect(document.activeElement).toHaveTextContent('Bar');
-        expect(body.scrollTop).toBe(1000);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
     });
   });
@@ -4149,10 +4190,10 @@ export let tableTests = () => {
       );
 
       let body = tree.getAllByRole('rowgroup')[1];
-      let scrollView = body.parentNode.parentNode;
+      let scrollView = body;
 
       let rows = within(body).getAllByRole('row');
-      expect(rows).toHaveLength(25); // each row is 41px tall. table is 1000px tall. 25 rows fit.
+      expect(rows).toHaveLength(34); // each row is 41px tall. table is 1000px tall. 25 rows fit. + 1/3 overscan
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
@@ -4673,8 +4714,7 @@ export let tableTests = () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -4712,8 +4752,7 @@ export let tableTests = () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -4722,10 +4761,8 @@ export let tableTests = () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick);
         await trigger(items[1], ' ');
-        expect(onClick).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         document.removeEventListener('click', onClick);
       });
@@ -4761,15 +4798,12 @@ export let tableTests = () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick);
+        let onClick = mockClickDefault();
         await trigger(items[0], ' ');
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         document.removeEventListener('click', onClick);
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
@@ -4792,7 +4826,7 @@ export let tableTests = () => {
                 <Column>Baz</Column>
               </TableHeader>
               <TableBody>
-                <Row href="/one">
+                <Row href="/one" routerOptions={{foo: 'bar'}}>
                   <Cell>Foo 1</Cell>
                   <Cell>Bar 1</Cell>
                   <Cell>Baz 1</Cell>
@@ -4809,11 +4843,10 @@ export let tableTests = () => {
 
         let items = getAllByRole('row').slice(1);
         await trigger(items[0]);
-        expect(navigate).toHaveBeenCalledWith('/one');
+        expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
 
         navigate.mockReset();
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
 
         await trigger(items[1]);
         expect(navigate).not.toHaveBeenCalled();

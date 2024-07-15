@@ -5,10 +5,10 @@
   "homepage": ".",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
+    "@babel/preset-react": "^7.24.1",
     "@react-aria/dnd": "^3.5.0",
-    "@react-spectrum/inlinealert": "^3.0.0-rc.0",
     "@react-spectrum/color": "^3.0.0-beta.28",
-    "@react-spectrum/dropzone": "^3.0.0-beta.0",
     "@react-spectrum/toast": "^3.0.0-beta.7",
     "@spectrum-icons/workflow": "latest",
     "@spectrum-icons/illustrations": "^3.6.8",

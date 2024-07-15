@@ -15,9 +15,9 @@ import {CheckboxAria, useCheckbox} from './useCheckbox';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DEFAULT_VALIDATION_RESULT, privateValidationStateProp, useFormValidationState} from '@react-stately/form';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject, ValidationResult} from '@react-types/shared';
+import {useEffect, useRef} from 'react';
 import {useToggleState} from '@react-stately/toggle';
-import {ValidationResult} from '@react-types/shared';
 
 /**
  * Provides the behavior and accessibility implementation for a checkbox component contained within a checkbox group.
@@ -26,7 +26,7 @@ import {ValidationResult} from '@react-types/shared';
  * @param state - State for the checkbox, as returned by `useCheckboxGroupState`.
  * @param inputRef - A ref for the HTML input element.
  */
-export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: CheckboxGroupState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
+export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: CheckboxGroupState, inputRef: RefObject<HTMLInputElement | null>): CheckboxAria {
   const toggleState = useToggleState({
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isSelected: state.isSelected(props.value),

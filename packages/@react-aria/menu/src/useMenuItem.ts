@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
+import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject, RouterOptions} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -98,8 +97,9 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
-export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement | null>): MenuItemAria {
   let {
+    id,
     key,
     closeOnSelect,
     isVirtualized,
@@ -120,19 +120,29 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   } = props;
 
   let isTrigger = !!hasPopup;
-  let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
+  let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
   let data = menuData.get(state);
+  let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
-  let onAction = isTrigger ? () => {} : props.onAction || data.onAction;
   let router = useRouter();
   let performAction = (e: PressEvent) => {
-    if (onAction) {
+    if (isTrigger) {
+      return;
+    }
+
+    if (item?.props?.onAction) {
+      item.props.onAction();
+    }
+
+    if (data.onAction) {
+      // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
+      let onAction = data.onAction;
       onAction(key);
     }
 
     if (e.target instanceof HTMLAnchorElement) {
-      router.open(e.target, e);
+      router.open(e.target, e, item.props.href, item.props.routerOptions as RouterOptions);
     }
   };
 
@@ -150,6 +160,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   let ariaProps = {
+    id,
     'aria-disabled': isDisabled || undefined,
     role,
     'aria-label': props['aria-label'],
@@ -164,7 +175,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-checked'] = isSelected;
   }
 
-  let item = state.collection.getItem(key);
   if (isVirtualized) {
     ariaProps['aria-posinset'] = item?.index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
@@ -260,13 +270,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   });
 
   let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
-  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(item.props);
   delete domProps.id;
+  let linkProps = useLinkProps(item.props);
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(domProps, isTrigger ? {onFocus: itemProps.onFocus} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
+      ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
       tabIndex: itemProps.tabIndex != null ? -1 : undefined
     },
     labelProps: {

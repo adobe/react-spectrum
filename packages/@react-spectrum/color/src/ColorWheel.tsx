@@ -12,6 +12,7 @@
 
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
+import {ColorWheelContext, useContextProps} from 'react-aria-components';
 import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
@@ -26,13 +27,14 @@ const WHEEL_THICKNESS = 24;
 
 function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  let inputRef = useRef(null);
+  let containerRef = useFocusableRef(ref, inputRef);
+  [props, containerRef] = useContextProps(props, containerRef, ColorWheelContext);
 
   let {isDisabled} = props;
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
-  let inputRef = useRef(null);
-  let containerRef = useFocusableRef(ref, inputRef);
 
   let [wheelRadius, setWheelRadius] = useState<number>(0);
   let [wheelThickness, setWheelThickness] = useState(WHEEL_THICKNESS);
@@ -96,6 +98,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         isFocused={isFocusVisible}
         isDisabled={isDisabled}
         isDragging={state.isDragging}
+        containerRef={containerRef}
         className={classNames(styles, 'spectrum-ColorWheel-handle')}
         {...thumbProps}>
         <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />

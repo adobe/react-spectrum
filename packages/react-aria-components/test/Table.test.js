@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -27,7 +27,7 @@ function MyColumn(props) {
             {sortDirection === 'ascending' ? '▲' : '▼'}
           </span>
         )}
-        {props.allowsResizing && <ColumnResizer />}
+        {props.allowsResizing && <ColumnResizer data-testid="resizer" />}
       </>)}
     </Column>
   );
@@ -123,6 +123,15 @@ let DraggableTable = (props) => {
   return <TestTable tableProps={{dragAndDropHooks}} />;
 };
 
+let DraggableTableWithSelection = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <TestTable tableProps={{dragAndDropHooks, selectionMode: 'multiple'}} />;
+};
+
 let columns = [
   {name: 'Name', id: 'name', isRowHeader: true},
   {name: 'Type', id: 'type'},
@@ -165,6 +174,10 @@ describe('Table', () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should render with default classes', () => {
@@ -340,9 +353,12 @@ describe('Table', () => {
   });
 
   it('should support hover', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}
     });
     let row = getAllByRole('row')[1];
 
@@ -352,24 +368,37 @@ describe('Table', () => {
     await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
 
     await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
   });
 
   it('should not show hover state when item is not interactive', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
     let {getAllByRole} = renderTable({
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
 
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {
@@ -488,6 +517,70 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rows[3]);
   });
 
+  it('should support isDisabled prop on rows', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow isDisabled>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 3</Cell>
+            <Cell>Bar 3</Cell>
+            <Cell>Baz 3</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    expect(items[2]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[3]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow onAction={onAction}>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[1]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support sorting', () => {
     let {getAllByRole} = renderTable({
       tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange: jest.fn()},
@@ -604,7 +697,7 @@ describe('Table', () => {
       </Table>
     );
 
-    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // React 19 only calls render function once, vs twice in React 18, 17 and 16.
     // Every call should be the same, so just loop over them.
     expect(renderRow.mock.calls.length).toBeGreaterThanOrEqual(1);
     renderRow.mock.calls.forEach((call) => {
@@ -678,6 +771,80 @@ describe('Table', () => {
     let grid = getByRole('grid');
     fireEvent.scroll(grid);
     expect(onScroll).toHaveBeenCalled();
+  });
+
+  it('should support data-focus-visible-within', async () => {
+    let {getAllByRole} = renderTable();
+    let items = getAllByRole('row');
+    expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
+    await user.keyboard('{ArrowRight}');
+
+    let cell = within(items[1]).getAllByRole('rowheader')[0];
+    expect(document.activeElement).toBe(cell);
+    expect(cell).toHaveAttribute('data-focus-visible', 'true');
+    expect(items[1]).toHaveAttribute('data-focus-visible-within', 'true');
+
+    await user.keyboard('{ArrowDown}');
+    expect(items[1]).not.toHaveAttribute('data-focus-visible-within', 'true');
+  });
+
+  it('should support virtualizer', async () => {
+    let layout = new TableLayout({
+      rowHeight: 25
+    });
+
+    let items = [];
+    for (let i = 0; i < 50; i++) {
+      items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+    }
+
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole, getAllByRole} = render(
+      <Virtualizer layout={layout}>
+        <Table aria-label="Test">
+          <TableHeader>
+            <Column isRowHeader>Foo</Column>
+            <Column>Bar</Column>
+          </TableHeader>
+          <TableBody items={items}>
+            {item => (
+              <Row>
+                <Cell>{item.foo}</Cell>
+                <Cell>{item.bar}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </Virtualizer>
+    );
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(8);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 0Bar 0', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 3Bar 3', 'Foo 4Bar 4', 'Foo 5Bar 5', 'Foo 6Bar 6']);
+    for (let row of rows) {
+      expect(row).toHaveAttribute('aria-rowindex');
+    }
+
+    let grid = getByRole('grid');
+    grid.scrollTop = 200;
+    fireEvent.scroll(grid);
+    
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(8);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14']);
+
+    await user.tab();
+    await user.keyboard('{End}');
+
+    rows = getAllByRole('row');
+    expect(rows).toHaveLength(9);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14', 'Foo 49Bar 49']);
   });
 
   describe('drag and drop', () => {
@@ -781,6 +948,47 @@ describe('Table', () => {
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
+
+    it('should support disabled drag and drop', async () => {
+      let {queryAllByRole, getByRole, getAllByRole} = render(
+        <DraggableTable isDisabled />
+      );
+
+      let buttons = queryAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toBeDisabled();
+      });
+
+      let table = getByRole('grid');
+      expect(table).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(table).not.toHaveAttribute('draggable', 'true');
+
+      let rows = getAllByRole('row');
+      rows.forEach(row => {
+        expect(row).not.toHaveAttribute('draggable', 'true');
+      });
+    });
+
+    it('should allow selection even when drag and drop is disabled', async () => {
+      let {getAllByRole} = render(
+        <DraggableTableWithSelection isDisabled />
+    );
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+
+      let checkbox = getAllByRole('checkbox')[0];
+      expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+      await user.click(checkbox);
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).toBeChecked();
+      }
+    });
   });
 
   describe('column resizing', () => {
@@ -873,6 +1081,12 @@ describe('Table', () => {
         </ResizableTableContainer>
       );
     }
+
+    it('Column resizer accepts data attributes', () => {
+      let {getAllByTestId} = render(<ControlledResizableTable />);
+      let resizers = getAllByTestId('resizer');
+      expect(resizers).toHaveLength(5);
+    });
   });
 
   it('should support overriding table style', () => {
@@ -942,8 +1156,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -979,8 +1192,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -989,10 +1201,8 @@ describe('Table', () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         await trigger(items[1], ' ');
-        expect(onClick).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
       });
 
@@ -1024,9 +1234,7 @@ describe('Table', () => {
           expect(item.tagName).not.toBe('A');
           expect(item).toHaveAttribute('data-href');
         }
-
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault({once: true});
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
@@ -1036,8 +1244,6 @@ describe('Table', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
@@ -1048,6 +1254,34 @@ describe('Table', () => {
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
+    });
+  });
+
+  describe('with pointer events', () => {
+    installPointerEvent();
+
+    it('should show checkboxes on long press', async () => {
+      let {getAllByRole} = renderTable({
+        tableProps: {
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onRowAction: () => {}
+        }
+      });
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).queryByRole('checkbox');
+        expect(checkbox).toBeNull();
+      }
+
+      let row = getAllByRole('row')[1];
+      triggerLongPress(row);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).queryByRole('checkbox');
+        expect(checkbox).toBeInTheDocument();
+      }
     });
   });
 });

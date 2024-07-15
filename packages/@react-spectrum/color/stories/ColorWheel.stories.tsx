@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ColorWheel} from '../';
+import {ColorSwatch, ColorWheel} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Flex} from '@adobe/react-spectrum';
+import {Flex, useLocale} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 
@@ -61,8 +61,8 @@ export const Controlled: ColorWheelStory = {
 };
 
 export function ControlledHSL(props) {
+  let {locale} = useLocale();
   let [color, setColor] = useState(props.defaultValue || parseColor('hsl(0, 100%, 50%)'));
-  let colorCSS = color.toString('css');
   let onChangeEnd = (color) => {
     props.onChangeEnd && props.onChangeEnd(color);
     setColor(color);
@@ -72,9 +72,10 @@ export function ControlledHSL(props) {
     setColor(color);
   };
   return (
-    <>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
       <ColorWheel onChange={onChange} onChangeEnd={onChangeEnd} value={color.toString('hsl')} />
-      <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
-    </>
+      <ColorSwatch color={color} size="L" />
+      <div>{color.getColorName(locale)}</div>
+    </div>
   );
 }
