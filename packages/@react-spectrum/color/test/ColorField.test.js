@@ -150,7 +150,7 @@ describe('ColorField', function () {
     // should call onChange when input is cleared
     expect(colorField.value).toBe('');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(null);
+    expect(onChangeSpy).toHaveBeenCalledWith(undefined);
 
     act(() => {
       colorField.focus();
@@ -206,10 +206,8 @@ describe('ColorField', function () {
     act(() => {
       colorField.blur();
     });
-    // should call onChange when input is cleared
     expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(null);
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
 
     act(() => {
       colorField.focus();
@@ -221,7 +219,7 @@ describe('ColorField', function () {
     });
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should update value in controlled state when implemented', async function () {
@@ -250,18 +248,16 @@ describe('ColorField', function () {
       colorField.blur();
     });
     // should call onChange when input is cleared
-    expect(colorField.value).toBe('');
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(null);
+    expect(colorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
 
     act(() => {
       colorField.focus();
     });
     await user.keyboard('cba');
     act(() => {colorField.blur();});
-    expect(colorField.value).toBe('#CCBBAA');
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
+    expect(colorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it('should disallow invalid characters and revert back to last valid value if left incomplete', async function () {

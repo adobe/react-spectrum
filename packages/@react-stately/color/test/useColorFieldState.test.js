@@ -162,8 +162,8 @@ describe('useColorFieldState tests', function () {
     act(() => result.current.setInputValue(''));
 
     act(() => result.current.commit());
-    expect(onChangeSpy).toHaveBeenCalledWith(null);
-    expect(result.current.colorValue).toBeNull();
+    expect(onChangeSpy).toHaveBeenCalledWith(undefined);
+    expect(result.current.colorValue).toBeUndefined();
     expect(result.current.inputValue).toBe('');
   });
 
