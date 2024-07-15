@@ -364,7 +364,12 @@ export const LoadingStoryDepOnCollectionStory = {
   args: {
     isLoading: false
   },
-  name: 'Loading, static root loader and dynamic rows'
+  name: 'Loading, static root loader and dynamic rows',
+  parameters: {
+    description: {
+      data: 'Test that Level 3 loading spinner and the root level load spinner appear when toggling isLoading in the controls'
+    }
+  }
 };
 
 function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
@@ -384,7 +389,12 @@ export const LoadingStoryDepOnTopStory = {
   args: {
     isLoading: false
   },
-  name: 'Loading, dynamic rows, root loader rendered dynamically as well'
+  name: 'Loading, dynamic rows, root loader rendered dynamically as well',
+  parameters: {
+    description: {
+      data: 'Test that Level 3 loading spinner and the root level load spinner appear when toggling isLoading in the controls'
+    }
+  }
 };
 
 function ExpandButton(props) {
@@ -469,7 +479,12 @@ export const ButtonLoadingIndicatorStory = {
   args: {
     isLoading: false
   },
-  name: 'Loading, dynamic rows, spinner renders in button'
+  name: 'Loading, dynamic rows, spinner renders in button',
+  parameters: {
+    description: {
+      data: 'Test that the expand icon for Project 2 and 5 change to spinner icons when isLoading is toggled on via controls'
+    }
+  }
 };
 export function VirtualizedTree(args) {
   let layout = useMemo(() => {

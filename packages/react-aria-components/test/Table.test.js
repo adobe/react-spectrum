@@ -1285,7 +1285,7 @@ describe('Table', () => {
       jest.restoreAllMocks();
     });
 
-    it('should throw a warning if the rows are rendered staticly but the cells are rendered dynamically', () => {
+    it('should throw a warning if the rows are rendered staticly without ids but the cells are rendered dynamically', () => {
       function StaticRowDynamicCell() {
         let columns = [
           {name: 'Name', id: 'name', isRowHeader: true},
