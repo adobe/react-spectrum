@@ -63,6 +63,22 @@ function Example() {
 }
 ```
 
+Fully transparent colors are displayed with a red slash through the swatch, while partially transparent colors are shown with a checkerboard background.
+
+```tsx example
+import {parseColor, ColorSlider} from '@react-spectrum/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0)'));
+  return (
+    <Flex direction="column" gap="size-100">
+      <ColorSlider value={color} onChange={setColor} channel="alpha" />
+      <ColorSwatch color={color} />
+    </Flex>
+  );
+}
+```
+
 ## Labeling
 
 By default, ColorSwatch includes a localized color description for screen reader users (e.g. "dark vibrant blue") as an `aria-label`. If you have a more specific color name (e.g. Pantone colors), the automatically generated color description can be overridden via the `colorName` prop. An additional label describing the context of the color swatch (e.g. "Background color") can also be provided via the `aria-label` or `aria-labelledby` props.
