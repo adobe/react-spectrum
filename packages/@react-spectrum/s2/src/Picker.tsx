@@ -46,7 +46,7 @@ import {
   menuitem,
   description,
   icon,
-  label as labelStyles,
+  label,
   section,
   sectionHeader,
   sectionHeading,
@@ -310,18 +310,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               <Provider
                 values={[
                   [HeaderContext, {className: sectionHeader({size})}],
-                  [HeadingContext, {className: sectionHeading}],
-                  [IconContext, {
-                    slots: {
-                      icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
-                    }
-                  }],
-                  [TextContext, {
-                    slots: {
-                      label: {className: labelStyles},
-                      'description': {className: description({size})}
-                    }
-                  }]
+                  [HeadingContext, {className: sectionHeading}]
                 ]}>
                 <ListBox
                   items={items}
@@ -361,14 +350,38 @@ export function PickerItem(props: PickerItemProps) {
       {(renderProps) => {
         let {children} = props;
         return (
-          <>
-            {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
-            {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-          </>
+          <DefaultProvider
+            context={IconContext} 
+            value={{slots: {
+              icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
+            }}}>
+            <DefaultProvider
+              context={TextContext}
+              value={{
+                slots: {
+                  label: {className: label},
+                  description: {className: description({...renderProps, size})}
+                }
+              }}>
+              {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+            </DefaultProvider>
+          </DefaultProvider>
         );
       }}
     </ListBoxItem>
   );
+}
+
+// A Context.Provider that only sets a value if one is not already set higher in the tree.
+// This is so the slots can be overridden inside of SelectValue.
+function DefaultProvider({context, value, children}: {context: React.Context<any>, value: any, children: any}) {
+  let cur = useContext(context);
+  if (Object.keys(cur).length) {
+    return children;
+  }
+
+  return <context.Provider value={value}>{children}</context.Provider>;
 }
 
 export interface PickerSectionProps<T extends object> extends SectionProps<T> {}

@@ -20,6 +20,7 @@ import ClockPendingIcon from '../s2wf-icons/assets/svg/S2_Icon_ClockPending_20_N
 import CommunityIcon from '../s2wf-icons/assets/svg/S2_Icon_Community_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
+import More from '../s2wf-icons/assets/svg/S2_Icon_More_20_N.svg';
 
 import type {Meta, StoryObj} from '@storybook/react';
 import {categorizeArgTypes} from './utils';
@@ -160,7 +161,7 @@ export const PublishAndExport: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Share menu"><NewIcon /></Button>
+        <Button variant="accent">Publish</Button>
         <Menu {...menuProps}>
           <MenuSection>
             <Header>
@@ -392,7 +393,7 @@ export const DynamicExample: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Actions"><NewIcon /></Button>
+        <Button aria-label="Actions"><More /></Button>
         <Menu {...menuProps}>
           {function renderItem(arg) {
             let item = arg as IExampleItem;

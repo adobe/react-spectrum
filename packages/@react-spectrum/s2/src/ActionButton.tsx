@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonProps, ButtonRenderProps, Button as RACButton, Text, Provider} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, Button as RACButton, Text, Provider, OverlayTriggerStateContext} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with { type: 'macro' };
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {ReactNode, forwardRef} from 'react';
+import {ReactNode, forwardRef, useContext} from 'react';
 import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
 import {TextContext} from './Content';
@@ -173,6 +173,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
 
 function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
+  let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
   return (
     <RACButton
@@ -181,6 +182,8 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
+        // Retain hover styles when an overlay is open.
+        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
         staticColor: props.staticColor,
         size: props.size || 'M',
         isQuiet: props.isQuiet

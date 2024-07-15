@@ -25,6 +25,7 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   SeparatorProps
 } from 'react-aria-components';
+import {PressResponder} from '@react-aria/interactions';
 import {box, iconStyles} from './Checkbox';
 import {TextContext, HeadingContext, HeaderContext, Text, ImageContext, KeyboardContext} from './Content';
 import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -112,7 +113,7 @@ export let section = style({
 });
 
 export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
-  color: 'gray-800',
+  color: 'neutral',
   gridColumnStart: 2,
   gridColumnEnd: -2,
   boxSizing: 'border-box',
@@ -244,6 +245,14 @@ export let label = style({
 export let description = style({
   gridArea: 'description',
   fontFamily: 'sans',
+  color: {
+    default: 'neutral-subdued',
+    // Ideally this would use the same token as hover, but we don't have access to that here.
+    // TODO: should we always consider isHovered and isFocused to be the same thing?
+    isFocused: 'gray-800',
+    isDisabled: 'disabled'
+  },
+  transition: 'default',
   fontSize: {
     default: 'ui-sm',
     size: {
@@ -432,7 +441,7 @@ export function MenuItem(props: MenuItemProps) {
                 [TextContext, {
                   slots: {
                     label: {className: label},
-                    description: {className: description({size})},
+                    description: {className: description({...renderProps, size})},
                     value: {className: value}
                   }
                 }],
@@ -468,7 +477,13 @@ function MenuTrigger(props: MenuTriggerProps) {
         direction: props.direction,
         shouldFlip: props.shouldFlip
       }}>
-      <AriaMenuTrigger {...props} />
+      <AriaMenuTrigger {...props}>
+        {/* RAC sets isPressed via PressResponder when the menu is open.
+            We don't want press scaling to appear to get "stuck", so override this. */}
+        <PressResponder isPressed={false}>
+          {props.children}
+        </PressResponder>
+      </AriaMenuTrigger>
     </InternalMenuTriggerContext.Provider>
   );
 }

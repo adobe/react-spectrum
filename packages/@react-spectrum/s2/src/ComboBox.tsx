@@ -357,7 +357,7 @@ export function ComboBoxItem(props: ComboBoxItemProps) {
                 [TextContext, {
                   slots: {
                     label: {className: label},
-                    description: {className: description({size})}
+                    description: {className: description({...renderProps, size})}
                   }
                 }]
               ]}>

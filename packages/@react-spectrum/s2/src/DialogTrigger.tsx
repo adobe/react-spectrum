@@ -12,6 +12,7 @@
 
 import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps, PopoverProps as AriaPopoverProps} from 'react-aria-components';
 import {DialogContext} from './Dialog';
+import {PressResponder} from '@react-aria/interactions';
 
 export interface DialogTriggerProps extends AriaDialogTriggerProps, Pick<AriaPopoverProps, 'placement' | 'shouldFlip' | 'isKeyboardDismissDisabled' | 'containerPadding' | 'offset' | 'crossOffset' > {
   /**
@@ -50,7 +51,11 @@ export function DialogTrigger(props: DialogTriggerProps) {
           offset: props.offset,
           crossOffset: props.crossOffset
         }}>
-        {props.children}
+        {/* RAC sets isPressed via PressResponder when the dialog is open.
+            We don't want press scaling to appear to get "stuck", so override this. */}
+        <PressResponder isPressed={false}>
+          {props.children}
+        </PressResponder>
       </DialogContext.Provider>
     </AriaDialogTrigger>
   );

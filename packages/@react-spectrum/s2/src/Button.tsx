@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Provider, Link, LinkProps} from 'react-aria-components';
+import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Provider, Link, LinkProps, OverlayTriggerStateContext} from 'react-aria-components';
 import {FocusableRef} from '@react-types/shared';
 import {style, baseColor, fontRelative} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -279,6 +279,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let ctx = useContext(ButtonContext);
   props = mergeProps(ctx, props);
+  let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
   return (
     <RACButton
@@ -287,6 +288,8 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + button({
         ...renderProps,
+        // Retain hover styles when an overlay is open.
+        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
         variant: props.variant || 'primary',
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
@@ -318,6 +321,7 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
   let domRef = useFocusableRef(ref);
   let ctx = useContext(ButtonContext);
   props = mergeProps(ctx, props);
+  let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
   return (
     <Link
@@ -326,6 +330,8 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + button({
         ...renderProps,
+        // Retain hover styles when an overlay is open.
+        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
         variant: props.variant || 'primary',
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
