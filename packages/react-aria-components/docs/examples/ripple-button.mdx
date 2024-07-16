@@ -64,7 +64,7 @@ function RippleButton(props) {
       relative overflow-hidden
       inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-6 py-4 text-white text-lg
       hover:bg-opacity-60 pressed:bg-opacity-70 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75`}>
-      {coords !== null ? (
+      {coords && (
         <div
           key={`${coords.x},${coords.y}`}
           className="absolute h-8 w-8 rounded-full opacity-100 bg-white/60"
@@ -72,10 +72,7 @@ function RippleButton(props) {
             animation: 'ripple 600ms linear',
             left: coords.x - 15,
             top: coords.y - 15
-          }} />
-        ) : (
-          ''
-        )}
+          }} />)}
         <span className="flex items-center gap-4">{props.children}</span>
       </Button>
     </div>
