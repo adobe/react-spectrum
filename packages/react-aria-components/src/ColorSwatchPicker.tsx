@@ -66,7 +66,7 @@ export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRender
 
 export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents {
   /** The color of the swatch. */
-  color: string | Color | null,
+  color: string | Color,
   /** Whether the color swatch is disabled. */
   isDisabled?: boolean
 }
