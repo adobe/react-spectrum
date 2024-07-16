@@ -50,5 +50,9 @@ TagGroupExample.argTypes = {
 };
 
 function MyTag(props: TagProps) {
-  return <Tag {...props} style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />;
+  return (
+    <Tag
+      {...props}
+      style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />
+  );
 }

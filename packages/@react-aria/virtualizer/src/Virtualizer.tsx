@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Key} from '@react-types/shared';
-import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
+import {Collection, Key, RefObject} from '@react-types/shared';
+import {Layout, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
+import {mergeProps, useLoadMore} from '@react-aria/utils';
+import React, {HTMLAttributes, ReactElement, ReactNode, useCallback, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -29,7 +29,7 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   renderWrapper?: RenderWrapper<T, V>,
   layout: Layout<T, O>,
   collection: Collection<T>,
-  focusedKey?: Key,
+  persistedKeys?: Set<Key> | null,
   sizeToFit?: 'width' | 'height',
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
   isLoading?: boolean,
@@ -49,7 +49,7 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
     isLoading,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onLoadMore,
-    focusedKey,
+    persistedKeys,
     layoutOptions,
     ...otherProps
   } = props;
@@ -65,15 +65,18 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
       ref.current.scrollLeft = rect.x;
       ref.current.scrollTop = rect.y;
     },
-    persistedKeys: useMemo(() => focusedKey != null ? new Set([focusedKey]) : new Set(), [focusedKey]),
+    persistedKeys,
     layoutOptions
   });
 
-  let {virtualizerProps, scrollViewProps} = useVirtualizer(props, state, ref);
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+  }, [state]);
 
   return (
     <ScrollView
-      {...mergeProps(otherProps, virtualizerProps, scrollViewProps)}
+      {...mergeProps(otherProps, {onVisibleRectChange})}
       ref={ref}
       contentSize={state.contentSize}
       onScrollStart={state.startScrolling}
@@ -83,66 +86,6 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
       {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
     </ScrollView>
   );
-}
-
-interface VirtualizerOptions {
-  tabIndex?: number,
-  focusedKey?: Key,
-  isLoading?: boolean,
-  onLoadMore?: () => void
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useVirtualizer<T extends object, V extends ReactNode, W>(props: VirtualizerOptions, state: VirtualizerState<T, V>, ref: RefObject<HTMLElement | null>) {
-  let {isLoading, onLoadMore} = props;
-  let {setVisibleRect, virtualizer} = state;
-
-  // Handle scrolling, and call onLoadMore when nearing the bottom.
-  let isLoadingRef = useRef(isLoading);
-  let prevProps = useRef(props);
-  let onVisibleRectChange = useCallback((rect: Rect) => {
-    setVisibleRect(rect);
-
-    if (!isLoadingRef.current && onLoadMore) {
-      let scrollOffset = virtualizer.contentSize.height - rect.height * 2;
-      if (rect.y > scrollOffset) {
-        isLoadingRef.current = true;
-        onLoadMore();
-      }
-    }
-  }, [onLoadMore, setVisibleRect, virtualizer]);
-
-  let lastContentSize = useRef(0);
-  useLayoutEffect(() => {
-    // Only update isLoadingRef if props object actually changed,
-    // not if a local state change occurred.
-    let wasLoading = isLoadingRef.current;
-    if (props !== prevProps.current) {
-      isLoadingRef.current = isLoading;
-      prevProps.current = props;
-    }
-
-    let shouldLoadMore = !isLoadingRef.current
-      && onLoadMore
-      && state.contentSize.height > 0
-      && state.contentSize.height <= state.virtualizer.visibleRect.height
-      // Only try loading more if the content size changed, or if we just finished
-      // loading and still have room for more items.
-      && (wasLoading || state.contentSize.height !== lastContentSize.current);
-
-    if (shouldLoadMore) {
-      isLoadingRef.current = true;
-      onLoadMore();
-    }
-    lastContentSize.current = state.contentSize.height;
-  }, [state.contentSize, state.virtualizer, isLoading, onLoadMore, props]);
-
-  return {
-    virtualizerProps: {},
-    scrollViewProps: {
-      onVisibleRectChange
-    }
-  };
 }
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type

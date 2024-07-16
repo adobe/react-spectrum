@@ -1,4 +1,6 @@
-import {RefObject, useEffect} from 'react';
+
+import {RefObject} from '@react-types/shared';
+import {useEffect} from 'react';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';

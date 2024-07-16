@@ -127,8 +127,8 @@ function MenuPopup(props) {
               key={item.key}
               item={item}
               state={state}
-              onAction={props.onAction}
-              onClose={props.onClose} />
+              onClose={props.onClose}
+              onAction={props.onAction} />
           ))}
         </ul>
         <DismissButton onDismiss={props.onClose} />

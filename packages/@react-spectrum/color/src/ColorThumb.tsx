@@ -12,9 +12,9 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, RefObject} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {CSSProperties, ReactElement, RefObject, useRef, useState} from 'react';
+import React, {CSSProperties, ReactElement, useRef, useState} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
 import {useId, useLayoutEffect} from '@react-aria/utils';

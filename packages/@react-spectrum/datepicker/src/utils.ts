@@ -13,7 +13,7 @@ import {createDOMRef} from '@react-spectrum/utils';
 import {createFocusManager} from '@react-aria/focus';
 import {FocusableRef} from '@react-types/shared';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
 import {useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -76,4 +76,17 @@ export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
     }
   }));
   return domRef;
+}
+
+export function useFormattedDateWidth(state) {
+  let locale = useLocale()?.locale;
+  let currentDate = new Date();
+  let formatedDate = state.getDateFormatter(locale, {shouldForceLeadingZeros: true}).format(currentDate, locale);
+  let totalCharacters =  formatedDate.length;
+
+  // The max of two is for times with only hours.
+  // As the length of a date grows we need to proportionally increase the width.
+  // We use the character count with 'ch' units and add extra padding to accomate for
+  // dates with months and time dashes, which are wider characters.
+  return (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2));
 }

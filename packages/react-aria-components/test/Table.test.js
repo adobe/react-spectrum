@@ -12,10 +12,19 @@
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
-import React, {useMemo, useState} from 'react';
+import {composeStories} from '@storybook/react';
+import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import React, {useMemo, useRef, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
+import * as stories from '../stories/Table.stories';
+import {useLoadMore} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
+
+let {
+  RenderEmptyStateStory: EmptyLoadingTable,
+  TableLoadingBodyWrapperStory: LoadingMoreTable
+} = composeStories(stories);
 
 function MyColumn(props) {
   return (
@@ -611,7 +620,7 @@ describe('Table', () => {
     );
     let body = getAllByRole('rowgroup')[1];
     expect(body).toHaveAttribute('data-empty', 'true');
-    let cell = getByRole('gridcell');
+    let cell = getByRole('rowheader');
     expect(cell).toHaveTextContent('No results');
   });
 
@@ -834,7 +843,7 @@ describe('Table', () => {
     let grid = getByRole('grid');
     grid.scrollTop = 200;
     fireEvent.scroll(grid);
-    
+
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
     expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14']);
@@ -1254,6 +1263,471 @@ describe('Table', () => {
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
+    });
+  });
+
+  describe('error state', () => {
+    let consoleWarnSpy = jest.fn();
+    let consoleWarn = console.warn;
+    let consoleError = console.error;
+    beforeEach(() => {
+      console.warn = consoleWarnSpy;
+      console.error = jest.fn();
+    });
+
+    afterEach(() => {
+      console.warn = consoleWarn;
+      console.error = consoleError;
+      jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('should throw a warning if the rows are rendered staticly without ids but the cells are rendered dynamically', () => {
+      function StaticRowDynamicCell() {
+        let columns = [
+          {name: 'Name', id: 'name', isRowHeader: true},
+          {name: 'Type', id: 'type'},
+          {name: 'Date Modified', id: 'date'}
+        ];
+
+        return (
+          <Table aria-label="Files">
+            <TableHeader columns={columns}>
+              {(column) => (
+                <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+              )}
+            </TableHeader>
+            <TableBody>
+              <Row columns={columns}>
+                {() => {
+                  return <Cell>filler</Cell>;
+                }}
+              </Row>
+              <Row columns={columns}>
+                {() => {
+                  return <Cell>filler</Cell>;
+                }}
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      }
+
+      expect(() => render(<StaticRowDynamicCell />)).toThrow();
+      expect(consoleWarnSpy).toHaveBeenCalledWith('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    });
+  });
+
+  describe('load more spinner', () => {
+    let offsetHeight, scrollHeight;
+    let DndTable = stories.DndTable;
+    let initialItems = [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'}
+    ];
+    beforeAll(function () {
+      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+        if (this.getAttribute('role') === 'grid') {
+          return 200;
+        }
+
+        return 40;
+      });
+    });
+
+    afterAll(function () {
+      offsetHeight.mockReset();
+      scrollHeight.mockReset();
+    });
+
+    it('should render the load more element with the expected attributes', () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(6);
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      let cell = within(loader).getByRole('rowheader');
+      expect(cell).toHaveAttribute('colspan', '3');
+    });
+
+    it('should not focus the load more row when using ArrowDown', async () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[3]);
+    });
+
+    it('should not focus the load more row when using End', async () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[3]);
+    });
+
+    it('should not focus the load more row when using PageDown', async () => {
+      let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[5];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(rows[4]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[3]);
+
+      // Check that the same when cell is focused
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[2]).getByRole('rowheader'));
+      await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(within(rows[4]).getByRole('rowheader'));
+    });
+
+    it('should disable the select all checkbox and column focusablity when the table is empty and loading', async () => {
+      let {getByRole, getAllByRole} = render(<EmptyLoadingTable isLoading />);
+
+      let table = getByRole('grid');
+      await user.tab();
+      expect(document.activeElement).toBe(table);
+      let column = getAllByRole('columnheader')[0];
+      expect(within(column).getByRole('checkbox', {hidden: true})).toBeDisabled();
+    });
+
+    it('should not render no results state and the loader at the same time', () => {
+      let {getAllByRole, rerender} = render(<EmptyLoadingTable isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[1];
+      let body = getAllByRole('rowgroup')[1];
+
+      expect(rows).toHaveLength(2);
+      expect(body).toHaveAttribute('data-empty', 'true');
+      expect(loader).toHaveTextContent('Loading spinner');
+
+      rerender(<EmptyLoadingTable />);
+
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(body).toHaveAttribute('data-empty', 'true');
+      expect(rows[1]).toHaveTextContent('No results');
+    });
+
+    it('should not include the loader in the selection when selecting all/deselecting all', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoading onSelectionChange={onSelectionChange} />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      let loader = rows[3];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      let selectAll = getAllByRole('checkbox')[0];
+      expect(selectAll).toHaveAttribute('aria-label', 'Select All');
+
+      await user.click(selectAll);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+
+      let checkbox = getAllByRole('checkbox')[2];
+      await user.click(checkbox);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1']));
+    });
+
+    it('should not crash when dragging over the loader', async () => {
+      let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoading />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      expect(rows[1]).toHaveTextContent('Adobe Photoshop');
+      let loader = rows[3];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      let dragButton = getAllByRole('button')[0];
+      expect(dragButton).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
+      await user.tab();
+      await user.keyboard('{Right}');
+      expect(document.activeElement).toBe(dragButton);
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      rows = getAllByRole('row');
+
+      // There should be 4 rows aka the drag indicator rows (1 for before the first row, between the two rows, and after the last row) + the original dragged row
+      expect(rows).toHaveLength(4);
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Adobe Photoshop');
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      rows = getAllByRole('row');
+
+      let dragCell = within(rows[1]).getAllByRole('rowheader')[0];
+
+      let dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      let dropTarget = rows[2];
+      fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 80}));
+      fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 80}));
+      fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+      act(() => jest.runAllTimers());
+
+      rows = getAllByRole('row');
+      expect(rows[2]).toHaveTextContent('Adobe Photoshop');
+    });
+  });
+
+  describe('async loading', function () {
+    let onLoadMore = jest.fn();
+    let items = [];
+    for (let i = 1; i <= 10; i++) {
+      items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+    }
+
+    function LoadMoreTable({onLoadMore, isLoading, scrollOffset, items}) {
+      let scrollRef = useRef(null);
+      let memoedLoadMoreProps = useMemo(() => ({
+        isLoading,
+        onLoadMore,
+        scrollOffset
+      }), [isLoading, onLoadMore, scrollOffset]);
+      useLoadMore(memoedLoadMoreProps, scrollRef);
+
+      return (
+        <ResizableTableContainer data-testid="scrollRegion" ref={scrollRef}>
+          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
+            <TableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {(item) => (
+                <Row>
+                  <Cell>{item.foo}</Cell>
+                  <Cell>{item.bar}</Cell>
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        </ResizableTableContainer>
+      );
+    }
+
+    afterEach(() => {
+      onLoadMore.mockRestore();
+    });
+
+    it('should fire onLoadMore when scrolling near the bottom', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} />);
+
+      let scrollView = tree.getByTestId('scrollRegion');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 50;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('doesn\'t call onLoadMore if it is already loading items', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} isLoading />);
+
+      let scrollView = tree.getByTestId('scrollRegion');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} />);
+
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} isLoading items={items} />);
+      tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} items={items} />);
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    // TODO: this test doesn't work due to the TableBody not being rendered immediately, hence scrollRef.current is undef when
+    // we try to attach it via useEvent
+    // This could be remedied perhaps by moving the useLoadOnScroll call to TableBody internally and passing down the scrollRef and other load props via context from body.
+    // That would guarentee that the ref for the table body is defined at the time the hook renders. Stashed this change locally, to be discussed.
+    it.skip('accepts a user defined scrollRef', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+      let LoadMoreTableBodyScroll = ({onLoadMore, isLoading, scrollOffset, items}) => {
+        let scrollRef = React.useRef();
+        return (
+          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
+            <TableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+            </TableHeader>
+            <TableBody items={items} ref={scrollRef}>
+              {(item) => (
+                <Row>
+                  <Cell>{item.foo}</Cell>
+                  <Cell>{item.bar}</Cell>
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        );
+      };
+
+      let tree = render(<LoadMoreTableBodyScroll onLoadMore={onLoadMore} />);
+
+      let table = tree.getByRole('grid');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      table.scrollTop = 76;
+      fireEvent.scroll(table);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      let scrollView = tree.getAllByRole('rowgroup')[1];
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('allows the user to customize the scrollOffset required to trigger onLoadMore', function () {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+
+      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} scrollOffset={2} />);
+
+      let scrollView = tree.getByTestId('scrollRegion');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 50;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('works with virtualizer', function () {
+      let items = [];
+      for (let i = 0; i < 6; i++) {
+        items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+      }
+      function VirtualizedTableLoad() {
+        let layout = new TableLayout({
+          rowHeight: 25
+        });
+
+        let scrollRef = useRef(null);
+        useLoadMore({onLoadMore}, scrollRef);
+
+        return (
+          <Virtualizer layout={layout}>
+            <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
+              <TableHeader>
+                <Column isRowHeader>Foo</Column>
+                <Column>Bar</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item => (
+                  <Row>
+                    <Cell>{item.foo}</Cell>
+                    <Cell>{item.bar}</Cell>
+                  </Row>
+                )}
+              </TableBody>
+            </Table>
+          </Virtualizer>
+        );
+      }
+
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 150);
+      jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
+        if (this.getAttribute('role') === 'grid') {
+          return 50;
+        }
+
+        return 25;
+      });
+
+      let {getByRole} = render(<VirtualizedTableLoad />);
+
+      let scrollView = getByRole('grid');
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 50;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      scrollView.scrollTop = 76;
+      fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -11,15 +11,16 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
+import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
-import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
@@ -249,7 +250,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
           <CollectionRoot
             collection={collection}
             scrollRef={listBoxRef}
-            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)}
+            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}

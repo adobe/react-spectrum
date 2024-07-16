@@ -27,6 +27,7 @@
     "@react-aria/utils": "^3.24.1",
     "@react-stately/toggle": "^3.7.4",
     "@react-types/checkbox": "^3.8.1",
+    "@react-types/shared": "^3.23.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
