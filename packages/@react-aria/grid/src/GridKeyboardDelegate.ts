@@ -101,7 +101,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key);
+    key = this.findNextKey(key, (item => item.type === 'item'));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -128,7 +128,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the previous item
-    key = this.findPreviousKey(key);
+    key = this.findPreviousKey(key, item => item.type === 'item');
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -232,7 +232,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the first row
-    key = this.findNextKey();
+    key = this.findNextKey(null, item => item.type === 'item');
 
     // If global flag is set (or if focus mode is cell), focus the first cell in the first row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -262,7 +262,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the last row
-    key = this.findPreviousKey();
+    key = this.findPreviousKey(null, item => item.type === 'item');
 
     // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -303,13 +303,13 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (itemRect && (itemRect.y + itemRect.height) < pageY) {
       let nextKey = this.getKeyBelow(key);
-      itemRect = this.layoutDelegate.getItemRect(nextKey);
-
-      // Guard against case where maxY of the last key is barely less than pageY due to rounding
-      // and thus it attempts to set key to null
-      if (nextKey != null) {
-        key = nextKey;
+      // If nextKey is undefined, we've reached the last row already
+      if (nextKey == null) {
+        break;
       }
+
+      itemRect = this.layoutDelegate.getItemRect(nextKey);
+      key = nextKey;
     }
 
     return key;
@@ -345,7 +345,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         }
       }
 
-      key = this.findNextKey(key);
+      key = this.findNextKey(key, item => item.type === 'item');
 
       // Wrap around when reaching the end of the collection
       if (key == null && !hasWrapped) {
