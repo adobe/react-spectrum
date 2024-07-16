@@ -942,6 +942,9 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
 
   let {rowGroupProps} = useTableRowGroup();
   let TBody = useElementType('tbody');
+
+  // TODO: TableBody doesn't support being the scrollable body of the table yet, to revisit if needed. Would need to
+  // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
   return (
     <TBody
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
