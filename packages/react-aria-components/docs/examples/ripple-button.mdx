@@ -39,15 +39,15 @@ import {useEffect, useRef, useState} from 'react';
 import Airplane from '@spectrum-icons/workflow/Airplane';
 
 function RippleButton(props) {
-  const [coords, setCoords] = useState({x: -1, y: -1});
-  const [isRippling, setIsRippling] = useState(false);
+  const [coords, setCoords] = useState(null);
 
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let onPress = (e) => {
-    setCoords({x: e.x, y: e.y});
-    if (e.x !== -1 && e.y !== -1) {
-      setIsRippling(true);
-      timeout.current = setTimeout(() => setIsRippling(false), 600);
+    if (coords === null) {
+      setCoords({x: e.x, y: e.y});
+      if (e.x !== -1 && e.y !== -1) {
+        timeout.current = setTimeout(() => setCoords(null), 600);
+      }
     }
   };
   useEffect(() => {
@@ -62,12 +62,16 @@ function RippleButton(props) {
         onPress={onPress}
         className={`
       relative overflow-hidden min-h-16
-      inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white
+      inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-3.5 py-2 text-white text-lg
       hover:bg-opacity-60 pressed:bg-opacity-70 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75`}>
-      {isRippling ? (
+      {coords !== null ? (
         <div
-          className="ripple"
+          className={`
+            absolute h-8 w-8 rounded-full opacity-100 bg-white/60
+          `}
           style={{
+            transform: 'scale(0)',
+            animation: 'ripple 600ms linear',
             left: coords.x - 15,
             top: coords.y - 15
           }} />
@@ -83,16 +87,6 @@ function RippleButton(props) {
 <RippleButton><Airplane size="S" /> Book flight</RippleButton>
 ```
 ```css
-div.ripple {
-  position: absolute;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 1;
-  animation: ripple 600ms linear;
-  background-color: rgba(255, 255, 255, .6);
-}
 @keyframes ripple {
   from {
     transform: scale(0);
