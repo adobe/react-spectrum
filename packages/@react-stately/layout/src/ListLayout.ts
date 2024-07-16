@@ -23,6 +23,10 @@ export interface ListLayoutOptions {
   headingHeight?: number,
   /** The estimated height of a section header, when the height is variable. */
   estimatedHeadingHeight?: number,
+  /** The fixed height of a loader element in px. This loader is specifically for
+   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
+   */
+  loaderHeight?: number,
   /** The thickness of the drop indicator. */
   dropIndicatorThickness?: number
 }
@@ -51,6 +55,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   protected estimatedRowHeight: number;
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
+  protected loaderHeight: number;
   protected dropIndicatorThickness: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
@@ -74,6 +79,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
+    this.loaderHeight = options.loaderHeight;
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
     this.layoutNodes = new Map();
     this.rootNodes = [];
@@ -253,7 +259,21 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
         return this.buildItem(node, x, y);
       case 'header':
         return this.buildSectionHeader(node, x, y);
+      case 'loader':
+        return this.buildLoader(node, x, y);
     }
+  }
+
+  protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
+    let rect = new Rect(x, y, 0, 0);
+    let layoutInfo = new LayoutInfo('loader', node.key, rect);
+    rect.width = this.virtualizer.contentSize.width;
+    rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight;
+
+    return {
+      layoutInfo,
+      validRect: rect.intersection(this.requestedRect)
+    };
   }
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {

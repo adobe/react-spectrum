@@ -310,6 +310,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
+
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({...props, id, key: item.key}, state, ref);
 
   let {isFocusVisible, focusProps} = useFocusRing();
