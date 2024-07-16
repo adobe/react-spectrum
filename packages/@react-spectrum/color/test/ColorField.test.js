@@ -206,8 +206,10 @@ describe('ColorField', function () {
     act(() => {
       colorField.blur();
     });
+    // should call onChange when input is cleared
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(null);
 
     act(() => {
       colorField.focus();
@@ -220,6 +222,7 @@ describe('ColorField', function () {
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
   });
 
   it('should update value in controlled state when implemented', async function () {

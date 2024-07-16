@@ -149,7 +149,7 @@ describe('useColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#AABBCC');
   });
 
-  it('should keep previous value if input field is empty', function () {
+  it('should call onChange when input is cleared', function () {
     let onChangeSpy = jest.fn();
     let props = {defaultValue: '#abc', onChange: onChangeSpy};
     let {result} = renderHook(() => useColorFieldState(props));
