@@ -1,10 +1,10 @@
-import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useEffect, useRef} from 'react';
 import {ToastState} from '@react-stately/toast';
+import {useEffect, useRef} from 'react';
 import {useLandmark} from '@react-aria/landmark';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

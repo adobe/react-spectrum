@@ -11,12 +11,11 @@
  */
 
 import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
-import {RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface OptionAria extends SelectableItemStates {

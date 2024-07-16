@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, RefObject} from '@react-types/shared';
 import {ColorChannelFieldProps, ColorChannelFieldState} from '@react-stately/color';
 import {NumberFieldAria, useNumberField} from '@react-aria/numberfield';
-import {RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaColorChannelFieldProps extends ColorChannelFieldProps, AriaLabelingProps {}
