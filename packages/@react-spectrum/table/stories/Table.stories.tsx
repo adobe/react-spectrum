@@ -1546,6 +1546,7 @@ function TableWithBreadcrumbs(props) {
       </Breadcrumbs>
       <TableView
         width="400px"
+        height="300px"
         aria-label="table"
         {...props}
         selectedKeys={selection}
