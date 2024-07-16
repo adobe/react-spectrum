@@ -162,12 +162,9 @@ describe('useColorFieldState tests', function () {
     act(() => result.current.setInputValue(''));
 
     act(() => result.current.commit());
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
-    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledWith(null);
+    expect(result.current.colorValue).toBeNull();
+    expect(result.current.inputValue).toBe('');
   });
 
   it.each`

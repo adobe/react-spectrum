@@ -147,9 +147,10 @@ describe('ColorField', function () {
     act(() => {
       colorField.blur();
     });
-    // should not call onChange when input is cleared
-    expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    // should call onChange when input is cleared
+    expect(colorField.value).toBe('');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(null);
 
     act(() => {
       colorField.focus();
@@ -159,8 +160,9 @@ describe('ColorField', function () {
     act(() => {
       colorField.blur();
     });
-    expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(colorField.value).toBe('#CBACBA');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
   });
 
   it('should handle uncontrolled state typing same value twice', async function () {
@@ -205,7 +207,7 @@ describe('ColorField', function () {
       colorField.blur();
     });
     expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
     act(() => {
       colorField.focus();
@@ -217,7 +219,7 @@ describe('ColorField', function () {
     });
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should update value in controlled state when implemented', async function () {
@@ -246,16 +248,17 @@ describe('ColorField', function () {
       colorField.blur();
     });
     // should call onChange when input is cleared
-    expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(colorField.value).toBe('');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(null);
 
     act(() => {
       colorField.focus();
     });
     await user.keyboard('cba');
     act(() => {colorField.blur();});
-    expect(colorField.value).toBe('#AABBCC');
-    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(colorField.value).toBe('#CCBBAA');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should disallow invalid characters and revert back to last valid value if left incomplete', async function () {
