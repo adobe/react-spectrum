@@ -138,6 +138,9 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   useEffect(() => {
     return () => {
       clearTimeout(state.scrollTimeout);
+      if (state.isScrolling) {
+        window.dispatchEvent(new Event('tk.connect-observer'));
+      }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
