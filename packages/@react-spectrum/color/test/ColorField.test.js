@@ -222,7 +222,6 @@ describe('ColorField', function () {
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cba'));
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
   });
 
   it('should update value in controlled state when implemented', async function () {
@@ -262,6 +261,7 @@ describe('ColorField', function () {
     act(() => {colorField.blur();});
     expect(colorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
   });
 
   it('should disallow invalid characters and revert back to last valid value if left incomplete', async function () {
