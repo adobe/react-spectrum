@@ -149,7 +149,7 @@ describe('useColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#AABBCC');
   });
 
-  it('should call onChange when input is cleared', function () {
+  it('should keep previous value if input field is empty', function () {
     let onChangeSpy = jest.fn();
     let props = {defaultValue: '#abc', onChange: onChangeSpy};
     let {result} = renderHook(() => useColorFieldState(props));
@@ -162,9 +162,12 @@ describe('useColorFieldState tests', function () {
     act(() => result.current.setInputValue(''));
 
     act(() => result.current.commit());
-    expect(onChangeSpy).toHaveBeenCalledWith(undefined);
-    expect(result.current.colorValue).toBeUndefined();
-    expect(result.current.inputValue).toBe('');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
+    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
+    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
+    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
+    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+    expect(result.current.inputValue).toBe('#AABBCC');
   });
 
   it.each`

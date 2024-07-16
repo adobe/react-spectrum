@@ -147,10 +147,9 @@ describe('ColorField', function () {
     act(() => {
       colorField.blur();
     });
-    // should call onChange when input is cleared
-    expect(colorField.value).toBe('');
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith(undefined);
+    // should not call onChange when input is cleared
+    expect(colorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
 
     act(() => {
       colorField.focus();
@@ -160,9 +159,8 @@ describe('ColorField', function () {
     act(() => {
       colorField.blur();
     });
-    expect(colorField.value).toBe('#CBACBA');
-    expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#cbacba'));
+    expect(colorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it('should handle uncontrolled state typing same value twice', async function () {

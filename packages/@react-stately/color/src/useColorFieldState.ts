@@ -108,11 +108,11 @@ export function useColorFieldState(
   }, [inputValue]);
 
   let commit = () => {
-    // Set to initial state if input value is empty
+    // Set to previous value if input value is empty
     if (!inputValue.length) {
-      safelySetColorValue(initialValue!);
+      safelySetColorValue(prevValue);
       if (value === undefined || colorValue === null) {
-        setInputValue('');
+        setInputValue(prevValue ? prevValue.toString('hex') : '');
       } else {
         setInputValue(colorValue.toString('hex'));
       }
