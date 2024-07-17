@@ -52,22 +52,30 @@ const StaticTable = (args: any) => (
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
       <Column>Date Modified</Column>
+      <Column>A</Column>
+      <Column>B</Column>
     </TableHeader>
     <TableBody>
       <Row id="1">
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
+        <Cell>Dummy content</Cell>
+        <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
+        <Cell>Dummy content</Cell>
+        <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
+        <Cell>Dummy content</Cell>
+        <Cell>Long long long long long long long cell</Cell>
       </Row>
     </TableBody>
   </Table>
@@ -76,20 +84,21 @@ const StaticTable = (args: any) => (
 let columns = [
   {name: 'Foo', id: 'foo', isRowHeader: true},
   {name: 'Bar', id: 'bar'},
-  {name: 'Baz', id: 'baz'}
+  {name: 'Baz', id: 'baz'},
+  {name: 'Yah', id: 'yah'}
 ];
 
 let items = [
-  {id: 1, foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
-  {id: 2, foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
-  {id: 3, foo: 'Foo 3', bar: 'Bar 3', baz: 'Baz 3'},
-  {id: 4, foo: 'Foo 4', bar: 'Bar 4', baz: 'Baz 4'},
-  {id: 5, foo: 'Foo 5', bar: 'Bar 5', baz: 'Baz 5'},
-  {id: 6, foo: 'Foo 6', bar: 'Bar 6', baz: 'Baz 6'},
-  {id: 7, foo: 'Foo 7', bar: 'Bar 7', baz: 'Baz 7'},
-  {id: 8, foo: 'Foo 8', bar: 'Bar 8', baz: 'Baz 8'},
-  {id: 9, foo: 'Foo 9', bar: 'Bar 9', baz: 'Baz 9'},
-  {id: 10, foo: 'Foo 10', bar: 'Bar 10', baz: 'Baz 10'}
+  {id: 1, foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1', yah: 'Yah long long long 1'},
+  {id: 2, foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2', yah: 'Yah long long long 2'},
+  {id: 3, foo: 'Foo 3', bar: 'Bar 3', baz: 'Baz 3', yah: 'Yah long long long 3'},
+  {id: 4, foo: 'Foo 4', bar: 'Bar 4', baz: 'Baz 4', yah: 'Yah long long long 4'},
+  {id: 5, foo: 'Foo 5', bar: 'Bar 5', baz: 'Baz 5', yah: 'Yah long long long 5'},
+  {id: 6, foo: 'Foo 6', bar: 'Bar 6', baz: 'Baz 6', yah: 'Yah long long long 6'},
+  {id: 7, foo: 'Foo 7', bar: 'Bar 7', baz: 'Baz 7', yah: 'Yah long long long 7'},
+  {id: 8, foo: 'Foo 8', bar: 'Bar 8', baz: 'Baz 8', yah: 'Yah long long long 8'},
+  {id: 9, foo: 'Foo 9', bar: 'Bar 9', baz: 'Baz 9', yah: 'Yah long long long 9'},
+  {id: 10, foo: 'Foo 10', bar: 'Bar 10', baz: 'Baz 10', yah: 'Yah long long long 10'}
 ];
 
 const DynamicTable = (args: any) => (

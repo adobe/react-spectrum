@@ -57,7 +57,10 @@ import {LoadingState} from '@react-types/shared';
 import { mergeStyles } from '../style/runtime';
 import { useIsMobileDevice } from './utils';
 import {useLoadMore} from '@react-aria/utils';
-import {raw} from '../style/style-macro' with {type: 'macro'};
+import { GridNode } from '@react-types/grid';
+import { LayoutInfo, Rect} from '@react-stately/virtualizer';
+import { Node} from '@react-types/shared';
+import {LayoutNode} from '@react-stately/layout';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -231,6 +234,42 @@ const ROW_HEIGHTS = {
 
 type Scale = 'large' | 'medium';
 
+export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
+  protected isStickyColumn(node: GridNode<T>): boolean {
+    if (node.props.isSticky) {
+      return true;
+    }
+
+    return false;
+  }
+
+  protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
+    let layoutNode = super.buildLoader(node, x, y);
+    layoutNode.layoutInfo.allowOverflow = true;
+    return layoutNode;
+  }
+
+  protected buildBody(y: number): LayoutNode {
+    let layoutNode = super.buildBody(y);
+    layoutNode.layoutInfo.allowOverflow = true;
+    // TODO: may need to do something similar to TableView's build body for the loader/empty state margins
+    return layoutNode;
+  }
+
+  protected buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
+    let layoutNode = super.buildRow(node, x, y);
+    layoutNode.layoutInfo.allowOverflow = true;
+    return layoutNode;
+  }
+
+  protected buildTableHeader(): LayoutNode {
+    let layoutNode = super.buildTableHeader();
+    layoutNode.layoutInfo.allowOverflow = true;
+    return layoutNode;
+  }
+}
+
+
 // TODO: v3 had min widths for hide header columns, but RAC table's useTableColumnResizeState
 // call that happens internally doesn't accept options for that.
 export function Table(props: TableProps) {
@@ -279,7 +318,7 @@ export function Table(props: TableProps) {
   }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale]);
   // TODO: subclass tablelayout and implement isStickyColumn and overwrite buildLoader and maybe buildBody
   let layout = useMemo(() => {
-    return new UNSTABLE_TableLayout({
+    return new S2TableLayout({
       rowHeight: overflowMode === 'wrap'
         ? undefined
         : ROW_HEIGHTS[density][scale],
@@ -366,7 +405,8 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let emptyRender;
   let renderer = children;
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator className={style({height: 'full'})}>
+    // TODO: need to position this in such a way that it is positioned properly within the full width row
+    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', position: 'sticky', top: 40, left: 40, width: 32})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
@@ -449,7 +489,6 @@ const cellFocus = style({
 function CellFocusRing(props: {isFocusVisible: boolean}) {
   let {isFocusVisible} = props;
   return <span className={cellFocus({isFocusVisible})} />;
-  // return null;
 }
 
 const columnStyles = style({
@@ -502,9 +541,6 @@ export function Column(props: ColumnProps) {
   let isColumResizable = columnsResizable && isResizable;
 
   return (
-    // TODO: the column has a width applied on it directly in Table even though the virtualized wrapper div already has a width
-    // This messes up the sizing because the padding is also applied on this element. Will need to see if removing it     style = {...style, width: layoutState.getColumnWidth(column.key)};
-    // is appropriate
     <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
@@ -590,7 +626,7 @@ const resizableMenuButtonWrapper = style({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineOffset: -2, // Maybe can use space?
+  outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
   borderRadius: 'sm'
@@ -612,15 +648,6 @@ const resizerHandleContainer = style({
   },
   // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
   zIndex: 1000
-  // TODO: seems to have problems moving focus to the resizer if we conditionally hide it. For now just skip over it in keyboard navigation with the data-attribute
-  // Will need to update rac for this first
-  // display: {
-  //   default: 'none',
-  //   isHovered: 'block',
-  //   isFocusVisible: 'block',
-  //   isResiziing: 'block',
-  //   isFocused: 'block'
-  // }
 });
 
 const resizerHandle = style({
@@ -673,7 +700,6 @@ interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSor
 }
 
 // TODOS for resizing still
-// show all resizer handles on hover (need info from header row, but it doesn't have renderProp function support)
 // need a blue line rendered for the column all the way down the body (need info in the cells of the column's resizing state)
 
 // TODO: placeholder, just copied over from v3. Will need to be adjusted to having the same kind of fill that the s2 icons use
@@ -759,7 +785,13 @@ const selectAllCheckbox = style({
   }
 });
 
+const stickyCell = {
+  // TODO: this color isn't quite right
+  // backgroundColor: 'gray-25'
+} as const;
+
 const selectAllCheckboxColumn = style({
+  ...stickyCell,
   padding: 0,
   // TODO: this needs to be full - 1 but adding a .5 for now so it matches the other columns, will need to figure out why the text elements are 17.5px
   height: '[calc(100% - 1.5px)]',
@@ -788,12 +820,16 @@ export function TableHeader<T extends object>(
         {/* Add extra columns for drag and drop and selection. */}
         {allowsDragging && (
           // TODO: width for this column is taken from v3, designs don't have DnD specified yet
-          <AriaColumn width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
+          // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+          // @ts-ignore
+          <AriaColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
             {({isFocusVisible}) => <CellFocusRing isFocusVisible={isFocusVisible} />}
           </AriaColumn>
         )}
         {selectionBehavior === 'toggle' && (
-          <AriaColumn width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
+          // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+          // @ts-ignore
+          <AriaColumn isSticky width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
             {({isFocusVisible}) => (
               <>
                 {selectionMode === 'single' &&
@@ -863,6 +899,7 @@ const cell = style<CellRenderProps & S2TableProps>({
 
 const checkboxCellStyle = style({
   ...commonCellStyles,
+  ...stickyCell,
   paddingStart: 16,
   paddingEnd: {
     default: 8,
@@ -871,15 +908,20 @@ const checkboxCellStyle = style({
     }
   },
   alignContent: 'center',
-  height: 'full'
+  // TODO: Figure out better way to make the background not cover the border of the row itself
+  height: '[calc(100% - 1px)]',
+  borderBottomWidth: 0
 });
 
 // TODO: placeholder styles until we confirm the design
 const dragButtonCellStyle = style({
   ...commonCellStyles,
+  ...stickyCell,
   paddingX: 4,
   alignContent: 'center',
-  height: 'full'
+  // TODO: Figure out better way to make the background not cover the border of the row itself
+  height: '[calc(100% - 1px)]',
+  borderBottomWidth: 0
 });
 
 // TODO: fix for overflow mode wrap, might need another div inbetween
@@ -1026,13 +1068,17 @@ export function Row<T extends object>(
       })}
       {...otherProps}>
       {allowsDragging && (
-        <Cell className={dragButtonCellStyle}>
+        // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+        // @ts-ignore
+        <Cell isSticky className={dragButtonCellStyle}>
           {/* TODO: listgripper is from react-spectrum-ui? what do? */}
           <Button className={({isFocusVisible}) => dragButton({isFocusVisible})} slot="drag">≡</Button>
         </Cell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-        <Cell className={checkboxCellStyle({scale: tableVisualOptions.scale})}>
+        // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+        // @ts-ignore
+        <Cell isSticky className={checkboxCellStyle({scale: tableVisualOptions.scale})}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>
       )}
