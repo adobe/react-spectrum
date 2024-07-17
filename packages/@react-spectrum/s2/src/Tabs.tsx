@@ -35,7 +35,7 @@ interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style'
 
 interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>{
   children?: ReactNode
-};
+}
 
 export function TabPanel(props: TabPanelProps) {
   return (
@@ -149,13 +149,13 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   return (
     <div className={style({position: 'relative'})}>
       {orientation === 'vertical' && 
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation}/>}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} />}
       <RACTabList 
         {...props}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, density})} />
       {orientation === 'horizontal' && 
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation}/>}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} />}
     </div>
   );
 }
@@ -222,9 +222,9 @@ function TabLine(props: TabLineProps) {
   useEffect(() => {
     let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
     setIsDisabled(isDisabled);
-  }, [state?.collection, disabledKeys, isTabsDisabled, setIsDisabled])
+  }, [state?.collection, disabledKeys, isTabsDisabled, setIsDisabled]);
 
-  let [style, setStyle] = useState<{transform: string | undefined; width: string | undefined; height: string | undefined}>({
+  let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
     transform: undefined,
     width: undefined,
     height: undefined
@@ -232,7 +232,7 @@ function TabLine(props: TabLineProps) {
 
   let onResize = useCallback(() => {
     if (selectedTab) {
-      let styleObj: { transform: string | undefined; width: string | undefined; height: string | undefined } = { 
+      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = { 
         transform: undefined, 
         width: undefined, 
         height: undefined 
@@ -246,8 +246,7 @@ function TabLine(props: TabLineProps) {
 
       if (orientation === 'horizontal') {
         styleObj.width = `${selectedTab.offsetWidth}px`;
-      } 
-      else {
+      } else {
         styleObj.height = `${selectedTab.offsetHeight}px`;
       }
       setStyle(styleObj);
@@ -260,7 +259,7 @@ function TabLine(props: TabLineProps) {
   
   return (
     <div style={{...style}} className={selectedIndicator({isDisabled, orientation}) + ' ' + raw('transition: transform 130ms ease-in-out 0s, width 130ms ease-in-out 0s')} />
-    )
+  );
 }
 
 const tabs = style({
