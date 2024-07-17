@@ -194,7 +194,9 @@ export class Virtualizer<T extends object, V> {
 
     let removed = new Set<ReusableView<T, V>>();
     for (let [key, view] of this._visibleViews) {
-      if (!visibleLayoutInfos.has(key)) {
+      let layoutInfo = visibleLayoutInfos.get(key);
+      // If a layout info's parentKey changed, treat it as a delete and re-create in the new parent.
+      if (!layoutInfo || view.layoutInfo?.parentKey !== layoutInfo.parentKey) {
         this._visibleViews.delete(key);
         view.parent.reuseChild(view);
         removed.add(view); // Defer removing in case we reuse this view.
