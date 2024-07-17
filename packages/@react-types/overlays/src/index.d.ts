@@ -25,7 +25,7 @@ export type PlacementAxis = Axis | 'center';
 export interface PositionProps {
   /**
    * The placement of the element with respect to its anchor element.
-   * @default 'top'
+   * @default 'bottom'
    */
   placement?: Placement,
   /**
