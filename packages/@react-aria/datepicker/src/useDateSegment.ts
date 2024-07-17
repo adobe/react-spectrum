@@ -269,6 +269,17 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     selection.collapse(ref.current);
   };
 
+  let documentRef = useRef(typeof document !== 'undefined' ? document : null);
+  useEvent(documentRef, 'selectionchange', () => {
+    // Enforce that the selection is collapsed when inside a date segment.
+    // Otherwise, when tapping on a segment in Android Chrome and then entering text,
+    // composition events will be fired that break the DOM structure and crash the page.
+    let selection = window.getSelection();
+    if (ref.current.contains(selection.anchorNode)) {
+      selection.collapse(ref.current);
+    }
+  });
+
   let compositionRef = useRef('');
   // @ts-ignore - TODO: possibly old TS version? doesn't fail in my editor...
   useEvent(ref, 'beforeinput', e => {
