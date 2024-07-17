@@ -127,7 +127,7 @@ export default function DocSearch() {
 
       sections.push({title, items: items.map((item) => item[0])});
     }
-    let newSuggestions = sections.map((section, index) => ({key: `${index}-${section.title}`, title: section.title, children: section.items}));
+    let newSuggestions = sections.map((section) => ({key: section.title, title: section.title, children: section.items}));
     newSuggestions.push({
       key: 'algolia-footer',
       title: 'Search by',
