@@ -410,6 +410,34 @@ describe('Table', () => {
     expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
+  it('should support hover events on the TableHeader', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTable({
+      tableHeaderProps: {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd}
+    });
+    let headerRow = getAllByRole('rowgroup')[0];
+
+    expect(headerRow).not.toHaveAttribute('data-hovered');
+    expect(headerRow).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
+
+    await user.hover(headerRow);
+    expect(headerRow).toHaveAttribute('data-hovered');
+    expect(headerRow).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
+
+    await user.unhover(headerRow);
+    expect(headerRow).not.toHaveAttribute('data-hovered');
+    expect(headerRow).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
   it('should support focus ring', async () => {
     let {getAllByRole} = renderTable({
       rowProps: {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''},
