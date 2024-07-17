@@ -48,7 +48,7 @@ export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, '
    */
   offset?: number,
   /**
-   * The placement of the popover with respect to the action button.
+   * The placement of the tooltip with respect to the trigger.
    * @default 'top'
    */
   placement?: Placement
