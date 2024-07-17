@@ -4,7 +4,7 @@ import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {ValueBase} from '@react-types/shared';
 
-export interface ColorPickerProps extends ValueBase<string | Color | null, Color> {}
+export interface ColorPickerProps extends ValueBase<string | Color, Color> {}
 
 export interface ColorPickerState {
   /** The current color value of the color picker. */
