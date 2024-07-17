@@ -45,7 +45,7 @@ import {
 import {Checkbox} from './Checkbox';
 import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {createContext, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {ProgressCircle} from './ProgressCircle';
 import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
@@ -125,12 +125,12 @@ export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehav
 let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale}>({});
 
 const tableWrapper = style({
-  overflow: 'auto',
   width: 'full'
 });
 
 // TODO: will need focus styles and stuff which will use the TableRenderProps here
 const table = style<TableRenderProps & S2TableProps>({
+  height: 'full',
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
@@ -277,6 +277,7 @@ export function Table(props: TableProps) {
     columnsResizable,
     scale
   }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale]);
+  // TODO: subclass tablelayout and implement isStickyColumn and overwrite buildLoader and maybe buildBody
   let layout = useMemo(() => {
     return new UNSTABLE_TableLayout({
       rowHeight: overflowMode === 'wrap'
@@ -303,11 +304,6 @@ export function Table(props: TableProps) {
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
-
-  // TODO: Ideally I'd always use the ResizableTableContainer for consistency. However, a potential problem is that we'll need
-  // to make the outline of the table change colors depending on if it gets focused, but if the Resizable table container is present, the table
-  // is actaully the height of all the contents hence the outline needs to be placed on the ResizableTableContainer div. That div doesn't have the same render
-  // props as the Table and thus we might not be able to change the outline color on focus properly...
   let baseTable = (
     <UNSTABLE_Virtualizer layout={layout}>
       <InternalTableContext.Provider value={context}>
@@ -327,7 +323,6 @@ export function Table(props: TableProps) {
 
   if (columnsResizable) {
     baseTable = (
-      // TODO: for now we are going with the approach of making the outline go around the whole table
       <ResizableTableContainer
         ref={scrollRef}
         onResize={onResize}
@@ -339,7 +334,8 @@ export function Table(props: TableProps) {
           <InternalTableContext.Provider value={context}>
             <AriaTable
               className={renderProps => table({
-                ...renderProps
+                ...renderProps,
+                isQuiet
               })}
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               dragAndDropHooks={dragAndDropHooks}
@@ -425,10 +421,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
   return (
     <AriaTableBody
-      // TODO: super scuffed way of making the last row have a curved radius. Ideally would just have access to the collection or have a data
-      // attribute set in RAC.... The problem with this is that all the rows aren't rendered so it will curve an intermidate row's bottom left border
-      // as you scroll...
-      className={style({height: 'full'}) + ' ' + raw('&> :last-of-type { border-bottom-left-radius: 6px; }')}
+      className={style({height: 'full'})}
       {...props}
       renderEmptyState={emptyRender}
       dependencies={[loadingState]}>
@@ -460,6 +453,7 @@ function CellFocusRing(props: {isFocusVisible: boolean}) {
 }
 
 const columnStyles = style({
+  boxSizing: 'border-box',
   color: {
     default: 'gray-800', // neutral-content-color-default
     isHovered: 'gray-900', // neutral-content-color-hover
@@ -503,6 +497,7 @@ export interface ColumnProps extends RACColumnProps {
 
 export function Column(props: ColumnProps) {
   let {isQuiet, columnsResizable} = useContext(InternalTableContext);
+  let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
   let {isResizable, children} = props;
   let isColumResizable = columnsResizable && isResizable;
 
@@ -518,7 +513,7 @@ export function Column(props: ColumnProps) {
           <CellFocusRing isFocusVisible={isFocusVisible} />
           {columnsResizable && isResizable ?
             (
-              <ResizableColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} isHovered={isHovered}>
+              <ResizableColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} isHovered={isHeaderRowHovered || isHovered}>
                 {children}
               </ResizableColumnContents>
             ) : (
@@ -583,8 +578,8 @@ const resizableMenuButtonWrapper = style({
   alignItems: 'center',
   // TODO: same styles from columnStyles, consolidate later
   paddingX: 16,
-  paddingTop: size(7), // table-column-header-row-top-to-text-medium
-  paddingBottom: size(8), // table-column-header-row-top-to-text-medium
+  paddingTop: size(6), // table-column-header-row-top-to-text-medium
+  paddingBottom: size(7), // table-column-header-row-top-to-text-medium
   backgroundColor: 'transparent',
   borderStyle: 'none',
   fontSize: 'control',
@@ -778,38 +773,44 @@ const selectAllCheckboxColumn = style({
   borderStyle: 'solid'
 });
 
+let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
+
 export function TableHeader<T extends object>(
   {columns, children}: TableHeaderProps<T>
 ) {
   let {scale} = useContext(InternalTableContext);
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
+  let [isHeaderRowHovered, setHeaderRowHovered] = useState(false);
+
   return (
-    <AriaTableHeader className={tableHeader}>
-      {/* Add extra columns for drag and drop and selection. */}
-      {allowsDragging && (
-        // TODO: width for this column is taken from v3, designs don't have DnD specified yet
-        <AriaColumn width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
-          {({isFocusVisible}) => <CellFocusRing isFocusVisible={isFocusVisible} />}
-        </AriaColumn>
-      )}
-      {selectionBehavior === 'toggle' && (
-        <AriaColumn width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
-          {({isFocusVisible}) => (
-            <>
-              {selectionMode === 'single' &&
-                <CellFocusRing isFocusVisible={isFocusVisible} />
-              }
-              {selectionMode === 'multiple' &&
-                <Checkbox isEmphasized styles={selectAllCheckbox({scale})} slot="selection" />
-              }
-            </>
-          )}
-        </AriaColumn>
-      )}
-      <Collection items={columns}>
-        {children}
-      </Collection>
-    </AriaTableHeader>
+    <InternalTableHeaderContext.Provider value={{isHeaderRowHovered}}>
+      <AriaTableHeader onHoverChange={setHeaderRowHovered} className={tableHeader}>
+        {/* Add extra columns for drag and drop and selection. */}
+        {allowsDragging && (
+          // TODO: width for this column is taken from v3, designs don't have DnD specified yet
+          <AriaColumn width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
+            {({isFocusVisible}) => <CellFocusRing isFocusVisible={isFocusVisible} />}
+          </AriaColumn>
+        )}
+        {selectionBehavior === 'toggle' && (
+          <AriaColumn width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
+            {({isFocusVisible}) => (
+              <>
+                {selectionMode === 'single' &&
+                  <CellFocusRing isFocusVisible={isFocusVisible} />
+                }
+                {selectionMode === 'multiple' &&
+                  <Checkbox isEmphasized styles={selectAllCheckbox({scale})} slot="selection" />
+                }
+              </>
+            )}
+          </AriaColumn>
+        )}
+        <Collection items={columns}>
+          {children}
+        </Collection>
+      </AriaTableHeader>
+    </InternalTableHeaderContext.Provider>
   );
 }
 
@@ -1022,8 +1023,7 @@ export function Row<T extends object>(
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-        // TODO: remove in favor of a better method
-      }) + ' ' + raw('border-radius: inherit; ')}
+      })}
       {...otherProps}>
       {allowsDragging && (
         <Cell className={dragButtonCellStyle}>
