@@ -37,6 +37,7 @@ date: 2024-07-20
   - Add `inputRef` support to RAC SliderThumb - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6392)
 - Table
   - Add renderProp support for if a Table row has visible focus within it - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6350)
+  - Directly apply width to table column and add hover events to table header - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6719)
 - Virtualizer
   - Add Virtualizer to React Aria Components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6518)
   - Refactor virtualizer layouts to remove Spectrum-specific logic and improve backward compatibility - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6613)
@@ -66,6 +67,8 @@ date: 2024-07-20
   - ActionBar expose buttonLabelBehavior prop - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6708)
 - Color
   - TS Strict Color Stately - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6499)
+  - Fix default color value in ColorPicker - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6364)
+  - Support null values in ColorField with channel prop - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6722)
 - ComboBox
   - Fix correctly handle IME Input in Combobox - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6239)
   - Fix Combobox from closing prematurely - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6461)
@@ -73,7 +76,8 @@ date: 2024-07-20
 - Date and time
   - TS Strict Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6076)
   - Remove `autoCapitalize` to prevent mismatch warning in `useDateSegment` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6657)
-  - Disable DatePicker's native input when the picker is disabled - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6692)
+  - Disable DatePicker's native input when the picker is disabled - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6692),
+  - Fix crash in TimeField on Android - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6717)
 - Form
   - Prevent SearchField from triggering `onSubmit` when pressing Enter to complete IME - [@QzCurious](https://github.com/QzCurious) - [PR](https://github.com/adobe/react-spectrum/pull/6404)
 - Menu
@@ -82,7 +86,7 @@ date: 2024-07-20
   - Ensure Menu has the `[data-rac]` data attribute - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/6436)
 - Overlays
   - Fix infinite resizing issue in overlay positioning - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6312)
-- TableView
+- Table
   - Fix TableView column resizer nubbin - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6559)
   - Improve screen reader experience in Firefox for TableView - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/6465)
   - Fix `TableLayout` issues - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6711)
@@ -108,11 +112,12 @@ date: 2024-07-20
 ## Docs
 - Update `useToast` docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6468)
 - Add Breadcrumb render props to docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6489)
-- Add Ripple button example to docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6579)
+- Add Ripple button example to docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6579), [PR](https://github.com/adobe/react-spectrum/pull/6709)
 - Add example customizing `selectvalue` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6425)
 - Fix various doc examples for accessiblity - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6607)
 - Fix typo in interactions docs - [@jvliwanag](https://github.com/jvliwanag) - [PR](https://github.com/adobe/react-spectrum/pull/6698)
 - Fix typo in DropZone docs - [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/6334)
+- Fix RAC Slider label example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6710)
 
 ## Under Construction
 
