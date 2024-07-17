@@ -61,6 +61,7 @@ import { GridNode } from '@react-types/grid';
 import { LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import { Node} from '@react-types/shared';
 import {LayoutNode} from '@react-stately/layout';
+import {raw} from '../style/style-macro' with {type: 'macro'};
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
@@ -251,6 +252,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     if (children?.length === 0) {
       layoutInfo.rect.width = this.virtualizer.visibleRect.width - 80;
     }
+
     return [
       header,
       body
@@ -261,6 +263,9 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
+    // TODO: I'm not quite sure why the visible rect in the load more story stays as 320px instead of
+    // becomeing 305px when the scrollbar shows up... This doesn't seem to happen in the "loading state, has item" story,
+    // that one properly goes from 320px to 305px when the scrollbar renders
     layoutInfo.rect.width = this.virtualizer.visibleRect.width;
     layoutInfo.isSticky = true;
     return layoutNode;
@@ -611,7 +616,8 @@ function ColumnContents(props: ColumnContentProps) {
               styles: style({
                 height: 16,
                 width: 16,
-                marginEnd: 8
+                marginEnd: 8,
+                verticalAlign: 'bottom'
               })
             }]
           ]}>
@@ -808,7 +814,9 @@ const selectAllCheckbox = style({
 });
 
 const stickyCell = {
-  // TODO: this color isn't quite right
+  // TODO: this color isn't quite right, needs to match the color of the row + the parent needs to match the table body color
+  // so that it covers the non-sticky elements that may go under it. Additionally, either the sticky cell needs to render the
+  // the selection border or it needs to only be 38px so that it doesn't cover the top/bottom border
   // backgroundColor: 'gray-25'
 } as const;
 
@@ -1038,7 +1046,8 @@ const row = style<RowRenderProps & S2TableProps>({
     default: '[inset 0 -1px 0 0 gray]',
     // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
     // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
-    isSelected: '[inset 0 0 0 1px blue]',
+    // isSelected: '[inset 0 0 0 1px blue]',
+    // isSelected: '[inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue]',
     forcedColors: {
       default: '[inset 0 -1px 0 0 black]',
       isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
@@ -1080,7 +1089,9 @@ export function Row<T extends object>(
 ) {
   let {selectionBehavior, allowsDragging, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
-
+  // TODO: something like the below we could do in the className where we could perhaps modify the color and inset-block-start 50 be gray and 0 vs -1px respectively depending on the renderProps for isSelected.
+  // However would need to be able to use the color variables for the proper coloring
+  // + ' ' + raw('&:after { content: ""; display: block; position: absolute; inset-inline-start: 0;  inset-inline-end: 0;  inset-block-end: 0; inset-block-start: -1px; z-index: 3; box-shadow: inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue')
   return (
     <AriaRow
       id={id}

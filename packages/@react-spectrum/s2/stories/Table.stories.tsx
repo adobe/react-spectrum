@@ -105,7 +105,7 @@ const DynamicTable = (args: any) => (
   <Table aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
       {(column) => (
-        <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
       )}
     </TableHeader>
     <TableBody items={items}>
@@ -366,7 +366,7 @@ const OnLoadMoreTable = (args: any) => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 20000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
