@@ -58,7 +58,7 @@ import { mergeStyles } from '../style/runtime';
 import { useIsMobileDevice } from './utils';
 import {useLoadMore} from '@react-aria/utils';
 import { GridNode } from '@react-types/grid';
-import { LayoutInfo, Rect} from '@react-stately/virtualizer';
+import { LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import { Node} from '@react-types/shared';
 import {LayoutNode} from '@react-stately/layout';
 
@@ -243,22 +243,46 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     return false;
   }
 
+  protected buildCollection(): LayoutNode[] {
+    let [header, body] = super.buildCollection();
+    let {children, layoutInfo} = body;
+    // TableLayout's buildCollection always sets the body width to the max width between the header width, but
+    // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
+    if (children?.length === 0) {
+      layoutInfo.rect.width = this.virtualizer.visibleRect.width - 80;
+    }
+    return [
+      header,
+      body
+    ];
+  }
+
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
     let layoutNode = super.buildLoader(node, x, y);
-    layoutNode.layoutInfo.allowOverflow = true;
+    let {layoutInfo} = layoutNode;
+    layoutInfo.allowOverflow = true;
+    layoutInfo.rect.width = this.virtualizer.visibleRect.width;
+    layoutInfo.isSticky = true;
     return layoutNode;
   }
 
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
-    layoutNode.layoutInfo.allowOverflow = true;
-    // TODO: may need to do something similar to TableView's build body for the loader/empty state margins
-    return layoutNode;
+    let {children, layoutInfo} = layoutNode;
+    layoutInfo.allowOverflow = true;
+    // If loading or empty, we'll want the body to be sticky and centered
+    if (children?.length === 0) {
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
+      layoutInfo.isSticky = true;
+    }
+
+    return {...layoutNode, layoutInfo};
   }
 
   protected buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
     let layoutNode = super.buildRow(node, x, y);
     layoutNode.layoutInfo.allowOverflow = true;
+
     return layoutNode;
   }
 
@@ -268,7 +292,6 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     return layoutNode;
   }
 }
-
 
 // TODO: v3 had min widths for hide header columns, but RAC table's useTableColumnResizeState
 // call that happens internally doesn't accept options for that.
@@ -405,8 +428,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let emptyRender;
   let renderer = children;
   let loadMoreSpinner = (
-    // TODO: need to position this in such a way that it is positioned properly within the full width row
-    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', position: 'sticky', top: 40, left: 40, width: 32})}>
+    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate

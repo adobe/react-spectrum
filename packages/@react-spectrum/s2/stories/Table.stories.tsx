@@ -143,7 +143,7 @@ const EmptyStateTable = (args: any) => (
   <Table aria-label="Empty state" {...args} styles={style({height: '[400px]', width: '[400px]'})}>
     <TableHeader columns={columns}>
       {(column) => (
-        <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>{column.name}</Column>
       )}
     </TableHeader>
     <TableBody items={[]} renderEmptyState={renderEmptyState}>
