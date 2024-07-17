@@ -522,7 +522,15 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> extends StyleProps {
+export interface TableHeaderRenderProps {
+  /**
+   * Whether the table header is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean
+}
+
+export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -552,13 +560,27 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
 
     let THead = useElementType('thead');
     let {rowGroupProps} = useTableRowGroup();
+    let {hoverProps, isHovered} = useHover({
+      onHoverStart: props.onHoverStart,
+      onHoverChange: props.onHoverChange,
+      onHoverEnd: props.onHoverEnd
+    });
+
+    let renderProps = useRenderProps({
+      className: props.className,
+      style: props.style,
+      defaultClassName: 'react-aria-TableHeader',
+      values: {
+        isHovered
+      }
+    });
+
     return (
       <THead
-        {...filterDOMProps(props as any)}
-        {...rowGroupProps}
+        {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
+        {...renderProps}
         ref={ref}
-        className={props.className ?? 'react-aria-TableHeader'}
-        style={props.style}>
+        data-hovered={isHovered || undefined}>
         {headerRows}
       </THead>
     );
@@ -711,7 +733,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
 
   let style = renderProps.style;
   if (layoutState) {
-    style = {...style, width: isVirtualized ? undefined : layoutState.getColumnWidth(column.key)};
+    style = {...style, width: layoutState.getColumnWidth(column.key)};
   }
 
   let TH = useElementType('th');
