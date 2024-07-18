@@ -101,8 +101,16 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
     let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
     let result = this.layoutInfos.slice(firstVisibleItem, lastVisibleItem + 1);
-    let persistedIndices = [...this.virtualizer.persistedKeys].map(key => this.virtualizer.collection.getItem(key).index).sort((a, b) => a - b);
-    let persistedBefore = [];
+    let persistedIndices: number[] = [];
+    for (let key of this.virtualizer.persistedKeys) {
+      let item = this.virtualizer.collection.getItem(key);
+      if (item?.index != null) {
+        persistedIndices.push(item.index);
+      }
+    }
+    persistedIndices.sort((a, b) => a - b);
+    
+    let persistedBefore: LayoutInfo[] = [];
     for (let index of persistedIndices) {
       if (index < firstVisibleItem) {
         persistedBefore.push(this.layoutInfos[index]);
