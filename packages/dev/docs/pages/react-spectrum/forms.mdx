@@ -437,7 +437,7 @@ function App() {
             onBlur={onBlur}
             ref={ref}
             isRequired
-            isInvalid={invalid}
+            validationState={invalid ? 'invalid' : undefined}
             errorMessage={error?.message}
           />
         )}
