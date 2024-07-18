@@ -13,7 +13,7 @@
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, NodeValue, useCachedChildren} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
@@ -25,7 +25,7 @@ import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
-  private keyMap: Map<Key, NodeValue<T>> = new Map();
+  private keyMap: Map<Key, CollectionNode<T>> = new Map();
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
@@ -506,14 +506,14 @@ interface TreeGridCollectionOptions {
 
 interface FlattenedTree<T> {
   flattenedRows: Node<T>[],
-  keyMap: Map<Key, NodeValue<T>>
+  keyMap: Map<Key, CollectionNode<T>>
 }
 
 function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
   let {
     expandedKeys = new Set()
   } = opts;
-  let keyMap: Map<Key, NodeValue<T>> = new Map();
+  let keyMap: Map<Key, CollectionNode<T>> = new Map();
   let flattenedRows: Node<T>[] = [];
 
   let visitNode = (node: Node<T>) => {
@@ -534,9 +534,9 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
           clone.level = node.level + 1;
         }
 
-        keyMap.set(clone.key, clone as NodeValue<T>);
+        keyMap.set(clone.key, clone as CollectionNode<T>);
       } else {
-        keyMap.set(node.key, node as NodeValue<T>);
+        keyMap.set(node.key, node as CollectionNode<T>);
       }
 
       if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
@@ -544,7 +544,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         flattenedRows.push(keyMap.get(node.key) || node);
       }
     } else if (node.type !== null) {
-      keyMap.set(node.key, node as NodeValue<T>);
+      keyMap.set(node.key, node as CollectionNode<T>);
     }
 
     for (let child of collection.getChildren(node.key)) {
