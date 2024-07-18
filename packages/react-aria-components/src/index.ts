@@ -61,7 +61,7 @@ export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateConte
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
+export {UNSTABLE_TableLoadingIndicator, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
 export {TableLayout as UNSTABLE_TableLayout} from './TableLayout';
 export {Tabs, TabList, TabPanel, Tab, TabsContext, TabListStateContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGroup';
@@ -71,7 +71,7 @@ export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
+export {UNSTABLE_TreeLoadingIndicator, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer as UNSTABLE_Virtualizer} from './Virtualizer';

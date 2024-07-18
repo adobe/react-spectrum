@@ -12,7 +12,7 @@
 
 import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
+import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
@@ -62,7 +62,9 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   /** Whether the date picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** Formats the selected value using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string
+  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  /** Gets a formatter based on state's props. */
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 /**
@@ -187,6 +189,11 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       let formatOptions = getFormatOptions(fieldOptions, formatOpts);
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
+    },
+    getDateFormatter(locale, formatOptions: FormatterOptions) {
+      let newOptions = {...formatOpts, ...formatOptions};
+      let newFormatOptions = getFormatOptions({}, newOptions);
+      return new DateFormatter(locale, newFormatOptions);
     }
   };
 }
