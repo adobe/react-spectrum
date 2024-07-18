@@ -29,7 +29,7 @@ date: 2024-07-20
   - Support grid layout and tab navigation in GridList - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6486)
   - Selection checkbox should always toggle regardless of `selectionBehavior` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6526)
   - Refactor collection internals in preparation for public API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6608)
-  - Move RAC collections implementation into new package - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6640)
+  - Move RAC collections implementation into new package - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6640), [PR](https://github.com/adobe/react-spectrum/pull/6725)
 - Overlays
   - Implement scroll anchoring for overlay positioning - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6527)
   - Add `ResizeObserver` that observes targetRef - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6396)
@@ -65,10 +65,13 @@ date: 2024-07-20
   - Allow `SingleSelectListState.selectedItem` type to be nullable - [@PHILLIPS71](https://github.com/PHILLIPS71) - [PR](https://github.com/adobe/react-spectrum/pull/6565)
   - Ensure that RAC tabs correctly find the first non-disabled tab - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6681)
   - ActionBar expose buttonLabelBehavior prop - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6708)
+  - Fix crash in GridLayout when a persisted key is deleted - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6731)
+  - Ensure async ListBox `rect` updates size - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6724)
 - ComboBox
   - Fix correctly handle IME Input in Combobox - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6239)
   - Fix Combobox from closing prematurely - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6461)
   - Fix Combobox hidden input default value causing React warnings - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6336)
+  - Fix readonly ComboBox from making selections when `menuTrigger` is set to `focus` - [@mwannewitz](https://github.com/mwannewitz) - [PR](https://github.com/adobe/react-spectrum/pull/6693)
 - Date and time
   - TS Strict Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6076)
   - Remove `autoCapitalize` to prevent mismatch warning in `useDateSegment` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6657)
@@ -96,6 +99,7 @@ date: 2024-07-20
   - Fix virtualizer persisted keys with drag and drop - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6644)
   - Fix divide by zero in GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6676)
   - Fix incremental layout with variable heights - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6588)
+  - Fix virtualizer bug when an item changes parents - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6723)
 - Misc
   - Ensure Section has the `[data-rac]` data attribute - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/6452)
   - Fix Tailwind plugin options type - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6515)
@@ -114,6 +118,8 @@ date: 2024-07-20
 - Fix typo in interactions docs - [@jvliwanag](https://github.com/jvliwanag) - [PR](https://github.com/adobe/react-spectrum/pull/6698)
 - Fix typo in DropZone docs - [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/6334)
 - Fix RAC Slider label example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6710)
+- Update Tooltip docs to reflect correct default `placement` value - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6721)
+- Fix crash in controlled ColorField docs examples - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6732)
 
 ## Under Construction
 
