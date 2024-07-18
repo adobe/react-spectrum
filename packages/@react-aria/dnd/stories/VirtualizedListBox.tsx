@@ -168,7 +168,6 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
         {...mergeProps(collectionProps, listBoxProps)}
         ref={domRef}
         className={classNames(dndStyles, 'droppable-collection', 'is-virtualized', {'is-drop-target': isDropTarget})}
-        sizeToFit="height"
         scrollDirection="vertical"
         layout={layout}
         collection={state.collection}
