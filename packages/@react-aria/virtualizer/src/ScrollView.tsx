@@ -33,7 +33,6 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onVisibleRectChange: (rect: Rect) => void,
   children?: ReactNode,
   innerStyle?: CSSProperties,
-  sizeToFit?: 'width' | 'height',
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
@@ -60,7 +59,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     contentSize,
     onVisibleRectChange,
     innerStyle,
-    sizeToFit,
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
@@ -158,14 +156,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     let clientHeight = dom.clientHeight;
     let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
     let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
-
-    if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
-      if (sizeToFit === 'width') {
-        w = Math.min(w, contentSize.width);
-      } else if (sizeToFit === 'height') {
-        h = Math.min(h, contentSize.height);
-      }
-    }
 
     if (state.width !== w || state.height !== h) {
       state.width = w;
