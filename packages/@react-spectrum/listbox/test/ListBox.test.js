@@ -759,6 +759,60 @@ describe('ListBox', function () {
     expect(option.id).not.toEqual('Foo');
   });
 
+  it('should handle when an item changes sections', function () {
+    let sections = [
+      {
+        id: 'foo',
+        title: 'Foo',
+        children: [
+          {id: 'foo-1', title: 'Foo 1'},
+          {id: 'foo-2', title: 'Foo 2'}
+        ]
+      },
+      {
+        id: 'bar',
+        title: 'Bar',
+        children: [
+          {id: 'bar-1', title: 'Bar 1'},
+          {id: 'bar-2', title: 'Bar 2'}
+        ]
+      }
+    ];
+
+    function Example({sections}) {
+      return (
+        <Provider theme={theme}>
+          <ListBox aria-label="listbox" items={sections}>
+            {section => (
+              <Section title={section.title} items={section.children}>
+                {item => <Item>{item.title}</Item>}
+              </Section>
+            )}
+          </ListBox>
+        </Provider>
+      );
+    }
+
+    let {getByText, rerender} = render(<Example sections={sections} />);
+    let item = getByText('Foo 1');
+    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Foo');
+
+    let sections2 = [
+      {
+        ...sections[0],
+        children: [sections[0].children[1]]
+      },
+      {
+        ...sections[1],
+        children: [...sections[1].children, sections[0].children[0]]
+      }
+    ];
+
+    rerender(<Example sections={sections2} />);
+    item = getByText('Foo 1');
+    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Bar');
+  });
+
   describe('async loading', function () {
     it('should display a spinner while loading', async function () {
       let {getByRole, rerender} = render(
