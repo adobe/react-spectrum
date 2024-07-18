@@ -1,5 +1,5 @@
 import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent, CollectionNode, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
