@@ -30,7 +30,6 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   layout: Layout<T, O>,
   collection: Collection<T>,
   persistedKeys?: Set<Key> | null,
-  sizeToFit?: 'width' | 'height',
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
   isLoading?: boolean,
   onLoadMore?: () => void,
@@ -43,7 +42,6 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
     renderWrapper,
     layout,
     collection,
-    sizeToFit,
     scrollDirection,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isLoading,
@@ -81,7 +79,6 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
       contentSize={state.contentSize}
       onScrollStart={state.startScrolling}
       onScrollEnd={state.endScrolling}
-      sizeToFit={sizeToFit}
       scrollDirection={scrollDirection}>
       {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
     </ScrollView>
