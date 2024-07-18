@@ -218,6 +218,7 @@ function TabLine(props: TabLineProps) {
   let {direction} = useLocale();
   let state = useContext(TabListStateContext);
 
+  // We want to add disabled styling to the selection indicator only if all the Tabs are disabled
   let [isDisabled, setIsDisabled] = useState<boolean>(false);
   useEffect(() => {
     let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
