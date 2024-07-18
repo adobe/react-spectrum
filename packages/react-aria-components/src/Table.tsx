@@ -1,5 +1,5 @@
 import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent, NodeValue, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
@@ -22,11 +22,11 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   columns: GridNode<T>[] = [];
   rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: NodeValue<T> = new NodeValue('tableheader', -1);
-  body: NodeValue<T> = new NodeValue('tablebody', -2);
+  head: CollectionNode<T> = new CollectionNode('tableheader', -1);
+  body: CollectionNode<T> = new CollectionNode('tablebody', -2);
   columnsDirty = true;
 
-  addNode(node: NodeValue<T>) {
+  addNode(node: CollectionNode<T>) {
     super.addNode(node);
 
     this.columnsDirty ||= node.type === 'column';
