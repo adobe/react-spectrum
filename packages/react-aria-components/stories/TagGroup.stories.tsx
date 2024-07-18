@@ -18,7 +18,7 @@ import {
   TagGroup,
   TagGroupProps,
   TagList,
-  TagProps,
+  TagProps
 } from 'react-aria-components';
 import {Collection, Node} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
@@ -93,7 +93,7 @@ export const TagGroupCollapsingExample = (props: TagGroupProps & {maxTags?: numb
   );
 };
 
-let CustomTagGroup = forwardRef((props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) => {
+let CustomTagGroup = forwardRef((props: TagGroupProps, ref: ForwardedRef<HTMLElement>) => {
   return (
     <CollectionBuilder content={props.children}>
       {collection => <CustomTagGroupInner props={props} forwardedRef={ref} collection={collection} />}
@@ -101,7 +101,7 @@ let CustomTagGroup = forwardRef((props: TagGroupProps, ref: ForwardedRef<HTMLDiv
   );
 });
 
-function CustomTagGroupInner({props, forwardedRef: ref, collection}: {props: TagGroupProps, forwardedRef: ForwardedRef<HTMLDivElement>, collection: Collection<Node<unknown>>}) {
+function CustomTagGroupInner({props, forwardedRef: ref, collection}: {props: TagGroupProps, forwardedRef: ForwardedRef<HTMLElement>, collection: Collection<Node<unknown>>}) {
   let keyboardDelegate = useMemo(() => new ListKeyboardDelegate({
     collection,
     ref,
