@@ -118,10 +118,11 @@ async function compare() {
       if (diff.length > 0) {
         let affected = followInvertedDependencies(simplifiedName, invertedDeps);
         // combine export change messages
+        // remove extra newline we added between the name of the interface and the properties to make the diffs easier to read
         changes.push(`
 #### ${simplifiedName}
 ${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff}${affected.length > 0 ? `
+ - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${affected.length > 0 ? `
 it changed:
  - ${affected.join('\n - ')}
 ` : ''}
@@ -375,6 +376,9 @@ function processType(value) {
     }
     return name;
   }
+  if (value.type === 'mapped') {
+    return `${value.readonly === '-' ? '-readonly' : ''}${processType(value.typeParameter)}: ${processType(value.typeAnnotation)}`;
+  }
   // interface still needed if we have it at top level?
   if (value.type === 'object') {
     if (value.properties) {
@@ -485,8 +489,11 @@ function rebuildInterfaces(json) {
         compInterface[name] = {optional, defaultVal, value};
       }
       let name = item.name ?? key;
-      if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+      if (item.typeParameters?.length > 0) {
+        compInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+      }
+      if (item.props?.extends?.length > 0) {
+        compInterface['extend'] = `extends ${item.props.extends.map(processType).sort().join(', ')}`;
       }
       exports[name] = compInterface;
     } else if (item.type === 'function') {
@@ -503,10 +510,11 @@ function rebuildInterfaces(json) {
       });
       let returnVal = processType(item.return);
       let name = item.name ?? key;
-      if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+      funcInterface['returnVal'] = returnVal;
+      if (item.typeParameters?.length > 0) {
+        funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
-      exports[name] = {...funcInterface, returnVal};
+      exports[name] = funcInterface;
     } else if (item.type === 'interface') {
       let funcInterface = {};
       Object.entries(item.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, property]) => {
@@ -521,8 +529,8 @@ function rebuildInterfaces(json) {
         funcInterface[name] = {optional, defaultVal, value};
       });
       let name = item.name ?? key;
-      if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+      if (item.typeParameters?.length > 0) {
+        funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       exports[name] = funcInterface;
     } else if (item.type === 'link') {
@@ -551,10 +559,24 @@ function formatProp([name, prop]) {
 
 function formatInterfaces(interfaces, allInterfaces) {
   return allInterfaces.map(name => {
-    if (interfaces[name]) {
-      let output = `${name} {\n`;
-      output += interfaces[name].isType ? formatProp(name, interfaces[name]) : Object.entries(interfaces[name]).map(formatProp).join('\n');
+    let interfaceO = interfaces[name];
+    if (interfaceO && interfaceO !== 'UNTYPED') {
+      let output = `${name}`;
+      if (interfaceO.typeParameters) {
+        output += ` ${interfaceO.typeParameters}`;
+        delete interfaceO.typeParameters;
+      }
+      if (interfaceO.extend) {
+        output += ` ${interfaceO.extend}`;
+        delete interfaceO.extend;
+      }
+      // include extra newline so that the names of the interface are always compared
+      output += ' {\n\n';
+      output += interfaces[name].isType ? formatProp(name, interfaceO) : Object.entries(interfaceO).map(formatProp).join('\n');
       return `${output}\n}\n`;
+    } else if (interfaceO === 'UNTYPED') {
+      // include extra newline so that the names of the interface are always compared
+      return `${name} {\n\n  UNTYPED\n}\n`;
     } else {
       return '\n';
     }
