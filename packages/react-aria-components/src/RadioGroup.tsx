@@ -213,7 +213,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps, focusableProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, focusableProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}

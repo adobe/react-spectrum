@@ -227,7 +227,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps, focusableProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, focusableProps, renderProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
