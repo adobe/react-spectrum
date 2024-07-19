@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusable, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -186,7 +186,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   }, state, inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
-
+  let {focusableProps} = useFocusable(props, ref);
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: interactionDisabled
@@ -213,7 +213,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps, focusableProps)}
       ref={ref}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
