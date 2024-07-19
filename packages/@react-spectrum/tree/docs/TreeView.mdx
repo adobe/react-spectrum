@@ -23,7 +23,9 @@ import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import GlobeOutline from '@spectrum-icons/workflow/GlobeOutline';
 import Image from '@spectrum-icons/workflow/Image';
 import {Text} from '@react-spectrum/text';
-import {SpectrumTreeViewProps, TreeView, TreeViewItem} from '@react-spectrum/tree';
+import {TreeView, TreeViewItem} from '@react-spectrum/tree';
+import {JSX} from "react";
+import {Key} from "@react-types/shared";
 ```
 
 ---
@@ -195,7 +197,7 @@ Here is how you would control expansion for the above example.
 
 ```tsx example
 function Example(props) {
-  let [expandedKeys, setExpandedKeys] = React.useState(new Set(['documents', 'photos']));
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['documents', 'photos']));
 
   return (
     <TreeView
