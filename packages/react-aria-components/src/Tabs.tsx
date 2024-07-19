@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, usePersistedKeys} from './Collection';
@@ -43,7 +43,7 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps {
+export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents {
   /** The unique id of the tab. */
   id?: Key,
   /** Whether the tab is disabled. */
@@ -252,7 +252,10 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    isDisabled
+    isDisabled,
+    onHoverStart: props.onHoverStart,
+    onHoverEnd: props.onHoverEnd,
+    onHoverChange: props.onHoverChange
   });
 
   let renderProps = useRenderProps({
