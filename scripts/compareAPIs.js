@@ -121,7 +121,7 @@ async function compare() {
         changes.push(`
 #### ${simplifiedName}
 ${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
+ - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff}${affected.length > 0 ? `
 it changed:
  - ${affected.join('\n - ')}
 ` : ''}
@@ -449,10 +449,12 @@ function rebuildInterfaces(json) {
     let item = json.exports[key];
     if (item?.type == null) {
       // todo what to do here??
+      exports[item.name] = 'UNTYPED';
       return;
     }
     if (item.props?.type === 'identifier') {
       // todo what to do here??
+      exports[item.name] = 'UNTYPED';
       return;
     }
     if (item.type === 'component') {
@@ -536,6 +538,7 @@ function rebuildInterfaces(json) {
         exports[name] = {isType, optional, defaultVal, value};
       }
     } else {
+      exports[key] = 'UNTYPED';
       console.log('unknown top level export', item);
     }
   });
