@@ -12,19 +12,21 @@
 
 import {
   Button,
-  Cell as AriaCell,
+  Cell as RACCell,
   Collection,
-  Column as AriaColumn,
+  Column as RACColumn,
   ColumnProps as RACColumnProps,
-  Row as AriaRow,
+  Row as RACRow,
   RowProps,
+  Table as RACTable,
+  TableHeader as RACTableHeader,
   TableHeaderProps,
   TableProps as RACTableProps,
-  TableBody as AriaTableBody,
+  TableBody as RACTableBody,
   TableBodyProps as RACTableBodyProps,
   useTableOptions,
   TableRenderProps,
-  CellProps,
+  CellProps as RACCellProps,
   CellRenderProps,
   TableBodyRenderProps,
   RowRenderProps,
@@ -180,6 +182,7 @@ let dragRowPreview = style({
 });
 
 // TODO: same style as from cell, combine later
+// TODO: just do vertical centering instead
 let dragCellPreview = style({
   paddingTop: {
     default: size(11), // table-row-top-to-text-medium-regular
@@ -374,7 +377,7 @@ export function Table(props: TableProps) {
   let baseTable = (
     <UNSTABLE_Virtualizer layout={layout}>
       <InternalTableContext.Provider value={context}>
-        <AriaTable
+        <RACTable
           ref={scrollRef}
           style={UNSAFE_style}
           className={renderProps => (UNSAFE_className || '') + table({
@@ -399,7 +402,7 @@ export function Table(props: TableProps) {
         style={UNSAFE_style}>
         <UNSTABLE_Virtualizer layout={layout}>
           <InternalTableContext.Provider value={context}>
-            <AriaTable
+            <RACTable
               className={renderProps => table({
                 ...renderProps,
                 isQuiet
@@ -487,13 +490,13 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   }
 
   return (
-    <AriaTableBody
+    <RACTableBody
       className={style({height: 'full'})}
       {...props}
       renderEmptyState={emptyRender}
       dependencies={[loadingState]}>
       {renderer}
-    </AriaTableBody>
+    </RACTableBody>
   );
 }
 
@@ -515,10 +518,11 @@ const cellFocus = style({
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
   let {isFocusVisible} = props;
-  return <span className={cellFocus({isFocusVisible})} />;
+  return <div role="presentation" className={cellFocus({isFocusVisible})} />;
 }
 
 const columnStyles = style({
+  height: '[inherit]',
   boxSizing: 'border-box',
   color: {
     default: 'gray-800', // neutral-content-color-default
@@ -531,6 +535,7 @@ const columnStyles = style({
     isColumResizable: 0
   },
   // TODO: would be nice to not have to hard code these
+  // TODO: just do vertical centering instead
   paddingTop: {
     default: size(6),  // table-column-header-row-top-to-text-medium
     isColumResizable: 0
@@ -540,6 +545,7 @@ const columnStyles = style({
     default: size(7), // table-column-header-row-top-to-text-medium
     isColumResizable: 0
   },
+  // TODO: need to support text align and that would need to apply to all cells in the column, need to figure out how
   textAlign: 'start',
   outlineStyle: 'none',
   position: 'relative',
@@ -556,6 +562,7 @@ const columnStyles = style({
 });
 
 export interface ColumnProps extends RACColumnProps {
+  // TODO: still need to figure out a way
   showDivider?: boolean,
   isResizable?: boolean,
   children?: ReactNode
@@ -568,7 +575,7 @@ export function Column(props: ColumnProps) {
   let isColumResizable = columnsResizable && isResizable;
 
   return (
-    <AriaColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
+    <RACColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
@@ -587,7 +594,7 @@ export function Column(props: ColumnProps) {
           }
         </>
       )}
-    </AriaColumn>
+    </RACColumn>
   );
 }
 
@@ -642,6 +649,7 @@ const resizableMenuButtonWrapper = style({
   alignItems: 'center',
   // TODO: same styles from columnStyles, consolidate later
   paddingX: 16,
+  // TODO: just do vertical centering instead
   paddingTop: size(6), // table-column-header-row-top-to-text-medium
   paddingBottom: size(7), // table-column-header-row-top-to-text-medium
   backgroundColor: 'transparent',
@@ -814,17 +822,14 @@ const selectAllCheckbox = style({
 });
 
 const stickyCell = {
-  // TODO: this color isn't quite right, needs to match the color of the row + the parent needs to match the table body color
-  // so that it covers the non-sticky elements that may go under it. Additionally, either the sticky cell needs to render the
-  // the selection border or it needs to only be 38px so that it doesn't cover the top/bottom border
-  // backgroundColor: 'gray-25'
+  backgroundColor: 'gray-25'
 } as const;
 
 const selectAllCheckboxColumn = style({
   ...stickyCell,
   padding: 0,
   // TODO: this needs to be full - 1 but adding a .5 for now so it matches the other columns, will need to figure out why the text elements are 17.5px
-  height: '[calc(100% - 1.5px)]',
+  height: '[calc(100% - 1px)]',
   outlineStyle: 'none',
   position: 'relative',
   alignContent: 'center',
@@ -846,20 +851,20 @@ export function TableHeader<T extends object>(
 
   return (
     <InternalTableHeaderContext.Provider value={{isHeaderRowHovered}}>
-      <AriaTableHeader onHoverChange={setHeaderRowHovered} className={tableHeader}>
+      <RACTableHeader onHoverChange={setHeaderRowHovered} className={tableHeader}>
         {/* Add extra columns for drag and drop and selection. */}
         {allowsDragging && (
           // TODO: width for this column is taken from v3, designs don't have DnD specified yet
           // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
           // @ts-ignore
-          <AriaColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
+          <RACColumn isSticky width={scale === 'medium' ? 16 : 20} minWidth={scale === 'medium' ? 16 : 20} className={selectAllCheckboxColumn}>
             {({isFocusVisible}) => <CellFocusRing isFocusVisible={isFocusVisible} />}
-          </AriaColumn>
+          </RACColumn>
         )}
         {selectionBehavior === 'toggle' && (
           // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
           // @ts-ignore
-          <AriaColumn isSticky width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
+          <RACColumn isSticky width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
             {({isFocusVisible}) => (
               <>
                 {selectionMode === 'single' &&
@@ -870,12 +875,12 @@ export function TableHeader<T extends object>(
                 }
               </>
             )}
-          </AriaColumn>
+          </RACColumn>
         )}
         <Collection items={columns}>
           {children}
         </Collection>
-      </AriaTableHeader>
+      </RACTableHeader>
     </InternalTableHeaderContext.Provider>
   );
 }
@@ -905,6 +910,8 @@ const cell = style<CellRenderProps & S2TableProps>({
     isPressed: 'gray-900', // neutral-content-color-down
     isFocusVisible: 'gray-900' // neutral-content-color-key-focus
   },
+
+  // Still need this paddingTop/Bottom for overflow wrap
   // TODO: might need to remove these when virtualized?
   // TODO: figure out if there is a better way then this cuz these are hardcoded and won't change with scale
   // when they probably should
@@ -922,8 +929,11 @@ const cell = style<CellRenderProps & S2TableProps>({
       compact: '[8px]' // table-row-bottom-to-text-medium-compact
     }
   },
+  boxSizing: 'border-box',
+  height: 'full',
+  width: 'full',
   fontSize: 'control',
-  alignContent: 'center',
+  alignItems: 'center',
   display: 'flex'
 });
 
@@ -964,15 +974,33 @@ const cellContent = style({
   },
   textOverflow: 'ellipsis',
   minWidth: 0,
-  overflow: 'hidden',
-  width: 'auto'
+  overflow: 'hidden'
 });
 
+const cellBackground = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  right: 0,
+  left: 0,
+  backgroundColor: {
+    default: 'transparent',
+    isSticky: '--rowBackgroundColor'
+  }
+});
+
+export interface CellProps extends RACCellProps {
+  isSticky: boolean
+}
+
 export function Cell(props: CellProps) {
-  let {children, ...otherProps} = props;
+  let {children, isSticky, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   return (
-    <AriaCell
+    <RACCell
+      // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+      // @ts-ignore
+      isSticky={isSticky}
       className={renderProps => cell({
         ...renderProps,
         ...tableVisualOptions
@@ -980,13 +1008,47 @@ export function Cell(props: CellProps) {
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
+          {/* Reason for doing it this way is because ideally I'd have a wrapper around the cell that is full width that serves as a background
+            but can't have a div wrapping the cell here. I also want the padding applied on the RAC cell itself so a div wrapping the cell contents won't
+            have the proper full height
+          */}
+          <div role="presentation" className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
           <span className={cellContent({...tableVisualOptions})}>{children}</span>
         </>
       )}
-    </AriaCell>
+    </RACCell>
   );
 }
+
+const rowBackgroundColor = {
+  default: 'gray-25',
+  isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
+  isHovered: 'gray-900/7', // table-row-hover-color
+  isPressed: 'gray-900/10', // table-row-hover-color
+  isSelected: {
+    default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
+    isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+    isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+    isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
+  },
+  isQuiet: {
+    // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
+    default: 'transparent',
+    isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
+    isHovered: 'gray-900/7', // table-row-hover-color
+    isPressed: 'gray-900/10', // table-row-hover-color
+    isSelected: {
+      default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
+      isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+      isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
+      isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
+    }
+  },
+  forcedColors: {
+    default: 'transparent'
+  }
+} as const;
 
 
 // TODO: for the borders between the tables, try doing 4 box shadows, one for each side. For the top and bottom box shadows, make them thicker
@@ -1003,33 +1065,10 @@ const row = style<RowRenderProps & S2TableProps>({
     // TODO: will need the proper blue from tokens
     isFocusVisible: 'linear-gradient(to right, blue 0 3px, transparent 3px)'
   },
-  backgroundColor: {
-    default: 'gray-25',
-    isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
-    isHovered: 'gray-900/7', // table-row-hover-color
-    isPressed: 'gray-900/10', // table-row-hover-color
-    isSelected: {
-      default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
-      isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-      isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-      isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
-    },
-    isQuiet: {
-      // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
-      default: 'transparent',
-      isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
-      isHovered: 'gray-900/7', // table-row-hover-color
-      isPressed: 'gray-900/10', // table-row-hover-color
-      isSelected: {
-        default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
-        isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-        isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-        isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
-      }
-    },
-    forcedColors: {
-      default: 'transparent'
-    }
+  backgroundColor: rowBackgroundColor,
+  '--rowBackgroundColor': {
+    type: 'backgroundColor',
+    value: rowBackgroundColor
   },
   outlineStyle: 'none',
   // TODO: need to fix the row outlines
@@ -1047,13 +1086,26 @@ const row = style<RowRenderProps & S2TableProps>({
     // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
     // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
     // isSelected: '[inset 0 0 0 1px blue]',
-    // isSelected: '[inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue]',
+    isSelected: '[inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue]',
     forcedColors: {
       default: '[inset 0 -1px 0 0 black]',
       isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
       isFocusVisible: '[inset 0 0 0 2px black, inset 0 -3px 0 0 black]'
     }
   },
+
+  // outlineWidth: 1,
+  // outlineOffset: -1,
+  // outlineStyle: 'solid',
+  // outlineColor: {
+  //   isSelected: 'red-500',
+  //   default: 'gray-300'
+  // },
+
+
+  // width: '[calc(100%-2px)]',
+  // marginStart: '[1px]',
+  // marginTop: '[-1px]',
   forcedColorAdjust: 'none'
   // TODO: This is an alternative to having the tablebody + cells render an outline
   //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
@@ -1093,24 +1145,24 @@ export function Row<T extends object>(
   // However would need to be able to use the color variables for the proper coloring
   // + ' ' + raw('&:after { content: ""; display: block; position: absolute; inset-inline-start: 0;  inset-inline-end: 0;  inset-block-end: 0; inset-block-start: -1px; z-index: 3; box-shadow: inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue')
   return (
-    <AriaRow
+    <RACRow
       id={id}
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
       })}
+      // })  + ' ' + raw('&:after { content: ""; display: block; position: absolute; inset-inline-start: 0;  inset-inline-end: 0;  inset-block-end: 0; inset-block-start: -1px; z-index: 3; box-shadow: inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue')}
       {...otherProps}>
       {allowsDragging && (
-        // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
-        // @ts-ignore
         <Cell isSticky className={dragButtonCellStyle}>
           {/* TODO: listgripper is from react-spectrum-ui? what do? */}
           <Button className={({isFocusVisible}) => dragButton({isFocusVisible})} slot="drag">≡</Button>
         </Cell>
       )}
+      {/* TODO: make a separate checkbox cell here instead of using . Can also get rid of the ts-ignore if we add it to CellProps since this is our wrapper
+          Can use something like CellFocusRing but just make
+      */}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-        // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
-        // @ts-ignore
         <Cell isSticky className={checkboxCellStyle({scale: tableVisualOptions.scale})}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>
@@ -1118,7 +1170,7 @@ export function Row<T extends object>(
       <Collection items={columns}>
         {children}
       </Collection>
-    </AriaRow>
+    </RACRow>
   );
 }
 
