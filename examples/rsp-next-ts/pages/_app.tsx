@@ -15,6 +15,7 @@ import Light from "@spectrum-icons/workflow/Light";
 import { ToastContainer } from "@react-spectrum/toast";
 import {enableTableNestedRows} from '@react-stately/flags';
 import {useRouter, type NextRouter} from 'next/router';
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/color';
 
 declare module '@adobe/react-spectrum' {
   interface RouterConfig {
@@ -31,7 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   enableTableNestedRows();
 
   return (
-    <Provider 
+    <Provider
       theme={lightTheme}
       colorScheme={theme}
       router={{
@@ -59,6 +60,12 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ActionButton>
         </Flex>
         <View>
+        <ColorSwatchPicker defaultValue="#f00">
+          <ColorSwatch color="#f00" />
+          <ColorSwatch color="#0f0" />
+          <ColorSwatch color="#0ff" />
+          <ColorSwatch color="#00f" />
+        </ColorSwatchPicker>
           <Component {...pageProps} />
         </View>
       </Grid>
