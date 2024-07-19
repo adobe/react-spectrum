@@ -77,8 +77,11 @@ import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 import {
   ColorArea,
+  ColorEditor,
   ColorField,
   ColorSlider,
+  ColorSwatch,
+  ColorSwatchPicker,
   ColorWheel,
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
@@ -242,6 +245,12 @@ export default function Home() {
             <ColorField label="Primary Color" />
             <ColorSlider defaultValue="#7f0000" channel="red" />
             <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+            <ColorSwatchPicker defaultValue="#f00">
+              <ColorSwatch color="#f00" />
+              <ColorSwatch color="#0f0" />
+              <ColorSwatch color="#0ff" />
+              <ColorSwatch color="#00f" />
+            </ColorSwatchPicker>
           </Section>
 
           <Section title="Date and Time">

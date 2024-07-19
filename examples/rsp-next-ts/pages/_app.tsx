@@ -60,12 +60,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ActionButton>
         </Flex>
         <View>
-        <ColorSwatchPicker defaultValue="#f00">
-          <ColorSwatch color="#f00" />
-          <ColorSwatch color="#0f0" />
-          <ColorSwatch color="#0ff" />
-          <ColorSwatch color="#00f" />
-        </ColorSwatchPicker>
           <Component {...pageProps} />
         </View>
       </Grid>
