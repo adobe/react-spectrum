@@ -77,7 +77,6 @@ import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 import {
   ColorArea,
-  ColorEditor,
   ColorField,
   ColorSlider,
   ColorSwatch,

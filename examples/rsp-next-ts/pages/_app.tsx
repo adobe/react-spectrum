@@ -15,7 +15,6 @@ import Light from "@spectrum-icons/workflow/Light";
 import { ToastContainer } from "@react-spectrum/toast";
 import {enableTableNestedRows} from '@react-stately/flags';
 import {useRouter, type NextRouter} from 'next/router';
-import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/color';
 
 declare module '@adobe/react-spectrum' {
   interface RouterConfig {
