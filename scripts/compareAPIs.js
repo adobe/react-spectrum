@@ -55,7 +55,9 @@ async function compare() {
   // find all matching pairs based on what's been published
   for (let pubApi of publishedAPIs) {
     let pubApiPath = pubApi.split(path.sep);
-    let sharedPath = path.join(...pubApiPath.slice(pubApiPath.length - 4));
+    let pkgJson = fs.readJsonSync(path.join('/', ...pubApiPath.slice(0, pubApiPath.length - 2), 'package.json'));
+    let name = pkgJson.name;
+    let sharedPath = path.join(name, 'dist', 'api.json');
     let found = false;
     for (let branchApi of branchAPIs) {
       if (branchApi.includes(sharedPath)) {
@@ -72,7 +74,9 @@ async function compare() {
   // don't care about private APIs, but we do care if we're about to publish a new one
   for (let branchApi of branchAPIs) {
     let branchApiPath = branchApi.split(path.sep);
-    let sharedPath = path.join(...branchApiPath.slice(branchApiPath.length - 4));
+    let pkgJson = fs.readJsonSync(path.join('/', ...branchApiPath.slice(0, branchApiPath.length - 2), 'package.json'));
+    let name = pkgJson.name;
+    let sharedPath = path.join(name, 'dist', 'api.json');
     let found = false;
     for (let pubApi of publishedAPIs) {
       if (pubApi.includes(sharedPath)) {
