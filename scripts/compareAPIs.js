@@ -547,7 +547,7 @@ function rebuildInterfaces(json) {
       }
     } else {
       exports[key] = 'UNTYPED';
-      console.log('unknown top level export', item);
+      // console.log('unknown top level export', key, item);
     }
   });
   return exports;
