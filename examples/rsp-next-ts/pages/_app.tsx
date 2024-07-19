@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   enableTableNestedRows();
 
   return (
-    <Provider 
+    <Provider
       theme={lightTheme}
       colorScheme={theme}
       router={{
