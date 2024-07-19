@@ -70,6 +70,39 @@ describe('ColorPicker', function () {
     expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'dark vibrant blue');
   });
 
+  it('should have default value of black', async function () {
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <ColorPicker label="Fill">
+          <ColorEditor />
+        </ColorPicker>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Fill');
+    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'black');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby'))).toHaveTextContent('Fill');
+
+    let sliders = getAllByRole('slider');
+    expect(sliders).toHaveLength(3);
+
+    let picker = getAllByRole('button')[1];
+    expect(picker).toHaveTextContent('Hex');
+
+    let colorField = getAllByRole('textbox')[0];
+    expect(colorField).toHaveAttribute('aria-label', 'Hex');
+
+    let alpha = getAllByRole('textbox')[1];
+    expect(alpha).toHaveAttribute('aria-label', 'Alpha');
+  });
+
+
   it('allows switching color space', async function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>

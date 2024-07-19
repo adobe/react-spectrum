@@ -80,6 +80,7 @@ function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButt
                 })({isFocusVisible})}>
                 <ColorSwatch
                   ref={swatchRef}
+                  color={props.value}
                   size={props.size}
                   rounding={props.rounding}
                   aria-label={props['aria-label']}
