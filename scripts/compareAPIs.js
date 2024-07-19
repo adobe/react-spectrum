@@ -436,7 +436,7 @@ ${value.exact ? '\\}' : '}'}`;
     return `keyof ${processType(value.keyof)}`;
   }
 
-  console.log('unknown type', value);
+  return `UNKNOWN: ${value.type}`;
 }
 
 function rebuildInterfaces(json) {
