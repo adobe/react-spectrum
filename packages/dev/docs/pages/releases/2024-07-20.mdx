@@ -24,17 +24,19 @@ date: 2024-07-20
 - Breadcrumbs
   - Support renderProps in Breadcrumbs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6440) - [PR](https://github.com/adobe/react-spectrum/pull/6489)
 - Date and time
-  - Removing date segment placeholder default width - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6562)
+  - Refactor date segment width to take the space of placeholder or value  - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6562)
 - Collections
   - Support grid layout and tab navigation in GridList - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6486)
   - Selection checkbox should always toggle regardless of `selectionBehavior` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6526)
   - Refactor collection internals in preparation for public API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6608)
   - Move RAC collections implementation into new package - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6640), [PR](https://github.com/adobe/react-spectrum/pull/6725)
+  - Expose `buttonLabelBehavior` prop in ActionBar - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6708)
 - Overlays
   - Implement scroll anchoring for overlay positioning - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6527)
   - Add `ResizeObserver` that observes targetRef - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6396)
 - Slider
   - Add `inputRef` support to RAC SliderThumb - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6392)
+  - Remove unused `excludeFromTabOrder` prop on slider thumb - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6737)
 - Table
   - Add renderProp support for if a Table row has visible focus within it - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6350)
   - Directly apply width to table column and add hover events to table header - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6719)
@@ -64,7 +66,6 @@ date: 2024-07-20
   - Prevent `onRemove` from being called on disabled tags - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6690)
   - Allow `SingleSelectListState.selectedItem` type to be nullable - [@PHILLIPS71](https://github.com/PHILLIPS71) - [PR](https://github.com/adobe/react-spectrum/pull/6565)
   - Ensure that RAC tabs correctly find the first non-disabled tab - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6681)
-  - ActionBar expose buttonLabelBehavior prop - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6708)
   - Fix crash in GridLayout when a persisted key is deleted - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6731)
   - Ensure async ListBox `rect` updates size - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6724)
 - ComboBox
