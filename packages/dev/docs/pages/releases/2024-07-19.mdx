@@ -12,12 +12,17 @@ export default BlogPostLayout;
 
 ---
 
-description: 
+description: For this summer release, we have been busy working on improving virtualization in many of our Spectrum components including TableView, ListView, and ListBox. Our Color Components are moving to RC, Toast focus management has been improved, we have been preparing for React 19 release along with many bug fixes and improvements.
 
-date: 2024-07-20
+date: 2024-07-19
 ---
-# July 20, 2024 Release
+# July 19, 2024 Release
 
+For this summer release, we have been busy working on improving virtualization in many of our Spectrum components including TableView, ListView, and ListBox. We have significantly reduced the complexity of our implementation, resulting in smaller bundle size, better performance, and improved stability. In our testing, this resulted in 14x faster per-frame render times on large tables due to better reuse of DOM nodes as you scroll. We are also working on bringing virtualization support to React Aria Components, which is available as an unstable API in this version.
+
+Our color picker components also are moving to RC! Focus management within Toasts has also been greatly improved, making announcements from screen readers clearer and more consistent. Thanks to [@thmsfchtnr](https://github.com/thmsfchtnr), press events now include coordinates, enabling interactions like our new [animated ripple button example](/react-aria/examples/ripple-button.html). And finally, in preparation for React 19, this release is now compatible with React 19 RC.
+
+Thank you to our ever growing list of contributors :heart: 
 
 ## Enhancements
 
