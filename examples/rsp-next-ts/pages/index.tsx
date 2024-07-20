@@ -70,23 +70,26 @@ import {
   Well,
   DialogContainer,
   Avatar,
-  TagGroup
+  TagGroup,
+  InlineAlert
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 import {
   ColorArea,
+  ColorEditor,
   ColorField,
+  ColorPicker,
   ColorSlider,
   ColorSwatch,
   ColorSwatchPicker,
-  ColorWheel,
+  ColorWheel
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
-import {InlineAlert} from '@react-spectrum/inlinealert'
 import {SubmenuTrigger} from "@react-spectrum/menu";
+import Script from 'next/script';
 
 let nestedItems = [
   {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
@@ -110,10 +113,13 @@ export default function Home() {
       <Head>
         <title>React Spectrum + NextJS</title>
         <meta name="description" content="React Spectrum + NextJS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
+        <Script src="/static/fontLoader.js" />
+
         <Heading level={1}>
           React Spectrum +{" "}
           <Link>
@@ -240,16 +246,21 @@ export default function Home() {
           </Section>
 
           <Section title="Color">
-            <ColorArea defaultValue="#7f0000" />
             <ColorField label="Primary Color" />
-            <ColorSlider defaultValue="#7f0000" channel="red" />
-            <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
-            <ColorSwatchPicker defaultValue="#f00">
-              <ColorSwatch color="#f00" />
-              <ColorSwatch color="#0f0" />
-              <ColorSwatch color="#0ff" />
-              <ColorSwatch color="#00f" />
+            <ColorPicker label="Fill" defaultValue="#5100FF">
+              <ColorEditor />
+            </ColorPicker>
+            <ColorSwatchPicker>
+              <ColorSwatch color="#A00" />
+              <ColorSwatch color="#f80" />
+              <ColorSwatch color="#080" />
+              <ColorSwatch color="#08f" />
+              <ColorSwatch color="#088" />
+              <ColorSwatch color="#008" />
             </ColorSwatchPicker>
+            <ColorSlider defaultValue="#7f0000" channel="red" />
+            <ColorArea defaultValue="#7f0000" />
+            <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
           </Section>
 
           <Section title="Date and Time">
