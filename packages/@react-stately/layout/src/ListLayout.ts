@@ -23,6 +23,10 @@ export interface ListLayoutOptions {
   headingHeight?: number,
   /** The estimated height of a section header, when the height is variable. */
   estimatedHeadingHeight?: number,
+  /** The fixed height of a loader element in px. This loader is specifically for
+   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
+   */
+  loaderHeight?: number,
   /** The thickness of the drop indicator. */
   dropIndicatorThickness?: number
 }
@@ -51,6 +55,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   protected estimatedRowHeight: number;
   protected headingHeight: number;
   protected estimatedHeadingHeight: number;
+  protected loaderHeight: number;
   protected dropIndicatorThickness: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
@@ -74,6 +79,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
+    this.loaderHeight = options.loaderHeight;
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
     this.layoutNodes = new Map();
     this.rootNodes = [];
@@ -128,12 +134,12 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     if (!this.requestedRect.containsRect(rect)) {
       this.requestedRect = this.requestedRect.union(rect);
       this.rootNodes = this.buildCollection();
-    } else {
-      // Ensure all of the persisted keys are available.
-      for (let key of this.virtualizer.persistedKeys) {
-        if (this.ensureLayoutInfo(key)) {
-          break;
-        }
+    }
+    
+    // Ensure all of the persisted keys are available.
+    for (let key of this.virtualizer.persistedKeys) {
+      if (this.ensureLayoutInfo(key)) {
+        return;
       }
     }
   }
@@ -162,7 +168,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return invalidationContext.sizeChanged;
   }
 
-  validate(invalidationContext: InvalidationContext<O>) {
+  update(invalidationContext: InvalidationContext<O>) {
     this.collection = this.virtualizer.collection;
 
     // Reset valid rect if we will have to invalidate everything.
@@ -170,6 +176,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.invalidateEverything = this.shouldInvalidateEverything(invalidationContext);
     if (this.invalidateEverything) {
       this.requestedRect = this.virtualizer.visibleRect.copy();
+      this.layoutNodes.clear();
     }
 
     this.rootNodes = this.buildCollection();
@@ -237,7 +244,6 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     }
 
     let layoutNode = this.buildNode(node, x, y);
-    layoutNode.node = node;
 
     layoutNode.layoutInfo.parentKey = parentKey ?? null;
     this.layoutNodes.set(node.key, layoutNode);
@@ -252,7 +258,21 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
         return this.buildItem(node, x, y);
       case 'header':
         return this.buildSectionHeader(node, x, y);
+      case 'loader':
+        return this.buildLoader(node, x, y);
     }
+  }
+
+  protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
+    let rect = new Rect(x, y, 0, 0);
+    let layoutInfo = new LayoutInfo('loader', node.key, rect);
+    rect.width = this.virtualizer.contentSize.width;
+    rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight;
+
+    return {
+      layoutInfo,
+      validRect: rect.intersection(this.requestedRect)
+    };
   }
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
@@ -289,7 +309,8 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return {
       layoutInfo,
       children,
-      validRect: layoutInfo.rect.intersection(this.requestedRect)
+      validRect: layoutInfo.rect.intersection(this.requestedRect),
+      node
     };
   }
 
@@ -326,7 +347,8 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return {
       layoutInfo: header,
       children: [],
-      validRect: header.rect.intersection(this.requestedRect)
+      validRect: header.rect.intersection(this.requestedRect),
+      node
     };
   }
 
@@ -359,7 +381,9 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo,
-      validRect: layoutInfo.rect
+      children: [],
+      validRect: layoutInfo.rect,
+      node
     };
   }
 

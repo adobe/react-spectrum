@@ -13,13 +13,15 @@
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, Node, SelectState, useSelectState} from 'react-stately';
-import {CollectionBuilder, ItemRenderProps} from './Collection';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {CollectionBuilder} from '@react-aria/collections';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ItemRenderProps} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
@@ -156,6 +158,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
+  let scrollRef = useRef(null);
+
   return (
     <Provider
       values={[
@@ -168,10 +172,11 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [PopoverContext, {
           trigger: 'Select',
           triggerRef: buttonRef,
+          scrollRef,
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }],
-        [ListBoxContext, menuProps],
+        [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],
         [TextContext, {
           slots: {

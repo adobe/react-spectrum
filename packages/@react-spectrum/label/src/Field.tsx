@@ -14,10 +14,10 @@ import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
-import {LabelPosition} from '@react-types/shared';
+import {LabelPosition, RefObject} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {ReactNode, Ref, RefObject} from 'react';
+import React, {ReactNode, Ref} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 

@@ -18,11 +18,11 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HelpText} from '@react-spectrum/label';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {HTMLAttributes, JSX, RefObject} from 'react';
+import React, {HTMLAttributes, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';

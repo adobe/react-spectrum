@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject, useEffect} from 'react';
 import {TableState} from '@react-stately/table';
+import {useEffect} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';

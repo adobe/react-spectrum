@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import {ArrowRight} from 'lucide-react';
-import React, {HTMLAttributes, ReactNode, RefObject} from 'react';
+import React, {HTMLAttributes, ReactNode} from 'react';
+import {RefObject} from '@react-types/shared';
 
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (
