@@ -56,31 +56,27 @@ export class MenuTester {
       needsLongPress
     } = opts;
 
-    if (!this._trigger) {
-      throw new Error('Menu trigger element hasn\'t beeen set yet, please call setElement(element) to set which element to target.');
-    }
-
     if (this._interactionType === 'mouse') {
       if (needsLongPress) {
         // TODO: add long press support once I figure out how to make it generic and not specific to jest
       } else {
-        await this.user.click(this._trigger);
+        await this.user.click(this.trigger);
       }
     } else if (this._interactionType === 'keyboard') {
-      act(() => this._trigger.focus());
+      act(() => this.trigger.focus());
       await this.user.keyboard('[Enter]');
     } else if (this._interactionType === 'touch') {
-      await this.user.pointer({target: this._trigger, keys: '[TouchA]'});
+      await this.user.pointer({target: this.trigger, keys: '[TouchA]'});
     }
 
     await waitFor(() => {
-      if (this._trigger.getAttribute('aria-controls') == null) {
+      if (this.trigger.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on menu trigger element.');
       } else {
         return true;
       }
     });
-    let menuId = this._trigger.getAttribute('aria-controls');
+    let menuId = this.trigger.getAttribute('aria-controls');
     await waitFor(() => {
       if (!menuId || document.getElementById(menuId) == null) {
         throw new Error(`Menu with id of ${menuId} not found in document.`);
@@ -93,7 +89,7 @@ export class MenuTester {
   // TODO: also very similar to select, barring potential long press support
   async selectOption(opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean}) {
     let {optionText, menuSelectionMode = 'single', needsLongPress, closesOnSelect = true, option} = opts;
-    if (!this._trigger.getAttribute('aria-controls')) {
+    if (!this.trigger.getAttribute('aria-controls')) {
       // TODO: technically this would need the user to pass in if their menu needs long press if we want calling selectOption to
       // work without needing to call open first. Bit annoying though, maybe I add opts and have one of them be needsLongPress?
       await this.open({needsLongPress});
@@ -141,7 +137,7 @@ export class MenuTester {
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
   async openSubmenu(opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean}): Promise<MenuTester | null> {
     let {submenuTrigger, submenuTriggerText, needsLongPress} = opts;
-    if (!this._trigger.getAttribute('aria-controls')) {
+    if (!this.trigger.getAttribute('aria-controls')) {
       await this.open({needsLongPress});
     }
 
@@ -184,14 +180,14 @@ export class MenuTester {
 
   get trigger() {
     if (!this._trigger) {
-      throw new Error('Menu trigger element hasn\'t been set yet. Did you call `setMenu()` yet?');
+      throw new Error('Menu trigger element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._trigger;
   }
 
   get menu() {
-    let menuId = this._trigger.getAttribute('aria-controls');
+    let menuId = this.trigger.getAttribute('aria-controls');
     return menuId ? document.getElementById(menuId) : undefined;
   }
 

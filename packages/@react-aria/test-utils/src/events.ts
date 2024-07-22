@@ -13,6 +13,7 @@
 import {act, fireEvent} from '@testing-library/react';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
+// TODO: make this not rely on jest
 
 /**
  * Simulates a "long press" event on a element.

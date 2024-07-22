@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ComboBoxTester} from './combobox';
 import {MenuTester} from './menu';
 import {pointerMap} from './';
 import {SelectTester} from './select';
@@ -20,8 +21,7 @@ interface UserOpts {
   interactionType?: 'mouse' | 'touch' | 'keyboard'
 }
 
-
-let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester};
+let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester};
 
 export class User {
   user;
