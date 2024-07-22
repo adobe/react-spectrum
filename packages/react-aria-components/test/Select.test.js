@@ -251,7 +251,7 @@ describe('Select', () => {
     expect(document.activeElement).toBe(trigger);
 
     await selectUtil.selectOption('Cat');
-    expect(trigger).not.toHaveAttribute('aria-describedby');
+    expect(selectUtil.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });
 });

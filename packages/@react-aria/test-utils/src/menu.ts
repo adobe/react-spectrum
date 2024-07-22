@@ -57,8 +57,7 @@ export class MenuTester {
     } = opts;
 
     if (!this._trigger) {
-      console.error('Menu trigger element hasn\'t beeen set yet, please call setElement(element) to set which element to target.');
-      return;
+      throw new Error('Menu trigger element hasn\'t beeen set yet, please call setElement(element) to set which element to target.');
     }
 
     if (this._interactionType === 'mouse') {

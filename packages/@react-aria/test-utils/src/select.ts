@@ -61,8 +61,7 @@ export class SelectTester {
 
   async open() {
     if (!this._element) {
-      console.error('Select element hasn\'t beeen set yet, please call setElement(element) to set which element to target.');
-      return;
+      throw new Error('Select element hasn\'t beeen set yet, please call setElement(element) to set which element to target.');
     }
 
     if (this._interactionType === 'mouse') {
@@ -98,7 +97,7 @@ export class SelectTester {
 
   getOptions() {
     if (!this._trigger.getAttribute('aria-controls')) {
-      console.error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
+      throw new Error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
     }
     let listBoxId = this._trigger.getAttribute('aria-controls');
     if (listBoxId) {
@@ -117,6 +116,9 @@ export class SelectTester {
       await this.open();
     } else if (this._listbox) {
       this.getOptions();
+    }
+
+    if (this._listbox) {
       let option = within(this._listbox).getByText(optionText);
       if (this._interactionType === 'keyboard') {
         if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
@@ -182,7 +184,7 @@ export class SelectTester {
   // TODO: name element here to just be picker perhaps
   get element() {
     if (!this._element) {
-      console.error('Select element hasn\'t been set yet. Did you call `setElement()` yet?');
+      throw new Error('Select element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._element;
@@ -190,7 +192,7 @@ export class SelectTester {
 
   get trigger() {
     if (!this._trigger) {
-      console.error('Select trigger hasn\'t been set yet. Did you call `setElement()` yet?');
+      throw new Error('Select trigger hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._trigger;
@@ -201,7 +203,7 @@ export class SelectTester {
     if (this._trigger.getAttribute('aria-controls')) {
       this.getOptions();
     } else if (!this._listbox) {
-      console.error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
+      throw new Error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
     }
 
     return this._listbox;
@@ -211,7 +213,7 @@ export class SelectTester {
     if (this._trigger.getAttribute('aria-controls')) {
       this.getOptions();
     } else if (!this._options) {
-      console.error('Select options hasn\'t been set yet. Did you call `open()` yet?');
+      throw new Error('Select options hasn\'t been set yet. Did you call `open()` yet?');
     }
 
     return this._options;
@@ -221,7 +223,7 @@ export class SelectTester {
     if (this._trigger.getAttribute('aria-controls')) {
       this.getOptions();
     } else if (!this._sections) {
-      console.error('Select sections hasn\'t been set yet. Did you call `open()` yet? Are there sections available?');
+      throw new Error('Select sections hasn\'t been set yet. Did you call `open()` yet? Are there sections available?');
     }
 
     return this._sections;
