@@ -118,8 +118,6 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Script src="/static/fontLoader.js" />
-
         <Heading level={1}>
           React Spectrum +{" "}
           <Link>
