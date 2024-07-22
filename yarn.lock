@@ -29,33 +29,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-ui@npm:1.2.0":
-  version: 1.2.0
-  resolution: "@adobe/react-spectrum-ui@npm:1.2.0"
+"@adobe/react-spectrum-ui@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@adobe/react-spectrum-ui@npm:1.2.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 10c0/84c1f5537596c6fb234ba8d82d805395b63e2229c119110dd54c0e9654872847e63c9e5c978e63303ba9ee9b5dfc14b70cbf013be9dfebbcef4fbd3db874d76c
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/2166a623a07b9892466e4287e6841a9e5f7e6d4ef6d2c227601ceb6b01fa9f84a2553103d435b1e6a6606a47e3a23474df90bd97b12ea8e3c4d0c8bc632377d3
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-workflow-color@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@adobe/react-spectrum-workflow-color@npm:1.1.0"
+"@adobe/react-spectrum-workflow-color@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@adobe/react-spectrum-workflow-color@npm:1.1.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 10c0/e8c6b9257cf54496c0b48efa4f9832c958d97e61bf49cb3de6539435908b744bc693380c70d203ff632b758458075ad6eeb4a356aff917f1e6781dfee245c37d
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/227842648a70fddcfd8ecb51358ae4d38a03b8ae576112cdc1b70b8c6f1f008e8b35130f542ec98a342c59a5b935f87cbb3b592702b8eca985fa6f3eac544bab
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-workflow@npm:2.3.4":
-  version: 2.3.4
-  resolution: "@adobe/react-spectrum-workflow@npm:2.3.4"
+"@adobe/react-spectrum-workflow@npm:2.3.5":
+  version: 2.3.5
+  resolution: "@adobe/react-spectrum-workflow@npm:2.3.5"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 10c0/c106c1b5d22ef2096ecffec8e95d79df700dae79519c412ce4350f1bff32d646fc383270d93382a5e3a91d2d826a27e841f6218f44df764bc855a440ee7125d5
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/65de62192cc28528befd5e8faaa3c6d188638501571df13ef045079f0a20e4cf41f352c06c4b0fe6ea17a9f037368fd774e41b9a36379a755dad8409a6f72ace
   languageName: node
   linkType: hard
 
@@ -5623,6 +5623,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/collections@npm:3.0.0-alpha.1, @react-aria/collections@workspace:packages/@react-aria/collections":
+  version: 0.0.0-use.local
+  resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
+  dependencies:
+    "@react-aria/ssr": "npm:^3.9.4"
+    "@react-aria/utils": "npm:^3.24.1"
+    "@react-types/shared": "npm:^3.23.1"
+    "@swc/helpers": "npm:^0.5.0"
+    use-sync-external-store: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@react-aria/color@npm:3.0.0-beta.33, @react-aria/color@workspace:packages/@react-aria/color":
   version: 0.0.0-use.local
   resolution: "@react-aria/color@workspace:packages/@react-aria/color"
@@ -6186,6 +6201,7 @@ __metadata:
   dependencies:
     "@react-aria/toggle": "npm:^3.10.4"
     "@react-stately/toggle": "npm:^3.7.4"
+    "@react-types/shared": "npm:^3.23.1"
     "@react-types/switch": "npm:^3.5.3"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -6313,6 +6329,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.24.1"
     "@react-stately/toggle": "npm:^3.7.4"
     "@react-types/checkbox": "npm:^3.8.1"
+    "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
@@ -7113,6 +7130,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.24.1"
     "@react-spectrum/utils": "npm:^3.11.7"
     "@react-types/link": "npm:^3.5.5"
+    "@react-types/shared": "npm:^3.23.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.9.7
@@ -8950,7 +8968,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/color@workspace:packages/@spectrum-icons/color"
   dependencies:
-    "@adobe/react-spectrum-workflow-color": "npm:1.1.0"
+    "@adobe/react-spectrum-workflow-color": "npm:1.1.1"
     "@react-spectrum/icon": "npm:^3.7.13"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
@@ -8993,7 +9011,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/ui@workspace:packages/@spectrum-icons/ui"
   dependencies:
-    "@adobe/react-spectrum-ui": "npm:1.2.0"
+    "@adobe/react-spectrum-ui": "npm:1.2.1"
     "@react-spectrum/icon": "npm:^3.7.13"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
@@ -9007,7 +9025,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow"
   dependencies:
-    "@adobe/react-spectrum-workflow": "npm:2.3.4"
+    "@adobe/react-spectrum-workflow": "npm:2.3.5"
     "@react-spectrum/icon": "npm:^3.7.13"
     "@spectrum-icons/build-tools": "npm:3.0.0-alpha.1"
     "@swc/helpers": "npm:^0.5.0"
@@ -27920,6 +27938,7 @@ __metadata:
   dependencies:
     "@internationalized/date": "npm:^3.5.4"
     "@internationalized/string": "npm:^3.2.3"
+    "@react-aria/collections": "npm:3.0.0-alpha.1"
     "@react-aria/color": "npm:3.0.0-beta.33"
     "@react-aria/dnd": "npm:^3.6.1"
     "@react-aria/focus": "npm:^3.17.1"
