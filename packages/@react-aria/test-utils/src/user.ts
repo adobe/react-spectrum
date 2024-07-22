@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {MenuTester} from './menu';
 import {pointerMap} from './';
 import {SelectTester} from './select';
 import {TableTester} from './table';
@@ -20,7 +21,7 @@ interface UserOpts {
 }
 
 
-let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester};
+let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester};
 
 export class User {
   user;

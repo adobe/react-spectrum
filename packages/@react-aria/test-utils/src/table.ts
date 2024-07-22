@@ -67,6 +67,7 @@ export class TableTester {
     this._interactionType = opts.interactionType || 'mouse';
   }
 
+  // TODO change to setElement for consistency? Or maybe change the others to be setTrigger/setBlah, something more specific to the tester element
   setTable(element: HTMLElement) {
     this._table = element;
     // This can potentially become stale? Double check, if so replace with getters that refetch the rows and columns
@@ -158,27 +159,31 @@ export class TableTester {
 
       let menuId = menuButton.getAttribute('aria-controls');
       await waitFor(() => {
-        if (document.getElementById(menuId) == null) {
+        if (!menuId || document.getElementById(menuId) == null) {
           throw new Error(`Table column header menu with id of ${menuId} not found in document.`);
         } else {
           return true;
         }
       });
 
-      let menu = document.getElementById(menuId);
-      if (currentSort === 'ascending') {
-        await this.pressElement(within(menu).getAllByRole('menuitem')[1]);
-      } else {
-        await this.pressElement(within(menu).getAllByRole('menuitem')[0]);
-      }
+      if (menuId) {
+        let menu = document.getElementById(menuId);
+        if (menu) {
+          if (currentSort === 'ascending') {
+            await this.pressElement(within(menu).getAllByRole('menuitem')[1]);
+          } else {
+            await this.pressElement(within(menu).getAllByRole('menuitem')[0]);
+          }
 
-      await waitFor(() => {
-        if (document.contains(menu)) {
-          throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
-        } else {
-          return true;
+          await waitFor(() => {
+            if (document.contains(menu)) {
+              throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
+            } else {
+              return true;
+            }
+          });
         }
-      });
+      }
 
       await waitFor(() => {
         if (document.activeElement !== menuButton) {
@@ -260,14 +265,20 @@ export class TableTester {
     return row;
   }
 
-  findCell(opts: {text?: string}) {
+  findCell(opts: {text: string}) {
     let {
       text
     } = opts;
 
     let cell = within(this.table).getByText(text);
-    while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role'))) {
-      cell = cell.parentElement;
+    if (cell) {
+      while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role') || '')) {
+        if (cell.parentElement) {
+          cell = cell.parentElement;
+        } else {
+          break;
+        }
+      }
     }
 
     return cell;
@@ -275,7 +286,7 @@ export class TableTester {
 
   get table() {
     if (!this._table) {
-      console.error('Table element hasn\'t been set yet. Did you call `setTable()` yet?');
+      throw new Error('Table element hasn\'t been set yet. Did you call `setTable()` yet?');
     }
 
     return this._table;

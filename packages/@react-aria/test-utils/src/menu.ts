@@ -33,7 +33,15 @@ export class MenuTester {
     if (element.getAttribute('role') === 'menuitem') {
       this._trigger = element;
     } else {
-      this._trigger = within(element).queryByRole('button');
+      // Handle case where element provided is a wrapper of the trigger button
+      let trigger = within(element).queryByRole('button');
+      if (trigger) {
+        this._trigger = trigger;
+      }
+    }
+
+    if (this._trigger == null) {
+      this._trigger = element;
     }
   }
 
@@ -43,7 +51,7 @@ export class MenuTester {
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  async open(opts?: {needsLongPress?: boolean}) {
+  async open(opts: {needsLongPress?: boolean} = {}) {
     let {
       needsLongPress
     } = opts;
@@ -75,7 +83,7 @@ export class MenuTester {
     });
     let menuId = this._trigger.getAttribute('aria-controls');
     await waitFor(() => {
-      if (document.getElementById(menuId) == null) {
+      if (!menuId || document.getElementById(menuId) == null) {
         throw new Error(`Menu with id of ${menuId} not found in document.`);
       } else {
         return true;
@@ -84,8 +92,8 @@ export class MenuTester {
   }
 
   // TODO: also very similar to select, barring potential long press support
-  async selectOption(opts?: {optionText: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean}) {
-    let {optionText, menuSelectionMode, needsLongPress} = opts;
+  async selectOption(opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean}) {
+    let {optionText, menuSelectionMode = 'single', needsLongPress, closesOnSelect = true, option} = opts;
     if (!this._trigger.getAttribute('aria-controls')) {
       // TODO: technically this would need the user to pass in if their menu needs long press if we want calling selectOption to
       // work without needing to call open first. Bit annoying though, maybe I add opts and have one of them be needsLongPress?
@@ -93,51 +101,66 @@ export class MenuTester {
     }
 
     let menu = this.menu;
-    let option = within(menu).getByText(optionText);
-
-    if (this._interactionType === 'keyboard') {
-      if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
-        act(() => this.menu.focus());
+    if (menu) {
+      if (!option && optionText) {
+        option = within(menu).getByText(optionText);
       }
 
-      await this.user.keyboard(optionText);
-      await this.user.keyboard('[Enter]');
-    } else {
-      if (this._interactionType === 'mouse') {
-        await this.user.click(option);
-      } else {
-        await this.user.pointer({target: option, keys: '[TouchA]'});
-      }
-    }
-
-    if (option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single') {
-      await waitFor(() => {
-        if (document.activeElement !== this.trigger) {
-          throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
-        } else {
-          return true;
+      if (this._interactionType === 'keyboard') {
+        if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
+          act(() => menu.focus());
         }
-      });
 
-      if (document.contains(menu)) {
-        throw new Error('Expected menu element to not be in the document after selecting an option');
+        await this.user.keyboard(optionText);
+        await this.user.keyboard('[Enter]');
+      } else {
+        if (this._interactionType === 'mouse') {
+          await this.user.click(option);
+        } else {
+          await this.user.pointer({target: option, keys: '[TouchA]'});
+        }
       }
+
+      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect) {
+        await waitFor(() => {
+          if (document.activeElement !== this.trigger) {
+            throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
+          } else {
+            return true;
+          }
+        });
+
+        if (document.contains(menu)) {
+          throw new Error('Expected menu element to not be in the document after selecting an option');
+        }
+      }
+    } else {
+      throw new Error("Attempted to select a option with the menu, but menu wasn't found.");
     }
   }
 
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
-  async openSubmenu(opts?: {submenuTriggerText: string, needsLongPress?: boolean}): Promise<MenuTester> {
-    let {submenuTriggerText, needsLongPress} = opts;
+  async openSubmenu(opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean}): Promise<MenuTester | null> {
+    let {submenuTrigger, submenuTriggerText, needsLongPress} = opts;
     if (!this._trigger.getAttribute('aria-controls')) {
       await this.open({needsLongPress});
     }
 
     let menu = this.menu;
-    let submenuTrigger = new MenuTester({user: this.user, interactionType: this._interactionType});
-    submenuTrigger.setElement(within(menu).getByText(submenuTriggerText));
-    await submenuTrigger.open();
+    if (menu) {
+      let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType});
+      if (submenuTrigger) {
+        submenuTriggerTester.setElement(submenuTrigger);
+      } else if (submenuTriggerText) {
+        submenuTriggerTester.setElement(within(menu).getByText(submenuTriggerText));
+      }
 
-    return submenuTrigger;
+      await submenuTriggerTester.open();
+
+      return submenuTriggerTester;
+    }
+
+    return null;
   }
 
   async close() {
@@ -145,42 +168,65 @@ export class MenuTester {
     if (menu) {
       act(() => menu.focus());
       await this.user.keyboard('[Escape]');
-    }
 
-    await waitFor(() => {
-      if (document.activeElement !== this.trigger) {
-        throw new Error(`Expected the document.activeElement closing the menu to be the menu trigger but got ${document.activeElement}`);
-      } else {
-        return true;
+      await waitFor(() => {
+        if (document.activeElement !== this.trigger) {
+          throw new Error(`Expected the document.activeElement after closing the menu to be the menu trigger but got ${document.activeElement}`);
+        } else {
+          return true;
+        }
+      });
+
+      if (document.contains(menu)) {
+        throw new Error('Expected the menu to not be in the document after closing it.');
       }
-    });
-
-    if (document.contains(menu)) {
-      throw new Error('Expected the menu to not be in the document after closing it.');
     }
   }
 
   get trigger() {
-    if (!this.trigger) {
-      console.error('Menu trigger element hasn\'t been set yet. Did you call `setMenu()` yet?');
+    if (!this._trigger) {
+      throw new Error('Menu trigger element hasn\'t been set yet. Did you call `setMenu()` yet?');
     }
 
     return this._trigger;
   }
 
   get menu() {
-    return document.getElementById(this._trigger.getAttribute('aria-controls'));
+    let menuId = this._trigger.getAttribute('aria-controls');
+    return menuId ? document.getElementById(menuId) : undefined;
   }
 
-  get options() {
-    return within(this.menu).getAllByRole('menuitem');
+  get options(): HTMLElement[] | never[] {
+    let menu = this.menu;
+    let options = [];
+    if (menu) {
+      options = within(menu).queryAllByRole('menuitem');
+      if (options.length === 0) {
+        options = within(menu).queryAllByRole('menuitemradio');
+        if (options.length === 0) {
+          options = within(menu).queryAllByRole('menuitemcheckbox');
+        }
+      }
+    }
+
+    return options;
   }
 
   get sections() {
-    return within(this.menu).queryAllByRole('group');
+    let menu = this.menu;
+    if (menu) {
+      return within(menu).queryAllByRole('group');
+    } else {
+      return [];
+    }
   }
 
   get submenuTriggers() {
-    return this.options.filter(item => item.getAttribute('aria-haspopup') === 'true');
+    let options = this.options;
+    if (options.length > 0) {
+      return this.options.filter(item => item.getAttribute('aria-haspopup') != null);
+    }
+
+    return [];
   }
 }

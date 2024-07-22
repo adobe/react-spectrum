@@ -27,9 +27,9 @@ export class SelectTester {
   // when called but I wonder if it is worth even exposing these getters
   private _element: HTMLElement;
   private _trigger: HTMLElement;
-  private _listbox: HTMLElement;
-  private _options: HTMLElement[];
-  private _sections: HTMLElement[];
+  private _listbox: HTMLElement | undefined;
+  private _options: HTMLElement[] | undefined;
+  private _sections: HTMLElement[] | undefined;
   // TODO: should we find the label/field error/etc for the user
   // what about value placeholder? Not entirely sure that there is a ton of value in helping the
   // user find those when they can be queried by getByText or by looking up the labeledby that the user already
@@ -87,7 +87,7 @@ export class SelectTester {
     });
     let listBoxId = this._trigger.getAttribute('aria-controls');
     await waitFor(() => {
-      if (document.getElementById(listBoxId) == null) {
+      if (!listBoxId || document.getElementById(listBoxId) == null) {
         throw new Error(`ListBox with id of ${listBoxId} not found in document.`);
       } else {
         return true;
@@ -101,57 +101,62 @@ export class SelectTester {
       console.error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
     }
     let listBoxId = this._trigger.getAttribute('aria-controls');
-    this._listbox = document.getElementById(listBoxId);
+    if (listBoxId) {
+      let listbox = document.getElementById(listBoxId);
+      if (listbox) {
+        this._listbox = listbox;
 
-    this._options = within(this._listbox).getAllByRole('option');
-    this._sections = within(this._listbox).queryAllByRole('group');
-    return;
+        this._options = within(this._listbox).getAllByRole('option');
+        this._sections = within(this._listbox).queryAllByRole('group');
+      }
+    }
   }
 
   async selectOption(optionText) {
     if (!this._trigger.getAttribute('aria-controls')) {
       await this.open();
-    } else {
+    } else if (this._listbox) {
       this.getOptions();
-    }
-
-    let option = within(this._listbox).getByText(optionText);
-    if (this._interactionType === 'keyboard') {
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
-      }
-
-      // TODO: this simulates typeahead, do we want to add a helper util for that? Not sure if users would really need that for
-      // their test
-      await this.user.keyboard(optionText);
-      await this.user.keyboard('[Enter]');
-    } else {
-      // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
-      if (this._interactionType === 'mouse') {
-        await this.user.click(option);
-      } else {
-        await this.user.pointer({target: option, keys: '[TouchA]'});
-      }
-    }
-
-    if (option.getAttribute('href') == null) {
-      // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
-      await waitFor(() => {
-        if (document.activeElement !== this.trigger) {
-          throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
-        } else {
-          return true;
+      let option = within(this._listbox).getByText(optionText);
+      if (this._interactionType === 'keyboard') {
+        if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+          // @ts-ignore TODO figure out what it thinks listbox might not be defined here
+          act(() => this._listbox.focus());
         }
-      });
 
-      if (document.contains(this._listbox)) {
-        throw new Error('Expected select element listbox to not be in the document after selecting an option');
+        // TODO: this simulates typeahead, do we want to add a helper util for that? Not sure if users would really need that for
+        // their test
+        await this.user.keyboard(optionText);
+        await this.user.keyboard('[Enter]');
+      } else {
+        // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
+        if (this._interactionType === 'mouse') {
+          await this.user.click(option);
+        } else {
+          await this.user.pointer({target: option, keys: '[TouchA]'});
+        }
+      }
+
+      if (option.getAttribute('href') == null) {
+        // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
+        await waitFor(() => {
+          if (document.activeElement !== this.trigger) {
+            throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+          } else {
+            return true;
+          }
+        });
+
+        if (document.contains(this._listbox)) {
+          throw new Error('Expected select element listbox to not be in the document after selecting an option');
+        }
       }
     }
   }
 
   async close() {
     if (this._trigger.getAttribute('aria-controls')) {
+      // @ts-ignore TODO figure out what it thinks listbox might not be defined here
       act(() => this._listbox.focus());
       await this.user.keyboard('[Escape]');
     }
@@ -164,7 +169,7 @@ export class SelectTester {
       }
     });
 
-    if (document.contains(this._listbox)) {
+    if (this._listbox && document.contains(this._listbox)) {
       throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
     }
   }
