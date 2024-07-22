@@ -1,19 +1,20 @@
-import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-import {BaseCollection, Collection, CollectionBuilder, CollectionContext, CollectionProps, CollectionRendererContext, createBranchComponent, createLeafComponent, ItemRenderProps, NodeValue, useCachedChildren, useCollectionChildren} from './Collection';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
-import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -21,11 +22,11 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   columns: GridNode<T>[] = [];
   rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: NodeValue<T> = new NodeValue('tableheader', -1);
-  body: NodeValue<T> = new NodeValue('tablebody', -2);
+  head: CollectionNode<T> = new CollectionNode('tableheader', -1);
+  body: CollectionNode<T> = new CollectionNode('tablebody', -2);
   columnsDirty = true;
 
-  addNode(node: NodeValue<T>) {
+  addNode(node: CollectionNode<T>) {
     super.addNode(node);
 
     this.columnsDirty ||= node.type === 'column';
@@ -362,13 +363,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
+  let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
     isVirtualized
   }, state, ref);
-
-  let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -482,7 +482,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           <CollectionRoot
             collection={collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}
-            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)} />
+            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
         </ElementType>
       </FocusScope>
       {dragPreview}
@@ -522,7 +522,15 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> extends StyleProps {
+export interface TableHeaderRenderProps {
+  /**
+   * Whether the table header is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean
+}
+
+export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -549,25 +557,39 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
         }
       }, [])
     });
-  
+
     let THead = useElementType('thead');
     let {rowGroupProps} = useTableRowGroup();
+    let {hoverProps, isHovered} = useHover({
+      onHoverStart: props.onHoverStart,
+      onHoverChange: props.onHoverChange,
+      onHoverEnd: props.onHoverEnd
+    });
+
+    let renderProps = useRenderProps({
+      className: props.className,
+      style: props.style,
+      defaultClassName: 'react-aria-TableHeader',
+      values: {
+        isHovered
+      }
+    });
+
     return (
       <THead
-        {...filterDOMProps(props as any)}
-        {...rowGroupProps}
+        {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
+        {...renderProps}
         ref={ref}
-        className={props.className ?? 'react-aria-TableHeader'}
-        style={props.style}>
+        data-hovered={isHovered || undefined}>
         {headerRows}
       </THead>
     );
   },
-  props => useCollectionChildren({
-    children: props.children,
-    items: props.columns,
-    dependencies: props.dependencies
-  })
+  props => (
+    <Collection dependencies={props.dependencies} items={props.columns}>
+      {props.children}
+    </Collection>
+  )
 );
 
 function TableHeaderRow({item}: {item: GridNode<any>}) {
@@ -729,9 +751,13 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       data-resizing={isResizing || undefined}
       data-allows-sorting={column.props.allowsSorting || undefined}
       data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
-      <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
+      <Provider
+        values={[
+          [ColumnResizerContext, {column, triggerRef: ref}],
+          [CollectionRendererContext, DefaultCollectionRenderer]
+        ]}>
         {renderProps.children}
-      </ColumnResizerContext.Provider>
+      </Provider>
     </TH>
   );
 });
@@ -892,6 +918,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
   let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let collection = state.collection;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
@@ -911,12 +938,24 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   });
 
   let emptyState;
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let numColumns = collection.columnCount;
   if (collection.size === 0 && props.renderEmptyState && state) {
-    let TR = useElementType('tr');
-    let TD = useElementType('td');
+    let rowProps = {};
+    let rowHeaderProps = {};
+    let style = {};
+    if (isVirtualized) {
+      rowProps['aria-rowindex'] = collection.headerRows.length + 1;
+      rowHeaderProps['aria-colspan'] = numColumns;
+      style = {display: 'contents'};
+    } else {
+      rowHeaderProps['colSpan'] = numColumns;
+    }
+
     emptyState = (
-      <TR role="row">
-        <TD role="gridcell" colSpan={collection.columnCount}>
+      <TR role="row" {...rowProps} style={style}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
           {props.renderEmptyState(renderValues)}
         </TD>
       </TR>
@@ -925,6 +964,9 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
 
   let {rowGroupProps} = useTableRowGroup();
   let TBody = useElementType('tbody');
+
+  // TODO: TableBody doesn't support being the scrollable body of the table yet, to revisit if needed. Would need to
+  // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
   return (
     <TBody
       {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
@@ -1048,7 +1090,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
     let TR = useElementType('tr');
     let TD = useElementType('td');
-    
+
     return (
       <>
         {dropIndicator && !dropIndicator.isHidden && (
@@ -1099,21 +1141,15 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     );
   },
   props => {
+    if (props.id == null && typeof props.children === 'function') {
+      console.warn('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    }
+
     let dependencies = [props.value].concat(props.dependencies);
-    let children = useCollectionChildren({
-      dependencies,
-      children: props.children,
-      items: props.columns,
-      idScope: props.id
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    let ctx = useMemo(() => ({idScope: props.id, dependencies}), [props.id, ...dependencies]);
-
     return (
-      <CollectionContext.Provider value={ctx}>
-        {children}
-      </CollectionContext.Provider>
+      <Collection dependencies={dependencies} items={props.columns} idScope={props.id}>
+        {props.children}
+      </Collection>
     );
   }
 );
@@ -1190,7 +1226,9 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
-      {renderProps.children}
+      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+        {renderProps.children}
+      </CollectionRendererContext.Provider>
     </TD>
   );
 });
@@ -1291,3 +1329,48 @@ function RootDropIndicator() {
     </TR>
   );
 }
+
+export interface TableLoadingIndicatorProps extends StyleProps {
+  children?: ReactNode
+}
+
+export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+  let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  let numColumns = state.collection.columns.length;
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-TableLoadingIndicator',
+    values: null
+  });
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let rowProps = {};
+  let rowHeaderProps = {};
+  let style = {};
+
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowHeaderProps['aria-colspan'] = numColumns;
+    style = {display: 'contents'};
+  } else {
+    rowHeaderProps['colSpan'] = numColumns;
+  }
+
+  return (
+    <>
+      <TR
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any), rowProps)}
+        {...renderProps}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
+          {renderProps.children}
+        </TD>
+      </TR>
+    </>
+  );
+});

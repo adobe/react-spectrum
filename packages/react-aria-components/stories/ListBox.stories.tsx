@@ -11,8 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection} from '../src/Collection';
-import {DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Collection, DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -345,7 +344,7 @@ export function VirtualizedListBoxDnd() {
   );
 }
 
-export function VirtualizedListBoxGrid() {
+export function VirtualizedListBoxGrid({minSize, maxSize}) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
@@ -353,10 +352,10 @@ export function VirtualizedListBoxGrid() {
 
   let layout = useMemo(() => {
     return new GridLayout({
-      minItemSize: new Size(80, 80),
-      maxItemSize: new Size(100, 100)
+      minItemSize: new Size(minSize, minSize),
+      maxItemSize: new Size(maxSize, maxSize)
     });
-  }, []);
+  }, [minSize, maxSize]);
 
   let list = useListData({
     initialItems: items
@@ -396,3 +395,8 @@ export function VirtualizedListBoxGrid() {
     </div>
   );
 }
+
+VirtualizedListBoxGrid.args = {
+  minSize: 80,
+  maxSize: 100
+};

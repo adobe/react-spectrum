@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, forwardRefType, RenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, RenderProps, useContextProps, useRenderProps} from './utils';
+import {forwardRefType} from '@react-types/shared';
 import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 

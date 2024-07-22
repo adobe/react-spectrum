@@ -23,7 +23,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps, TableCollection} from '@react-types/table';
-import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key} from '@react-types/shared';
+import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key, RefObject} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
@@ -33,15 +33,15 @@ import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
+import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria/virtualizer';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Resizer, ResizeStateContext} from './Resizer';
 import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
@@ -404,9 +404,19 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   let focusedKey = state.selectionManager.focusedKey;
+  let dropTargetKey: Key | null = null;
   if (dropState?.target?.type === 'item') {
-    focusedKey = dropState.target.key;
+    dropTargetKey = dropState.target.key;
+    if (dropState.target.dropPosition === 'before' && dropTargetKey !== state.collection.getFirstKey()) {
+      // Normalize to the "after" drop position since we only render those in the DOM.
+      // The exception to this is for the first row in the table, where we also render the "before" position.
+      dropTargetKey = state.collection.getKeyBefore(dropTargetKey);
+    }
   }
+
+  let persistedKeys = useMemo(() => {
+    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+  }, [focusedKey, dropTargetKey]);
 
   let mergedProps = mergeProps(
     isTableDroppable && droppableCollection?.collectionProps,
@@ -462,7 +472,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         tableState={state}
         layout={layout}
         collection={state.collection}
-        focusedKey={focusedKey}
+        persistedKeys={persistedKeys}
         renderView={renderView}
         renderWrapper={renderWrapper}
         onVisibleRectChange={onVisibleRectChange}
@@ -494,7 +504,7 @@ interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
   tableState: TableState<T>,
   layout: TableViewLayout<T>,
   collection: TableCollection<T>,
-  focusedKey: Key | null,
+  persistedKeys: Set<Key> | null,
   renderView: (type: string, content: GridNode<T>) => ReactElement,
   renderWrapper?: (
     parent: View | null,
@@ -513,7 +523,7 @@ interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
 function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
-  let {tableState, layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
+  let {tableState, layout, collection, persistedKeys, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
   let {direction} = useLocale();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -558,20 +568,17 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    persistedKeys: useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]),
+    persistedKeys,
     layoutOptions: useMemo(() => ({
       columnWidths: columnResizeState.columnWidths
     }), [columnResizeState.columnWidths])
   });
 
-  let memoedVirtualizerProps = useMemo(() => ({
-    tabIndex: otherProps.tabIndex,
-    focusedKey,
-    isLoading,
-    onLoadMore
-  }), [otherProps.tabIndex, focusedKey, isLoading, onLoadMore]);
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, bodyRef);
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+  }, [state]);
 
-  let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, domRef);
   let onVisibleRectChangeMemo = useCallback(rect => {
     setTableWidth(rect.width);
     onVisibleRectChange(rect);
@@ -612,7 +619,6 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   }), [resizingColumnWidth, columnResizeState.resizingColumn]);
   let mergedProps = mergeProps(
     otherProps,
-    virtualizerProps,
     isVirtualDragging && {tabIndex: null}
   );
 

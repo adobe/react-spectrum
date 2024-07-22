@@ -13,9 +13,9 @@
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, ValidationResult} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
+import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDatePickerGroup} from './useDatePickerGroup';
@@ -149,7 +149,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name: props.name,
-    value: state.value?.toString() || ''
+    value: state.value?.toString() || '',
+    disabled: props.isDisabled
   };
 
   if (props.validationBehavior === 'native') {

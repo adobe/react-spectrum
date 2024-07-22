@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
 import {mergeProps, useEffectEvent} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
-import {RefObject, useEffect} from 'react';
+import {useEffect} from 'react';
 
 export interface AriaActionGroupItemProps {
   key: Key

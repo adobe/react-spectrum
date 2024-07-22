@@ -12,8 +12,15 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Checkbox, Collection, UNSTABLE_ListLayout as ListLayout, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, UNSTABLE_Virtualizer as Virtualizer} from '../';
+import {composeStories} from '@storybook/react';
 import React from 'react';
+import * as stories from '../stories/Tree.stories';
 import userEvent from '@testing-library/user-event';
+
+let {
+  EmptyTreeStaticStory: EmptyLoadingTree,
+  LoadingStoryDepOnTopStory: LoadingMoreTree
+} = composeStories(stories);
 
 let onSelectionChange = jest.fn();
 let onAction = jest.fn();
@@ -406,11 +413,11 @@ describe('Tree', () => {
     let tree = getByRole('treegrid');
     tree.scrollTop = 200;
     fireEvent.scroll(tree);
-    
+
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
     expect(rows.map(r => r.querySelector('span')!.textContent)).toEqual(['Project 4', 'Project 5', 'Project 5A', 'Project 5B', 'Project 5C', 'Reports', 'Reports 1', 'Reports 1A']);
-  
+
     await user.tab();
     await user.keyboard('{End}');
 
@@ -1206,6 +1213,117 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('aria-posinset', '1');
       expect(row).toHaveAttribute('aria-setsize', '1');
       expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
+    });
+  });
+
+  describe('load more', () => {
+    let offsetHeight, scrollHeight;
+    beforeAll(function () {
+      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 880);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+        // @ts-ignore
+        if (this.getAttribute('role') === 'treegrid') {
+          return 880;
+        }
+
+        return 40;
+      });
+    });
+
+    afterAll(function () {
+      offsetHeight.mockReset();
+      scrollHeight.mockReset();
+    });
+
+    it('should render the load more element with the expected attributes', () => {
+      let {getAllByRole} = render(<LoadingMoreTree isLoading />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(22);
+      let subRowLoader = rows[6];
+      expect(subRowLoader).toHaveAttribute('data-level', '3');
+      expect(subRowLoader).toHaveTextContent('Level 3 loading spinner');
+
+      let rootLoader = rows[21];
+      expect(rootLoader).toHaveAttribute('data-level', '1');
+      expect(rootLoader).toHaveTextContent('Load more spinner');
+
+      let cell = within(rootLoader).getByRole('gridcell');
+      expect(cell).toHaveAttribute('aria-colindex', '1');
+    });
+
+    it('should not focus the load more row when using ArrowDown/ArrowUp', async () => {
+      let {getAllByRole} = render(<LoadingMoreTree isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[6];
+      expect(loader).toHaveTextContent('Level 3 loading spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      for (let i = 0; i < 5; i++) {
+        await user.keyboard('{ArrowDown}');
+      }
+      expect(document.activeElement).toBe(rows[5]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(rows[7]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[5]);
+    });
+
+    it('should not focus the load more row when using End', async () => {
+      let {getAllByRole} = render(<LoadingMoreTree isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[21];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.keyboard('{End}');
+      expect(document.activeElement).toBe(rows[20]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[19]);
+    });
+
+    it('should not focus the load more row when using PageDown', async () => {
+      let {getAllByRole} = render(<LoadingMoreTree isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[21];
+      expect(loader).toHaveTextContent('Load more spinner');
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.keyboard('{PageDown}');
+      expect(document.activeElement).toBe(rows[20]);
+
+      // Check that it didn't shift the focusedkey to the loader key even if DOM focus didn't shift to the loader
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(rows[19]);
+    });
+
+    it('should not render no results state and the loader at the same time', () => {
+      let {getByRole, getAllByRole, rerender} = render(<EmptyLoadingTree isLoading />);
+
+      let rows = getAllByRole('row');
+      let loader = rows[0];
+      let body = getByRole('treegrid');
+
+      expect(rows).toHaveLength(1);
+      expect(body).toHaveAttribute('data-empty', 'true');
+      expect(loader).toHaveTextContent('Root level loading spinner');
+
+      rerender(<EmptyLoadingTree />);
+
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      expect(body).toHaveAttribute('data-empty', 'true');
+      expect(rows[0]).toHaveTextContent('Nothing in tree');
     });
   });
 });
