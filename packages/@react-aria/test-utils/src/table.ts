@@ -185,6 +185,17 @@ export class TableTester {
         }
       }
 
+      // Handle cases where the table may transition in response to the row selection/deselection
+      // TODO: make this generic instead of specific to jest
+      // TODO: note that this was moved here because react 17 needs the timers run for the focus to make it onto the button in certain circumstances
+      if (!jestFakeTimersAreEnabled()) {
+        await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
+      } else {
+        act(() => {
+          jest.runOnlyPendingTimers();
+        });
+      }
+
       await waitFor(() => {
         if (document.activeElement !== menuButton) {
           throw new Error(`Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`);
@@ -193,15 +204,7 @@ export class TableTester {
         }
       });
 
-      // Handle cases where the table may transition in response to the row selection/deselection
-      // TODO: make this generic instead of specific to jest
-      if (!jestFakeTimersAreEnabled()) {
-        await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
-      } else {
-        act(() => {
-          jest.runOnlyPendingTimers();
-        });
-      }
+
     } else {
       await this.pressElement(columnheader);
     }
