@@ -1,0 +1,353 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+
+description: For this summer release, we have been busy working on improving virtualization in many of our Spectrum components including TableView, ListView, and ListBox. Our Color components are moving to RC, Toast focus management has been improved, we have been preparing for React 19 release along with many bug fixes and improvements.
+
+date: 2024-07-22
+---
+# July 22, 2024 Release
+
+For this summer release, we have been busy working on improving virtualization in many of our Spectrum components including TableView, ListView, and ListBox. We have significantly reduced the complexity of our implementation, resulting in smaller bundle size, better performance, and improved stability. In our testing, this resulted in 14x faster per-frame render times on large tables due to better reuse of DOM nodes as you scroll. We are also working on bringing virtualization support to React Aria Components, which is available as an unstable API in this version.
+
+Our color components are also moving to RC! Focus management within Toasts have also been greatly improved, making announcements from screen readers clearer and more consistent. Thanks to [@thmsfchtnr](https://github.com/thmsfchtnr), press events now include coordinates, enabling interactions like our new [animated ripple button example](/react-aria/examples/ripple-button.html). And finally, in preparation for React 19, this release is now compatible with React 19 RC.
+
+Thank you to our ever growing list of contributors! ❤️
+
+### API updates
+Because of various breaking changes, several packages are being bumped a major version, specifically @react-aria/virtualizer , @react-stately/virtualizer , and @react-stately/layout. While these packages were undocumented and not yet intended for public use, we know this is not always the case, so please review the updated code carefully.
+
+## Enhancements
+
+- Breadcrumbs
+  - Support renderProps in Breadcrumbs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6440) - [PR](https://github.com/adobe/react-spectrum/pull/6489)
+- Date and time
+  - Refactor date segment width to take the space of placeholder or value  - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6562)
+- Collections
+  - Support grid layout and tab navigation in GridList - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6486)
+  - Selection checkbox should always toggle regardless of `selectionBehavior` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6526)
+  - Refactor collection internals in preparation for public API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6608)
+  - Move RAC collections implementation into new package - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6640), [PR](https://github.com/adobe/react-spectrum/pull/6725)
+  - Expose `buttonLabelBehavior` prop in ActionBar - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6708)
+- Icons
+  - Spectrum icons have been re-licensed as Apache 2.0 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6735)
+- Overlays
+  - Implement scroll anchoring for overlay positioning - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6527)
+  - Add `ResizeObserver` that observes targetRef - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6396)
+- Slider
+  - Add `inputRef` support to RAC SliderThumb - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6392)
+  - Remove unused `excludeFromTabOrder` prop on slider thumb - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6737)
+- Table
+  - Add renderProp support for if a Table row has visible focus within it - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6350)
+  - Directly apply width to table column and add hover events to table header - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6719)
+- Virtualizer
+  - Add Virtualizer to React Aria Components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6518)
+  - Refactor virtualizer layouts to remove Spectrum-specific logic and improve backward compatibility - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6613)
+  - Refactor Virtualizer to improve performance, stability, and complexity - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6451)
+  - Add support for custom collection renderers (e.g. virtualization) - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5912)
+  - Render drop indicators with collection renderers and add GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6631)
+  - Pause typekit MutationObserver during scrolling - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6699)
+- Misc
+  - Typescript 5.5.0 upgrade - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6370), [@Renegade334](https://github.com/Renegade334) - [PR](https://github.com/adobe/react-spectrum/pull/6329)
+  - React 19 support - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6437)
+  - Update react testing library - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6467)
+  - Add event coordinates to `usePress` and `useHover` - [@thmsfchtnr](https://github.com/thmsfchtnr) - [PR](https://github.com/adobe/react-spectrum/pull/6482)
+  - Add ContextualHelpTrigger to monopackage - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6358)
+
+## Fixes
+
+- Button
+  - Prevent default when the submit button is clicked while `isPending` is true - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6209)
+- Collections
+  - Fix buttons inside disabled GridList items not being disabled - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/6324)
+  - Always render ListBox section headers in RSP for dividers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6535)
+  - Fix `SelectAll` logic for falsy keys - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6639)
+  - Fix `useListState` infinite loop - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6621)
+  - Prevent `onRemove` from being called on disabled tags - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6690)
+  - Allow `SingleSelectListState.selectedItem` type to be nullable - [@PHILLIPS71](https://github.com/PHILLIPS71) - [PR](https://github.com/adobe/react-spectrum/pull/6565)
+  - Ensure that RAC tabs correctly find the first non-disabled tab - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6681)
+  - Fix crash in GridLayout when a persisted key is deleted - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6731)
+  - Ensure async ListBox `rect` updates size - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6724)
+- ComboBox
+  - Fix correctly handle IME Input in Combobox - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6239)
+  - Fix Combobox from closing prematurely - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6461)
+  - Fix Combobox hidden input default value causing React warnings - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6336)
+  - Fix readonly ComboBox from making selections when `menuTrigger` is set to `focus` - [@mwannewitz](https://github.com/mwannewitz) - [PR](https://github.com/adobe/react-spectrum/pull/6693)
+- Date and time
+  - TS Strict Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6076)
+  - Remove `autoCapitalize` to prevent mismatch warning in `useDateSegment` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6657)
+  - Disable DatePicker's native input when the picker is disabled - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6692),
+  - Fix crash in TimeField on Android - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6717)
+- Form
+  - Prevent SearchField from triggering `onSubmit` when pressing Enter to complete IME - [@QzCurious](https://github.com/QzCurious) - [PR](https://github.com/adobe/react-spectrum/pull/6404)
+- Menu
+  - Fix Menu Section's `aria-label` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6423)
+  - Prevent `onAction` from being called multiple times in Menu - [@yajihum](https://github.com/yajihum) - [PR](https://github.com/adobe/react-spectrum/pull/6671)
+  - Ensure Menu has the `[data-rac]` data attribute - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/6436)
+  - Fix flash when RAC Menu first opened - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6740)
+- Overlays
+  - Fix infinite resizing issue in overlay positioning - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6312)
+- Table
+  - Fix TableView column resizer nubbin - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6559)
+  - Improve screen reader experience in Firefox for TableView - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/6465)
+  - Fix `TableLayout` issues - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6711)
+- Tooltip
+  - Properly close controlled tooltips - [@igorman007](https://github.com/igorman007) - [PR](https://github.com/adobe/react-spectrum/pull/6418)
+  - Fix tooltip positioning when `containerPadding` is set - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6577)
+- Virtualizer
+  - Fix ResizeObserver crash in Virtualizer due to scrollbar flapping - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6508)
+  - Fix Virtualizer infinite loop when `height=0` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6497)
+  - Cap overlay max height to `100vh` on initial render - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6525)
+  - Fix virtualizer persisted keys with drag and drop - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6644)
+  - Fix divide by zero in GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6676)
+  - Fix incremental layout with variable heights - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6588)
+  - Fix virtualizer bug when an item changes parents - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6723)
+- Misc
+  - Ensure Section has the `[data-rac]` data attribute - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/6452)
+  - Fix Tailwind plugin options type - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6515)
+  - Fix Compat for React 19 types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6632)
+  - Add `nonce` parameter in `LocalizedStringProvider` - [@Julienng](https://github.com/Julienng) - [PR](https://github.com/adobe/react-spectrum/pull/6219)
+  - Fix synthetic links not using `useHref` - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/6346)
+  - Fix source maps in  `@react-aria` - [@oedotme](https://github.com/oedotme) - [PR](https://github.com/adobe/react-spectrum/pull/6368)
+  - Cache locale dictionary to prevent unnecessary re-renders - [@IgnusG](https://github.com/IgnusG) - [PR](https://github.com/adobe/react-spectrum/pull/6185)
+  - Include RAC i18n strings with React Spectrum LocalizedStringProvider - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6743)
+
+## Docs
+- Update `useToast` docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6468)
+- Add Breadcrumb render props to docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6489)
+- Add Ripple button example to docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6579), [PR](https://github.com/adobe/react-spectrum/pull/6709)
+- Add example customizing `selectvalue` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6425)
+- Fix various doc examples for accessiblity - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6607)
+- Fix typo in interactions docs - [@jvliwanag](https://github.com/jvliwanag) - [PR](https://github.com/adobe/react-spectrum/pull/6698)
+- Fix typo in DropZone docs - [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/6334)
+- Fix RAC Slider label example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6710)
+- Update Tooltip docs to reflect correct default `placement` value - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/6721)
+- Fix crash in controlled ColorField docs examples - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6732)
+- Fix React Spectrum Form examples to use validationState - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6733)
+
+## Under Construction
+
+- Toast (Beta)
+  - Improve Toast focus management - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6223)
+
+- Color (RC)
+  - Normalize hue - [@theMosaad](https://github.com/theMosaad) - [PR](https://github.com/adobe/react-spectrum/pull/6456)
+  - Prevent `classname` from being overwritten in ColorSwatch - [@CHE1RON](https://github.com/CHE1RON) - [PR](https://github.com/adobe/react-spectrum/pull/6584)
+  - TS Strict Color Stately - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6499)
+  - Fix default color value in ColorPicker - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6364)
+  - Support null values in ColorField with channel prop - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6722)
+
+- Tree (Alpha) / Table
+  - Load more collection element support in RAC Table and Tree - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6494)
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.36.0
+ - @internationalized/date@3.5.5
+ - @react-aria/accordion@3.0.0-alpha.30
+ - @react-aria/actiongroup@3.7.6
+ - @react-aria/aria-modal-polyfill@3.7.11
+ - @react-aria/autocomplete@3.0.0-alpha.30
+ - @react-aria/breadcrumbs@3.5.14
+ - @react-aria/button@3.9.6
+ - @react-aria/calendar@3.5.9
+ - @react-aria/checkbox@3.14.4
+ - @react-aria/collections@3.0.0-alpha.2
+ - @react-aria/color@3.0.0-rc.0
+ - @react-aria/combobox@3.10.0
+ - @react-aria/datepicker@3.11.0
+ - @react-aria/dialog@3.5.15
+ - @react-aria/dnd@3.7.0
+ - @react-aria/focus@3.18.0
+ - @react-aria/form@3.0.6
+ - @react-aria/grid@3.10.0
+ - @react-aria/gridlist@3.9.0
+ - @react-aria/i18n@3.12.0
+ - @react-aria/interactions@3.22.0
+ - @react-aria/label@3.7.9
+ - @react-aria/link@3.7.2
+ - @react-aria/listbox@3.13.0
+ - @react-aria/menu@3.15.0
+ - @react-aria/meter@3.4.14
+ - @react-aria/numberfield@3.11.4
+ - @react-aria/overlays@3.23.0
+ - @react-aria/progress@3.4.14
+ - @react-aria/radio@3.10.5
+ - @react-aria/searchfield@3.7.6
+ - @react-aria/select@3.14.6
+ - @react-aria/selection@3.19.0
+ - @react-aria/separator@3.4.0
+ - @react-aria/slider@3.7.9
+ - @react-aria/spinbutton@3.6.6
+ - @react-aria/ssr@3.9.5
+ - @react-aria/steplist@3.0.0-alpha.6
+ - @react-aria/switch@3.6.5
+ - @react-aria/table@3.15.0
+ - @react-aria/tabs@3.9.2
+ - @react-aria/tag@3.4.2
+ - @react-aria/textfield@3.14.6
+ - @react-aria/toast@3.0.0-beta.13
+ - @react-aria/toggle@3.10.5
+ - @react-aria/toolbar@3.0.0-beta.6
+ - @react-aria/tooltip@3.7.5
+ - @react-aria/tree@3.0.0-alpha.2
+ - @react-aria/utils@3.25.0
+ - @react-aria/virtualizer@4.0.0
+ - @react-aria/visually-hidden@3.8.13
+ - @react-spectrum/accordion@3.0.0-alpha.32
+ - @react-spectrum/actionbar@3.5.0
+ - @react-spectrum/actiongroup@3.10.6
+ - @react-spectrum/autocomplete@3.0.0-alpha.33
+ - @react-spectrum/avatar@3.0.13
+ - @react-spectrum/badge@3.1.14
+ - @react-spectrum/breadcrumbs@3.9.8
+ - @react-spectrum/button@3.16.5
+ - @react-spectrum/buttongroup@3.6.14
+ - @react-spectrum/calendar@3.4.10
+ - @react-spectrum/card@3.0.0-alpha.34
+ - @react-spectrum/checkbox@3.9.7
+ - @react-spectrum/color@3.0.0-rc.0
+ - @react-spectrum/combobox@3.13.0
+ - @react-spectrum/contextualhelp@3.6.12
+ - @react-spectrum/datepicker@3.10.0
+ - @react-spectrum/dialog@3.8.12
+ - @react-spectrum/divider@3.5.14
+ - @react-spectrum/dnd@3.4.0
+ - @react-spectrum/dropzone@3.0.2
+ - @react-spectrum/filetrigger@3.0.2
+ - @react-spectrum/form@3.7.7
+ - @react-spectrum/icon@3.7.14
+ - @react-spectrum/illustratedmessage@3.5.2
+ - @react-spectrum/image@3.5.2
+ - @react-spectrum/inlinealert@3.2.6
+ - @react-spectrum/label@3.16.7
+ - @react-spectrum/labeledvalue@3.1.15
+ - @react-spectrum/layout@3.6.6
+ - @react-spectrum/link@3.6.8
+ - @react-spectrum/list@3.8.0
+ - @react-spectrum/listbox@3.13.0
+ - @react-spectrum/menu@3.20.0
+ - @react-spectrum/meter@3.5.2
+ - @react-spectrum/numberfield@3.9.4
+ - @react-spectrum/overlays@5.6.2
+ - @react-spectrum/picker@3.15.0
+ - @react-spectrum/progress@3.7.8
+ - @react-spectrum/provider@3.9.8
+ - @react-spectrum/radio@3.7.7
+ - @react-spectrum/searchfield@3.8.7
+ - @react-spectrum/slider@3.6.10
+ - @react-spectrum/statuslight@3.5.14
+ - @react-spectrum/steplist@3.0.0-alpha.6
+ - @react-spectrum/switch@3.5.6
+ - @react-spectrum/table@3.13.0
+ - @react-spectrum/tabs@3.8.11
+ - @react-spectrum/tag@3.2.7
+ - @react-spectrum/text@3.5.6
+ - @react-spectrum/textfield@3.12.2
+ - @react-spectrum/theme-dark@3.5.11
+ - @react-spectrum/theme-default@3.5.11
+ - @react-spectrum/theme-express@3.0.0-alpha.13
+ - @react-spectrum/theme-light@3.4.11
+ - @react-spectrum/toast@3.0.0-beta.13
+ - @react-spectrum/tooltip@3.6.8
+ - @react-spectrum/tree@3.0.0-alpha.2
+ - @react-spectrum/utils@3.11.8
+ - @react-spectrum/view@3.6.11
+ - @react-spectrum/well@3.4.14
+ - @react-stately/calendar@3.5.2
+ - @react-stately/checkbox@3.6.6
+ - @react-stately/collections@3.10.8
+ - @react-stately/color@3.7.0
+ - @react-stately/combobox@3.9.0
+ - @react-stately/data@3.11.5
+ - @react-stately/datepicker@3.10.0
+ - @react-stately/dnd@3.4.0
+ - @react-stately/form@3.0.4
+ - @react-stately/grid@3.9.0
+ - @react-stately/layout@4.0.0
+ - @react-stately/list@3.10.6
+ - @react-stately/menu@3.8.0
+ - @react-stately/numberfield@3.9.4
+ - @react-stately/overlays@3.6.8
+ - @react-stately/radio@3.10.5
+ - @react-stately/searchfield@3.5.4
+ - @react-stately/select@3.6.5
+ - @react-stately/selection@3.16.0
+ - @react-stately/slider@3.5.5
+ - @react-stately/steplist@3.0.0-alpha.6
+ - @react-stately/table@3.12.0
+ - @react-stately/tabs@3.6.7
+ - @react-stately/toast@3.0.0-beta.5
+ - @react-stately/toggle@3.7.5
+ - @react-stately/tooltip@3.4.10
+ - @react-stately/tree@3.8.2
+ - @react-stately/utils@3.10.2
+ - @react-stately/virtualizer@4.0.0
+ - @react-types/accordion@3.0.0-alpha.22
+ - @react-types/actionbar@3.1.8
+ - @react-types/actiongroup@3.4.10
+ - @react-types/autocomplete@3.0.0-alpha.23
+ - @react-types/avatar@3.0.8
+ - @react-types/badge@3.1.10
+ - @react-types/breadcrumbs@3.7.6
+ - @react-types/button@3.9.5
+ - @react-types/buttongroup@3.3.10
+ - @react-types/calendar@3.4.7
+ - @react-types/card@3.0.0-alpha.27
+ - @react-types/checkbox@3.8.2
+ - @react-types/color@3.0.0-rc.0
+ - @react-types/combobox@3.12.0
+ - @react-types/contextualhelp@3.2.11
+ - @react-types/datepicker@3.8.0
+ - @react-types/dialog@3.5.11
+ - @react-types/divider@3.3.10
+ - @react-types/form@3.7.5
+ - @react-types/grid@3.2.7
+ - @react-types/illustratedmessage@3.3.10
+ - @react-types/image@3.4.2
+ - @react-types/label@3.9.4
+ - @react-types/layout@3.3.16
+ - @react-types/link@3.5.6
+ - @react-types/list@3.2.18
+ - @react-types/listbox@3.5.0
+ - @react-types/menu@3.9.10
+ - @react-types/meter@3.4.2
+ - @react-types/numberfield@3.8.4
+ - @react-types/overlays@3.8.8
+ - @react-types/progress@3.5.5
+ - @react-types/provider@3.8.2
+ - @react-types/radio@3.8.2
+ - @react-types/searchfield@3.5.6
+ - @react-types/select@3.9.5
+ - @react-types/shared@3.24.0
+ - @react-types/slider@3.7.4
+ - @react-types/statuslight@3.3.10
+ - @react-types/switch@3.5.4
+ - @react-types/table@3.10.0
+ - @react-types/tabs@3.3.8
+ - @react-types/text@3.3.10
+ - @react-types/textfield@3.9.4
+ - @react-types/tooltip@3.4.10
+ - @react-types/view@3.4.10
+ - @react-types/well@3.3.10
+ - @spectrum-icons/color@3.5.14
+ - @spectrum-icons/express@3.0.0-alpha.18
+ - @spectrum-icons/illustrations@3.6.14
+ - @spectrum-icons/ui@3.6.8
+ - @spectrum-icons/workflow@4.2.13
+ - react-aria@3.34.0
+ - react-aria-components@1.3.0
+ - react-stately@3.32.0
+ - tailwindcss-react-aria-components@1.1.4
+```
