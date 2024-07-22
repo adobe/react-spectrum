@@ -81,7 +81,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
           startItem?.index ?? 0
         ),
         (itemNodes?.length ?? 0) - 1);
-      let newNode:Node<T> | null = null;
+      let newNode: Node<T> | null = null;
       let isReverseSearching = false;
       while (index >= 0) {
         if (!selectionManager.isDisabled(itemNodes[index].key)) {

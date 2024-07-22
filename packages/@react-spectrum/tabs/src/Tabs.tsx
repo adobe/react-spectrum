@@ -21,7 +21,8 @@ import React, {
   CSSProperties,
   MutableRefObject,
   ReactElement,
-  ReactNode, RefObject,
+  ReactNode,
+  RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -339,6 +340,12 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   const {tabListState} = tabState;
 
   const factory = useCallback(nodes => new ListCollection(nodes), []);
+  /**
+   * [0]         Type '(item: T) => CollectionElement<T>' is not assignable to type '(item: object) => ReactElement<any, string | JSXElementConstructor<any>>'.
+   * [0]           Types of parameters 'item' and 'item' are incompatible.
+   * [0]             Type 'object' is not assignable to type 'T'.
+   * [0]               'T' could be instantiated with an arbitrary type which could be unrelated to 'object'.
+   */
   // TODO: how to fix this one?
   // @ts-ignore
   const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
