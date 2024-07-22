@@ -72,14 +72,14 @@ function MyTag(props: TagProps) {
 
 
 export const TagGroupCollapsingExample = (props: TagGroupProps & {maxTags?: number}) => {
-  let {maxTags, ...otherProps} = props;
+  let {maxTags = 2, ...otherProps} = props;
   let [showAll, setShowAll] = useState(false);
-  let onAction = () => {
+  let onTagGroupAction = () => {
     setShowAll(val => !val);
   };
 
   return (
-    <CollapsingCollection count={maxTags} showAll={showAll} onAction={onAction}>
+    <CollapsingCollection count={maxTags} showAll={showAll} onTagGroupAction={onTagGroupAction}>
       <CustomTagGroup {...otherProps}>
         <Label>Categories</Label>
         <TagList style={{display: 'flex', gap: 4}}>
@@ -141,13 +141,13 @@ TagGroupCollapsingExample.argTypes = {
 
 // Context for passing the count for the custom renderer
 interface ICollapseContext {
-  count?: number, onAction: () => void, showAll: boolean
+  count?: number, onTagGroupAction: () => void, showAll: boolean
 }
-let CollapseContext = React.createContext<ICollapseContext>({onAction: () => {}, showAll: false});
+let CollapseContext = React.createContext<ICollapseContext>({onTagGroupAction: () => {}, showAll: false});
 
-function CollapsingCollection({children, count, onAction, showAll}) {
+function CollapsingCollection({children, count, onTagGroupAction, showAll}) {
   return (
-    <CollapseContext.Provider value={{count, onAction, showAll}}>
+    <CollapseContext.Provider value={{count, onTagGroupAction, showAll}}>
       <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </CollectionRendererContext.Provider>
@@ -165,7 +165,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 };
 
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
-  let {count, onAction, showAll} = useContext(CollapseContext);
+  let {count, onTagGroupAction, showAll} = useContext(CollapseContext);
   let children = useMemo(() => {
     let result: Node<unknown>[] = [];
     let index = 0;
@@ -181,7 +181,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
   return (
     <>
       {children.map(node => node.render?.(node))}
-      {(children.length !== collection.size || showAll) && <Button onPress={onAction}>{showAll ? 'Collapse' : 'Show All'}</Button>}
+      {(children.length !== collection.size || showAll) && <Button onPress={onTagGroupAction}>{showAll ? 'Collapse' : 'Show All'}</Button>}
     </>
   );
 };
