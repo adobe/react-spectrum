@@ -17,7 +17,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, isValidElement, JSX, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {Text} from '@react-spectrum/text';
@@ -38,7 +38,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
+export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
   /** Whether this item has children, even if not loaded yet. */
@@ -48,7 +48,7 @@ export interface SpectrumTreeViewItemProps<T extends object = object> extends Om
 }
 
 interface TreeRendererContextValue {
-  renderer?: (item) => React.ReactElement<any, string | React.JSXElementConstructor<any>>
+  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
@@ -333,7 +333,7 @@ const expandButton = style<ExpandableRowChevronProps>({
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef();
+  let expandButtonRef = useRef<HTMLSpanElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();

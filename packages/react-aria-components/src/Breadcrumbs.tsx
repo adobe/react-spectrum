@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 import {AriaBreadcrumbsProps} from 'react-aria';
-import {Collection, Node} from 'react-stately';
-import {CollectionChildren, CollectionProps, createLeafComponent, useCollection} from './Collection';
-import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext} from './Collection';
+import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
+import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject} from 'react';
+import {Node} from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -29,35 +30,23 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
-  let {portal, collection} = useCollection(props);
+  let {CollectionRoot} = useContext(CollectionRendererContext);
 
-  // Render the portal first so that we have the collection by the time we render the DOM in SSR
   return (
-    <>
-      {portal}
-      <BreadcrumbsInner props={props} collection={collection} breadcrumbsRef={ref} />
-    </>
-  );
-}
-
-interface BreadcrumbsInnerProps<T> {
-  props: BreadcrumbsProps<T>,
-  collection: Collection<Node<T>>,
-  breadcrumbsRef: RefObject<HTMLOListElement>
-}
-
-function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: ref}: BreadcrumbsInnerProps<T>) {
-  return (
-    <ol
-      ref={ref}
-      {...filterDOMProps(props, {labelable: true})}
-      slot={props.slot || undefined}
-      style={props.style}
-      className={props.className ?? 'react-aria-Breadcrumbs'}>
-      <BreadcrumbsContext.Provider value={props}>
-        <CollectionChildren collection={collection} />
-      </BreadcrumbsContext.Provider>
-    </ol>
+    <CollectionBuilder content={<Collection {...props} />}>
+      {collection => (
+        <ol
+          ref={ref}
+          {...filterDOMProps(props, {labelable: true})}
+          slot={props.slot || undefined}
+          style={props.style}
+          className={props.className ?? 'react-aria-Breadcrumbs'}>
+          <BreadcrumbsContext.Provider value={props}>
+            <CollectionRoot collection={collection} />
+          </BreadcrumbsContext.Provider>
+        </ol>
+      )}
+    </CollectionBuilder>
   );
 }
 
@@ -67,7 +56,15 @@ function BreadcrumbsInner<T extends object>({props, collection, breadcrumbsRef: 
 const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
 
-export interface BreadcrumbProps extends StyleProps {
+export interface BreadcrumbRenderProps {
+  /**
+   * Whether the breadcrumb is for the current page.
+   * @selector [data-current]
+   */
+  isCurrent: boolean
+}
+
+export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {
   /** A unique id for the breadcrumb, which will be passed to `onAction` when the breadcrumb is pressed. */
   id?: Key,
   /** The children of the breadcrumb, typically a `<Link>`. */

@@ -34,7 +34,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
     'aria-label': item['aria-label']
   });
 
-  let headerRef = useRef();
+  let headerRef = useRef(undefined);
   useVirtualizerItem({
     layoutInfo: headerLayoutInfo,
     virtualizer,
@@ -42,7 +42,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   });
 
   let {direction} = useLocale();
-  let state = useContext(ListBoxContext);
+  let {state} = useContext(ListBoxContext);
 
   return (
     <Fragment>

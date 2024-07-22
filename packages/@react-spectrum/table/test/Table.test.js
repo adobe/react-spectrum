@@ -11,6 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria/utils/src/scrollIntoView');
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
@@ -29,6 +30,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {scrollIntoView} from '@react-aria/utils';
 import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -1822,10 +1824,9 @@ export let tableTests = () => {
       it('should scroll to a cell when it is focused', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
-        expect(body.scrollTop).toBe(0);
 
         focusCell(tree, 'Baz 25');
-        expect(body.scrollTop).toBe(24);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should scroll to a cell when it is focused off screen', function () {
@@ -1842,6 +1843,7 @@ export let tableTests = () => {
         body.scrollTop = 1000;
         body.scrollLeft = 1000;
         fireEvent.scroll(body);
+        act(() => jest.runAllTimers());
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(cell);
@@ -1861,8 +1863,8 @@ export let tableTests = () => {
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
-        expect(body.scrollTop).toBe(164);
         expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should not scroll when a column header receives focus', function () {
@@ -1881,7 +1883,7 @@ export let tableTests = () => {
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
         expect(document.activeElement).toHaveTextContent('Bar');
-        expect(body.scrollTop).toBe(1000);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
     });
   });
@@ -4162,6 +4164,7 @@ export let tableTests = () => {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 4100);
       let items = [];
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -4185,10 +4188,10 @@ export let tableTests = () => {
       );
 
       let body = tree.getAllByRole('rowgroup')[1];
-      let scrollView = body.parentNode.parentNode;
+      let scrollView = body;
 
       let rows = within(body).getAllByRole('row');
-      expect(rows).toHaveLength(25); // each row is 41px tall. table is 1000px tall. 25 rows fit.
+      expect(rows).toHaveLength(34); // each row is 41px tall. table is 1000px tall. 25 rows fit. + 1/3 overscan
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
@@ -4203,11 +4206,15 @@ export let tableTests = () => {
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 1000);
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
-      let onLoadMoreSpy = jest.fn();
+      let onLoadMore = jest.fn(() => {
+        scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 2000);
+      });
 
       let TableMock = (props) => (
         <TableView aria-label="Table">
@@ -4215,7 +4222,7 @@ export let tableTests = () => {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+          <TableBody items={props.items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
                 {key => <Cell>{row[key]}</Cell>}
@@ -4227,7 +4234,8 @@ export let tableTests = () => {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
   });
 

@@ -13,10 +13,9 @@
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {
   ChangeEvent,
-  DOMFactory,
   HTMLAttributes,
+  type JSX,
   LabelHTMLAttributes,
-  ReactDOM,
   RefObject,
   useEffect
 } from 'react';
@@ -40,9 +39,7 @@ type IntrinsicHTMLElements = {
  * A map of HTML element names and their attribute interface types.
  * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
  */
-type IntrinsicHTMLAttributes = {
-  [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
-};
+type IntrinsicHTMLAttributes = JSX.IntrinsicElements;
 
 type DefaultElementType = 'input';
 
@@ -81,7 +78,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    */
   inputElementType?: T,
   /**
-   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
@@ -92,7 +89,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
  * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
  * `RefObject<HTMLTextAreaElement>`.
  */
-type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T] | null>;
 
 export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends ValidationResult {
   /** Props for the input element. */
@@ -166,7 +163,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     labelProps,
     inputProps: mergeProps(
       domProps,
-      inputElementType === 'input' && inputOnlyProps,
+      inputElementType === 'input' ? inputOnlyProps : undefined,
       {
         disabled: isDisabled,
         readOnly: isReadOnly,

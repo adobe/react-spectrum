@@ -12,7 +12,8 @@
 
 import {AriaToggleProps} from '@react-types/checkbox';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -37,7 +38,7 @@ export interface ToggleAria {
 /**
  * Handles interactions for toggle elements, e.g. Checkboxes and Switches.
  */
-export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement>): ToggleAria {
+export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement | null>): ToggleAria {
   let {
     isDisabled = false,
     isReadOnly = false,

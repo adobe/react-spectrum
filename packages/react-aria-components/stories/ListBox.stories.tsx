@@ -11,14 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, CollectionRenderer, CollectionRendererContext} from '../src/Collection';
-import {Header, ListBox, ListBoxItem, ListBoxProps, Section, Separator, Text, useDragAndDrop} from 'react-aria-components';
-import {ListLayout} from '@react-stately/layout';
+import {Collection, DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
-import React, {useContext, useMemo} from 'react';
+import React, {useMemo} from 'react';
+import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
-import {Virtualizer, VirtualizerContext} from '@react-aria/virtualizer';
 
 export default {
   title: 'React Aria Components'
@@ -229,17 +227,38 @@ ListBoxGrid.story = {
   }
 };
 
-export function VirtualizedListBox() {
+function generateRandomString(minLength: number, maxLength: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return result;
+}
+
+export function VirtualizedListBox({variableHeight}) {
   let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string, name: string}[] = [];
     for (let i = 0; i < 100; i++) {
-      items.push({id: `item_${s}_${i}`, name: `Item ${i}`});
+      const l = (s * 5) + i + 10;
+      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
+
+  let layout = useMemo(() => {
+    return new ListLayout({
+      [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
+      estimatedHeadingHeight: 26
+    });
+  }, [variableHeight]);
+
   return (
-    <VirtualizedCollection>
+    <Virtualizer layout={layout}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
           <Section className={styles.group}>
@@ -250,53 +269,134 @@ export function VirtualizedListBox() {
           </Section>
         )}
       </ListBox>
-    </VirtualizedCollection>
+    </Virtualizer>
   );
 }
 
-function VirtualizedCollection({children}) {
-  return (
-    <CollectionRendererContext.Provider value={VirtualizedCollectionRenderer}>
-      {children}
-    </CollectionRendererContext.Provider>
-  );
-}
+VirtualizedListBox.args = {
+  variableHeight: false
+};
 
-const VirtualizedCollectionRenderer: CollectionRenderer = (collection, parent) => {
-  if (parent) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    let virtualizer = useContext(VirtualizerContext)!;
-    return virtualizer.virtualizer.getChildren(parent.key);
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export function VirtualizedListBoxEmpty() {
   let layout = useMemo(() => {
     return new ListLayout({
-      estimatedRowHeight: 32,
-      estimatedHeadingHeight: 26,
-      padding: 4,
-      loaderHeight: 40,
-      placeholderHeight: 32
-      // collator
+      rowHeight: 25,
+      estimatedHeadingHeight: 26
     });
   }, []);
 
   return (
-    <Virtualizer
-      sizeToFit="height"
-      scrollDirection="vertical"
-      layout={layout}
-      style={{height: 'inherit'}}
-      collection={collection}
-      shouldUseVirtualFocus>
-      {(type, item) => {
-        switch (type) {
-          case 'placeholder':
-            return null;
-          default:
-            return item.render!(item);
-        }
-      }}
+    <Virtualizer layout={layout}>
+      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
+        <></>
+      </ListBox>
     </Virtualizer>
   );
+}
+
+export function VirtualizedListBoxDnd() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new ListLayout({
+      rowHeight: 25
+    });
+  }, []);
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
+  return (
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer layout={layout}>
+        <ListBox 
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={list.items}
+          dragAndDropHooks={dragAndDropHooks}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+}
+
+export function VirtualizedListBoxGrid({minSize, maxSize}) {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new GridLayout({
+      minItemSize: new Size(minSize, minSize),
+      maxItemSize: new Size(maxSize, maxSize)
+    });
+  }, [minSize, maxSize]);
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+    }
+  });
+
+  return (
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer layout={layout}>
+        <ListBox
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          layout="grid"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={list.items}
+          dragAndDropHooks={dragAndDropHooks}>
+          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+}
+
+VirtualizedListBoxGrid.args = {
+  minSize: 80,
+  maxSize: 100
 };

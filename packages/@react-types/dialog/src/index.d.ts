@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
-import {ReactElement, ReactNode, RefObject} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
@@ -31,7 +31,7 @@ export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, Positio
    */
   hideArrow?: boolean,
   /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
-  targetRef?: RefObject<HTMLElement>,
+  targetRef?: RefObject<HTMLElement | null>,
   /** Whether a modal type Dialog should be dismissable. */
   isDismissable?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */

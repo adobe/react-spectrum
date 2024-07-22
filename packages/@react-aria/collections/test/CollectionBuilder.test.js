@@ -1,22 +1,21 @@
-import {ListBoxItem} from '../src/ListBox';
+import {Collection, CollectionBuilder, createLeafComponent} from '../src';
 import React from 'react';
 import {render} from '@testing-library/react';
-import {useCollection} from '../src/Collection';
 
-
-const CollectionTest = (props) => {
-  const result = useCollection(props);
-  props.spyCollection.current = result.collection;
-  return <>{result.portal}</>;
-};
+const Item = createLeafComponent('item', () => {
+  return <div />;
+});
 
 const renderItems = (items, spyCollection) => (
-  <CollectionTest spyCollection={spyCollection}>
-    {items.map((item) => <ListBoxItem key={item} />)}
-  </CollectionTest>
+  <CollectionBuilder content={<Collection>{items.map((item) => <Item key={item} />)}</Collection>}>
+    {collection => {
+      spyCollection.current = collection;
+      return null;
+    }}
+  </CollectionBuilder>
 );
 
-describe('Collection', () => {
+describe('CollectionBuilder', () => {
   it('should be frozen even in case of empty initial collection', () => {
     let spyCollection = {};
     render(renderItems([], spyCollection));

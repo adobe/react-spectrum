@@ -18,7 +18,7 @@ import {SpectrumColorSwatchContext, SpectrumColorSwatchProps} from './ColorSwatc
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useDOMRef, useStyleProps} from '@react-spectrum/utils';
 
-export interface SpectrumColorSwatchPickerProps extends ValueBase<string | Color | null, Color>, StyleProps {
+export interface SpectrumColorSwatchPickerProps extends ValueBase<string | Color, Color>, StyleProps {
   /** The ColorSwatches within the ColorSwatchPicker. */
   children: ReactNode,
   /**
