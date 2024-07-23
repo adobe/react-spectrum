@@ -12,7 +12,6 @@
 
 import {
   Button,
-  CollectionRenderer,
   Label,
   Tag,
   TagGroup,
@@ -22,9 +21,7 @@ import {
 } from 'react-aria-components';
 import {Collection, Node} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
-import {CollectionRendererContext} from '../src/Collection';
-import {ListKeyboardDelegate} from '@react-aria/selection';
-import React, {ForwardedRef, forwardRef, useContext, useMemo, useState} from 'react';
+import React, {ForwardedRef, forwardRef, useMemo, useState} from 'react';
 
 export default {
   title: 'React Aria Components'
@@ -79,21 +76,16 @@ export const TagGroupCollapsingExample = (props: TagGroupProps & {maxTags?: numb
   };
 
   return (
-    <CollapsingCollection count={maxTags} showAll={showAll} onTagGroupAction={onTagGroupAction}>
-      <CustomTagGroup {...otherProps}>
-        <Label>Categories</Label>
-        <TagList style={{display: 'flex', gap: 4}}>
-          <MyTag href="https://nytimes.com">News</MyTag>
-          <MyTag>Travel</MyTag>
-          <MyTag>Gaming</MyTag>
-          <MyTag>Shopping</MyTag>
-        </TagList>
-      </CustomTagGroup>
-    </CollapsingCollection>
+    <CustomTagGroup {...otherProps} count={maxTags} showAll={showAll} onTagGroupAction={onTagGroupAction}>
+      <Label>Categories</Label>
+      <TagList style={{display: 'flex', gap: 4}}>
+        {props.children}
+      </TagList>
+    </CustomTagGroup>
   );
 };
 
-let CustomTagGroup = forwardRef((props: TagGroupProps, ref: ForwardedRef<HTMLElement>) => {
+let CustomTagGroup = forwardRef((props: TagGroupProps & {onTagGroupAction: () => void, count: number, showAll: boolean}, ref: ForwardedRef<HTMLDivElement>) => {
   return (
     <CollectionBuilder content={props.children}>
       {collection => <CustomTagGroupInner props={props} forwardedRef={ref} collection={collection} />}
@@ -101,22 +93,38 @@ let CustomTagGroup = forwardRef((props: TagGroupProps, ref: ForwardedRef<HTMLEle
   );
 });
 
-function CustomTagGroupInner({props, forwardedRef: ref, collection}: {props: TagGroupProps, forwardedRef: ForwardedRef<HTMLElement>, collection: Collection<Node<unknown>>}) {
-  let keyboardDelegate = useMemo(() => new ListKeyboardDelegate({
-    collection,
-    ref,
-    orientation: 'horizontal',
-    direction: 'ltr',
-    disabledKeys: new Set(),
-    disabledBehavior: 'selection'
-  }), []);
+function CustomTagGroupInner({props, forwardedRef: ref, collection}: {props: TagGroupProps & {onTagGroupAction: () => void, count: number, showAll: boolean}, forwardedRef: ForwardedRef<HTMLDivElement>, collection: Collection<Node<unknown>>}) {
+  let {count, onTagGroupAction, showAll, ...otherProps} = props;
 
-  return <TagGroup {...props} ref={ref} keyboardDelegate={keyboardDelegate} />;
+  let items = useMemo(
+    () => Array.from(collection).slice(0, showAll ? collection.size : count),
+    [collection, count, showAll]
+  );
+
+  return (
+    <>
+      <TagGroup {...otherProps} ref={ref}>
+        <Label>Categories</Label>
+        <TagList style={{display: 'flex', gap: 4}} items={items}>
+          {item => <Tag {...item.props} />}
+        </TagList>
+        {(count !== collection.size || showAll) && <Button onPress={onTagGroupAction}>{showAll ? 'Collapse' : 'Show All'}</Button>}
+      </TagGroup>
+    </>
+  );
 }
 
 TagGroupCollapsingExample.args = {
   selectionMode: 'none',
-  selectionBehavior: 'toggle'
+  selectionBehavior: 'toggle',
+  children: (
+    <>
+      <MyTag href="https://nytimes.com">News</MyTag>
+      <MyTag>Travel</MyTag>
+      <MyTag>Gaming</MyTag>
+      <MyTag>Shopping</MyTag>
+    </>
+  )
 };
 
 TagGroupCollapsingExample.argTypes = {
@@ -137,51 +145,4 @@ TagGroupCollapsingExample.argTypes = {
       type: 'number'
     }
   }
-};
-
-// Context for passing the count for the custom renderer
-interface ICollapseContext {
-  count?: number, onTagGroupAction: () => void, showAll: boolean
-}
-let CollapseContext = React.createContext<ICollapseContext>({onTagGroupAction: () => {}, showAll: false});
-
-function CollapsingCollection({children, count, onTagGroupAction, showAll}) {
-  return (
-    <CollapseContext.Provider value={{count, onTagGroupAction, showAll}}>
-      <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
-        {children}
-      </CollectionRendererContext.Provider>
-    </CollapseContext.Provider>
-  );
-}
-
-let CollapsingCollectionRenderer: CollectionRenderer = {
-  CollectionRoot({collection}) {
-    return useCollectionRender(collection);
-  },
-  CollectionBranch({collection}) {
-    return useCollectionRender(collection);
-  }
-};
-
-let useCollectionRender = (collection: Collection<Node<unknown>>) => {
-  let {count, onTagGroupAction, showAll} = useContext(CollapseContext);
-  let children = useMemo(() => {
-    let result: Node<unknown>[] = [];
-    let index = 0;
-    for (let key of collection.getKeys()) {
-      result.push(collection.getItem(key)!);
-      index++;
-      if (!showAll && count != null && !Number.isNaN(count) && index >= count) {
-        break;
-      }
-    }
-    return result;
-  }, [collection, count, showAll]);
-  return (
-    <>
-      {children.map(node => node.render?.(node))}
-      {(children.length !== collection.size || showAll) && <Button onPress={onTagGroupAction}>{showAll ? 'Collapse' : 'Show All'}</Button>}
-    </>
-  );
 };
