@@ -74,6 +74,7 @@ function isOurDep(dep) {
     || dep.startsWith('@adobe')
     || dep.includes('react-aria')
     || dep.includes('react-stately')
+    || dep.includes('react-types')
     || dep.startsWith('@internationalized')
     || dep.startsWith('react-aria-components');
 }
