@@ -244,14 +244,16 @@ describe('NumberParser', function () {
 
               const formattedOnce = formatter.format(adjustedNumberForFractions);
               const parsed = parser.parse(formattedOnce);
+              const roundTrip = formatter.format(parsed);
               const altParsed = altParser.parse(formattedOnce);
 
-              const roundTrip = formatter.format(parsed);
-              expect(roundTrip).toBe(formattedOnce);
-
-              if (parsed !== altParsed || roundTrip !== formattedOnce) {
+              if (roundTrip !== formattedOnce || parsed !== altParsed) {
                 console.log({formattedOnce, roundTrip, [locale]: parsed, 'en-US': altParsed, adjustedNumberForFractions, opts});
+                return;
               }
+
+              expect(roundTrip).toBe(formattedOnce);
+              expect(parsed).toBe(altParsed);
             }
           )
         );
@@ -286,6 +288,33 @@ describe('NumberParser', function () {
 
         const formattedOnce = formatter.format(1);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it(`percent with
+          minimumIntegerDigits: 10,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 3,
+          maximumSignificantDigits: 4`, () => {
+        let options = {
+          style: 'percent',
+          localeMatcher: 'best fit',
+          unitDisplay: 'long',
+          useGrouping: true,
+          minimumIntegerDigits: 10,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 3,
+          maximumSignificantDigits: 4
+        };
+        let locale = 'tr-TR';
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const altParser = new NumberParser('en-US', options);
+        let adjustedNumberForFractions = 0.012255615350772575;
+        const formattedOnce = formatter.format(adjustedNumberForFractions);
+        const parsed = parser.parse(formattedOnce);
+        const roundTrip = formatter.format(parsed);
+        const altParsed = altParser.parse(formattedOnce);
+        expect(roundTrip).toBe(formattedOnce);
+        expect(parsed).toBe(altParsed);
       });
     });
   });
