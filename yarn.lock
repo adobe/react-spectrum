@@ -136,7 +136,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/spectrum-css-temp@npm:3.0.0-alpha.1, @adobe/spectrum-css-temp@npm:^3.0.0-alpha.1, @adobe/spectrum-css-temp@workspace:packages/@adobe/spectrum-css-temp":
+"@adobe/spectrum-css-temp@npm:3.0.0-alpha.1, @adobe/spectrum-css-temp@workspace:packages/@adobe/spectrum-css-temp":
   version: 0.0.0-use.local
   resolution: "@adobe/spectrum-css-temp@workspace:packages/@adobe/spectrum-css-temp"
   languageName: unknown
@@ -7142,7 +7142,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/list@workspace:packages/@react-spectrum/list"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/button": "npm:^3.9.6"
     "@react-aria/dnd": "npm:^3.0.0"
     "@react-aria/focus": "npm:^3.18.0"
@@ -7501,7 +7501,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/steplist@workspace:packages/@react-spectrum/steplist"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/focus": "npm:^3.18.0"
     "@react-aria/i18n": "npm:^3.12.0"
     "@react-aria/interactions": "npm:^3.22.0"
@@ -7525,7 +7525,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/story-utils@workspace:packages/@react-spectrum/story-utils"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/utils": "npm:^3.8.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:

@@ -50,7 +50,7 @@
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
