@@ -7451,7 +7451,7 @@ __metadata:
     "@react-spectrum/label": "npm:^3.10.0"
     "@react-spectrum/utils": "npm:^3.8.1"
     "@react-types/searchwithin": "npm:3.0.0-alpha.10"
-    "@react-types/shared": "npm:^3.23.1"
+    "@react-types/shared": "npm:^3.16.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0-rc.1
@@ -8651,7 +8651,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-types/pagination@workspace:packages/@react-types/pagination"
   dependencies:
-    "@react-types/shared": "npm:^3.23.1"
+    "@react-types/shared": "npm:^3.1.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
@@ -8702,7 +8702,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-types/searchwithin@workspace:packages/@react-types/searchwithin"
   dependencies:
-    "@react-types/shared": "npm:^3.23.1"
+    "@react-types/shared": "npm:^3.16.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
@@ -8718,7 +8718,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/shared@npm:^3.23.1, @react-types/shared@npm:^3.24.0, @react-types/shared@workspace:packages/@react-types/shared":
+"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.16.0, @react-types/shared@npm:^3.23.1, @react-types/shared@npm:^3.24.0, @react-types/shared@workspace:packages/@react-types/shared":
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   peerDependencies:
@@ -8731,7 +8731,7 @@ __metadata:
   resolution: "@react-types/sidenav@workspace:packages/@react-types/sidenav"
   dependencies:
     "@react-stately/virtualizer": "npm:^3.1.7"
-    "@react-types/shared": "npm:^3.23.1"
+    "@react-types/shared": "npm:^3.1.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
