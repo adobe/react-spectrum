@@ -134,7 +134,8 @@ function enforceWorkspaceDependencies({Yarn}) {
 
       if (isOurPackage(dependency)) {
         // change back to workspaces:^ when we're ready for yarn to handle versioning
-        dependency.update(otherDependency.range);
+        // don't check for consistency on our own packages because they can individually version and we don't bump EVERY package because of one change
+        // dependency.update(otherDependency.range);
       }
     }
   }
