@@ -119,7 +119,10 @@ describe('ComboBox', () => {
 
     let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
     comboboxUtil.setElement(tree.container);
-    await comboboxUtil.setText('p');
+    act(() => {
+      comboboxUtil.combobox.focus();
+    });
+    await user.keyboard('p');
 
     let groups = comboboxUtil.sections;
     expect(groups).toHaveLength(1);
@@ -153,7 +156,10 @@ describe('ComboBox', () => {
 
     let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
     comboboxUtil.setElement(tree.container);
-    await comboboxUtil.setText('c');
+    act(() => {
+      comboboxUtil.combobox.focus();
+    });
+    await user.keyboard('c');
     let options = comboboxUtil.options;
     expect(options).toHaveLength(1);
   });
@@ -245,7 +251,10 @@ describe('ComboBox', () => {
     let comboboxWrapper = combobox.closest('.react-aria-ComboBox');
     expect(comboboxWrapper).toHaveAttribute('data-invalid');
 
-    await comboboxUtil.setText('C');
+    act(() => {
+      comboboxUtil.combobox.focus();
+    });
+    await user.keyboard('C');
 
     let options = comboboxUtil.options;
     await user.click(options[0]);

@@ -41,22 +41,15 @@ export class ComboBoxTester {
     if (trigger) {
       this._trigger = trigger;
     }
-    // TODO: how to find button if user doesn't provide an element that wraps both of them? Perhaps
-    // have a setTrigger?
+  }
+
+  // TODO: This is for if user need to directly set the trigger button element (aka the element provided in setElement was the combobox input or the trigger is somewhere unexpected)
+  setTrigger(element: HTMLElement) {
+    this._trigger = element;
   }
 
   setInteractionType(type: InteractionType) {
     this._interactionType = type;
-  }
-
-  // TODO: maybe have it delete the stuff inside the input?
-  async setText(text: string) {
-    if (!this._combobox) {
-      throw new Error('Combobox element hasn\'t beeen set yet, please call setElement(element) to set which combobox to target.');
-    }
-
-    act(() => this._combobox.focus());
-    await this.user.keyboard(text);
   }
 
   async open(opts: {triggerBehavior?: 'focus' | 'manual'} = {}) {
@@ -190,5 +183,8 @@ export class ComboBoxTester {
     }
   }
 
-  // TODO: perhaps add a getter for the current focused options? Might be helpful so people don't need to know about aria-activedescendant
+  get focusedOption() {
+    let focusedOptionId = this.combobox.getAttribute('aria-activedescendant');
+    return focusedOptionId ? document.getElementById(focusedOptionId) : undefined;
+  }
 }

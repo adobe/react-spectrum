@@ -311,7 +311,10 @@ describe('ComboBox', function () {
     let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
     comboboxUtil.setElement(tree.container);
 
-    await comboboxUtil.setText('One');
+    act(() => {
+      comboboxUtil.combobox.focus();
+    });
+    await user.keyboard('One');
     expect(comboboxUtil.listbox).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).not.toHaveBeenCalled();
@@ -334,8 +337,10 @@ describe('ComboBox', function () {
     let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
     comboboxUtil.setElement(tree.container);
 
-    await comboboxUtil.setText('One');
-
+    act(() => {
+      comboboxUtil.combobox.focus();
+    });
+    await user.keyboard('One');
     expect(comboboxUtil.listbox).toBeFalsy();
     expect(comboboxUtil.combobox.value).toBe('Blargh');
     expect(onOpenChange).not.toHaveBeenCalled();
@@ -357,9 +362,11 @@ describe('ComboBox', function () {
   });
 
   it('features default behavior of completionMode suggest and menuTrigger input', async function () {
-    let {getByRole} = renderComboBox();
+    let tree = renderComboBox();
+    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+    comboboxUtil.setElement(tree.container);
 
-    let combobox = getByRole('combobox');
+    let combobox = comboboxUtil.combobox;
     expect(combobox).not.toHaveAttribute('aria-controls');
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
     expect(combobox).toHaveAttribute('aria-autocomplete', 'list');
@@ -372,14 +379,12 @@ describe('ComboBox', function () {
       jest.runAllTimers();
     });
 
-    let listbox = getByRole('listbox');
-
-    let items = within(listbox).getAllByRole('option');
+    let items = comboboxUtil.options;
     expect(items).toHaveLength(1);
 
     expect(combobox.value).toBe('On');
     expect(items[0]).toHaveTextContent('One');
-    expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+    expect(combobox).toHaveAttribute('aria-controls', comboboxUtil.listbox.id);
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
 
     await user.keyboard('{ArrowDown}');
@@ -387,7 +392,7 @@ describe('ComboBox', function () {
       jest.runAllTimers();
     });
 
-    expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    expect(combobox).toHaveAttribute('aria-activedescendant', comboboxUtil.focusedOption.id);
   });
 
   describe('refs', function () {
@@ -448,30 +453,25 @@ describe('ComboBox', function () {
 
     describe('button click', function () {
       it('keeps focus within the textfield after opening the menu', async function () {
-        let {getByRole, queryByRole} = renderComboBox();
-
+        let {getByRole} = renderComboBox();
+        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        expect(queryByRole('listbox')).toBeNull();
+        comboboxUtil.setElement(combobox);
+        comboboxUtil.setTrigger(button);
 
-        act(() => {
-          combobox.focus();
-        });
-        await user.click(button);
-        act(() => {
-          jest.runAllTimers();
-        });
+        expect(comboboxUtil.listbox).toBeFalsy();
+        await comboboxUtil.open();
 
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeTruthy();
-        expect(document.activeElement).toBe(combobox);
+        expect(comboboxUtil.listbox).toBeTruthy();
+        expect(document.activeElement).toBe(comboboxUtil.combobox);
 
-        await user.click(button);
+        await user.click(comboboxUtil.trigger);
         act(() => {
           jest.runAllTimers();
         });
 
-        expect(queryByRole('listbox')).toBeNull();
+        expect(comboboxUtil.listbox).toBeFalsy();
       });
 
       it('doesn\'t focus first item if there are items loaded', async function () {
