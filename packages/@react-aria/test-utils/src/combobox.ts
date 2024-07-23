@@ -49,9 +49,8 @@ export class ComboBoxTester {
     this._interactionType = type;
   }
 
-  async setText(opts: {text: string}) {
-    let {text} = opts;
-
+  // TODO: maybe have it delete the stuff inside the input?
+  async setText(text: string) {
     if (!this._combobox) {
       throw new Error('Combobox element hasn\'t beeen set yet, please call setElement(element) to set which combobox to target.');
     }
@@ -60,8 +59,9 @@ export class ComboBoxTester {
     await this.user.keyboard(text);
   }
 
-  async open(opts: {triggerBehavior?: 'focus' | 'manual'}) {
-    let {triggerBehavior} = opts;
+  async open(opts: {triggerBehavior?: 'focus' | 'manual'} = {}) {
+    let {triggerBehavior = 'manual'} = opts;
+    let isDisabled = this.trigger.hasAttribute('disabled');
 
     if (this._interactionType === 'mouse') {
       if (triggerBehavior === 'focus') {
@@ -76,7 +76,6 @@ export class ComboBoxTester {
       }
     } else if (this._interactionType === 'touch') {
       if (triggerBehavior === 'focus') {
-        // TODO: add long press support once I figure out how to make it generic and not specific to jest
         await this.user.pointer({target: this.combobox, keys: '[TouchA]'});
       } else {
         await this.user.pointer({target: this.trigger, keys: '[TouchA]'});
@@ -84,7 +83,7 @@ export class ComboBoxTester {
     }
 
     await waitFor(() => {
-      if (this.combobox.getAttribute('aria-controls') == null) {
+      if (!isDisabled && this.combobox.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on combobox trigger element.');
       } else {
         return true;
@@ -92,7 +91,7 @@ export class ComboBoxTester {
     });
     let listBoxId = this.combobox.getAttribute('aria-controls');
     await waitFor(() => {
-      if (!listBoxId || document.getElementById(listBoxId) == null) {
+      if (!isDisabled && (!listBoxId || document.getElementById(listBoxId) == null)) {
         throw new Error(`Listbox with id of ${listBoxId} not found in document.`);
       } else {
         return true;
@@ -100,7 +99,7 @@ export class ComboBoxTester {
     });
   }
 
-  async selectOption(opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual'}) {
+  async selectOption(opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual'} = {}) {
     let {optionText, option, triggerBehavior} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
@@ -171,6 +170,7 @@ export class ComboBoxTester {
     return listBoxId ? document.getElementById(listBoxId) : undefined;
   }
 
+  // TODO: Perhaps this should also be able to take a section and return only the options from said section?
   get options(): HTMLElement[] | never[] {
     let listbox = this.listbox;
     let options = [];
@@ -189,4 +189,6 @@ export class ComboBoxTester {
       return [];
     }
   }
+
+  // TODO: perhaps add a getter for the current focused options? Might be helpful so people don't need to know about aria-activedescendant
 }

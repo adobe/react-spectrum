@@ -87,6 +87,7 @@ export class MenuTester {
   }
 
   // TODO: also very similar to select, barring potential long press support
+  // Close on select is also kinda specific?
   async selectOption(opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean}) {
     let {optionText, menuSelectionMode = 'single', needsLongPress, closesOnSelect = true, option} = opts;
     if (!this.trigger.getAttribute('aria-controls')) {
@@ -130,7 +131,7 @@ export class MenuTester {
         }
       }
     } else {
-      throw new Error("Attempted to select a option with the menu, but menu wasn't found.");
+      throw new Error("Attempted to select a option in the menu, but menu wasn't found.");
     }
   }
 

@@ -24,6 +24,7 @@ import {SSRProvider} from '@react-aria/ssr';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -204,6 +205,8 @@ let AsyncComboBox = () => {
 
 describe('ComboBox', function () {
   let user;
+  let testUtilUser = new User();
+
   async function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
     let buttonId = button.id;
     let comboboxLabelledBy = combobox.getAttribute('aria-labelledby');
@@ -304,76 +307,52 @@ describe('ComboBox', function () {
   });
 
   it('can be disabled', async function () {
-    let {getByRole, queryByRole} = renderComboBox({isDisabled: true});
+    let tree = renderComboBox({isDisabled: true});
+    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+    comboboxUtil.setElement(tree.container);
 
-    let combobox = getByRole('combobox');
-    act(() => {
-      combobox.focus();
-    });
-    await user.keyboard('One');
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    expect(queryByRole('listbox')).toBeNull();
+    await comboboxUtil.setText('One');
+    expect(comboboxUtil.listbox).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).not.toHaveBeenCalled();
 
-    await user.keyboard('{ArrowDown}');
-    act(() => {
-      jest.runAllTimers();
-    });
+    comboboxUtil.setInteractionType('keyboard');
+    await comboboxUtil.open();
 
-    expect(queryByRole('listbox')).toBeNull();
+    expect(comboboxUtil.listbox).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
 
-    let button = getByRole('button');
-    await user.click(button);
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    expect(queryByRole('listbox')).toBeNull();
+    comboboxUtil.setInteractionType('mouse');
+    await comboboxUtil.open();
+    expect(comboboxUtil.listbox).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onInputChange).not.toHaveBeenCalled();
   });
 
   it('can be readonly', async function () {
-    let {getByRole, queryByRole} = renderComboBox({isReadOnly: true, defaultInputValue: 'Blargh'});
+    let tree = renderComboBox({isReadOnly: true, defaultInputValue: 'Blargh'});
+    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+    comboboxUtil.setElement(tree.container);
 
-    let combobox = getByRole('combobox');
-    act(() => {
-      combobox.focus();
-    });
-    await user.keyboard('One');
-    act(() => {
-      jest.runAllTimers();
-    });
+    await comboboxUtil.setText('One');
 
-    expect(queryByRole('listbox')).toBeNull();
-    expect(combobox.value).toBe('Blargh');
+    expect(comboboxUtil.listbox).toBeFalsy();
+    expect(comboboxUtil.combobox.value).toBe('Blargh');
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalled();
     expect(onInputChange).not.toHaveBeenCalled();
 
-    await user.keyboard('{ArrowDown}');
-    act(() => {
-      jest.runAllTimers();
-    });
+    comboboxUtil.setInteractionType('keyboard');
+    await comboboxUtil.open();
 
-    expect(queryByRole('listbox')).toBeNull();
+    expect(comboboxUtil.listbox).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onInputChange).not.toHaveBeenCalled();
 
-    let button = getByRole('button');
-    // user event click on the button actually makes focus leave the combobox
-    // so onInputChange will fire
-    await user.click(button);
-    act(() => {
-      jest.runAllTimers();
-    });
+    comboboxUtil.setInteractionType('mouse');
+    await comboboxUtil.open();
 
-    expect(queryByRole('listbox')).toBeNull();
+    expect(comboboxUtil.listbox).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
@@ -437,34 +416,30 @@ describe('ComboBox', function () {
   describe('opening', function () {
     describe('menuTrigger = focus', function () {
       it('opens menu when combobox is focused', async function () {
-        let {getByRole} = renderComboBox({menuTrigger: 'focus'});
+        let tree = renderComboBox({menuTrigger: 'focus'});
+        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+        comboboxUtil.setElement(tree.container);
 
-        let button = getByRole('button');
-        let combobox = getByRole('combobox');
-        act(() => {
-          combobox.focus();
-        });
-        act(() => {
-          jest.runAllTimers();
-        });
+        let button = comboboxUtil.trigger;
+        let combobox = comboboxUtil.combobox;
+        await comboboxUtil.open({triggerBehavior: 'focus'});
 
-        let listbox = getByRole('listbox');
+        let listbox = comboboxUtil.listbox;
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testComboBoxOpen(combobox, button, listbox);
       });
 
       it('opens menu when combobox is focused by clicking button', async function () {
-        let {getByRole} = renderComboBox({menuTrigger: 'focus'});
+        let tree = renderComboBox({menuTrigger: 'focus'});
+        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+        comboboxUtil.setElement(tree.container);
 
-        let button = getByRole('button');
-        let combobox = getByRole('combobox');
-        await user.click(button);
-        act(() => {
-          jest.runAllTimers();
-        });
+        let button = comboboxUtil.trigger;
+        let combobox = comboboxUtil.combobox;
+        await comboboxUtil.open({triggerBehavior: 'manual'});
 
-        let listbox = getByRole('listbox');
+        let listbox = comboboxUtil.listbox;
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testComboBoxOpen(combobox, button, listbox);
@@ -515,65 +490,43 @@ describe('ComboBox', function () {
         await testComboBoxOpen(combobox, button, listbox);
       });
 
-      it('opens for touch', () => {
-        let {getByRole, queryByRole} = renderComboBox({});
+      it('opens for touch', async () => {
+        let tree = renderComboBox({});
+        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+        comboboxUtil.setElement(tree.container);
 
-        let button = getByRole('button');
-        let combobox = getByRole('combobox');
+        let combobox = comboboxUtil.combobox;
         expect(document.activeElement).not.toBe(combobox);
 
+        comboboxUtil.setInteractionType('touch');
+        await comboboxUtil.open();
+        expect(document.activeElement).toBe(comboboxUtil.combobox);
+        expect(comboboxUtil.listbox).toBeTruthy();
+
+        let button = comboboxUtil.trigger;
         fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
         fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
         act(() => {
           jest.runAllTimers();
         });
-
-        expect(document.activeElement).toBe(combobox);
-        let listbox = getByRole('listbox');
-        expect(listbox).toBeTruthy();
-        expect(document.activeElement).toBe(combobox);
-
-        fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
-        fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-        act(() => {
-          jest.runAllTimers();
-        });
-
-        expect(queryByRole('listbox')).toBeNull();
+        expect(comboboxUtil.listbox).toBeFalsy();
       });
 
       it('resets the focused item when re-opening the menu', async function () {
-        let {getByRole} = renderComboBox({});
+        let tree = renderComboBox({});
+        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+        comboboxUtil.setElement(tree.container);
 
-        let button = getByRole('button');
-        let combobox = getByRole('combobox');
+        await comboboxUtil.open();
+        expect(comboboxUtil.combobox).not.toHaveAttribute('aria-activedescendant');
 
-        act(() => {
-          combobox.focus();
-        });
-        await user.click(button);
-        act(() => {
-          jest.runAllTimers();
-        });
+        let options = comboboxUtil.options;
+        await comboboxUtil.selectOption({option: options[0]});
 
-        let listbox = getByRole('listbox');
-        let items = within(listbox).getAllByRole('option');
-        expect(combobox).not.toHaveAttribute('aria-activedescendant');
+        expect(comboboxUtil.combobox.value).toBe('One');
 
-        await user.click(items[0]);
-        act(() => {
-          jest.runAllTimers();
-        });
-
-        expect(combobox.value).toBe('One');
-
-        await user.click(button);
-        act(() => {
-          jest.runAllTimers();
-        });
-
-        listbox = getByRole('listbox');
-        expect(combobox).not.toHaveAttribute('aria-activedescendant');
+        await comboboxUtil.open();
+        expect(comboboxUtil.combobox).not.toHaveAttribute('aria-activedescendant');
       });
 
       it('shows all items', async function () {
@@ -911,26 +864,23 @@ describe('ComboBox', function () {
     });
 
     it('resets input text if reselecting a selected option with click', async function () {
-      let {getByRole, queryByRole} = renderComboBox({defaultSelectedKey: '2'});
+      let tree = renderComboBox({defaultSelectedKey: '2'});
+      let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+      comboboxUtil.setElement(tree.container);
 
-      let combobox = getByRole('combobox');
+      let combobox = comboboxUtil.combobox;
       expect(combobox.value).toBe('Two');
 
       act(() => combobox.focus());
       fireEvent.change(combobox, {target: {value: 'Tw'}});
       act(() => jest.runAllTimers());
-
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
       expect(combobox.value).toBe('Tw');
-      let listbox = getByRole('listbox');
-      let items = within(listbox).getAllByRole('option');
-      expect(items.length).toBe(1);
+      expect(comboboxUtil.options.length).toBe(1);
 
-      await user.click(items[0]);
-      act(() => jest.runAllTimers());
-
-      expect(queryByRole('listbox')).toBeNull();
+      await comboboxUtil.selectOption({optionText: 'Two'});
+      expect(comboboxUtil.listbox).toBeFalsy();
       expect(combobox.value).toBe('Two');
       // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
