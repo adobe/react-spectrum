@@ -67,20 +67,15 @@ export class TableTester {
     this._interactionType = opts.interactionType || 'mouse';
   }
 
-  // TODO change to setElement for consistency? Or maybe change the others to be setTrigger/setBlah, something more specific to the tester element
-  setTable(element: HTMLElement) {
+  setElement = (element: HTMLElement) => {
     this._table = element;
-    // This can potentially become stale? Double check, if so replace with getters that refetch the rows and columns
-    // this._rowgroups = within(this._element).getAllByRole('rowgroup');
-    // this._columns = within(this._rowgroups[0]).getAllByRole('columnheader');
-    // this._rows = within(this._rowgroups[1]).getAllByRole('row');
-  }
+  };
 
-  setInteractionType(type: InteractionType) {
+  setInteractionType = (type: InteractionType) => {
     this._interactionType = type;
-  }
+  };
 
-  private async pressElement(element: HTMLElement) {
+  private pressElement = async (element: HTMLElement) => {
     if (this._interactionType === 'mouse') {
       await this.user.click(element);
     } else if (this._interactionType === 'keyboard') {
@@ -92,9 +87,9 @@ export class TableTester {
     } else if (this._interactionType === 'touch') {
       await this.user.pointer({target: element, keys: '[TouchA]'});
     }
-  }
+  };
 
-  async toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean}) {
+  toggleRowSelection = async (opts: {index?: number, text?: string, needsLongPress?: boolean} = {}) => {
     let {
       index,
       text,
@@ -118,9 +113,9 @@ export class TableTester {
         jest.runOnlyPendingTimers();
       });
     }
-  }
+  };
 
-  async toggleSort(opts: {index?: number, text?: string}) {
+  toggleSort = async (opts: {index?: number, text?: string} = {}) => {
     let {
       index,
       text
@@ -128,9 +123,9 @@ export class TableTester {
 
     let columnheader;
     if (index != null) {
-      columnheader = this.columns[index];
+      columnheader = this.getColumns()[index];
     } else if (text != null) {
-      columnheader = within(this.rowgroups[0]).getByText(text);
+      columnheader = within(this.getRowGroups()[0]).getByText(text);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
@@ -208,11 +203,11 @@ export class TableTester {
     } else {
       await this.pressElement(columnheader);
     }
-  }
+  };
   // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
   // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
   // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
-  async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean}) {
+  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean} = {}) => {
     let {
       index,
       text,
@@ -230,7 +225,7 @@ export class TableTester {
         await this.pressElement(row);
       }
     }
-  }
+  };
 
   // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
   // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
@@ -238,7 +233,7 @@ export class TableTester {
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
 
-  async toggleSelectAll() {
+  toggleSelectAll = async () => {
     let checkbox = within(this._table).getByLabelText('Select All');
     if (this._interactionType === 'keyboard') {
       // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
@@ -246,34 +241,35 @@ export class TableTester {
     } else {
       await this.pressElement(checkbox);
     }
+  };
 
-  }
-
-  findRow(opts: {index?: number, text?: string}) {
+  findRow = (opts: {index?: number, text?: string} = {}) => {
     let {
       index,
       text
     } = opts;
 
     let row;
+    let rows = this.getRows();
+    let bodyRowGroup = this.getRowGroups()[1];
     if (index != null) {
-      row = this.rows[index];
+      row = rows[index];
     } else if (text != null) {
-      row = within(this.rowgroups[1]).getByText(text);
+      row = within(bodyRowGroup).getByText(text);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
     }
 
     return row;
-  }
+  };
 
-  findCell(opts: {text: string}) {
+  findCell = (opts: {text: string}) => {
     let {
       text
     } = opts;
 
-    let cell = within(this.table).getByText(text);
+    let cell = within(this._table).getByText(text);
     if (cell) {
       while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role') || '')) {
         if (cell.parentElement) {
@@ -285,35 +281,40 @@ export class TableTester {
     }
 
     return cell;
-  }
+  };
 
-  get table() {
+  getTable = () => {
     if (!this._table) {
       throw new Error('Table element hasn\'t been set yet. Did you call `setTable()` yet?');
     }
 
     return this._table;
-  }
+  };
 
   // TODO: for now make the getters always grab the latest set of elements, might be expesive though
   // After some benchmark testing it doesn't seem to make much of a difference though, seemingly negligible
-  get rowgroups() {
-    return within(this._table).getAllByRole('rowgroup');
-  }
+  getRowGroups = () => {
+    let table = this._table;
+    return table ? within(table).queryAllByRole('rowgroup') : [];
+  };
 
-  get columns() {
-    return within(this.rowgroups[0]).getAllByRole('columnheader');
-  }
+  getColumns = () => {
+    let headerRowGroup = this.getRowGroups()[0];
+    return headerRowGroup ? within(headerRowGroup).queryAllByRole('columnheader') : [];
+  };
 
-  get rows() {
-    return within(this.rowgroups[1]).getAllByRole('row');
-  }
+  getRows = () => {
+    let bodyRowGroup = this.getRowGroups()[1];
+    return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
+  };
 
-  get rowheaders() {
-    return within(this._table).getAllByRole('rowheader');
-  }
+  getRowHeaders = () => {
+    let table = this._table;
+    return table ? within(this._table).queryAllByRole('rowheader') : [];
+  };
 
-  get cells() {
-    return within(this._table).getAllByRole('gridcell');
-  }
+  getCells = () => {
+    let table = this._table;
+    return table ? within(table).queryAllByRole('gridcell') : [];
+  };
 }

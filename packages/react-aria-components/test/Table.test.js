@@ -193,29 +193,29 @@ describe('Table', () => {
 
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
-    let tableUtil = testUtilUser.createTester('TableTester');
-    tableUtil.setTable(getByRole('grid'));
-    let table = tableUtil.table;
+    let {setElement, getTable, getRows, getRowGroups, getColumns, getRowHeaders, getCells} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
+    let table = getTable();
     expect(table).toHaveAttribute('class', 'react-aria-Table');
 
-    for (let row of tableUtil.rows) {
+    for (let row of getRows()) {
       expect(row).toHaveAttribute('class', 'react-aria-Row');
     }
 
-    let rowGroups = tableUtil.rowgroups;
+    let rowGroups = getRowGroups();
     expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('class', 'react-aria-TableHeader');
     expect(rowGroups[1]).toHaveAttribute('class', 'react-aria-TableBody');
 
-    for (let cell of tableUtil.columns) {
+    for (let cell of getColumns()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Column');
     }
 
-    for (let cell of tableUtil.rowheaders) {
+    for (let cell of getRowHeaders()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of tableUtil.cells) {
+    for (let cell of getCells()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -618,9 +618,9 @@ describe('Table', () => {
       </Table>
     );
 
-    let tableUtil = testUtilUser.createTester('TableTester');
-    tableUtil.setTable(getByRole('grid'));
-    await tableUtil.triggerRowAction({index: 0});
+    let {setElement, triggerRowAction} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
+    await triggerRowAction({index: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
@@ -631,10 +631,10 @@ describe('Table', () => {
       columnProps: {allowsSorting: true}
     });
 
-    let tableUtil = testUtilUser.createTester('TableTester');
-    tableUtil.setTable(getByRole('grid'));
+    let {setElement, getColumns, toggleSort} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
 
-    let columns = tableUtil.columns;
+    let columns = getColumns();
     expect(columns[0]).toHaveAttribute('aria-sort', 'ascending');
     expect(columns[0]).toHaveTextContent('▲');
     expect(columns[1]).toHaveAttribute('aria-sort', 'none');
@@ -642,7 +642,7 @@ describe('Table', () => {
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
 
-    await tableUtil.toggleSort({index: 0});
+    await toggleSort({index: 0});
     expect(onSortChange).toHaveBeenCalledTimes(1);
     expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });
@@ -669,15 +669,15 @@ describe('Table', () => {
   it('supports removing rows', async () => {
     let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
 
-    let tableUtil = testUtilUser.createTester('TableTester');
-    tableUtil.setTable(getByRole('grid'));
+    let {setElement, getRows} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
     await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-    let gridRows = tableUtil.rows;
+    let gridRows = getRows();
     expect(gridRows).toHaveLength(4);
     let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('Program Files');
@@ -685,7 +685,7 @@ describe('Table', () => {
 
     rerender(<DynamicTable tableBodyProps={{items: [rows[0], ...rows.slice(2)]}} />);
 
-    gridRows = tableUtil.rows;
+    gridRows = getRows();
     expect(gridRows).toHaveLength(3);
     cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('bootmgr');
