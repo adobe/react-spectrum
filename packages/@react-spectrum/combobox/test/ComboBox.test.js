@@ -308,65 +308,65 @@ describe('ComboBox', function () {
 
   it('can be disabled', async function () {
     let tree = renderComboBox({isDisabled: true});
-    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-    comboboxUtil.setElement(tree.container);
+    let {setInteractionType, setElement, getCombobox, getListbox, open} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
 
     act(() => {
-      comboboxUtil.combobox.focus();
+      getCombobox().focus();
     });
     await user.keyboard('One');
-    expect(comboboxUtil.listbox).toBeFalsy();
+    expect(getListbox()).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).not.toHaveBeenCalled();
 
-    comboboxUtil.setInteractionType('keyboard');
-    await comboboxUtil.open();
+    setInteractionType('keyboard');
+    await open();
 
-    expect(comboboxUtil.listbox).toBeFalsy();
+    expect(getListbox()).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
 
-    comboboxUtil.setInteractionType('mouse');
-    await comboboxUtil.open();
-    expect(comboboxUtil.listbox).toBeFalsy();
+    setInteractionType('mouse');
+    await open();
+    expect(getListbox()).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onInputChange).not.toHaveBeenCalled();
   });
 
   it('can be readonly', async function () {
     let tree = renderComboBox({isReadOnly: true, defaultInputValue: 'Blargh'});
-    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-    comboboxUtil.setElement(tree.container);
+    let {setInteractionType, setElement, getCombobox, getListbox, open} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
 
     act(() => {
-      comboboxUtil.combobox.focus();
+      getCombobox().focus();
     });
     await user.keyboard('One');
-    expect(comboboxUtil.listbox).toBeFalsy();
-    expect(comboboxUtil.combobox.value).toBe('Blargh');
+    expect(getListbox()).toBeFalsy();
+    expect(getCombobox().value).toBe('Blargh');
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalled();
     expect(onInputChange).not.toHaveBeenCalled();
 
-    comboboxUtil.setInteractionType('keyboard');
-    await comboboxUtil.open();
+    setInteractionType('keyboard');
+    await open();
 
-    expect(comboboxUtil.listbox).toBeFalsy();
+    expect(getListbox()).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onInputChange).not.toHaveBeenCalled();
 
-    comboboxUtil.setInteractionType('mouse');
-    await comboboxUtil.open();
+    setInteractionType('mouse');
+    await open();
 
-    expect(comboboxUtil.listbox).toBeFalsy();
+    expect(getListbox()).toBeFalsy();
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
   it('features default behavior of completionMode suggest and menuTrigger input', async function () {
     let tree = renderComboBox();
-    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-    comboboxUtil.setElement(tree.container);
+    let {setElement, getCombobox, getListbox, getOptions, getFocusedOption} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
 
-    let combobox = comboboxUtil.combobox;
+    let combobox = getCombobox();
     expect(combobox).not.toHaveAttribute('aria-controls');
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
     expect(combobox).toHaveAttribute('aria-autocomplete', 'list');
@@ -379,12 +379,12 @@ describe('ComboBox', function () {
       jest.runAllTimers();
     });
 
-    let items = comboboxUtil.options;
+    let items = getOptions();
     expect(items).toHaveLength(1);
 
     expect(combobox.value).toBe('On');
     expect(items[0]).toHaveTextContent('One');
-    expect(combobox).toHaveAttribute('aria-controls', comboboxUtil.listbox.id);
+    expect(combobox).toHaveAttribute('aria-controls', getListbox.id);
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
 
     await user.keyboard('{ArrowDown}');
@@ -392,7 +392,7 @@ describe('ComboBox', function () {
       jest.runAllTimers();
     });
 
-    expect(combobox).toHaveAttribute('aria-activedescendant', comboboxUtil.focusedOption.id);
+    expect(combobox).toHaveAttribute('aria-activedescendant', getFocusedOption().id);
   });
 
   describe('refs', function () {
@@ -422,14 +422,14 @@ describe('ComboBox', function () {
     describe('menuTrigger = focus', function () {
       it('opens menu when combobox is focused', async function () {
         let tree = renderComboBox({menuTrigger: 'focus'});
-        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-        comboboxUtil.setElement(tree.container);
+        let {setElement, getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester');
+        setElement(tree.container);
 
-        let button = comboboxUtil.trigger;
-        let combobox = comboboxUtil.combobox;
-        await comboboxUtil.open({triggerBehavior: 'focus'});
+        let button = getTrigger();
+        let combobox = getCombobox();
+        await open({triggerBehavior: 'focus'});
 
-        let listbox = comboboxUtil.listbox;
+        let listbox = getListbox();
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testComboBoxOpen(combobox, button, listbox);
@@ -437,14 +437,14 @@ describe('ComboBox', function () {
 
       it('opens menu when combobox is focused by clicking button', async function () {
         let tree = renderComboBox({menuTrigger: 'focus'});
-        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-        comboboxUtil.setElement(tree.container);
+        let {setElement, getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester');
+        setElement(tree.container);
 
-        let button = comboboxUtil.trigger;
-        let combobox = comboboxUtil.combobox;
-        await comboboxUtil.open({triggerBehavior: 'manual'});
+        let button = getTrigger();
+        let combobox = getCombobox();
+        await open({triggerBehavior: 'manual'});
 
-        let listbox = comboboxUtil.listbox;
+        let listbox = getListbox();
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testComboBoxOpen(combobox, button, listbox);
@@ -454,24 +454,24 @@ describe('ComboBox', function () {
     describe('button click', function () {
       it('keeps focus within the textfield after opening the menu', async function () {
         let {getByRole} = renderComboBox();
-        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
+        let {setElement, getCombobox, getListbox, getTrigger, setTrigger, open} = testUtilUser.createTester('ComboBoxTester');
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        comboboxUtil.setElement(combobox);
-        comboboxUtil.setTrigger(button);
+        setElement(combobox);
+        setTrigger(button);
 
-        expect(comboboxUtil.listbox).toBeFalsy();
-        await comboboxUtil.open();
+        expect(getListbox()).toBeFalsy();
+        await open();
 
-        expect(comboboxUtil.listbox).toBeTruthy();
-        expect(document.activeElement).toBe(comboboxUtil.combobox);
+        expect(getListbox()).toBeTruthy();
+        expect(document.activeElement).toBe(getCombobox());
 
-        await user.click(comboboxUtil.trigger);
+        await user.click(getTrigger());
         act(() => {
           jest.runAllTimers();
         });
 
-        expect(comboboxUtil.listbox).toBeFalsy();
+        expect(getListbox()).toBeFalsy();
       });
 
       it('doesn\'t focus first item if there are items loaded', async function () {
@@ -492,41 +492,41 @@ describe('ComboBox', function () {
 
       it('opens for touch', async () => {
         let tree = renderComboBox({});
-        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-        comboboxUtil.setElement(tree.container);
+        let {setElement, getCombobox, getListbox, getTrigger, setInteractionType, open} = testUtilUser.createTester('ComboBoxTester');
+        setElement(tree.container);
 
-        let combobox = comboboxUtil.combobox;
+        let combobox = getCombobox();
         expect(document.activeElement).not.toBe(combobox);
 
-        comboboxUtil.setInteractionType('touch');
-        await comboboxUtil.open();
-        expect(document.activeElement).toBe(comboboxUtil.combobox);
-        expect(comboboxUtil.listbox).toBeTruthy();
+        setInteractionType('touch');
+        await open();
+        expect(document.activeElement).toBe(getCombobox());
+        expect(getListbox()).toBeTruthy();
 
-        let button = comboboxUtil.trigger;
+        let button = getTrigger();
         fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
         fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
         act(() => {
           jest.runAllTimers();
         });
-        expect(comboboxUtil.listbox).toBeFalsy();
+        expect(getListbox()).toBeFalsy();
       });
 
       it('resets the focused item when re-opening the menu', async function () {
         let tree = renderComboBox({});
-        let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-        comboboxUtil.setElement(tree.container);
+        let {setElement, getCombobox, getOptions, selectOption, open} = testUtilUser.createTester('ComboBoxTester');
+        setElement(tree.container);
 
-        await comboboxUtil.open();
-        expect(comboboxUtil.combobox).not.toHaveAttribute('aria-activedescendant');
+        await open();
+        expect(getCombobox()).not.toHaveAttribute('aria-activedescendant');
 
-        let options = comboboxUtil.options;
-        await comboboxUtil.selectOption({option: options[0]});
+        let options = getOptions();
+        await selectOption({option: options[0]});
 
-        expect(comboboxUtil.combobox.value).toBe('One');
+        expect(getCombobox().value).toBe('One');
 
-        await comboboxUtil.open();
-        expect(comboboxUtil.combobox).not.toHaveAttribute('aria-activedescendant');
+        await open();
+        expect(getCombobox()).not.toHaveAttribute('aria-activedescendant');
       });
 
       it('shows all items', async function () {
@@ -865,10 +865,10 @@ describe('ComboBox', function () {
 
     it('resets input text if reselecting a selected option with click', async function () {
       let tree = renderComboBox({defaultSelectedKey: '2'});
-      let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-      comboboxUtil.setElement(tree.container);
+      let {setElement, getCombobox, getOptions, selectOption, getListbox} = testUtilUser.createTester('ComboBoxTester');
+      setElement(tree.container);
 
-      let combobox = comboboxUtil.combobox;
+      let combobox = getCombobox();
       expect(combobox.value).toBe('Two');
 
       act(() => combobox.focus());
@@ -877,10 +877,10 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
       expect(combobox.value).toBe('Tw');
-      expect(comboboxUtil.options.length).toBe(1);
+      expect(getOptions().length).toBe(1);
 
-      await comboboxUtil.selectOption({optionText: 'Two'});
-      expect(comboboxUtil.listbox).toBeFalsy();
+      await selectOption({optionText: 'Two'});
+      expect(getListbox()).toBeFalsy();
       expect(combobox.value).toBe('Two');
       // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same
       expect(onSelectionChange).toHaveBeenCalledTimes(1);

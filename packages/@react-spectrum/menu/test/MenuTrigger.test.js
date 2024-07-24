@@ -103,16 +103,16 @@ describe('MenuTrigger', function () {
 
   async function verifyMenuToggle(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
     let tree = renderComponent(Component, triggerProps, menuProps);
-    let menuUtil = testUtilUser.createTester('MenuTester');
+    let {setElement, getMenu} = testUtilUser.createTester('MenuTester');
     let triggerButton = tree.getByRole('button');
-    menuUtil.setElement(triggerButton);
+    setElement(triggerButton);
 
     expect(onOpenChange).toBeCalledTimes(0);
 
     await triggerEvent(triggerButton);
     act(() => {jest.runAllTimers();});
 
-    let menu = menuUtil.menu;
+    let menu = getMenu();
     expect(menu).toBeTruthy();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
@@ -151,9 +151,9 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
   `('$Name has default behavior (button renders, menu is closed)', function ({Component}) {
     let tree = renderComponent(Component);
-    let menuUtil = testUtilUser.createTester('MenuTester');
-    menuUtil.setElement(tree.container);
-    let triggerButton = menuUtil.trigger;
+    let {setElement, getTrigger, getMenu} = testUtilUser.createTester('MenuTester');
+    setElement(tree.container);
+    let triggerButton = getTrigger();
 
     expect(triggerButton).toBeTruthy();
     expect(triggerButton).toHaveAttribute('aria-haspopup', 'true');
@@ -161,7 +161,7 @@ describe('MenuTrigger', function () {
     let buttonText = within(triggerButton).getByText(triggerText);
     expect(buttonText).toBeTruthy();
 
-    expect(menuUtil.menu).toBeFalsy();
+    expect(getMenu()).toBeFalsy();
 
     expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
     expect(triggerButton).toHaveAttribute('type', 'button');
@@ -263,11 +263,11 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name does not trigger on disabled button', async function ({Component, props}) {
     let tree = renderComponent(Component, props, {}, {isDisabled: true});
-    let menuUtil = testUtilUser.createTester('MenuTester');
-    menuUtil.setElement(tree.container);
-    await user.click(menuUtil.trigger);
+    let {setElement, getTrigger, getMenu} = testUtilUser.createTester('MenuTester');
+    setElement(tree.container);
+    await user.click(getTrigger());
     act(() => {jest.runAllTimers();});
-    let menu = menuUtil.menu;
+    let menu = getMenu();
     expect(menu).toBeFalsy();
     expect(onOpenChange).toBeCalledTimes(0);
   });
@@ -279,32 +279,32 @@ describe('MenuTrigger', function () {
     `('$Name autofocuses the selected item on menu open', async function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectedKeys: ['Bar'], selectionMode: 'single'});
       act(() => {jest.runAllTimers();});
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
-      let button = menuUtil.trigger;
-      await menuUtil.open();
-      let menu = menuUtil.menu;
+      let {setElement, getTrigger, getMenu, getOptions, setInteractionType, open, close} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
+      let button = getTrigger();
+      await open();
+      let menu = getMenu();
       expect(menu).toBeTruthy();
-      let menuItems = menuUtil.options;
+      let menuItems = getOptions();
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
-      await menuUtil.close();
+      await close();
 
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via down arrow still autofocuses the selected item
-      menuUtil.setInteractionType('keyboard');
+      setInteractionType('keyboard');
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
       fireEvent.keyUp(button, {key: 'ArrowDown', code: 40, charCode: 40});
-      menuItems = menuUtil.options;
+      menuItems = getOptions();
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
-      await menuUtil.close();
+      await close();
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via up arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
-      menuItems = menuUtil.options;
+      menuItems = getOptions();
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -356,21 +356,21 @@ describe('MenuTrigger', function () {
         </Provider>
       );
 
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
-      fireEvent.keyDown(menuUtil.trigger, {key: 'ArrowDown', code: 40, charCode: 40});
+      let {setElement, getTrigger, getMenu, getOptions} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
+      fireEvent.keyDown(getTrigger(), {key: 'ArrowDown', code: 40, charCode: 40});
 
-      let selectedItem = menuUtil.options[0];
+      let selectedItem = getOptions()[0];
       expect(selectedItem).toBe(document.activeElement);
 
-      fireEvent.keyDown(menuUtil.menu, {key: 'ArrowDown', code: 40, charCode: 40});
-      expect(menuUtil.options[1]).toBe(document.activeElement);
+      fireEvent.keyDown(getMenu(), {key: 'ArrowDown', code: 40, charCode: 40});
+      expect(getOptions()[1]).toBe(document.activeElement);
 
-      fireEvent.keyDown(menuUtil.menu, {key: 'ArrowDown', code: 40, charCode: 40});
-      expect(menuUtil.options[2]).toBe(document.activeElement);
+      fireEvent.keyDown(getMenu(), {key: 'ArrowDown', code: 40, charCode: 40});
+      expect(getOptions()[2]).toBe(document.activeElement);
 
-      fireEvent.keyDown(menuUtil.menu, {key: 'ArrowUp', code: 38, charCode: 38});
-      expect(menuUtil.options[1]).toBe(document.activeElement);
+      fireEvent.keyDown(getMenu(), {key: 'ArrowUp', code: 38, charCode: 38});
+      expect(getOptions()[1]).toBe(document.activeElement);
     });
   });
 
@@ -384,10 +384,10 @@ describe('MenuTrigger', function () {
     });
 
     async function openAndTriggerMenuItem(tree, role, selectionMode, triggerEvent) {
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
-      await menuUtil.open();
-      let menuItems = menuUtil.options;
+      let {setElement, getOptions, open} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
+      await open();
+      let menuItems = getOptions();
       let itemToAction = menuItems[1];
       await triggerEvent(itemToAction);
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
@@ -399,15 +399,15 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon clicking escape key', async function ({Component, props}) {
       tree = renderComponent(Component, props);
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
-      menuUtil.setInteractionType('keyboard');
-      await menuUtil.open();
+      let {setElement, setInteractionType, getMenu, getTrigger, open, close} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
+      setInteractionType('keyboard');
+      await open();
 
-      let menu = menuUtil.menu;
-      await menuUtil.close();
+      let menu = getMenu();
+      await close();
       expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(menuUtil.trigger);
+      expect(document.activeElement).toBe(getTrigger());
     });
 
     it.each`
@@ -416,26 +416,26 @@ describe('MenuTrigger', function () {
     `('$Name does not clear selection with escape', async function ({Component, props}) {
       let onSelectionChange = jest.fn();
       tree = renderComponent(Component, props, {selectionMode: 'multiple', defaultSelectedKeys: ['Foo'], onSelectionChange});
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
-      await menuUtil.open();
+      let {setElement, getMenu, getOptions, getTrigger, open} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
+      await open();
       expect(onSelectionChange).not.toHaveBeenCalled();
 
-      let menu = menuUtil.menu;
-      expect(menuUtil.options[0]).toHaveAttribute('aria-checked', 'true');
+      let menu = getMenu();
+      expect(getOptions()[0]).toHaveAttribute('aria-checked', 'true');
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
       act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(menuUtil.trigger);
+      expect(document.activeElement).toBe(getTrigger());
       expect(onSelectionChange).not.toHaveBeenCalled();
 
       // reopen and make sure we still have the selection
-      await menuUtil.open();
+      await open();
       expect(onSelectionChange).not.toHaveBeenCalled();
 
-      menu = menuUtil.menu;
-      expect(menuUtil.options[0]).toHaveAttribute('aria-checked', 'true');
+      menu = getMenu();
+      expect(getOptions()[0]).toHaveAttribute('aria-checked', 'true');
       expect(menu).toBeTruthy();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       expect(onSelectionChange).not.toHaveBeenCalled();
@@ -465,10 +465,10 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
     `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
       tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
+      let {setElement, selectOption, getMenu, getTrigger, open} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
       expect(onOpenChange).toBeCalledTimes(0);
-      await menuUtil.open();
+      await open();
 
       if (Component === MenuTrigger) {
         expect(onOpenChange).toBeCalledTimes(1);
@@ -479,7 +479,7 @@ describe('MenuTrigger', function () {
         expect(onSelect).toBeCalledTimes(0);
       }
 
-      await menuUtil.selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+      await selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
       if (Component === MenuTrigger) {
         expect(onSelectionChange).toBeCalledTimes(1);
@@ -487,13 +487,13 @@ describe('MenuTrigger', function () {
         expect(onSelect).toBeCalledTimes(1);
       }
 
-      expect(menuUtil.menu).toBeInTheDocument();
+      expect(getMenu()).toBeInTheDocument();
 
       if (Component === MenuTrigger) {
-        expect(menuUtil.trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(getTrigger()).toHaveAttribute('aria-expanded', 'true');
         expect(onOpenChange).toBeCalledTimes(1);
       } else {
-        expect(menuUtil.trigger).toHaveAttribute('aria-expanded');
+        expect(getTrigger()).toHaveAttribute('aria-expanded');
         expect(onOpen).toBeCalledTimes(1);
         expect(onClose).toBeCalledTimes(0);
       }
@@ -504,18 +504,18 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
     `('$Name doesn\'t closes menu on item selection via ENTER press if closeOnSelect=false', async function ({Component, props}) {
       tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(tree.container);
+      let {setElement, setInteractionType, selectOption, getMenu, getTrigger, open} = testUtilUser.createTester('MenuTester');
+      setElement(tree.container);
       expect(onOpenChange).toBeCalledTimes(0);
-      await menuUtil.open();
+      await open();
 
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onSelectionChange).toBeCalledTimes(0);
-      menuUtil.setInteractionType('keyboard');
-      await menuUtil.selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+      setInteractionType('keyboard');
+      await selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
-      expect(menuUtil.menu).toBeInTheDocument();
-      expect(menuUtil.trigger).toHaveAttribute('aria-expanded', 'true');
+      expect(getMenu()).toBeInTheDocument();
+      expect(getTrigger()).toHaveAttribute('aria-expanded', 'true');
       expect(onOpenChange).toBeCalledTimes(1);
     });
 

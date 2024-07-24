@@ -117,14 +117,14 @@ describe('ComboBox', () => {
       </ComboBox>
     );
 
-    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-    comboboxUtil.setElement(tree.container);
+    let {setElement, getCombobox, getSections} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
     act(() => {
-      comboboxUtil.combobox.focus();
+      getCombobox().focus();
     });
     await user.keyboard('p');
 
-    let groups = comboboxUtil.sections;
+    let groups = getSections();
     expect(groups).toHaveLength(1);
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
@@ -154,13 +154,13 @@ describe('ComboBox', () => {
       </ComboBox>
     );
 
-    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-    comboboxUtil.setElement(tree.container);
+    let {setElement, getCombobox, getOptions} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
     act(() => {
-      comboboxUtil.combobox.focus();
+      getCombobox().focus();
     });
     await user.keyboard('c');
-    let options = comboboxUtil.options;
+    let options = getOptions();
     expect(options).toHaveLength(1);
   });
 
@@ -233,9 +233,9 @@ describe('ComboBox', () => {
       </form>
     );
 
-    let comboboxUtil = testUtilUser.createTester('ComboBoxTester');
-    comboboxUtil.setElement(tree.container);
-    let combobox = comboboxUtil.combobox;
+    let {setElement, getCombobox, getOptions} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
+    let combobox = getCombobox();
 
     expect(combobox).toHaveAttribute('required');
     expect(combobox).not.toHaveAttribute('aria-required');
@@ -252,11 +252,11 @@ describe('ComboBox', () => {
     expect(comboboxWrapper).toHaveAttribute('data-invalid');
 
     act(() => {
-      comboboxUtil.combobox.focus();
+      getCombobox().focus();
     });
     await user.keyboard('C');
 
-    let options = comboboxUtil.options;
+    let options = getOptions();
     await user.click(options[0]);
 
     expect(combobox).toHaveAttribute('aria-describedby');

@@ -29,7 +29,7 @@ export class ComboBoxTester {
     this._interactionType = opts.interactionType || 'mouse';
   }
 
-  setElement(element: HTMLElement) {
+  setElement = (element: HTMLElement) => {
     this._combobox = element;
     // Handle case where element provided is a wrapper around the combobox
     let combobox = within(element).queryByRole('combobox');
@@ -41,26 +41,26 @@ export class ComboBoxTester {
     if (trigger) {
       this._trigger = trigger;
     }
-  }
+  };
 
   // TODO: This is for if user need to directly set the trigger button element (aka the element provided in setElement was the combobox input or the trigger is somewhere unexpected)
-  setTrigger(element: HTMLElement) {
+  setTrigger = (element: HTMLElement) => {
     this._trigger = element;
-  }
+  };
 
-  setInteractionType(type: InteractionType) {
+  setInteractionType = (type: InteractionType) => {
     this._interactionType = type;
-  }
+  };
 
-  async open(opts: {triggerBehavior?: 'focus' | 'manual'} = {}) {
+  open = async (opts: {triggerBehavior?: 'focus' | 'manual'} = {}) => {
     let {triggerBehavior = 'manual'} = opts;
-    let isDisabled = this.trigger.hasAttribute('disabled');
+    let isDisabled = this.getTrigger().hasAttribute('disabled');
 
     if (this._interactionType === 'mouse') {
       if (triggerBehavior === 'focus') {
-        await this.user.click(this.combobox);
+        await this.user.click(this.getCombobox());
       } else {
-        await this.user.click(this.trigger);
+        await this.user.click(this.getTrigger());
       }
     } else if (this._interactionType === 'keyboard') {
       act(() => this._trigger.focus());
@@ -69,20 +69,20 @@ export class ComboBoxTester {
       }
     } else if (this._interactionType === 'touch') {
       if (triggerBehavior === 'focus') {
-        await this.user.pointer({target: this.combobox, keys: '[TouchA]'});
+        await this.user.pointer({target: this.getCombobox(), keys: '[TouchA]'});
       } else {
-        await this.user.pointer({target: this.trigger, keys: '[TouchA]'});
+        await this.user.pointer({target: this.getTrigger(), keys: '[TouchA]'});
       }
     }
 
     await waitFor(() => {
-      if (!isDisabled && this.combobox.getAttribute('aria-controls') == null) {
+      if (!isDisabled && this.getCombobox().getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on combobox trigger element.');
       } else {
         return true;
       }
     });
-    let listBoxId = this.combobox.getAttribute('aria-controls');
+    let listBoxId = this.getCombobox().getAttribute('aria-controls');
     await waitFor(() => {
       if (!isDisabled && (!listBoxId || document.getElementById(listBoxId) == null)) {
         throw new Error(`Listbox with id of ${listBoxId} not found in document.`);
@@ -90,15 +90,15 @@ export class ComboBoxTester {
         return true;
       }
     });
-  }
+  };
 
-  async selectOption(opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual'} = {}) {
+  selectOption = async (opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual'} = {}) => {
     let {optionText, option, triggerBehavior} = opts;
-    if (!this.combobox.getAttribute('aria-controls')) {
+    if (!this.getCombobox().getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
     }
 
-    let listbox = this.listbox;
+    let listbox = this.getListbox();
     if (listbox) {
       if (!option && optionText) {
         option = within(listbox).getByText(optionText);
@@ -124,12 +124,12 @@ export class ComboBoxTester {
     } else {
       throw new Error("Attempted to select a option in the combobox, but the listbox wasn't found.");
     }
-  }
+  };
 
-  async close() {
-    let listbox = this.listbox;
+  close = async () => {
+    let listbox = this.getListbox();
     if (listbox) {
-      act(() => this.combobox.focus());
+      act(() => this.getCombobox().focus());
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
@@ -140,51 +140,52 @@ export class ComboBoxTester {
         }
       });
     }
-  }
+  };
 
-  get combobox() {
+  getCombobox = () => {
     if (!this._combobox) {
       throw new Error('Combobox input element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._combobox;
-  }
+  };
 
-  get trigger() {
+  getTrigger = () => {
     if (!this._trigger) {
       throw new Error('Combobox trigger element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._trigger;
-  }
+  };
 
-  get listbox() {
+  getListbox = () => {
     let listBoxId = this._combobox.getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) : undefined;
-  }
+  };
 
   // TODO: Perhaps this should also be able to take a section and return only the options from said section?
-  get options(): HTMLElement[] | never[] {
-    let listbox = this.listbox;
+  getOptions = (opts: {element?: HTMLElement} = {}): HTMLElement[] | never[] => {
+    let {element} = opts;
+    element = element || this.getListbox();
     let options = [];
-    if (listbox) {
-      options = within(listbox).queryAllByRole('option');
+    if (element) {
+      options = within(element).queryAllByRole('option');
     }
 
     return options;
-  }
+  };
 
-  get sections() {
-    let listbox = this.listbox;
+  getSections = () => {
+    let listbox = this.getListbox();
     if (listbox) {
       return within(listbox).queryAllByRole('group');
     } else {
       return [];
     }
-  }
+  };
 
-  get focusedOption() {
-    let focusedOptionId = this.combobox.getAttribute('aria-activedescendant');
+  getFocusedOption = () =>  {
+    let focusedOptionId = this.getCombobox().getAttribute('aria-activedescendant');
     return focusedOptionId ? document.getElementById(focusedOptionId) : undefined;
-  }
+  };
 }

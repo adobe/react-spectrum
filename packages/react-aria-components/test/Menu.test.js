@@ -1001,12 +1001,12 @@ describe('Menu', () => {
 
       let button = getByRole('button');
       expect(button).not.toHaveAttribute('data-pressed');
-      let menuUtil = testUtilUser.createTester('MenuTester');
-      menuUtil.setElement(button);
-      await menuUtil.open();
+      let {setElement, open, getSections, getMenu, getSubmenuTriggers, openSubmenu} = testUtilUser.createTester('MenuTester');
+      setElement(button);
+      await open();
       expect(button).toHaveAttribute('data-pressed');
 
-      let groups = menuUtil.sections;
+      let groups = getSections();
       expect(groups).toHaveLength(2);
 
       expect(groups[0]).toHaveClass('react-aria-Section');
@@ -1018,24 +1018,24 @@ describe('Menu', () => {
       expect(groups[1]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groups[1].getAttribute('aria-labelledby'))).toHaveTextContent('Settings');
 
-      let menu = menuUtil.menu;
+      let menu = getMenu();
       expect(getAllByRole('menuitem')).toHaveLength(7);
 
       let popover = menu.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-      let submenuTriggers = menuUtil.submenuTriggers;
+      let submenuTriggers = getSubmenuTriggers();
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      let submenuUtil = await menuUtil.openSubmenu({submenuTriggerText: 'Share…'});
-      let submenu = submenuUtil.menu;
+      let submenuUtil = await openSubmenu({submenuTriggerText: 'Share…'});
+      let submenu = submenuUtil.getMenu();
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = submenuUtil.options;
+      let submenuItems = submenuUtil.getOptions();
       expect(submenuItems).toHaveLength(6);
 
-      let groupsInSubmenu = submenuUtil.sections;
+      let groupsInSubmenu = submenuUtil.getSections();
       expect(groupsInSubmenu).toHaveLength(2);
 
       expect(groupsInSubmenu[0]).toHaveClass('react-aria-Section');
