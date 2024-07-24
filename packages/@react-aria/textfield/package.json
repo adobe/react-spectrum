@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/textfield",
-  "version": "3.14.6",
+  "version": "3.14.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,14 +22,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.18.0",
-    "@react-aria/form": "^3.0.6",
-    "@react-aria/label": "^3.7.9",
-    "@react-aria/utils": "^3.25.0",
-    "@react-stately/form": "^3.0.4",
+    "@react-aria/focus": "^3.18.1",
+    "@react-aria/form": "^3.0.7",
+    "@react-aria/label": "^3.7.10",
+    "@react-aria/utils": "^3.25.1",
+    "@react-stately/form": "^3.0.5",
     "@react-stately/utils": "^3.10.2",
-    "@react-types/shared": "^3.24.0",
-    "@react-types/textfield": "^3.9.4",
+    "@react-types/shared": "^3.24.1",
+    "@react-types/textfield": "^3.9.5",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
