@@ -11,6 +11,7 @@
  */
 
 import {ComboBoxTester} from './combobox';
+import {GridListTester} from './gridlist';
 import {MenuTester} from './menu';
 import {pointerMap} from './';
 import {SelectTester} from './select';
@@ -21,7 +22,7 @@ interface UserOpts {
   interactionType?: 'mouse' | 'touch' | 'keyboard'
 }
 
-let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester};
+let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester};
 
 export class User {
   user;

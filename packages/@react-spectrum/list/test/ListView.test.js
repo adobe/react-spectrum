@@ -24,6 +24,7 @@ import {renderEmptyState} from '../stories/ListView.stories';
 import {scrollIntoView} from '@react-aria/utils';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -45,6 +46,7 @@ describe('ListView', function () {
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();
   let user;
+  let testUtilUser = new User();
   let checkSelection = (onSelectionChange, selectedKeys) => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
@@ -149,7 +151,7 @@ describe('ListView', function () {
   let focusRow = (tree, text) => act(() => getRow(tree, text).focus());
 
   it('renders a static listview', function () {
-    let {getByRole, getAllByRole} = render(
+    let {getByRole} = render(
       <ListView aria-label="List" data-testid="test">
         <Item>Foo</Item>
         <Item>Bar</Item>
@@ -158,19 +160,22 @@ describe('ListView', function () {
     );
 
     let grid = getByRole('grid');
+    let gridListUtil = testUtilUser.createTester('GridListTester');
+    gridListUtil.setElement(grid);
+
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'List');
     expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '1');
 
-    let rows = getAllByRole('row');
+    let rows = gridListUtil.rows;
     expect(rows).toHaveLength(3);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
     expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
-    let gridCells = within(rows[0]).getAllByRole('gridcell');
+    let gridCells = gridListUtil.cells({element: rows[0]});
     expect(gridCells).toHaveLength(1);
     expect(gridCells[0]).toHaveTextContent('Foo');
     expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
