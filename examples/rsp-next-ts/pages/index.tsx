@@ -89,7 +89,6 @@ import {
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
 import {SubmenuTrigger} from "@react-spectrum/menu";
-import Script from 'next/script';
 
 let nestedItems = [
   {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
