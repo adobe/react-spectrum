@@ -22,14 +22,8 @@ interface SelectOptions {
 export class SelectTester {
   private user;
   private _interactionType: InteractionType;
-  // TODO: Potential problem with tracking these internally is that the user might perform some interactions
-  // themselves and thus we won't update them... I've tried to mitigate this by making the getters update these values
-  // when called but I wonder if it is worth even exposing these getters
-  private _element: HTMLElement;
   private _trigger: HTMLElement;
-  private _listbox: HTMLElement | undefined;
-  private _options: HTMLElement[] | undefined;
-  private _sections: HTMLElement[] | undefined;
+
   // TODO: should we find the label/field error/etc for the user
   // what about value placeholder? Not entirely sure that there is a ton of value in helping the
   // user find those when they can be queried by getByText or by looking up the labeledby that the user already
@@ -41,29 +35,20 @@ export class SelectTester {
     this._interactionType = opts.interactionType || 'mouse';
   }
 
-  setElement(element: HTMLElement) {
-    this._element = element;
+  setElement = (element: HTMLElement) => {
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
-    let triggerButton = within(this._element).queryByRole('button');
+    let triggerButton = within(element).queryByRole('button');
     if (triggerButton == null) {
-      triggerButton = this._element;
+      triggerButton = element;
     }
     this._trigger = triggerButton;
-    // Reset the previously obtained elements since we may be interacting with a different element now
-    this._listbox = undefined;
-    this._options = undefined;
-    this._sections = undefined;
-  }
+  };
 
-  setInteractionType(type: InteractionType) {
+  setInteractionType = (type: InteractionType) => {
     this._interactionType = type;
-  }
+  };
 
-  async open() {
-    if (!this._element) {
-      throw new Error('Select element hasn\'t beeen set yet, please call setElement(element) to set which element to target.');
-    }
-
+  open = async () => {
     if (this._interactionType === 'mouse') {
       await this.user.click(this._trigger);
     } else if (this._interactionType === 'keyboard') {
@@ -92,38 +77,19 @@ export class SelectTester {
         return true;
       }
     });
-    this.getOptions();
-  }
+  };
 
-  getOptions() {
-    if (!this._trigger.getAttribute('aria-controls')) {
-      throw new Error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
-    }
-    let listBoxId = this._trigger.getAttribute('aria-controls');
-    if (listBoxId) {
-      let listbox = document.getElementById(listBoxId);
-      if (listbox) {
-        this._listbox = listbox;
-
-        this._options = within(this._listbox).getAllByRole('option');
-        this._sections = within(this._listbox).queryAllByRole('group');
-      }
-    }
-  }
-
-  async selectOption(optionText) {
+  selectOption = async (optionText) => {
     if (!this._trigger.getAttribute('aria-controls')) {
       await this.open();
-    } else if (this._listbox) {
-      this.getOptions();
     }
-
-    if (this._listbox) {
-      let option = within(this._listbox).getByText(optionText);
+    let listbox = this.getListbox();
+    if (listbox) {
+      let option = within(listbox).getByText(optionText);
       if (this._interactionType === 'keyboard') {
-        if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+        if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
           // @ts-ignore TODO figure out what it thinks listbox might not be defined here
-          act(() => this._listbox.focus());
+          act(() => listbox.focus());
         }
 
         // TODO: this simulates typeahead, do we want to add a helper util for that? Not sure if users would really need that for
@@ -142,94 +108,64 @@ export class SelectTester {
       if (option.getAttribute('href') == null) {
         // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
         await waitFor(() => {
-          if (document.activeElement !== this.trigger) {
+          if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
           } else {
             return true;
           }
         });
 
-        if (document.contains(this._listbox)) {
+        if (document.contains(listbox)) {
           throw new Error('Expected select element listbox to not be in the document after selecting an option');
         }
       }
     }
-  }
+  };
 
-  async close() {
-    if (this._trigger.getAttribute('aria-controls')) {
-      // @ts-ignore TODO figure out what it thinks listbox might not be defined here
-      act(() => this._listbox.focus());
+  close = async () => {
+    let listbox = this.getListbox();
+    if (listbox) {
+      act(() => listbox.focus());
       await this.user.keyboard('[Escape]');
     }
 
     await waitFor(() => {
-      if (document.activeElement !== this.trigger) {
+      if (document.activeElement !== this._trigger) {
         throw new Error(`Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`);
       } else {
         return true;
       }
     });
 
-    if (this._listbox && document.contains(this._listbox)) {
+    if (listbox && document.contains(listbox)) {
       throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
     }
-  }
+  };
 
   // TODO is it valuable to add support for a utility for pressing ArrowLeft/ArrowRight when the picker is closed to cycle through the options?
   // Doesn't really feel that useful since it isn't very complicated and I don't think people really need access to every single supported interaction
   // since we should already be testing them
 
-  // TODO: perhaps these should be getElement/getTrigger/etc. That way the user could destruct them from the class without explicitlly triggering the getter
-  // TODO: name element here to just be picker perhaps
-  get element() {
-    if (!this._element) {
-      throw new Error('Select element hasn\'t been set yet. Did you call `setElement()` yet?');
-    }
-
-    return this._element;
-  }
-
-  get trigger() {
+  getTrigger = () => {
     if (!this._trigger) {
       throw new Error('Select trigger hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._trigger;
-  }
+  };
 
-  get listbox() {
-    // If user has triggered open the select themseleves, then grab the options and set the listbox element
-    if (this._trigger.getAttribute('aria-controls')) {
-      this.getOptions();
-    } else if (!this._listbox) {
-      throw new Error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
-    }
+  getListbox = () => {
+    let listBoxId = this._trigger.getAttribute('aria-controls');
+    return listBoxId ? document.getElementById(listBoxId) : undefined;
+  };
 
-    return this._listbox;
-  }
+  getOptions = () => {
+    let listbox = this.getListbox();
+    return listbox ? within(listbox).queryAllByRole('option') : [];
+  };
 
-  get options() {
-    if (this._trigger.getAttribute('aria-controls')) {
-      this.getOptions();
-    } else if (!this._options) {
-      throw new Error('Select options hasn\'t been set yet. Did you call `open()` yet?');
-    }
-
-    return this._options;
-  }
-
-  get sections() {
-    if (this._trigger.getAttribute('aria-controls')) {
-      this.getOptions();
-    } else if (!this._sections) {
-      throw new Error('Select sections hasn\'t been set yet. Did you call `open()` yet? Are there sections available?');
-    }
-
-    return this._sections;
-  }
-
-  get interactionType() {
-    return this._interactionType;
-  }
+  getSections = () => {
+    let listbox = this.getListbox();
+    return listbox ? within(listbox).queryAllByRole('group') : [];
+  };
 }

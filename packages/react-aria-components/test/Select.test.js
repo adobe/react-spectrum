@@ -44,14 +44,15 @@ describe('Select', () => {
 
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('select'));
+    let {setElement, open, getTrigger, getOptions, getListbox} = testUtilUser.createTester('SelectTester');
+    let wrapper = getByTestId('select');
+    setElement(wrapper);
 
-    let trigger = selectUtil.trigger;
+    let trigger = getTrigger();
     expect(trigger).toHaveTextContent('Select an item');
     expect(trigger).not.toHaveAttribute('data-pressed');
 
-    expect(selectUtil.element).toHaveAttribute('data-foo', 'bar');
+    expect(wrapper).toHaveAttribute('data-foo', 'bar');
 
     expect(trigger).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(trigger.getAttribute('aria-labelledby').split(' ')[1]);
@@ -65,15 +66,15 @@ describe('Select', () => {
     expect(trigger).toHaveAttribute('aria-describedby');
     expect(trigger.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
 
-    await selectUtil.open();
+    await open();
 
     expect(trigger).toHaveAttribute('data-pressed', 'true');
-    let listbox = selectUtil.listbox;
+    let listbox = getListbox();
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
     expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
-    let options = selectUtil.options;
+    let options = getOptions();
     expect(options).toHaveLength(3);
 
     await user.click(options[1]);
@@ -87,9 +88,9 @@ describe('Select', () => {
       </SelectContext.Provider>
     );
 
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('select'));
-    let trigger = selectUtil.trigger;
+    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
+    setElement(getByTestId('select'));
+    let trigger = getTrigger();
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
     expect(trigger).toHaveAttribute('aria-label', 'test');
   });
@@ -122,9 +123,9 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('select'));
-    let trigger = selectUtil.trigger;
+    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
+    setElement(getByTestId('select'));
+    let trigger = getTrigger();
     expect(trigger).toHaveTextContent('Cat');
   });
 
@@ -152,17 +153,17 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('select'));
-    let trigger = selectUtil.trigger;
+    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
+    setElement(getByTestId('select'));
+    let trigger = getTrigger();
     expect(trigger).toHaveTextContent('1 - Cat');
   });
 
   it('supports placeholder', () => {
     let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('select'));
-    let trigger = selectUtil.trigger;
+    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
+    setElement(getByTestId('select'));
+    let trigger = getTrigger();
     expect(trigger).toHaveTextContent('Select an animal');
   });
 
@@ -188,12 +189,12 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('select'));
-    let trigger = selectUtil.trigger;
+    let {setElement, open, getTrigger} = testUtilUser.createTester('SelectTester');
+    setElement(getByTestId('select'));
+    let trigger = getTrigger();
     expect(trigger).toHaveTextContent('open');
 
-    await selectUtil.open();
+    await open();
     expect(trigger).toHaveTextContent('close');
   });
 
@@ -233,10 +234,11 @@ describe('Select', () => {
       </form>
     );
 
-    let selectUtil = testUtilUser.createTester('SelectTester');
-    selectUtil.setElement(getByTestId('test-select'));
-    let trigger = selectUtil.trigger;
-    let select = selectUtil.element;
+    let {setElement, getTrigger, selectOption} = testUtilUser.createTester('SelectTester');
+    let wrapper = getByTestId('test-select');
+    setElement(getByTestId('test-select'));
+    let trigger = getTrigger();
+    let select = wrapper;
     let input = document.querySelector('[name=select]');
     expect(input).toHaveAttribute('required');
     expect(trigger).not.toHaveAttribute('aria-describedby');
@@ -250,8 +252,8 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
-    await selectUtil.selectOption('Cat');
-    expect(selectUtil.trigger).not.toHaveAttribute('aria-describedby');
+    await selectOption('Cat');
+    expect(getTrigger()).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });
 });
