@@ -394,7 +394,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
                   description: descriptionProps
                 }
               }],
-              [CollectionRendererContext, DefaultCollectionRenderer]
+              [CollectionRendererContext, DefaultCollectionRenderer],
+              [ListStateContext, null]
             ]}>
             {renderProps.children}
           </Provider>

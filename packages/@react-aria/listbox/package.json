@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/listbox",
-  "version": "3.13.0",
+  "version": "3.13.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,14 +22,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.22.0",
-    "@react-aria/label": "^3.7.9",
-    "@react-aria/selection": "^3.19.0",
-    "@react-aria/utils": "^3.25.0",
-    "@react-stately/collections": "^3.10.8",
-    "@react-stately/list": "^3.10.6",
-    "@react-types/listbox": "^3.5.0",
-    "@react-types/shared": "^3.24.0",
+    "@react-aria/interactions": "^3.22.1",
+    "@react-aria/label": "^3.7.10",
+    "@react-aria/selection": "^3.19.1",
+    "@react-aria/utils": "^3.25.1",
+    "@react-stately/collections": "^3.10.9",
+    "@react-stately/list": "^3.10.7",
+    "@react-types/listbox": "^3.5.1",
+    "@react-types/shared": "^3.24.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
