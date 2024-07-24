@@ -96,28 +96,28 @@ export type SortDirection = 'ascending' | 'descending';
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key): Key | null,
+  getKeyBelow?(key?: Key | null): Key | null,
 
   /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key): Key | null,
+  getKeyAbove?(key?: Key | null): Key | null,
 
   /** Returns the key visually to the left of the given one, or `null` for none. */
-  getKeyLeftOf?(key: Key): Key | null,
+  getKeyLeftOf?(key?: Key | null): Key | null,
 
   /** Returns the key visually to the right of the given one, or `null` for none. */
-  getKeyRightOf?(key: Key): Key | null,
+  getKeyRightOf?(key?: Key | null): Key | null,
 
   /** Returns the key visually one page below the given one, or `null` for none. */
-  getKeyPageBelow?(key: Key): Key | null,
+  getKeyPageBelow?(key?: Key | null): Key | null,
 
   /** Returns the key visually one page above the given one, or `null` for none. */
-  getKeyPageAbove?(key: Key): Key | null,
+  getKeyPageAbove?(key?: Key | null): Key | null,
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key, global?: boolean): Key | null,
+  getFirstKey?(key?: Key | null, global?: boolean): Key | null,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key, global?: boolean): Key | null,
+  getLastKey?(key?: Key | null, global?: boolean): Key | null,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key | null
@@ -159,16 +159,16 @@ export interface Collection<T> extends Iterable<T> {
   getKeys(): Iterable<Key>,
 
   /** Get an item by its key. */
-  getItem(key: Key): T | null,
+  getItem(key?: Key | null): T | null,
 
   /** Get an item by the index of its key. */
   at(idx: number): T | null,
 
   /** Get the key that comes before the given key in the collection. */
-  getKeyBefore(key: Key): Key | null,
+  getKeyBefore(key?: Key | null): Key | null,
 
   /** Get the key that comes after the given key in the collection. */
-  getKeyAfter(key: Key): Key | null,
+  getKeyAfter(key?: Key | null): Key | null,
 
   /** Get the first key in the collection. */
   getFirstKey(): Key | null,
@@ -177,10 +177,10 @@ export interface Collection<T> extends Iterable<T> {
   getLastKey(): Key | null,
 
   /** Iterate over the child items of the given key. */
-  getChildren?(key: Key): Iterable<T>,
+  getChildren?(key?: Key | null): Iterable<T>,
 
   /** Returns a string representation of the item's contents. */
-  getTextValue?(key: Key): string
+  getTextValue?(key?: Key | null): string
 }
 
 export interface Node<T> {

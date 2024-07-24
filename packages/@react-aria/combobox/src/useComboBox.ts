@@ -89,9 +89,14 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       isDisabled: isDisabled || isReadOnly
     },
     state,
+    // useMenuTrigger shouldn't have an optional ref, but because we handle the keyboard
+    // we can omit this. Maybe useComboboxMenuTrigger should be created?
+    // @ts-ignore
     buttonRef
   );
 
+  // Do we throw an error if menuProps.id doesn't exist? that would mean a change in useMenuTrigger which
+  // currently always returns an id.
   // Set listbox id so it can be used when calling getItemId later
   listData.set(state, {id: menuProps.id});
 
@@ -136,12 +141,14 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         }
 
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
+        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
           if (e.key === 'Enter') {
             let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
               let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
+              if (collectionItem) {
+                router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
+              }
             }
           }
 
@@ -173,7 +180,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   };
 
-  let onBlur = (e: FocusEvent<HTMLInputElement>) => {
+  let onBlur = (e: FocusEvent) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
     let blurIntoPopover = popoverRef.current?.contains(e.relatedTarget);
     // Ignore blur if focused moved to the button(if exists) or into the popover.
@@ -182,19 +189,19 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
 
     if (props.onBlur) {
-      props.onBlur(e);
+      props.onBlur(e as FocusEvent<HTMLInputElement>);
     }
 
     state.setFocused(false);
   };
 
-  let onFocus = (e: FocusEvent<HTMLInputElement>) => {
+  let onFocus = (e: FocusEvent) => {
     if (state.isFocused) {
       return;
     }
 
     if (props.onFocus) {
-      props.onFocus(e);
+      props.onFocus(e as FocusEvent<HTMLInputElement>);
     }
 
     state.setFocused(true);
@@ -217,14 +224,14 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle(null, 'manual');
     }
   };
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
     }
   };
@@ -251,7 +258,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
     if (e.timeStamp - lastEventTime.current < 500) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       return;
     }
 
@@ -263,7 +270,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle(null, 'manual');
 
       lastEventTime.current = e.timeStamp;
@@ -287,7 +294,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
 
       let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: section && sectionKey !== lastSection.current,
+        isGroupChange: (section && sectionKey !== lastSection.current) ?? false,
         groupTitle: sectionTitle,
         groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
@@ -336,7 +343,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   useEffect(() => {
     if (state.isOpen) {
-      return ariaHideOutside([inputRef.current, popoverRef.current]);
+      return ariaHideOutside([inputRef.current, popoverRef.current].filter(element => element != null));
     }
   }, [state.isOpen, inputRef, popoverRef]);
 

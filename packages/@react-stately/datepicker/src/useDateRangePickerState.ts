@@ -38,7 +38,7 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
    * The date portion of the selected range. This may be set prior to `value` if the user has
    * selected a date range but has not yet selected a time range.
    */
-  dateRange: DateRange | null,
+  dateRange: DateRange | undefined,
   /** Sets the date portion of the selected range. */
   setDateRange(value: DateRange): void,
   /**

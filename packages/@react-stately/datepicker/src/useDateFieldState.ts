@@ -86,8 +86,8 @@ export interface DateFieldState extends FormValidationState {
    */
   decrementPage(type: SegmentType): void,
   /** Sets the value of the given segment. */
-  setSegment(type: 'era', value: string): void,
-  setSegment(type: SegmentType, value: number): void,
+  setSegment(type: 'era', value?: string): void,
+  setSegment(type: SegmentType, value?: number): void,
   /** Updates the remaining unfilled segments with the placeholder value. */
   confirmPlaceholder(): void,
   /** Clears the value of the given segment, reverting it to the placeholder. */
@@ -364,7 +364,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     decrementPage(part) {
       adjustSegment(part, -(PAGE_STEP[part] || 1));
     },
-    setSegment(part, v) {
+    setSegment(part, v: string | number) {
       markValid(part);
       setValue(setSegment(displayValue, part, v, resolvedOptions));
     },
@@ -521,7 +521,7 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
   }
 }
 
-function setSegment(value: DateValue, part: string, segmentValue: number, options: Intl.ResolvedDateTimeFormatOptions) {
+function setSegment(value: DateValue, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'day':
     case 'month':
@@ -530,7 +530,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number, option
       return value.set({[part]: segmentValue});
   }
 
-  if ('hour' in value) {
+  if ('hour' in value && typeof segmentValue === 'number') {
     switch (part) {
       case 'dayPeriod': {
         let hours = value.hour;

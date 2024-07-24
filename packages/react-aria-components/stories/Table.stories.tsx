@@ -40,9 +40,9 @@ const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: stri
     },
     getDropOperation: () => 'move',
     onReorder: e => {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     },
@@ -50,9 +50,9 @@ const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: stri
       const processedItems = await Promise.all(
         e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('item')))
       );
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.insertBefore(e.target.key, ...processedItems);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.insertAfter(e.target.key, ...processedItems);
       }
     },
@@ -276,9 +276,9 @@ export const DndTable = (props: DndTableProps) => {
             .filter(isTextDropItem)
             .map(async item => JSON.parse(await item.getText('custom-app-type')))
         );
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.insertBefore(e.target.key, ...processedItems);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.insertAfter(e.target.key, ...processedItems);
       }
     },
@@ -295,9 +295,9 @@ export const DndTable = (props: DndTableProps) => {
 
     // Handle reordering items within the same list.
     onReorder(e) {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     },
@@ -632,9 +632,9 @@ export function VirtualizedTable() {
       return [...keys].map(key => ({'text/plain': list.getItem(key).foo}));
     },
     onReorder(e) {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     },

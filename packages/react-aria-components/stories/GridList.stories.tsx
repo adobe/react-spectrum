@@ -24,7 +24,7 @@ export default {
 export const GridListExample = (args) => (
   <GridList
     {...args}
-    className={styles.menu} 
+    className={styles.menu}
     aria-label="test gridlist"
     style={{
       width: 300,
@@ -128,9 +128,9 @@ export function VirtualizedGridList() {
       return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
     },
     onReorder(e) {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     },
@@ -141,7 +141,7 @@ export function VirtualizedGridList() {
 
   return (
     <Virtualizer layout={layout}>
-      <GridList 
+      <GridList
         className={styles.menu}
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
@@ -178,7 +178,7 @@ export function VirtualizedGridListGrid() {
 export function TagGroupInsideGridList() {
   return (
     <GridList
-      className={styles.menu} 
+      className={styles.menu}
       aria-label="Grid list with tag group"
       style={{
         width: 300,

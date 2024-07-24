@@ -44,7 +44,12 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {VirtualizedListBoxExample} from './VirtualizedListBox';
 
-let manyItems = [];
+interface Iitem {
+  id: string,
+  type: string,
+  text: string
+}
+let manyItems: Array<Iitem> = [];
 for (let i = 0; i < 20; i++) {
   manyItems.push({id: '' + i, type: 'item', text: 'Item ' + i});
 }
@@ -279,7 +284,7 @@ export function Draggable({isDisabled = false}) {
     }
   });
 
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {buttonProps} = useButton({elementType: 'div'}, ref);
 
   return (
@@ -296,7 +301,7 @@ export function Draggable({isDisabled = false}) {
 }
 
 export function Droppable({type, children, actionId = ''}: any) {
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     onDropEnter: action(`onDropEnter${actionId}`),
@@ -330,7 +335,7 @@ export function Droppable({type, children, actionId = ''}: any) {
 
 function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref: unwrapDOMRef(ref),
     onDropActivate() {
@@ -386,7 +391,7 @@ function DraggableCollection(props) {
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection({
+    collection: React.useMemo(() => new GridCollection<Iitem>({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -413,13 +418,17 @@ function DraggableCollection(props) {
     getItems(keys) {
       return [...keys].map(key => {
         let item = gridState.collection.getItem(key);
+        if (item == null || item.value == null) {
+          return null;
+        }
 
+        // TODO why doesn't this work like DraggableCollection example?
         return {
           // @ts-ignore
           [item.value.type]: item.textValue,
           'text/plain': item.textValue
         };
-      });
+      }).filter(item => item != null);
     },
     preview,
     onDragStart: action('onDragStart'),
@@ -459,7 +468,7 @@ function DraggableCollection(props) {
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
               </div>
-              <span>{item.rendered}</span>
+              {item && <span>{item.rendered}</span>}
               {selectedKeys.size > 1 &&
                 <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
               }
@@ -472,8 +481,8 @@ function DraggableCollection(props) {
 }
 
 function DraggableCollectionItem({item, state, dragState, onCut}) {
-  let rowRef = React.useRef(undefined);
-  let cellRef = React.useRef(undefined);
+  let rowRef = React.useRef(null);
+  let cellRef = React.useRef(null);
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
@@ -493,7 +502,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
     onCut: () => onCut(dragState.getKeysForDrag(item.key))
   });
 
-  let buttonRef = React.useRef(undefined);
+  let buttonRef = React.useRef(null);
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'

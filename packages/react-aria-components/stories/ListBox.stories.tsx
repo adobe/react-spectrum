@@ -136,9 +136,9 @@ export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
     onReorder(e) {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     }
@@ -191,7 +191,7 @@ export const ListBoxHover = () => (
 export const ListBoxGrid = (args) => (
   <ListBox
     {...args}
-    className={styles.menu} 
+    className={styles.menu}
     aria-label="test listbox"
     style={{
       width: 300,
@@ -315,9 +315,9 @@ export function VirtualizedListBoxDnd() {
       return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
     },
     onReorder(e) {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     },
@@ -329,7 +329,7 @@ export function VirtualizedListBoxDnd() {
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
       <Virtualizer layout={layout}>
-        <ListBox 
+        <ListBox
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
@@ -366,9 +366,9 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
       return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
     },
     onReorder(e) {
-      if (e.target.dropPosition === 'before') {
+      if (e.target.dropPosition === 'before' && e.target.key != null) {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
+      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
         list.moveAfter(e.target.key, e.keys);
       }
     },

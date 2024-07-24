@@ -20,7 +20,7 @@ import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
 let dropItems = new Map<Element, DroppableItem>();
-let dragSession: DragSession = null;
+let dragSession: DragSession | null = null;
 let subscriptions = new Set<() => void>();
 
 interface DropTarget {
@@ -71,9 +71,11 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
 
   dragSession = new DragSession(target, stringFormatter);
   requestAnimationFrame(() => {
-    dragSession.setup();
-    if (getDragModality() === 'keyboard') {
-      dragSession.next();
+    if (dragSession) {
+      dragSession.setup();
+      if (getDragModality() === 'keyboard') {
+        dragSession.next();
+      }
     }
   });
 
@@ -154,14 +156,14 @@ const MESSAGES = {
 
 class DragSession {
   dragTarget: DragTarget;
-  validDropTargets: DropTarget[];
-  currentDropTarget: DropTarget;
-  currentDropItem: DroppableItem;
-  dropOperation: DropOperation;
-  private mutationObserver: MutationObserver;
-  private restoreAriaHidden: () => void;
+  validDropTargets: DropTarget[] = [];
+  currentDropTarget: DropTarget | undefined;
+  currentDropItem: DroppableItem | undefined;
+  dropOperation: DropOperation | undefined;
+  private mutationObserver: MutationObserver | undefined;
+  private restoreAriaHidden: (() => void) | undefined;
   private stringFormatter: LocalizedStringFormatter;
-  private isVirtualClick: boolean;
+  private isVirtualClick: boolean = false;
   private initialFocused: boolean;
 
   constructor(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
@@ -210,8 +212,8 @@ class DragSession {
       document.removeEventListener(event, this.cancelEvent, true);
     }
 
-    this.mutationObserver.disconnect();
-    this.restoreAriaHidden();
+    this.mutationObserver?.disconnect();
+    this.restoreAriaHidden?.();
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -396,7 +398,7 @@ class DragSession {
     // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === this.validDropTargets.length - 1) {
       if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
-        this.setCurrentDropTarget(null);
+        this.setCurrentDropTarget(undefined);
         this.dragTarget.element.focus();
       } else {
         this.setCurrentDropTarget(this.validDropTargets[0]);
@@ -422,7 +424,7 @@ class DragSession {
     // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === 0) {
       if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
-        this.setCurrentDropTarget(null);
+        this.setCurrentDropTarget(undefined);
         this.dragTarget.element.focus();
       } else {
         this.setCurrentDropTarget(this.validDropTargets[this.validDropTargets.length - 1]);
@@ -452,7 +454,7 @@ class DragSession {
     return nearest;
   }
 
-  setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
+  setCurrentDropTarget(dropTarget?: DropTarget, item?: DroppableItem) {
     if (dropTarget !== this.currentDropTarget) {
       if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
         let rect = this.currentDropTarget.element.getBoundingClientRect();
@@ -482,7 +484,7 @@ class DragSession {
     }
 
     if (item !== this.currentDropItem) {
-      if (item && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
+      if (item && this.currentDropTarget && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
         this.currentDropTarget.onDropTargetEnter(item?.target);
       }
 
@@ -520,14 +522,14 @@ class DragSession {
       // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
       // This corrects state such as whether focus ring should appear.
       // useDroppableCollection handles this itself, so this is only for standalone drop zones.
-      document.activeElement.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
+      document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 
-    this.setCurrentDropTarget(null);
+    this.setCurrentDropTarget(undefined);
   }
 
   cancel() {
-    this.setCurrentDropTarget(null);
+    this.setCurrentDropTarget(undefined);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();

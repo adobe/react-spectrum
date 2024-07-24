@@ -59,9 +59,9 @@ interface DroppingState {
   focusedKey: Key,
   selectedKeys: Set<Key>,
   target: DropTarget,
-  draggingKeys: Set<Key>,
+  draggingKeys: Set<Key | null | undefined>,
   isInternal: boolean,
-  timeout: ReturnType<typeof setTimeout>
+  timeout: ReturnType<typeof setTimeout> | undefined
 }
 
 const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];
@@ -72,7 +72,12 @@ const DROP_POSITIONS_RTL: DropPosition[] = ['after', 'on', 'before'];
  * based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
 export function useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DroppableCollectionResult {
-  let localState = useRef({
+  let localState = useRef<{
+    props: DroppableCollectionOptions,
+    state: DroppableCollectionState,
+    nextTarget: DropTarget | null,
+    dropOperation: DropOperation | null
+  }>({
     props,
     state,
     nextTarget: null,
@@ -161,7 +166,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let isValidDropTarget = (target) => state.getDropOperation({target, types, allowedOperations, isInternal, draggingKeys}) !== 'cancel';
       let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
       if (!target) {
-        localState.dropOperation = 'cancel';
+        localState.dropOperation = 'cancel' as DropOperation;
         localState.nextTarget = null;
         return 'cancel';
       }
@@ -228,7 +233,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         isInternal,
         draggingKeys
       } = droppingState.current;
-      
+
       // If an insert occurs during a drop, we want to immediately select these items to give
       // feedback to the user that a drop occurred. Only do this if the selection didn't change
       // since the drop started so we don't override if the user or application did something.
@@ -271,12 +276,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         draggingKeys.has(state.collection.getItem(prevFocusedKey)?.parentKey)
       ) {
         // Focus row instead of cell when reordering.
-        state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey).parentKey);
+        state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey)?.parentKey);
         setInteractionModality('keyboard');
       } else if (
         state.selectionManager.focusedKey === prevFocusedKey &&
-        target.type === 'item' && 
-        target.dropPosition === 'on' && 
+        target.type === 'item' &&
+        target.dropPosition === 'on' &&
         state.collection.getItem(target.key) != null
       ) {
         // If focus didn't move already (e.g. due to an insert), and the user dropped on an item,
@@ -294,10 +299,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
   let onDrop = useCallback((e: DropEvent, target: DropTarget) => {
     let {state} = localState;
-    
+
     // Save some state of the collection/selection before the drop occurs so we can compare later.
     droppingState.current = {
-      timeout: null,
+      timeout: undefined,
       focusedKey: state.selectionManager.focusedKey,
       collection: state.collection,
       selectedKeys: state.selectionManager.selectedKeys,
@@ -343,7 +348,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
   let {direction} = useLocale();
   useEffect(() => {
-    let getNextTarget = (target: DropTarget, wrap = true, horizontal = false): DropTarget => {
+    if (!ref.current) {
+      return;
+    }
+
+    let getNextTarget = (target: DropTarget | null | undefined, wrap = true, horizontal = false): DropTarget | null => {
       if (!target) {
         return {
           type: 'root'
@@ -351,11 +360,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
 
       let {keyboardDelegate} = localState.props;
-      let nextKey: Key;
+      let nextKey: Key | null | undefined;
       if (target?.type === 'item') {
-        nextKey = horizontal ? keyboardDelegate.getKeyRightOf(target.key) : keyboardDelegate.getKeyBelow(target.key);
+        nextKey = horizontal ? keyboardDelegate.getKeyRightOf?.(target.key) : keyboardDelegate.getKeyBelow?.(target.key);
       } else {
-        nextKey = horizontal && direction === 'rtl' ? keyboardDelegate.getLastKey() : keyboardDelegate.getFirstKey();
+        nextKey = horizontal && direction === 'rtl' ? keyboardDelegate.getLastKey?.() : keyboardDelegate.getFirstKey?.();
       }
       let dropPositions = horizontal && direction === 'rtl' ? DROP_POSITIONS_RTL : DROP_POSITIONS;
       let dropPosition: DropPosition = dropPositions[0];
@@ -403,13 +412,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       };
     };
 
-    let getPreviousTarget = (target: DropTarget, wrap = true, horizontal = false): DropTarget => {
+    let getPreviousTarget = (target: DropTarget | null | undefined, wrap = true, horizontal = false): DropTarget | null => {
       let {keyboardDelegate} = localState.props;
-      let nextKey: Key;
+      let nextKey: Key | null | undefined;
       if (target?.type === 'item') {
-        nextKey = horizontal ? keyboardDelegate.getKeyLeftOf(target.key) : keyboardDelegate.getKeyAbove(target.key);
+        nextKey = horizontal ? keyboardDelegate.getKeyLeftOf?.(target.key) : keyboardDelegate.getKeyAbove?.(target.key);
       } else {
-        nextKey = horizontal && direction === 'rtl' ? keyboardDelegate.getFirstKey() : keyboardDelegate.getLastKey();
+        nextKey = horizontal && direction === 'rtl' ? keyboardDelegate.getFirstKey?.() : keyboardDelegate.getLastKey?.();
       }
       let dropPositions = horizontal && direction === 'rtl' ? DROP_POSITIONS_RTL : DROP_POSITIONS;
       let dropPosition: DropPosition = !target || target.type === 'root' ? dropPositions[2] : 'on';
@@ -458,12 +467,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     };
 
     let nextValidTarget = (
-      target: DropTarget,
+      target: DropTarget | null | undefined,
       types: Set<string>,
       allowedDropOperations: DropOperation[],
-      getNextTarget: (target: DropTarget, wrap: boolean) => DropTarget,
+      getNextTarget: (target: DropTarget | null | undefined, wrap: boolean) => DropTarget | null,
       wrap = true
-    ): DropTarget => {
+    ): DropTarget | null => {
       let seenRoot = 0;
       let operation: DropOperation;
       let {draggingKeys} = globalDndState;
@@ -509,13 +518,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDropEnter(e, drag) {
         let types = getTypes(drag.items);
         let selectionManager = localState.state.selectionManager;
-        let target: DropTarget;
+        let target: DropTarget | null = null;
         // Update the drop collection ref tracker for useDroppableItem's getDropOperation isInternal check
         setDropCollectionRef(ref);
 
         // When entering the droppable collection for the first time, the default drop target
         // is after the focused key.
-        let key = selectionManager.focusedKey;
+        let key: Key | null | undefined = selectionManager.focusedKey;
         let dropPosition: DropPosition = 'after';
 
         // If the focused key is a cell, get the parent item instead.
@@ -529,7 +538,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // But if the focused key is the first selected item, then default to before the first selected item.
         // This is to make reordering lists slightly easier. If you select top down, we assume you want to
         // move the items down. If you select bottom up, we assume you want to move the items up.
-        if (selectionManager.isSelected(key)) {
+        if (key != null && selectionManager.isSelected(key)) {
           if (selectionManager.selectedKeys.size > 1 && selectionManager.firstSelectedKey === key) {
             dropPosition = 'before';
           } else {
@@ -640,16 +649,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               } else {
                 // If on the root, go to the item a page below the top. Otherwise a page below the current item.
-                let nextKey = keyboardDelegate.getKeyPageBelow(
+                let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageBelow(
                   target.type === 'item'
                     ? target.key
-                    : keyboardDelegate.getFirstKey()
+                    : keyboardDelegate.getFirstKey?.()
                 );
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.
-                if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey())) {
-                  nextKey = keyboardDelegate.getLastKey();
+                if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey?.())) {
+                  nextKey = keyboardDelegate.getLastKey?.();
                   dropPosition = 'after';
                 }
 
@@ -684,15 +693,15 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               target = nextValidTarget(null, types, drag.allowedDropOperations, getPreviousTarget);
             } else if (target.type === 'item') {
               // If at the top already, switch to the root. Otherwise navigate a page up.
-              if (target.key === keyboardDelegate.getFirstKey()) {
+              if (target.key === keyboardDelegate.getFirstKey?.()) {
                 target = {
                   type: 'root'
                 };
               } else {
-                let nextKey = keyboardDelegate.getKeyPageAbove(target.key);
+                let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageAbove(target.key);
                 let dropPosition = target.dropPosition;
                 if (nextKey == null) {
-                  nextKey = keyboardDelegate.getFirstKey();
+                  nextKey = keyboardDelegate.getFirstKey?.();
                   dropPosition = 'before';
                 }
 
