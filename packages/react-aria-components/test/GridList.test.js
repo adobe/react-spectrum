@@ -68,12 +68,12 @@ describe('GridList', () => {
 
   it('should render with default classes', () => {
     let {getByRole} = renderGridList();
-    let gridListUtil = testUtilUser.createTester('GridListTester');
-    gridListUtil.setElement(getByRole('grid'));
+    let {setElement, getGridList, getRows} = testUtilUser.createTester('GridListTester');
+    setElement(getByRole('grid'));
 
-    expect(gridListUtil.gridlist).toHaveAttribute('class', 'react-aria-GridList');
+    expect(getGridList()).toHaveAttribute('class', 'react-aria-GridList');
 
-    for (let row of gridListUtil.rows) {
+    for (let row of getRows()) {
       expect(row).toHaveAttribute('class', 'react-aria-GridListItem');
     }
   });
@@ -217,20 +217,20 @@ describe('GridList', () => {
 
   it('should support selection state', async () => {
     let {getByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
-    let gridListUtil = testUtilUser.createTester('GridListTester');
-    gridListUtil.setElement(getByRole('grid'));
+    let {toggleRowSelection, setElement, getRows} = testUtilUser.createTester('GridListTester');
+    setElement(getByRole('grid'));
 
-    let row = gridListUtil.rows[0];
+    let row = getRows()[0];
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
 
-    await gridListUtil.toggleRowSelection({index: 0});
+    await toggleRowSelection({index: 0});
     expect(row).toHaveAttribute('aria-selected', 'true');
     expect(row).toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).toBeChecked();
 
-    await gridListUtil.toggleRowSelection({index: 0});
+    await toggleRowSelection({index: 0});
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
@@ -246,7 +246,7 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).toBeDisabled();
   });
 
-  it.only('should support isDisabled prop on items', async () => {
+  it('should support isDisabled prop on items', async () => {
     let {getByRole} = render(
       <GridList aria-label="Test">
         <GridListItem id="cat">Cat</GridListItem>
@@ -255,9 +255,9 @@ describe('GridList', () => {
       </GridList>
     );
 
-    let gridListUtil = testUtilUser.createTester('GridListTester');
-    gridListUtil.setElement(getByRole('grid'));
-    let rows = gridListUtil.rows;
+    let {setElement, getRows} = testUtilUser.createTester('GridListTester');
+    setElement(getByRole('grid'));
+    let rows = getRows();
     expect(rows[1]).toHaveAttribute('aria-disabled', 'true');
     expect(within(rows[1]).getByRole('button')).toBeDisabled();
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act, within} from '@testing-library/react';
 
 type InteractionType = 'mouse' | 'touch' | 'keyboard'
 
@@ -29,16 +29,16 @@ export class GridListTester {
     this._interactionType = opts.interactionType || 'mouse';
   }
 
-  setElement(element: HTMLElement) {
+  setElement = (element: HTMLElement) => {
     this._gridlist = element;
-  }
+  };
 
-  setInteractionType(type: InteractionType) {
+  setInteractionType = (type: InteractionType) => {
     this._interactionType = type;
-  }
+  };
 
   // TODO: taken directly from table, move to somewhere sharable. Maybe can be used by the other utils
-  // as well (not sure if the keyboard one is valid for all of them aka if we'd consider doing .focus directly on the element prior
+  // as well (not sure if the keyboard one is valid for all of them aka if we'd consider doing "".focus" directly on the element prior
   // to the actual keystroke as valid)
   private async pressElement(element: HTMLElement) {
     if (this._interactionType === 'mouse') {
@@ -54,7 +54,7 @@ export class GridListTester {
   // TODO: support long press? This is also pretty much the same as table's toggleRowSelection so maybe can share
   // Maybe also support an option to force the click to happen on a specific part of the element (checkbox or row). That way
   // the user can test a specific type of interaction?
-  async toggleRowSelection(opts: {index?: number, text?: string} = {}) {
+  toggleRowSelection = async (opts: {index?: number, text?: string} = {}) => {
     let {index, text} = opts;
 
     let row = this.findRow({index, text});
@@ -75,11 +75,11 @@ export class GridListTester {
     //     jest.runOnlyPendingTimers();
     //   });
     // }
-  }
+  };
 
   // TODO: pretty much the same as table except it uses this.gridlist. Make common between the two by accepting an option for
   // an element?
-  findRow(opts: {index?: number, text?: string}) {
+  findRow = (opts: {index?: number, text?: string}) => {
     let {
       index,
       text
@@ -87,38 +87,54 @@ export class GridListTester {
 
     let row;
     if (index != null) {
-      row = this.rows[index];
+      row = this.getRows()[index];
     } else if (text != null) {
-      row = within(this.gridlist).getByText(text);
+      row = within(this.getGridList()).getByText(text);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
     }
 
     return row;
-  }
+  };
 
-  // TODO add findCell? Do we need it since there is only one gridcell per row? See if the test need it
+  // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
+  // user specificlly tells us
+  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean}) => {
+    let {
+      index,
+      text,
+      needsDoubleClick
+    } = opts;
 
-  // TODO: maybe also support triggering row action like in table? There is also a more difficult use case where the row
-  // has a link, don't think we have a good way to determine that a list row might behave like a link
+    let row = this.findRow({index, text});
+    if (row) {
+      if (needsDoubleClick) {
+        await this.user.dblClick(row);
+      } else if (this._interactionType === 'keyboard') {
+        act(() => row.focus());
+        await this.user.keyboard('[Enter]');
+      } else {
+        await this.pressElement(row);
+      }
+    }
+  };
 
   // TODO: do we really need this getter? Theoretically the user already has the reference to the gridlist
-  get gridlist() {
+  getGridList = () => {
     if (!this._gridlist) {
       throw new Error('Gridlist element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._gridlist;
-  }
+  };
 
-  get rows() {
-    return within(this.gridlist).queryAllByRole('row');
-  }
+  getRows = () => {
+    return within(this.getGridList()).queryAllByRole('row');
+  };
 
-  // TODO: maybe have this accept a optional row element so it can return the cells specific to the provided row
-  cells(opts: {element?: HTMLElement} = {}) {
+  getCells = (opts: {element?: HTMLElement} = {}) => {
     let {element} = opts;
-    return within(element || this.gridlist).queryAllByRole('gridcell');
-  }
+    return within(element || this.getGridList()).queryAllByRole('gridcell');
+  };
 }
