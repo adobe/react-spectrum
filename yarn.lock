@@ -5849,6 +5849,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
+    "@react-aria/ssr": "npm:^3.9.5"
     "@react-aria/utils": "npm:^3.25.1"
     "@react-types/shared": "npm:^3.24.1"
     "@swc/helpers": "npm:^0.5.0"
