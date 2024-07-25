@@ -68,10 +68,18 @@ fi
 # Publish packages to verdaccio
 yarn lerna publish from-package --registry $registry --yes
 
+# set the npm registry because that will set it at a higher level, making local testing easier
 npm set registry $registry
+yarn config set npmRegistryServer $registry
 
 if [ "$ci" = true ];
 then
+  echo 'build prod docs'
+  cd starters/docs
+  yarn config set npmRegistryServer $registry
+  cd ../tailwind
+  yarn config set npmRegistryServer $registry
+  cd ../..
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
 
@@ -81,9 +89,11 @@ then
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
+  echo 'build rsp-cra-18'
   # install packages in CRA test app
   cd examples/rsp-cra-18
-  yarn install
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
   yarn build | tee build-stats.txt
@@ -92,9 +102,12 @@ then
   mv build-stats.txt ../../
   mv build ../../$verdaccio_path
 
+  echo 'build webpack 4 test app'
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
-  yarn install
+  node ./scripts/prepareForProd.mjs
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
   yarn jest
 
   # Build Webpack 4 test app and move to dist folder. Store the size of the build in a text file.
@@ -103,9 +116,11 @@ then
   mv webpack-4-build-stats.txt ../../$verdaccio_path/publish-stats
   mv dist ../../$verdaccio_path/webpack-4
 
+  echo 'build nextjs test app'
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
-  yarn install
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
   yarn test
 
   # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
@@ -115,26 +130,33 @@ then
   mv next-build-stats.txt ../../$verdaccio_path/publish-stats
   mv out ../../$verdaccio_path/next
 
+  echo 'build RAC Tailwind app'
   # Install/build RAC Tailwind app
   cd ../../examples/rac-tailwind
-  yarn install
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-tailwind
 
+  echo 'build RAC Spectrum Tailwind app'
   # Install/build RAC + Spectrum + Tailwind app
   cd ../../examples/rac-spectrum-tailwind
-  yarn install
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
 
   cd ../..
 
+  echo 'get size of each package published to verdaccio'
   # Get the tarball size of each published package.
   node scripts/verdaccioPkgSize.js
 
+  echo 'compare sizes'
   # Compare the size of the built app and the published packages.
   node scripts/compareSize.js
 
+  echo 'move to folder for azure'
   # Store into folder for azure.
   mv size-diff.txt build-stats.txt publish.json $verdaccio_path/publish-stats
 else
