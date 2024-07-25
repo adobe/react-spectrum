@@ -1,0 +1,218 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/color/package.json';
+import Anatomy from './ColorWheelAnatomy.svg';
+
+---
+category: Color
+keywords: [color wheel, color picker, aria]
+---
+
+# useColorWheel
+
+<PageDescription>{docs.exports.useColorWheel.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useColorWheel']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useColorWheel} links={docs.links} />
+
+## Features
+
+The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
+can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
+of a complete color picker rather than only a hue color wheel. `useColorWheel` helps achieve accessible and
+touch-friendly color wheels that can be styled as needed.
+
+* Support for adjusting the hue of an HSL or HSB color value
+* Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
+* Multi-touch support
+* Pressing on the track moves the thumb to that position
+* Supports using the arrow keys, as well as page up/down, home, and end keys
+* Support for disabling the color wheel
+* Prevents text selection while dragging
+* Exposed to assistive technology as a `slider` element via ARIA
+* Uses a hidden native input element to support touch screen readers
+* Automatic ARIA labeling using the localized channel name by default
+
+## Anatomy
+
+<Anatomy
+  role="img"
+  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements." />
+
+A color wheel consists of a circular track and a thumb that the user can drag to change the color hue.
+A visually hidden `<input>` element is used to represent the value to assistive technologies.
+
+`useColorWheel` returns three sets of props that you should spread onto the appropriate elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useColorWheel.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useColorWheelState} />
+hook from `@react-stately/color`. The state object should be passed as an option to `useColorWheel`
+
+By default, `useColorWheel` provides an `aria-label` for the localized string "Hue". If you wish to override this
+with a more specific label, an `aria-label` or `aria-labelledby` prop may be passed instead to identify the element
+to assistive technologies.
+
+## Example
+
+This example shows how to build a simple color wheel with a draggable thumb to adjust the hue value of a color. Styling for
+the track background and positioning of the thumb are provided by `useColorWheel` in the returned `style` prop for each element.
+The visually hidden `<input>` element inside the thumb is used to represent the color wheel to assistive technology. The thumb also 
+uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
+
+```tsx example export=true
+import {useColorWheel} from '@react-aria/color';
+import {useColorWheelState} from '@react-stately/color';
+import {useFocusRing} from '@react-aria/focus';
+
+const RADIUS = 100;
+const TRACK_THICKNESS = 28;
+const THUMB_SIZE = 20;
+
+function ColorWheel(props) {
+  let {isDisabled} = props;
+  let state = useColorWheelState(props);
+  let inputRef = React.useRef(null);
+  let {trackProps, inputProps, thumbProps} = useColorWheel({
+    ...props,
+    outerRadius: RADIUS,
+    innerRadius: RADIUS - TRACK_THICKNESS
+  }, state, inputRef);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div style={{position: 'relative', display: 'inline-block'}}>
+      <div
+        {...trackProps}
+        style={{
+          ...trackProps.style,
+          background: isDisabled ? 'rgb(142, 142, 142)' : trackProps.style.background
+        }} />
+      <div
+        {...thumbProps}
+        style={{
+          ...thumbProps.style,
+          background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+          border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
+          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          borderRadius: '50%',
+          boxSizing: 'border-box'
+        }}>
+        <input {...inputProps} {...focusProps} ref={inputRef} />
+      </div>
+    </div>
+  );
+}
+
+<ColorWheel />
+```
+
+## Usage
+
+The following examples show how to use the `ColorWheel` component created in the above example.
+
+### Uncontrolled
+
+By default, `ColorWheel` is uncontrolled with a default value of red (hue = 0˚). You can change the
+default value using the `defaultValue` prop.
+
+```tsx example
+<ColorWheel defaultValue="hsl(80, 100%, 50%)" />
+```
+
+### Controlled
+
+A `ColorWheel` can be made controlled using the `value` prop. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
+function is used to parse the initial color from an HSL string, stored in state. The `onChange` prop
+is used to update the value in state when the user drags the thumb.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <>
+      <ColorWheel value={color} onChange={setColor} />
+      <p>Current color value: {color.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+### onChangeEnd
+
+The `onChangeEnd` prop can be used to handle when a user stops dragging the color wheel, whereas the `onChange`
+prop is called as the user drags.
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <>
+      <ColorWheel defaultValue={color} onChangeEnd={setColor} />
+      <p>Current color value: {color.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+### Disabled
+
+A `ColorWheel` can be disabled using the `isDisabled` prop. This prevents the thumb from being focused or dragged.
+It's up to you to style your color wheel to appear disabled accordingly.
+
+```tsx example
+<ColorWheel defaultValue="hsl(80, 100%, 50%)" isDisabled />
+```
+
+### HTML forms
+
+ColorWheel supports the `name` prop for integration with HTML forms. The value will be submitted as a number between 0 and 360 degrees.
+
+```tsx example
+<ColorWheel name="hue" />
+```
+
+## Internationalization
+
+### Labeling
+
+By default, a localized string for the "hue" channel name is used as the `aria-label` for the `ColorWheel`. When a custom `aria-label`
+is provided, it should be localized accordingly. To get a localized channel name to use as a visual label,
+you can use the `color.getChannelName` method.
+
+### Value formatting
+
+The `aria-valuetext` of the `<input>` element is formatted according to the user's locale automatically. If you wish to display this
+value visually, you can use the `color.formatChannelValue` method.
+
+### RTL
+
+Color wheels should not be mirrored in right-to-left languages.

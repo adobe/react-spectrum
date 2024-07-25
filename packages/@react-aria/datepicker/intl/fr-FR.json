@@ -1,0 +1,18 @@
+{
+  "calendar": "Calendrier",
+  "day": "jour",
+  "dayPeriod": "cadran",
+  "endDate": "Date de fin",
+  "era": "ère",
+  "hour": "heure",
+  "minute": "minute",
+  "month": "mois",
+  "second": "seconde",
+  "selectedDateDescription": "Date sélectionnée : {date}",
+  "selectedRangeDescription": "Plage sélectionnée : {startDate} au {endDate}",
+  "selectedTimeDescription": "Heure choisie : {time}",
+  "startDate": "Date de début",
+  "timeZoneName": "fuseau horaire",
+  "weekday": "jour de la semaine",
+  "year": "année"
+}

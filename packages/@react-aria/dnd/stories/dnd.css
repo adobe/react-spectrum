@@ -1,0 +1,301 @@
+.draggable {
+  --spectrum-dnd-draggable-background-color: var(--spectrum-global-color-gray-50);
+  --spectrum-dnd-draggable-background-color-selected: var(--spectrum-alias-highlight-selected);
+  --spectrum-dnd-draggable-background-color-dragging: var(--spectrum-global-color-gray-75);
+  --spectrum-dnd-draggable-border-color: var(--spectrum-global-color-gray-300);
+  --spectrum-dnd-draggable-border-color-selected: var(--spectrum-table-row-background-color-selected);
+  --spectrum-dnd-draggable-border-color-dragging: var(--spectrum-global-color-gray-200);
+  --spectrum-dnd-draggable-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
+  --spectrum-dnd-draggable-border-color-focus: var(--spectrum-dnd-draggable-border-color-selected-hover);
+  --spectrum-dnd-draggable-badge-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-dnd-draggable-badge-background-color: var(--spectrum-global-color-blue-400);
+}
+
+.droppable {
+  --spectrum-dnd-droppable-background-color: var(--spectrum-global-color-gray-50);
+  --spectrum-dnd-droppable-background-color-selected: var(--spectrum-alias-highlight-selected);
+  --spectrum-dnd-droppable-border-color: var(--spectrum-global-color-gray-300);
+  --spectrum-dnd-droppable-border-color-selected: var(--spectrum-table-row-background-color-selected);
+  --spectrum-dnd-droppable-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
+  --spectrum-dnd-droppable-border-color-focus: var(--spectrum-dnd-droppable-border-color-selected-hover);
+}
+
+.draggable {
+  width: var(--spectrum-alias-single-line-width);
+  border: 1px solid var(--spectrum-dnd-draggable-border-color);
+  box-sizing: border-box;
+  height: var(--spectrum-global-dimension-static-size-500);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spectrum-global-dimension-static-size-150);
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  background: var(--spectrum-dnd-draggable-background-color);
+  margin: 4px 0;
+
+  &.is-selected {
+    background: var(--spectrum-dnd-draggable-background-color-selected);
+    border-color: var(--spectrum-dnd-draggable-border-color-selected);
+    forced-color-adjust: none;
+  }
+
+  &.is-dragging {
+    background: var(--spectrum-dnd-draggable-background-color-dragging);
+    border-color: var(--spectrum-dnd-draggable-border-color-dragging);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    border-color: var(--spectrum-dnd-draggable-border-color-focus);
+    box-shadow: 0 0 0 1px var(--spectrum-dnd-draggable-border-color-focus);
+    forced-color-adjust: none;
+  }
+
+  > span {
+    margin-left: var(--spectrum-global-dimension-static-size-100);
+    flex: 1;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: var(--spectrum-global-dimension-static-size-100);
+    }
+  }
+
+  &.is-drag-preview {
+    margin: 0;
+    border-color: var(--spectrum-dnd-draggable-border-color-selected-hover);
+  }
+
+  &.is-dragging-multiple {
+    position: relative;
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: -1;
+      top: 4px;
+      left: 4px;
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--spectrum-dnd-draggable-border-color-selected-hover);
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      background: var(--spectrum-dnd-draggable-background-color);
+      forced-color-adjust: none;
+    }
+  }
+
+  .badge {
+    color: var(--spectrum-dnd-draggable-badge-text-color);
+    background: var(--spectrum-dnd-draggable-badge-background-color);
+    padding: 0 8px;
+    border-radius: var(--spectrum-alias-border-radius-regular);
+    forced-color-adjust: none;
+  }
+}
+
+.droppable {
+  width: var(--spectrum-alias-single-line-width);
+  border: 1px solid var(--spectrum-dnd-droppable-border-color);
+  box-sizing: border-box;
+  height: var(--spectrum-global-dimension-static-size-500);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spectrum-global-dimension-static-size-150);
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  background: var(--spectrum-dnd-droppable-background-color);
+  margin: 4px 0;
+
+  &.is-selected {
+    background: var(--spectrum-dnd-droppable-background-color-selected);
+    border-color: var(--spectrum-dnd-droppable-border-color-selected);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    border-color: var(--spectrum-dnd-droppable-border-color-selected-hover);
+    box-shadow: 0 0 0 1px var(--spectrum-dnd-droppable-border-color-selected-hover);
+  }
+
+  &.is-drop-target {
+    border-color: var(--spectrum-dnd-droppable-border-color-selected-hover);
+    background-color: var(--spectrum-dnd-droppable-background-color-selected);
+    box-shadow: 0 0 0 1px var(--spectrum-dnd-droppable-border-color-selected-hover);
+  }
+
+  > span {
+    margin-left: var(--spectrum-global-dimension-static-size-100);
+  }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+}
+
+.drag-handle {
+  height: 20px;
+  border-radius: var(--spectrum-alias-border-radius-small);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--spectrum-dnd-draggable-border-color-selected-hover);
+  }
+}
+
+.droppable-collection {
+  outline: none;
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  padding: 8px 12px;
+  max-height: 300px;
+  overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &.is-drop-target {
+    background-color: var(--spectrum-dnd-droppable-background-color-selected-hover);
+    box-shadow: 0 0 0 2px var(--spectrum-dnd-droppable-border-color-selected-hover);
+  }
+
+  &.is-virtualized {
+    padding: 0;
+    width: calc(var(--spectrum-alias-single-line-width) + 24px);
+
+    > div > div {
+      overflow: visible !important;
+    }
+  }
+
+  .droppable {
+    margin: 0;
+  }
+}
+
+.draggable-listbox {
+  padding: 0;
+  margin: 5px 0;
+  list-style: none;
+  border: 1px solid gray;
+  outline: none;
+  width: 250px;
+}
+
+.option {
+  padding: 2px 5px;
+  outline: none;
+}
+
+.option.pressed {
+  background: var(--spectrum-global-color-gray-200);
+}
+
+.option[aria-selected=true] {
+  background: blueviolet;
+  color: white;
+}
+
+.option.focus-visible {
+  outline: 2px solid orange;
+}
+
+.option.drop-target {
+  outline: 2px solid blue;
+}
+
+@media (forced-colors: active) {
+  .draggable {
+    --spectrum-dnd-draggable-row-text-color-selected: HighlightText;
+    --spectrum-dnd-draggable-row-background-color-selected: Highlight;
+    --spectrum-dnd-draggable-background-color: Canvas;
+    --spectrum-dnd-draggable-background-color-selected: Canvas;
+    --spectrum-dnd-draggable-background-color-dragging: Canvas;
+    --spectrum-dnd-draggable-border-color: CanvasText;
+    --spectrum-dnd-draggable-border-color-selected: Highlight;
+    --spectrum-dnd-draggable-border-color-dragging: Highlight;
+    --spectrum-dnd-draggable-border-color-selected-hover: Highlight;
+    --spectrum-dnd-draggable-border-color-focus: Highlight;
+    --spectrum-dnd-draggable-badge-text-color: HighlightText;
+    --spectrum-dnd-draggable-badge-background-color: Highlight;
+
+    .drag-handle {
+      --spectrum-dnd-draggable-border-color-selected-hover: CanvasText;
+    }
+
+    &.is-selected {
+      color: var(--spectrum-dnd-draggable-row-text-color-selected);
+      background-color: var(--spectrum-dnd-draggable-row-background-color-selected);
+
+      .drag-handle {
+        --spectrum-dnd-draggable-border-color-selected-hover: HighlightText;
+      }
+    }
+  }
+
+  .droppable {
+    --spectrum-dnd-droppable-row-text-color-selected: HighlightText;
+    --spectrum-dnd-droppable-row-background-color-selected: Highlight;
+    --spectrum-dnd-droppable-background-color: Canvas;
+    --spectrum-dnd-droppable-background-color-selected: Canvas;
+    --spectrum-dnd-droppable-background-color-dragging: Canvas;
+    --spectrum-dnd-droppable-border-color: CanvasText;
+    --spectrum-dnd-droppable-border-color-selected: Highlight;
+    --spectrum-dnd-droppable-border-color-dragging: Highlight;
+    --spectrum-dnd-droppable-border-color-selected-hover: Highlight;
+    --spectrum-dnd-droppable-border-color-focus: Highlight;
+    --spectrum-dnd-droppable-badge-text-color: HighlightText;
+    --spectrum-dnd-droppable-badge-background-color: Highlight;
+
+    &:focus-visible {
+      forced-color-adjust: none;
+    }
+
+    &.is-selected {
+      forced-color-adjust: none;
+      color: var(--spectrum-dnd-droppable-row-text-color-selected);
+      background-color: var(--spectrum-dnd-droppable-row-background-color-selected);
+    }
+
+    &.is-drop-target {
+      --spectrum-dnd-droppable-background-color-selected-hover: Canvas;
+      --spectrum-dnd-droppable-border-color-selected-hover: Highlight;
+      forced-color-adjust: none;
+    }
+  }
+
+  .drag-handle {
+    &:focus-visible {
+      forced-color-adjust: none;
+      --spectrum-dnd-draggable-border-color-selected-hover: Highlight;
+    }
+  }
+
+  .droppable-collection {
+    --spectrum-dnd-droppable-background-color-selected-hover: Canvas;
+    --spectrum-dnd-droppable-border-color-selected-hover: Highlight;
+    &.is-drop-target {
+      forced-color-adjust: none;
+    }
+  }
+
+  .option[aria-selected=true] {
+    background: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+
+  .option.focus-visible {
+    position: relative;
+    outline: 3px solid Highlight;
+    forced-color-adjust: none;
+  }
+}

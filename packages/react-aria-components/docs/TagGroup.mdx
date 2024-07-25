@@ -1,0 +1,730 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/list';
+import {PropTable, HeaderInfo, PageDescription, StateTable, ContextTable, TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/tag/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Collections
+keywords: [tag, aria]
+type: component
+---
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TagGroup', 'TagList', 'Tag']}
+   sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
+
+<TagGroup selectionMode="multiple">
+  <Label>Categories</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+</TagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './ToggleButton.mdx' layer(togglebutton);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-TagGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: small;
+  color: var(--text-color);
+}
+
+.react-aria-TagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.react-aria-Tag {
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  forced-color-adjust: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.929rem;
+  outline: none;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  transition: border-color 200ms;
+
+  &[data-hovered] {
+    border-color: var(--border-color-hover);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  &[data-selected] {
+    border-color: var(--highlight-background);
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+  }
+}
+```
+
+</details>
+
+## Features
+
+A static tag list can be built using [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul) or [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol) HTML elements, but does not support any user interactions.
+HTML lists are meant for static content, rather than lists with rich interactions such as keyboard navigation, item selection, removal, etc.
+`TagGroup` helps achieve accessible and interactive tag list components that can be styled as needed.
+
+* **Keyboard navigation** – Tags can be navigated using the arrow keys, along with page up/down, home/end, etc.
+* **Removable** – Tags can be removed from the tag group by clicking a remove button or pressing the backspace key.
+* **Item selection** – Single or multiple selection, with support for disabled items and both `toggle` and `replace` selection behaviors.
+* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
+## Anatomy
+
+<Anatomy />
+
+A tag group consists of label and a list of tags. Each tag should include a visual label, and may optionally include a remove button. If a visual label is not included in a tag group, then an `aria-label` or `aria-labelledby` prop must be passed to identify it to assistive technology.
+
+`TagGroup` also supports optional description and error message slots, which can be used
+to provide more context about the tag group, and any validation messages. These are linked with the
+tag group via the `aria-describedby` attribute.
+
+```tsx
+import {TagGroup, TagList, Tag, Label, Button, Text} from 'react-aria-components';
+
+<TagGroup>
+  <Label />
+  <TagList>
+    <Tag>
+      <Button slot="remove" />
+    </Tag>
+  </TagList>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TagGroup>
+```
+
+### Concepts
+
+`TagGroup` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `TagGroup` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an element.">
+  <Label />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="taggroup" />
+
+## Reusable wrappers
+
+If you will use a TagGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `TagGroup` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)). The `Tag` component is also wrapped to automatically render a remove button when the `onRemove` prop is provided to the TagGroup.
+
+```tsx example export=true
+import type {TagGroupProps, TagListProps, TagProps} from 'react-aria-components';
+import {Button, Text} from 'react-aria-components';
+
+interface MyTagGroupProps<T> extends Omit<TagGroupProps, 'children'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyTagGroup<T extends object>({label, description, errorMessage, items, children, renderEmptyState, ...props}: MyTagGroupProps<T>) {
+  return (
+    <TagGroup {...props}>
+      <Label>{label}</Label>
+      <TagList items={items} renderEmptyState={renderEmptyState}>
+        {children}
+      </TagList>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </TagGroup>
+  );
+}
+
+function MyTag({children, ...props}: TagProps) {
+  let textValue = typeof children === 'string' ? children : undefined;
+  return (
+    <Tag textValue={textValue} {...props}>
+      {({allowsRemoving}) => (<>
+        {children}
+        {allowsRemoving && <Button slot="remove">ⓧ</Button>}
+      </>)}
+    </Tag>
+  );
+}
+
+<MyTagGroup label="Ice cream flavor" selectionMode="single">
+  <MyTag>Chocolate</MyTag>
+  <MyTag>Mint</MyTag>
+  <MyTag>Strawberry</MyTag>
+  <MyTag>Vanilla</MyTag>
+</MyTagGroup>
+```
+
+## Removing tags
+
+The `onRemove` prop can be used to allow the user to remove tags. In the above example, an additional `<Button slot="remove>` element is rendered when a tag group allows removing. The user can also press the backspace key while a tag is focused to remove the tag from the group. Additionally, when [selection](#selection) is enabled, all selected items will be deleted when pressing the backspace key on a selected tag.
+
+```tsx example
+import {useListData} from '@react-stately/data';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      { id: 1, name: "News" },
+      { id: 2, name: "Travel" },
+      { id: 3, name: "Gaming" },
+      { id: 4, name: "Shopping" }
+    ]
+  });
+
+  return (
+    <MyTagGroup
+      label="Categories"
+      items={list.items}
+      ///- begin highlight -///
+      onRemove={keys => list.remove(...keys)}
+      ///- end highlight -///
+    >
+      {(item) => <MyTag>{item.name}</MyTag>}
+    </MyTagGroup>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tag {
+  [slot=remove] {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    color: var(--text-color-base);
+    transition: color 200ms;
+    outline: none;
+    font-size: 0.95em;
+
+    &[data-hovered] {
+      color: var(--text-color-hover);
+    }
+  }
+
+  &[data-selected] {
+    [slot=remove] {
+      color: inherit;
+    }
+  }
+}
+```
+
+</details>
+
+## Selection
+
+ TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+ Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
+ See the [Selection](selection.html) guide for more details.
+
+ ```tsx example
+ import type {Selection} from 'react-aria-components';
+
+ function Example() {
+   let [selected, setSelected] = React.useState<Selection>(new Set(['parking']));
+
+   return (
+     <>
+       <MyTagGroup
+         label="Amenities"
+         ///- begin highlight -///
+         selectionMode="multiple"
+         selectedKeys={selected}
+         onSelectionChange={setSelected}
+         ///- end highlight -///
+       >
+         <MyTag id="laundry">Laundry</MyTag>
+         <MyTag id="fitness">Fitness center</MyTag>
+         <MyTag id="parking">Parking</MyTag>
+         <MyTag id="pool">Swimming pool</MyTag>
+         <MyTag id="breakfast">Breakfast</MyTag>
+       </MyTagGroup>
+       <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+     </>
+   );
+ }
+ ```
+
+## Links
+
+Tags may be links to another page or website. This can be achieved by passing the `href` prop to the `<Tag>` component. Tags with an `href` are not selectable.
+
+```tsx example
+<MyTagGroup label="Links">
+  <MyTag href="https://adobe.com/" target="_blank">Adobe</MyTag>
+  <MyTag href="https://apple.com/" target="_blank">Apple</MyTag>
+  <MyTag href="https://google.com/" target="_blank">Google</MyTag>
+  <MyTag href="https://microsoft.com/" target="_blank">Microsoft</MyTag>
+</MyTagGroup>
+```
+
+```css hidden
+.react-aria-Tag[data-href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Tag>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Disabled tags
+
+A `Tag` can be disabled with the `isDisabled` prop. Disabled tags are not focusable, selectable, or keyboard navigable.
+
+```tsx example
+<MyTagGroup
+ label="Sandwich contents"
+ selectionMode="multiple"
+>
+  <MyTag>Lettuce</MyTag>
+  <MyTag>Tomato</MyTag>
+  <MyTag>Cheese</MyTag>
+  {/*- begin highlight -*/}
+  <MyTag isDisabled>Tuna Salad</MyTag>
+  {/*- end highlight -*/}
+  <MyTag>Egg Salad</MyTag>
+  <MyTag>Ham</MyTag>
+</MyTagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TagList {
+  .react-aria-Tag {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `TagGroup` level instead of `isDisabled` on individual tags. Each key in this list
+corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). A tag is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let options = [
+    { id: 1, name: "News" },
+    { id: 2, name: "Travel" },
+    { id: 3, name: "Gaming" },
+    { id: 4, name: "Shopping" }
+  ];
+
+  return (
+    <MyTagGroup
+      label="Categories"
+      items={options}
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      disabledKeys={[2, 4]}
+      /*- end highlight -*/
+    >
+      {(item) => <MyTag>{item.name}</MyTag>}
+    </MyTagGroup>
+  );
+}
+```
+
+## Empty state
+
+Use the `renderEmptyState` prop to customize what a `TagList` will display if there are no items.
+
+```tsx example
+<TagGroup>
+  <Label>Categories</Label>
+  {/*- begin highlight -*/}
+  <TagList renderEmptyState={() => 'No categories.'}>
+  {/*- end highlight -*/}
+    {[]}
+  </TagList>
+</TagGroup>
+```
+
+## Help text
+
+### Description
+
+The `description` slot can be used to associate additional help text with a `TagGroup`.
+
+```tsx example
+<TagGroup>
+  <Label>Categories</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+  {/*- begin highlight -*/}
+  <Text slot="description">Your selected categories.</Text>
+  {/*- end highlight -*/}
+</TagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TagGroup {
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
+### Error message
+
+The `errorMessage` slot can be used to help the user fix a validation error.
+
+```tsx example
+<TagGroup>
+  <Label>Categories</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+  {/*- begin highlight -*/}
+  <Text slot="errorMessage">Invalid set of categories.</Text>
+  {/*- end highlight -*/}
+</TagGroup>
+```
+
+## Props
+
+### TagGroup
+
+<PropTable component={docs.exports.TagGroup} links={docs.links} />
+
+### TagList
+
+A `<TagList>` is a list of tags within a `<TagGroup>`.
+
+<PropTable component={docs.exports.TagList} links={docs.links} />
+
+### Tag
+
+A `<Tag>` defines a single item within a `<TagList>`. If the children are not plain text, then the `textValue` prop must also be set to a plain text representation for accessibility.
+
+<PropTable component={docs.exports.Tag} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Text
+
+`<Text>` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-TagGroup {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<TagGroup className="my-tag-group">
+  {/* ... */}
+</TagGroup>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Tag[data-selected] {
+  /* ... */
+}
+
+.react-aria-Tag[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Tag className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</Tag>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a remove button only when removal is allowed.
+
+```jsx
+<Tag>
+  {({allowsRemoving}) => (
+    <>
+      Item
+      {allowsRemoving && <RemoveButton />}
+    </>
+  )}
+</Tag>
+```
+
+The states and selectors for each component used in a `TagGroup` are documented below.
+
+### TagGroup
+
+A `TagGroup` can be targeted with the `.react-aria-TagGroup` CSS selector, or by overriding with a custom `className`.
+
+### TagList
+
+A `TagList` can be targeted with the `.react-aria-TagList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TagListRenderProps.properties} />
+
+### Tag
+
+A `Tag` can be targeted with the `.react-aria-Tag` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TagRenderProps.properties} />
+
+Tags also accept a `<Button slot="remove">` element as a child, which allows them to be removed. This can be conditionally rendered using the `allowsRemoving` render prop, as shown below.
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Text
+
+The help text elements within a `TagGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `TagGroup`, such as `TagList` or `Tag`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyTag(props) {
+  return <Tag {...props} className="my-tag" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['TagGroup']} docs={docs} />
+
+This example shows a component that accepts a `TagGroup` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn edit mode for the tag group on and off by pressing the button.
+
+```tsx example render=false export=true
+import {ToggleButtonContext, TagGroupContext} from 'react-aria-components';
+
+function Removable({children, onRemove}) {
+  let [isSelected, onChange] = React.useState(false);
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <TagGroupContext.Provider value={{onRemove: isSelected && onRemove}}>
+      {/*- end highlight -*/}
+        {children}
+      </TagGroupContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Removable` component can be reused to make the edit mode of any nested `TagGroup` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Removable onRemove={ids => alert(`Remove ${[...ids]}`)}>
+  <MyTagGroup label="Ice cream flavor">
+    <MyTag id="chocolate">Chocolate</MyTag>
+    <MyTag id="mint">Mint</MyTag>
+    <MyTag id="strawberry">Strawberry</MyTag>
+    <MyTag id="vanilla">Vanilla</MyTag>
+  </MyTagGroup>
+  <ToggleButton style={{marginTop: '8px'}}>Edit</ToggleButton>
+</Removable>
+```
+
+### Custom children
+
+TagGroup passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by TagGroup.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `TagGroup`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<TagGroup>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</TagGroup>
+```
+
+### State
+
+TagGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ListState} /> object to its children via `ListStateContext`. This can be used to access and manipulate the TagGroup's state.
+
+This example shows a `SelectionCount` component that can be placed within a `TagGroup` to display the number of selected tags.
+
+```tsx example
+import {ListStateContext} from 'react-aria-components';
+
+function SelectionCount() {
+  /*- begin highlight -*/
+  let state = React.useContext(ListStateContext);
+  /*- end highlight -*/
+  let selected = state?.selectionManager.selectedKeys.size ?? 0;
+  return <small>{selected} tags selected.</small>;
+}
+
+<TagGroup selectionMode="multiple">
+  <Label>Tags</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+  <SelectionCount />
+</TagGroup>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTagGroup](useTagGroup.html) for more details.

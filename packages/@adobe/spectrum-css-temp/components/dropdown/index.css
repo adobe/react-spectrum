@@ -1,0 +1,178 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-dropdown-popover-max-width: var(--spectrum-global-dimension-size-3000);
+  --spectrum-dropdown-width: var(--spectrum-global-dimension-size-2400);
+}
+
+.spectrum-Dropdown {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+
+  /* Truncate if menu options make us too wide */
+  max-inline-size: 100%;
+  inline-size: var(--spectrum-dropdown-width);
+  min-inline-size: var(--spectrum-dropdown-min-width);
+
+  /* Hack to enable select-powered Dropdowns */
+  select {
+    appearance: none;
+    -ms-appearance: none; /* Edge */
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &::-ms-value {
+      background-color: transparent;
+    }
+
+    & + .spectrum-Dropdown-chevron {
+      position: absolute;
+      inset-inline-end: var(--spectrum-dropdown-padding-x);
+      inset-block-start: 50%;
+      margin-block-start: calc(var(--spectrum-icon-chevron-down-medium-height) / -2);
+    }
+  }
+}
+
+.spectrum-Dropdown-trigger {
+  position: relative;
+  inline-size: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* Ensure that changing the selected item doesn't affect the size of the dropdown and its parents */
+  contain: size;
+}
+
+.spectrum-Dropdown-label {
+  /* Be the biggest, but also shrink! */
+  flex: 1 1 auto;
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  block-size: calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2));
+  line-height: calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2));
+
+  font-size: var(--spectrum-dropdown-text-size);
+
+  text-overflow: ellipsis;
+  text-align: start;
+
+  &.is-placeholder {
+    font-weight: var(--spectrum-dropdown-placeholder-text-font-weight);
+    font-style: var(--spectrum-dropdown-placeholder-text-font-style);
+    transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+  }
+}
+
+/* Only apply margin to the icon if there's a label */
+.spectrum-Dropdown-label + .spectrum-Dropdown-chevron {
+  margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
+}
+
+.spectrum-Icon + .spectrum-Dropdown-label {
+  margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
+}
+
+.spectrum-Dropdown-avatar + .spectrum-Dropdown-label {
+  margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
+}
+
+/* Only apply margin if there's a label */
+.spectrum-Dropdown-label ~ .spectrum-Dropdown-chevron {
+  margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
+}
+
+.spectrum-Dropdown-chevron {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  transition: color var(--spectrum-global-animation-duration-100) ease-out;
+  flex-shrink: 0;
+
+  /* Fix Safari 10 bug where align-items is ignored inside of buttons */
+  margin-top: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-icon-chevron-down-medium-height)) / 2);
+  margin-bottom: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-icon-chevron-down-medium-height)) / 2);
+
+  opacity: 1;
+}
+
+/* Error icons */
+.spectrum-Dropdown-trigger {
+  .spectrum-Dropdown-invalidIcon {
+    /* Fix Safari 10 bug where align-items is ignored inside of buttons */
+    margin-block-start: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
+    margin-block-end: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
+  }
+
+  .spectrum-Dropdown-label + .spectrum-Dropdown-invalidIcon {
+    margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
+  }
+}
+
+.spectrum-Dropdown-trigger {
+  .spectrum-Dropdown-progressCircle {
+    margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
+  }
+}
+
+.spectrum-Icon + .spectrum-Dropdown-chevron {
+  margin-inline-start: var(--spectrum-dropdown-icon-gap);
+}
+
+.spectrum-Dropdown--quiet {
+  inline-size: auto;
+  min-inline-size: var(--spectrum-dropdown-quiet-min-width);
+
+  .spectrum-Dropdown-trigger {
+    contain: none;
+  }
+}
+
+.spectrum-Dropdown-popover--quiet {
+  inline-size: var(--spectrum-dropdown-width);
+
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  margin-inline-start: calc(var(--spectrum-dropdown-quiet-offset) * -1);
+}
+
+/* When used with a label or inside a Form, we need to override some things from .spectrum-Field
+ * so quiet dropdowns still collapse properly. */
+.spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
+  display: inline-flex;
+  flex-direction: column;
+  inline-size: max-content;
+  max-width: 100%;
+
+  .spectrum-Dropdown--quiet {
+    inline-size: auto;
+    min-inline-size: var(--spectrum-dropdown-quiet-min-width);
+
+    .spectrum-Dropdown-trigger {
+      inline-size: max-content;
+      max-width: 100%;
+    }
+  }
+
+  &.spectrum-Dropdown-fieldWrapper--positionSide {
+    flex-direction: row;
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "calendar": "Календар",
+  "day": "день",
+  "dayPeriod": "дп/пп",
+  "endDate": "Дата завершення",
+  "era": "ера",
+  "hour": "година",
+  "minute": "хвилина",
+  "month": "місяць",
+  "second": "секунда",
+  "selectedDateDescription": "Вибрана дата: {date}",
+  "selectedRangeDescription": "Вибраний діапазон: {startDate} — {endDate}",
+  "selectedTimeDescription": "Вибраний час: {time}",
+  "startDate": "Дата початку",
+  "timeZoneName": "часовий пояс",
+  "weekday": "день тижня",
+  "year": "рік"
+}

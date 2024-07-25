@@ -1,0 +1,4 @@
+{
+  "close": "Lukk",
+  "notifications": "{count, plural, one {# varsling} other {# varsler}}."
+}

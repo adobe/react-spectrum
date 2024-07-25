@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} έως {endDate}",
+  "dateSelected": "Επιλέχθηκε {date}",
+  "finishRangeSelectionPrompt": "Κάντε κλικ για να ολοκληρώσετε την επιλογή εύρους ημερομηνιών",
+  "maximumDate": "Τελευταία διαθέσιμη ημερομηνία",
+  "minimumDate": "Πρώτη διαθέσιμη ημερομηνία",
+  "next": "Επόμενο",
+  "previous": "Προηγούμενο",
+  "selectedDateDescription": "Επιλεγμένη ημερομηνία: {date}",
+  "selectedRangeDescription": "Επιλεγμένο εύρος: {dateRange}",
+  "startRangeSelectionPrompt": "Κάντε κλικ για να ξεκινήσετε την επιλογή εύρους ημερομηνιών",
+  "todayDate": "Σήμερα, {date}",
+  "todayDateSelected": "Σήμερα, επιλέχτηκε {date}"
+}

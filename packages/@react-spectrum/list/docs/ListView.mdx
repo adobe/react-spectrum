@@ -1,0 +1,1193 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import Anatomy from './anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import docs from 'docs:@react-spectrum/list';
+import dndDocs from 'docs:@react-spectrum/dnd';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-spectrum/list/package.json';
+
+```jsx import
+import {ActionMenu} from '@react-spectrum/menu';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+import {Flex} from '@react-spectrum/layout';
+import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
+import {Item, ListView} from '@react-spectrum/list';
+```
+
+---
+category: Collections
+keywords: [listview, collections]
+---
+
+# ListView
+
+<PageDescription>{docs.exports.ListView.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Item', 'ListView']}
+  since="3.21.0" />
+
+## Example
+```tsx example
+<ListView selectionMode="multiple" aria-label="Static ListView items example" maxWidth="size-6000">
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</ListView>
+```
+
+## Content
+ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list. While it may feel similar to the [ListBox](ListBox.html)
+component, ListView offers greater flexibility in the contents it can render and can distinguish between row selection and actions performed on a row. This makes ListView an ideal component for use cases such as file
+managers.
+
+Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView are hard coded.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView
+to automatically cache the rendering of each item, which dramatically improves performance.
+
+Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
+See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
+
+
+```tsx example
+const items = [
+  {id: 1, name: 'Adobe Photoshop'},
+  {id: 2, name: 'Adobe XD'},
+  {id: 3, name: 'Adobe InDesign'},
+  {id: 4, name: 'Adobe AfterEffects'},
+  {id: 5, name: 'Adobe Illustrator'},
+  {id: 6, name: 'Adobe Lightroom'},
+  {id: 7, name: 'Adobe Premiere Pro'},
+  {id: 8, name: 'Adobe Fresco'},
+  {id: 9, name: 'Adobe Dreamweaver'}
+];
+
+<ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="Dynamic ListView items example">
+  {(item) => <Item>{item.name}</Item>}
+</ListView>
+```
+
+### Internationalization
+To internationalize a ListView, all text content within the ListView should be localized. This includes the `aria-label` provided to the ListView if any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of ListView is automatically flipped.
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the ListView for accessibility. If the ListView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+## Asynchronous loading
+ListView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@adobe/react-spectrum';
+
+interface Character {
+  name: string
+}
+
+function AsyncList() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListView
+      selectionMode="multiple"
+      aria-label="Async loading ListView example"
+      maxWidth="size-6000"
+      height="size-3000"
+      items={list.items}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item) => (
+        <Item key={item.name}>{item.name}</Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+## Complex items
+
+<Anatomy />
+
+Items within a ListView also allow for additional content used to add context or provide additional actions to items. Descriptions, illustrations, and thumbnails can be added to
+the children of `<Item>` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item. Providing the `hasChildItems` prop
+to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
+
+```tsx example
+import File from '@spectrum-icons/illustrations/File';
+import Folder from '@spectrum-icons/illustrations/Folder';
+
+<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
+  <Item key="1" textValue="Utilities" hasChildItems>
+    <Folder />
+    <Text>Utilities</Text>
+    <Text slot="description">16 items</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+  <Item key="2" textValue="Glasses Dog">
+    <Image
+      src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
+      alt="Shiba Inu with glasses" />
+    <Text>Glasses Dog</Text>
+    <Text slot="description">JPG</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+  <Item key="3" textValue="readme">
+    <File />
+    <Text>readme.txt</Text>
+    <Text slot="description">TXT</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+  <Item key="4" textValue="Onboarding">
+    <File />
+    <Text>Onboarding</Text>
+    <Text slot="description">PDF</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+</ListView>
+```
+
+## Selection
+
+By default, ListView doesn't allow row selection, but this can be enabled using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Item.
+
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "Charizard" and "Venusaur".
+
+```tsx example
+<ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="ListView multiple selection example">
+  <Item key="Charizard">
+    Charizard
+  </Item>
+  <Item key="Blastoise">
+    Blastoise
+  </Item>
+  <Item key="Venusaur">
+    Venusaur
+  </Item>
+  <Item key="Pikachu">
+    Pikachu
+  </Item>
+</ListView>
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly. Note that the value of the selected keys must match the `key` prop of the Item.
+
+Here is how you would control selection for the above example.
+
+```tsx example export=true
+import type {SpectrumListViewProps} from '@react-spectrum/list';
+
+function PokemonList<T>(props: Omit<SpectrumListViewProps<T>, 'children'>) {
+  let rows = [
+    {id: 1, name: 'Charizard'},
+    {id: 2, name: 'Blastoise'},
+    {id: 3, name: 'Venusaur'},
+    {id: 4, name: 'Pikachu'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(props.defaultSelectedKeys || new Set([2]));
+
+  return (
+    <ListView maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" {...props} items={rows} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+      {(item) => (
+        <Item>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+### Single selection
+
+To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
+
+```tsx example
+// Using the same list as above
+<PokemonList selectionMode="single" selectionStyle="highlight" aria-label="ListView with single selection" />
+```
+
+### Disallow empty selection
+
+ListView also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the ListView selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the same list as above
+<PokemonList disallowEmptySelection aria-label="ListView with empty selection disallowed" />
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will disable all interactions on disabled rows, unless the `disabledBehavior` prop is used to change this behavior.
+
+```tsx example
+// Using the same list as above
+<PokemonList disabledKeys={[3]} aria-label="ListView with disabled rows" />
+```
+
+If you set the `disabledBehavior` prop to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+```tsx example
+<Flex wrap gap="size-300">
+  <PokemonList
+    disabledKeys={[3]}
+    defaultSelectedKeys={[]}
+    disabledBehavior="all"
+    aria-label="ListView with all interaction disabled for disabled rows"
+    width="size-2400"
+    onAction={key => alert(`Opening item ${key}...`)}
+  />
+  <PokemonList
+    disabledKeys={[3]}
+    defaultSelectedKeys={[]}
+    disabledBehavior="selection"
+    aria-label="ListView with selection disabled for disabled rows"
+    width="size-2400"
+    onAction={key => alert(`Opening item ${key}...`)}
+  />
+</Flex>
+```
+
+### Highlight selection
+
+By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the selectionStyle prop is set to `"highlight"`, the checkboxes are hidden,
+ and the selected rows are displayed with a highlighted background instead.
+
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing
+the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows,
+modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
+keys may not be available.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
+
+```tsx example
+// Using the same list as above
+<PokemonList selectionStyle="highlight" aria-label="Highlight selection ListView" />
+```
+
+## Row actions
+
+ListView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the ListView performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the ListView is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
+be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
+
+```tsx example
+// Checkbox selection with onAction
+<Flex wrap gap="size-300">
+  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection ListView with row actions" width="size-2400" />
+  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
+</Flex>
+```
+
+### Links
+
+Items in a ListView may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionStyle`.
+
+```tsx example
+<ListView aria-label="Links" selectionMode="multiple">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListView>
+```
+
+#### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Drag and drop
+
+To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDragAndDrop} /> to the ListView's `dragAndDropHooks` prop.
+See the examples below for various common drag and drop use cases. For more information on `useDragAndDrop` and the various supported ways to perform a drag and drop interaction,
+please see the [drag and drop documentation](dnd.html).
+
+### Draggable ListView and droppable ListView
+
+The example below demonstrates how to create a draggable ListView and a droppable ListView.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import type {DragAndDropOptions, TextDropItem} from '@react-spectrum/dnd';
+import type {ListData} from '@adobe/react-spectrum';
+import {useDragAndDrop} from '@react-spectrum/dnd';
+import {useListData} from '@adobe/react-spectrum';
+
+interface Item {
+  name: string,
+  type?: string,
+  childNodes?: Item[]
+}
+
+interface DndListViewProps extends DragAndDropOptions {
+  list: ListData<Item>
+}
+
+function DraggableListView(props: DndListViewProps) {
+  let {list, ...otherProps} = props;
+  /*- begin highlight -*/
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only allow move operations when dropping items from this list
+    getAllowedDropOperations: () => ['move'],
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    },
+    ...otherProps
+  });
+  /*- end highlight -*/
+
+  return (
+    <ListView
+      aria-label="Draggable ListView in drag into list example"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      /*- begin highlight -*/
+      dragAndDropHooks={dragAndDropHooks}
+      /*- end highlight -*/
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableListView(props: DndListViewProps) {
+  let {list, ...otherProps} = props;
+  /*- begin highlight -*/
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only accept items with the following drag type
+    acceptedDragTypes: ['custom-app-type'],
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+    ...otherProps
+  });
+  /*- end highlight -*/
+
+  return (
+    <ListView
+      aria-label="Droppable ListView in drag into list example"
+      width="size-3600"
+      height="size-2400"
+      /*- begin highlight -*/
+      dragAndDropHooks={dragAndDropHooks}
+      /*- end highlight -*/
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DragIntoList() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: '6', type: 'file', name: 'Adobe Fresco'},
+      {id: '7', type: 'file', name: 'Adobe Connect'},
+      {id: '8', type: 'file', name: 'Adobe Lightroom'}
+    ]
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <DraggableListView list={sourceList} />
+      <DroppableListView list={targetList} />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoList />
+```
+
+### Handling folder drops
+
+The example below replicates the previous example but demonstrates how to handle on item drops.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DraggableListViewFolder(props: DndListViewProps) {
+  let {list, ...otherProps} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only allow move operations when dropping items from this list
+    getAllowedDropOperations: () => ['move'],
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type-folder-drop': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    },
+
+    ...otherProps
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView in drag onto folder example"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableListViewFolder(props: DndListViewProps) {
+  let {list, ...otherProps} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    // Only allow drops on items with childNodes aka folders
+    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes,
+    /*- end highlight -*/
+    // Only accept items with the following drag type
+    acceptedDragTypes: ['custom-app-type-folder-drop'],
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
+      );
+      list.append(...processedItems);
+    },
+    /*- begin highlight -*/
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
+      );
+
+      let targetItem = list.getItem(target.key);
+      list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+    },
+    /*- end highlight -*/
+    ...otherProps
+  });
+
+  return (
+    <ListView
+      aria-label="Droppable ListView in drop into folder example"
+      width="size-3600"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes?.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DragIntoListFolder() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents', childNodes: []},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities', childNodes: []},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '7', type: 'folder', name: 'Pictures', childNodes: []},
+      {id: '8', type: 'file', name: 'Adobe Fresco'},
+      {id: '9', type: 'folder', name: 'Apps', childNodes: []}
+    ]
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <DraggableListViewFolder list={sourceList} />
+      <DroppableListViewFolder list={targetList} />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoListFolder />
+```
+
+### Reorderable
+
+The example below demonstrates how to make a ListView draggable and droppable at the same time. The ListView below supports reordering its own rows via drag and drop.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function ReorderableList() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents', childNodes: []},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities', childNodes: []},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the drag types and associated info for each dragged item.
+        return {
+          'custom-app-type-reorder': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+    acceptedDragTypes: ['custom-app-type-reorder'],
+    /*- begin highlight -*/
+    onReorder: async (e) => {
+      let {keys, target} = e;
+
+      if (target.dropPosition === 'before') {
+        list.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list.moveAfter(target.key, [...keys]);
+      }
+    },
+    getAllowedDropOperations: () => ['move']
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListView
+      aria-label="Reorderable ListView"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+</details>
+
+```tsx example
+<ReorderableList />
+```
+
+### Bi-directional dragging
+
+The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
+the ability to drop into a folder. Each list is internally reorderable.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function BidirectionalDnDListView(props: DndListViewProps) {
+  let {list} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['custom-app-type-bidirectional'],
+    // Only allow move operations
+    getAllowedDropOperations: () => ['move'],
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the drag types and associated info for each dragged item.
+        return {
+          'custom-app-type-bidirectional': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
+      );
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target
+      } = e;
+
+      if (target.dropPosition === 'before') {
+        list.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list.moveAfter(target.key, [...keys]);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
+      );
+      list.append(...processedItems);
+    },
+    /*- begin highlight -*/
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys,
+        isInternal
+      } = e;
+      // Only remove the dragged items if they aren't dropped inside the source list
+      if (dropOperation === 'move' && !isInternal) {
+        list.remove(...keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListView
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DragBetweenListsExample() {
+  let list1 = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents'},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {id: '7', type: 'folder', name: 'Pictures'},
+      {id: '8', type: 'file', name: 'Adobe Fresco'},
+      {id: '9', type: 'folder', name: 'Apps'},
+      {id: '10', type: 'file', name: 'Adobe Illustrator'},
+      {id: '11', type: 'file', name: 'Adobe Lightroom'},
+      {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
+    ]
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <BidirectionalDnDListView list={list1} aria-label="First ListView in drag between list example" />
+      <BidirectionalDnDListView list={list2} aria-label="Second ListView in drag between list example" />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragBetweenListsExample />
+```
+
+### Overriding default drop operation
+
+The example below demonstrates how to use `getDropOperation` to specify the default drop operation of the droppable list.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DraggableListViewDefaultCopy(props: DndListViewProps) {
+  let {list} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type-copy-default': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView in default copy operation example"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableListViewDefaultCopy(props: DndListViewProps) {
+  let {list} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['custom-app-type-copy-default'],
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      /*- begin highlight -*/
+      // Create random id to allow for multiple copies of the same item
+      let processedItems = await Promise.all(
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+
+      /*- begin highlight -*/
+      // Create random id to allow for multiple copies of the same item
+      let processedItems = await Promise.all(
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      list.append(...processedItems);
+    }
+  });
+
+
+  return (
+    <ListView
+      aria-label="Droppable ListView in default copy operation example"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DragIntoListDefaultCopy() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: '6', type: 'file', name: 'Adobe Fresco'},
+      {id: '7', type: 'file', name: 'Adobe Connect'},
+      {id: '8', type: 'file', name: 'Adobe Lightroom'}
+    ]
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <DraggableListViewDefaultCopy list={sourceList} />
+      <DroppableListViewDefaultCopy list={targetList} />
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoListDefaultCopy />
+```
+
+### Custom drag previews
+
+Use the `renderPreview` prop to provide a custom drag preview. `keys` and `draggedKey` are passed to this function, where `keys` includes all the keys of the items being dragged, and `draggedKey` is the key of the item the user initiated the drag from.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {View} from '@react-spectrum/view';
+
+function CustomDragPreviewExample() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    /*- begin highlight -*/
+    renderPreview: (keys, draggedKey) => (
+      <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+        <strong>Custom Preview</strong>
+        <div>Keys: [{[...keys].join(', ')}]</div>
+        <div>Dragged: {draggedKey}</div>
+      </View>
+    )
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView with custom drag preview"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+</details>
+
+```tsx example
+<CustomDragPreviewExample />
+```
+
+## Props
+
+<PropTable component={docs.exports.ListView} links={docs.links} />
+
+## Visual options
+### Quiet
+
+```tsx example export=true
+function ListExample(props) {
+  return (
+    <ListView selectionMode="multiple" aria-label="Quiet ListView example" width="size-3000" {...props}>
+      <Item>Adobe AfterEffects</Item>
+      <Item>Adobe Dreamweaver</Item>
+      <Item>Adobe Acrobat</Item>
+    </ListView>
+  );
+}
+
+<ListExample isQuiet />
+```
+
+### Density
+The amount of vertical padding that each row contains can be modified by providing the `density` prop.
+
+```tsx example
+<Flex wrap gap="size-300">
+  <ListExample density="compact" aria-label="Compact ListView example" />
+  <ListExample density="spacious" aria-label="Spacious ListView example" />
+</Flex>
+```
+
+### Overflow mode
+By default, text content that overflows its row will be truncated. You can have it wrap instead by passing `overflowMode="wrap"`
+to the ListView.
+
+```tsx example
+<ListExample overflowMode="wrap" aria-label="Text wrapping ListView example" width="size-2000" />
+```
+
+### Empty state
+Use the `renderEmptyState` prop to customize what the ListView will display if there are no rows provided.
+
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+import {Heading} from '@react-spectrum/text';
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <NotFound />
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
+}
+
+<ListView
+  selectionMode="multiple"
+  aria-label="Example ListView for empty state"
+  maxWidth="size-6000"
+  height="size-3000"
+  renderEmptyState={renderEmptyState}>
+  {[]}
+</ListView>
+```
+
+## Testing
+
+The ListView features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
+It also features long press interactions on its rows depending on the row actions provided and if user is interacting with the list on
+a touch device. Please see the following sections in the testing docs for more information on how to handle these
+behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+[Long press](./testing.html#simulating-user-long-press)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/list/test/ListView.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

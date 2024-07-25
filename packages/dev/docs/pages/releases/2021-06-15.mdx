@@ -1,0 +1,141 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: Today we're excited to announce the stable release of Tabs! Also ActionGroup now has support for collapsing behavior and a new staticColor prop has been added to ActionGroup, ActionButton, and ToggleButton for displaying over colored backgrounds. We now have support for responsive breakpoints and CSS functions in our style props plus plenty of bug fixes and documentation updates.
+date: 2021-06-15
+---
+
+# June 15, 2021 Release
+
+Today we're excited to announce the stable release of Tabs! 🎉 [React Aria](https://react-spectrum.adobe.com/react-aria/useTabList.html) includes hooks for you to build your own tabs that are fully accessible and keyboard friendly, and [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Tabs.html) includes some advanced behaviors like automatic collapsing when screen space is limited.
+
+Also in this release, React Spectrum's ActionGroup component has gained support for collapsing items that do not fit in the available space. In addition, the text labels of the buttons within an ActionGroup can now be hidden, and automatically displayed in a tooltip. See our [documentation](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#collapsing-behavior) for more details about this behavior.
+
+[ActionGroup](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#static-color), [ActionButton](https://react-spectrum.adobe.com/react-spectrum/ActionButton.html#static-color), and [ToggleButton](https://react-spectrum.adobe.com/react-spectrum/ToggleButton.html#static-color) now also support a `staticColor` prop, which allows these components to be placed over a color background.
+
+Finally, thanks to [@so99ynoodles](https://github.com/so99ynoodles) and [@tomsontom](https://github.com/tomsontom), React Spectrum's style props have been upgraded, including support for [responsive breakpoints](https://react-spectrum.adobe.com/react-spectrum/layout.html#responsive-layout) and [CSS functions](https://react-spectrum.adobe.com/react-spectrum/styling.html#css-functions) like `calc()`.
+
+Thank you to all our contributors for their support! 🤩
+
+## New component
+- **Tabs**
+  - `@react-spectrum/tabs` - [Docs](https://react-spectrum.adobe.com/react-spectrum/Tabs.html)
+  - `@react-aria/tabs` - [Docs](https://react-spectrum.adobe.com/react-aria/useTabList.html)
+  - `@react-stately/tabs` - [Docs](https://react-spectrum.adobe.com/react-stately/useTabListState.html)
+
+## New features
+- Add support for responsive style props - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/1684) - [Docs](https://react-spectrum.adobe.com/react-spectrum/layout.html#responsive-layout)
+- Add support for CSS functions (e.g. `calc()`) in style props - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/1774) - [Docs](https://react-spectrum.adobe.com/react-spectrum/styling.html#css-functions)
+- Add collapse behavior to ActionGroup - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1919) - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#collapsing-behavior)
+- Add `staticColor` option for ActionButton and ToggleButton - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1881) - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionButton.html#static-color)
+- Support for `left`/`right`/`start`/`end` directions in MenuTrigger - [@razvanip](https://github.com/razvanip) - [PR](https://github.com/adobe/react-spectrum/pull/1868) - [Docs](https://react-spectrum.adobe.com/react-spectrum/MenuTrigger.html#align-and-direction)
+- Add `useFocusVisibleListener` hook for focus visible events - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/1875)
+- Add screen reader announcements for selection changes in TableView - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1929)
+
+## Fixed
+- Keep modality when switching tabs in `useFocusVisible` - [@BartoszGamza](https://github.com/BartoszGamza) - [PR](https://github.com/adobe/react-spectrum/pull/1845)
+- Update `useSelectableList` to scroll to set `element` correctly - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/1862)
+- ActionButton emphasized focus ring is now more visible - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1881)
+- Update `intl-messageformat` package - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1872)
+- Add undefined check in updateItemSize in `ListLayout` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1920)
+- Trigger `onHoverEnd` when element becomes disabled in `useHover` - [@alpinesnow](https://github.com/alpinesnow) - [PR](https://github.com/adobe/react-spectrum/pull/1882)
+- Add `underlayProps` to `useOverlay` for Firefox issue with text selection - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1468)
+- Improve `selectOnFocus` support in `useSelectableCollection` - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/1843)
+- Fix prop passthrough in TabPanel - [@MarcelReis](https://github.com/MarcelReis) - [PR](https://github.com/adobe/react-spectrum/pull/1894)
+- Fix behavior of mobile ComboBox - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1874)
+- Improve hit detection in `usePress` - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/1613)
+- Remove unused `isReadOnly` prop from `Picker` - [@Patil2099](https://github.com/Patil2099) - [PR](https://github.com/adobe/react-spectrum/pull/1949)
+- Fix change in modality when blurring window in `useFocusVisible` - [@BartoszGamza](https://github.com/BartoszGamza) - [PR](https://github.com/adobe/react-spectrum/pull/1925)
+- Stop event propagation through portals - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/1840)
+- Stop default closing on select in multi-select menus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1969)
+- Show all items in `ComboBox` when open on mobile - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1971)
+- Always show clear button with `validationState` in `ComboBox` on mobile - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1972)
+- Fix keyboard navigation in `useGridCell` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1990)
+- Fix `ActionButton` focus ring on autofocus - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1973)
+- Fix Popover not closing from pressing trigger - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1970)
+- Fix keyboard navigation behavior of ActionGroup - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1991/)
+
+## Docs
+- Update numbering system names in `NumberField`  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1876)
+- Update `selectedKey` documentation - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1670)
+- Update imports in `Tabs` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/1889)
+- Update useMenuTrigger imports - [@shannonrothe](https://github.com/shannonrothe) - [PR](https://github.com/adobe/react-spectrum/pull/1909)
+- Fix broken design links in `Menu`  - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/1917)
+- Add docs for `useTabList` `useTabListState` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1888)
+- Fix typo in `styleProps` - [@Robbie-Cook](https://github.com/Robbie-Cook) - [PR](https://github.com/adobe/react-spectrum/pull/1966)
+- Update `Tooltip` and `Menu` docs to include element ordering - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2006)
+
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+- ComboBox rc
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ComboBox.html)
+  - [React Aria](https://react-spectrum.adobe.com/react-aria/useComboBox.html)
+  - [React Stately](https://react-spectrum.adobe.com/react-stately/useComboBoxState.html)
+- TableView beta
+  - Documentation coming soon
+  - Please note, the name of the component in React Spectrum changed from `Table` to `TableView` in this release. Also, the `isLoading` prop is now `loadingState = "loading" | "loadingMore" | "sorting" | "filtering" | "error" | "idle"`.
+
+## Released packages
+```
+- @adobe/react-spectrum => 3.11.0
+- @internationalized/message => 3.0.1
+- @internationalized/number => 3.0.1
+- @react-aria/actiongroup => 3.2.0
+- @react-aria/combobox => 3.0.0-rc.0
+- @react-aria/dnd => 3.0.0-alpha.2
+- @react-aria/focus => 3.4.0
+- @react-aria/grid => 3.0.0-beta.0
+- @react-aria/interactions => 3.5.0
+- @react-aria/menu => 3.2.2
+- @react-aria/overlays => 3.7.0
+- @react-aria/selection => 3.5.0
+- @react-aria/table => 3.0.0-beta.0
+- @react-aria/tabs => 3.0.0
+- @react-aria/utils => 3.8.1
+- @react-spectrum/actionbar => 3.0.0-alpha.0
+- @react-spectrum/actiongroup => 3.2.0
+- @react-spectrum/button => 3.5.0
+- @react-spectrum/combobox => 3.0.0-rc.0
+- @react-spectrum/layout => 3.2.0
+- @react-spectrum/list => 3.0.0-alpha.0
+- @react-spectrum/listbox => 3.4.3
+- @react-spectrum/menu => 3.3.0
+- @react-spectrum/overlays => 3.4.2
+- @react-spectrum/provider => 3.2.0
+- @react-spectrum/table => 3.0.0-beta.0
+- @react-spectrum/tabs => 3.0.0
+- @react-spectrum/utils => 3.6.0
+- @react-stately/combobox => 3.0.0-rc.0
+- @react-stately/grid => 3.0.0-beta.0
+- @react-stately/layout => 3.3.0
+- @react-stately/numberfield => 3.0.1
+- @react-stately/selection => 3.6.0
+- @react-stately/table => 3.0.0-beta.0
+- @react-stately/tabs => 3.0.0
+- @react-types/actionbar => 3.0.0-alpha.0
+- @react-types/actiongroup => 3.2.0
+- @react-types/button => 3.4.0
+- @react-types/combobox => 3.0.0-rc.0
+- @react-types/grid => 3.0.0-beta.0
+- @react-types/menu => 3.2.0
+- @react-types/overlays => 3.5.0
+- @react-types/provider => 3.3.0
+- @react-types/select => 3.2.1
+- @react-types/shared => 3.7.0
+- @react-types/table => 3.0.0-beta.0
+- @react-types/tabs => 3.0.0
+- react-aria => 3.7.0
+- react-stately => 3.6.0
+```

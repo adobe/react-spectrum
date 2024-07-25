@@ -1,0 +1,98 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Dropdown {
+  /* Override to gray-800 to meet WCAG */
+  --spectrum-dropdown-placeholder-text-color: var(--spectrum-global-color-gray-800);
+
+
+  .spectrum-Dropdown-trigger {
+    &.is-selected {
+      .is-placeholder {
+        color: var(--spectrum-dropdown-placeholder-text-color-down);
+      }
+    }
+  }
+
+  &.is-invalid {
+    /* override all states (e.g. active) */
+    .spectrum-Dropdown-invalidIcon.spectrum-Dropdown-invalidIcon {
+      fill: var(--spectrum-dropdown-validation-icon-color-error);
+    }
+
+    &.is-disabled {
+      .spectrum-Icon,
+      .spectrum-Dropdown-invalidIcon {
+        fill: var(--spectrum-dropdown-icon-color-disabled);
+      }
+    }
+  }
+
+  &.is-disabled {
+    &:active .spectrum-Dropdown-label {
+      color: var(--spectrum-dropdown-text-color-disabled);
+    }
+    .spectrum-Dropdown-label {
+      &.is-placeholder {
+        color: var(--spectrum-dropdown-placeholder-text-color-disabled);
+      }
+    }
+  }
+}
+
+.spectrum-Dropdown-label {
+  &.is-placeholder {
+    color: var(--spectrum-dropdown-placeholder-text-color);
+  }
+}
+
+.spectrum-Dropdown-trigger {
+  &:hover .spectrum-Dropdown-label {
+    color: var(--spectrum-dropdown-placeholder-text-color-hover);
+  }
+
+  &:active .spectrum-Dropdown-label {
+    color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus);
+  }
+}
+
+.spectrum-Dropdown-trigger.focus-ring {
+  .spectrum-Dropdown-label.is-placeholder {
+    color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Dropdown {
+    --spectrum-dropdown-icon-color: ButtonText;
+    --spectrum-dropdown-icon-color-disabled: GrayText;
+    --spectrum-dropdown-icon-color-hover: ButtonText;
+    --spectrum-dropdown-icon-color-key-focus: ButtonText;
+    --spectrum-dropdown-placeholder-text-color: GrayText;
+    --spectrum-dropdown-placeholder-text-color-disabled: GrayText;
+    --spectrum-dropdown-placeholder-text-color-down: GrayText;
+    --spectrum-dropdown-placeholder-text-color-hover: GrayText;
+    --spectrum-dropdown-placeholder-text-color-key-focus: GrayText;
+    --spectrum-dropdown-placeholder-text-color-mouse-focus: GrayText;
+    --spectrum-dropdown-text-color-disabled: GrayText;
+    --spectrum-dropdown-validation-icon-color-error: ButtonText;
+  }
+  /*Override the label behaviour when NOT a placeholder*/
+  .spectrum-Dropdown-trigger {
+    &:hover .spectrum-Dropdown-label {
+      color: ButtonText;
+      &.is-placeholder {
+        color: GrayText;
+      }
+    }
+  }
+}

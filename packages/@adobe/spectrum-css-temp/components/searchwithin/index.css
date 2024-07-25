@@ -1,0 +1,75 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+.spectrum-SearchWithin {
+  --spectrum-searchwithin-width: var(--spectrum-global-dimension-size-3000);
+  --spectrum-searchwithin-searchfield-width: var(--spectrum-global-dimension-size-1600);
+
+  /* Force override */
+  --spectrum-searchwithin-border-radius: 0;
+  --spectrum-searchwithin-picker-min-width: 0;
+}
+
+.spectrum-SearchWithin {
+  inline-size: var(--spectrum-searchwithin-width);
+  min-inline-size: var(--spectrum-searchwithin-width);
+  display: inline-flex;
+  position: relative;
+
+  .spectrum-SearchWithin-picker {
+    width: auto;
+  }
+}
+
+.spectrum-SearchWithin-picker {
+  inline-size: auto;
+  min-inline-size: var(--spectrum-global-dimension-size-1000);
+  flex-shrink: 1;
+
+  button {
+    contain: unset;
+    border-end-start-radius: var(--spectrum-searchwithin-border-radius);
+    border-start-start-radius: var(--spectrum-searchwithin-border-radius);
+  }
+}
+
+.spectrum-SearchWithin-searchfield {
+  min-inline-size: var(--spectrum-searchwithin-searchfield-width);
+  flex-grow: 1;
+  order: -1;
+  margin-inline-end: calc(
+    -1 * var(--spectrum-textfield-border-size)
+  ); /* hides right border */
+
+  &:focus-within {
+    z-index: 1; /* shows entire focus ring */
+  }
+
+  input {
+    border-end-end-radius: var(--spectrum-searchwithin-border-radius);
+    border-start-end-radius: var(--spectrum-searchwithin-border-radius);
+    flex: 1;
+    box-sizing: border-box;
+    min-inline-size: inherit;
+  }
+}
+
+/* this is specific to handling default width */
+.spectrum-SearchWithin-container {
+  /* ensure we have higher specificity than .spectrum-Field */
+  &.spectrum-SearchWithin-container {
+     /* override the default width of the field container, only with labelPosition=top. */
+     --spectrum-field-default-width: var(--spectrum-global-dimension-size-3000);
+    min-inline-size: var(--spectrum-global-dimension-size-3000);
+  }
+}

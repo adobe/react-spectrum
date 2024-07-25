@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} לא נבחר.",
+  "longPressToSelect": "הקשה ארוכה לכניסה למצב בחירה.",
+  "select": "בחר",
+  "selectedAll": "כל הפריטים נבחרו.",
+  "selectedCount": "{count, plural, =0 {לא נבחרו פריטים} one {פריט # נבחר} other {# פריטים נבחרו}}.",
+  "selectedItem": "{item} נבחר."
+}

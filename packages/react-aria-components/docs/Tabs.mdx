@@ -1,0 +1,753 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/tabs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {Keyboard} from '@react-spectrum/text';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Navigation
+keywords: [tabs, aria]
+type: component
+---
+
+# Tabs
+
+<PageDescription>{docs.exports.Tabs.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Tabs']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+
+<Tabs>
+  <TabList aria-label="History of Ancient Rome">
+    <Tab id="FoR">Founding of Rome</Tab>
+    <Tab id="MaR">Monarchy and Republic</Tab>
+    <Tab id="Emp">Empire</Tab>
+  </TabList>
+  <TabPanel id="FoR">
+    Arma virumque cano, Troiae qui primus ab oris.
+  </TabPanel>
+  <TabPanel id="MaR">
+    Senatus Populusque Romanus.
+  </TabPanel>
+  <TabPanel id="Emp">
+    Alea jacta est.
+  </TabPanel>
+</Tabs>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Link.mdx' layer(link);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-Tabs {
+  display: flex;
+  color: var(--text-color);
+
+  &[data-orientation=horizontal] {
+    flex-direction: column;
+  }
+}
+
+.react-aria-TabList {
+  display: flex;
+
+  &[data-orientation=horizontal] {
+    border-bottom: 1px solid var(--border-color);
+
+    .react-aria-Tab {
+      border-bottom: 3px solid var(--border-color);
+    }
+  }
+}
+
+.react-aria-Tab {
+  padding: 10px;
+  cursor: default;
+  outline: none;
+  position: relative;
+  color: var(--text-color-base);
+  transition: color 200ms;
+  --border-color: transparent;
+  forced-color-adjust: none;
+
+  &[data-hovered],
+  &[data-focused] {
+    color: var(--text-color-hover);
+  }
+
+  &[data-selected] {
+    --border-color: var(--highlight-background);
+    color: var(--text-color);
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    &[data-selected] {
+      --border-color: var(--text-color-disabled);
+    }
+  }
+
+  &[data-focus-visible]:after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 4px;
+    border: 2px solid var(--focus-ring-color);
+  }
+}
+
+.react-aria-TabPanel {
+  margin-top: 4px;
+  padding: 10px;
+  border-radius: 4px;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+  }
+}
+```
+
+</details>
+
+## Features
+
+Tabs provide a list of tabs that a user can select from to switch between multiple tab panels. `Tabs` can be used to implement these in an accessible way.
+
+* **Flexible** – Support for both horizontal and vertical orientations, disabled tabs, customizable layout, and multiple keyboard activation modes.
+* **Accessible** – Follows the [ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/), automatically linking tabs and their associated tab panels semantically. The arrow keys can be used to navigate between tabs, and tab panels automatically become focusable when they don't contain any focusable children.
+* **International** – Keyboard navigation is automatically mirrored in right-to-left languages.
+* **Styleable** – Hover, press, keyboard focus, and selection states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+
+## Anatomy
+
+<Anatomy />
+
+Tabs consist of a tab list with one or more visually separated tabs. Each tab has associated content, and only the selected tab's content is shown.
+Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <Keyboard>Enter</Keyboard> key.
+
+```tsx
+import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+
+<Tabs>
+  <TabList>
+    <Tab />
+  </TabList>
+  <TabPanel />
+</Tabs>
+```
+
+### Concepts
+
+`Tabs` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="tabs" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="tabs" />
+
+## Selection
+
+### Default selection
+
+A default selected tab can be provided using the `defaultSelectedKey` prop, which should correspond to the `id` prop provided to each item.
+When `Tabs` is used with dynamic items as described below, the key of each item is derived from the data.
+See the [Selection](selection.html) guide for more details.
+
+```tsx example
+<Tabs defaultSelectedKey="keyboard">
+  <TabList aria-label="Input settings">
+    <Tab id="mouse">Mouse Settings</Tab>
+    <Tab id="keyboard">Keyboard Settings</Tab>
+    <Tab id="gamepad">Gamepad Settings</Tab>
+  </TabList>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
+</Tabs>
+```
+
+### Controlled selection
+
+Selection can be controlled using the `selectedKey` prop, paired with the `onSelectionChange` event. The `id` prop from the selected tab will be passed into the callback when the tab is selected, allowing you to update state accordingly.
+
+```tsx example
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let [timePeriod, setTimePeriod] = React.useState<Key>('triassic');
+
+  return (
+    <>
+      <p>Selected time period: {timePeriod}</p>
+      <Tabs selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
+        <TabList aria-label="Mesozoic time periods">
+          <Tab id="triassic">Triassic</Tab>
+          <Tab id="jurassic">Jurassic</Tab>
+          <Tab id="cretaceous">Cretaceous</Tab>
+        </TabList>
+        <TabPanel id="triassic">
+          The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.
+        </TabPanel>
+        <TabPanel id="jurassic">
+          The Jurassic ranges from 200 million years to 145 million years ago.
+        </TabPanel>
+        <TabPanel id="cretaceous">
+          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 million years ago.
+        </TabPanel>
+      </Tabs>
+    </>
+  );
+}
+```
+
+### Keyboard Activation
+
+By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent Tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
+from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing on arrow key press, requiring a subsequent `Enter` or `Space` key press to confirm
+tab selection.
+
+```tsx example
+<Tabs keyboardActivation="manual">
+  <TabList aria-label="Input settings">
+    <Tab id="mouse">Mouse Settings</Tab>
+    <Tab id="keyboard">Keyboard Settings</Tab>
+    <Tab id="gamepad">Gamepad Settings</Tab>
+  </TabList>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
+</Tabs>
+```
+
+## Content
+
+### Focusable content
+
+When the tab panel doesn't contain any focusable content, the entire panel is given a `tabIndex=0` so that the content can be navigated to with the keyboard. When the tab panel contains focusable content, such as a textfield, then the `tabIndex` is omitted because the content itself can receive focus.
+
+This example uses the same `Tabs` component from above. Try navigating from the tabs to the content for each panel using the keyboard.
+
+```tsx example
+<Tabs>
+  <TabList aria-label="Notes app">
+    <Tab id="1">Jane Doe</Tab>
+    <Tab id="2">John Doe</Tab>
+    <Tab id="3">Joe Bloggs</Tab>
+  </TabList>
+  <TabPanel id="1">
+    <label>Leave a note for Jane: <input type="text" /></label>
+  </TabPanel>
+  <TabPanel id="2">Senatus Populusque Romanus.</TabPanel>
+  <TabPanel id="3">Alea jacta est.</TabPanel>
+</Tabs>
+```
+
+### Dynamic items
+
+The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `TabList` component is called for each item in the list, and returns an `<Tab>`. A function passed as the children of the <TypeLink links={docs.links} type={docs.exports.Collection} /> component returns a corresponding `<TabPanel>` for each tab.
+
+Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](collections.html) for more details.
+
+```tsx example
+import {Collection, Button} from 'react-aria-components';
+
+function Example() {
+  let [tabs, setTabs] = React.useState([
+    {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+    {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}
+  ]);
+
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        content: `Tab body ${tabs.length + 1}`
+      }
+    ]);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+
+  return (
+    <Tabs>
+      <div style={{display: 'flex'}}>
+        <TabList aria-label="Dynamic tabs" items={tabs} style={{flex: 1}}>
+          {item => <Tab>{item.title}</Tab>}
+        </TabList>
+        <div className="button-group">
+          <Button onPress={addTab}>Add tab</Button>
+          <Button onPress={removeTab}>Remove tab</Button>
+        </div>
+      </div>
+      <Collection items={tabs}>
+        {item => <TabPanel>{item.content}</TabPanel>}
+      </Collection>
+    </Tabs>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.button-group {
+  border-bottom: 1px solid gray;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+```
+
+</details>
+
+## Orientation
+
+By default, tabs are horizontally oriented. The `orientation` prop can be set to `vertical` to change this. This does not affect keyboard navigation. You are responsible for styling your tabs accordingly.
+
+```tsx example
+<Tabs orientation="vertical">
+  <TabList aria-label="Chat log orientation example">
+    <Tab id="1">John Doe</Tab>
+    <Tab id="2">Jane Doe</Tab>
+    <Tab id="3">Joe Bloggs</Tab>
+  </TabList>
+  <TabPanel id="1">There is no prior chat history with John Doe.</TabPanel>
+  <TabPanel id="2">There is no prior chat history with Jane Doe.</TabPanel>
+  <TabPanel id="3">There is no prior chat history with Joe Bloggs.</TabPanel>
+</Tabs>
+```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tabs {
+  &[data-orientation=vertical] {
+    flex-direction: row;
+  }
+}
+
+.react-aria-TabList {
+  &[data-orientation=vertical] {
+    flex-direction: column;
+    border-inline-end: 1px solid gray;
+
+    .react-aria-Tab {
+      border-inline-end: 3px solid var(--border-color, transparent);
+    }
+  }
+}
+```
+
+</details>
+
+## Disabled
+
+All tabs can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Tabs isDisabled>
+  <TabList aria-label="Input settings">
+    <Tab id="mouse">Mouse Settings</Tab>
+    <Tab id="keyboard">Keyboard Settings</Tab>
+    <Tab id="gamepad">Gamepad Settings</Tab>
+  </TabList>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
+</Tabs>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tab {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    &[data-selected] {
+      --border-color: var(--border-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+### Disabled items
+
+An individual `Tab` can be disabled with the `isDisabled` prop. Disabled tabs are not focusable, selectable, or keyboard navigable.
+
+```tsx example
+<Tabs>
+  <TabList aria-label="Input settings">
+    <Tab id="mouse">Mouse Settings</Tab>
+    <Tab id="keyboard">Keyboard Settings</Tab>
+    {/*- begin highlight -*/}
+    <Tab id="gamepad" isDisabled>Gamepad Settings</Tab>
+    {/*- end highlight -*/}
+  </TabList>
+  <TabPanel id="mouse">Mouse Settings</TabPanel>
+  <TabPanel id="keyboard">Keyboard Settings</TabPanel>
+  <TabPanel id="gamepad">Gamepad Settings</TabPanel>
+</Tabs>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Tabs` level instead of `isDisabled` on individual tabs. Each key in this list
+corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). A tab is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {id: 1, title: 'Mouse settings'},
+    {id: 2, title: 'Keyboard settings'},
+    {id: 3, title: 'Gamepad settings'}
+  ];
+
+  return (
+    <Tabs disabledKeys={[2]}>
+      <TabList aria-label="Input settings" items={tabs}>
+        {item => <Tab>{item.title}</Tab>}
+      </TabList>
+      <Collection items={tabs}>
+        {item => <TabPanel>{item.title}</TabPanel>}
+      </Collection>
+    </Tabs>
+  );
+}
+```
+
+## Links
+
+Tabs may be rendered as links to different routes in your application. This can be achieved by passing the `href` prop to the `<Tab>` component. By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
+
+1. Set up a <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [client side routing guide](routing.html) to learn how to set this up.
+2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#selection).
+
+This example uses [React Router](https://reactrouter.com/en/main) to setup routes for each tab and synchronize the selection with the URL.
+
+```tsx
+import {useLocation, useNavigate, BrowserRouter, Routes, Route} from 'react-router-dom';
+import {RouterProvider} from 'react-aria-components';
+
+function AppTabs() {
+  let {pathname} = useLocation();
+
+  return (
+    <Tabs selectedKey={pathname}>
+      <TabList aria-label="Tabs">
+        <Tab id="/" href="/">Home</Tab>
+        <Tab id="/shared" href="/shared">Shared</Tab>
+        <Tab id="/deleted" href="/deleted">Deleted</Tab>
+      </TabList>
+      <TabPanel id={pathname}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/shared" element={<SharedPage />} />
+          <Route path="/deleted" element={<DeletedPage />} />
+        </Routes>
+      </TabPanel>
+    </Tabs>
+  );
+}
+
+function App() {
+  let navigate = useNavigate();
+  return (
+    <RouterProvider navigate={navigate}>
+      <Routes>
+        <Route path="/*" element={<AppTabs />} />
+      </Routes>
+    </RouterProvider>
+  );
+}
+
+<BrowserRouter>
+  <App />
+</BrowserRouter>
+```
+
+```css hidden
+.react-aria-Tab[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+## Props
+
+### Tabs
+
+<PropTable component={docs.exports.Tabs} links={docs.links} />
+
+### TabList
+
+<PropTable component={docs.exports.TabList} links={docs.links} />
+
+### Tab
+
+<PropTable component={docs.exports.Tab} links={docs.links} />
+
+### TabPanel
+
+<PropTable component={docs.exports.TabPanel} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Tabs {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Tabs className="my-tabs">
+  {/* ... */}
+</Tabs>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Tab[data-selected] {
+  /* ... */
+}
+
+.react-aria-Tab[data-focus-visible] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Tab className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Settings
+</Tab>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when an item is selected.
+
+```jsx
+<Tab>
+  {({isSelected}) => (
+    <>
+      {isSelected && <SelectionIndicator />}
+      Item
+    </>
+  )}
+</Tab>
+```
+
+The states and selectors for each component used in `Tabs` are documented below.
+
+### Tabs
+
+`Tabs` can be targeted with the `.react-aria-Tabs` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TabsRenderProps.properties} />
+
+### TabList
+
+A `TabList` can be targeted with the `.react-aria-TabList` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.TabListRenderProps.properties} />
+
+### Tab
+
+A `Tab` can be targeted with the `.react-aria-Tab` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TabRenderProps.properties} />
+
+### TabPanel
+
+A `TabPanel` can be targeted with the `.react-aria-TabPanel` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TabPanelRenderProps.properties} />
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Tabs']} docs={docs} />
+
+This example shows a `Router` component that accepts `Tabs` and `Link` elements as children. When a link is clicked, it updates the selected tab accordingly.
+
+```tsx example render=false export=true
+import type {PressEvent} from 'react-aria-components';
+import {TabsContext, LinkContext} from 'react-aria-components';
+
+function Router({children}) {
+  let [selectedKey, onSelectionChange] = React.useState(null);
+  let onPress = (e: PressEvent) => {
+    onSelectionChange(e.target.getAttribute('data-href'));
+  };
+
+  return (
+    /*- begin highlight -*/
+    <TabsContext.Provider value={{selectedKey, onSelectionChange}}>
+    {/*- end highlight -*/}
+      <LinkContext.Provider value={{onPress}}>
+        {children}
+      </LinkContext.Provider>
+    </TabsContext.Provider>
+  );
+}
+```
+
+Now clicking a link rendered within a `Router` navigates to the linked tab.
+
+```tsx example
+import {Link} from 'react-aria-components';
+
+<Router>
+  <Tabs>
+    <TabList aria-label="Mesozoic time periods">
+      <Tab id="triassic">Triassic</Tab>
+      <Tab id="jurassic">Jurassic</Tab>
+      <Tab id="cretaceous">Cretaceous</Tab>
+    </TabList>
+    <TabPanel id="triassic">
+      The Triassic ranges roughly from 252 million to 201 million years ago,
+      preceding the <Link data-href="jurassic">Jurassic Period</Link>.
+    </TabPanel>
+    <TabPanel id="jurassic">
+      The Jurassic ranges from 200 million years to 145 million years ago,
+      preceding the <Link data-href="cretaceous">Cretaceous Period</Link>.
+    </TabPanel>
+    <TabPanel id="cretaceous">
+      The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 million years ago.
+    </TabPanel>
+  </Tabs>
+</Router>
+```
+
+### State
+
+Tabs provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TabListState} /> object to its children via `TabListStateContext`. This can be used to access and manipulate the tab list state.
+
+This example shows a `TabNavigation` component that can be placed within `Tabs` to navigate to the previous or next selected tab.
+
+```tsx example
+import {TabListStateContext, Button} from 'react-aria-components';
+
+function TabNavigation() {
+  /*- begin highlight -*/
+  let state = React.useContext(TabListStateContext);
+  /*- end highlight -*/
+  let prevKey = state?.collection.getKeyBefore(state.selectedKey);
+  let nextKey = state?.collection.getKeyAfter(state.selectedKey);
+  let onPrev = prevKey != null ? () => state.setSelectedKey(prevKey) : null;
+  let onNext = nextKey != null ? () => state.setSelectedKey(nextKey) : null;
+  return (
+    <div className="button-group">
+      <Button aria-label="Previous tab" onPress={onPrev}>←</Button>
+      <Button aria-label="Next tab" onPress={onNext}>→</Button>
+    </div>
+  );
+}
+
+<Tabs>
+  <div style={{display: 'flex'}}>
+    <TabList aria-label="Tabs" style={{flex: 1}}>
+      <Tab id="home">Home</Tab>
+      <Tab id="projects">Projects</Tab>
+      <Tab id="search">Search</Tab>
+    </TabList>
+    {/*- begin highlight -*/}
+    <TabNavigation />
+    {/*- end highlight -*/}
+  </div>
+  <TabPanel id="home">Home</TabPanel>
+  <TabPanel id="projects">Projects</TabPanel>
+  <TabPanel id="search">Search</TabPanel>
+</Tabs>
+```
+
+```css hidden
+.button-group .react-aria-Button[aria-label] {
+  font-size: 1.2rem;
+  line-height: 1rem;
+  font-weight: bold;
+}
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTabList](useTabList.html) for more details.

@@ -1,0 +1,204 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+:root {
+  --spectrum-menu-selected-color: var(--spectrum-global-color-blue-600);
+  --spectrum-selectlist-divider-color: var(--spectrum-global-color-gray-300);
+}
+
+.spectrum-Menu-wrapper,
+.spectrum-Menu-subdialog {
+  border-color: var(--spectrum-popover-border-color);
+  background-color: var(--spectrum-popover-background-color);
+  filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+  /* explicitly adding this webkit prefix may fix the bug where the drop-shadow remains dirty */
+  /* https://stackoverflow.com/questions/56478925/safari-drop-shadow-filter-remains-visible-even-with-hidden-element */
+  -webkit-filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+  will-change: filter;
+}
+
+.spectrum-Menu {
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
+  background-color: var(--spectrum-selectlist-background-color);
+}
+
+.spectrum-Submenu-headingWrapper {
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
+}
+
+.spectrum-Menu-item {
+  background-color: var(--spectrum-selectlist-option-background-color);
+  color: var(--spectrum-selectlist-option-text-color);
+
+  &:focus-visible,
+  &.is-focused {
+    background-color: var(--spectrum-selectlist-option-background-color-key-focus);
+    color: var(--spectrum-selectlist-option-text-color-key-focus);
+    border-inline-start-color: var(--spectrum-selectlist-option-focus-indicator-color);
+  }
+
+  &:hover,
+  &:focus,
+  &.is-highlighted,
+  &.is-open {
+    background-color: var(--spectrum-selectlist-option-background-color-hover);
+    color: var(--spectrum-selectlist-option-text-color-hover);
+  }
+
+  &.is-selected {
+    .spectrum-Menu-checkmark {
+      color: var(--spectrum-selectlist-option-icon-color-selected);
+    }
+  }
+
+  .is-active,
+  &:active {
+    background-color: var(--spectrum-selectlist-option-background-color-down);
+  }
+
+  &.is-disabled {
+    .spectrum-Menu-description {
+      color: var(--spectrum-selectlist-option-text-color-disabled);
+    }
+    background-color: var(--spectrum-selectlist-option-background-color-disabled);
+    background-image: none;
+    color: var(--spectrum-selectlist-option-text-color-disabled);
+    cursor: default;
+  }
+}
+
+.spectrum-Menu-sectionHeading {
+  color: var(--spectrum-heading-subtitle3-text-color);
+}
+
+.spectrum-Menu-divider {
+  background-color: var(--spectrum-selectlist-divider-color);
+}
+
+.spectrum-Menu-description {
+  color: var(--spectrum-global-color-gray-700);
+}
+
+.spectrum-Submenu-popover.spectrum-Submenu-popover  {
+  filter: unset;
+  -webkit-filter: unset;
+  transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+              visibility 0ms linear var(--spectrum-global-animation-duration-100);
+  transform: none;
+}
+
+.spectrum-Submenu-heading {
+  color: var(--spectrum-heading-subtitle3-text-color);
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0)
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0)
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.spectrum-TraySubmenu-enter {
+  animation-name: slideInFromRight;
+  animation-duration: var(--spectrum-global-animation-duration-400);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--spectrum-global-animation-ease-out);
+  &:dir(rtl) {
+    animation-name: slideInFromLeft;
+  }
+}
+
+.spectrum-TraySubmenu-exit {
+  animation-name: slideOutToRight;
+  animation-duration: var(--spectrum-global-animation-duration-400);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--spectrum-global-animation-ease-in);
+  &:dir(rtl) {
+    animation-name: slideOutToLeft;
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Menu-divider {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
+  .spectrum-Menu-item {
+    forced-color-adjust: none;
+    --spectrum-heading-subtitle3-text-color: ButtonText;
+    --spectrum-selectlist-background-color: ButtonFace;
+    --spectrum-selectlist-divider-color: ButtonText;
+    --spectrum-selectlist-option-background-color: ButtonFace;
+    --spectrum-selectlist-option-background-color-disabled: ButtonFace;
+    --spectrum-selectlist-option-background-color-down: ButtonFace;
+    --spectrum-selectlist-option-background-color-hover: Highlight;
+    --spectrum-selectlist-option-background-color-key-focus: Highlight;
+    --spectrum-selectlist-option-focus-indicator-color: Highlight;
+    --spectrum-selectlist-option-icon-color-selected: Highlight;
+    --spectrum-selectlist-option-text-color: ButtonText;
+    --spectrum-selectlist-option-text-color-disabled: GrayText;
+    --spectrum-selectlist-option-text-color-hover: HighlightText;
+    --spectrum-selectlist-option-text-color-key-focus: HighlightText;
+    --spectrum-alias-border-color-focus: Highlight;
+    /* Overriding menu descriptions which were hardcoded to gray-700 */
+    .spectrum-Menu-description {
+      color: var(--spectrum-selectlist-option-text-color);
+    }
+    &:hover,
+    &:focus,
+    &.is-highlighted,
+    &.is-open,
+    &:focus-visible,
+    &.is-focused {
+      &.is-selected {
+        .spectrum-Menu-checkmark {
+          color: HighlightText;
+        }
+      }
+      .spectrum-Menu-description {
+        color: var(--spectrum-selectlist-option-text-color-key-focus);
+        background-color: var(--spectrum-selectlist-option-background-color-key-focus);
+      }
+      background-color: var(--spectrum-selectlist-option-background-color-key-focus);
+      color: var(--spectrum-selectlist-option-text-color-key-focus);
+    }
+  }
+}

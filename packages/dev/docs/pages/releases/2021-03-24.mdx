@@ -1,0 +1,165 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This month we bring you some important updates to our under construction components, and we have also added some additional documentation on how we manage our pre-releases. Hopefully this can be used as a guide when deciding to try our new components. We have also added new translations for strings across all supported locales and new documentation for our ColorSlider, ColorWheel, and ColorField components. Additionally, we have made improvements to our FocusScope and fixed issues in Menu, Picker, ActionGroup, and Tooltip.
+date: 2021-03-24
+---
+
+# March 24, 2021 Release
+
+This month we bring you some important updates to our under construction components, and we have also added some additional documentation on how we manage our pre-releases. Hopefully this can be used as a guide when deciding to try our new components. Visit our [docs page](https://react-spectrum.adobe.com/Support.html#pre-releases) for a description of each stage in our release process.
+
+We have also added new translations for strings across all supported locales and new documentation for our [ColorSlider](https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html), [ColorWheel](https://react-spectrum.adobe.com/react-spectrum/ColorWheel.html), and [ColorField](https://react-spectrum.adobe.com/react-spectrum/ColorField.html) components. Additionally, we have made improvements to our FocusScope and fixed issues in Menu, Picker, ActionGroup, and Tooltip.
+
+As always we want to thank all of our amazing contributors for the time they donate.
+
+## New features
+- Upgraded babel version - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1402)
+- Support custom key in Collections - [@marbemac](https://github.com/marbemac) - [PR](https://github.com/adobe/react-spectrum/pull/1577)
+- Add delay to loading spinner in `ComboBox` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1557)
+- Add translations for pt-PT - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/1616)
+- Add translations for `Color`, `Numberfield` and `ComboBox` - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/1616)
+- Add revert function to `aria-modal-polyfill` - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/1680)
+
+## Updated
+- Update Tooltip positioning - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1515)
+- Cleanup Tooltip timers - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/1562)
+- Add wrapping text in `Menu` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/1600)
+- Adjust sizing inconsistencies in Virtualizer - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1561)
+- Add null checks for refs in `Picker` and `ComboBox` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1599)
+- Fix color scheme for scrollbars - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1547)
+- Export `TreeProps` from `useTreeState` - [@Julienng](https://github.com/Julienng) - [PR](https://github.com/adobe/react-spectrum/pull/1239)
+- Update default submit behavior of `Picker` - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/1657)
+- Prevent submit on `Enter` if `ComboBox` is open - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1651)
+- Fix `Menu` item height for medium scale - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1677)
+- Fix disabled component tabbing in `FocusScope` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1521)
+- Improve rendering of `Tabs` underline - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1650)
+- Fix infinite loop in `useTreeData` update method - [@razvanip](https://github.com/razvanip) - [PR](https://github.com/adobe/react-spectrum/pull/1499)
+- Fix disabled keys handling in `ActionGroup` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1359)
+- Refactor `NumberField` css - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1614)
+- Update blur handling in  `useComboBoxState` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1587)
+- Fix `Table` paging on load  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1678)
+- Fix typeahead in `useSelect` when closed - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1374)
+- Update `Menu` item css size variable - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1709)
+- Add `ListData` interface to react-stately - [@kqito](https://github.com/kqito) - [PR](https://github.com/adobe/react-spectrum/pull/1702)
+- Fix height fill in `Table` - [@LFDanLu](https://github.com/LFDanLu)  - [PR](https://github.com/adobe/react-spectrum/pull/1698)
+- Ensure `onPressEnd` is fired correctly on disabled elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1719)
+
+## Docs
+- Add ref to useRadioGroup examples - [@RubenSandwich](https://github.com/RubenSandwich) - [PR](https://github.com/adobe/react-spectrum/pull/1588)
+- Sync Contributing docs to contribute file - [@AndyOGo](https://github.com/AndyOGo) - [PR](https://github.com/adobe/react-spectrum/pull/1571)
+- Update mergeProps descriptions - [@AndyOGo](https://github.com/AndyOGo) - [PR](https://github.com/adobe/react-spectrum/pull/1551)
+- Update disabled examples in `useMenu` - [@razvanip](https://github.com/razvanip) - [PR](https://github.com/adobe/react-spectrum/pull/1498)
+- Add anatomy diagrams to `Color` aria hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1603)
+- Remove broken link in `Menu` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1652)
+- Fix container sizing in `Tabs` - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/1656)
+
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+
+- NumberField rc
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/NumberField.html)
+  - [React Aria](https://react-spectrum.adobe.com/react-aria/useNumberField.html)
+- ComboBox beta
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ComboBox.html)
+  - [React Aria](https://react-spectrum.adobe.com/react-aria/useComboBox.html)
+- ColorSlider beta
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html)
+  - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorSlider.html)
+- ColorWheel beta
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorWheel.html)
+  - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorWheel.html)
+- ColorField beta
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorField.html)
+  - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorField.html)
+- Tabs beta
+  - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Tabs.html)
+- Accordion alpha
+- Table alpha
+- Grid alpha
+- Drag and Drop alpha
+  - [RFC](https://github.com/adobe/react-spectrum/blob/main/rfcs/2020-v3-dnd.md)
+
+## Released packages
+```
+- @adobe/react-spectrum@3.9.0
+- @internationalized/message@3.0.0-rc.0
+- @internationalized/number@3.0.0-rc.0
+- @react-aria/accordion@3.0.0-alpha.0
+- @react-aria/actiongroup@3.1.2
+- @react-aria/aria-modal-polyfill@3.3.0
+- @react-aria/breadcrumbs@3.1.3
+- @react-aria/color@3.0.0-beta.0
+- @react-aria/combobox@3.0.0-beta.0
+- @react-aria/dnd@3.0.0-alpha.0
+- @react-aria/focus@3.2.4
+- @react-aria/grid@3.0.0-alpha.0
+- @react-aria/interactions@3.3.4
+- @react-aria/live-announcer@3.0.0-rc.0
+- @react-aria/menu@3.2.0
+- @react-aria/numberfield@3.0.0-rc.0
+- @react-aria/overlays@3.6.2
+- @react-aria/searchfield@3.1.2
+- @react-aria/select@3.3.1
+- @react-aria/selection@3.4.0
+- @react-aria/spinbutton@3.0.0-rc.0
+- @react-aria/table@3.0.0-alpha.9
+- @react-aria/tabs@3.0.0-beta.0
+- @react-aria/utils@3.7.0
+- @react-aria/virtualizer@3.3.2
+- @react-spectrum/accordion@3.0.0-alpha.0
+- @react-spectrum/breadcrumbs@3.2.1
+- @react-spectrum/color@3.0.0-beta.0
+- @react-spectrum/combobox@3.0.0-beta.0
+- @react-spectrum/dialog@3.3.1
+- @react-spectrum/label@3.3.2
+- @react-spectrum/listbox@3.4.1
+- @react-spectrum/menu@3.2.2
+- @react-spectrum/numberfield@3.0.0-rc.0
+- @react-spectrum/picker@3.2.3
+- @react-spectrum/provider@3.1.3
+- @react-spectrum/slider@3.0.2
+- @react-spectrum/table@3.0.0-alpha.10
+- @react-spectrum/tabs@3.0.0-beta.0
+- @react-spectrum/theme-dark@3.2.0
+- @react-spectrum/theme-default@3.2.0
+- @react-spectrum/theme-light@3.1.0
+- @react-spectrum/tooltip@3.1.2
+- @react-stately/collections@3.3.1
+- @react-stately/color@3.0.0-beta.0
+- @react-stately/combobox@3.0.0-beta.0
+- @react-stately/data@3.3.0
+- @react-stately/dnd@3.0.0-alpha.0
+- @react-stately/grid@3.0.0-alpha.0
+- @react-stately/layout@3.2.1
+- @react-stately/numberfield@3.0.0-rc.0
+- @react-stately/selection@3.4.0
+- @react-stately/table@3.0.0-alpha.8
+- @react-stately/tabs@3.0.0-beta.0
+- @react-stately/tooltip@3.0.3
+- @react-stately/tree@3.1.3
+- @react-stately/virtualizer@3.1.3
+- @react-types/accordion@3.0.0-alpha.0
+- @react-types/color@3.0.0-beta.0
+- @react-types/combobox@3.0.0-beta.0
+- @react-types/grid@3.0.0-alpha.0
+- @react-types/numberfield@3.0.0-rc.0
+- @react-types/shared@3.5.0
+- @react-types/table@3.0.0-alpha.0
+- @react-types/tabs@3.0.0-beta.0
+- react-aria@3.5.0
+- react-stately@3.4.0
+```
+

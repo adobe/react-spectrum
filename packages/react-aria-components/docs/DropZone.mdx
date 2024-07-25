@@ -1,0 +1,348 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+import FileTrigger from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg'
+
+---
+category: Drag and drop
+keywords: [dropzone, drop, dnd, drag and drop, aria, accessibility]
+type: component
+---
+
+# DropZone
+
+<PageDescription>{docs.exports.DropZone.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['DropZone']} />
+
+## Example
+
+```tsx example
+import {DropZone, Text} from 'react-aria-components';
+
+function Example() {
+  let [dropped, setDropped] = React.useState(false);
+
+  return (
+    <DropZone
+      onDrop={() => {
+        setDropped(true);
+      }}>
+      <Text slot="label">
+        {dropped ? "You dropped something" : "Drop object here"}
+      </Text>
+    </DropZone>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(dropzone);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-DropZone {
+  color: var(--text-color);
+  background: var(--overlay-background);
+  border: 1px solid var(--border-color);
+  forced-color-adjust: none;
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 24px 12px;
+  width: 25%;
+  display: inline-block;
+
+  &[data-focus-visible],
+  &[data-drop-target] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  &[data-drop-target] {
+    background: var(--highlight-overlay);
+  }
+}
+```
+
+</details>
+
+## Features
+
+There is no native element to implement a drop zone in HTML. `DropZone` helps achieve accessible dropzone components that can be styled as needed.
+
+* **Styleable** – Hover, keyboard focus, and the drop target states are provided for easy styling. These styles only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+* **Accessible** – Support for native drag and drop via mouse and touch, as well as keyboard and screen reader interactions. Copy and paste is also supported as a keyboard accessible alternative.
+* **Flexible** – Files, directories, and custom data types can be dropped, and the contents of the drop zone can be fully customized.
+
+## Anatomy
+
+A drop zone consists of a target element for the dropped objects. Users may drop objects via mouse, keyboard, or touch. `DropZone` accepts any content as its children, which may change when the user drops content. A [FileTrigger](FileTrigger.html) is commonly paired with a DropZone to allow a user to choose files from their device.
+
+A visual label should be provided to `DropZone` using a `Text` element with a `label` slot. If it is not provided, then an `aria-label` or `aria-labelledby` prop must be passed to identify the visually hidden button to assistive technology.
+
+```tsx
+import {DropZone, Text} from 'react-aria-components';
+
+<DropZone>
+  <Text slot="label" />
+</DropZone>
+```
+
+### Composed Components
+A drop zone can include a `FileTrigger` as a child, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="FileTrigger.html"
+  title="FileTrigger"
+  description="A file trigger allows a user to access the file system with any pressable component such as a Button.">
+  <FileTrigger />
+</ExampleCard>
+
+</section>
+
+## Events
+
+`DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone.
+
+```tsx example
+import type {TextDropItem} from '@react-aria/dnd';
+
+function Example() {
+  let [dropped, setDropped] = React.useState(null);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        onDrop={async(e) => {
+          let items = await Promise.all(
+            e.items
+              .filter(item => item.kind === 'text' && item.types.has('text/plain'))
+              .map((item: TextDropItem) => item.getText('text/plain'))
+          );
+          setDropped(items.join('\n'));
+        }}>
+        <Text slot="label">
+          {dropped || 'Drop here'}
+        </Text>
+      </ DropZone>
+    </>
+  );
+}
+
+<Example />
+
+```
+
+The `Draggable` component used above is defined below. See [useDrag](useDrag.html) for more details and documentation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example render=false export=true
+import {useDrag} from '@react-aria/dnd';
+
+function Draggable() {
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world',
+        'my-app-custom-type': JSON.stringify({message: 'hello world'})
+      }];
+    }
+  });
+
+  return (
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+      Drag me
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 4px;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+```
+
+</details>
+</details>
+
+## Labeling
+
+The `label` slot enables the user to reference the text content to define the dropzone's accessible name.
+
+```tsx example
+import {Text} from 'react-aria-components';
+
+function Example() {
+  let [dropped, setDropped] = React.useState(false);
+
+  return (
+    <DropZone
+      onDrop={() => setDropped(true)}>
+      <Text slot="label">
+        {dropped ? 'Successful drop!' : 'Drop files here'}
+      </Text>
+    </DropZone>
+  );
+}
+```
+
+## FileTrigger
+
+To allow the selection of files from the user's device, pass `FileTrigger` as a child of `DropZone`.
+
+```tsx example
+import {FileTrigger, Button} from 'react-aria-components';
+import type {FileDropItem} from 'react-aria'
+
+function Example() {
+  let [files, setFiles] = React.useState(null);
+
+  return(
+    <DropZone
+      onDrop={(e) => {
+        let files = e.items.filter((file) => file.kind === 'file') as FileDropItem[];
+        let filenames = files.map((file) => file.name);
+        setFiles(filenames.join(', '));
+      }}>
+      <FileTrigger
+        allowsMultiple
+        onSelect={(e) => {
+          let files = Array.from(e);
+          let filenames = files.map((file) => file.name);
+          setFiles(filenames.join(', '));
+        }}>
+        <Button>Select files</Button>
+      </FileTrigger>
+      <Text slot="label" style={{display: 'block'}}>
+        {files || 'Drop files here'}
+      </Text>
+    </DropZone>
+  );
+}
+```
+
+## Visual feedback
+
+A dropzone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOperation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `cancel` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](https://react-spectrum.adobe.com/react-aria/useDrop.html#getdropoperation)
+
+```tsx example
+
+function Example() {
+  let [dropped, setDropped] = React.useState(false);
+
+  return (
+    <DropZone
+      getDropOperation={(types) => types.has('image/png') ? 'copy' : 'cancel'}
+      onDrop={() => setDropped(true)}>
+      {dropped ? 'Successful drop!' : 'Drop files here'}
+    </DropZone>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.DropZone} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-DropZone {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DropZone className="my-dropzone">
+  {/* ... */}
+</DropZone>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-DropZone[data-drop-target] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<DropZone className={({isDropTarget}) => isDropTarget ? 'bg-gray-700' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the drop target is in an active state.
+
+```jsx
+<DropZone>
+  {({isDropTarget}) => (
+    <>
+      {isDropTarget && <DropHighlight/>}
+      Drop item here
+    </>
+  )}
+</DropZone>
+```
+
+The states, selectors, and render props for `DropZone` are documented below.
+
+<StateTable properties={docs.exports.DropZoneRenderProps.properties} />
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDrop](useDrop.html) for more details.

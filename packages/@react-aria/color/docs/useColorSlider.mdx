@@ -1,0 +1,351 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
+import typesDocs from 'docs:@react-types/color';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/color/package.json';
+import Anatomy from './ColorSliderAnatomy.svg';
+
+---
+category: Color
+keywords: [color slider, color picker, aria]
+---
+
+# useColorSlider
+
+<PageDescription>{docs.exports.useColorSlider.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useColorSlider']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useColorSlider} links={docs.links} />
+
+## Features
+
+The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
+can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
+of a complete color picker rather than a single color channel slider. `useColorSlider` helps achieve accessible and
+touch-friendly color sliders that can be styled as needed.
+
+* Support for adjusting a single channel of RGBA, HSLA, and HSBA colors
+* Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
+* Multi-touch support for dragging multiple sliders at once
+* Pressing on the track moves the thumb to that position
+* Supports using the arrow keys, as well as page up/down, home, and end keys
+* Support for both horizontal and vertical orientations
+* Support for disabling the color slider
+* Prevents text selection while dragging
+* Exposed to assistive technology as a `slider` element via ARIA
+* Uses a hidden native input element to support touch screen readers
+* Automatic ARIA labeling using localized channel names by default
+* Support for visually labeling the slider
+* Support for displaying the current value using an `<output>` element
+* Internationalized number formatting based on the color channel type
+* Support for mirroring in RTL locales
+
+## Anatomy
+
+<Anatomy
+  role="img"
+  aria-label="Color slider anatomy diagram: Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements." />
+
+A color slider consists of a track element and a thumb that the user can drag to change a single channel of a color value.
+It may also include optional label and `<output>` elements to display the color channel name and current numeric value, respectively.
+A visually hidden `<input>` element is used to represent the value to assistive technologies.
+
+`useColorSlider` returns props that you should spread onto the appropriate elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useColorSlider.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useColorSliderState} />
+hook from `@react-stately/color`. The state object should be passed as an option to `useColorSlider`
+
+By default, `useColorSlider` provides an `aria-label` for the localized color channel name. If you wish to display a visual
+label, or override this with a more specific label, a `label`, `aria-label` or `aria-labelledby` prop may be passed instead.
+
+## Example
+
+This example shows how to build a horizontal color slider. It also includes a label which can be clicked to focus the thumb.
+Styling for the track background and positioning of the thumb are provided by `useColorSlider` in the returned `style` prop for each element.
+
+If no `label` prop is given, it uses the <TypeLink links={typesDocs.links} type={typesDocs.exports.Color} /> object to
+get a localized string for the channel name using the `getChannelName` method. In addition, an `<output>` element is used
+to display the current channel value as text. This is formatted using the Color object's `formatChannelValue` method, which
+formats the value according to the channel type and locale settings.
+
+The visually hidden `<input>` element inside the thumb is used to represent the color slider to assistive technology. 
+The thumb also uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
+
+```tsx example export=true
+import {useColorSlider} from '@react-aria/color';
+import {useColorSliderState} from '@react-stately/color';
+import {useLocale} from '@react-aria/i18n';
+import {useFocusRing} from '@react-aria/focus';
+
+const TRACK_THICKNESS = 28;
+const THUMB_SIZE = 20;
+
+function ColorSlider(props) {
+  let {isDisabled} = props;
+  let {locale} = useLocale();
+  let state = useColorSliderState({...props, locale});
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
+
+  // Default label to the channel name in the current locale
+  let label = props.label || state.value.getChannelName(props.channel, locale);
+
+  let {trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider({
+    ...props,
+    label,
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: 300
+      }}>
+      {/* Create a flex container for the label and output element. */}
+      <div style={{display: 'flex', alignSelf: 'stretch'}}>
+        <label {...labelProps}>{label}</label>
+        <output {...outputProps} style={{flex: '1 0 auto', textAlign: 'end'}}>
+          {state.value.formatChannelValue(props.channel, locale)}
+        </output>
+      </div>
+      {/* The track element holds the visible track line and the thumb. */}
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          ...trackProps.style,
+          height: TRACK_THICKNESS,
+          width: '100%',
+          borderRadius: 4,
+          background: isDisabled ? 'rgb(142, 142, 142)' : trackProps.style.background
+        }}>
+        <div
+          {...thumbProps}
+          style={{
+            ...thumbProps.style,
+            top: TRACK_THICKNESS / 2,
+            background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+            border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
+            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            borderRadius: '50%',
+            boxSizing: 'border-box'
+          }}>
+          <input ref={inputRef} {...inputProps} {...focusProps} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
+```
+
+### Vertical
+
+This example shows how to build a vertical color slider. The main difference from horizontal color sliders is the addition of the
+`orientation: 'vertical'` option to `useColorSlider`. This automatically adjusts the internal positioning and dragging logic.
+Additionally, this example does not have a visible label or `<output>` element. This can be done by simply not using the returned
+`labelProps` and `outputProps`. The color slider will have a default `aria-label` using the localized channel name, which can be overridden
+by passing an `aria-label` prop to `useColorSlider`.
+
+```tsx example
+function ColorSlider(props) {
+  let {locale} = useLocale();
+  let state = useColorSliderState({...props, locale});
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
+  let {trackProps, thumbProps, inputProps} = useColorSlider({
+    ...props,
+    orientation: 'vertical',
+    trackRef,
+    inputRef
+  }, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      style={{
+        height: 200
+      }}>
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{
+          ...trackProps.style,
+          width: TRACK_THICKNESS,
+          height: '100%',
+          borderRadius: 4
+        }}>
+        <div
+          {...thumbProps}
+          style={{
+            ...thumbProps.style,
+            left: TRACK_THICKNESS / 2,
+            border: '2px solid white',
+            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            borderRadius: '50%',
+            boxSizing: 'border-box',
+            background: state.getDisplayColor().toString('css')
+          }}>
+          <input ref={inputRef} {...inputProps} {...focusProps} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
+```
+
+## Usage
+
+The following examples show how to use the `ColorSlider` component created in the above example.
+
+### RGBA
+
+This example shows how you could build an RGBA color picker using four color sliders bound to the same
+color value in state. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
+function is used to parse the initial color from a hex value, stored in state. The `value` and `onChange` props
+of `ColorSlider` are used to make the sliders controlled, so that they all update when the color is modified.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('#7f007f'));
+  return (
+    <>
+      <ColorSlider channel="red" value={color} onChange={setColor} />
+      <ColorSlider channel="green" value={color} onChange={setColor} />
+      <ColorSlider channel="blue" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
+    </>
+  );
+}
+```
+
+### HSLA
+
+This example shows how to build a similar color picker to the one above, using HSLA colors instead.
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <>
+      <ColorSlider channel="hue" value={color} onChange={setColor} />
+      <ColorSlider channel="saturation" value={color} onChange={setColor} />
+      <ColorSlider channel="lightness" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
+    </>
+  );
+}
+```
+
+### HSBA
+
+This example shows how to build an HSBA color picker.
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsb(0, 100%, 50%)'));
+  return (
+    <>
+      <ColorSlider channel="hue" value={color} onChange={setColor} />
+      <ColorSlider channel="saturation" value={color} onChange={setColor} />
+      <ColorSlider channel="brightness" value={color} onChange={setColor} />
+      <ColorSlider channel="alpha" value={color} onChange={setColor} />
+    </>
+  );
+}
+```
+
+### onChangeEnd
+
+The `onChangeEnd` prop can be used to handle when a user stops dragging a color slider, whereas the `onChange`
+prop is called as the user drags.
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('#7f007f'));
+  return (
+    <>
+      <ColorSlider channel="red" defaultValue={color} onChangeEnd={setColor} />
+      <p>Current color value: {color.toString('hex')}</p>
+    </>
+  );
+}
+```
+
+### Disabled
+
+A `ColorSlider` can be disabled using the `isDisabled` prop. This prevents the thumb from being focused or dragged.
+It's up to you to style your color slider to appear disabled accordingly.
+
+```tsx example
+<ColorSlider channel="red" defaultValue="#7f007f" isDisabled />
+```
+
+### HTML forms
+
+ColorSlider supports the `name` prop for integration with HTML forms. The value will be submitted as a number between the minimum and maximum value for the displayed channel.
+
+```tsx example
+<ColorSlider
+  defaultValue="#7f0000"
+  channel="red"
+  name="red" />
+```
+
+## Internationalization
+
+### Labeling
+
+By default, a localized string for the channel name is used as the `aria-label` for the `ColorSlider`. When a custom `aria-label`
+or visual `label` is provided, it should be localized accordingly. To get a localized channel name to use as the visual label,
+you can use the `color.getChannelName` method.
+
+### Value formatting
+
+The `aria-valuetext` of the `<input>` element is formatted according to the user's locale automatically. If you wish to display this
+value visually in the `<output>` element, you can use the `color.formatChannelValue` method.
+
+### RTL
+
+In right-to-left languages, color sliders should be mirrored. The label should be right aligned, and the value should be left aligned.
+Ensure that your CSS accounts for this. Positioning of the thumb and dragging behavior is automatically mirrored by `useColorSlider`.

@@ -1,0 +1,492 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import contextualHelpTriggerTypes from 'docs:@react-spectrum/menu/src/ContextualHelpTrigger.tsx';
+import submenuTriggerTypes from 'docs:@react-spectrum/menu/src/SubmenuTrigger.tsx';
+import docs from 'docs:@react-spectrum/menu';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/menu/package.json';
+import {Keyboard} from '@react-spectrum/text';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button'
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import Paste from '@spectrum-icons/workflow/Paste';
+```
+
+---
+category: Collections
+keywords: [menu trigger, dropdown, action menu]
+---
+
+# Menu
+
+<PageDescription>{docs.exports.Menu.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Menu', 'MenuTrigger', 'ContextualHelpTrigger']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/menu/'}
+  ]}
+  since="3.0.0" />
+
+## Example
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+    Edit
+  </ActionButton>
+  <Menu onAction={(key) => alert(key)}>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+    <Item key="replace">Replace</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+## Content
+
+Menu follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), Menu accepts `<Item>` elements as children, each with a `key` prop. Basic usage of Menu, seen in the example above, shows multiple items populated with a string. Static collections, as in this example, can be used when the full list of items is known ahead of time.
+
+Dynamic collections, as shown below, can be used when the items come from an external data source such as an API call, or update over time. Providing the data in this way allows for Menu to automatically cache the rendering of each item, which dramatically improves performance.
+
+As seen below, an iterable list of items is passed to the Menu using the `items` prop. Each item accepts a `key` prop, which is passed to the event handler to identify the selected item. Alternatively, if the item objects contain an id property, this is then used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection and actions.
+
+```tsx example
+function Example() {
+  let menuItems = [
+    {name: 'Cut'},
+    {name: 'Copy'},
+    {name: 'Paste'},
+    {name: 'Replace'}
+  ];
+
+  return (
+    <MenuTrigger>
+      <ActionButton>
+        Edit
+      </ActionButton>
+      <Menu items={menuItems}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+### Trays
+On mobile, Menus automatically display in a tray instead of a popover to improve usability.
+
+### Internationalization
+In order to internationalize a Menu, the content provided to all child items should be localized.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the Menu is flipped.
+
+## Events
+Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either single or multiple. See [Selection](#selection) for more information.
+
+Menu also supports the `onAction` callback when `selectionMode` is `none` (default).
+
+```tsx example
+function Example() {
+  let [action, setAction] = React.useState(null);
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>
+          Edit
+        </ActionButton>
+        <Menu onAction={setAction}>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
+        </Menu>
+      </MenuTrigger>
+      <p>Action: {action}</p>
+    </>
+  );
+}
+```
+
+## Selection
+Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+
+```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['middle']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>
+          Align
+        </ActionButton>
+        <Menu selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
+          <Item key="left">Left</Item>
+          <Item key="middle">Middle</Item>
+          <Item key="right">Right</Item>
+        </Menu>
+      </MenuTrigger>
+      <p>Current selection (controlled): {[...selected]}</p>
+    </>
+  );
+}
+```
+
+Set `selectionMode` prop to `multiple` to allow more than one selection.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['Sidebar', 'Console']));
+
+  return (
+    <>
+      <MenuTrigger closeOnSelect={false}>
+        <ActionButton>
+          Show
+        </ActionButton>
+        <Menu selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+          <Item key='Sidebar'>Sidebar</Item>
+          <Item key='Searchbar'>Searchbar</Item>
+          <Item key='Tools'>Tools</Item>
+          <Item key='Console'>Console</Item>
+        </Menu>
+      </MenuTrigger>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Links
+
+By default, interacting with an item in a Menu triggers `onAction` and optionally `onSelectionChange` depending on the `selectionMode`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a menu are not selectable.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>Links</ActionButton>
+  <Menu>
+    <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+    <Item href="https://apple.com/" target="_blank">Apple</Item>
+    <Item href="https://google.com/" target="_blank">Google</Item>
+    <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Sections
+Menu supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
+
+### Static Items
+
+```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['bold', 'left']));
+
+  return (
+    <MenuTrigger>
+      <ActionButton>
+        Edit
+      </ActionButton>
+      <Menu selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+        <Section title="Styles">
+          <Item key="bold">Bold</Item>
+          <Item key="underline">Underline</Item>
+        </Section>
+        <Section title="Align">
+          <Item key="left">Left</Item>
+          <Item key="middle">Middle</Item>
+          <Item key="right">Right</Item>
+        </Section>
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+### Dynamic Items
+
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
+
+```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
+  let openWindows = [
+    {
+      name: 'Left Panel',
+      id: 'left',
+      children: [
+        {id: 1, name: 'Final Copy (1)'}
+      ]
+    },
+    {
+      name: 'Right Panel',
+      id: 'right',
+      children: [
+        {id: 2, name: 'index.ts'},
+        {id: 3, name: 'package.json'},
+        {id: 4, name: 'license.txt'}
+      ]
+    }
+  ];
+
+  return (
+    <MenuTrigger>
+      <ActionButton>
+        Window
+      </ActionButton>
+      <Menu
+        items={openWindows}
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+```
+
+### Accessibility
+
+Sections without a `title` must provide an `aria-label` for accessibility.
+
+## Complex Menu Items
+
+Items within Menu also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+
+```tsx example
+import {Keyboard, Text} from '@react-spectrum/text';
+<MenuTrigger>
+  <ActionButton>
+    Edit
+  </ActionButton>
+  <Menu>
+    <Item key="cut" textValue="cut">
+      <Cut />
+      <Text>Cut</Text>
+      <Keyboard>⌘X</Keyboard>
+    </Item>
+    <Item key="copy" textValue="copy">
+      <Copy />
+      <Text>Copy</Text>
+      <Keyboard>⌘C</Keyboard>
+    </Item>
+    <Item key="paste" textValue="paste">
+      <Paste />
+      <Text>Paste</Text>
+      <Keyboard>⌘V</Keyboard>
+    </Item>
+  </Menu>
+</MenuTrigger>
+```
+
+## Unavailable Items
+
+ContextualHelpTrigger disables a menu item's action and replaces it with a popover with information on why the item is unavailable and may link users to more information elsewhere.
+
+The ContextualHelpTrigger accepts exactly
+two children: the `Item` which triggers opening of the Dialog and the Dialog itself. The trigger must be
+the first child passed into the ContextualHelpTrigger and should be an `Item`. Similar to
+ContextualHelp, the layout of the Dialog is very deliberate. See [ContextualHelp](ContextualHelp.html#content) for further explanation.
+
+By default, a ContextualHelpTrigger's Dialog is opened by hovering, pressing the trigger element or activating
+it via the <Keyboard>Space</Keyboard>, <Keyboard>Enter</Keyboard>, or <Keyboard>Right Arrow</Keyboard> keys.
+Hovering another item or pressing the <Keyboard>Esc</Keyboard> key will close the Dialog and leave the Menu open.
+
+Setting the `isUnavailable` prop on the ContextualHelpTrigger makes the menu item unavailable and enables the Dialog with contextual help, allowing for programmatic control.
+
+Note that the Menu's `onAction` and `onSelectionChange`
+callbacks will not fire for items made unavailable by a ContextualHelpTrigger.
+
+The example below illustrates how one would setup a Menu to use ContextualHelpTrigger.
+
+```tsx example keepIndividualImports
+import {Content, Dialog, Heading} from '@adobe/react-spectrum';
+import {ContextualHelpTrigger} from '@react-spectrum/menu';
+
+<MenuTrigger>
+  <ActionButton>Edit</ActionButton>
+  <Menu>
+    <Item key="undo">Undo</Item>
+    <Item key="redo">Redo</Item>
+    <ContextualHelpTrigger isUnavailable>
+      <Item key="cut">Cut</Item>
+      <Dialog>
+        <Heading>Cut</Heading>
+        <Content>Please select text for 'Cut' to be enabled.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
+    <ContextualHelpTrigger isUnavailable>
+      <Item key="copy">Copy</Item>
+      <Dialog>
+        <Heading>Copy</Heading>
+        <Content>Please select text for 'Copy' to be enabled.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
+    <ContextualHelpTrigger>
+      <Item key="paste">Paste</Item>
+      <Dialog>
+        <Heading>Paste</Heading>
+        <Content>You have nothing to 'Paste'.</Content>
+      </Dialog>
+    </ContextualHelpTrigger>
+  </Menu>
+</MenuTrigger>
+```
+
+## Submenus
+
+Submenus can be created by wrapping an item and a menu in a `SubmenuTrigger`. The `SubmenuTrigger` accepts exactly two children: the `Item` which triggers opening of the submenu, and the `Menu` itself.
+Each submenu's Menu accepts its own set of menu props, allowing you to customize its user action and selection behavior.
+
+### Static
+
+```tsx example keepIndividualImports
+
+import {SubmenuTrigger} from '@react-spectrum/menu';
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu onAction={(key) => alert(`Root menu ${key} action`)}>
+    <Item key="Copy">Copy</Item>
+    <Item key="Cut">Cut</Item>
+    <Item key="Paste">Paste</Item>
+      <SubmenuTrigger>
+        <Item key="Share">Share</Item>
+        <Menu onAction={(key) => alert(`Share menu ${key} action`)}>
+          <Item key="Copy Link">Copy Link</Item>
+          <SubmenuTrigger>
+            <Item key="Email">Email</Item>
+            <Menu onAction={(key) => alert(`Email menu ${key} action`)}>
+              <Item key="Attachment">Email as Attachment</Item>
+              <Item key="Link">Email as Link</Item>
+            </Menu>
+          </SubmenuTrigger>
+          <Item key="SMS">SMS</Item>
+        </Menu>
+      </SubmenuTrigger>
+    <Item key="Delete">Delete</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Dynamic
+
+You can define a recursive function to render the nested menu items dynamically.
+
+```tsx example keepIndividualImports
+import {SubmenuTrigger} from '@react-spectrum/menu';
+
+let items = [
+  {name: 'Copy'},
+  {name: 'Cut'},
+  {name: 'Paste'},
+  {name: 'Share', children: [
+    {name: 'Copy Link'},
+    {name: 'Email', children: [
+      {name: 'Email as Attachment'},
+      {name: 'Email as Link'},
+    ]},
+    {name: 'SMS'},
+  ]},
+  {name: 'Delete'}
+];
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu items={items}>
+    {function renderSubmenu(item) {
+      if (item.children) {
+        return (
+          <SubmenuTrigger>
+            <Item key={item.name}>{item.name}</Item>
+            <Menu items={item.children}>
+              {(item) => renderSubmenu(item)}
+            </Menu>
+          </SubmenuTrigger>
+        );
+      } else {
+        return <Item key={item.name}>{item.name}</Item>;
+      }
+    }}
+  </Menu>
+</MenuTrigger>
+```
+
+## Props
+
+### Menu props
+
+<PropTable component={docs.exports.Menu} links={docs.links} />
+
+### ContextualHelpTrigger Props
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.SpectrumMenuDialogTriggerProps.properties))
+  }
+}} links={contextualHelpTriggerTypes.links} />
+
+### SubmenuTrigger Props
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.SpectrumSubmenuTriggerProps.properties))
+  }
+}} links={submenuTriggerTypes.links} />
+
+## Visual Options
+
+### Autofocus
+
+Applying `autoFocus` to the Menu of the MenuTrigger sets focus to a Menu Item
+within the Menu upon opening.
+
+### Disabled
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+    Filter
+  </ActionButton>
+  <Menu
+    items={[
+      {name: 'tiff', id: 'a1b2c3'},
+      {name: 'png', id: 'g5h1j9'},
+      {name: 'jpg', id: 'p8k3i4'},
+      {name: 'PDF', id: 'j7i3a0'}
+    ]}
+    disabledKeys={['a1b2c3', 'p8k3i4']}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```

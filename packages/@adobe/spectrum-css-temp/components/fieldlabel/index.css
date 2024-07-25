@@ -1,0 +1,248 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-tableform-border-spacing: 0 var(--spectrum-global-dimension-size-300);
+  --spectrum-tableform-margin: calc(var(--spectrum-global-dimension-size-250) * -1) 0;
+  --spectrum-fieldlabel-margin: var(--spectrum-global-dimension-size-100);
+}
+
+.spectrum-FieldLabel {
+  display: flex;
+  flex: 0 0 auto;
+
+  box-sizing: border-box;
+
+  padding: var(--spectrum-fieldlabel-padding-top) 0 var(--spectrum-fieldlabel-padding-bottom);
+
+  font-size: var(--spectrum-fieldlabel-text-size);
+  font-weight: var(--spectrum-fieldlabel-text-font-weight);
+  line-height: var(--spectrum-fieldlabel-text-line-height);
+
+  vertical-align: top;
+
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-smoothing: subpixel-antialiased;
+  text-align: start;
+
+  cursor: default; /* match native labels even if not using a <label> element */
+}
+
+.spectrum-FieldLabel--positionSide {
+  display: inline-flex;
+  padding-top: var(--spectrum-fieldlabel-side-padding-top);
+  padding-inline-end: var(--spectrum-fieldlabel-side-padding-x);
+}
+
+.spectrum-FieldLabel-requiredIcon {
+  margin-top: var(--spectrum-fieldlabel-asterisk-margin-y);
+  margin-inline-end: 0;
+  margin-bottom: 0;
+  margin-inline-start: var(--spectrum-fieldlabel-asterisk-gap);
+}
+
+.spectrum-FieldLabel--alignEnd {
+  justify-content: flex-end; /* labelPosition=top case */
+  text-align: end; /* labelPosition=side case */
+}
+
+/* A Field is a wrapper for a FieldLabel, a field component (e.g. textfield), and a HelpText.
+ * By default, labels are placed above the field. Fields have a default width, and the
+ * label will wrap within this width. The width of the whole field can be overridden by the user,
+ * and this causes both the label and inner field to resize as well. */
+.spectrum-Field {
+  --spectrum-field-default-width: var(--spectrum-component-single-line-width);
+  height: max-content; /* don't stretch in a flex layout */
+
+  .spectrum-Field-contextualHelp {
+    grid-area: contextualHelp;
+    margin-inline-start: var(--spectrum-global-dimension-size-50);
+    margin-top: var(--spectrum-global-dimension-size-25);
+  }
+
+  &:where(.spectrum-Field--positionTop) {
+    display: inline-grid;
+    grid-template-areas: "label contextualHelp ."
+                         "field field field"
+                         "helpText helpText helpText";
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    align-content: start;
+    width: var(--spectrum-field-default-width);
+
+    .spectrum-Field-field {
+      /* If the user overrides the width of the field, propagate to the inner component */
+      width: 100%;
+      grid-area: field;
+    }
+
+    &.spectrum-Field--alignEnd {
+      grid-template-columns: 1fr auto 0;
+    }
+
+    .spectrum-FieldLabel {
+      grid-area: label;
+    }
+  }
+
+  /* The side label variant of Field is inline, and fills as much space as needed
+   * by default. If an explicit width is set, then the field flexes to fill available space. */
+  &:where(.spectrum-Field--positionSide) {
+    display: inline-flex;
+    align-items: flex-start;
+
+    /* Wraps the field & help text, but not the label */
+    .spectrum-Field-wrapper {
+      flex: 1;
+      /* Setting `flex: 1;` is equivalent to `flex: 1 1 0;`, which means we expect to be able to shrink
+       * To be able to shrink, we must have a min-width that isn't 'auto' */
+      min-width: 0;
+      /* TODO: By default, vertical flex wrapper for `labelPosition: side` should have default field width.
+       * This is a workaround until we find a better way to set the width of the field & help text.
+       * Should default to form field's default width and and allow users to override with custom width. */
+      width: var(--spectrum-field-default-width);
+
+      /* If the user overrides the height of the field, propagate to the inner wrapper element */
+      height: 100%;
+
+      .spectrum-Field-field {
+        /* If the user overrides the width of the field, propagate to the inner component */
+        width: 100%;
+      }
+    }
+
+    .spectrum-Field-field {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .spectrum-Field-contextualHelp {
+      margin-top: var(--spectrum-global-dimension-size-65);
+      margin-inline-end: var(--spectrum-fieldlabel-side-padding-x);
+    }
+  }
+
+  &.spectrum-Field--hasContextualHelp {
+    .spectrum-FieldLabel {
+      padding-inline-end: 0;
+    }
+  }
+}
+
+/* topdoc
+{{ form/index.yml }}
+*/
+
+.spectrum-Form {
+  /* With labelPosition=side, we override field layout to use a CSS table
+   * so that all the labels and fields line up automatically. */
+  &.spectrum-Form--positionSide {
+    display: table;
+    border-collapse: separate;
+    border-spacing: var(--spectrum-tableform-border-spacing);
+    margin: var(--spectrum-tableform-margin);
+    text-align: start;
+
+    .spectrum-Field {
+      display: table-row;
+      width: 100%;
+
+      /* if the field has contextual help, there's an extra wrapper to apply table-cell to.
+       * otherwise, apply to the label itself. */
+      &:not(.spectrum-Field--hasContextualHelp) .spectrum-FieldLabel,
+      &.spectrum-Field--hasContextualHelp .spectrum-Field-labelCell {
+        display: table-cell;
+      }
+
+      .spectrum-Field-labelCell {
+        /* This fixes vertical alignment in safari */
+        vertical-align: top;
+      }
+
+      &.spectrum-Field--alignEnd .spectrum-Field-labelCell {
+        text-align: end;
+      }
+
+      /* can't have an element with both display: table-cell and inline-flex, so this wrapper lives inside the cell. */
+      .spectrum-Field-labelWrapper {
+        display: inline-flex;
+
+        .spectrum-FieldLabel {
+          flex: 1;
+        }
+      }
+    }
+
+    .spectrum-Field-wrapper {
+      width: 100%;
+    }
+
+    .spectrum-Field-field {
+      width: auto;
+      min-width: var(--spectrum-component-single-line-width);
+    }
+  }
+
+  /* With labelPosition=top, we use a normal flex stack */
+  &.spectrum-Form--positionTop {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-width: var(--spectrum-component-single-line-width);
+
+    /* Users may want to make multiple fields appear next to each other.
+     * We want to ensure that all items inside the form get the proper
+     * margin and widths applied, even if wrapped in extra divs for example. */
+    > * {
+      margin-top: var(--spectrum-fieldlabel-margin);
+      width: 100%;
+    }
+  }
+}
+
+.spectrum-LabeledValue {
+
+  &.spectrum-Field--positionSide {
+    align-items: first baseline;
+
+    .spectrum-Field-contextualHelp {
+      position: relative;
+      top: var(--spectrum-global-dimension-size-40);
+      margin-top: var(--spectrum-global-dimension-size-65);
+    }
+  }
+
+  &.spectrum-Field--positionTop {
+    width: unset;
+  }
+
+  .spectrum-FieldLabel.spectrum-FieldLabel {
+    padding-top: 0px;
+  }
+
+  .spectrum-Field-wrapper.spectrum-Field-wrapper {
+    width: unset;
+  }
+
+  .spectrum-Field-field {
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .spectrum-Field-contextualHelp {
+    /* align with label */
+    margin-top: calc(-1 * var(--spectrum-global-dimension-size-25));
+  }
+}

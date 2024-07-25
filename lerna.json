@@ -1,0 +1,13 @@
+{
+  "lerna": "3.0.0",
+  "version": "independent",
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "allowBranch": [
+        "main",
+        "release"
+      ]
+    }
+  }
+}

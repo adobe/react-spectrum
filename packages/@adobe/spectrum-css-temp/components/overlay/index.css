@@ -1,0 +1,56 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-overlay {
+  visibility: hidden;
+
+  opacity: 0;
+
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+              visibility 0ms linear var(--spectrum-global-animation-duration-100);
+
+  pointer-events: none;
+}
+
+.spectrum-overlay--open {
+  visibility: visible;
+  /* In Edge (pre chromium), a stacking context is formed for opacity less then 1, and then its removed for 1.
+     It causes a rendering flicker that is visible when css transition is applied. */
+  opacity: 0.9999;
+
+  transition-delay: 0ms;
+
+  pointer-events: auto;
+}
+
+.spectrum-overlay--bottom--open {
+  transform: translateY(var(--spectrum-overlay-positive-transform-distance));
+}
+
+.spectrum-overlay--top--open {
+  /*
+  Edge does not support combination of translate, calc and var.
+  New var equal to negative calculation result is added instead.
+  TODO: for Chromium Edge return to
+  transform: translateX(calc(var(--spectrum-global-dimension-size-75) * -1));
+  */
+  transform: translateY(var(--spectrum-overlay-negative-transform-distance));
+}
+
+.spectrum-overlay--right--open {
+  transform: translateX(var(--spectrum-overlay-positive-transform-distance));
+}
+
+.spectrum-overlay--left--open {
+  transform: translateX(var(--spectrum-overlay-negative-transform-distance));
+}

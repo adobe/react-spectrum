@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "{selectedCount, plural, one {Избраната дата не е налична} other {Избраните дати не са налични}}."
+}

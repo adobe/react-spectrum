@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} – {endDate}",
+  "dateSelected": "{date} valittu",
+  "finishRangeSelectionPrompt": "Lopeta päivämääräalueen valinta napsauttamalla tätä.",
+  "maximumDate": "Viimeinen varattavissa oleva päivämäärä",
+  "minimumDate": "Ensimmäinen varattavissa oleva päivämäärä",
+  "next": "Seuraava",
+  "previous": "Edellinen",
+  "selectedDateDescription": "Valittu päivämäärä: {date}",
+  "selectedRangeDescription": "Valittu aikaväli: {dateRange}",
+  "startRangeSelectionPrompt": "Aloita päivämääräalueen valinta napsauttamalla tätä.",
+  "todayDate": "Tänään, {date}",
+  "todayDateSelected": "Tänään, {date} valittu"
+}

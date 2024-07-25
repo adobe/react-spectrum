@@ -1,0 +1,30 @@
+{
+  "name": "@internationalized/string",
+  "version": "3.2.3",
+  "description": "Internationalized string formatting and locale negotiation",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.5.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

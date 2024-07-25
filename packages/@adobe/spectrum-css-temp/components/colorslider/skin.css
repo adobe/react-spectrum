@@ -1,0 +1,28 @@
+:root {
+  /* todo: fix this in DNA */
+  --spectrum-colorslider-border-color: var(--spectrum-colorarea-border-color);
+}
+
+.spectrum-ColorSlider {
+  background-color: var(--spectrum-global-color-static-white);
+  box-shadow: inset 0 0 0 var(--spectrum-colorslider-border-size) var(--spectrum-colorslider-border-color);
+
+  &:before {
+    background: repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 0% 50% / 16px 16px;
+  }
+
+  &.is-disabled {
+    background: var(--spectrum-colorslider-fill-color-disabled) !important;
+    box-shadow: inset 0 0 0 var(--spectrum-colorslider-border-size) var(--spectrum-colorslider-border-color-disabled);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-ColorSlider {
+    forced-color-adjust: none;
+    --spectrum-colorslider-fill-color-disabled: GrayText;
+    --spectrum-colorslider-border-color-disabled: GrayText;
+    --spectrum-colorslider-border-color: ButtonText;
+    --spectrum-colorarea-border-color: ButtonText;
+  }
+}

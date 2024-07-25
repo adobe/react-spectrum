@@ -1,0 +1,11 @@
+{
+  "ascending": "oplopend",
+  "ascendingSort": "gesorteerd in oplopende volgorde in kolom {columnName}",
+  "columnSize": "{value} pixels",
+  "descending": "aflopend",
+  "descendingSort": "gesorteerd in aflopende volgorde in kolom {columnName}",
+  "resizerDescription": "Druk op Enter om het formaat te wijzigen",
+  "select": "Selecteren",
+  "selectAll": "Alles selecteren",
+  "sortable": "sorteerbare kolom"
+}

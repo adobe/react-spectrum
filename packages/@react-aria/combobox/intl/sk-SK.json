@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Zobraziť návrhy",
+  "countAnnouncement": "{optionCount, plural, one {# možnosť} other {# možnosti/-í}} k dispozícii.",
+  "focusAnnouncement": "{isGroupChange, select, true {Zadaná skupina {groupTitle}, s {groupCount, plural, one {# možnosťou} other {# možnosťami}}. } other {}}{optionText}{isSelected, select, true {, vybraté} other {}}",
+  "listboxLabel": "Návrhy",
+  "selectedAnnouncement": "{optionText}, vybraté"
+}

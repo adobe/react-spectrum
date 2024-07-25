@@ -1,0 +1,11 @@
+{
+  "ascending": "stigende",
+  "ascendingSort": "sortert etter kolonne {columnName} i stigende rekkefølge",
+  "columnSize": "{value} piksler",
+  "descending": "synkende",
+  "descendingSort": "sortert etter kolonne {columnName} i synkende rekkefølge",
+  "resizerDescription": "Trykk på Enter for å starte størrelsesendring",
+  "select": "Velg",
+  "selectAll": "Velg alle",
+  "sortable": "kolonne som kan sorteres"
+}

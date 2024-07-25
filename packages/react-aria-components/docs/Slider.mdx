@@ -1,0 +1,668 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/slider';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/slider/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Forms
+keywords: [slider, range, aria]
+type: component
+---
+
+# Slider
+
+<PageDescription>{docs.exports.Slider.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Slider']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
+
+<Slider defaultValue={30}>
+  <Label>Opacity</Label>
+  <SliderOutput />
+  <SliderTrack>
+    <SliderThumb />
+  </SliderTrack>
+</Slider>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './NumberField.mdx' layer(numberfield);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-Slider {
+  display: grid;
+  grid-template-areas: "label output"
+                       "track track";
+  grid-template-columns: 1fr auto;
+  max-width: 300px;
+  color: var(--text-color);
+
+  .react-aria-Label {
+    grid-area: label;
+  }
+
+  .react-aria-SliderOutput {
+    grid-area: output;
+  }
+
+  .react-aria-SliderTrack {
+    grid-area: track;
+    position: relative;
+
+    /* track line */
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      background: var(--border-color);
+    }
+  }
+
+  .react-aria-SliderThumb {
+    width: 1.429rem;
+    height: 1.429rem;
+    border-radius: 50%;
+    background: var(--highlight-background);
+    border: 2px solid var(--background-color);
+    forced-color-adjust: none;
+
+    &[data-dragging] {
+      background: var(--highlight-background-pressed);
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+
+  &[data-orientation=horizontal] {
+    flex-direction: column;
+    width: 300px;
+
+    .react-aria-SliderTrack {
+      height: 30px;
+      width: 100%;
+
+      &:before {
+        height: 3px;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+
+    .react-aria-SliderThumb {
+      top: 50%;
+    }
+  }
+}
+```
+
+</details>
+
+## Features
+
+The [&lt;input type="range"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
+HTML element can be used to build a slider, however it is
+very difficult to style cross browser. `Slider` helps achieve accessible
+sliders that can be styled as needed.
+
+* **Customizable** – Support for one or multiple thumbs, in both horizontal and vertical orientations. The whole slider, or individual thumbs can be disabled. Custom minimum, maximum, and step values are supported as well.
+* **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the nearest thumb to that position. Text selection and touch scrolling are prevented while dragging.
+* **Touch friendly** – Multiple thumbs or sliders can be dragged at once on multi-touch screens.
+* **Accessible** – Slider thumbs use visually hidden `<input>` elements for mobile screen reader support, and HTML form integration. `<label>` and `<output>` elements are automatically associated to provide context for assistive technologies.
+* **International** – Output value is formatted as a percentage or custom format according to the user's locale. The slider automatically mirrors all interactions in right-to-left languages.
+
+## Anatomy
+
+<Anatomy />
+
+Sliders consist of a track element showing the range of available values,
+one or more thumbs showing the current values, an
+optional [&lt;output&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output)
+element displaying the current values textually, and a label.
+The thumbs can be dragged to allow a user to change their value. In addition, the
+track can be clicked to move the nearest thumb to that position.
+
+```tsx
+import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
+
+<Slider>
+  <Label />
+  <SliderOutput />
+  <SliderTrack>
+    <SliderThumb />
+    <SliderThumb>
+      <Label />
+    </SliderThumb>
+  </SliderTrack>
+</Slider>
+```
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the slider and thumbs to screen readers.
+
+### Composed components
+
+A `Slider` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an input element.">
+  <Label />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="slider" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="slider" />
+
+## Reusable wrappers
+
+If you will use a Slider in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Slider` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `SliderTrack` and `SliderOutput` render props to render multiple slider thumbs, depending on the provided values. When multiple thumbs are rendered, each `SliderThumb` should have an `aria-label`, which is provided via the `thumbLabels` prop in this example.
+
+```tsx example export=true
+import type {SliderProps} from 'react-aria-components';
+
+interface MySliderProps<T> extends SliderProps<T> {
+  label?: string,
+  thumbLabels?: string[]
+}
+
+function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: MySliderProps<T>) {
+  return (
+    <Slider {...props}>
+      {label && <Label>{label}</Label>}
+      <SliderOutput>
+        {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
+      </SliderOutput>
+      <SliderTrack>
+        {({state}) => state.values.map((_, i) => (
+          <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} />
+        ))}
+      </SliderTrack>
+    </Slider>
+  );
+}
+
+<MySlider label="Range" defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
+```
+
+## Value
+
+### Controlled value
+
+The `value` prop paired with the `onChange` event can be used to make a slider controlled. The value must fall between the Slider's minimum and maximum values, which default to 0 and 100 respectively. The `onChange` event receives the new slider value as a parameter, which can be used to update state.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(25);
+  return (
+    <>
+      <MySlider<number>
+        label="Cookies to buy"
+        value={value}
+        onChange={setValue} />
+      <p>Current value: {value}</p>
+    </>
+  );
+}
+```
+
+Multi thumb sliders specify their values as an array rather than a single number.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState([25, 75]);
+  return (
+    <>
+      <MySlider<number[]>
+        label="Range"
+        thumbLabels={['start', 'end']}
+        value={value}
+        onChange={setValue} />
+      <p>Current value: {value.join(' – ')}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+Each SliderThumb supports the `name` prop for integration with HTML forms.
+
+```tsx example
+<Slider defaultValue={50}>
+  <Label>Opacity</Label>
+  <SliderOutput />
+  <SliderTrack>
+    {/*- begin highlight -*/}
+    <SliderThumb name="opacity" />
+    {/*- end highlight -*/}
+  </SliderTrack>
+</Slider>
+```
+
+## Events
+
+The `onChange` prop is called as the user drags a slider. The `onChangeEnd` prop can be used to handle when a user stops dragging.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(25);
+  return (
+    <>
+      <MySlider<number>
+        label="Cookies to buy"
+        defaultValue={value}
+        onChangeEnd={setValue} />
+      <p>Current value: {value}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+### Custom value scale
+
+By default, slider values are precentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<MySlider
+  label="Cookies to buy"
+  minValue={50}
+  maxValue={150}
+  defaultValue={100} />
+```
+
+### Step values
+
+The `step` prop can be used to snap the value to certain increments. The steps are calculated
+starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+This example allows increments of 5 between 0 and 100.
+
+```tsx example
+<MySlider
+  label="Amount"
+  formatOptions={{style: 'currency', currency: 'USD'}}
+  minValue={0}
+  maxValue={100}
+  step={5} />
+```
+
+## Visual options
+
+### Vertical orientation
+
+Sliders are horizontally oriented by default. The `orientation` prop can be set to `"vertical"` to create a vertical slider.
+This example also uses `aria-label` rather than `label` to create a slider with no visible label.
+
+```tsx example
+<MySlider
+  orientation="vertical"
+  aria-label="Opacity"
+  maxValue={1}
+  step={0.01} />
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Slider {
+  &[data-orientation=vertical] {
+    height: 150px;
+    display: block;
+
+    .react-aria-Label,
+    .react-aria-SliderOutput {
+      display: none;
+    }
+
+    .react-aria-SliderTrack {
+      width: 30px;
+      height: 100%;
+
+      &:before {
+        width: 3px;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .react-aria-SliderThumb {
+      left: 50%;
+    }
+  }
+}
+```
+
+</details>
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MySlider
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  defaultValue={60} />
+```
+
+### Disabled
+
+A slider can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MySlider
+  label="Cookies to share"
+  defaultValue={25}
+  isDisabled />
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Slider {
+  &[data-disabled] {
+    .react-aria-SliderTrack:before {
+      background: var(--border-color-disabled);
+    }
+
+    .react-aria-SliderThumb {
+      background: var(--border-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+## Props
+
+### Slider
+
+<PropTable component={docs.exports.Slider} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### SliderOutput
+
+A `<SliderOutput>` renders the current value of the slider as text.
+
+<PropTable component={docs.exports.SliderOutput} links={docs.links} />
+
+### SliderTrack
+
+The `<SliderTrack>` component is a grouping of one or more `<SliderThumb>` elements.
+
+<PropTable component={docs.exports.SliderTrack} links={docs.links} />
+
+### SliderThumb
+
+The `<SliderThumb>` component renders an individual thumb within a `<SliderTrack>`.
+
+<PropTable component={docs.exports.SliderThumb} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Slider {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Slider className="my-slider">
+  {/* ... */}
+</Slider>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-SliderThumb[data-dragging] {
+  /* ... */
+}
+
+.react-aria-SliderThumb[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<SliderThumb className={({isDragging}) => isDragging ? 'bg-gray-700' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could implement custom formatting for the slider's current value.
+
+```jsx
+<SliderOutput>
+  {state => `${state.getThumbValueLabel(0)} cookies`}
+</SliderOutput>
+```
+
+The states, selectors, and render props for each component used in a `Slider` are documented below.
+
+### Slider
+
+The `Slider` component can be targeted with the `.react-aria-Slider` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.SliderRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### SliderOutput
+
+The `SliderOutput` component can be targeted with the `.react-aria-SliderOutput` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.SliderRenderProps.properties} />
+
+### SliderTrack
+
+The `SliderTrack` component can be targeted with the `.react-aria-SliderTrack` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.SliderTrackRenderProps.properties} />
+
+### SliderThumb
+
+The `SliderThumb` component can be targeted with the `.react-aria-SliderThumb` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.SliderThumbRenderProps.properties} />
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `Slider`, such as `Label` or `SliderOutput`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MySliderOutput(props) {
+  return <SliderOutput {...props} className="my-slider-output" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Slider']} docs={docs} />
+
+This example shows a `SliderDescription` component that accepts a slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the slider via the `aria-describedby` attribute passed to the `SliderContext` provider.
+
+```tsx example
+import {SliderContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface SliderDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function SliderDescription({children, description}: SliderDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <SliderContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </SliderContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<SliderDescription description="Keeping your display on may shorten its life.">
+  <MySlider label="Turn off display after" minValue={10} maxValue={60} defaultValue={45} formatOptions={{style: 'unit', unit: 'minute'}} />
+</SliderDescription>
+```
+
+### Custom children
+
+Slider passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Slider.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `Slider`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<Slider>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Opacity</MyCustomLabel>
+  {/*- end highlight -*/}
+  <SliderTrack>
+    <SliderThumb />
+  </SliderTrack>
+</Slider>
+```
+
+### State
+
+Slider provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its children via `SliderStateContext`. This can be used to access and manipulate the slider's state.
+
+This example shows a `SliderNumberField` component that can be placed within a `Slider` to allow the user to enter a number and update the slider's value.
+
+```tsx example
+import {SliderStateContext, LabelContext, NumberField, Input, useSlottedContext} from 'react-aria-components';
+
+function SliderNumberField() {
+  /*- begin highlight -*/
+  let state = React.useContext(SliderStateContext)!;
+  /*- end highlight -*/
+  let labelProps = useSlottedContext(LabelContext)!;
+  return (
+    <NumberField
+      aria-labelledby={labelProps.id}
+      value={state.values[0]}
+      onChange={v => state.setThumbValue(0, v)}>
+      <Input />
+    </NumberField>
+  );
+}
+
+<Slider defaultValue={30}>
+  <Label>Opacity</Label>
+  {/*- begin highlight -*/}
+  <SliderNumberField />
+  {/*- end highlight -*/}
+  <SliderTrack>
+    <SliderThumb />
+  </SliderTrack>
+</Slider>
+```
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Input {
+  border-radius: 6px;
+  width: 3ch;
+}
+```
+
+</details>
+
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useSlider](useSlider.html) for more details.

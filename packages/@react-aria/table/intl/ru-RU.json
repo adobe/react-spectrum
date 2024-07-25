@@ -1,0 +1,11 @@
+{
+  "ascending": "возрастание",
+  "ascendingSort": "сортировать столбец {columnName} в порядке возрастания",
+  "columnSize": "{value} пикс.",
+  "descending": "убывание",
+  "descendingSort": "сортировать столбец {columnName} в порядке убывания",
+  "resizerDescription": "Нажмите клавишу Enter для начала изменения размеров",
+  "select": "Выбрать",
+  "selectAll": "Выбрать все",
+  "sortable": "сортируемый столбец"
+}

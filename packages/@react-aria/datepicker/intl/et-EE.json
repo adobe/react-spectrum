@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalender",
+  "day": "päev",
+  "dayPeriod": "enne/pärast lõunat",
+  "endDate": "Lõppkuupäev",
+  "era": "ajastu",
+  "hour": "tund",
+  "minute": "minut",
+  "month": "kuu",
+  "second": "sekund",
+  "selectedDateDescription": "Valitud kuupäev: {date}",
+  "selectedRangeDescription": "Valitud vahemik: {startDate} kuni {endDate}",
+  "selectedTimeDescription": "Valitud aeg: {time}",
+  "startDate": "Alguskuupäev",
+  "timeZoneName": "ajavöönd",
+  "weekday": "nädalapäev",
+  "year": "aasta"
+}

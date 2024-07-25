@@ -1,0 +1,344 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/menu';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/menu/package.json';
+
+```jsx import
+import {ActionMenu, Item, Section} from '@react-spectrum/menu';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
+import {Flex} from '@react-spectrum/layout';
+import Paste from '@spectrum-icons/workflow/Paste';
+```
+
+---
+category: Collections
+keywords: [action menu, dropdown]
+---
+
+# ActionMenu
+
+<p>{docs.exports.ActionMenu.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ActionMenu']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popover/'}
+  ]}
+  since="3.18.0" />
+
+## Example
+
+```tsx example
+<ActionMenu>
+  <Item>Cut</Item>
+  <Item>Copy</Item>
+  <Item>Paste</Item>
+</ActionMenu>
+```
+
+## Content
+
+ActionMenu follows the [Collection Components](../react-stately/collections.html) API,
+accepting both static and dynamic collections. See [Menu](Menu.html#content) for further explanation.
+
+```tsx example
+function Example() {
+  let actionMenuItems = [
+    {name: 'Cut'},
+    {name: 'Copy'},
+    {name: 'Paste'},
+    {name: 'Select All'}
+  ];
+
+  return (
+    <ActionMenu items={actionMenuItems}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </ActionMenu>
+  );
+}
+```
+
+### Trays
+On mobile, ActionMenus automatically display in a tray instead of a popover to improve usability.
+
+### Internationalization
+In order to internationalize an ActionMenu, the content provided to all child items should be localized.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ActionMenu is flipped.
+
+## Events
+ActionMenu supports the `onAction` prop, which is called when the user presses a menu item. It receives the key of the item as an argument, which can be used to perform the relevant action.
+
+```tsx example
+function Example() {
+  let [action, setAction] = React.useState(null);
+
+  return (
+    <>
+      <ActionMenu onAction={setAction}>
+        <Item key="cut">Cut</Item>
+        <Item key="copy">Copy</Item>
+        <Item key="paste">Paste</Item>
+      </ActionMenu>
+      <p>Action: {action}</p>
+    </>
+  );
+}
+```
+
+## Links
+
+By default, interacting with an item in an ActionMenu triggers `onAction`. Items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<ActionMenu>
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ActionMenu>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Sections
+ActionMenu supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
+
+### Static Items
+
+```tsx example
+<ActionMenu>
+  <Section title="File">
+    <Item key="new">New</Item>
+    <Item key="open">Open...</Item>
+  </Section>
+  <Section title="Save">
+    <Item key="save">Save</Item>
+    <Item key="saveAs">Save As...</Item>
+    <Item key="saveAll">Save All</Item>
+  </Section>
+</ActionMenu>
+```
+
+### Dynamic Items
+
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on ActionMenu, `<Section>` takes an array of data using the `items` prop.
+
+```tsx example
+function Example() {
+  let openWindows = [
+    {
+      name: 'Reversion',
+      id: 'reversion',
+      children: [
+        {id: 'undo', name: 'Undo'},
+        {id: 'redo', name: 'Redo'}
+      ]
+    },
+    {
+      name: 'Clipboard',
+      id: 'clipboard',
+      children: [
+        {id: 'cut', name: 'Cut'},
+        {id: 'copy', name: 'Copy'},
+        {id: 'paste', name: 'Paste'}
+      ]
+    }
+  ];
+
+  return (
+    <ActionMenu
+      items={openWindows}>
+      {item => (
+        <Section items={item.children} title={item.name}>
+          {item => <Item>{item.name}</Item>}
+        </Section>
+      )}
+    </ActionMenu>
+  );
+}
+```
+
+### Accessibility
+
+Sections without a `title` must provide an `aria-label` for accessibility.
+
+## Complex Menu Items
+
+Items within ActionMenu also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+
+```tsx example
+import {Keyboard, Text} from '@react-spectrum/text';
+<ActionMenu>
+  <Item key="cut" textValue="cut">
+    <Cut />
+    <Text>Cut</Text>
+    <Keyboard>⌘X</Keyboard>
+  </Item>
+  <Item key="copy" textValue="copy">
+    <Copy />
+    <Text>Copy</Text>
+    <Keyboard>⌘C</Keyboard>
+  </Item>
+  <Item key="paste" textValue="paste">
+    <Paste />
+    <Text>Paste</Text>
+    <Keyboard>⌘V</Keyboard>
+  </Item>
+</ActionMenu>
+```
+
+## Props
+
+<PropTable component={docs.exports.ActionMenu} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Quiet)
+
+```tsx example
+<ActionMenu
+  isQuiet
+  items={[
+    {name: 'Cut', id: 'cut'},
+    {name: 'Copy', id: 'copy'},
+    {name: 'Paste', id: 'paste'}
+  ]}>
+  {item => <Item>{item.name}</Item>}
+</ActionMenu>
+```
+
+### Autofocus
+
+Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
+
+### Disabled
+
+```tsx example
+<ActionMenu
+  items={[
+    {name: 'Undo', id: 'undo'},
+    {name: 'Redo', id: 'redo'},
+    {name: 'Cut', id: 'cut'},
+    {name: 'Copy', id: 'copy'},
+    {name: 'Paste', id: 'paste'}
+  ]}
+  isDisabled>
+  {item => <Item>{item.name}</Item>}
+</ActionMenu>
+```
+
+### Disabled items
+
+```tsx example
+<ActionMenu
+  items={[
+    {name: 'Undo', id: 'undo'},
+    {name: 'Redo', id: 'redo'},
+    {name: 'Cut', id: 'cut'},
+    {name: 'Copy', id: 'copy'},
+    {name: 'Paste', id: 'paste'}
+  ]}
+  disabledKeys={['redo', 'paste']}>
+  {item => <Item>{item.name}</Item>}
+</ActionMenu>
+```
+
+### Align and direction
+
+[View guidelines](https://spectrum.adobe.com/page/popover/#Placement)
+
+The `align` prop aligns the ActionMenu menu relative to the trigger and the `direction` prop controls the direction the ActionMenu will render.
+
+```tsx example
+<Flex gap="size-100">
+  <ActionMenu align="start">
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </ActionMenu>
+  <ActionMenu align="end" direction="top" shouldFlip={false}>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </ActionMenu>
+  <ActionMenu direction="start" align="start">
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </ActionMenu>
+  <ActionMenu direction="end" align="end">
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </ActionMenu>
+</Flex>
+```
+
+### Flipping
+By default, the ActionMenu menu flips direction automatically upon opening when space is limited. To change this, set the `shouldFlip` prop to `false`. Try scrolling the viewport close to the edge of the trigger in the example to see this in action.
+
+```tsx example
+<Flex gap="size-100">
+  <ActionMenu shouldFlip>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </ActionMenu>
+  <ActionMenu shouldFlip={false}>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </ActionMenu>
+</Flex>
+```
+
+### Open
+
+The `isOpen` and `defaultOpen` props on the ActionMenu control whether the menu is open by default.
+They apply controlled and uncontrolled behavior on the Menu respectively.
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+
+  return (
+    <ActionMenu
+      isOpen={open}
+      onOpenChange={setOpen}>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </ActionMenu>
+  );
+}
+```
+
+## Testing
+
+The ActionMenu features an overlay that transitions in and out of the page as it is opened and closed. Depending on
+your configuration, this overlay may render as a tray or a dropdown. Please see the following sections in the
+testing docs for more information on how to handle these behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/menu/test/ActionMenu.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

@@ -1,0 +1,11 @@
+{
+  "ascending": "ascendente",
+  "ascendingSort": "Ordenar por coluna {columnName} em ordem ascendente",
+  "columnSize": "{value} pixels",
+  "descending": "descendente",
+  "descendingSort": "Ordenar por coluna {columnName} em ordem descendente",
+  "resizerDescription": "Prima Enter para iniciar o redimensionamento",
+  "select": "Selecionar",
+  "selectAll": "Selecionar tudo",
+  "sortable": "Coluna ordenável"
+}

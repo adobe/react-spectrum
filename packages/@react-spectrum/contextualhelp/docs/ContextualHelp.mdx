@@ -1,0 +1,137 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/contextualhelp';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/contextualhelp/package.json';
+
+```jsx import
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Content, Footer} from '@react-spectrum/view';
+import {Heading, Text} from '@react-spectrum/text';
+import {Link} from '@react-spectrum/link';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Overlays
+keywords: [popover, field, input]
+---
+
+# ContextualHelp
+
+<PageDescription>{docs.exports.ContextualHelp.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ContextualHelp']}
+  sourceData={[ {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/contextual-help/'} ]}
+  since="3.16.0" />
+
+## Example
+
+```tsx example
+<ContextualHelp variant="info">
+  <Heading>Need help?</Heading>
+  <Content><Text>If you're having issues accessing your account, contact our customer support team for help.</Text></Content>
+</ContextualHelp>
+```
+
+## Content
+
+Unlike [Dialog](Dialog.html), the layout in ContextualHelp is very deliberate. Every ContextualHelp component is triggered as a popover where the
+trigger element is a quiet action button with either a help or info icon. Much like [Dialog](Dialog.html), however, ContextualHelp has sections that
+can be populated by providing the following components to your ContextualHelp as children:
+[Heading](Heading.html) (title), [Content](Content.html) (body), and [Footer](Footer.html) (link).
+Each of these components are required in a Spectrum compliant ContextualHelp except for `Footer` since including a link is optional.
+
+```tsx example
+<ContextualHelp variant="help">
+  <Heading>What is a segment?</Heading>
+  <Content><Text>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Text></Content>
+  <Footer><Link>Learn more about segments</Link></Footer>
+</ContextualHelp>
+```
+
+## Placement
+
+ContextualHelp supports [Dialog placement](./DialogTrigger.html#dialog-placement) options for when the positioning of the popover needs to customized.
+
+```tsx example
+<ContextualHelp variant="info" placement="top start">
+  <Heading>Placement</Heading>
+  <Content><Text>The placement of this contextual help popover has been customized to use top start.</Text></Content>
+</ContextualHelp>
+```
+
+## Events
+
+ContextualHelp accepts an `onOpenChange` prop, triggered when the ContextualHelp's popover opens or closes.
+
+The example below uses `onOpenChange` to update a separate element with the current open state of the Dialog.
+
+```tsx example
+function Example() {
+  let [state, setState] = React.useState(false);
+
+  return (
+    <Flex alignItems="center" gap="size-100">
+      <ContextualHelp variant="info" onOpenChange={(isOpen) => setState(isOpen)}>
+        <Heading>Permission required</Heading>
+        <Content><Text>Your admin must grant you permission before you can create a segment.</Text></Content>
+      </ContextualHelp>
+      <Text>Current open state: {state.toString()}</Text>
+    </Flex>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ContextualHelp} links={docs.links} />
+
+## Visual options
+
+### Info
+
+Use the info icon for brief, specific, contextual guidance. This is best for supplemental or nice-to-know information,
+in-line with a label or a component (if there is no label). The content for an info icon’s popover should be [instructive](https://spectrum.adobe.com/page/voice-and-tone/#Tone-spectrum) in tone.
+
+```tsx example
+<ContextualHelp variant="info">
+  <Heading>Permission required</Heading>
+  <Content><Text>Your admin must grant you permission before you can create a segment.</Text></Content>
+</ContextualHelp>
+```
+
+### Help
+
+Use the help icon for content that offers more detailed, in-depth guidance about a task, UI element, tool, or keyboard shortcuts.
+This may include an image, video, or link and should be [helpful](https://spectrum.adobe.com/page/voice-and-tone/#Tone-spectrum) in tone.
+
+```tsx example
+<ContextualHelp variant="help">
+  <Heading>What is a segment?</Heading>
+  <Content><Text>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Text></Content>
+  <Footer><Link>Learn more about segments</Link></Footer>
+</ContextualHelp>
+```
+
+## Testing
+
+The ContextualHelpTrigger features an overlay that transitions in and out of the page as it is opened and closed.
+Please see the following sections in the testing docs for more information on how to handle these behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/dialog/test/AlertDialog.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

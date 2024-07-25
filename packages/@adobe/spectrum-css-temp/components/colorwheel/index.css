@@ -1,0 +1,86 @@
+:root {
+  /* todo: fix this in DNA */
+  --spectrum-colorwheel-focus-ring-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-colorwheel-border-radius: 100%;
+  --spectrum-colorwheel-width: calc(var(--spectrum-global-dimension-size-125) * 16);
+  --spectrum-colorwheel-height: var(--spectrum-colorwheel-width);
+}
+
+/** index.css (scale dependent) */
+
+.spectrum-ColorControl-hiddenField {
+  opacity: 0.0001;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+/* Use two class selectors as a workaround for the issue: https://github.com/adobe/react-spectrum/issues/1605 */
+.spectrum-ColorWheel.spectrum-ColorWheel {
+  position: relative;
+  display: block;
+  width: var(--spectrum-colorwheel-width);
+  height: var(--spectrum-colorwheel-height);
+  /* expose to JS */
+  --spectrum-colorwheel-track-thickness: var(--spectrum-colorwheel-track-width);
+
+  border-radius: var(--spectrum-colorwheel-border-radius);
+
+  user-select: none;
+  touch-action: none;
+  cursor: default;
+
+  .spectrum-ColorWheel-handle {
+    margin: 0;
+  }
+
+  &.is-focused {
+    z-index: 2;
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+  }
+
+  &.is-dragged {
+    /* Be on top when dragging so loupe can overlap */
+    z-index: 2;
+  }
+}
+
+.spectrum-ColorWheel-gradient {
+  position: relative;
+  z-index: 0;
+  width: var(--spectrum-colorwheel-width);
+  height: var(--spectrum-colorwheel-height);
+
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    border-radius: 100%;
+    border-width: var(--spectrum-colorwheel-border-size);
+    border-style: solid;
+  }
+
+  &:before {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+
+  &:after {
+    top: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+    left: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+    bottom: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+    right: calc(var(--spectrum-colorwheel-track-width) - var(--spectrum-colorwheel-border-size));
+  }
+}
+
+.spectrum-ColorWheel-slider {
+  composes: spectrum-ColorControl-hiddenField;
+}

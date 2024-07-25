@@ -1,0 +1,552 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/actiongroup';
+import collectionsDocs from 'docs:@react-stately/collections';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/actiongroup/package.json';
+
+```jsx import
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import Brush from '@spectrum-icons/workflow/Brush';
+import RegionSelect from '@spectrum-icons/workflow/RegionSelect';
+import Select from '@spectrum-icons/workflow/Select';
+import {Flex} from '@react-spectrum/layout';
+import {View} from '@react-spectrum/view';
+import ViewList from '@spectrum-icons/workflow/ViewList';
+import ViewGrid from '@spectrum-icons/workflow/ViewGrid';
+import ViewCard from '@spectrum-icons/workflow/ViewCard';
+import Move from '@spectrum-icons/workflow/Move';
+import Duplicate from '@spectrum-icons/workflow/Duplicate';
+import TagBold from '@spectrum-icons/workflow/TagBold';
+import TagItalic from '@spectrum-icons/workflow/TagItalic';
+import TagUnderline from '@spectrum-icons/workflow/TagUnderline';
+import TextStrikethrough from '@spectrum-icons/workflow/TextStrikethrough';
+import TextAlignCenter from '@spectrum-icons/workflow/TextAlignCenter';
+import TextAlignJustify from '@spectrum-icons/workflow/TextAlignJustify';
+import TextAlignLeft from '@spectrum-icons/workflow/TextAlignLeft';
+import TextAlignRight from '@spectrum-icons/workflow/TextAlignRight';
+```
+
+---
+category: Buttons
+keywords: [toolbar, actiongroup, collections]
+---
+
+# ActionGroup
+
+<PageDescription>{docs.exports.ActionGroup.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ActionGroup', 'Item']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/action-group/'}
+  ]}
+  since="3.0.0" />
+
+## Example
+
+```tsx example
+function Example() {
+  let [action, setAction] = React.useState(null);
+
+  return (
+    <>
+      <ActionGroup onAction={setAction}>
+        <Item key="add">Add</Item>
+        <Item key="delete">Delete</Item>
+        <Item key="edit">Edit</Item>
+      </ActionGroup>
+      <p>Action: {action}</p>
+    </>
+  );
+}
+```
+
+## Content
+
+ActionGroups accept a list of <TypeLink links={docs.links} type={docs.exports.Item} /> elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported. See the [collection components](../react-stately/collections.html) docs for more details about this API.
+
+```tsx example
+const items = [
+  {label: 'React', name: 'React'},
+  {label: 'Add', name: 'Add'},
+  {label: 'Delete', name: 'Delete'}
+];
+
+<ActionGroup items={items}>
+  {item => <Item key={item.name}>{item.label}</Item>}
+</ActionGroup>
+```
+
+### Icons
+
+Icons can be added to ActionGroup items by wrapping the label in a [Text](Text.html) element, and adding the icon as a sibling.
+
+```tsx example
+import Draw from '@spectrum-icons/workflow/Draw';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import {Text} from '@react-spectrum/text';
+
+<ActionGroup>
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+</ActionGroup>
+```
+
+You can also hide the label text within the buttons using the `buttonLabelBehavior` prop. When set to `"hide"`, the label is
+hidden and automatically shown in a tooltip on hover.
+
+```tsx example
+<ActionGroup buttonLabelBehavior="hide">
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+</ActionGroup>
+```
+
+### Accessibility
+
+Icon only ActionGroups should usually include a tooltip to describe the button via the `buttonLabelBehavior` prop as described above. This also automatically handles
+labeling the button for assistive technology users.
+
+In rare cases where no tooltip is desired, an alternative text label must be provided to identify the control for accessibility.
+This should be added using the `aria-label` prop to each Item.
+
+```tsx example
+<ActionGroup>
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+### Internationalization
+
+In order to internationalize an ActionGroup, the content provided to all child items should be localized.
+
+## Selection
+ActionGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+
+```tsx example
+<ActionGroup selectionMode="single" defaultSelectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
+</ActionGroup>
+```
+
+The `selectedKeys` prop can be used to make the selected state controlled.
+
+```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['list']));
+
+  return (
+    <>
+      <ActionGroup selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
+        <Item key="grid">Grid view</Item>
+        <Item key="list">List view</Item>
+        <Item key="gallery">Gallery view</Item>
+      </ActionGroup>
+      <p>Current selection (controlled): {[...selected]}</p>
+    </>
+  );
+}
+```
+
+Set `selectionMode` prop to `multiple` to allow more than one selection.
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['list']));
+
+  return (
+    <>
+      <ActionGroup selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+        <Item key="grid">Grid view</Item>
+        <Item key="list">List view</Item>
+        <Item key="gallery">Gallery view</Item>
+      </ActionGroup>
+      <p>Current selections (controlled): {[...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Events
+Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either `single` or `multiple`.
+The `key` prop from the selected item will be passed into the callback.
+
+To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
+```tsx example
+import type {Key} from '@adobe/react-spectrum';
+
+function Example() {
+  let [actionKey, setActionKey] = React.useState<Key>('');
+  return (
+    <>
+      <ActionGroup onAction={setActionKey}>
+        <Item key="add">Add</Item>
+        <Item key="delete">Delete</Item>
+        <Item key="edit">Edit</Item>
+      </ActionGroup>
+      <p>Action: {actionKey}</p>
+    </>
+  );
+}
+```
+
+## Collapsing behavior
+
+By default, ActionGroup items wrap to form a new line when horizontal space is limited. However, this can cause content to shift below the
+ActionGroup. If the ActionGroup should always appear in a single line, the `overflowMode` prop can be set to `collapse`. In this mode, when
+horizontal space is limited, the ActionGroup will collapse into a menu. The exact behavior depends on the `selectionMode`.
+
+### Non-selectable
+
+When selection is not enabled, ActionGroup displays as many items as possible and collapses the remaining items into a more actions menu.
+
+```tsx example
+<ActionGroup overflowMode="collapse" maxWidth={250}>
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+  <Item key="move">
+    <Move />
+    <Text>Move</Text>
+  </Item>
+  <Item key="duplicate">
+    <Duplicate />
+    <Text>Duplicate</Text>
+  </Item>
+</ActionGroup>
+```
+
+### Selection
+
+When selection is enabled, ActionGroup collapses all items into a menu together when space is limited. The menu button indicates when one of
+the options within it is selected by showing a highlighted state. A `summaryIcon` should be specified to visually communicate the purpose of
+the ActionGroup when collapsed, and an `aria-label` should be provided to describe the ActionGroup to assistive technology.
+
+This example shows a multi-selectable ActionGroup that can be used to select text styles. When space is limited, it collapses into a dropdown
+menu, and displays the `TextStyle` icon passed to the `summaryIcon` prop.
+
+```tsx example
+import TextStyle from '@spectrum-icons/workflow/TextStyle';
+
+<ActionGroup
+  aria-label="Text style"
+  overflowMode="collapse"
+  selectionMode="multiple"
+  isEmphasized
+  summaryIcon={<TextStyle />}
+  maxWidth={100}>
+  <Item key="bold">
+    <TagBold />
+    <Text>Bold</Text>
+  </Item>
+  <Item key="italic">
+    <TagItalic />
+    <Text>Italic</Text>
+  </Item>
+  <Item key="underline">
+    <TagUnderline />
+    <Text>Underline</Text>
+  </Item>
+  <Item key="strike">
+    <TextStrikethrough />
+    <Text>Strikethrough</Text>
+  </Item>
+</ActionGroup>
+```
+
+### Single selection
+
+A special case where a `summaryIcon` is not needed is a single selectable ActionGroup (`selectionMode="single"`) which enforces that an item
+is always selected (`disallowEmptySelection`). In this case, the selected item is displayed inside the menu button when collapsed.
+
+```tsx example
+<ActionGroup
+  aria-label="Text alignment"
+  overflowMode="collapse"
+  selectionMode="single"
+  defaultSelectedKeys={['left']}
+  disallowEmptySelection
+  buttonLabelBehavior="hide"
+  isEmphasized
+  maxWidth={100}>
+  <Item key="left">
+    <TextAlignLeft />
+    <Text>Align Left</Text>
+  </Item>
+  <Item key="center">
+    <TextAlignCenter />
+    <Text>Align Center</Text>
+  </Item>
+  <Item key="right">
+    <TextAlignRight />
+    <Text>Align Right</Text>
+  </Item>
+  <Item key="justify">
+    <TextAlignJustify />
+    <Text>Justify</Text>
+  </Item>
+</ActionGroup>
+```
+
+### Collapsing button labels
+
+In addition to collapsing items that don't fit into a menu, the button labels can also be automatically hidden when space is limited.
+This keeps more buttons visible at a time before needing to collapse into a menu. This behavior can be enabled by setting the
+`buttonLabelBehavior` prop to `"collapse"`. The labels will be automatically shown in tooltips when collapsed.
+
+```tsx example
+<ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse" maxWidth={180}>
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+  <Item key="move">
+    <Move />
+    <Text>Move</Text>
+  </Item>
+  <Item key="duplicate">
+    <Duplicate />
+    <Text>Duplicate</Text>
+  </Item>
+</ActionGroup>
+```
+
+### Vertical collapsing behavior
+
+Non-selectable vertical ActionGroups also support collapsing when the height is too small to fit all of the buttons.
+The behavior is the same as for horizontal ActionGroups, except for the positioning of the tooltips and menu.
+
+Vertical ActionGroups with selection do not currently support collapsing. When selection is enabled, we recommend placing
+the ActionGroup in a scrollable container so that the user can access all items.
+
+```tsx example
+<ActionGroup overflowMode="collapse" orientation="vertical" buttonLabelBehavior="hide" maxHeight={150}>
+  <Item key="edit">
+    <Draw />
+    <Text>Edit</Text>
+  </Item>
+  <Item key="copy">
+    <Copy />
+    <Text>Copy</Text>
+  </Item>
+  <Item key="delete">
+    <Delete />
+    <Text>Delete</Text>
+  </Item>
+  <Item key="move">
+    <Move />
+    <Text>Move</Text>
+  </Item>
+  <Item key="duplicate">
+    <Duplicate />
+    <Text>Duplicate</Text>
+  </Item>
+</ActionGroup>
+```
+
+## Props
+
+<PropTable component={docs.exports.ActionGroup} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<ActionGroup isQuiet>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+### Emphasized
+
+The additional styling provided by the `isEmphasized` prop is only applied when items are selected.
+
+```tsx example
+<ActionGroup
+  isEmphasized
+  selectionMode="single"
+  defaultSelectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
+</ActionGroup>
+```
+
+### Static color
+
+The `staticColor` prop can be used when the ActionGroup is displayed over a color background. When selected, the icon and text in each
+button automatically take on the color of the background. You are responsible for choosing the static color variant that ensures the
+text meets an [accessible contrast ratio](https://developer.mozilla.org/en-US/docs/Web/Accessibility/Understanding_WCAG/Perceivable/Color_contrast)
+with the background.
+
+```tsx example
+<Flex wrap gap="size-250">
+  <View backgroundColor="static-blue-700" padding="size-500">
+    <ActionGroup staticColor="white">
+      <Item key="edit">
+        <Draw />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="copy">
+        <Copy />
+        <Text>Copy</Text>
+      </Item>
+      <Item key="delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionGroup>
+  </View>
+  <View backgroundColor="static-yellow-400" padding="size-500">
+    <ActionGroup
+      staticColor="black"
+      isQuiet
+      buttonLabelBehavior="hide"
+      selectionMode="single"
+      disallowEmptySelection
+      defaultSelectedKeys={['list']}>
+      <Item key="list">
+        <ViewList />
+        <Text>List view</Text>
+      </Item>
+      <Item key="grid">
+        <ViewGrid />
+        <Text>Grid view</Text>
+      </Item>
+      <Item key="gallery">
+        <ViewCard />
+        <Text>Gallery view</Text>
+      </Item>
+    </ActionGroup>
+  </View>
+</Flex>
+```
+
+### Disabled
+
+To disable the entire ActionGroup, use the `isDisabled` prop on the root.
+
+```tsx example
+<ActionGroup isDisabled>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+To disable individual items, a list of `disabledKeys` can be provided.
+
+```tsx example
+<ActionGroup disabledKeys={['add', 'delete']}>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+### Orientation
+
+Using the `orientation` prop with value `vertical` changes the alignment of the items to follow the y-axis.
+
+```tsx example
+<ActionGroup orientation="vertical">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+### Density
+
+Using the `density` prop with value `compact` changes the margins between the buttons.
+In the default case, this merges the borders of neighboring ActionButtons. In the
+quiet case, it just reduces the margin size between the buttons.
+
+```tsx example
+<ActionGroup density="compact">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+```tsx example
+<ActionGroup isQuiet density="compact">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+### Justified
+The `isJustified` prop will divide all available horizontal space evenly among the buttons.
+
+```tsx example
+<Flex width="size-2000" direction="column">
+  <ActionGroup isJustified>
+    <Item key="brush" aria-label="Brush"><Brush /></Item>
+    <Item key="select" aria-label="Select"><Select /></Item>
+    <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+  </ActionGroup>
+</Flex>
+```

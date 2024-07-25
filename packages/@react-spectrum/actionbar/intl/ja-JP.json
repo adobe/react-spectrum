@@ -1,0 +1,7 @@
+{
+  "actions": "アクション",
+  "actionsAvailable": "アクションを利用できます。",
+  "clearSelection": "選択をクリア",
+  "selected": "{count, plural, =0 {選択されていません} other {# 個を選択しました}}",
+  "selectedAll": "すべてを選択"
+}

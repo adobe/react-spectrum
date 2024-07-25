@@ -1,0 +1,5 @@
+{
+  "decrease": "降低 {fieldLabel}",
+  "increase": "提高 {fieldLabel}",
+  "numberField": "数字字段"
+}

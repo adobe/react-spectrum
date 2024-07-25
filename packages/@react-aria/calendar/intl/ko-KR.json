@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} ~ {endDate}",
+  "dateSelected": "{date} 선택됨",
+  "finishRangeSelectionPrompt": "날짜 범위 선택을 완료하려면 클릭하십시오.",
+  "maximumDate": "마지막으로 사용 가능한 일자",
+  "minimumDate": "처음으로 사용 가능한 일자",
+  "next": "다음",
+  "previous": "이전",
+  "selectedDateDescription": "선택 일자: {date}",
+  "selectedRangeDescription": "선택 범위: {dateRange}",
+  "startRangeSelectionPrompt": "날짜 범위 선택을 시작하려면 클릭하십시오.",
+  "todayDate": "오늘, {date}",
+  "todayDateSelected": "오늘, {date} 선택됨"
+}

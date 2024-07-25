@@ -1,0 +1,193 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/button';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/button/package.json';
+
+```jsx import
+import {Button} from '@react-spectrum/button';
+import Bell from '@spectrum-icons/workflow/Bell';
+import {View} from '@react-spectrum/view';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Buttons
+---
+
+# Button
+
+<PageDescription>{docs.exports.Button.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Button']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/button/'}
+  ]}
+  since="3.0.0" />
+
+## Example
+
+```tsx example
+<Button variant="accent">Save</Button>
+```
+
+## Content
+
+Buttons must have a visible label, and can optionally have an icon. Text only buttons accept a string
+as children. Icons can also be added as children, with a sibling [Text](Text.html) element for the label.
+
+```tsx example
+import {Text} from '@react-spectrum/text';
+
+<Button variant="primary">
+  <Bell />
+  <Text>Icon + Label</Text>
+</Button>
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using
+the `aria-label` prop.
+
+### Internationalization
+
+In order to internationalize a button, a localized string should be passed to the `children` or `aria-label` prop.
+
+## Events
+
+Buttons support user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress`
+prop.
+
+The following example uses an `onPress` handler to update a counter stored in React state.
+
+```tsx example
+function Example() {
+  let [count, setCount] = React.useState(0);
+
+  return (
+    <Button variant="primary" onPress={() => setCount(c => c + 1)}>{count} Dogs</Button>
+  );
+}
+```
+
+## Pending
+
+Buttons can indicate that a quick progress task is taking place (e.g., saving settings on a server). After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon. You can trigger this behavior with the `isPending` prop. Button events are disabled while `isPending` is true.
+
+```tsx example
+function Example() {
+  let [isLoading, setIsLoading] = React.useState(false);
+
+  let handlePress = () => {
+    // Trigger button pending state
+    setIsLoading(true);
+
+    setTimeout(() => {
+      // Cancel button pending state
+      setIsLoading(false);
+    }, 3000);
+  };
+
+  return (
+    <Button variant="primary" isPending={isLoading} onPress={handlePress}>Click me!</Button>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+## Visual options
+
+### Accent
+[View guidelines](https://spectrum.adobe.com/page/button/#Accent-variant)
+
+```tsx example
+<Flex wrap gap="size-250">
+  <Button variant="accent" style="fill">Save</Button>
+  <Button variant="accent" style="outline">Save</Button>
+</Flex>
+```
+
+### Primary
+[View guidelines](https://spectrum.adobe.com/page/button/#Primary-variant)
+
+```tsx example
+<Flex wrap gap="size-250">
+  <Button variant="primary" style="fill">Save</Button>
+  <Button variant="primary" style="outline">Save</Button>
+</Flex>
+```
+
+### Secondary
+[View guidelines](https://spectrum.adobe.com/page/button/#Secondary-variant)
+
+```tsx example
+<Flex wrap gap="size-250">
+  <Button variant="secondary" style="fill">Save</Button>
+  <Button variant="secondary" style="outline">Save</Button>
+</Flex>
+```
+
+### Negative
+[View guidelines](https://spectrum.adobe.com/page/button/#Negative-variant)
+
+```tsx example
+<Flex wrap gap="size-250">
+  <Button variant="negative" style="fill">Save</Button>
+  <Button variant="negative" style="outline">Save</Button>
+</Flex>
+```
+
+### Static color
+[View guidelines](https://spectrum.adobe.com/page/button/#Static-color)
+
+```tsx example
+<Flex wrap gap="size-250">
+  <View backgroundColor="static-blue-700" padding="size-500">
+    <Flex wrap gap="size-200">
+      <Button variant="primary" staticColor="white" style="fill">Save</Button>
+      <Button variant="primary" staticColor="white" style="outline">Save</Button>
+    </Flex>
+  </View>
+  <View backgroundColor="static-yellow-400" padding="size-500">
+    <Flex wrap gap="size-200">
+      <Button variant="primary" staticColor="black" style="fill">Save</Button>
+      <Button variant="primary" staticColor="black" style="outline">Save</Button>
+    </Flex>
+  </View>
+</Flex>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/button/#Disabled)
+
+```tsx example
+<Button variant="accent" isDisabled>Save</Button>
+```
+
+### Icon only
+[View guidelines](https://spectrum.adobe.com/page/button/#Label-and-icon)
+
+```tsx example
+<Flex direction="row" gap={8}>
+  <Button variant="accent" aria-label="Ring for service"><Bell /></Button>
+  <Button variant="primary" aria-label="Ring for service"><Bell /></Button>
+  <Button variant="secondary" aria-label="Ring for service"><Bell /></Button>
+</Flex>
+```

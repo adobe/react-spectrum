@@ -1,0 +1,291 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/searchfield';
+import statelyDocs from 'docs:@react-stately/searchfield';
+import buttonDocs from 'docs:@react-aria/button';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/searchfield/package.json';
+import Anatomy from './anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+category: Forms
+keywords: [searchbox, input, search, aria]
+---
+
+# useSearchField
+
+<PageDescription>{docs.exports.useSearchField.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useSearchField']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#searchbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useSearchField} links={docs.links} />
+
+## Features
+
+Search fields can be built with `<input type="search">`, but these can be hard to
+style consistently cross browser. `useSearchField` helps achieve accessible
+search fields that can be styled as needed.
+
+* Built with a native `<input type="search">` element
+* Visual and ARIA labeling support
+* Keyboard submit handling via the <Keyboard>Enter</Keyboard> key
+* Keyboard support for clearing the search field with the <Keyboard>Escape</Keyboard> key
+* Custom clear button support with internationalized label for accessibility
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+
+## Anatomy
+
+<Anatomy />
+
+Search fields consist of an input element, a label, and an optional clear button.
+`useSearchField` automatically manages the labeling and relationships between the elements,
+and handles keyboard events. Users can press the <Keyboard>Escape</Keyboard> key to clear the search field, or
+the <Keyboard>Enter</Keyboard> key to trigger the `onSubmit` event.
+
+`useSearchField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+`useSearchField` returns props that you should spread onto the appropriate elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSearchField.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSearchFieldState} />
+hook in `@react-stately/searchfield`. The state object should be passed as an option to `useSearchField`.
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
+## Example
+
+**Note**: This example does not show the optional description or error message elements. See [useTextField](useTextField.html) for an example of that.
+
+```tsx example
+import {useSearchField} from '@react-aria/searchfield';
+import {useSearchFieldState} from '@react-stately/searchfield';
+
+function SearchField(props) {
+  let {label} = props;
+  let state = useSearchFieldState(props);
+  let ref = React.useRef(null);
+  let {labelProps, inputProps} = useSearchField(props, state, ref);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
+      <label {...labelProps}>{label}</label>
+      <input {...inputProps} ref={ref} />
+    </div>
+  );
+}
+
+<SearchField
+  label="Search"
+  onSubmit={text => alert(text)} />
+```
+
+## Styling
+
+This example uses CSS to reset the default browser styling for a search field and implement
+custom styles. It also includes a custom clear button, built with [useButton](useButton.html).
+The `Button` component is independent, and can be shared with many other components.
+
+```tsx example export=true
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
+
+function SearchField(props) {
+  let {label} = props;
+  let state = useSearchFieldState(props);
+  let ref = React.useRef(null);
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
+
+  return (
+    <div className="search-field">
+      <label {...labelProps}>{label}</label>
+      <div>
+        <input {...inputProps} ref={ref} />
+        {state.value !== '' &&
+          <Button {...clearButtonProps}>❎</Button>
+        }
+      </div>
+    </div>
+  );
+}
+
+<SearchField
+  label="Search"
+  onSubmit={text => alert(text)} />
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+/* css */
+.search-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-field div {
+  background: slategray;
+  padding: 4px 0 4px 4px;
+  border-radius: 4px;
+  width: 250px;
+  display: flex;
+}
+
+.search-field input {
+  flex: 1;
+  color: white;
+  font-size: 15px;
+  padding: 2px 0;
+}
+
+.search-field input, .search-field button {
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+.search-field input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to clear the search field. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef(null);
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+}
+```
+
+</details>
+
+## Usage
+
+The following examples show how to use the `SearchField` component created in the above example.
+
+### Default value
+
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+
+```tsx example
+<SearchField
+  label="Search"
+  defaultValue="Puppies" />
+```
+
+### Controlled value
+
+The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
+
+```tsx example
+function Example() {
+  let [text, setText] = React.useState('');
+
+  return (
+    <>
+      <SearchField label="Search" onChange={setText} />
+      <p>Mirrored text: {text}</p>
+    </>
+  );
+}
+```
+
+### Events
+
+The most commonly used handlers for events in SearchField are the:
+- `onChange` prop which is triggered whenever the value is edited by the user.
+- `onSubmit` prop which is triggered whenever the value is submitted by the user (e.g. by pressing <Keyboard>Enter</Keyboard>).
+- `onClear` prop which is triggered whenever the value is cleared by the user (e.g. by pressing clear button or <Keyboard>Escape</Keyboard> key).
+
+The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
+
+```tsx example
+function Example() {
+  let [currentText, setCurrentText] = React.useState('');
+  let [submittedText, setSubmittedText] = React.useState('');
+
+  return (
+    <div>
+      <SearchField
+        onClear={() => setCurrentText('')}
+        onChange={setCurrentText}
+        onSubmit={setSubmittedText}
+        label="Your text"
+        value={currentText}
+      />
+      <p>Mirrored text: {currentText}</p>
+      <p>Submitted text: {submittedText}</p>
+    </div>
+  );
+}
+```
+
+### Disabled
+
+A SearchField can be disabled using the `isDisabled` prop.
+
+```tsx example
+<SearchField label="Email" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<SearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<SearchField label="Email" name="email" type="email" />
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, search fields should be mirrored. The label should be right aligned,
+along with the text in the input. Ensure that your CSS accounts for this.

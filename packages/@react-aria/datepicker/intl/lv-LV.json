@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalendārs",
+  "day": "diena",
+  "dayPeriod": "priekšpusdienā/pēcpusdienā",
+  "endDate": "Beigu datums",
+  "era": "ēra",
+  "hour": "stundas",
+  "minute": "minūtes",
+  "month": "mēnesis",
+  "second": "sekundes",
+  "selectedDateDescription": "Atlasītais datums: {date}",
+  "selectedRangeDescription": "Atlasītais diapazons: no {startDate} līdz {endDate}",
+  "selectedTimeDescription": "Atlasītais laiks: {time}",
+  "startDate": "Sākuma datums",
+  "timeZoneName": "laika josla",
+  "weekday": "nedēļas diena",
+  "year": "gads"
+}

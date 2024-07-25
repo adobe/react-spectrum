@@ -1,0 +1,8 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Birač boja",
+  "colorSwatch": "Uzorak boje",
+  "transparent": "providno",
+  "twoDimensionalSlider": "2D klizač"
+}

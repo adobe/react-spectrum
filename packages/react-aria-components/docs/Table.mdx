@@ -1,0 +1,2494 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import sharedDocs from 'docs:@react-types/shared';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from './TableAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import {Keyboard} from '@react-spectrum/text';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
+import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Collections
+keywords: [table, aria, grid]
+type: component
+---
+
+# Table
+
+<PageDescription>{docs.exports.Table.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Table']}
+   sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-components';
+
+<Table aria-label="Files" selectionMode="multiple">
+  <TableHeader>
+    <Column><MyCheckbox slot="selection" /></Column>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell><MyCheckbox slot="selection" /></Cell>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row>
+      <Cell><MyCheckbox slot="selection" /></Cell>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row>
+      <Cell><MyCheckbox slot="selection" /></Cell>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row>
+      <Cell><MyCheckbox slot="selection" /></Cell>
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
+@import './Checkbox.mdx' layer(checkbox);
+@import './Popover.mdx' layer(popover);
+@import './Menu.mdx' layer(menu);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-Table {
+  padding: 0.286rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  outline: none;
+  border-spacing: 0;
+  min-height: 100px;
+  align-self: start;
+  max-width: 100%;
+  word-break: break-word;
+  forced-color-adjust: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  .react-aria-TableHeader {
+    color: var(--text-color);
+
+    &:after {
+      content: '';
+      display: table-row;
+      height: 2px;
+    }
+
+    & tr:last-child .react-aria-Column {
+      border-bottom: 1px solid var(--border-color);
+      cursor: default;
+    }
+  }
+
+  .react-aria-Row {
+    --radius-top: 6px;
+    --radius-bottom: 6px;
+    --radius: var(--radius-top) var(--radius-top) var(--radius-bottom) var(--radius-bottom);
+    border-radius: var(--radius);
+    clip-path: inset(0 round var(--radius)); /* firefox */
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    transform: scale(1);
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
+    }
+
+    &[data-pressed] {
+      background: var(--gray-100);
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
+
+      &[data-focus-visible],
+      .react-aria-Cell[data-focus-visible] {
+        outline-offset: -4px;
+      }
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+  }
+
+  .react-aria-Cell,
+  .react-aria-Column {
+    padding: 4px 8px;
+    text-align: left;
+    outline: none;
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
+    }
+  }
+
+  .react-aria-Cell {
+    transform: translateZ(0);
+
+    &:first-child {
+      border-radius: var(--radius-top) 0 0 var(--radius-bottom);
+    }
+
+    &:last-child {
+      border-radius: 0 var(--radius-top) var(--radius-bottom) 0;
+    }
+  }
+
+  /* join selected items if :has selector is supported */
+  @supports selector(:has(.foo)) {
+    .react-aria-Row[data-selected]:has(+ [data-selected]),
+    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+      --radius-bottom: 0px;
+    }
+
+    .react-aria-Row[data-selected] + [data-selected],
+    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected]{
+      --radius-top: 0px;
+    }
+  }
+}
+
+:where(.react-aria-Row) .react-aria-Checkbox {
+  --selected-color: var(--highlight-foreground);
+  --selected-color-pressed: var(--highlight-foreground-pressed);
+  --checkmark-color: var(--highlight-background);
+  --background-color: var(--highlight-background);
+}
+```
+
+</details>
+
+## Features
+
+A table can be built using the [&lt;table&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table), [&lt;tr&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr),
+[&lt;td&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td), and other table specific HTML elements, but is very limited in functionality especially when it comes to user interactions.
+HTML tables are meant for static content, rather than tables with rich interactions like focusable elements within cells, keyboard navigation, row selection, sorting, etc.
+`Table` helps achieve accessible and interactive table components that can be styled as needed.
+
+* **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
+* **Columns** – Support for column sorting and [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
+* **Interactive children** – Table cells may include interactive elements such as buttons, menus, etc.
+* **Actions** – Rows and cells support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
+* **Async loading** – Support for loading and sorting items asynchronously.
+* **Keyboard navigation** – Table rows, cells, and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – Tables support drag and drop to reorder, insert, or update rows via mouse, touch, keyboard, and screen reader interactions.
+* **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
+* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
+
+A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
+
+If the table supports row selection, each row can optionally include a selection checkbox. Additionally, a "select all" checkbox may be displayed in a column header if the table supports multiple row selection. A drag button may also be included within a cell if the row is draggable.
+
+If a table supports column resizing, then it should also be wrapped in a `<ResizableTableContainer>`, and a `<ColumnResizer>` should be included in each resizable column.
+
+```tsx
+import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, ResizableTableContainer, ColumnResizer} from 'react-aria-components';
+
+<ResizableTableContainer>
+  <Table>
+    <TableHeader>
+      <Column />
+      <Column><Checkbox slot="selection" /></Column>
+      <Column><ColumnResizer /></Column>
+      <Column>
+        <Column />
+        <Column />
+      </Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><Button slot="drag" /></Cell>
+        <Cell><Checkbox slot="selection" /></Cell>
+        <Cell />
+        <Cell />
+        <Cell />
+      </Row>
+    </TableBody>
+  </Table>
+</ResizableTableContainer>
+```
+
+### Concepts
+
+`Table` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `Table` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Checkbox.html"
+  title="Checkbox"
+  description="A checkbox allows a user to select an individual option.">
+  <Checkbox />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="table" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="table" />
+
+## Reusable wrappers
+
+If you will use a Table in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+The following example includes a custom Column component with a sort indicator. It displays an upwards facing arrow when the column is sorted in the ascending direction, and a downward facing arrow otherwise.
+
+```tsx example export=true render=false
+import type {ColumnProps} from 'react-aria-components';
+
+function MyColumn(props: ColumnProps) {
+  return (
+    <Column {...props}>
+      {({allowsSorting, sortDirection}) => <>
+        {props.children}
+        {allowsSorting && (
+          <span aria-hidden="true" className="sort-indicator">
+            {sortDirection === 'ascending' ? '▲' : '▼'}
+          </span>
+        )}
+      </>}
+    </Column>
+  );
+}
+```
+
+The TableHeader and Row components can also be wrapped to automatically include [checkboxes](Checkbox.html) for selection, and a drag handle when [drag and drop](#drag-and-drop) is enabled, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
+
+```tsx example export=true render=false
+import type {TableHeaderProps, RowProps, CheckboxProps} from 'react-aria-components';
+import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
+
+function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
+
+  return (
+    <TableHeader>
+      {/* Add extra columns for drag and drop and selection. */}
+      {allowsDragging && <Column />}
+      {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox slot="selection" />}</Column>}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </TableHeader>
+  );
+}
+
+function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+  let {selectionBehavior, allowsDragging} = useTableOptions();
+
+  return (
+    <Row id={id} {...otherProps}>
+      {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
+      {selectionBehavior === 'toggle' && <Cell><MyCheckbox slot="selection" /></Cell>}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </Row>
+  );
+}
+
+function MyCheckbox({children, ...props}: CheckboxProps) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => <>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
+        {children}
+      </>}
+    </Checkbox>
+  );
+}
+```
+
+Now we can render a table with a default selection column built in.
+
+```tsx example
+<Table aria-label="Files" selectionMode="multiple">
+  <MyTableHeader>
+    <MyColumn isRowHeader>Name</MyColumn>
+    <MyColumn>Type</MyColumn>
+    <MyColumn>Date Modified</MyColumn>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+## Content
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
+In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
+only the rows dynamic.
+
+```tsx example export=true
+import type {TableProps} from 'react-aria-components';
+
+function FileTable(props: TableProps) {
+  let columns = [
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  ];
+
+  return (
+    <Table aria-label="Files" {...props}>
+      <MyTableHeader columns={columns}>
+        {column => (
+          <Column isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
+        )}
+      </MyTableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <MyRow columns={columns}>
+            {column => <Cell>{item[column.id]}</Cell>}
+          </MyRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+## Selection
+
+### Single selection
+
+By default, `Table` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `id` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with id equal to `2`.
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<FileTable selectionMode="single" defaultSelectedKeys={[2]} />
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the example above
+<FileTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+```
+
+### Disallow empty selection
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the example above
+<FileTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `id` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+```tsx example export=true
+import type {Selection} from 'react-aria-components';
+
+interface Pokemon {
+  id: number,
+  name: string,
+  type: string,
+  level: string
+}
+
+interface PokemonTableProps extends TableProps {
+  items?: Pokemon[],
+  renderEmptyState?: () => string
+}
+
+function PokemonTable(props: PokemonTableProps) {
+  let items = props.items || [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  ///- begin highlight -///
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
+  ///- end highlight -///
+
+  return (
+    <Table
+      aria-label="Pokemon table"
+      {...props}
+      /*- begin highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      /*- end highlight -*/
+    >
+      <MyTableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Level</Column>
+      </MyTableHeader>
+      <TableBody items={items} renderEmptyState={props.renderEmptyState}>
+        {item => (
+          <MyRow>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.level}</Cell>
+          </MyRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+
+<PokemonTable selectionMode="multiple" />
+```
+
+### Selection behavior
+
+By default, `Table` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
+
+```tsx example
+<PokemonTable selectionMode="multiple" selectionBehavior="replace" />
+```
+
+## Row actions
+
+`Table` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
+When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
+and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
+and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
+
+```tsx example
+<div style={{display: 'flex', flexWrap: 'wrap', gap: '24px'}}>
+  <PokemonTable
+    aria-label="Pokemon table with row actions and toggle selection behavior"
+    ///- begin highlight -///
+    onRowAction={key => alert(`Opening item ${key}...`)}
+    ///- end highlight -///
+    selectionMode="multiple" />
+  <PokemonTable
+    aria-label="Pokemon table with row actions and replace selection behavior"
+    ///- begin highlight -///
+    onRowAction={key => alert(`Opening item ${key}...`)}
+    selectionBehavior="replace"
+    ///- end highlight -///
+    selectionMode="multiple" />
+</div>
+```
+
+Rows may also have a row action specified by directly applying `onAction` on the `Row` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `Table`, both the table's and the row's `onAction` are called.
+
+```tsx example
+<Table aria-label="Table with onAction applied on the rows directly" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Charizard`)}>
+    {/*- end highlight -*/}
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Blastoise`)}>
+    {/*- end highlight -*/}
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Venusaur`)}>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Pikachu`)}>
+    {/*- end highlight -*/}
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+### Links
+
+Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<Table aria-label="Bookmarks" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow href="https://adobe.com/" target="_blank">
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </MyRow>
+    <MyRow href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </MyRow>
+    <MyRow href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+```css hidden
+.react-aria-Row[data-href] {
+  cursor: pointer;
+}
+```
+
+#### Client side routing
+
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Disabled rows
+
+A `Row` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
+unless the `disabledBehavior` prop on `Table` is used to change this behavior.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+<Table aria-label="Table with disabled rows" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
+
+```tsx example
+<Table 
+  aria-label="Table with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledBehavior="all"
+  /*- end highlight -*/
+>
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    <MyRow isDisabled>
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Table` level instead of `isDisabled` on individual rows.
+This accepts a list of row ids that are disabled. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+```
+
+## Sorting
+
+Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The Table accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `sortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information on how to perform server side sorting.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+function AsyncSortTable() {
+  let list = useAsyncList<Character>({
+    async load({signal}) {
+      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <Table
+      aria-label="Example table with client side sorting"
+      /*- begin highlight -*/
+      sortDescriptor={list.sortDescriptor}
+      onSortChange={list.sort}
+      /*- end highlight -*/
+    >
+      <TableHeader>
+        <MyColumn id="name" isRowHeader allowsSorting>Name</MyColumn>
+        <MyColumn id="height" allowsSorting>Height</MyColumn>
+        <MyColumn id="mass" allowsSorting>Mass</MyColumn>
+        <MyColumn id="birth_year" allowsSorting>Birth Year</MyColumn>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row id={item.name}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.height}</Cell>
+            <Cell>{item.mass}</Cell>
+            <Cell>{item.birth_year}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Column {
+  .sort-indicator {
+    padding: 0 2px;
+  }
+
+  &:not([data-sort-direction]) .sort-indicator {
+    visibility: hidden;
+  }
+}
+```
+
+</details>
+
+## Empty state
+
+Use the `renderEmptyState` prop to customize what the `TableBody` will display if there are no items.
+
+```tsx example
+<Table aria-label="Search results">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  {/*- begin highlight -*/}
+  <TableBody renderEmptyState={() => 'No results found.'}>
+  {/*- end highlight -*/}
+    {[]}
+  </TableBody>
+</Table>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TableBody {
+  &[data-empty] {
+    text-align: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
+
+## Column Resizing
+
+Table supports resizable columns, allowing users to dynamically adjust the width of a column. This is enabled by wrapping the `<Table>` with a `<ResizableTableContainer>` element, which serves as a scrollable container for the Table. Then, to make a column resizable, render a `<ColumnResizer>` element inside a `<Column>`. This allows a user to drag a resize handle to change the width of a column. Keyboard users can also resize a column by pressing <Keyboard>Enter</Keyboard> to enter resizing mode and then using the arrow keys to resize. Screen reader users can resize columns by operating the resizer like a slider.
+
+### Width values
+
+By default, a Table relies on the browser's default table layout algorithm to determine column widths. However, when a Table is wrapped in a `<ResizableTableContainer>`, column widths are calculated in JavaScript by React Aria. When no additional props are provided, Table divides the available space evenly among the columns. The `Column` component also supports four different width props that allow you to control column sizing behavior: `defaultWidth`, `width`, `minWidth`, and `maxWidth`.
+
+An initial, uncontrolled width can be provided to a Column using the `defaultWidth` prop. This allows the column width to freely shrink and grow in relation to other column widths. Alternatively, a controlled value can be provided by the `width` prop. These props accept fixed pixel values, percentages of the total table width, or [fractional](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) values (the `fr` unit), which represent a fraction of the available space. Columns without a defined width are equivalent to `1fr`.
+
+The `minWidth` and `maxWidth` props define constraints on the size of a column, which may be defined either as fixed pixel values or as percentages of the total table width. These are respected when calculating the size of a column, and also provide limits for column resizing.
+
+The example below illustrates how each of the column width props affects their respective column's resize behavior. Note that the column names are wrapped in a `<span tabIndex={-1}>` so that they can be focused with the keyboard in addition to the `<ColumnResizer>`.
+
+```tsx example
+import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
+
+<ResizableTableContainer>
+  <Table aria-label="Table with resizable columns">
+    <TableHeader>
+      {/*- begin highlight -*/}
+      <Column id="file" isRowHeader maxWidth={500}>
+        <div className="flex-wrapper">
+          <span tabIndex={-1} className="column-name">File Name</span>
+          <ColumnResizer />
+        </div>
+      </Column>
+      <Column id="size" width={80}>Size</Column>
+      <Column id="date" minWidth={100}>
+        <div className="flex-wrapper">
+          <span tabIndex={-1} className="column-name">Date Modified</span>
+          <ColumnResizer />
+        </div>
+      </Column>
+      {/*- end highlight -*/}
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>2022-Roadmap-Proposal-Revision-012822-Copy(2)</Cell>
+        <Cell>214 KB</Cell>
+        <Cell>November 27, 2022 at 4:56PM</Cell>
+      </Row>
+      <Row>
+        <Cell>62259692_p0_master1200</Cell>
+        <Cell>120 KB</Cell>
+        <Cell>January 27, 2021 at 1:56AM</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</ResizableTableContainer>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ResizableTableContainer {
+  max-width: 400px;
+  overflow: auto;
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-color);
+
+  .react-aria-Table {
+    border: none;
+  }
+
+  .flex-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .column-name,
+  .react-aria-Button {
+    --background-color: var(--overlay-background);
+    flex: 1;
+    font: inherit;
+    text-align: start;
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-color: transparent;
+    transition: background 200ms;
+    &[data-hovered] {
+      background: var(--highlight-hover);
+    }
+
+    &[data-pressed] {
+      background: var(--highlight-pressed);
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+
+  .react-aria-ColumnResizer {
+    width: 15px;
+    background-color: grey;
+    height: 25px;
+    flex: 0 0 auto;
+    touch-action: none;
+    box-sizing: border-box;
+    border: 5px;
+    border-style: none solid;
+    border-color: transparent;
+    background-clip: content-box;
+
+    &[data-resizable-direction=both] {
+      cursor: ew-resize;
+    }
+
+    &[data-resizable-direction=left] {
+      cursor: e-resize;
+    }
+
+    &[data-resizable-direction=right] {
+      cursor: w-resize;
+    }
+
+    &[data-focus-visible] {
+      background-color: var(--focus-ring-color);
+    }
+
+    &[data-resizing] {
+      border-color: var(--focus-ring-color);
+      background-color: transparent;
+    }
+  }
+
+  .react-aria-Column,
+  .react-aria-Cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+```
+
+</details>
+
+### Resize events
+
+Table accepts an `onResize` prop which is triggered whenever a column resizer is moved by the user. This can be used in combination with the `width` prop to update a Column's width in a controlled fashion. Table also accepts an `onResizeEnd` prop, which is triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column in the Table.
+
+The example below uses `onResize` to update each of the Table's controlled column widths. It also saves the finalized column widths to `localStorage` in `onResizeEnd`, allowing the Table's state to be preserved between page loads and refreshes.
+
+```tsx example
+let initialColumns = [
+  {name: 'File Name', id: 'file', width: '1fr'},
+  {name: 'Size', id: 'size', width: 80},
+  {name: 'Date', id: 'date', width: 100}
+];
+
+function ResizableTable() {
+  /*- begin highlight -*/
+  let [columns, setColumns] = React.useState(() => {
+    let localStorageWidths = localStorage.getItem('table-widths');
+    if (localStorageWidths) {
+      let widths = JSON.parse(localStorageWidths);
+      return initialColumns.map(col => ({...col, width: widths[col.id]}));
+    } else {
+      return initialColumns;
+    }
+  });
+
+  let onResize = (widths) => {
+    setColumns(columns => columns.map(col => ({...col, width: widths.get(col.id)})));
+  };
+
+  let onResizeEnd = (widths) => {
+    localStorage.setItem('table-widths', JSON.stringify(Object.fromEntries(widths)));
+  };
+  /*- end highlight -*/
+
+  return (
+    <ResizableTableContainer
+      /*- begin highlight -*/
+      onResize={onResize}
+      onResizeEnd={onResizeEnd}
+      /*- end highlight -*/
+    >
+      <Table aria-label="Table with controlled, resizable columns saved in local storage">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column isRowHeader={column.id === 'file'} width={column.width}>
+              <div className="flex-wrapper">
+                <span tabIndex={-1} className="column-name">{column.name}</span>
+                <ColumnResizer />
+              </div>
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2022-Roadmap-Proposal-Revision-012822-Copy(2)</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>November 27, 2022 at 4:56PM</Cell>
+          </Row>
+          <Row>
+            <Cell>62259692_p0_master1200</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>January 27, 2021 at 1:56AM</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+}
+
+<ResizableTable />
+```
+
+### Column header menu
+
+The `Column` component exposes a `startResize` function as part of its render props which allows initiating column resizing programmatically. In addition, sorting can also be performed using the `sort` function. This enables you to create a dropdown menu that the user can use to sort or resize a column, along with any other custom actions you may have. Using a menu to initiate column resizing provides a larger hit area for touch screen users.
+
+This example shows how to create a reusable component that wraps `<Column>` to include a menu with sorting and resizing functionality.
+
+```tsx example export=true render=false
+import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
+
+interface ResizableTableColumnProps<T> extends Omit<ColumnProps, 'children'> {
+  children: React.ReactNode
+}
+
+function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps<T>) {
+  return (
+    <Column {...props}>
+      {({startResize, sort, allowsSorting, sortDirection}) => (
+        <div className="flex-wrapper">
+          <MenuTrigger>
+            <Button>{props.children}</Button>
+            <Popover>
+              <Menu onAction={(action) => {
+                if (action === 'sortAscending') {
+                  sort('ascending');
+                } else if (action === 'sortDescending') {
+                  sort('descending');
+                } else if (action === 'resize') {
+                  startResize();
+                }
+              }}>
+                <MenuItem id="sortAscending">Sort Ascending</MenuItem>
+                <MenuItem id="sortDescending">Sort Descending</MenuItem>
+                <MenuItem id="resize">Resize</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          {allowsSorting && (
+            <span aria-hidden="true" className="sort-indicator">
+              {sortDirection === 'ascending' ? '▲' : '▼'}
+            </span>
+          )}
+          <ColumnResizer />
+        </div>
+      )}
+    </Column>
+  );
+}
+```
+
+We can now use this component in place of `<Column>` to render a table with support for both resizing and sorting columns using a dropdown menu.
+
+```tsx example
+import type {SortDescriptor} from 'react-aria-components';
+
+function Example() {
+  let [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+    column: 'file',
+    direction: 'ascending'
+  });
+
+  let items = [
+    // ...
+    ///- begin collapse -////
+    {
+      id: 1,
+      file: '2022-Roadmap-Proposal-Revision-012822-Copy(2)',
+      size: '214 KB',
+      date: 'November 27, 2022 at 4:56PM'
+    },
+    {
+      id: 2,
+      file: '62259692_p0_master1200',
+      size: '120 KB',
+      date: 'January 27, 2021 at 1:56AM'
+    }
+    ///- end collapse -///
+  ].sort((a, b) => {
+    let d = a[sortDescriptor.column].localeCompare(b[sortDescriptor.column]);
+    return sortDescriptor.direction === 'descending' ? -d : d;
+  });
+
+  return (
+    <ResizableTableContainer>
+      <Table aria-label="Table with resizable columns" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+        <TableHeader>
+          <ResizableTableColumn id="file" isRowHeader allowsSorting>File Name</ResizableTableColumn>
+          <ResizableTableColumn id="size" allowsSorting>Size</ResizableTableColumn>
+          <ResizableTableColumn id="date" allowsSorting>Date Modified</ResizableTableColumn>
+        </TableHeader>
+        <TableBody items={items}>
+          {item => (
+            <Row>
+              <Cell>{item.file}</Cell>
+              <Cell>{item.size}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+}
+```
+
+## Drag and drop
+
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new items between existing rows, or reorder rows.
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A table is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a table, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an row, or between rows.
+
+Draggable rows must include a focusable drag handle using a `<Button slot="drag">`. This enables keyboard and screen reader users to initiate drag and drop. The `MyRow` component defined in the [reusable wrappers](#reusable-wrappers) section above includes this as an extra column automatically when the table allows dragging.
+
+See the [drag and drop introduction](dnd.html) to learn more.
+
+### Reorderable
+
+This example shows a basic table that allows users to reorder rows via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+
+This uses [useListData](../react-stately/useListData.html) from React Stately to manage the item list. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop, Button} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': list.getItem(key).name
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <Table
+      aria-label="Files"
+      selectionMode="multiple"
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      <TableHeader>
+        <Column></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            {/*- begin highlight -*/}
+            <Cell><Button slot="drag">≡</Button></Cell>
+            {/*- end highlight -*/}
+            <Cell><MyCheckbox slot="selection" /></Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Row {
+  &[data-dragging] {
+    opacity: 0.6;
+    transform: translateZ(0);
+  }
+
+  [slot=drag] {
+    all: unset;
+    width: 15px;
+    text-align: center;
+
+    &[data-focus-visible] {
+      border-radius: 4px;
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+}
+
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+  transform: translateZ(0);
+}
+```
+
+</details>
+
+### Custom drag preview
+
+By default, the drag preview shown under the user's pointer or finger is a copy of the original element that started the drag. A custom preview can be rendered by implementing the `renderDragPreview` function, passed to `useDragAndDrop`. This receives the dragged data that was returned by `getItems`, and returns a rendered preview for those items.
+
+This example renders a custom drag preview which shows the number of items being dragged.
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': list.getItem(key).name
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
+  });
+
+  return (
+    <Table
+      aria-label="Files"
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+  ///- end collapse -///
+  // ...
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.drag-preview {
+  width: 150px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: var(--highlight-background);
+  color: white;
+  border-radius: 4px;
+
+  .badge {
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+</details>
+
+### Drag data
+
+Data for draggable items can be provided in multiple formats at once. This allows drop targets to choose data in a format that they understand. For example, you could serialize a complex object as JSON in a custom format for use within your own application, and also provide plain text and/or rich HTML fallbacks that can be used when a user drops data in an external application (e.g. an email message).
+
+This can be done by returning multiple keys for an item from the `getItems` function. Types can either be a standard [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) for interoperability with external applications, or a custom string for use within your own app.
+
+This example provides representations of each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
+
+```tsx example export=true
+function DraggableTable() {
+  let items = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    /*- begin highlight -*/
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = items.find(item => item.id === key)!;
+        return {
+          'text/plain': `${item.name} – ${item.type}`,
+          'text/html': `<strong>${item.name}</strong> – <em>${item.type}</em>`,
+          'pokemon': JSON.stringify(item)
+        };
+      });
+    },
+    /*- end highlight -*/
+  });
+
+  return (
+    <PokemonTable
+      items={items}
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks} />
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableTable />
+  {/* see below */}
+  <DroppableTable />
+</div>
+```
+
+### Dropping on the collection
+
+Dropping on the Table as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the Table, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+function Example() {
+  let [items, setItems] = React.useState<Pokemon[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => (
+        JSON.parse(await item.getText('pokemon'))
+      )));
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTable />
+      <PokemonTable
+        items={items}
+        dragAndDropHooks={dragAndDropHooks}
+        renderEmptyState={() => 'Drop items here'} />
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Table[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay)
+}
+```
+
+</details>
+
+### Dropping on items
+
+Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+function Example() {
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin highlight -///
+    onItemDrop(e) {
+      alert(`Dropped on ${e.target.key}`);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      {/* see above */}
+      <DraggableTable />
+      <FileTable dragAndDropHooks={dragAndDropHooks} />
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Row[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  background: var(--highlight-overlay)
+}
+```
+
+</details>
+
+### Dropping between items
+
+Dropping between items can be enabled using the `onInsert` event. Table renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', level: '65'},
+      {id: 2, name: 'Charmander', type: 'Fire', level: '89'},
+      {id: 3, name: 'Squirtle', type: 'Water', level: '77'},
+      {id: 4, name: 'Caterpie', type: 'Bug', level: '46'}
+    ]
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin highlight -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.filter(isTextDropItem).map(async item => {
+        let {name, type, level} = JSON.parse(await item.getText('pokemon'));
+        return {id: Math.random(), name, type, level};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTable />
+      <PokemonTable items={list.items} dragAndDropHooks={dragAndDropHooks} />
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+  transform: translateZ(0);
+}
+```
+
+</details>
+
+A custom drop indicator can also be rendered with the `renderDropIndicator` function. This lets you customize the DOM structure and CSS classes applied to the drop indicator.
+
+```tsx example
+///- begin highlight -///
+import {DropIndicator} from 'react-aria-components';
+///- end highlight -///
+
+function Example() {
+  let { dragAndDropHooks } = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.filter(isTextDropItem).map(async item => {
+        let {name, type, level} = JSON.parse(await item.getText('pokemon'));
+        return {id: Math.random(), name, type, level};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDropIndicator(target) {
+      return (
+        <DropIndicator
+          target={target}
+          className={({isDropTarget}) => `my-drop-indicator ${isDropTarget ? 'active' : ''}`} />
+      );
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', level: '65'},
+      {id: 2, name: 'Charmander', type: 'Fire', level: '89'},
+      {id: 3, name: 'Squirtle', type: 'Water', level: '77'},
+      {id: 4, name: 'Caterpie', type: 'Bug', level: '46'}
+    ]
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTable />
+      <PokemonTable
+        items={list.items}
+        dragAndDropHooks={dragAndDropHooks} />
+    </div>
+  );
+  ///- end collapse -///
+  // ...
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-drop-indicator.active {
+  outline: 1px solid #e70073;
+  transform: translateZ(0);
+}
+```
+
+</details>
+
+### Drop data
+
+`Table` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+#### Text
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
+
+```tsx example export=true
+import {isTextDropItem} from 'react-aria-components';
+
+function DroppableTable() {
+  let [items, setItems] = React.useState<Pokemon[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['pokemon'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('pokemon')))
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <PokemonTable
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'} />
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  {/* see above */}
+  <DraggableTable />
+  <DroppableTable />
+</div>
+```
+
+#### Files
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
+
+```tsx example
+import {isFileDropItem} from 'react-aria-components';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string,
+  type: string,
+  lastModified: number
+}
+
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['image/jpeg', 'image/png'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => {
+          let file = await item.getFile();
+          return {
+            id: Math.random(),
+            url: URL.createObjectURL(file),
+            name: item.name,
+            type: file.type,
+            lastModified: file.lastModified
+          };
+        })
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <Table
+      aria-label="Droppable table"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column>Image</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Last Modified</Column>
+      </TableHeader>
+      <TableBody items={items} renderEmptyState={() => 'Drop images here'}>
+        {item => (
+          <Row>
+            <Cell><img src={item.url} /></Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{new Date(item.lastModified).toLocaleString()}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Cell img {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+  display: block;
+}
+```
+
+</details>
+
+#### Directories
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
+
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+
+```tsx example
+import File from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
+///- begin highlight -///
+import {DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
+///- end highlight -///
+
+interface DirItem {
+  name: string,
+  kind: string,
+  type: string
+}
+
+function Example() {
+  let [files, setFiles] = React.useState<DirItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
+    async onRootDrop(e) {
+      // Read entries in directory and update state with relevant info.
+      let dir = e.items.find(isDirectoryDropItem)!;
+      let files = [];
+      for await (let entry of dir.getEntries()) {
+        files.push({
+          name: entry.name,
+          kind: entry.kind,
+          type: entry.kind === 'directory' ? 'Directory' : entry.type
+        });
+      }
+      setFiles(files);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <Table
+      aria-label="Droppable table"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column>Kind</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+      </TableHeader>
+      <TableBody items={files} renderEmptyState={() => 'Drop directory here'}>
+        {item => (
+          <Row id={item.name}>
+            <Cell>{item.kind === 'directory' ? <Folder /> : <File />}</Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Drop operations
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – indicates that the dragged data will be moved from its source location to the target location.
+* `copy` – indicates that the dragged data will be copied to the target destination.
+* `link` – indicates that there will be a relationship established between the source and target locations.
+* `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
+
+#### onDragEnd
+
+The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged items.
+
+This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+      {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+      {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+      {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+    ]
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'pokemon': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    /*- begin highlight -*/
+    onDragEnd(e) {
+      if (e.dropOperation === 'move') {
+        list.remove(...e.keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <PokemonTable
+        items={list.items}
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks} />
+      <DroppableTable />
+    </div>
+  );
+}
+```
+
+#### getAllowedDropOperations
+
+The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor now shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
+
+```tsx example
+function Example() {
+  // ...
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+      {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+      {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+      {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+    ]
+  });
+  ///- end collapse -///
+  let { dragAndDropHooks } = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'pokemon': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    /*- begin highlight -*/
+    getAllowedDropOperations: () => ['copy']
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <PokemonTable
+        items={list.items}
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks} />
+      <DroppableTable />
+    </div>
+  );
+}
+```
+
+#### getDropOperation
+
+The `getDropOperation` function passed to `useDragAndDrop` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. This function receives the drop target, set of types contained in the drag, and a list of allowed drop operations as specified by the drag source. It should return one of the drop operations in `allowedOperations`, or a specific drop operation if only that drop operation is supported. It may also return `'cancel'` to reject the drop. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
+
+```tsx example
+///- begin collapse -///
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string,
+  type: string,
+  lastModified: number
+}
+///- end collapse -///
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    acceptedDragTypes: ['image/png'],
+    async onRootDrop(e) {
+      ///- begin collapse -///
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => {
+          let file = await item.getFile();
+          return {
+            id: Math.random(),
+            url: URL.createObjectURL(file),
+            name: item.name,
+            type: file.type,
+            lastModified: file.lastModified
+          };
+        })
+      );
+      setItems(items);
+      ///- end collapse -///
+      // ...
+    }
+  });
+
+  ///- begin collapse -///
+  return (
+    <Table
+      aria-label="Droppable table"
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column>Image</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Last Modified</Column>
+      </TableHeader>
+      <TableBody items={items} renderEmptyState={() => 'Drop PNGs here'}>
+        {item => (
+          <Row>
+            <Cell><img src={item.url} /></Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{new Date(item.lastModified).toLocaleString()}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+  ///- end collapse -///
+  // See "Files" example above...
+}
+```
+
+#### Drop events
+
+Drop events such as `onInsert`, `onItemDrop`, etc. also include the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+let onItemDrop = async (e) => {
+  let data = JSON.parse(await e.items[0].getText('my-app-file'));
+  /*- begin highlight -*/
+  switch (e.dropOperation) {
+    case 'move':
+      MyAppFileService.move(data.filePath, props.filePath);
+      break;
+    case 'copy':
+      MyAppFileService.copy(data.filePath, props.filePath);
+      break;
+    case 'link':
+      MyAppFileService.link(data.filePath, props.filePath);
+      break;
+  }
+  /*- end highlight -*/
+};
+```
+
+### Drag between tables
+
+This example puts together many of the concepts described above, allowing users to drag items between tables bidirectionally. It also supports reordering items within the same table. When a table is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndTableProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndTable(props: DndTableProps) {
+  let list = useListData({
+    initialItems: props.initialItems
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
+    async onInsert(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <Table
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>ID</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+      </TableHeader>
+      <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
+        {item => (
+          <Row>
+            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
+            <Cell>{item.id}</Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DndTable
+    initialItems={[
+      { id: '1', type: 'file', name: 'Adobe Photoshop' },
+      { id: '2', type: 'file', name: 'Adobe XD' },
+      { id: '3', type: 'folder', name: 'Documents' },
+      { id: '4', type: 'file', name: 'Adobe InDesign' },
+      { id: '5', type: 'folder', name: 'Utilities' },
+      { id: '6', type: 'file', name: 'Adobe AfterEffects' }
+    ]}
+    aria-label="First Table"
+  />
+  <DndTable
+    initialItems={[
+      { id: '7', type: 'folder', name: 'Pictures' },
+      { id: '8', type: 'file', name: 'Adobe Fresco' },
+      { id: '9', type: 'folder', name: 'Apps' },
+      { id: '10', type: 'file', name: 'Adobe Illustrator' },
+      { id: '11', type: 'file', name: 'Adobe Lightroom' },
+      { id: '12', type: 'file', name: 'Adobe Dreamweaver' }
+    ]}
+    aria-label="Second Table"
+  />
+</div>
+```
+
+## Props
+
+### Table
+
+<PropTable component={docs.exports.Table} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TableHeader
+
+<PropTable component={docs.exports.TableHeader} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Column
+
+<PropTable component={docs.exports.Column} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TableBody
+
+<PropTable component={docs.exports.TableBody} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Row
+
+<PropTable component={docs.exports.Row} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Cell
+
+<PropTable component={docs.exports.Cell} links={docs.links} style={{marginBottom: '40px'}} />
+
+### ResizableTableContainer
+
+<PropTable component={docs.exports.ResizableTableContainer} links={docs.links} />
+
+### ColumnResizer
+
+<PropTable component={docs.exports.ColumnResizer} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Table {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Table className="my-table">
+  {/* ... */}
+</Table>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Row[data-selected] {
+  /* ... */
+}
+
+.react-aria-Row[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Row className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  {/* ... */}
+</Row>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a sort indicator in sortable columns.
+
+```jsx
+<Column>
+  {({allowsSorting, sortDirection}) => (
+    <>
+      Column Title
+      {allowsSorting && <MySortIndicator direction={sortDirection} />}
+    </>
+  )}
+</Column>
+```
+
+The states and selectors for each component used in a `Table` are documented below.
+
+### Table
+
+A `Table` can be targeted with the `.react-aria-Table` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TableRenderProps.properties} />
+
+### TableHeader
+
+A `TableHeader` can be targeted with the `.react-aria-TableHeader` CSS selector, or by overriding with a custom `className`.
+
+### Column
+
+A `Column` can be targeted with the `.react-aria-Column` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ColumnRenderProps.properties} />
+
+### TableBody
+
+A `TableBody` can be targeted with the `.react-aria-TableBody` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TableBodyRenderProps.properties} />
+
+### Row
+
+A `Row` can be targeted with the `.react-aria-Row` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.RowRenderProps.properties} showOptional />
+
+### Cell
+
+A `Cell` can be targeted with the `.react-aria-Cell` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.CellRenderProps.properties} />
+
+### ResizableTableContainer
+
+A `ResizableTableContainer` can be targeted with the `.react-aria-ResizableTableContainer` CSS selector, or by overriding with a custom `className`.
+
+### ColumnResizer
+
+A `ColumnResizer` can be targeted with the `.react-aria-ColumnResizer` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ColumnResizerRenderProps.properties} />
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Table']} docs={docs} />
+
+This example shows a component that accepts a `Table` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn selection mode for the table on and off by pressing the button.
+
+```tsx example render=false export=true
+import type {SelectionMode} from 'react-aria-components';
+import {ToggleButtonContext, TableContext} from 'react-aria-components';
+
+function Selectable({children}) {
+  let [isSelected, onChange] = React.useState(false);
+  let selectionMode: SelectionMode = isSelected ? 'multiple' : 'none';
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <TableContext.Provider value={{selectionMode}}>
+      {/*- end highlight -*/}
+        {children}
+      </TableContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Selectable` component can be reused to make the selection mode of any nested `Table` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Selectable>
+  <ToggleButton>Select</ToggleButton>
+  <PokemonTable />
+</Selectable>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ToggleButton {
+  margin-bottom: 8px;
+}
+```
+</details>
+
+### Custom children
+
+Table passes props to its child components, such as the selection checkboxes, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Checkbox', 'Button']} docs={docs} />
+
+This example consumes from `CheckboxContext` in an existing styled checkbox component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Table. See [useCheckbox](useCheckbox.html) for more details about the hooks used in this example.
+
+```tsx
+import type {CheckboxProps} from 'react-aria-components';
+import {CheckboxContext, useContextProps} from 'react-aria-components';
+import {useToggleState} from 'react-stately';
+import {useCheckbox} from 'react-aria';
+
+const MyCustomCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, CheckboxContext);
+  ///- end highlight -///
+
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomCheckbox` within a `Table`, in place of the builtin React Aria Components `Checkbox`.
+
+```tsx
+<Table>
+  <TableHeader>
+    {/* ... */}
+  </TableHeader>
+  <TableBody>
+    <Row>
+      {/*- begin highlight -*/}
+      <Cell><MyCustomCheckbox slot="selection" /></Cell>
+      {/*- end highlight -*/}
+      {/* ... */}
+    </Row>
+  </TableBody>
+</Table>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTable](useTable.html) for more details.

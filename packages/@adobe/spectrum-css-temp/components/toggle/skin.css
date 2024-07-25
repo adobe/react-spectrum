@@ -1,0 +1,306 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-ToggleSwitch {
+  --spectrum-switch-emphasized-handle-border-color: var(--spectrum-alias-toggle-color-default);
+  --spectrum-switch-emphasized-handle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-switch-emphasized-handle-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
+  --spectrum-switch-quiet-track-color-selected: var(--spectrum-alias-toggle-color-selected);
+  --spectrum-switch-quiet-track-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
+  --spectrum-switch-quiet-track-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
+  --spectrum-switch-quiet-handle-border-color-selected: var(--spectrum-alias-toggle-color-selected);
+  --spectrum-switch-quiet-handle-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
+  --spectrum-switch-quiet-handle-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
+
+  --spectrum-switch-emphasized-track-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-handle-border-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-track-color-selected-down: var(--spectrum-accent-color-1100);
+  --spectrum-switch-emphasized-handle-border-color-selected-down: var(--spectrum-accent-color-1100);
+}
+
+/* Default */
+.spectrum-ToggleSwitch-switch {
+  background-color: var(--spectrum-switch-emphasized-track-color);
+  /* :after is the focus ring */
+  /* :before is used for the handle of the switch */
+  &:before {
+    background-color: var(--spectrum-switch-emphasized-handle-background-color);
+    border-color: var(--spectrum-switch-emphasized-handle-border-color);
+  }
+}
+.spectrum-ToggleSwitch-input ~ .spectrum-ToggleSwitch-label {
+  color: var(--spectrum-switch-emphasized-text-color);
+}
+/* Selected */
+.spectrum-ToggleSwitch-input {
+  &:checked + .spectrum-ToggleSwitch-switch {
+    background-color: var(--spectrum-switch-emphasized-track-color-selected);
+    &:before {
+      border-color: var(--spectrum-switch-emphasized-handle-border-color-selected);
+    }
+  }
+}
+/* Hover */
+.spectrum-ToggleSwitch:hover {
+  .spectrum-ToggleSwitch-input {
+    & + .spectrum-ToggleSwitch-switch {
+      &:before {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-hover);
+        box-shadow: none;
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-emphasized-text-color-hover);
+    }
+    /* Selected Hover */
+    &:checked:enabled + .spectrum-ToggleSwitch-switch {
+      background-color: var(--spectrum-switch-emphasized-track-color-selected-hover);
+      &:before {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-selected-hover);
+      }
+    }
+  }
+}
+/* Down */
+.spectrum-ToggleSwitch:active {
+  .spectrum-ToggleSwitch-input {
+    & + .spectrum-ToggleSwitch-switch {
+      &:before {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-down);
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-emphasized-text-color-down);
+    }
+    /* Selected Down */
+    &:checked:enabled + .spectrum-ToggleSwitch-switch {
+      background-color: var(--spectrum-switch-emphasized-track-color-selected-down);
+      &:before {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-selected-down);
+      }
+    }
+  }
+}
+/* Disabled */
+.spectrum-ToggleSwitch .spectrum-ToggleSwitch-input:disabled {
+  & + .spectrum-ToggleSwitch-switch {
+    background-color: var(--spectrum-switch-emphasized-track-color-disabled);
+    &:before {
+      border-color: var(--spectrum-switch-emphasized-handle-border-color-disabled);
+    }
+  }
+  & ~ .spectrum-ToggleSwitch-label {
+    color: var(--spectrum-switch-emphasized-text-color-disabled);
+  }
+  /* Selected Disabled */
+  &:checked {
+    & + .spectrum-ToggleSwitch-switch {
+      background-color: var(--spectrum-switch-emphasized-track-color-selected-disabled);
+      &:before {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-selected-disabled);
+      }
+    }
+    & ~ .spectrum-ToggleSwitch-label {
+      color: var(--spectrum-switch-emphasized-text-color-selected-disabled);
+    }
+  }
+}
+/* Quiet */
+/* Quiet Selected */
+.spectrum-ToggleSwitch--quiet {
+  .spectrum-ToggleSwitch-input:checked + .spectrum-ToggleSwitch-switch {
+    background-color: var(--spectrum-switch-quiet-track-color-selected);
+    &:before {
+      border-color: var(--spectrum-switch-quiet-handle-border-color-selected);
+    }
+  }
+}
+/* Quiet Selected Hover */
+.spectrum-ToggleSwitch--quiet:hover {
+  .spectrum-ToggleSwitch-input:checked:enabled + .spectrum-ToggleSwitch-switch {
+    background-color: var(--spectrum-switch-quiet-track-color-selected-hover);
+    &:before {
+      border-color: var(--spectrum-switch-quiet-handle-border-color-selected-hover);
+    }
+  }
+}
+/* Quiet Selected Down */
+.spectrum-ToggleSwitch.spectrum-ToggleSwitch--quiet:active {
+  .spectrum-ToggleSwitch-input:checked:enabled + .spectrum-ToggleSwitch-switch {
+    background-color: var(--spectrum-switch-quiet-track-color-selected-down);
+    &:before {
+      border-color: var(--spectrum-switch-quiet-handle-border-color-selected-down);
+    }
+  }
+}
+/* Key Focus */
+.spectrum-ToggleSwitch,
+.spectrum-ToggleSwitch:hover {
+  .spectrum-ToggleSwitch-input:focus-visible {
+    & + .spectrum-ToggleSwitch-switch {
+      &:after {
+        box-shadow: 0 0 0 var(--spectrum-switch-focus-ring-size-key-focus) var(--spectrum-switch-focus-ring-color-key-focus);
+      }
+      &:before {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-key-focus);
+      }
+    }
+    /* Selected Key Focus */
+    &:checked {
+      & + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-emphasized-track-color-selected-key-focus);
+        &:before {
+          border-color: var(--spectrum-switch-emphasized-handle-border-color-selected-key-focus);
+        }
+      }
+    }
+  }
+}
+
+.spectrum-ToggleSwitch--quiet,
+.spectrum-ToggleSwitch--quiet:hover {
+  .spectrum-ToggleSwitch-input:focus-visible {
+    /* Selected Key Focus */
+    &:checked {
+      & + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-quiet-track-color-selected-key-focus);
+        &:before {
+          border-color: var(--spectrum-switch-quiet-handle-border-color-selected-key-focus);
+        }
+      }
+    }
+  }
+}
+
+.spectrum-ToggleSwitch--ab {
+  .spectrum-ToggleSwitch-input {
+    &:checked + .spectrum-ToggleSwitch-switch {
+      background-color: var(--spectrum-switch-track-color);
+    }
+
+    &:checked + .spectrum-ToggleSwitch-switch {
+      &:before {
+        /* Don't be blue */
+        border-color: var(--spectrum-switch-handle-border-color);
+      }
+    }
+
+    &:focus-visible {
+      &:checked + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-track-color);
+
+        &:before {
+          border-color: var(--spectrum-switch-handle-border-color-selected);
+        }
+      }
+    }
+
+    &:disabled {
+      &:checked + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-emphasized-track-color-disabled);
+      }
+
+      & + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-emphasized-track-color-disabled);
+
+        &:before {
+          border-color: var(--spectrum-switch-emphasized-handle-border-color-disabled);
+        }
+      }
+    }
+  }
+
+  &:hover {
+    .spectrum-ToggleSwitch-input {
+      &:checked:enabled + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-emphasized-track-color);
+        &:before {
+          border-color: var(--spectrum-switch-emphasized-handle-border-color-hover);
+        }
+      }
+    }
+  }
+
+  &:active {
+    .spectrum-ToggleSwitch-input {
+      &:checked:enabled + .spectrum-ToggleSwitch-switch {
+        background-color: var(--spectrum-switch-emphasized-track-color);
+        &:before {
+          border-color: var(--spectrum-switch-emphasized-handle-border-color-down);
+        }
+      }
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-ToggleSwitch {
+    forced-color-adjust: none;
+    --spectrum-switch-emphasized-handle-background-color: ButtonFace;
+    --spectrum-switch-emphasized-handle-border-color: ButtonText;
+    --spectrum-switch-emphasized-handle-border-color-disabled: GrayText;
+    --spectrum-switch-emphasized-handle-border-color-down: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-hover: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-key-focus: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected-disabled: GrayText;
+    --spectrum-switch-emphasized-handle-border-color-selected-down: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected-hover: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected-key-focus: Highlight;
+    --spectrum-switch-emphasized-text-color: CanvasText;
+    --spectrum-switch-emphasized-text-color-disabled: GrayText;
+    --spectrum-switch-emphasized-text-color-down: CanvasText;
+    --spectrum-switch-emphasized-text-color-hover: CanvasText;
+    --spectrum-switch-emphasized-text-color-selected-disabled: GrayText;
+    --spectrum-switch-emphasized-track-color: ButtonFace;
+    --spectrum-switch-emphasized-track-color-disabled: ButtonFace;
+    --spectrum-switch-emphasized-track-color-selected: Highlight;
+    --spectrum-switch-emphasized-track-color-selected-disabled: GrayText;
+    --spectrum-switch-emphasized-track-color-selected-down: Highlight;
+    --spectrum-switch-emphasized-track-color-selected-hover: Highlight;
+    --spectrum-switch-emphasized-track-color-selected-key-focus: Highlight;
+    --spectrum-switch-focus-ring-color-key-focus: ButtonText;
+    --spectrum-switch-handle-border-color: ButtonText;
+    --spectrum-switch-handle-border-color-selected: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected-down: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected-hover: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected-key-focus: Highlight;
+    --spectrum-switch-quiet-track-color-selected: Highlight;
+    --spectrum-switch-quiet-track-color-selected-down: Highlight;
+    --spectrum-switch-quiet-track-color-selected-hover: Highlight;
+    --spectrum-switch-quiet-track-color-selected-key-focus: Highlight;
+    --spectrum-switch-track-color: ButtonFace;
+    --spectrum-switch-track-color-disabled: ButtonFace;
+
+    /* Add a box-shadow on the switch track when not checked*/
+    .spectrum-ToggleSwitch-input:not(:checked) + .spectrum-ToggleSwitch-switch {
+      box-shadow: inset 0 0 0 1px  var(--spectrum-switch-handle-border-color);
+    }
+    &:hover {
+      .spectrum-ToggleSwitch-input:not(:checked) + .spectrum-ToggleSwitch-switch {
+        box-shadow: inset 0 0 0 1px  var(--spectrum-switch-emphasized-handle-border-color-hover);
+      }
+    }
+    .spectrum-ToggleSwitch-input:not(:checked):focus + .spectrum-ToggleSwitch-switch {
+      box-shadow: inset 0 0 0 1px  var(--spectrum-switch-emphasized-handle-border-color-key-focus);
+    }
+    /* Disabled is the same colour as when checked so no need to only do this when unchecked*/
+    .spectrum-ToggleSwitch-input:disabled + .spectrum-ToggleSwitch-switch {
+      box-shadow: inset 0 0 0 1px  var(--spectrum-switch-emphasized-handle-border-color-disabled);
+    }
+  }
+}

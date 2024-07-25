@@ -1,0 +1,8 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Värimuokkain",
+  "colorSwatch": "värimalli",
+  "transparent": "läpinäkyvä",
+  "twoDimensionalSlider": "2D-liukusäädin"
+}

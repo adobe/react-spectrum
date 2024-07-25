@@ -1,0 +1,14 @@
+{
+  "dateRange": "Od {startDate} do {endDate}",
+  "dateSelected": "Vybratý dátum {date}",
+  "finishRangeSelectionPrompt": "Kliknutím dokončíte výber rozsahu dátumov",
+  "maximumDate": "Posledný dostupný dátum",
+  "minimumDate": "Prvý dostupný dátum",
+  "next": "Nasledujúce",
+  "previous": "Predchádzajúce",
+  "selectedDateDescription": "Vybratý dátum: {date}",
+  "selectedRangeDescription": "Vybratý rozsah: {dateRange}",
+  "startRangeSelectionPrompt": "Kliknutím spustíte výber rozsahu dátumov",
+  "todayDate": "Dnes {date}",
+  "todayDateSelected": "Vybratý dnešný dátum {date}"
+}

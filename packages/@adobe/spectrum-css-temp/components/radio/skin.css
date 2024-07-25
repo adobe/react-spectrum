@@ -1,0 +1,233 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+:root {
+  /* todo: fix in DNA */
+  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-radio-emphasized-circle-border-color-selected-hover);
+
+}
+
+.spectrum-Radio .spectrum-Radio-input {
+  &:checked + .spectrum-Radio-button {
+    &:before {
+      border-color: var(--spectrum-radio-emphasized-circle-border-color-selected);
+    }
+  }
+}
+
+.spectrum-Radio-label {
+  color: var(--spectrum-radio-emphasized-text-color);
+}
+
+.spectrum-Radio-button {
+  &:before {
+    background-color: var(--spectrum-radio-emphasized-circle-background-color);
+    border-color: var(--spectrum-radio-emphasized-circle-border-color);
+  }
+}
+
+.spectrum-Radio {
+  &:hover {
+    .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-hover);
+        box-shadow: none;
+      }
+    }
+
+    .spectrum-Radio-input:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-selected-hover);
+      }
+    }
+
+    .spectrum-Radio-label {
+      color: var(--spectrum-radio-emphasized-text-color-hover);
+    }
+  }
+
+  &:active {
+    .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-down);
+      }
+    }
+
+    .spectrum-Radio-input:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-selected-down);
+      }
+    }
+
+    .spectrum-Radio-label {
+      color: var(--spectrum-radio-emphasized-text-color-down);
+    }
+  }
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
+    &:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-selected-key-focus);
+      }
+    }
+  }
+}
+
+.spectrum-Radio--quiet {
+  .spectrum-Radio-input:checked + .spectrum-Radio-button {
+    &:before {
+      border-color: var(--spectrum-radio-quiet-circle-border-color-selected);
+    }
+  }
+  &:hover {
+    .spectrum-Radio-input:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-quiet-circle-border-color-selected-hover);
+      }
+    }
+  }
+  &:active {
+    .spectrum-Radio-input:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-quiet-circle-border-color-selected-down);
+      }
+    }
+  }
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
+    &:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-quiet-circle-border-color-selected-key-focus);
+      }
+    }
+  }
+}
+
+
+.spectrum-Radio, .spectrum-Radio--quiet {
+  &.is-invalid {
+    .spectrum-Radio-button,
+    .spectrum-Radio-input:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-error);
+      }
+    }
+    .spectrum-Radio-label {
+      color: var(--spectrum-radio-emphasized-circle-border-color-error);
+    }
+  }
+  &.is-invalid:hover {
+    .spectrum-Radio-input + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-error-hover);
+      }
+    }
+    .spectrum-Radio-label {
+      color: var(--spectrum-radio-emphasized-circle-border-color-error-hover);
+    }
+  }
+  &.is-invalid:active {
+    .spectrum-Radio-input + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-error-down);
+      }
+    }
+    .spectrum-Radio-label {
+      color: var(--spectrum-radio-emphasized-circle-border-color-error-down);
+    }
+  }
+  &.is-invalid .spectrum-Radio-input:focus-visible,
+  &.is-invalid:hover .spectrum-Radio-input:focus-visible {
+    &:not(:checked) + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-circle-border-color-error-key-focus);
+      }
+    }
+    &:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-circle-border-color-error-selected-key-focus);
+      }
+    }
+  }
+}
+
+.spectrum-Radio-input {
+  &:disabled + .spectrum-Radio-button {
+    &:before {
+      border-color: var(--spectrum-radio-emphasized-circle-border-color-disabled) !important;
+    }
+  }
+
+  &:disabled ~ .spectrum-Radio-label {
+    color: var(--spectrum-radio-emphasized-text-color-disabled) !important;
+  }
+}
+
+/* Focus Overrides all */
+/* Removed :before so that border-color isn't overwritten by keyboard focus */
+.spectrum-Radio,
+.spectrum-Radio--quiet {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
+    &:not(:checked) + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-circle-border-color-key-focus);
+      }
+    }
+    & + .spectrum-Radio-button {
+      &:after {
+        box-shadow: 0 0 0 var(--spectrum-radio-focus-ring-size-key-focus) var(--spectrum-radio-focus-ring-color-key-focus);
+      }
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Radio {
+    forced-color-adjust: none;
+    --spectrum-radio-circle-border-color-error-key-focus: ButtonText;
+    --spectrum-radio-circle-border-color-error-selected-key-focus: Highlight;
+    --spectrum-radio-circle-border-color-key-focus: Highlight;
+    --spectrum-radio-emphasized-circle-background-color: ButtonFace;
+    --spectrum-radio-emphasized-circle-border-color-disabled: GrayText;
+    --spectrum-radio-emphasized-circle-border-color-down: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-error: ButtonText;
+    --spectrum-radio-emphasized-circle-border-color-error-down: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-error-hover: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-hover: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected-down: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected-hover: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected-key-focus: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected: Highlight;
+    --spectrum-radio-emphasized-circle-border-color: ButtonText;
+    --spectrum-radio-emphasized-text-color-disabled: GrayText;
+    --spectrum-radio-emphasized-text-color-down: CanvasText;
+    --spectrum-radio-emphasized-text-color-hover: CanvasText;
+    --spectrum-radio-emphasized-text-color: CanvasText;
+    --spectrum-radio-focus-ring-color-key-focus: ButtonText;
+    --spectrum-radio-quiet-circle-border-color-selected: Highlight;
+    --spectrum-radio-quiet-circle-border-color-selected-down: Highlight;
+    --spectrum-radio-quiet-circle-border-color-selected-hover: Highlight;
+    --spectrum-radio-quiet-circle-border-color-selected-key-focus: Highlight;
+    --spectrum-radio-focus-ring-gap-key-focus: var(--spectrum-global-dimension-static-size-25);
+    --spectrum-radio-focus-ring-size: var(--spectrum-global-dimension-static-size-40);
+    &.is-invalid:hover {
+      .spectrum-Radio-label {
+        color: var(--spectrum-radio-emphasized-circle-border-color-error);
+      }
+    }
+    &.is-invalid:active {
+      .spectrum-Radio-label {
+        color: var(--spectrum-radio-emphasized-circle-border-color-error);
+      }
+    }
+  }
+}

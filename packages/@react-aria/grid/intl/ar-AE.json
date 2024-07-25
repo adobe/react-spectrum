@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} غير المحدد",
+  "longPressToSelect": "اضغط مطولًا للدخول إلى وضع التحديد.",
+  "select": "تحديد",
+  "selectedAll": "جميع العناصر المحددة.",
+  "selectedCount": "{count, plural, =0 {لم يتم تحديد عناصر} one {# عنصر محدد} other {# عنصر محدد}}.",
+  "selectedItem": "{item} المحدد"
+}

@@ -1,0 +1,367 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-InputGroup {
+  --spectrum-inputgroup-border-color-focus: var(--spectrum-alias-input-border-color-key-focus);
+  background: var(--spectrum-textfield-background-color);
+
+  .spectrum-FieldButton {
+    &:before {
+      border-color: var(--spectrum-textfield-border-color);
+    }
+  }
+
+  &.is-focused {
+    &:not(.spectrum-InputGroup--invalid):not(.is-disabled) {
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+      }
+
+      .spectrum-FieldButton {
+        &:before {
+          border-color: var(--spectrum-textfield-border-color-key-focus);
+        }
+      }
+    }
+  }
+
+  &:hover {
+    &:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled) {
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-hover);
+      }
+
+      .spectrum-FieldButton:before {
+        border-color: var(--spectrum-textfield-border-color-hover);
+      }
+    }
+  }
+
+  &.spectrum-InputGroup--invalid {
+    .spectrum-FieldButton:before,
+    .spectrum-InputGroup-input {
+      border-color: var(--spectrum-textfield-border-color-error);
+    }
+
+    &:hover {
+      .spectrum-FieldButton:before,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error-hover);
+      }
+    }
+
+    &:active {
+      .spectrum-FieldButton:before,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error-down);
+      }
+    }
+  }
+
+  &.is-disabled:not(.spectrum-InputGroup--quiet) {
+    .spectrum-FieldButton {
+      &:before {
+        border-color: transparent;
+      }
+    }
+  }
+}
+
+.spectrum-InputGroup.is-focused {
+  .spectrum-FieldButton:before,
+  .spectrum-InputGroup-input {
+    border-color: var(--spectrum-inputgroup-border-color-focus);
+  }
+
+  &.spectrum-InputGroup--invalid {
+    .spectrum-FieldButton:before,
+    .spectrum-InputGroup-input {
+      border-color: var(--spectrum-inputgroup-border-color-focus);
+    }
+  }
+}
+
+/* Only add the 2px ring for keyboard focus */
+.spectrum-InputGroup:focus-visible:not(.spectrum-InputGroup--quiet) {
+  .spectrum-FieldButton {
+    z-index: 1;
+  }
+}
+
+.spectrum-InputGroup--quiet {
+  background: transparent;
+  /*
+    specifically for readonly inputgroups that aren't disabled since the button will have the disabled class
+    but we don't want the border color to be the disabled quiet one
+  */
+  &:not(.is-disabled) {
+    .spectrum-FieldButton {
+      &:disabled:before,
+      &:disabled:hover:before {
+        border-color: var(--spectrum-textfield-quiet-border-color);
+      }
+    }
+  }
+
+  .spectrum-FieldButton {
+    &,
+    &:hover,
+    &:focus,
+    &:active,
+    &.is-selected,
+    &.spectrum-FieldButton--invalid {
+      &:before {
+         border-color: var(--spectrum-textfield-quiet-border-color);
+      }
+    }
+
+    &:disabled,
+    &:disabled:hover {
+      &:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+  }
+
+  &.is-disabled {
+    .spectrum-FieldButton {
+      &:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-disabled);
+      }
+    }
+  }
+
+  &:hover:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled) {
+    .spectrum-FieldButton {
+      &:before {
+         border-color: var(--spectrum-textfield-quiet-border-color-hover);
+      }
+    }
+  }
+
+  &.spectrum-InputGroup {
+    &.spectrum-InputGroup--invalid {
+      .spectrum-FieldButton:before,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error);
+      }
+
+      &:hover {
+        .spectrum-FieldButton:before,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-border-color-error-hover);
+        }
+      }
+
+      &:active {
+        .spectrum-FieldButton:before,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-border-color-error-down);
+        }
+      }
+    }
+
+    &.is-focused {
+      .spectrum-FieldButton:before {
+        border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+      }
+
+      &.spectrum-InputGroup--invalid {
+        .spectrum-FieldButton:before,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+        }
+      }
+    }
+  }
+}
+
+.spectrum-Datepicker--range {
+  &:focus-visible {
+    .spectrum-InputGroup-input {
+      box-shadow: none !important;
+    }
+  }
+
+  &.is-disabled {
+    .spectrum-Datepicker--rangeDash {
+      color: var(--spectrum-textfield-text-color-disabled);
+    }
+  }
+
+  /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
+  &:focus-visible {
+    box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
+
+    &.spectrum-InputGroup--invalid {
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-quiet-border-color-key-focus);
+
+      .spectrum-FieldButton {
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-quiet-border-color-key-focus);
+      }
+    }
+  }
+
+  &.spectrum-InputGroup--invalid {
+    .spectrum-InputGroup-input {
+      border-color: var(--spectrum-dropdown-border-color-error);
+    }
+
+    /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
+    &:focus-visible {
+      .spectrum-FieldButton {
+        &:before {
+           border-color: var(--spectrum-dropdown-border-color-key-focus);
+        }
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
+      }
+    }
+    .spectrum-FieldButton {
+      &:before {
+         border-color: var(--spectrum-dropdown-border-color-error);
+       }
+      &.spectrum-FieldButton--invalid {
+        &:focus-visible {
+          border-color: var(--spectrum-dropdown-border-color-key-focus);
+          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
+        }
+      }
+    }
+  }
+  &.spectrum-InputGroup--quiet {
+    &.is-focused {
+      box-shadow: 0 1px 0 0 var(--spectrum-dropdown-border-color-key-focus);
+
+      &.spectrum-InputGroup--invalid {
+        .spectrum-FieldButton {
+          box-shadow: none;
+          &:before {
+             border-color: var(--spectrum-dropdown-border-color-key-focus);
+           }
+          &.spectrum-FieldButton--invalid {
+            &:focus-visible {
+              box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
+            }
+          }
+        }
+        &:focus-visible {
+          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
+        }
+      }
+    }
+  }
+}
+@media (forced-colors: active) {
+  .spectrum-InputGroup {
+    --spectrum-dropdown-border-color-error: Highlight;
+    --spectrum-dropdown-border-color-key-focus: Highlight;
+    --spectrum-textfield-border-color-error: Highlight;
+    --spectrum-textfield-border-color-error-hover: Highlight;
+    --spectrum-textfield-border-color-hover: Highlight;
+    --spectrum-textfield-border-color-key-focus: Highlight;
+    --spectrum-textfield-quiet-border-color: ButtonText;
+    --spectrum-textfield-quiet-border-color-disabled: GrayText;
+    --spectrum-textfield-quiet-border-color-hover: Highlight;
+    --spectrum-textfield-quiet-border-color-key-focus: Highlight;
+    --spectrum-textfield-text-color-disabled: GrayText;
+    --spectrum-inputgroup-border-color-focus: Highlight;
+
+    forced-color-adjust: none;
+    .spectrum-InputGroup-input {
+      forced-color-adjust: auto;
+      --spectrum-textfield-border-color: ButtonText;
+      --spectrum-textfield-background-color-disabled: Canvas;
+    }
+    .spectrum-FieldButton {
+      forced-color-adjust: auto;
+      --spectrum-fieldbutton-background-color: Canvas;
+      --spectrum-fieldbutton-quiet-background-color: Canvas;
+      --spectrum-fieldbutton-icon-color: ButtonText;
+      --spectrum-fieldbutton-background-color-down: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-down: Canvas;
+      --spectrum-fieldbutton-icon-color-down: ButtonText;
+      --spectrum-fieldbutton-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-disabled: Canvas;
+      --spectrum-fieldbutton-background-color-hover: Canvas;
+      --spectrum-fieldbutton-quiet-background-color-hover: Canvas;
+      --spectrum-fieldbutton-icon-color-hover: ButtonText;
+      background-clip: unset;
+    }
+
+    &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
+      &:before {
+         border-color: GrayText;
+       }
+    }
+  }
+
+  .spectrum-InputGroup--quiet {
+    /*
+      specifically for readonly inputgroups that aren't disabled since the button will have the disabled class
+      but we don't want the border color to be the disabled quiet one
+    */
+    &:not(.is-disabled) {
+      .spectrum-FieldButton {
+        &:disabled,
+        &:disabled:hover {
+          &:before {
+             border-color: var(--spectrum-textfield-quiet-border-color);
+           }
+        }
+      }
+    }
+    &.is-disabled {
+      .spectrum-FieldButton {
+        &:before {
+           border-color: GrayText;
+         }
+      }
+    }
+  }
+  .spectrum-InputGroup--invalid {
+    .spectrum-FieldButton {
+      &:before {
+        border-color: Highlight;
+      }
+    }
+    &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-InputGroup-input {
+      border-color: GrayText;
+    }
+    &.is-disabled {
+      &.spectrum-InputGroup--quiet .spectrum-InputGroup-input {
+        border-color: GrayText;
+      }
+      &.spectrum-InputGroup--quiet .spectrum-FieldButton {
+        &:before {
+           border-color: GrayText;
+         }
+      }
+    }
+    &.is-disabled:not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
+      &:before {
+         border-color: GrayText;
+       }
+    }
+  }
+
+  .spectrum-InputGroup {
+    &:focus-visible
+    {
+      &:not(.spectrum-InputGroup--quiet) {
+        outline:2px solid Highlight;
+      }
+      &.spectrum-InputGroup--quiet {
+        box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
+      }
+    }
+  }
+}

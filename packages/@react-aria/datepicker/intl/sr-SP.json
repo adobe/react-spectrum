@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalendar",
+  "day": "дан",
+  "dayPeriod": "пре подне/по подне",
+  "endDate": "Datum završetka",
+  "era": "ера",
+  "hour": "сат",
+  "minute": "минут",
+  "month": "месец",
+  "second": "секунд",
+  "selectedDateDescription": "Izabrani datum: {date}",
+  "selectedRangeDescription": "Izabrani opseg: od {startDate} do {endDate}",
+  "selectedTimeDescription": "Izabrano vreme: {time}",
+  "startDate": "Datum početka",
+  "timeZoneName": "временска зона",
+  "weekday": "дан у недељи",
+  "year": "година"
+}

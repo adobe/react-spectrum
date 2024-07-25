@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "顯示建議",
+  "countAnnouncement": "{optionCount, plural, one {# 選項} other {# 選項}} 可用。",
+  "focusAnnouncement": "{isGroupChange, select, true {輸入的群組 {groupTitle}, 有 {groupCount, plural, one {# 選項} other {# 選項}}. } other {}}{optionText}{isSelected, select, true {, 已選取} other {}}",
+  "listboxLabel": "建議",
+  "selectedAnnouncement": "{optionText}, 已選取"
+}

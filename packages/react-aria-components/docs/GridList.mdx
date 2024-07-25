@@ -1,0 +1,1885 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import sharedDocs from 'docs:@react-types/shared';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from './GridListAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import {Keyboard} from '@react-spectrum/text';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
+import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Collections
+keywords: [list, aria, grid]
+type: component
+---
+
+# GridList
+
+<PageDescription>{docs.exports.GridList.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['GridList']}
+   sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {GridList, GridListItem, Button} from 'react-aria-components';
+
+<GridList aria-label="Favorite pokemon" selectionMode="multiple">
+  <GridListItem textValue="Charizard">
+    <MyCheckbox slot="selection" />
+    Charizard
+    <Button aria-label="Info">ⓘ</Button>
+  </GridListItem>
+  <GridListItem textValue="Blastoise">
+    <MyCheckbox slot="selection" />
+    Blastoise
+    <Button aria-label="Info">ⓘ</Button>
+  </GridListItem>
+  <GridListItem textValue="Venusaur">
+    <MyCheckbox slot="selection" />
+    Venusaur
+    <Button aria-label="Info">ⓘ</Button>
+  </GridListItem>
+  <GridListItem textValue="Pikachu">
+    <MyCheckbox slot="selection" />
+    Pikachu
+    <Button aria-label="Info">ⓘ</Button>
+  </GridListItem>
+</GridList>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Checkbox.mdx' layer(checkbox);
+@import './ToggleButton.mdx' layer(togglebutton);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-GridList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: inherit;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  min-height: 100px;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  .react-aria-GridListItem {
+    display: flex;
+    align-items: center;
+    gap: 0.571rem;
+    min-height: 28px;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    transform: translateZ(0);
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
+    }
+
+    &[data-pressed] {
+      background: var(--gray-100);
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
+
+      &[data-focus-visible] {
+        outline-color: var(--highlight-foreground);
+        outline-offset: -4px;
+      }
+
+      .react-aria-Button {
+        color: var(--highlight-foreground);
+        --highlight-hover: rgb(255 255 255 / 0.1);
+        --highlight-pressed: rgb(255 255 255 / 0.2);
+      }
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    .react-aria-Button:not([slot]) {
+      margin-left: auto;
+    }
+
+    .react-aria-Button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      line-height: 1.2em;
+      padding: 0.286rem 0.429rem;
+      transition: background 200ms;
+
+      &[data-hovered] {
+        background: var(--highlight-hover);
+      }
+
+      &[data-pressed] {
+        background: var(--highlight-pressed);
+        box-shadow: none;
+      }
+    }
+  }
+
+  /* join selected items if :has selector is supported */
+  @supports selector(:has(.foo)) {
+    gap: 0;
+
+    .react-aria-GridListItem[data-selected]:has(+ [data-selected]),
+    .react-aria-GridListItem[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    .react-aria-GridListItem[data-selected] + [data-selected],
+    .react-aria-GridListItem[data-selected] + .react-aria-DropIndicator + [data-selected] {
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
+  }
+
+  :where(.react-aria-GridListItem) .react-aria-Checkbox {
+    --selected-color: var(--highlight-foreground);
+    --selected-color-pressed: var(--highlight-foreground-pressed);
+    --checkmark-color: var(--highlight-background);
+    --background-color: var(--highlight-background);
+  }
+}
+```
+
+</details>
+
+## Features
+
+A list can be built using [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul) or [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol) HTML elements, but does not support any user interactions.
+HTML lists are meant for static content, rather than lists with rich interactions like focusable elements within rows, keyboard navigation, row selection, etc.
+`GridList` helps achieve accessible and interactive list components that can be styled as needed.
+
+* **Item selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
+* **Interactive children** – List items may include interactive elements such as buttons, checkboxes, menus, etc.
+* **Actions** – Items support optional row actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
+* **Async loading** – Support for loading items asynchronously.
+* **Keyboard navigation** – List items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – GridList supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
+* **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
+* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+
+**Note**: Use `GridList` when your list items may contain interactive elements such as buttons, checkboxes, menus, etc. within them. If your list items contain only static content such as text and images, then consider using [ListBox](ListBox.html) instead for a slightly better screen reader experience (especially on mobile).
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
+
+A grid list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
+If the list supports row selection, each row can optionally include a selection checkbox.
+
+```tsx
+import {GridList, GridListItem, Checkbox, Button} from 'react-aria-components';
+
+<GridList>
+  <GridListItem>
+    <Button slot="drag" />
+    <Checkbox slot="selection" />
+  </GridListItem>
+</GridList>
+```
+
+### Concepts
+
+`GridList` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `GridList` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Checkbox.html"
+  title="Checkbox"
+  description="A checkbox allows a user to select an individual option.">
+  <Checkbox />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="gridlist" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="gridlist" />
+
+## Reusable wrappers
+
+If you will use a GridList in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `GridListItem` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
+
+```tsx example export=true
+import type {GridListProps, GridListItemProps, CheckboxProps} from 'react-aria-components';
+import {Button, Checkbox} from 'react-aria-components';
+
+function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
+  return (
+    <GridList {...props}>
+      {children}
+    </GridList>
+  );
+}
+
+function MyItem({children, ...props}: GridListItemProps) {
+  let textValue = typeof children === 'string' ? children : undefined;
+  return (
+    <GridListItem textValue={textValue} {...props}>
+      {({selectionMode, selectionBehavior, allowsDragging}) => <>
+        {/* Add elements for drag and drop and selection. */}
+        {allowsDragging && <Button slot="drag">≡</Button>}
+        {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox slot="selection" />}
+        {children}
+      </>}
+    </GridListItem>
+  );
+}
+
+function MyCheckbox({children, ...props}: CheckboxProps) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => <>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
+        {children}
+      </>}
+    </Checkbox>
+  );
+}
+
+<MyGridList aria-label="Ice cream flavors" selectionMode="multiple">
+  <MyItem>Chocolate</MyItem>
+  <MyItem>Mint</MyItem>
+  <MyItem>Strawberry</MyItem>
+  <MyItem>Vanilla</MyItem>
+</MyGridList>
+```
+
+## Content
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the data comes from an external data source such as an API, or updates over time.
+In the example below, the rows are provided to the GridList via a render function.
+
+```tsx example export=true
+interface ItemValue {
+  id: number,
+  name: string
+}
+
+function ExampleList(props: GridListProps<ItemValue>) {
+  let rows = [
+    {id: 1, name: 'Games'},
+    {id: 2, name: 'Program Files'},
+    {id: 3, name: 'bootmgr'},
+    {id: 4, name: 'log.txt'}
+  ];
+
+  return (
+    <MyGridList
+      aria-label="Example dynamic collection List"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      items={rows}
+      /*- end highlight -*/
+      {...props}>
+      {item => (
+        <MyItem textValue={item.name}>
+          {item.name}
+          <Button aria-label="Info" onPress={() => alert(`Info for ${item.name}...`)}>ⓘ</Button>
+        </MyItem>
+      )}
+    </MyGridList>
+  );
+}
+```
+
+## Selection
+
+### Single selection
+
+By default, `GridList` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `id` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the id with key equal to `2`.
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<ExampleList
+  aria-label="List with single selection"
+  /*- begin highlight -*/
+  selectionMode="single"
+  defaultSelectedKeys={[2]}
+  /*- end highlight -*/
+/>
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`. Our example displays checkboxes when the list allows multiple selection.
+
+```tsx example
+<ExampleList
+  aria-label="List with multiple selection"
+  /*- begin highlight -*/
+  selectionMode="multiple"
+  /*- end highlight -*/
+  defaultSelectedKeys={[2, 4]} />
+```
+
+### Disallow empty selection
+
+`GridList` also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the List selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+<ExampleList
+  aria-label="List with disallowed empty selection"
+  selectionMode="multiple"
+  defaultSelectedKeys={[2]}
+  /*- begin highlight -*/
+  disallowEmptySelection
+  /*- end highlight -*/
+/>
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `id` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+```tsx example export=true
+import type {Selection} from 'react-aria-components';
+
+function PokemonList(props: GridListProps<ItemValue>) {
+  let rows = [
+    {id: 1, name: 'Charizard'},
+    {id: 2, name: 'Blastoise'},
+    {id: 3, name: 'Venusaur'},
+    {id: 4, name: 'Pikachu'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
+
+  return (
+    <MyGridList
+      aria-label="List with controlled selection"
+      items={rows}
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      /*- end highlight -*/
+      {...props}>
+      {item => <MyItem>{item.name}</MyItem>}
+    </MyGridList>
+  );
+}
+```
+
+### Selection behavior
+
+By default, `GridList` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a checkbox in each row as an explicit affordance for selection.
+
+When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
+
+```tsx example
+<PokemonList
+  aria-label="List with replace selection behavior"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  selectionBehavior="replace"
+  /*- end highlight -*/
+/>
+```
+
+## Row actions
+
+`GridList` supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the list performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
+be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
+
+```tsx example
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+  <ExampleList
+    aria-label="Checkbox selection list with row actions"
+    selectionMode="multiple"
+    /*- begin highlight -*/
+    selectionBehavior="toggle"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
+  <ExampleList
+    aria-label="Highlight selection list with row actions"
+    selectionMode="multiple"
+    /*- begin highlight -*/
+    selectionBehavior="replace"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
+</div>
+```
+
+Rows may also have a row action specified by directly applying `onAction` on the `GridListItem` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `GridList`, both the grid list's and the row's `onAction` are called.
+
+```tsx example
+<MyGridList aria-label="List with onAction applied on the rows directly" selectionMode="multiple">
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening Games`)}>
+  {/*- end highlight -*/}
+    Games
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening Program Files`)}>
+  {/*- end highlight -*/}
+    Program Files
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening bootmgr`)}>
+  {/*- end highlight -*/}
+    bootmgr
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening log.txt`)}>
+  {/*- end highlight -*/}
+    log.txt
+  </MyItem>
+</MyGridList>
+```
+
+### Links
+
+Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<GridListItem>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<MyGridList aria-label="Links" selectionMode="multiple">
+  <MyItem href="https://adobe.com/" target="_blank">Adobe</MyItem>
+  <MyItem href="https://apple.com/" target="_blank">Apple</MyItem>
+  <MyItem href="https://google.com/" target="_blank">Google</MyItem>
+  <MyItem href="https://microsoft.com/" target="_blank">Microsoft</MyItem>
+</MyGridList>
+```
+
+```css hidden
+.react-aria-GridListItem[data-href] {
+  cursor: pointer;
+}
+```
+
+#### Client side routing
+
+The `<GridListItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Disabled items
+
+A `GridListItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
+unless the `disabledBehavior` prop on `GridList` is used to change this behavior.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+<MyGridList aria-label="List with disabled rows" selectionMode="multiple">
+  <MyItem>Charizard</MyItem>
+  <MyItem>Blastoise</MyItem>
+  {/*- begin highlight -*/}
+  <MyItem isDisabled>Venusaur</MyItem>
+  {/*- end highlight -*/}
+  <MyItem>Pikachu</MyItem>
+</MyGridList>
+```
+
+When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+
+```tsx example
+<MyGridList 
+  aria-label="List with disabled rows" selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledBehavior="selection"
+  /*- end highlight -*/
+>
+  <MyItem>Charizard</MyItem>
+  <MyItem>Blastoise</MyItem>
+  {/*- begin highlight -*/}
+  <MyItem isDisabled>Venusaur</MyItem>
+  {/*- end highlight -*/}
+  <MyItem>Pikachu</MyItem>
+</MyGridList>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `GridList` level instead of `isDisabled` on individual items.
+This accepts a list of item ids that are disabled. An item is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+// Using the example above
+<PokemonList
+  aria-label="List with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledKeys={[3]}
+  /*- end highlight -*/
+/>
+```
+
+## Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. You may additionally want to display a spinner to indicate the loading state to the user, or support features like infinite scroll to load more data.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+interface Character {
+  name: string
+}
+
+function AsyncList() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <MyGridList
+      selectionMode="multiple"
+      aria-label="Async loading ListView example"
+      items={list.items}>
+      {(item) => (
+        <MyItem id={item.name}>{item.name}</MyItem>
+      )}
+    </MyGridList>
+  );
+}
+```
+
+## Empty state
+
+Use the `renderEmptyState` prop to customize what the `GridList` will display if there are no items.
+
+```tsx example
+<GridList
+  aria-label="Search results"
+  /*- begin highlight -*/
+  renderEmptyState={() => 'No results found.'}
+  /*- end highlight -*/
+>
+  {[]}
+</GridList>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
+
+## Drag and drop
+
+GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items.
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items.
+
+Draggable items must include a focusable drag handle using a `<Button slot="drag">`. This enables keyboard and screen reader users to initiate drag and drop. The `MyItem` component defined in the [reusable wrappers](#reusable-wrappers) section above includes this automatically when the list allows dragging.
+
+See the [drag and drop introduction](dnd.html) to learn more.
+
+### Reorderable
+
+This example shows a basic list that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+
+This uses [useListData](../react-stately/useListData.html) from React Stately to manage the item list. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <MyGridList
+      aria-label="Reorderable list"
+      selectionMode="multiple"
+      items={list.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {item => <MyItem>{item.name}</MyItem>}
+    </MyGridList>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridListItem {
+  &[data-allows-dragging] {
+    padding-left: 4px;
+  }
+
+  &[data-dragging] {
+    opacity: 0.6;
+  }
+
+  [slot=drag] {
+    all: unset;
+    width: 15px;
+    text-align: center;
+
+    &[data-focus-visible] {
+      border-radius: 4px;
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+}
+
+.react-aria-DropIndicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);
+  }
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
+}
+
+```
+
+</details>
+
+### Custom drag preview
+
+By default, the drag preview shown under the user's pointer or finger is a copy of the original element that started the drag. A custom preview can be rendered by implementing the `renderDragPreview` function, passed to `useDragAndDrop`. This receives the dragged data that was returned by `getItems`, and returns a rendered preview for those items.
+
+This example renders a custom drag preview which shows the number of items being dragged.
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  return (
+    <MyGridList aria-label="Reorderable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+      {item => <MyItem>{item.name}</MyItem>}
+    </MyGridList>
+  );
+  ///- end collapse -///
+  // ...
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.drag-preview {
+  width: 150px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  border-radius: 4px;
+
+  .badge {
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+</details>
+
+### Drag data
+
+Data for draggable items can be provided in multiple formats at once. This allows drop targets to choose data in a format that they understand. For example, you could serialize a complex object as JSON in a custom format for use within your own application, and also provide plain text and/or rich HTML fallbacks that can be used when a user drops data in an external application (e.g. an email message).
+
+This can be done by returning multiple keys for an item from the `getItems` function. Types can either be a standard [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) for interoperability with external applications, or a custom string for use within your own app.
+
+This example provides representations of each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
+
+```tsx example export=true
+function DraggableGridList() {
+  let items = new Map([
+    ['ps', {name: 'Photoshop', style: 'strong'}],
+    ['xd', {name: 'XD', style: 'strong'}],
+    ['id', {name: 'InDesign', style: 'strong'}],
+    ['dw', {name: 'Dreamweaver', style: 'em'}],
+    ['co', {name: 'Connect', style: 'em'}]
+  ]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    /*- begin highlight -*/
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = items.get(key as string)!;
+        return {
+          'text/plain': item.name,
+          'text/html': `<${item.style}>${item.name}</${item.style}>`,
+          'custom-app-type': JSON.stringify({id: key, ...item})
+        };
+      });
+    },
+    /*- end highlight -*/
+  });
+
+  return (
+    <MyGridList aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
+      {([id, item]) => <MyItem id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</MyItem>}
+    </MyGridList>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableGridList />
+  {/* see below */}
+  <DroppableGridList />
+</div>
+```
+
+### Dropping on the collection
+
+Dropping on the GridList as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the GridList, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+interface Item {
+  id: number,
+  name: string
+}
+
+function Example() {
+  let [items, setItems] = React.useState<Item[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    async onRootDrop(e) {
+      let items = await Promise.all(e.items.map(async (item, i) => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: i, name};
+      }));
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </MyGridList>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay);
+}
+```
+
+</details>
+
+### Dropping on items
+
+Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+function Example() {
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin highlight -///
+    onItemDrop(e) {
+      alert(`Dropped on ${e.target.key}`);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      {/* see above */}
+      <DraggableGridList />
+      <MyGridList aria-label="Droppable list" dragAndDropHooks={dragAndDropHooks}>
+        <MyItem id="applications">Applications</MyItem>
+        <MyItem id="documents">Documents</MyItem>
+        <MyItem id="pictures">Pictures</MyItem>
+      </MyGridList>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridListItem[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  background:var(--highlight-overlay);
+}
+```
+
+</details>
+
+### Dropping between items
+
+Dropping between items can be enabled using the `onInsert` event. GridList renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
+    ]
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin highlight -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.map(async item => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: Math.random(), name};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <MyGridList aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </MyGridList>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DropIndicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);
+  }
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
+}
+```
+
+</details>
+
+A custom drop indicator can also be rendered with the `renderDropIndicator` function. This lets you customize the DOM structure and CSS classes applied to the drop indicator.
+
+```tsx example
+///- begin highlight -///
+import {DropIndicator} from 'react-aria-components';
+///- end highlight -///
+
+function Example() {
+  let { dragAndDropHooks } = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.map(async item => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: Math.random(), name};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDropIndicator(target) {
+      return (
+        <DropIndicator
+          target={target}
+          className={({isDropTarget}) => `my-drop-indicator ${isDropTarget ? 'active' : ''}`} />
+      );
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
+    ]
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <MyGridList aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <GridListItem>{item.name}</GridListItem>}
+      </MyGridList>
+    </div>
+  );
+  ///- end collapse -///
+  // ...
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-drop-indicator {
+  &.active {
+    outline: 1px solid #e70073;
+  }
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
+}
+```
+
+</details>
+
+### Drop data
+
+`GridList` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+#### Text
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
+
+```tsx example export=true
+import {isTextDropItem} from 'react-aria-components';
+
+interface TextItem {
+  id: string,
+  name: string,
+  style: string
+}
+
+function DroppableGridList() {
+  let [items, setItems] = React.useState<TextItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['custom-app-type'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
+      {item => <MyItem textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</MyItem>}
+    </MyGridList>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  {/* see above */}
+  <DraggableGridList />
+  <DroppableGridList />
+</div>
+```
+
+#### Files
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
+
+```tsx example
+import {isFileDropItem} from 'react-aria-components';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['image/jpeg', 'image/png'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop images here"}>
+      {item => (
+        <MyItem textValue={item.name}>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </MyItem>
+      )}
+    </MyGridList>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.image-item {
+  display: flex;
+  height: 50px;
+  gap: 10px;
+  align-items: center;
+}
+
+.image-item img {
+  height: 100%;
+  aspect-ratio: 1/1;
+  object-fit: contain;
+}
+
+.image-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+</details>
+
+#### Directories
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
+
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+
+```tsx example
+import File from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
+///- begin highlight -///
+import {DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
+///- end highlight -///
+
+interface DirItem {
+  name: string,
+  kind: string
+}
+
+function Example() {
+  let [files, setFiles] = React.useState<DirItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
+    async onRootDrop(e) {
+      // Read entries in directory and update state with relevant info.
+      let dir = e.items.find(isDirectoryDropItem)!;
+      let files = [];
+      for await (let entry of dir.getEntries()) {
+        files.push({
+          name: entry.name,
+          kind: entry.kind
+        });
+      }
+      setFiles(files);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <MyGridList aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop directory here"}>
+      {item => (
+        <MyItem id={item.name} textValue={item.name}>
+          <div className="dir-item">
+            {item.kind === 'directory' ? <Folder /> : <File />}
+            <span>{item.name}</span>
+          </div>
+        </MyItem>
+      )}
+    </MyGridList>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.dir-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dir-item {
+  flex: 0 0 auto;
+}
+
+.dir-item {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+</details>
+
+### Drop operations
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – indicates that the dragged data will be moved from its source location to the target location.
+* `copy` – indicates that the dragged data will be copied to the target destination.
+* `link` – indicates that there will be a relationship established between the source and target locations.
+* `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
+
+#### onDragEnd
+
+The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged items.
+
+This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    // ...
+    /*- begin highlight -*/
+    onDragEnd(e) {
+      if (e.dropOperation === 'move') {
+        list.remove(...e.keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <MyGridList aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <MyItem>{item.name}</MyItem>}
+      </MyGridList>
+      <DroppableGridList />
+    </div>
+  );
+}
+```
+
+#### getAllowedDropOperations
+
+The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor now shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
+
+```tsx example
+function Example() {
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+  ///- end collapse -///
+  // ...
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    // ...
+    /*- begin highlight -*/
+    getAllowedDropOperations: () => ['copy']
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <MyGridList aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <MyItem>{item.name}</MyItem>}
+      </MyGridList>
+      <DroppableGridList />
+    </div>
+  );
+}
+```
+
+#### getDropOperation
+
+The `getDropOperation` function passed to `useDragAndDrop` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. This function receives the drop target, set of types contained in the drag, and a list of allowed drop operations as specified by the drag source. It should return one of the drop operations in `allowedOperations`, or a specific drop operation if only that drop operation is supported. It may also return `'cancel'` to reject the drop. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
+
+```tsx example
+///- begin collapse -///
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+///- end collapse -///
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    acceptedDragTypes: ['image/png'],
+    async onRootDrop(e) {
+      ///- begin collapse -///
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+      ///- end collapse -///
+      // ...
+    }
+  });
+
+  ///- begin collapse -///
+  return (
+    <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
+      {item => (
+        <MyItem textValue={item.name}>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </MyItem>
+      )}
+    </MyGridList>
+  );
+  ///- end collapse -///
+  // See "Files" example above...
+}
+```
+
+#### Drop events
+
+Drop events such as `onInsert`, `onItemDrop`, etc. also include the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+let onItemDrop = async (e) => {
+  let data = JSON.parse(await e.items[0].getText('my-app-file'));
+  /*- begin highlight -*/
+  switch (e.dropOperation) {
+    case 'move':
+      MyAppFileService.move(data.filePath, props.filePath);
+      break;
+    case 'copy':
+      MyAppFileService.copy(data.filePath, props.filePath);
+      break;
+    case 'link':
+      MyAppFileService.link(data.filePath, props.filePath);
+      break;
+  }
+  /*- end highlight -*/
+};
+```
+
+### Drag between lists
+
+This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. It also supports reordering items within the same list. When a list is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndGridListProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndGridList(props: DndGridListProps) {
+  let list = useListData({
+    initialItems: props.initialItems
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
+    async onInsert(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <MyGridList
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'}>
+      {item => <MyItem>{item.name}</MyItem>}
+    </MyGridList>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DndGridList
+    initialItems={[
+      { id: '1', type: 'file', name: 'Adobe Photoshop' },
+      { id: '2', type: 'file', name: 'Adobe XD' },
+      { id: '3', type: 'folder', name: 'Documents' },
+      { id: '4', type: 'file', name: 'Adobe InDesign' },
+      { id: '5', type: 'folder', name: 'Utilities' },
+      { id: '6', type: 'file', name: 'Adobe AfterEffects' }
+    ]}
+    aria-label="First GridList"
+  />
+  <DndGridList
+    initialItems={[
+      { id: '7', type: 'folder', name: 'Pictures' },
+      { id: '8', type: 'file', name: 'Adobe Fresco' },
+      { id: '9', type: 'folder', name: 'Apps' },
+      { id: '10', type: 'file', name: 'Adobe Illustrator' },
+      { id: '11', type: 'file', name: 'Adobe Lightroom' },
+      { id: '12', type: 'file', name: 'Adobe Dreamweaver' }
+    ]}
+    aria-label="Second GridList"
+  />
+</div>
+```
+
+## Props
+
+### GridList
+
+<PropTable component={docs.exports.GridList} links={docs.links} />
+
+### GridListItem
+
+A `<GridListItem>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.GridListItem} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-GridList {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<GridList className="my-gridlist">
+  {/* ... */}
+</GridList>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-GridListItem[data-selected] {
+  /* ... */
+}
+
+.react-aria-GridListItem[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<GridListItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</GridListItem>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
+
+```jsx
+<GridListItem>
+  {({selectionMode}) => (
+    <>
+      {selectionMode !== 'none' && <Checkbox />}
+      Item
+    </>
+  )}
+</GridListItem>
+```
+
+The states and selectors for each component used in a `GridList` are documented below.
+
+### GridList
+
+A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListRenderProps.properties} />
+
+### GridListItem
+
+A `GridListItem` can be targeted with the `.react-aria-GridListItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListItemRenderProps.properties} showOptional />
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `GridList`, such as `GridListItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyItem(props) {
+  return <GridListItem {...props} className="my-item" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['GridList']} docs={docs} />
+
+This example shows a component that accepts a `GridList` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn selection mode for the list on and off by pressing the button.
+
+```tsx example render=false export=true
+import type {SelectionMode} from 'react-aria-components';
+import {ToggleButtonContext, GridListContext} from 'react-aria-components';
+
+function Selectable({children}) {
+  let [isSelected, onChange] = React.useState(false);
+  let selectionMode: SelectionMode = isSelected ? 'multiple' : 'none';
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <GridListContext.Provider value={{selectionMode}}>
+      {/*- end highlight -*/}
+        {children}
+      </GridListContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Selectable` component can be reused to make the selection mode of any nested `GridList` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Selectable>
+  <ToggleButton style={{marginBottom: '8px'}}>Select</ToggleButton>
+  <GridList aria-label="Ice cream flavors">
+    <MyItem>Chocolate</MyItem>
+    <MyItem>Mint</MyItem>
+    <MyItem>Strawberry</MyItem>
+    <MyItem>Vanilla</MyItem>
+  </GridList>
+</Selectable>
+```
+
+### Custom children
+
+GridList passes props to its child components, such as the selection checkboxes, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Checkbox', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `CheckboxContext` in an existing styled checkbox component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by GridList. See [useCheckbox](useCheckbox.html) for more details about the hooks used in this example.
+
+```tsx
+import type {CheckboxProps} from 'react-aria-components';
+import {CheckboxContext, useContextProps} from 'react-aria-components';
+import {useToggleState} from 'react-stately';
+import {useCheckbox} from 'react-aria';
+
+const MyCustomCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, CheckboxContext);
+  ///- end highlight -///
+
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin React Aria Components `Checkbox`.
+
+```tsx
+<GridList>
+  <GridListItem>
+    {/*- begin highlight -*/}
+    <MyCustomCheckbox slot="selection" />
+    {/*- end highlight -*/}
+    {/* ... */}
+  </GridListItem>
+</GridList>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.

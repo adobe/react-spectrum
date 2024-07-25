@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalendář",
+  "day": "den",
+  "dayPeriod": "část dne",
+  "endDate": "Konečné datum",
+  "era": "letopočet",
+  "hour": "hodina",
+  "minute": "minuta",
+  "month": "měsíc",
+  "second": "sekunda",
+  "selectedDateDescription": "Vybrané datum: {date}",
+  "selectedRangeDescription": "Vybrané období: {startDate} až {endDate}",
+  "selectedTimeDescription": "Vybraný čas: {time}",
+  "startDate": "Počáteční datum",
+  "timeZoneName": "časové pásmo",
+  "weekday": "den v týdnu",
+  "year": "rok"
+}

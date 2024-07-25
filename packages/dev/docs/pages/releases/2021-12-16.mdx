@@ -1,0 +1,86 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: For our end of year release we worked on improving our accessibility, types and documentation. We will be back next year with new components and features! Have a safe and restful holiday break and thank you for all the contributions this year.
+date: 2021-12-16
+---
+
+# December 16, 2021 Release
+
+For our end of year release we worked on improving our accessibility, types and documentation. We will be back next year with new components and features! Have a safe and restful holiday break and thank you for all the contributions this year.
+
+## Fixed
+- Patch intl-messageformat for null or undefined values - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2544)
+- Add `onKeyDown` event handler to `SearchField` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2617)
+- Update selection `useSingleSelectionState` and `useMultipleSelectionState` to control sending duplicate selection events - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2618)
+- Fix incorrect color rending for `Checkbox` - [@paulchan14](https://github.com/paulchan14) - [PR](https://github.com/adobe/react-spectrum/pull/2662)
+- Pass filtered DOM props to Tabs - [@khoad](https://github.com/khoad) - [PR](https://github.com/adobe/react-spectrum/pull/2655)
+- Fix incorrect active state on disabled `Checkbox` in Firefox - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/2582)
+- Update types for ComboBox to seperate stately props - [@frdclav](https://github.com/frdclav) - [PR](https://github.com/adobe/react-spectrum/pull/2651)
+- Remove unused type `disallowEmptySelection` from `ComboBox`, `Select` and `useSingleSelectListState` - [@qilto](https://github.com/qilto) - [PR](https://github.com/adobe/react-spectrum/pull/2652/)
+- Improve VO support for selection and long press - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2521)
+- Add additional translations for long press support in React Aria `grid` - [andmail101](https://github.com/angmail101) - [PR](https://github.com/adobe/react-spectrum/pull/2690)
+
+## Documentation
+- Update Next.js docs to include latest components - [@rwoll](https://github.com/rwoll) - [PR](https://github.com/adobe/react-spectrum/pull/2638)
+- Fix `useMenuTrigger` example to spread correct props on menu - [@frdclav](https://github.com/frdclav) - [PR](https://github.com/adobe/react-spectrum/pull/2642/)
+- Update TableView and useAsyncList to use useCollator for sorting - [@wilfredo-malazarte](https://github.com/wilfredo-malazarte) - [PR](https://github.com/adobe/react-spectrum/pull/2656)
+- Update Contributing file with new versions - [@sdjustin](https://github.com/sdjustin) - [PR](https://github.com/adobe/react-spectrum/pull/2649)
+- Add missing import to `useSwitch` example - [@casperiv0](https://github.com/casperiv0) - [PR](https://github.com/adobe/react-spectrum/pull/2634)
+
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+- ColorSlider beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorSlider.html)
+- ColorWheel beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorWheel.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorWheel.html)
+- ColorField beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorField.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorField.html)
+- SearchWithin alpha
+- Calendar alpha
+- DatePicker alpha
+- ListView alpha
+- CardView alpha
+- Card alpha
+
+## Released packages
+
+```
+- @adobe/react-spectrum => 3.15.1
+- @internationalized/message => 3.0.3
+- @react-aria/color => 3.0.0-beta.6
+- @react-aria/combobox => 3.2.1
+- @react-aria/datepicker => 3.0.0-alpha.2
+- @react-aria/grid => 3.2.0
+- @react-aria/searchfield => 3.2.2
+- @react-aria/selection => 3.7.1
+- @react-aria/table => 3.2.0
+- @react-aria/utils => 3.11.0
+- @react-spectrum/color => 3.0.0-beta.6
+- @react-spectrum/datepicker => 3.0.0-alpha.2
+- @react-spectrum/list => 3.0.0-alpha.5
+- @react-spectrum/table => 3.1.1
+- @react-spectrum/tabs => 3.1.1
+- @react-stately/list => 3.4.1
+- @react-stately/selection => 3.9.0
+- @react-types/combobox => 3.2.1
+- @react-types/select => 3.5.1
+- @react-types/shared => 3.10.1
+- react-aria => 3.12.0
+- react-stately => 3.11.0
+```

@@ -1,0 +1,12 @@
+{
+  "name": "parcel-namer-docs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "DocsNamer.js",
+  "engines": {
+    "parcel": "2.0.0-dev.1599"
+  },
+  "dependencies": {
+    "@parcel/plugin": "2.0.0-dev.1601"
+  }
+}

@@ -1,0 +1,340 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/tag';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/tag/package.json';
+
+```jsx import
+import {Item, TagGroup} from '@react-spectrum/tag';
+import News from '@spectrum-icons/workflow/News';
+import Airplane from '@spectrum-icons/workflow/Airplane';
+import Game from '@spectrum-icons/workflow/Game';
+import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
+import {Text} from '@react-spectrum/text';
+import {Avatar} from '@react-spectrum/avatar';
+import {View} from '@react-spectrum/view';
+```
+
+---
+category: Collections
+keywords: [TagGroup, status]
+---
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TagGroup', 'Item']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tag/'}
+  ]}
+  since="3.27.0" />
+
+## Example
+```tsx example
+<TagGroup aria-label="Static TagGroup items example">
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</TagGroup>
+```
+
+## Content
+TagGroup is a component that allows users to categorize content. Basic usage of TagGroup, seen in the example above, shows the use of a static collection where the contents of the TagGroup are hard coded.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time.
+
+Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
+See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
+
+```tsx example
+const items = [
+  {id: 1, name: 'News'},
+  {id: 2, name: 'Travel'},
+  {id: 3, name: 'Gaming'},
+  {id: 4, name: 'Shopping'}
+];
+
+<TagGroup items={items} aria-label="Dynamic TagGroup items example">
+  {item => <Item>{item.name}</Item>}
+</TagGroup>
+```
+
+### Internationalization
+To internationalize a TagGroup, all text content within the TagGroup should be localized. This includes the `aria-label` provided to the TagGroup if any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of TagGroup is automatically flipped.
+
+## Labeling
+A visual label can be provided with the `label` prop. If a visual label isn't included, an `aria-label` must be provided to the TagGroup for accessibility. If the TagGroup is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+```tsx example
+<TagGroup label="Categories">
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</TagGroup>
+```
+
+## Events
+
+### onRemove
+Removing tags can be enabled by providing the `onRemove` prop to the TagGroup, which will receive the set of keys to remove.
+
+```tsx example
+function Example() {
+  let defaultItems = [
+    {id: 1, name: 'News'},
+    {id: 2, name: 'Travel'},
+    {id: 3, name: 'Gaming'},
+    {id: 4, name: 'Shopping'}
+  ];
+
+  let [items, setItems] = React.useState(defaultItems);
+
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+  };
+
+  return (
+    <TagGroup
+      items={items}
+      /*- begin highlight -*/
+      onRemove={onRemove}
+      /*- end highlight -*/
+      aria-label="Removable TagGroup example">
+      {item => <Item>{item.name}</Item>}
+    </TagGroup>
+  );
+}
+```
+
+### onAction
+
+TagGroup supports an `onAction` handler that, when used with the `actionLabel` prop, will add an action button at the end of the tags that can be used to perform a custom action.
+
+```tsx example
+<TagGroup
+  /*- begin highlight -*/
+  actionLabel="Clear"
+  onAction={() => alert('Clear action pressed.')}
+  /*- end highlight -*/
+  aria-label="TagGroup with action">
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</TagGroup>
+```
+
+## Links
+
+Tags may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<TagGroup label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</TagGroup>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Props
+
+<PropTable component={{
+  ...docs.exports.TagGroup,
+  props: {
+    ...docs.exports.TagGroup.props,
+    properties: Object.fromEntries(Object.entries(docs.exports.TagGroup.props.properties))
+  }
+}} links={docs.links} />
+
+## Visual options
+
+### With icons
+
+```tsx example
+<TagGroup aria-label="TagGroup with icons example">
+  <Item textValue="News">
+    <News />
+    <Text>News</Text>
+  </Item>
+  <Item textValue="Travel">
+    <Airplane />
+    <Text>Travel</Text>
+  </Item>
+  <Item textValue="Gaming">
+    <Game />
+    <Text>Gaming</Text>
+  </Item>
+  <Item textValue="Shopping">
+    <ShoppingCart />
+    <Text>Shopping</Text>
+  </Item>
+</TagGroup>
+```
+
+### With avatars
+
+```tsx example
+<TagGroup aria-label="TagGroup with avatars example">
+  <Item textValue="Person 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>Person 1</Text>
+  </Item>
+  <Item textValue="Person 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>Person 2</Text>
+  </Item>
+  <Item textValue="Person 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>Person 3</Text>
+  </Item>
+  <Item textValue="Person 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>Person 4</Text>
+  </Item>
+</TagGroup>
+```
+
+### Label position and alignment
+
+By default, the label is positioned above the TagGroup.
+The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can
+be used to align the label as "start" or "end".
+For left-to-right (LTR) languages, "start" refers to the left most edge of the TagGroup
+and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<TagGroup label="Categories" labelPosition="side" labelAlign="end">
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</TagGroup>
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/)
+
+Both a description and an error message can be supplied to a TagGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let defaultItems = [
+    {id: 1, name: 'News'},
+    {id: 2, name: 'Travel'},
+    {id: 3, name: 'Gaming'},
+    {id: 4, name: 'Shopping'}
+  ];
+
+  let [items, setItems] = React.useState(defaultItems);
+
+  let onRemove = (keys) => {
+    setItems(prevItems => prevItems.filter((item) => !keys.has(item.id)));
+  };
+
+  let isValid = items.length <= 3;
+
+  return (
+    <TagGroup
+      label="Categories"
+      items={items}
+      onRemove={onRemove}
+      aria-label="TagGroup help text example"
+      isInvalid={!isValid}
+      description="Please include tags for related categories."
+      errorMessage="Must contain no more than 3 tags. Please remove some."
+      >
+      {item => <Item>{item.name}</Item>}
+    </TagGroup>
+  );
+}
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TagGroup.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<TagGroup
+  label="Categories"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What are tags?</Heading>
+      <Content>Tags allow users to categorize content.</Content>
+    </ContextualHelp>
+  }>
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</TagGroup>
+```
+
+### Limit rows
+
+TagGroup supports a `maxRows` prop that will limit the number of rows initially shown. This will add an action button that can be pressed to show the remaining tags.
+
+```tsx example
+<View maxWidth="size-3400" minHeight="size-2000" padding="size-150" borderWidth="thin" borderColor="dark" borderRadius="medium">
+  <TagGroup
+    /*- begin highlight -*/
+    maxRows={2}
+    /*- end highlight -*/
+    aria-label="Static TagGroup items example with maxRows set">
+    <Item>News</Item>
+    <Item>Travel</Item>
+    <Item>Gaming</Item>
+    <Item>Shopping</Item>
+    <Item>Business</Item>
+    <Item>Entertainment</Item>
+    <Item>Food</Item>
+    <Item>Technology</Item>
+    <Item>Politics</Item>
+    <Item>Health</Item>
+    <Item>Science</Item>
+  </TagGroup>
+</View>
+```
+
+### Empty state
+
+Use the `renderEmptyState` prop to customize what the TagGroup will display if there are no tags provided.
+
+```tsx example
+import {Link} from '@react-spectrum/link';
+
+function renderEmptyState() {
+  return (
+    <span>
+      No categories. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.
+    </span>
+  );
+}
+
+<TagGroup
+  label="Categories"
+  renderEmptyState={renderEmptyState}>
+  {[]}
+</TagGroup>
+```

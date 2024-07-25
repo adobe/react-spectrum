@@ -1,0 +1,122 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+
+---
+keywords: [example, button, aria, accessibility, react, component]
+type: component
+image: ripple-button.png
+description: A button with an animated ripple effect styled with Tailwind CSS.
+---
+
+# Ripple Button
+
+A [Button](../Button.html) with an animated ripple effect styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {Button} from 'react-aria-components';
+import {useEffect, useRef, useState} from 'react';
+import Airplane from '@spectrum-icons/workflow/Airplane';
+
+function RippleButton(props) {
+  const [coords, setCoords] = useState(null);
+
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  let onPress = (e) => {
+    setCoords({x: e.x, y: e.y});
+    if (e.x !== -1 && e.y !== -1) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => setCoords(null), 600);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  return (
+    <div className="bg-gradient-to-r from-teal-300 to-cyan-500 p-12 rounded-lg flex justify-center">
+      <Button
+        onPress={onPress}
+        className={`
+      relative overflow-hidden
+      inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-6 py-4 text-white text-lg
+      hover:bg-opacity-60 pressed:bg-opacity-70 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75`}>
+      {coords && (
+        <div
+          key={`${coords.x},${coords.y}`}
+          className="absolute h-8 w-8 rounded-full opacity-100 bg-white/60"
+          style={{
+            animation: 'ripple 600ms linear',
+            left: coords.x - 15,
+            top: coords.y - 15
+          }} />)}
+        <span className="flex items-center gap-4">{props.children}</span>
+      </Button>
+    </div>
+  )
+}
+
+<RippleButton><Airplane size="S" /> Book flight</RippleButton>
+```
+```css
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+  <ExampleCard
+    url="../Button.html"
+    title="Button"
+    description="A button allows a user to perform an action.">
+    <Button />
+  </ExampleCard>
+
+</section>
+

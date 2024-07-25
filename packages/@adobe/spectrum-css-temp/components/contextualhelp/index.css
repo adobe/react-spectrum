@@ -1,0 +1,47 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+:root {
+  --spectrum-contextualhelp-button-size: var(--spectrum-global-dimension-size-250);
+  --spectrum-contextualhelp-icon-size: var(--spectrum-global-dimension-size-175);
+  --spectrum-contexualhelp-dialog-width: 250px;
+  --spectrum-contextualhelp-dialog-padding: var(--spectrum-global-dimension-static-size-300);
+}
+
+.react-spectrum-ContextualHelp-button {
+  --spectrum-button-primary-height: var(--spectrum-contextualhelp-button-size);
+  --spectrum-actionbutton-height: var(--spectrum-contextualhelp-button-size);
+  --spectrum-actionbutton-min-width: var(--spectrum-contextualhelp-button-size);
+  --spectrum-actionbutton-icon-padding-x: var(--spectrum-global-dimension-size-40);
+
+  svg {
+    block-size: var(--spectrum-contextualhelp-icon-size);
+    inline-size: var(--spectrum-contextualhelp-icon-size);
+  }
+}
+
+.react-spectrum-ContextualHelp-dialog.react-spectrum-ContextualHelp-dialog {
+  width: var(--spectrum-contexualhelp-dialog-width);
+  --spectrum-dialog-padding-x: var(--spectrum-contextualhelp-dialog-padding);
+  --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);
+
+  &.react-spectrum-ContextualHelp-dialog--isMobile {
+    width: 100%;
+  }
+  .react-spectrum-ContextualHelp-content {
+    margin-top: var(--spectrum-global-dimension-static-size-100);
+  }
+
+  .react-spectrum-ContextualHelp-footer {
+    padding-top: var(--spectrum-global-dimension-static-size-100);
+  }
+}

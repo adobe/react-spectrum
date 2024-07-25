@@ -1,0 +1,104 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/color/package.json';
+
+---
+category: Color
+keywords: [color swatch, color picker, aria]
+---
+
+# useColorSwatch
+
+<PageDescription>{docs.exports.useColorSwatch.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useColorSwatch']}
+  sourceData={[
+    {type: 'W3C', url: 'https://w3c.github.io/aria/#img'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useColorSwatch} links={docs.links} />
+
+## Features
+
+A color swatch may seem simple to build with a `<div>`, but requires additional semantics and labeling for accessibility.
+
+* **Accessible** – Includes a localized color description for screen reader users (e.g. "dark vibrant blue"). Uses the [img](https://w3c.github.io/aria/#img) role with a custom `aria-roledescription` of "color swatch".
+* **International** – Accessible color description and role description are translated into over 30 languages.
+
+## Anatomy
+
+A color swatch consists of a color preview, which is exposed to assistive technology with a localized color description.
+
+`useColorSwatch` returns props that you should spread onto the color swatch element, along with the parsed color value:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useColorSwatch.return.id].properties} />
+</TypeContext.Provider>
+
+## Example
+
+This example renders a color swatch component, with a checkerboard pattern behind partially transparent colors.
+
+```tsx example export=true
+import {useColorSwatch, AriaColorSwatchProps} from '@react-aria/color';
+
+function ColorSwatch(props: AriaColorSwatchProps) {
+  let {colorSwatchProps, color} = useColorSwatch(props);
+
+  return (
+    <div 
+      {...colorSwatchProps}
+      style={{
+        ...colorSwatchProps.style,
+        width: 32,
+        height: 32,
+        borderRadius: 4,
+        background: `linear-gradient(${color}, ${color}),
+          repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
+      }} />
+  );
+}
+
+<ColorSwatch color="#f00a" />
+```
+
+## Usage
+
+The following examples show how to use the `ColorSwatch` component created in the above example.
+
+### Value
+
+ColorSwatch accepts a value via the `color` prop. The value should be a color string or <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Color} /> object. This example uses the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function to parse a color from an HSL string.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+<ColorSwatch color={parseColor('hsl(35, 100%, 50%)')} />
+```
+
+### Labeling
+
+By default, useColorSwatch includes a localized color description for screen reader users (e.g. "dark vibrant blue") as an `aria-label`. If you have a more specific color name (e.g. Pantone colors), the automatically generated color description can be overridden via the `colorName` prop. An additional label describing the context of the color swatch (e.g. "Background color") can also be provided via the `aria-label` or `aria-labelledby` props.
+
+In the example below, the full accessible name of the color swatch will be "Fire truck red, Background color".
+
+```tsx example
+<ColorSwatch color="#f00" aria-label="Background color" colorName="Fire truck red" />
+```

@@ -1,0 +1,180 @@
+.express.express {
+  --spectrum-accent-color-100: var(--spectrum-indigo-100);
+  --spectrum-accent-color-200: var(--spectrum-indigo-200);
+  --spectrum-accent-color-300: var(--spectrum-indigo-300);
+  --spectrum-accent-color-400: var(--spectrum-indigo-400);
+  --spectrum-accent-color-500: var(--spectrum-indigo-500);
+  --spectrum-accent-color-600: var(--spectrum-indigo-600);
+  --spectrum-accent-color-700: var(--spectrum-indigo-700);
+  --spectrum-accent-color-800: var(--spectrum-indigo-800);
+  --spectrum-accent-color-900: var(--spectrum-indigo-900);
+  --spectrum-accent-color-1000: var(--spectrum-indigo-1000);
+  --spectrum-accent-color-1100: var(--spectrum-indigo-1100);
+  --spectrum-accent-color-1200: var(--spectrum-indigo-1200);
+  --spectrum-accent-color-1300: var(--spectrum-indigo-1300);
+  --spectrum-accent-color-1400: var(--spectrum-indigo-1400);
+
+  --spectrum-alias-heading-text-font-weight-regular: var(--spectrum-global-font-weight-black);
+  --spectrum-alias-border-radius-xsmall: var(--spectrum-global-dimension-size-25);
+  --spectrum-alias-border-radius-small: var(--spectrum-global-dimension-size-40);
+  --spectrum-alias-border-radius-regular: var(--spectrum-global-dimension-size-75);
+  --spectrum-alias-border-radius-medium: var(--spectrum-global-dimension-size-125);
+  --spectrum-alias-border-radius-large: var(--spectrum-global-dimension-size-150);
+
+  --spectrum-button-primary-border-radius:  var(--spectrum-global-dimension-size-200);
+  --spectrum-alias-input-border-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-alias-input-focusring-gap: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-alias-input-border-color-key-focus: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-input-focusring-size: var(--spectrum-global-dimension-static-size-25);
+
+  --spectrum-alias-border-color: var(--spectrum-gray-400);
+  --spectrum-alias-border-color-hover: var(--spectrum-gray-500);
+  --spectrum-alias-border-color-down: var(--spectrum-gray-900);
+
+  --spectrum-textfield-border-color-key-focus: var(--spectrum-alias-input-border-color-key-focus);
+  --spectrum-textfield-border-color-down: var(--spectrum-global-color-gray-900);
+  --spectrum-textfield-quiet-border-color-key-focus: var(--spectrum-alias-input-border-color-key-focus);
+
+  --spectrum-checkbox-box-size: var(--spectrum-global-dimension-size-200);
+  --spectrum-radio-circle-diameter: var(--spectrum-global-dimension-size-200);
+  --spectrum-switch-handle-size: var(--spectrum-global-dimension-size-200);
+  --spectrum-switch-track-height: var(--spectrum-global-dimension-size-200);
+
+  --spectrum-alias-toggle-color-default: var(--spectrum-global-color-gray-800);
+  --spectrum-alias-toggle-color-hover: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-toggle-color-key-focus: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-toggle-color-selected: var(--spectrum-gray-800);
+  --spectrum-alias-toggle-color-selected-hover: var(--spectrum-gray-900);
+  --spectrum-alias-toggle-color-selected-key-focus: var(--spectrum-gray-900);
+  --spectrum-alias-toggle-color-selected-down: var(--spectrum-gray-900);
+
+  --spectrum-actionbutton-icon-color: var(--spectrum-global-color-gray-800);
+  --spectrum-actionbutton-background-color: var(--spectrum-global-color-gray-200);
+  --spectrum-actionbutton-background-color-hover: var(--spectrum-global-color-gray-300);
+  --spectrum-actionbutton-background-color-key-focus: var(--spectrum-global-color-gray-300);
+  --spectrum-actionbutton-background-color-down: var(--spectrum-global-color-gray-400);
+  --spectrum-actionbutton-background-color-disabled: var(--spectrum-global-color-gray-200);
+  --spectrum-actionbutton-border-color-disabled: var(--spectrum-global-color-gray-200);
+
+  --spectrum-actionbutton-border-color: var(--spectrum-actionbutton-background-color);
+  --spectrum-actionbutton-border-color-hover: var(--spectrum-actionbutton-background-color-hover);
+  --spectrum-actionbutton-border-color-key-focus: var(--spectrum-actionbutton-background-color-key-focus);
+  --spectrum-actionbutton-border-color-down: var(--spectrum-actionbutton-background-color-down);
+
+  --spectrum-actionbutton-quiet-background-color-hover: var(--spectrum-actionbutton-background-color-hover);
+  --spectrum-actionbutton-quiet-background-color-key-focus:  var(--spectrum-actionbutton-background-color-key-focus);
+  --spectrum-actionbutton-quiet-background-color-down: var(--spectrum-actionbutton-background-color-down);
+  --spectrum-actionbutton-quiet-border-color-hover: var(--spectrum-actionbutton-border-color-hover);
+  --spectrum-actionbutton-quiet-border-color-key-focus: var(--spectrum-actionbutton-border-color-key-focus);
+  --spectrum-actionbutton-quiet-border-color-down: var(--spectrum-actionbutton-border-color-down);
+
+  --spectrum-actionbutton-static-black-border-color: transparent;
+  --spectrum-actionbutton-static-black-border-color-hover: transparent;
+  --spectrum-actionbutton-static-black-border-color-key-focus: transparent;
+  --spectrum-actionbutton-static-black-border-color-down: transparent;
+  --spectrum-actionbutton-static-black-border-color-disabled: transparent;
+  --spectrum-actionbutton-static-black-border-color-selected-disabled: transparent;
+  --spectrum-actionbutton-static-black-background-color: rgba(0, 0, 0, 0.07);
+  --spectrum-actionbutton-static-black-background-color-disabled: rgba(0, 0, 0, 0.07);
+
+  --spectrum-actionbutton-static-white-border-color: transparent;
+  --spectrum-actionbutton-static-white-border-color-hover: transparent;
+  --spectrum-actionbutton-static-white-border-color-key-focus: transparent;
+  --spectrum-actionbutton-static-white-border-color-down: transparent;
+  --spectrum-actionbutton-static-white-border-color-disabled: transparent;
+  --spectrum-actionbutton-static-white-border-color-selected-disabled: transparent;
+  --spectrum-actionbutton-static-white-background-color: rgba(255, 255, 255, 0.07);
+  --spectrum-actionbutton-static-white-background-color-disabled: rgba(255, 255, 255, 0.07);
+
+  --spectrum-fieldbutton-background-color: var(--spectrum-actionbutton-background-color);
+  --spectrum-fieldbutton-background-color-hover: var(--spectrum-actionbutton-background-color-hover);
+  --spectrum-fieldbutton-background-color-key-focus: var(--spectrum-actionbutton-background-color-key-focus);
+  --spectrum-fieldbutton-background-color-down: var(--spectrum-actionbutton-background-color-down);
+  --spectrum-fieldbutton-border-color: var(--spectrum-actionbutton-border-color);
+  --spectrum-fieldbutton-border-color-hover: var(--spectrum-actionbutton-border-color-hover);
+  --spectrum-fieldbutton-border-color-key-focus: var(--spectrum-actionbutton-border-color-key-focus);
+  --spectrum-fieldbutton-border-color-error-key-focus: var(--spectrum-fieldbutton-border-color-error);
+  --spectrum-fieldbutton-border-color-down: var(--spectrum-actionbutton-border-color-down);
+
+  --spectrum-breadcrumb-button-gap: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-breadcrumb-ui-icon-color: var(--spectrum-gray-800);
+  --spectrum-breadcrumb-ui-icon-width: var(--spectrum-global-dimension-size-225);
+  --spectrum-breadcrumb-ui-icon-height: var(--spectrum-global-dimension-size-225);
+  --spectrum-breadcrumb-item-padding-x: var(--spectrum-global-dimension-size-50);
+  --spectrum-breadcrumb-separator-icon-position-adjustment: 0;
+
+  --spectrum-icon-chevron-right-small-height: var(--spectrum-global-dimension-size-225);
+  --spectrum-icon-chevron-right-small-width: var(--spectrum-global-dimension-size-225);
+
+  --spectrum-combobox-fieldbutton-inset: var(--spectrum-global-dimension-size-75);
+  --spectrum-combobox-fieldbutton-border-left-width: 0;
+  --spectrum-combobox-fieldbutton-focus-ring-border-radius: var(--spectrum-alias-border-radius-regular);
+  --spectrum-combobox-fieldbutton-start-border-radius: calc(var(--spectrum-alias-border-radius-regular) + var(--spectrum-alias-input-border-size));
+  --spectrum-combobox-fieldbutton-end-border-radius: var(--spectrum-combobox-fieldbutton-start-border-radius);
+
+  --spectrum-search-border-radius: var(--spectrum-global-dimension-size-300);
+  --spectrum-search-clear-button-padding: var(--spectrum-global-dimension-size-50);
+
+  /* These are wrong in spectrum-css compared with XD. Matching XD here. */
+  --spectrum-search-clear-button-background-color-hover: var(--spectrum-global-color-gray-200);
+  --spectrum-search-clear-button-background-color-key-focus: var(--spectrum-global-color-gray-200);
+  --spectrum-search-clear-button-background-color-down: var(--spectrum-global-color-gray-300);
+
+  --spectrum-label-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-fieldlabel-text-size: var(--spectrum-global-dimension-font-size-100);
+
+  --spectrum-slider-track-height: var(--spectrum-global-dimension-size-50);
+  --spectrum-slider-track-color: var(--spectrum-global-color-gray-200);
+  --spectrum-slider-track-color-disabled: var(--spectrum-global-color-gray-200);
+  --spectrum-slider-track-border-radius: var(--spectrum-alias-border-radius-xsmall);
+  --spectrum-slider-fill-track-height: var(--spectrum-slider-track-height);
+  --spectrum-slider-fill-track-color: var(--spectrum-global-color-gray-600);
+  --spectrum-slider-handle-gap: 0px;
+  --spectrum-slider-handle-border-size-down: var(--spectrum-slider-handle-border-size);
+  --spectrum-slider-handle-width: var(--spectrum-global-dimension-size-225);
+  --spectrum-slider-handle-height: var(--spectrum-global-dimension-size-225);
+  --spectrum-slider-handle-background-color: var(--spectrum-global-color-gray-50);
+  --spectrum-slider-handle-border-color: var(--spectrum-global-color-gray-800);
+  --spectrum-slider-handle-border-color-hover: var(--spectrum-global-color-gray-900);
+  --spectrum-slider-handle-border-color-key-focus: var(--spectrum-global-color-gray-900);
+  --spectrum-slider-handle-border-color-down: var(--spectrum-global-color-gray-900);
+  --spectrum-slider-handle-border-color-disabled: var(--spectrum-global-color-gray-300);
+
+  --spectrum-actiongroup-compact-button-gap: var(--spectrum-global-dimension-size-25);
+
+  --spectrum-tag-border-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-tag-border-radius: var(--spectrum-global-dimension-size-300);
+  --spectrum-tag-border-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tag-border-color-hover: var(--spectrum-global-color-gray-400);
+  --spectrum-tag-border-color-key-focus: var(--spectrum-global-color-gray-400);
+  --spectrum-tag-border-color-down: var(--spectrum-global-color-gray-500);
+  --spectrum-tag-border-color-disabled: var(--spectrum-global-color-gray-300);
+  --spectrum-tag-background-color: var(--spectrum-global-color-gray-100);
+  --spectrum-tag-background-color-hover: var(--spectrum-global-color-gray-300);
+  --spectrum-tag-background-color-key-focus: var(--spectrum-global-color-gray-300);
+  --spectrum-tag-background-color-down: var(--spectrum-global-color-gray-400);
+  --spectrum-tag-background-color-disabled: var(--spectrum-global-color-gray-100);
+
+  /* These are missing from spectrum-css */
+  --spectrum-alias-dropshadow-blur: var(--spectrum-global-dimension-size-200);
+  --spectrum-alias-dropshadow-offset-y: var(--spectrum-global-dimension-size-50);
+  --spectrum-popover-border-size: 0px; /* TODO: is this for all popovers or just menu/picker/combobox? */
+  --spectrum-tooltip-dropshadow: drop-shadow(0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color));
+  --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
+
+  --spectrum-alias-neutral-background-color: var(--spectrum-neutral-background-color-default);
+}
+
+.express.medium {
+  --spectrum-switch-track-width: 28px;
+}
+
+.express.large {
+  --spectrum-switch-track-width: 36px;
+}
+
+@media (forced-colors: active) {
+  .express.express {
+    --spectrum-popover-border-size: var(--spectrum-alias-border-size-thin);
+  }
+}

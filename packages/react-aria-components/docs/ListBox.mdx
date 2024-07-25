@@ -1,0 +1,2091 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import sharedDocs from 'docs:@react-types/shared';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from './ListBoxAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import {Keyboard} from '@react-spectrum/text';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Collections
+keywords: [listbox, aria]
+type: component
+---
+
+# ListBox
+
+<PageDescription>{docs.exports.ListBox.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ListBox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/listbox/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {ListBox, ListBoxItem} from 'react-aria-components';
+
+<ListBox aria-label="Favorite animal" selectionMode="single">
+  <ListBoxItem>Aardvark</ListBoxItem>
+  <ListBoxItem>Cat</ListBoxItem>
+  <ListBoxItem>Dog</ListBoxItem>
+  <ListBoxItem>Kangaroo</ListBoxItem>
+  <ListBoxItem>Panda</ListBoxItem>
+  <ListBoxItem>Snake</ListBoxItem>
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Checkbox.mdx' layer(checkbox);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-ListBox {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  overflow: auto;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  min-height: 100px;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+}
+
+.react-aria-ListBoxItem {
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &[data-selected] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+
+    &[data-focus-visible] {
+      outline-color: var(--highlight-foreground);
+      outline-offset: -4px;
+    }
+  }
+}
+```
+
+</details>
+
+## Features
+
+A listbox can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is
+not possible to style consistently cross browser. `ListBox` helps you build accessible
+listbox components that can be styled as needed.
+
+* **Item selection** – Single or multiple selection, disabled rows, and both `toggle` and `replace` selection behaviors.
+* **Keyboard navigation** – List items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Layout options** – Items can be arranged in a vertical or horizontal stack, or as a two-dimensional grid.
+* **Drag and drop** – ListBox supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
+* **Touch friendly** – Selection behavior adapts depending on the device. For example, selection occurs on mouse down but on touch up, which is consistent with native conventions.
+* **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
+Note: `ListBox` only handles the list itself. For a dropdown, see [Select](Select.html).
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
+
+A listbox consists of a container element, with a list of items or sections inside.
+Users can select one or more items by clicking, tapping, or navigating with the keyboard.
+
+```tsx
+import {ListBox, ListBoxItem, Section, Header, Text} from 'react-aria-components';
+
+<ListBox>
+  <ListBoxItem>
+    <Text slot="label" />
+    <Text slot="description" />
+  </ListBoxItem>
+  <Section>
+    <Header />
+    <ListBoxItem />
+  </Section>
+</ListBox>
+```
+
+### Concepts
+
+`ListBox` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="listbox" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="listbox" />
+
+## Reusable wrappers
+
+If you will use a ListBox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `ListBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `ListBoxItem` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
+
+```tsx example export=true
+import type {ListBoxProps, ListBoxItemProps} from 'react-aria-components';
+
+function MyListBox<T extends object>({children, ...props}: ListBoxProps<T>) {
+  return (
+    <ListBox {...props} className="my-listbox">
+      {children}
+    </ListBox>
+  );
+}
+
+function MyItem(props: ListBoxItemProps) {
+  return <ListBoxItem {...props} className={({isFocusVisible, isSelected}) => `my-item ${isFocusVisible ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+}
+
+<MyListBox aria-label="Ice cream flavor" selectionMode="single">
+  <MyItem>Chocolate</MyItem>
+  <MyItem>Mint</MyItem>
+  <MyItem>Strawberry</MyItem>
+  <MyItem>Vanilla</MyItem>
+</MyListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-listbox {
+  max-height: inherit;
+  overflow: auto;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  outline: none;
+  max-width: 250px;
+  max-height: 300px;
+  box-sizing: border-box;
+}
+
+.my-item {
+  --highlight: #e70073;
+
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+
+  &.selected {
+    background: var(--highlight);
+    color: var(--highlight-foreground);
+  }
+
+  &.focused {
+    outline: 2px solid var(--highlight);
+    outline-offset: 2px;
+  }
+}
+
+@media (forced-colors: active) {
+  .my-item {
+    forced-color-adjust: none;
+    --highlight: Highlight;
+  }
+}
+```
+
+</details>
+
+## Content
+
+`ListBox` follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the ListBox using the `items` prop. Each item accepts an `id` prop, which
+is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+as shown in the example below, then this is used automatically and an `id` prop is not required.
+
+```tsx example
+function Example() {
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+
+  return (
+    <ListBox aria-label="Animals" items={options} selectionMode="single">
+      {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
+
+## Selection
+
+ListBox supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
+See the [Selection](selection.html) guide for more details.
+
+```tsx example
+import type {Selection} from 'react-aria-components';
+
+function Example() {
+  let [selected, setSelected] = React.useState<Selection>(new Set(['cheese']));
+
+  return (
+    <>
+      <ListBox
+        aria-label="Sandwich contents"
+        /*- begin highlight -*/
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        /*- end highlight -*/
+      >
+        <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+        <ListBoxItem id="tomato">Tomato</ListBoxItem>
+        <ListBoxItem id="cheese">Cheese</ListBoxItem>
+        <ListBoxItem id="tuna">Tuna Salad</ListBoxItem>
+        <ListBoxItem id="egg">Egg Salad</ListBoxItem>
+        <ListBoxItem id="ham">Ham</ListBoxItem>
+      </ListBox>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+### Selection behavior
+
+By default, `ListBox` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+
+When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
+
+These selection behaviors are defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
+
+```tsx example
+<ListBox
+  aria-label="Sandwich contents"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  selectionBehavior="replace"
+  /*- end highlight -*/
+>
+  <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+  <ListBoxItem id="tomato">Tomato</ListBoxItem>
+  <ListBoxItem id="cheese">Cheese</ListBoxItem>
+  <ListBoxItem id="tuna">Tuna Salad</ListBoxItem>
+  <ListBoxItem id="egg">Egg Salad</ListBoxItem>
+  <ListBoxItem id="ham">Ham</ListBoxItem>
+</ListBox>
+```
+
+## Links
+
+By default, interacting with an item in a ListBox triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component.
+
+```tsx example
+<ListBox aria-label="Links">
+  <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
+  <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
+  <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
+  <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
+</ListBox>
+```
+
+```css hidden
+.react-aria-ListBoxItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+```
+
+By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with the "replace" [selection behavior](#selection-behavior), items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
+
+```tsx example
+<ListBox aria-label="Links" selectionMode="multiple" selectionBehavior="replace">
+  <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
+  <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
+  <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
+  <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
+</ListBox>
+```
+
+### Client side routing
+
+The `<ListBoxItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Sections
+
+ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
+
+### Static items
+
+```tsx example
+import {Section, Header} from 'react-aria-components';
+
+<ListBox aria-label="Sandwich contents" selectionMode="multiple">
+  <Section>
+    <Header>Veggies</Header>
+    <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+    <ListBoxItem id="tomato">Tomato</ListBoxItem>
+    <ListBoxItem id="onion">Onion</ListBoxItem>
+  </Section>
+  <Section>
+    <Header>Protein</Header>
+    <ListBoxItem id="ham">Ham</ListBoxItem>
+    <ListBoxItem id="tuna">Tuna</ListBoxItem>
+    <ListBoxItem id="tofu">Tofu</ListBoxItem>
+  </Section>
+  <Section>
+    <Header>Condiments</Header>
+    <ListBoxItem id="mayo">Mayonaise</ListBoxItem>
+    <ListBoxItem id="mustard">Mustard</ListBoxItem>
+    <ListBoxItem id="ranch">Ranch</ListBoxItem>
+  </Section>
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox {
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+```
+
+</details>
+
+### Dynamic items
+
+The above example shows sections with static items. Sections can also be populated from a hierarchical data structure.
+Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
+
+```tsx example
+import type {Selection} from 'react-aria-components';
+import {Collection} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Australian', children: [
+      {id: 2, name: 'Koala'},
+      {id: 3, name: 'Kangaroo'},
+      {id: 4, name: 'Platypus'}
+    ]},
+    {name: 'American', children: [
+      {id: 6, name: 'Bald Eagle'},
+      {id: 7, name: 'Bison'},
+      {id: 8, name: 'Skunk'}
+    ]}
+  ];
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+
+  return (
+    <ListBox
+      aria-label="Pick an animal"
+      items={options}
+      selectedKeys={selected}
+      selectionMode="single"
+      onSelectionChange={setSelected}>
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <ListBoxItem>{item.name}</ListBoxItem>}
+          </Collection>
+        </Section>
+      )}
+    </ListBox>
+  );
+}
+```
+
+### Accessibility
+
+Sections without a `<Header>` must provide an `aria-label` for accessibility.
+
+## Text slots
+
+By default, items in a `ListBox` are labeled by their text contents for accessibility. Items also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
+
+**Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
+For these cases, see [GridList](GridList.html) instead.
+
+```tsx example
+import {Text} from 'react-aria-components';
+
+<ListBox aria-label="Permissions" selectionMode="single">
+  <ListBoxItem textValue="Read">
+    <Text slot="label">Read</Text>
+    <Text slot="description">Read only</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Write">
+    <Text slot="label">Write</Text>
+    <Text slot="description">Read and write only</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Admin">
+    <Text slot="label">Admin</Text>
+    <Text slot="description">Full access</Text>
+  </ListBoxItem>
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  [slot=label] {
+    font-weight: bold;
+  }
+
+  [slot=description] {
+    font-size: small;
+  }
+}
+```
+
+</details>
+
+## Layouts
+
+By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal and vertical stacks and grids.
+
+### Horizontal stack
+
+This example displays a horizontal list of cards. The left and right arrow keys can be used to navigate between the items.
+
+```tsx import
+let albums = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Euphoric Echoes',
+    artist: 'Luna Solstice'
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Neon Dreamscape',
+    artist: 'Electra Skyline'
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    title: 'Cosmic Serenade',
+    artist: 'Orion\'s Symphony'
+  },
+  {
+    id: 4,
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Melancholy Melodies',
+    artist: 'Violet Mistral'
+  },
+  {
+    id: 5,
+    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Rhythmic Illusions',
+    artist: 'Mirage Beats'
+  }
+];
+```
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  orientation="horizontal"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <ListBoxItem textValue={item.title}>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </ListBoxItem>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-orientation=horizontal],
+.react-aria-ListBox[data-layout=grid] {
+  flex-direction: row;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+
+  .react-aria-ListBoxItem {
+    position: relative;
+    margin: 0;
+    padding: 4px;
+
+    & img {
+      object-fit: cover;
+      aspect-ratio: 1/1;
+      max-width: 150px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: box-shadow 200ms;
+    }
+
+    &[data-hovered] {
+      & img {
+        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
+      }
+    }
+
+    &[data-selected] {
+      background: none;
+      color: inherit;
+
+      & img {
+        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+      }
+
+      &:after {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--highlight-background);
+        border: 2px solid var(--highlight-foreground);
+        color: var(--highlight-foreground);
+        width: 22px;
+        height: 22px;
+        border-radius: 22px;
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+      }
+    }
+  }
+}
+```
+
+</details>
+
+### Vertical grid
+
+The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navigation. By default, the grid scrolls vertically. The left, right, up, and down arrow keys can be used to navigate between the cards in this example.
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  layout="grid"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <ListBoxItem textValue={item.title}>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </ListBoxItem>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-layout=grid] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  scrollbar-gutter: stable;
+}
+```
+
+</details>
+
+### Horizontal grid
+
+The `layout="grid"` and `orientation="horizontal"` props can be combined to build a two dimensional grid where the items are grouped into columns, and the grid scrolls horizontally.
+
+```tsx example
+<ListBox
+  aria-label="Albums"
+  ///- begin highlight -///
+  layout="grid"
+  orientation="horizontal"
+  ///- end highlight -///
+  items={albums}
+  selectionMode="multiple">
+  {item => (
+    <ListBoxItem textValue={item.title}>
+      <img src={item.image} alt="" />
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.artist}</Text>
+    </ListBoxItem>
+  )}
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
+  width: 100%;
+  max-width: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 58px 58px;
+  grid-template-columns: none;
+  grid-auto-columns: 250px;
+  max-height: 200px;
+  gap: 8px;
+
+  .react-aria-ListBoxItem {
+    display: grid;
+    grid-template-areas: "image ."
+                         "image title"
+                         "image description"
+                         "image .";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    column-gap: 8px;
+
+    & img {
+      width: 50px;
+      height: 50px;
+      grid-area: image;
+      margin-bottom: 0;
+    }
+
+    [slot=label] {
+      grid-area: title;
+    }
+
+    [slot=description] {
+      grid-area: description;
+    }
+  }
+}
+```
+
+</details>
+
+## Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+of data from a server. You may additionally want to display a spinner to indicate the loading
+state to the user, or support features like infinite scroll to load more data.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <ListBox aria-label="Pick a Pokemon" items={list.items} selectionMode="single">
+      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
+
+## Disabled items
+
+A `ListBoxItem` can be disabled with the `isDisabled` prop. Disabled items are not focusable, selectable, or keyboard navigable.
+
+```tsx example
+<ListBox
+  aria-label="Choose sandwich contents with disabled items"
+  selectionMode="multiple">
+  <ListBoxItem>Lettuce</ListBoxItem>
+  <ListBoxItem>Tomato</ListBoxItem>
+  <ListBoxItem>Cheese</ListBoxItem>
+  {/*- begin highlight -*/}
+  <ListBoxItem isDisabled>Tuna Salad</ListBoxItem>
+  {/*- end highlight -*/}
+  <ListBoxItem>Egg Salad</ListBoxItem>
+  <ListBoxItem>Ham</ListBoxItem>
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `ListBox` level instead of `isDisabled` on individual items. Each key in this list
+corresponds with the `id` prop passed to the `ListBoxItem` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). An item is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+
+  return (
+    <ListBox 
+      aria-label="Animals with disabledKeys"
+      items={options}
+      selectionMode="single"
+      /*- begin highlight -*/
+      disabledKeys={[4, 6]}
+      /*- end highlight -*/
+    >
+      {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
+
+## Empty state
+
+Use the `renderEmptyState` prop to customize what the `ListBox` will display if there are no items.
+
+```tsx example
+<ListBox
+  aria-label="Search results"
+  /*- begin highlight -*/
+  renderEmptyState={() => 'No results found.'}
+  /*- end highlight -*/
+>
+  {[]}
+</ListBox>
+```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
+
+## Drag and drop
+
+ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items.
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items.
+
+See the [drag and drop introduction](dnd.html) to learn more.
+
+### Reorderable
+
+This example shows a basic list that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+
+This uses [useListData](../react-stately/useListData.html) from React Stately to manage the item list. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <ListBox
+      aria-label="Reorderable list"
+      selectionMode="multiple"
+      items={list.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {item => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  &[data-dragging] {
+    opacity: 0.6;
+  }
+}
+
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+}
+```
+
+</details>
+
+### Custom drag preview
+
+By default, the drag preview shown under the user's pointer or finger is a copy of the original element that started the drag. A custom preview can be rendered by implementing the `renderDragPreview` function, passed to `useDragAndDrop`. This receives the dragged data that was returned by `getItems`, and returns a rendered preview for those items.
+
+This example renders a custom drag preview which shows the number of items being dragged.
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let {dragAndDropHooks} = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  return (
+    <ListBox aria-label="Reorderable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+      {item => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+  ///- end collapse -///
+  // ...
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.drag-preview {
+  width: 150px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  border-radius: 4px;
+
+  .badge {
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+</details>
+
+### Drag data
+
+Data for draggable items can be provided in multiple formats at once. This allows drop targets to choose data in a format that they understand. For example, you could serialize a complex object as JSON in a custom format for use within your own application, and also provide plain text and/or rich HTML fallbacks that can be used when a user drops data in an external application (e.g. an email message).
+
+This can be done by returning multiple keys for an item from the `getItems` function. Types can either be a standard [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) for interoperability with external applications, or a custom string for use within your own app.
+
+This example provides representations of each item as plain text, HTML, and a custom app-specific data format. Dropping on the drop targets in this page will use the custom data format to render formatted items. If you drop in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
+
+```tsx example export=true
+function DraggableListBox() {
+  let items = new Map([
+    ['ps', {name: 'Photoshop', style: 'strong'}],
+    ['xd', {name: 'XD', style: 'strong'}],
+    ['id', {name: 'InDesign', style: 'strong'}],
+    ['dw', {name: 'Dreamweaver', style: 'em'}],
+    ['co', {name: 'Connect', style: 'em'}]
+  ]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    /*- begin highlight -*/
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = items.get(key as string)!;
+        return {
+          'text/plain': item.name,
+          'text/html': `<${item.style}>${item.name}</${item.style}>`,
+          'custom-app-type': JSON.stringify({id: key, ...item})
+        };
+      });
+    },
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListBox aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
+      {([id, item]) => <ListBoxItem id={id} textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</ListBoxItem>}
+    </ListBox>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DraggableListBox />
+  {/* see below */}
+  <DroppableListBox />
+</div>
+```
+
+### Dropping on the collection
+
+Dropping on the ListBox as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the ListBox, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+interface Item {
+  id: number,
+  name: string
+}
+
+function Example() {
+  let [items, setItems] = React.useState<Item[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    async onRootDrop(e) {
+      let items = await Promise.all(e.items.map(async (item, i) => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: i, name};
+      }));
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableListBox />
+      <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </ListBox>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay)
+}
+```
+
+</details>
+
+### Dropping on items
+
+Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+function Example() {
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin highlight -///
+    onItemDrop(e) {
+      alert(`Dropped on ${e.target.key}`);
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      {/* see above */}
+      <DraggableListBox />
+      <ListBox aria-label="Droppable list" dragAndDropHooks={dragAndDropHooks}>
+        <ListBoxItem id="applications">Applications</ListBoxItem>
+        <ListBoxItem id="documents">Documents</ListBoxItem>
+        <ListBoxItem id="pictures">Pictures</ListBoxItem>
+      </ListBox>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  background: var(--highlight-overlay)
+}
+```
+
+</details>
+
+### Dropping between items
+
+Dropping between items can be enabled using the `onInsert` event. ListBox renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
+    ]
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin highlight -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.map(async item => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: Math.random(), name};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    }
+    ///- end highlight -///
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableListBox />
+      <ListBox aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </ListBox>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+}
+```
+
+</details>
+
+A custom drop indicator can also be rendered with the `renderDropIndicator` function. This lets you customize the DOM structure and CSS classes applied to the drop indicator.
+
+```tsx example
+///- begin highlight -///
+import {DropIndicator} from 'react-aria-components';
+///- end highlight -///
+
+function Example() {
+  let { dragAndDropHooks } = useDragAndDrop({
+    // ...
+    ///- begin collapse -///
+    async onInsert(e) {
+      let items = await Promise.all(e.items.map(async item => {
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
+        return {id: Math.random(), name};
+      }));
+
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...items);
+      }
+    },
+    ///- end collapse -///
+    ///- begin highlight -///
+    renderDropIndicator(target) {
+      return (
+        <DropIndicator
+          target={target}
+          className={({isDropTarget}) => `my-drop-indicator ${isDropTarget ? 'active' : ''}`} />
+      );
+    }
+    ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
+    ]
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableListBox />
+      <ListBox aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </ListBox>
+    </div>
+  );
+  ///- end collapse -///
+  // ...
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-drop-indicator.active {
+  outline: 1px solid #e70073;
+}
+```
+
+</details>
+
+### Drop data
+
+`ListBox` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+#### Text
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
+
+```tsx example export=true
+import {isTextDropItem} from 'react-aria-components';
+
+interface TextItem {
+  id: string,
+  name: string,
+  style: string
+}
+
+function DroppableListBox() {
+  let [items, setItems] = React.useState<TextItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['custom-app-type'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
+      {item => <ListBoxItem textValue={item.name}>{React.createElement(item.style || 'span', null, item.name)}</ListBoxItem>}
+    </ListBox>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  {/* see above */}
+  <DraggableListBox />
+  <DroppableListBox />
+</div>
+```
+
+#### Files
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
+
+```tsx example
+import {isFileDropItem} from 'react-aria-components';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: ['image/jpeg', 'image/png'],
+    async onRootDrop(e) {
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
+      {item => (
+        <ListBoxItem textValue={item.name}>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.image-item {
+  display: flex;
+  height: 50px;
+  gap: 10px;
+  align-items: center;
+}
+
+.image-item img {
+  height: 100%;
+  aspect-ratio: 1/1;
+  object-fit: contain;
+}
+
+.image-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+</details>
+
+#### Directories
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
+
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+
+```tsx example
+import File from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
+///- begin highlight -///
+import {DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
+///- end highlight -///
+
+interface DirItem {
+  name: string,
+  kind: string
+}
+
+function Example() {
+  let [files, setFiles] = React.useState<DirItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
+    async onRootDrop(e) {
+      // Read entries in directory and update state with relevant info.
+      let dir = e.items.find(isDirectoryDropItem)!;
+      let files = [];
+      for await (let entry of dir.getEntries()) {
+        files.push({
+          name: entry.name,
+          kind: entry.kind
+        });
+      }
+      setFiles(files);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListBox aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
+      {item => (
+        <ListBoxItem id={item.name} textValue={item.name}>
+          <div className="dir-item">
+            {item.kind === 'directory' ? <Folder /> : <File />}
+            <span>{item.name}</span>
+          </div>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.dir-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dir-item {
+  flex: 0 0 auto;
+}
+
+.dir-item {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+</details>
+
+### Drop operations
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – indicates that the dragged data will be moved from its source location to the target location.
+* `copy` – indicates that the dragged data will be copied to the target destination.
+* `link` – indicates that there will be a relationship established between the source and target locations.
+* `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
+
+#### onDragEnd
+
+The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged items.
+
+This example removes the dragged items from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    // ...
+    /*- begin highlight -*/
+    onDragEnd(e) {
+      if (e.dropOperation === 'move') {
+        list.remove(...e.keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <ListBox aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </ListBox>
+      <DroppableListBox />
+    </div>
+  );
+}
+```
+
+#### getAllowedDropOperations
+
+The drag source can also control which drop operations are allowed for the data. For example, if moving data is not allowed, and only copying is supported, the `getAllowedDropOperations` function could be implemented to indicate this. When you drag the element below, the cursor now shows the copy affordance by default, and pressing a modifier to switch drop operations results in the drop being canceled.
+
+```tsx example
+function Example() {
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+  ///- end collapse -///
+  // ...
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        return {
+          'text/plain': item.name,
+          'custom-app-type': JSON.stringify(item)
+        };
+      });
+    },
+    ///- end collapse -///
+    // ...
+    /*- begin highlight -*/
+    getAllowedDropOperations: () => ['copy']
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <ListBox aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </ListBox>
+      <DroppableListBox />
+    </div>
+  );
+}
+```
+
+#### getDropOperation
+
+The `getDropOperation` function passed to `useDragAndDrop` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. This function receives the drop target, set of types contained in the drag, and a list of allowed drop operations as specified by the drag source. It should return one of the drop operations in `allowedOperations`, or a specific drop operation if only that drop operation is supported. It may also return `'cancel'` to reject the drop. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
+
+```tsx example
+///- begin collapse -///
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+///- end collapse -///
+function Example() {
+  let [items, setItems] = React.useState<ImageItem[]>([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    acceptedDragTypes: ['image/png'],
+    async onRootDrop(e) {
+      ///- begin collapse -///
+      let items = await Promise.all(
+        e.items.filter(isFileDropItem).map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+      );
+      setItems(items);
+      ///- end collapse -///
+      // ...
+    }
+  });
+
+  ///- begin collapse -///
+  return (
+    <ListBox aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
+      {item => (
+        <ListBoxItem textValue={item.name}>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+  ///- end collapse -///
+  // See "Files" example above...
+}
+```
+
+#### Drop events
+
+Drop events such as `onInsert`, `onItemDrop`, etc. also include the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+let onItemDrop = async (e) => {
+  let data = JSON.parse(await e.items[0].getText('my-app-file'));
+  /*- begin highlight -*/
+  switch (e.dropOperation) {
+    case 'move':
+      MyAppFileService.move(data.filePath, props.filePath);
+      break;
+    case 'copy':
+      MyAppFileService.copy(data.filePath, props.filePath);
+      break;
+    case 'link':
+      MyAppFileService.link(data.filePath, props.filePath);
+      break;
+  }
+  /*- end highlight -*/
+};
+```
+
+### Drag between lists
+
+This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. It also supports reordering items within the same list. When a list is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
+
+```tsx example
+import {isTextDropItem} from 'react-aria-components';
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndListBoxProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndListBox(props: DndListBoxProps) {
+  let list = useListData({
+    initialItems: props.initialItems
+  });
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    ///- begin collapse -///
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    },
+    ///- end collapse -///
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
+    async onInsert(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <ListBox
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'}>
+      {item => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+  <DndListBox
+    initialItems={[
+      { id: '1', type: 'file', name: 'Adobe Photoshop' },
+      { id: '2', type: 'file', name: 'Adobe XD' },
+      { id: '3', type: 'folder', name: 'Documents' },
+      { id: '4', type: 'file', name: 'Adobe InDesign' },
+      { id: '5', type: 'folder', name: 'Utilities' },
+      { id: '6', type: 'file', name: 'Adobe AfterEffects' }
+    ]}
+    aria-label="First ListBox"
+  />
+  <DndListBox
+    initialItems={[
+      { id: '7', type: 'folder', name: 'Pictures' },
+      { id: '8', type: 'file', name: 'Adobe Fresco' },
+      { id: '9', type: 'folder', name: 'Apps' },
+      { id: '10', type: 'file', name: 'Adobe Illustrator' },
+      { id: '11', type: 'file', name: 'Adobe Lightroom' },
+      { id: '12', type: 'file', name: 'Adobe Dreamweaver' }
+    ]}
+    aria-label="Second ListBox"
+  />
+</div>
+```
+
+## Props
+
+### ListBox
+
+<PropTable component={docs.exports.ListBox} links={docs.links} />
+
+### Section
+
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Section} links={docs.links} />
+
+</details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
+
+### ListBoxItem
+
+A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the ListBox.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBoxItem} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-ListBox {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ListBox className="my-listbox">
+  {/* ... */}
+</ListBox>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-ListBoxItem[data-selected] {
+  /* ... */
+}
+
+.react-aria-ListBoxItem[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<ListBoxItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</ListBoxItem>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
+
+```jsx
+<ListBoxItem>
+  {({isSelected}) => (
+    <>
+      {isSelected && <CheckmarkIcon />}
+      Item
+    </>
+  )}
+</ListBoxItem>
+```
+
+The states and selectors for each component used in a `ListBox` are documented below.
+
+### ListBox
+
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxRenderProps.properties} />
+
+### Section
+
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### ListBoxItem
+
+A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxItemRenderProps.properties} showOptional />
+
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+
+Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `ListBox`, such as `ListBoxItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyItem(props) {
+  return <ListBoxItem {...props} className="my-item" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['ListBox']} docs={docs} />
+
+This example shows a component that accepts a `ListBox` and a [Checkbox](Checkbox.html) as children, and allows the user to select or deselect all items by toggling the checkbox.
+
+```tsx example render=false export=true
+import {CheckboxContext, ListBoxContext} from 'react-aria-components';
+
+function SelectAllListBox({children}) {
+  let [selectedKeys, onSelectionChange] = React.useState<Selection>(new Set());
+  let isSelected = selectedKeys === 'all';
+  let onChange = (isSelected: boolean) => {
+    onSelectionChange(isSelected ? 'all' : new Set());
+  };
+
+  return (
+    <CheckboxContext.Provider value={{isSelected, onChange}}>
+      <ListBoxContext.Provider value={{selectedKeys, onSelectionChange}}>
+        {children}
+      </ListBoxContext.Provider>
+    </CheckboxContext.Provider>
+  );
+}
+```
+
+The `SelectAllListBox` component can be reused to allow the user to toggle select all for any nested `ListBox`.
+
+```tsx example
+import {Checkbox} from 'react-aria-components';
+
+<SelectAllListBox>
+  <Checkbox style={{marginBottom: '8px'}}>
+    <div className="checkbox">
+      <svg viewBox="0 0 18 18" aria-hidden="true">
+        <polyline points="1 9 7 14 15 4" />
+      </svg>
+    </div>
+    Unsubscribe
+  </Checkbox>
+  <ListBox selectionMode="multiple" aria-label="Ice cream flavors">
+    <ListBoxItem>Chocolate</ListBoxItem>
+    <ListBoxItem>Mint</ListBoxItem>
+    <ListBoxItem>Strawberry</ListBoxItem>
+    <ListBoxItem>Vanilla</ListBoxItem>
+  </ListBox>
+</SelectAllListBox>
+```
+
+### Custom children
+
+ListBox passes props to its child components, such as the section headers and separators, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Separator', 'Header', 'Text']} docs={docs} />
+
+This example consumes from `TextContext` in an existing styled typography component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by ListBox.
+
+```tsx
+import type {TextProps} from 'react-aria-components';
+import {TextContext, useContextProps} from 'react-aria-components';
+
+const MyText = React.forwardRef((props: TextProps, ref: React.ForwardedRef<HTMLElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, TextContext);
+  ///- end highlight -///
+
+  // ... your existing Text component
+  return <span {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyText` within a `Menu`, in place of the builtin React Aria Components `Text`.
+
+```tsx
+<ListBox>
+  <ListBoxItem>
+    {/*- begin highlight -*/}
+    <MyText slot="label">Option</MyText>
+    {/*- end highlight -*/}
+  </ListBoxItem>
+  {/* ... */}
+</ListBox>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useListBox](useListBox.html) for more details.

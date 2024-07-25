@@ -1,0 +1,159 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/toolbar';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {HeaderInfo, FunctionAPI, TypeContext, TypeLink, InterfaceType, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/toolbar/package.json';
+import Anatomy from './toolbar-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+
+---
+category: Content
+keywords: [toolbar, aria]
+---
+
+# useToolbar
+
+<PageDescription>{docs.exports.useToolbar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useToolbar']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useToolbar} links={docs.links} />
+
+## Features
+
+There is no native element to implement a toolbar in HTML. `useToolbar`
+helps achieve accessible toolbar components that can be styled as needed.
+
+* Exposed to assistive technology as a `toolbar` element via ARIA
+* Support for arrow key navigation
+* Support for both horizontal and vertical orientations
+* Support for interactive children including button, toggle button, menu, checkbox, and link
+* Automatic scrolling support during keyboard navigation
+
+## Anatomy
+
+<Anatomy />
+
+A toolbar consists of a container element for a set of interactive controls.
+`useToolbar` handles exposing this to assistive technology using ARIA, along with
+ handling arrow key navigation between children.
+
+`useToolbar` returns props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useToolbar.return.id].properties} />
+</TypeContext.Provider>
+
+An `aria-label` or `aria-labelledby` prop must be provided to identify the toolbar to assistive technology.
+
+## Example
+
+### Toolbar
+
+This example uses the <TypeLink links={docs.links} type={docs.exports.useToolbar} /> hook, spread on a container to handle
+navigation of components inside it.
+
+```tsx example
+import {useToolbar} from '@react-aria/toolbar';
+import {useRef} from 'react';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
+
+function Toolbar(props) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  // Get props for the toolbar element
+  let {toolbarProps} = useToolbar(props, ref);
+
+  return (
+    <div {...toolbarProps} ref={ref}>
+      {props.children}
+    </div>
+  );
+}
+
+<Toolbar aria-label="Actions">
+  <Button>Copy</Button>
+  <Button>Cut</Button>
+  <Button>Paste</Button>
+</Toolbar>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+[role=toolbar] {
+  --separator-color: var(--spectrum-global-color-gray-500);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example as an interactive child. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let {children} = props;
+  let ref = useRef<HTMLButtonElement | null>(null);
+  let {buttonProps, isPressed} = useButton({
+    ...props,
+    elementType: 'span'
+  }, ref);
+
+  return (
+    <span
+      {...buttonProps}
+      style={{
+        background: isPressed ? '#bbb' : '#aaa',
+        color: 'black',
+        cursor: 'default',
+        padding: '5px 10px'
+      }}
+      ref={ref}>
+      {children}
+    </span>
+  );
+}
+```
+
+</details>
+
+## Internationalization
+
+You are responsible for localizing all labels, both for the toolbar itself as well as all the
+content that is passed into the toolbar.
+
+### RTL
+
+In right-to-left languages, the toolbar should be mirrored both at the toolbar level as well as inside groups as appropriate.
+Ensure that your CSS accounts for this.

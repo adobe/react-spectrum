@@ -1,0 +1,5 @@
+{
+  "decrease": "Scădere {fieldLabel}",
+  "increase": "Creștere {fieldLabel}",
+  "numberField": "Câmp numeric"
+}

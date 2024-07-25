@@ -1,0 +1,128 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@mixin typographyColor .spectrum-Body1 {}
+@mixin typographyColor .spectrum-Body2 {}
+@mixin typographyColor .spectrum-Body3 {}
+@mixin typographyColor .spectrum-Body4 {}
+@mixin typographyColor .spectrum-Body5 {}
+@mixin typographyColor .spectrum-Heading1 {}
+@mixin typographyColor .spectrum-Heading2 {}
+@mixin typographyColor .spectrum-Heading3 {}
+@mixin typographyColor .spectrum-Heading4 {}
+@mixin typographyColor .spectrum-Heading5 {}
+@mixin typographyColor .spectrum-Heading6 {}
+@mixin typographyColor .spectrum-Subheading {}
+@mixin typographyColor .spectrum-Detail {}
+@mixin typographyColor .spectrum-Heading1--quiet, heading-quiet-1 {}
+@mixin typographyColor .spectrum-Heading2--quiet, heading-quiet-2 {}
+@mixin typographyColor .spectrum-Heading1--strong, heading-strong-1 {}
+@mixin typographyColor .spectrum-Heading2--strong, heading-strong-2 {}
+@mixin typographyColor .spectrum-Heading1--display, display-1 {}
+@mixin typographyColor .spectrum-Heading2--display, display-2 {}
+@mixin typographyColor .spectrum-Heading1--display.spectrum-Heading1--strong, display-strong-1 {}
+@mixin typographyColor .spectrum-Heading2--display.spectrum-Heading2--strong, display-strong-2 {}
+@mixin typographyColor .spectrum-Heading1--display.spectrum-Heading1--quiet, display-quiet-1 {}
+@mixin typographyColor .spectrum-Heading2--display.spectrum-Heading2--quiet, display-quiet-2 {}
+
+.spectrum-Article {
+  @mixin typographyColor .spectrum-Body1, body-article-1 {}
+  @mixin typographyColor .spectrum-Body2, body-article-2 {}
+  @mixin typographyColor .spectrum-Body3, body-article-3 {}
+  @mixin typographyColor .spectrum-Body4, body-article-4 {}
+  @mixin typographyColor .spectrum-Body5, body-article-5 {}
+  @mixin typographyColor .spectrum-Heading1, heading-article-1 {}
+  @mixin typographyColor .spectrum-Heading2, heading-article-2 {}
+  @mixin typographyColor .spectrum-Heading3, heading-article-3 {}
+  @mixin typographyColor .spectrum-Heading4, heading-article-4 {}
+  @mixin typographyColor .spectrum-Heading5, heading-article-5 {}
+  @mixin typographyColor .spectrum-Heading6, heading-article-6 {}
+  @mixin typographyColor .spectrum-Subheading, subheading-article {}
+  @mixin typographyColor .spectrum-Detail, detail-article {}
+  @mixin typographyColor .spectrum-Heading1--quiet, heading-quiet-article-1 {}
+  @mixin typographyColor .spectrum-Heading2--quiet, heading-quiet-article-2 {}
+  @mixin typographyColor .spectrum-Heading1--display, display-article-1 {}
+  @mixin typographyColor .spectrum-Heading2--display, display-article-2 {}
+  @mixin typographyColor .spectrum-Heading1--display.spectrum-Heading1--quiet, display-quiet-article-1 {}
+  @mixin typographyColor .spectrum-Heading2--display.spectrum-Heading2--quiet, display-quiet-article-2 {}
+}
+.spectrum {
+  &:lang(ja),
+  &:lang(ko),
+  &:lang(zh) {
+    @mixin typographyColor .spectrum-Body1, body-han-1 {}
+    @mixin typographyColor .spectrum-Body2, body-han-2 {}
+    @mixin typographyColor .spectrum-Body3, body-han-3 {}
+    @mixin typographyColor .spectrum-Body4, body-han-4 {}
+    @mixin typographyColor .spectrum-Body5, body-han-5 {}
+    @mixin typographyColor .spectrum-Heading1, heading-han-1 {}
+    @mixin typographyColor .spectrum-Heading2, heading-han-2 {}
+    @mixin typographyColor .spectrum-Heading3, heading-han-3 {}
+    @mixin typographyColor .spectrum-Heading4, heading-han-4 {}
+    @mixin typographyColor .spectrum-Heading5, heading-han-5 {}
+    @mixin typographyColor .spectrum-Heading6, heading-han-6 {}
+    @mixin typographyColor .spectrum-Subheading, subheading-han {}
+    @mixin typographyColor .spectrum-Detail, detail-han {}
+    @mixin typographyColor .spectrum-Heading1--quiet, heading-quiet-han-1 {}
+    @mixin typographyColor .spectrum-Heading2--quiet, heading-quiet-han-2 {}
+    @mixin typographyColor .spectrum-Heading1--strong, heading-strong-han-1 {}
+    @mixin typographyColor .spectrum-Heading2--strong, heading-strong-han-2 {}
+    @mixin typographyColor .spectrum-Heading1--display, display-han-1 {}
+    @mixin typographyColor .spectrum-Heading2--display, display-han-2 {}
+    @mixin typographyColor .spectrum-Heading1--display.spectrum-Heading1--strong, display-strong-han-1 {}
+    @mixin typographyColor .spectrum-Heading2--display.spectrum-Heading2--strong, display-strong-han-2 {}
+    @mixin typographyColor .spectrum-Heading1--display.spectrum-Heading1--quiet, display-quiet-han-1 {}
+    @mixin typographyColor .spectrum-Heading2--display.spectrum-Heading2--quiet, display-quiet-han-2 {}
+  }
+}
+@mixin typographyColor .spectrum-Code1, body-code-1 {}
+@mixin typographyColor .spectrum-Code2, body-code-2 {}
+@mixin typographyColor .spectrum-Code3, body-code-3 {}
+@mixin typographyColor .spectrum-Code4, body-code-4 {}
+@mixin typographyColor .spectrum-Code5, body-code-5 {}
+
+&,
+.spectrum-Body {
+  color: var(--spectrum-body-text-color);
+}
+
+.spectrum-Body--large {
+  color: var(--spectrum-body-large-text-color);
+}
+
+.spectrum-Body--small {
+  color: var(--spectrum-body-small-text-color);
+}
+
+.spectrum-Body--secondary {
+  color: var(--spectrum-body-secondary-text-color);
+}
+
+.spectrum-Heading--display {
+  color: var(--spectrum-heading-display-text-color);
+}
+
+.spectrum-Heading--pageTitle {
+  color: var(--spectrum-heading-page-title-text-color);
+}
+
+.spectrum-Heading--subtitle1 {
+  color: var(--spectrum-heading-subtitle1-text-color);
+}
+
+.spectrum-Heading--subtitle2 {
+  color: var(--spectrum-heading-subtitle2-text-color);
+}
+
+.spectrum-Heading--subtitle3 {
+  color: var(--spectrum-heading-subtitle3-text-color);
+}

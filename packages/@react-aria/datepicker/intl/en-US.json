@@ -1,0 +1,18 @@
+{
+  "era": "era",
+  "year": "year",
+  "month": "month",
+  "day": "day",
+  "hour": "hour",
+  "minute": "minute",
+  "second": "second",
+  "dayPeriod": "AM/PM",
+  "calendar": "Calendar",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "weekday": "day of the week",
+  "timeZoneName": "time zone",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}"
+}

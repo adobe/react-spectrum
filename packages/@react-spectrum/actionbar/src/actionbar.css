@@ -1,0 +1,91 @@
+.ActionBarContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  & > :not(.react-spectrum-ActionBar) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  & > .react-spectrum-ActionBar {
+    flex: 0 0 auto;
+  }
+}
+
+.react-spectrum-ActionBar {
+  transition: height var(--spectrum-global-animation-duration-100) ease-in-out,
+              opacity var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  /* Take up no space when not open */
+  block-size: 0;
+  opacity: 0;
+  width: 100%;
+
+  /* Clip anything outside of us, whether we're open or not. This makes the animation smooth */
+  overflow: hidden;
+
+  &.is-open {
+    height: calc(var(--spectrum-global-dimension-size-600) + var(--spectrum-global-dimension-size-100) * 2);
+    opacity: 1;
+    transition-delay: 0ms;
+  }
+
+  .react-spectrum-ActionBar-bar {
+    display: grid;
+    grid-template-areas: "clear selected . actiongroup";
+    grid-template-columns: auto max-content minmax(var(--spectrum-global-dimension-size-300), 1fr) auto;
+    align-items: center;
+    isolation: isolate;
+    justify-content: space-between;
+    padding: var(--spectrum-global-dimension-size-100);
+
+    position: absolute;
+    bottom: var(--spectrum-global-dimension-size-100);
+    left: var(--spectrum-global-dimension-size-100);
+    right: var(--spectrum-global-dimension-size-100);
+    max-width: 960px;
+    margin: 0 auto;
+
+    background: var(--spectrum-global-color-gray-50);
+    border-radius: var(--spectrum-popover-border-radius);
+    border-style: solid;
+    border-width: var(--spectrum-popover-border-size);
+    border-color: var(--spectrum-popover-border-color);
+    box-shadow: 0 2px 8px var(--spectrum-alias-dropshadow-color);
+
+    transform: translateY(var(--spectrum-overlay-positive-transform-distance));
+    transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  }
+
+  &.is-open .react-spectrum-ActionBar-bar {
+    transform: translateY(0);
+  }
+
+  &.react-spectrum-ActionBar--emphasized .react-spectrum-ActionBar-bar {
+    background: var(--spectrum-global-color-static-blue-700);
+    color: white;
+    box-shadow: 0 2px 6px var(--spectrum-alias-dropshadow-color);
+    border: none;
+  }
+
+  .react-spectrum-ActionBar-selectedCount {
+    grid-area: selected;
+    padding: 0 var(--spectrum-global-dimension-size-50);
+    user-select: none;
+    cursor: default;
+  }
+
+  .react-spectrum-ActionBar-actionGroup {
+    grid-area: actiongroup;
+    min-width: 0;
+  }
+}
+@media (forced-colors: active) {
+  .react-spectrum-ActionBar {
+    &.react-spectrum-ActionBar--emphasized .react-spectrum-ActionBar-bar {
+
+      border: 1px solid transparent;
+    }
+  }
+}

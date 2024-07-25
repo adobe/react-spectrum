@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} tot {endDate}",
+  "dateSelected": "{date} geselecteerd",
+  "finishRangeSelectionPrompt": "Klik om de selectie van het datumbereik te voltooien",
+  "maximumDate": "Laatste beschikbare datum",
+  "minimumDate": "Eerste beschikbare datum",
+  "next": "Volgende",
+  "previous": "Vorige",
+  "selectedDateDescription": "Geselecteerde datum: {date}",
+  "selectedRangeDescription": "Geselecteerd bereik: {dateRange}",
+  "startRangeSelectionPrompt": "Klik om het datumbereik te selecteren",
+  "todayDate": "Vandaag, {date}",
+  "todayDateSelected": "Vandaag, {date} geselecteerd"
+}

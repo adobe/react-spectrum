@@ -1,0 +1,471 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/breadcrumbs/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Navigation
+keywords: [breadcrumbs, aria]
+type: component
+---
+
+# Breadcrumbs
+
+<PageDescription>{docs.exports.Breadcrumbs.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Breadcrumbs']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
+
+<Breadcrumbs>
+  <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+  <Breadcrumb><Link href="/react-aria/">React Aria</Link></Breadcrumb>
+  <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
+</Breadcrumbs>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-Breadcrumbs {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  color: var(--text-color);
+
+  .react-aria-Breadcrumb:not(:last-child)::after {
+    content: '›';
+    content: '›' / '';
+    alt: ' ';
+    padding: 0 5px;
+  }
+
+  .react-aria-Link {
+    color: var(--link-color-secondary);
+    outline: none;
+    position: relative;
+    text-decoration: none;
+    cursor: pointer;
+
+    &[data-hovered] {
+      text-decoration: underline;
+    }
+
+    &[data-current] {
+      color: var(--text-color);
+      font-weight: bold;
+    }
+
+    &[data-focus-visible]:after {
+      content: '';
+      position: absolute;
+      inset: -2px -4px;
+      border-radius: 6px;
+      border: 2px solid var(--focus-ring-color);
+    }
+  }
+}
+```
+
+</details>
+
+## Features
+
+Breadcrumbs provide a list of links to parent pages of the current page in hierarchical order.
+`Breadcrumbs` helps implement these in an accessible way.
+
+* **Flexible** – Support for HTML navigation links, JavaScript handled links, and client side routing.
+* **Accessible** – Implemented as an ordered list of links. The last link is automatically marked as the current page using `aria-current`.
+* **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+
+## Anatomy
+
+<Anatomy />
+
+Breadcrumbs consist of a list of links, typically with a visual separator
+icon between each item. The last link represents the current page in the hierarchy, with the previous links representing the
+parent pages of the current page. Each of these parent links can be clicked, tapped, or
+triggered via the <Keyboard>Enter</Keyboard> key to navigate to that page.
+
+```tsx
+import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
+
+<Breadcrumbs>
+  <Breadcrumb><Link /></Breadcrumb>
+</Breadcrumbs>
+```
+
+### Concepts
+
+`Breadcrumbs` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+`Breadcrumbs` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Link.html"
+  title="Link"
+  description="A link allows a user to navigate to another page.">
+  <Link />
+</ExampleCard>
+
+</section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="breadcrumbs" />
+
+## Content
+
+`Breadcrumbs` follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrumb is pressed, the `onAction` event is triggered and the breadcrumbs array is updated.
+
+```tsx example
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let [breadcrumbs, setBreadcrumbs] = React.useState([
+    {id: 1, label: 'Home'},
+    {id: 2, label: 'Trendy'},
+    {id: 3, label: 'March 2022 Assets'}
+  ]);
+
+  let navigate = (id: Key) => {
+    let i = breadcrumbs.findIndex(item => item.id === id);
+    setBreadcrumbs(breadcrumbs.slice(0, i + 1));
+  };
+
+  return (
+    <Breadcrumbs items={breadcrumbs} onAction={navigate}>
+      {item => <Breadcrumb><Link>{item.label}</Link></Breadcrumb>}
+    </Breadcrumbs>
+  );
+}
+```
+
+### Client side routing
+
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Separator icons
+
+The above examples use the CSS `:after` pseudo class to add separators between each item. These may also be DOM elements instead, e.g. SVG icons. Be sure that they have `aria-hidden="true"` so they are hidden from assistive technologies.
+
+```tsx example
+import ChevronIcon from '@spectrum-icons/workflow/ChevronDoubleRight';
+
+<Breadcrumbs>
+  <Breadcrumb className="my-item">
+    <Link href="/">Home</Link>
+    <ChevronIcon size="S" />
+  </Breadcrumb>
+  <Breadcrumb><Link>React Aria</Link></Breadcrumb>
+</Breadcrumbs>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-item svg {
+  vertical-align: middle;
+  padding: 0 5px;
+  margin-top: -2px;
+}
+```
+
+</details>
+
+## Landmarks
+
+When breadcrumbs are used as a main navigation element for a page, they can be placed in a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html). Landmarks help assistive technology users quickly find major sections of a page. Place breadcrumbs inside a `<nav>` element with an `aria-label` to create a navigation landmark.
+
+```tsx example
+<nav aria-label="Breadcrumbs">
+  <Breadcrumbs>
+    <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+    <Breadcrumb><Link href="/react-aria/">React Aria</Link></Breadcrumb>
+    <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
+  </Breadcrumbs>
+</nav>
+```
+
+It is best to keep the number of landmarks on a page to a minimum, so only place breadcrumbs in a navigation landmark when it represents the primary or secondary navigation for the page. For example, breadcrumbs within table rows or popovers most likely should not be landmarks.
+
+## Disabled
+
+Breadcrumbs can be disabled using the `isDisabled` prop. This indicates that navigation is not currently available. When a breadcrumb is disabled, `onPress` will not be triggered, navigation will not occur, and links will be marked as `aria-disabled` for assistive technologies.
+
+```tsx example
+<Breadcrumbs isDisabled>
+  <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+  <Breadcrumb><Link href="/react-aria/">React Aria</Link></Breadcrumb>
+  <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
+</Breadcrumbs>
+```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Breadcrumbs {
+  .react-aria-Link {
+    &[data-disabled] {
+      cursor: default;
+
+      &:not([data-current]) {
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}
+```
+
+</details>
+
+Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to the `<Link>` element:
+
+```tsx example
+<Breadcrumbs>
+  <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
+  <Breadcrumb><Link isDisabled href="/react-aria/">React Aria</Link></Breadcrumb>
+  <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
+</Breadcrumbs>
+```
+
+## Props
+
+### Breadcrumbs
+
+<PropTable component={docs.exports.Breadcrumbs} links={docs.links} />
+
+### Breadcrumb
+
+<PropTable component={docs.exports.Breadcrumb} links={docs.links} />
+
+### Link
+
+<PropTable component={docs.exports.Link} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Breadcrumbs {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Breadcrumbs className="my-breadcrumbs">
+  {/* ... */}
+</Breadcrumbs>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Link[data-current] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Link className={({isCurrent}) => isCurrent ? 'bg-gray-700' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a link for all the breadcrumb items except the current one.
+
+```jsx
+<Breadcrumbs items={items}>
+  {(item) => (
+    <Breadcrumb>
+      {({isCurrent}) => isCurrent ? <strong>{item.label}</strong> : <Link>{item.label}</Link>}
+    </Breadcrumb>
+  )}
+</Breadcrumbs>
+```
+
+
+The states, selectors, and render props for all components used in `Breadcrumbs` are documented below.
+
+### Breadcrumbs
+
+`Breadcrumbs` can be targed with the `.react-aria-Breadcrumbs` CSS selector, or by overriding with a custom `className`. It is rendered as an `<ol>` element representing the list of items.
+
+### Breadcrumb
+
+A `Breadcrumb` can be targeted with the `.react-aria-Breadcrumb` CSS selector, or by overriding with a custom `className`. It is rendered as an `<li>` element, and should contain a `<Link>`. It may also include another element such as a [separator icon](#separator-icons). Breadcrumb support the following states and render props:
+
+<StateTable properties={docs.exports.BreadcrumbRenderProps.properties} />
+
+### Link
+
+A `Link` can be targeted with the `.react-aria-Link` CSS selector, or by overriding with a custom `className`. It is rendered as an `<a>` element when a href is provided via props. If only text is provided, it is rendered as a `<span>`. Links support the following states and render props:
+
+<StateTable properties={docs.exports.LinkRenderProps.properties} />
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Breadcrumbs']} docs={docs} />
+
+This example shows a `Router` component that accepts `Breadcrumbs` and `Link` elements as children, and tracks a history stack. When a link is clicked, it is pushed to the stack and automatically updates the breadcrumbs. When a breadcrumb is clicked, the stack is popped to that location.
+
+```tsx example render=false export=true
+import type {PressEvent} from 'react-aria-components';
+import {BreadcrumbsContext, LinkContext} from 'react-aria-components';
+
+interface RouterItem {
+  id: number,
+  label: string
+}
+
+function Router({children}) {
+  let [items, setItems] = React.useState<RouterItem[]>([
+    {id: 0, label: 'Home'},
+    {id: 1, label: 'React Aria'},
+  ]);
+
+  // Pop stack when a breadcrumb item is clicked.
+  let onAction = (id: Key) => {
+    let i = items.findIndex(item => item.id === id);
+    setItems(items.slice(0, i + 1));
+  };
+
+  // Push stack when a link is clicked.
+  let onPress = (e: PressEvent) => {
+    let label = e.target.textContent;
+    setItems(items.concat({id: items.length, label}));
+  };
+
+  return (
+    /*- begin highlight -*/
+    <BreadcrumbsContext.Provider value={{items, onAction}}>
+    {/*- end highlight -*/}
+      <LinkContext.Provider value={{onPress}}>
+        {children}
+      </LinkContext.Provider>
+    </BreadcrumbsContext.Provider>
+  );
+}
+```
+
+**Note**: `LinkContext` only affects links outside `Breadcrumbs` because `Breadcrumbs` also provides a value for `LinkContext` which overrides an outer provider. See [custom children](#custom-children) below for more details.
+
+Now when you place `Breadcrumbs` inside a `Router`, it automatically has access to the location history via context.
+
+```tsx example
+<Router>
+  <Breadcrumbs>
+    {(item: RouterItem) => <Breadcrumb><Link>{item.label}</Link></Breadcrumb>}
+  </Breadcrumbs>
+  <ul>
+    <li><Link>Breadcrumbs</Link></li>
+    <li><Link>Button</Link></li>
+    <li><Link>Calendar</Link></li>
+  </ul>
+</Router>
+```
+
+### Custom children
+
+Breadcrumbs passes props to its child components, such as the links, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Link']} docs={docs} />
+
+This example consumes from `LinkContext` in an existing styled link component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Breadcrumbs. [useLink](useLink.html) returns DOM props to spread onto the link element.
+
+```tsx
+import type {LinkProps} from 'react-aria-components';
+import {LinkContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLink = React.forwardRef((props: LinkProps, ref: React.ForwardedRef<HTMLAnchorElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LinkContext);
+  ///- end highlight -///
+
+  // ... your existing Link component
+  let {linkProps} = useLink(props, ref);
+  return <a {...linkProps} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLink` within `Breadcrumbs`, in place of the builtin React Aria Components `Link`.
+
+```tsx
+<Breadcrumbs>
+  {/*- begin highlight -*/}
+  <Breadcrumb><MyCustomLink>Custom link</MyCustomLink></Breadcrumb>
+  {/*- end highlight -*/}
+  {/* ... */}
+</Breadcrumbs>
+```
+
+### Hooks
+
+If you need to customize things further, such as customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useBreadcrumbs](useBreadcrumbs.html) for more details.

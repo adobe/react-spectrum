@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "选定的 {selectedCount, plural, one {个日期} other {个日期}} 不可用。"
+}

@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Показать предложения",
+  "countAnnouncement": "{optionCount, plural, one {# параметр} other {# параметров}} доступно.",
+  "focusAnnouncement": "{isGroupChange, select, true {Введенная группа {groupTitle}, с {groupCount, plural, one {# параметром} other {# параметрами}}. } other {}}{optionText}{isSelected, select, true {, выбранными} other {}}",
+  "listboxLabel": "Предложения",
+  "selectedAnnouncement": "{optionText}, выбрано"
+}

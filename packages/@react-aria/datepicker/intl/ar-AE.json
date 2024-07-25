@@ -1,0 +1,18 @@
+{
+  "calendar": "التقويم",
+  "day": "يوم",
+  "dayPeriod": "ص/م",
+  "endDate": "تاريخ الانتهاء",
+  "era": "العصر",
+  "hour": "الساعات",
+  "minute": "الدقائق",
+  "month": "الشهر",
+  "second": "الثواني",
+  "selectedDateDescription": "تاريخ محدد: {date}",
+  "selectedRangeDescription": "المدى الزمني المحدد: {startDate} إلى {endDate}",
+  "selectedTimeDescription": "الوقت المحدد: {time}",
+  "startDate": "تاريخ البدء",
+  "timeZoneName": "التوقيت",
+  "weekday": "اليوم",
+  "year": "السنة"
+}

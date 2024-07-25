@@ -1,0 +1,66 @@
+{
+  "name": "@react-spectrum/actionbar",
+  "version": "3.5.1",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria/focus": "^3.18.1",
+    "@react-aria/i18n": "^3.12.1",
+    "@react-aria/interactions": "^3.22.1",
+    "@react-aria/live-announcer": "^3.3.4",
+    "@react-aria/utils": "^3.25.1",
+    "@react-spectrum/actiongroup": "^3.10.7",
+    "@react-spectrum/button": "^3.16.6",
+    "@react-spectrum/overlays": "^5.6.3",
+    "@react-spectrum/text": "^3.5.7",
+    "@react-spectrum/utils": "^3.11.9",
+    "@react-stately/collections": "^3.10.9",
+    "@react-types/actionbar": "^3.1.9",
+    "@react-types/shared": "^3.24.1",
+    "@spectrum-icons/ui": "^3.6.9",
+    "@swc/helpers": "^0.5.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "@react-spectrum/provider": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

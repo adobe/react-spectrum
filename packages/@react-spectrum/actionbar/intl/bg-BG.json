@@ -1,0 +1,7 @@
+{
+  "actions": "Действия",
+  "actionsAvailable": "Налични действия.",
+  "clearSelection": "Изчистване на избора",
+  "selected": "{count, plural, =0 {Няма избрани} one {# избран} other {# избрани}}",
+  "selectedAll": "Всички избрани"
+}
