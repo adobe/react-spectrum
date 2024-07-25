@@ -64,17 +64,7 @@ export class GridListTester {
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
       await this.pressElement(cell);
-      // needsLongPress ? await triggerLongPress(cell) : await this.pressElement(cell);
     }
-
-    // // Handle cases where the table may transition in response to the row selection/deselection
-    // if (!jestFakeTimersAreEnabled()) {
-    //   await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
-    // } else {
-    //   act(() => {
-    //     jest.runOnlyPendingTimers();
-    //   });
-    // }
   };
 
   // TODO: pretty much the same as table except it uses this.gridlist. Make common between the two by accepting an option for
@@ -133,8 +123,13 @@ export class GridListTester {
     return within(this.getGridList()).queryAllByRole('row');
   };
 
+  getSelectedRows = () => {
+    return this.getRows().filter(row => row.getAttribute('aria-selected') === 'true');
+  };
+
   getCells = (opts: {element?: HTMLElement} = {}) => {
     let {element} = opts;
     return within(element || this.getGridList()).queryAllByRole('gridcell');
   };
+
 }

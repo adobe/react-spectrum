@@ -840,13 +840,17 @@ describe('ListView', function () {
 
     it('should support select all and clear all via keyboard', async function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+      let grid = tree.getByRole('grid');
+      let {setElement, toggleRowSelection, getSelectedRows, getRows} = testUtilUser.createTester('GridListTester');
+      setElement(grid);
+      let rows = getRows();
 
-      let rows = tree.getAllByRole('row');
-      await user.click(rows[0]);
+      await toggleRowSelection({index: 0});
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('Foo selected.');
       expect(announce).toHaveBeenCalledTimes(1);
+      expect(getSelectedRows()).toHaveLength(1);
 
       fireEvent.keyDown(rows[0], {key: 'a', ctrlKey: true});
       fireEvent.keyUp(rows[0], {key: 'a', ctrlKey: true});
@@ -854,6 +858,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('All items selected.');
       expect(announce).toHaveBeenCalledTimes(2);
+      expect(getSelectedRows()).toHaveLength(3);
 
       fireEvent.keyDown(rows[0], {key: 'Escape'});
       fireEvent.keyUp(rows[0], {key: 'Escape'});
@@ -861,6 +866,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
       expect(announce).toHaveBeenCalledTimes(3);
+      expect(getSelectedRows()).toHaveLength(0);
     });
 
     describe('onAction', function () {

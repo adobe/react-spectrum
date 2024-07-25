@@ -308,6 +308,10 @@ export class TableTester {
     return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
   };
 
+  getSelectedRows = () => {
+    return this.getRows().filter(row => row.getAttribute('aria-selected') === 'true');
+  };
+
   getRowHeaders = () => {
     let table = this._table;
     return table ? within(this._table).queryAllByRole('rowheader') : [];
@@ -317,4 +321,5 @@ export class TableTester {
     let table = this._table;
     return table ? within(table).queryAllByRole('gridcell') : [];
   };
+
 }

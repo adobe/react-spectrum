@@ -2393,7 +2393,7 @@ export let tableTests = () => {
 
     describe('select all', function () {
       it('should support selecting all via the checkbox', async function () {
-        let {setElement, setInteractionType, getRows, toggleSelectAll} = testUtilUser.createTester('TableTester');
+        let {setElement, setInteractionType, getRows, getSelectedRows, toggleSelectAll} = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
         setInteractionType('keyboard');
@@ -2403,9 +2403,10 @@ export let tableTests = () => {
 
         let rows = getRows();
         checkRowSelection(rows.slice(1), false);
+        expect(getSelectedRows()).toHaveLength(0);
 
         await toggleSelectAll();
-
+        expect(getSelectedRows()).toHaveLength(getRows().length);
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
         checkRowSelection(rows.slice(1), true);
