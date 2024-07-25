@@ -53,3 +53,60 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
   }
 </DialogTrigger>
 `);
+
+test('Comments out type="tray"', `
+import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} from '@adobe/react-spectrum';
+
+<DialogTrigger type="tray">
+  <ActionButton>Disk Status</ActionButton>
+  <Dialog>
+    50% disk space remaining.
+  </Dialog>
+</DialogTrigger>
+`);
+
+
+test('Comments out if type might be "tray"', `
+import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} from '@adobe/react-spectrum';
+
+<DialogTrigger type={true ? "tray" : "popover"}>
+  <ActionButton>Disk Status</ActionButton>
+  <Dialog>
+    50% disk space remaining.
+  </Dialog>
+</DialogTrigger>
+`);
+
+test('Comments out mobileType', `
+import {DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text} from '@adobe/react-spectrum';
+
+<>
+  <DialogTrigger mobileType="tray">
+    <ActionButton>Disk Status</ActionButton>
+    <Dialog>
+      50% disk space remaining.
+    </Dialog>
+  </DialogTrigger>
+  <DialogTrigger mobileType={true ? "tray" : "fullscreen"}>
+    <ActionButton>Disk Status</ActionButton>
+    <Dialog>
+      50% disk space remaining.
+    </Dialog>
+  </DialogTrigger>
+</>
+`);
+
+test('Removes onDismiss and leaves a comment', `
+import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogTrigger>
+  <Button>Test</Button>
+  {(close) => 
+    <Dialog onDismiss={close}>
+      <Heading>Test</Heading>
+      <Divider />
+      <Content>Content</Content>
+    </Dialog>
+  }
+</DialogTrigger>
+`);

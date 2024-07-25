@@ -107,3 +107,12 @@ import {Breadcrumbs, Item} from '@adobe/react-spectrum';
   <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
 `);
+
+test('Leaves a comment if size prop contains "S"', `
+import {Breadcrumbs, Item} from '@adobe/react-spectrum';
+
+<Breadcrumbs size={true ? 'M' : 'S'}>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+</Breadcrumbs>
+`);

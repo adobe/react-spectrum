@@ -15,6 +15,15 @@ import {Button} from '@adobe/react-spectrum';
 </div>
 `);
 
+test('Renames variants with aliased import', `
+import {Button as RSPButton} from '@adobe/react-spectrum';
+
+<div>
+  <RSPButton variant="cta">Test</RSPButton>
+  <RSPButton variant="overBackground">Test</RSPButton>
+</div>
+`);
+
 test('Comments out isPending', `
 import {Button} from '@adobe/react-spectrum';
 
@@ -30,5 +39,21 @@ import {Button} from '@adobe/react-spectrum';
 <div>
   <Button>Test</Button>
   <Button href="/">Test</Button>
+</div>
+`);
+
+test('Does not change nested components with same prop name', `
+import {Button} from '@adobe/react-spectrum';
+import {FakeComponent} from 'fake-package';
+
+<div>
+  <Button variant="cta">
+    Test
+    <FakeComponent variant="cta">Test</FakeComponent>
+  </Button>
+  <Button variant="overBackground">
+    Test
+    <FakeComponent variant="overBackground">Test</FakeComponent>
+  </Button>
 </div>
 `);

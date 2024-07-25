@@ -6,13 +6,20 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-// add other sizes if we are going to replace it for them
-test('Replaces size (maybe? or just removes it?)', `
+test('Replaces size prop with macro size value', `
 import {Avatar} from '@adobe/react-spectrum';
 let size = 75;
 let props = {size: 100};
 
 <div>
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    size="avatar-size-50" />
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    size="avatar-size-700" />
   <Avatar
     src="https://i.imgur.com/kJOwAdv.png"
     alt="avatar with custom size"

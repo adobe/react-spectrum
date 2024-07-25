@@ -52,7 +52,7 @@ let folders = [
 <div>
   // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
   <Breadcrumbs onAction={(a) => setFolderId(a)}>
-    {folders.map(f => <Breadcrumb id={f.id}>{f.label}</Breadcrumb>)}
+    {folders.map(f => <Breadcrumb id={f.id} key={f.id}>{f.label}</Breadcrumb>)}
   </Breadcrumbs>
 </div>"
 `;
@@ -80,6 +80,18 @@ const items = [
     {item => <Breadcrumb>{item.name}</Breadcrumb>}
   </Breadcrumbs>
 </div>"
+`;
+
+exports[`Leaves a comment if size prop contains "S" 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react/experimental-s2";
+import { Item } from '@adobe/react-spectrum';
+
+// TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+<Breadcrumbs // TODO(S2-upgrade): size="S" is no longer supported. You'll need to update this manually.
+size={true ? 'M' : 'S'}>
+  <Breadcrumb id="home">Home</Breadcrumb>
+  <Breadcrumb id="trendy">Trendy</Breadcrumb>
+</Breadcrumbs>"
 `;
 
 exports[`Removes size="S" 1`] = `

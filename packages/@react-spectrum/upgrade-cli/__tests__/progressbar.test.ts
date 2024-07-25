@@ -12,3 +12,21 @@ import {ProgressBar} from '@adobe/react-spectrum';
   <ProgressBar variant="overBackground"/>
 </div>
 `);
+
+
+test('Comments out labelPosition', `
+import {ProgressBar} from '@adobe/react-spectrum';
+<div>
+  <ProgressBar labelPosition="side" />
+  <ProgressBar labelPosition="top" />
+</div>
+`);
+
+test('Removes showValueLabel', `
+import {ProgressBar} from '@adobe/react-spectrum';
+<div>
+  <ProgressBar showValueLabel />
+  <ProgressBar showValueLabel={true} />
+  <ProgressBar showValueLabel={false} />
+</div>
+`);

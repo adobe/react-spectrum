@@ -94,11 +94,6 @@ export const changes: ChangesJSON = {
           name: 'commentOutProp',
           args: {propToComment: 'isDisabled'}
         }
-      },
-      {
-        description: 'Remove size',
-        reason: 'A size can be provided via the style macro',
-        function: {name: 'removeProp', args: {propToRemove: 'size'}}
       }
     ]
   },
@@ -250,22 +245,10 @@ export const changes: ChangesJSON = {
     ]
   },
   ColorArea: {
-    changes: [
-      {
-        description: 'Remove size',
-        reason: 'A size can be provided via the style macro',
-        function: {name: 'removeProp', args: {propToRemove: 'size'}}
-      }
-    ]
+    changes: []
   },
   ColorWheel: {
-    changes: [
-      {
-        description: 'Remove size',
-        reason: 'A size can be provided via the style macro',
-        function: {name: 'removeProp', args: {propToRemove: 'size'}}
-      }
-    ]
+    changes: []
   },
   ColorSlider: {
     changes: [
@@ -383,25 +366,18 @@ export const changes: ChangesJSON = {
     ]
   },
   Dialog: {
-    changes: [
-      // {
-      //   description:
-      //     'Remove onDismiss and use onOpenChange on the DialogTrigger, or onDismiss on the DialogContainer instead',
-      //   reason: 'Updated API',
-      //   function: {name: 'removeProp', args: {propToRemove: 'onDismiss'}}
-      // }
-    ]
+    changes: []
   },
   DialogTrigger: {
     changes: [
       {
         description: "Comment out type='tray'",
         reason: 'Tray has not been implemented yet',
-        function: {name: 'commentOutProp', args: {propToComment: 'type'}}
+        function: {name: 'commentOutProp', args: {propToComment: 'type', propValue: 'tray'}}
       },
       {
         description: "Comment out mobileType='tray'",
-        reason: 'Tray has not been implemented yet',
+        reason: 'mobileType has not been implemented yet',
         function: {
           name: 'commentOutProp',
           args: {propToComment: 'mobileType'}
@@ -732,12 +708,9 @@ export const changes: ChangesJSON = {
         }
       },
       {
-        description: 'Comment out showValueLabel',
-        reason: 'It has not been implemented yet',
-        function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'showValueLabel'}
-        }
+        description: 'Remove showValueLabel',
+        reason: 'It was removed for accessibility reasons',
+        function: {name: 'removeProp', args: {propToRemove: 'showValueLabel'}}
       }
     ]
   },
@@ -1145,7 +1118,8 @@ export const changes: ChangesJSON = {
         function: {
           name: 'updatePlacementToSingleValue',
           args: {
-            propToUpdate: 'placement'
+            propToUpdate: 'placement',
+            childComponent: 'Tooltip'
           }
         }
       }

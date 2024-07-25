@@ -117,3 +117,15 @@ export function addComponentImport(path: NodePath<t.Program>, newComponent: stri
   }
   return localName;
 }
+
+/**
+ * Look up the name in path.scope and find the original binding.
+ * Returns the original name even if an alias is used.
+ */
+export function getName(path: NodePath<t.JSXElement>, identifier: t.JSXIdentifier) {
+  let binding = path.scope.getBinding(identifier.name);
+  if (binding && t.isImportSpecifier(binding.path.node) && t.isIdentifier(binding.path.node.imported)) {
+    return binding.path.node.imported.name;
+  }
+  return identifier.name;
+}
