@@ -130,6 +130,10 @@ module.exports = new Transformer({
         return processExport(path.get('arguments.0'), node);
       }
 
+      if (isCollectionComponent(path)) {
+        return processExport(path.get('arguments.1'), node);
+      }
+
       if (path.isClassDeclaration()) {
         let properties = {};
         for (let propertyPath of path.get('body.body')) {
@@ -653,6 +657,13 @@ module.exports = new Transformer({
 
     function isReactForwardRef(path) {
       return isReactCall(path, 'forwardRef') || (path.isCallExpression() && path.get('callee').isIdentifier({name: 'createHideableComponent'}));
+    }
+
+    function isCollectionComponent(path) {
+      return path.isCallExpression() && t.isIdentifier(path.node.callee) && (
+        path.node.callee.name === 'createLeafComponent' ||
+        path.node.callee.name === 'createBranchComponent'
+      );
     }
 
     function isReactCall(path, name, module = 'react') {

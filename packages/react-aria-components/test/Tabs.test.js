@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
@@ -204,6 +204,39 @@ describe('Tabs', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('finds the first non-disabled tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a" isDisabled>A</Tab>
+          <Tab id="b">B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[0]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('selects first tab if all tabs are disabled', async () => {
+    let {getByRole} = renderTabs({}, {}, {isDisabled: true});
+    await user.tab();
+
+    let tablist = getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let tabpanel = getByRole('tabpanel');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(tabpanel);
+  });
+
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
@@ -376,5 +409,41 @@ describe('Tabs', () => {
     expect(tabs[0]).toHaveAttribute('aria-label', 'Tab A');
     expect(tabs[1]).toHaveAttribute('aria-label', 'Tab B');
     expect(tabs[2]).toHaveAttribute('aria-label', 'Tab C');
+  });
+
+  it('supports nested tabs', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList>
+          <Tab id="foo">Foo</Tab>
+          <Tab id="bar">Bar</Tab>
+        </TabList>
+        <TabPanel id="foo">
+          <Tabs>
+            <TabList>
+              <Tab id="one">One</Tab>
+              <Tab id="two">Two</Tab>
+            </TabList>
+            <TabPanel id="one">One</TabPanel>
+            <TabPanel id="two">Two</TabPanel>
+          </Tabs>
+        </TabPanel>
+        <TabPanel id="bar">Bar</TabPanel>
+      </Tabs>
+    );
+
+    // Wait a tick for MutationObserver in useHasTabbableChild to fire.
+    // This avoids React's "update not wrapped in act" warning.
+    await waitFor(() => Promise.resolve());
+
+    let rootTabs = within(getAllByRole('tablist')[0]).getAllByRole('tab');
+    expect(rootTabs).toHaveLength(2);
+    expect(rootTabs[0]).toHaveTextContent('Foo');
+    expect(rootTabs[1]).toHaveTextContent('Bar');
+
+    let innerTabs = within(getAllByRole('tabpanel')[0]).getAllByRole('tab');
+    expect(innerTabs).toHaveLength(2);
+    expect(innerTabs[0]).toHaveTextContent('One');
+    expect(innerTabs[1]).toHaveTextContent('Two');
   });
 });

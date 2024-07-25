@@ -18,10 +18,13 @@ import {
   Header, Heading,
   ListBox,
   ListBoxContext,
-  ListBoxItem, Modal,
+  ListBoxItem,
+  UNSTABLE_ListLayout as ListLayout,
+  Modal,
   Section,
   Text,
-  useDragAndDrop
+  useDragAndDrop,
+  UNSTABLE_Virtualizer as Virtualizer
 } from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -62,9 +65,40 @@ describe('ListBox', () => {
     jest.useFakeTimers();
   });
 
+  beforeEach(() => {
+    jest.spyOn(HTMLElement.prototype, 'scrollLeft', 'get').mockImplementation(() => 0);
+    jest.spyOn(HTMLElement.prototype, 'scrollTop', 'get').mockImplementation(() => 0);
+  });
+
   afterEach(() => {
     act(() => {jest.runAllTimers();});
     jest.restoreAllMocks();
+  });
+
+  it('should have the base set of aria and data attributes', () => {
+    let {getByRole, getAllByRole} = render(
+      <ListBox aria-label="Animals">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        <Section>
+          <Header>Fish</Header>
+          <ListBoxItem id="salmon">Salmon</ListBoxItem>
+          <ListBoxItem id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem id="cod">Cod</ListBoxItem>
+        </Section>
+      </ListBox>
+    );
+    let menu = getByRole('listbox');
+    expect(menu).toHaveAttribute('data-rac');
+
+    for (let group of getAllByRole('group')) {
+      expect(group).toHaveAttribute('data-rac');
+    }
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-rac');
+    }
   });
 
   it('should render with default classes', () => {
@@ -445,7 +479,23 @@ describe('ListBox', () => {
     );
     let items = getAllByRole('option');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on list ans list items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test" onAction={onAction}>
+        <ListBoxItem id="cat" onAction={itemAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledWith('cat');
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support empty state', () => {
@@ -656,6 +706,52 @@ describe('ListBox', () => {
     let listbox = getByRole('listbox');
     fireEvent.scroll(listbox);
     expect(onScroll).toHaveBeenCalled();
+  });
+
+  it('should support virtualizer', async () => {
+    let layout = new ListLayout({
+      rowHeight: 25
+    });
+
+    let items = [];
+    for (let i = 0; i < 50; i++) {
+      items.push({id: i, name: 'Item ' + i});
+    }
+
+    jest.restoreAllMocks(); // don't mock scrollTop for this test
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole, getAllByRole} = render(
+      <Virtualizer layout={layout}>
+        <ListBox aria-label="Test" items={items}>
+          {item => <ListBoxItem>{item.name}</ListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    );
+
+    let options = getAllByRole('option');
+    expect(options).toHaveLength(7);
+    expect(options.map(r => r.textContent)).toEqual(['Item 0', 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
+    for (let option of options) {
+      expect(option).toHaveAttribute('aria-setsize', '50');
+      expect(option).toHaveAttribute('aria-posinset');
+    }
+
+    let listbox = getByRole('listbox');
+    listbox.scrollTop = 200;
+    fireEvent.scroll(listbox);
+
+    options = getAllByRole('option');
+    expect(options).toHaveLength(8);
+    expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);
+
+    await user.tab();
+    await user.keyboard('{End}');
+
+    options = getAllByRole('option');
+    expect(options).toHaveLength(9);
+    expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
   });
 
   describe('drag and drop', () => {

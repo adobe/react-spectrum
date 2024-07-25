@@ -40,8 +40,8 @@ export function Table(props) {
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
     setShowSelectionCheckboxes(shouldShowCheckboxes);
   }
-  let ref = useRef();
-  let bodyRef = useRef();
+  let ref = useRef(undefined);
+  let bodyRef = useRef(undefined);
   let {collection} = state;
   let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
 
@@ -84,7 +84,7 @@ export const TableRowGroup = React.forwardRef((props: any, ref) => {
 });
 
 export function TableHeaderRow({item, state, children}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
   return (
@@ -95,7 +95,7 @@ export function TableHeaderRow({item, state, children}) {
 }
 
 export function TableColumnHeader({column, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
@@ -122,7 +122,7 @@ export function TableColumnHeader({column, state}) {
 }
 
 export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item, onAction: onAction ? () => onAction(item.key) : undefined}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -147,7 +147,7 @@ export function TableRow({item, children, state, onAction}: {item: any, children
 }
 
 export function TableCell({cell, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -166,7 +166,7 @@ export function TableCell({cell, state}) {
 }
 
 export function TableCheckboxCell({cell, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
 
@@ -183,7 +183,7 @@ export function TableCheckboxCell({cell, state}) {
 }
 
 export function TableSelectAllCell({column, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
 

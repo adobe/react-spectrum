@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
 import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
@@ -265,6 +266,32 @@ describe('TagGroup', () => {
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
+  it('should disable the remove button if the tag is disabled', async () => {
+    let onRemove = jest.fn();
+    let {getAllByRole} = render(
+      <TagGroup data-testid="group" onRemove={onRemove} disabledKeys={new Set(['dog'])}>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+        </TagList>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+      </TagGroup>
+    );
+
+    let row = getAllByRole('row')[0];
+
+    expect(row).toHaveAttribute('data-allows-removing', 'true');
+
+    let button = getAllByRole('button', {hidden: true})[1];
+    expect(button).toHaveAttribute('aria-label', 'Remove');
+    expect(button).toHaveAttribute('disabled');
+    await user.click(button);
+    expect(onRemove).toHaveBeenCalledTimes(0);
+  });
+
   it('should support empty state', () => {
     let {getByTestId} = render(
       <TagGroup data-testid="group">
@@ -329,6 +356,67 @@ describe('TagGroup', () => {
           document.removeEventListener('click', onClick);
         }
       });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <TagGroup selectionMode="none">
+              <Label>Tags</Label>
+              <TagList>
+                <Tag href="/foo" routerOptions={{foo: 'bar'}}>One</Tag>
+              </TagList>
+            </TagGroup>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
+      });
     });
+  });
+  it('if we cannot restore focus to next, then restore to previous but do not try focusing next again', async () => {
+    function MyTagGroup(props) {
+      const fruitsList = useListData({
+        initialItems: [
+          {id: 2, name: 'Grape'},
+          {id: 3, name: 'Plum'},
+          {id: 4, name: 'Watermelon'}
+        ]
+      });
+      return (
+        <TagGroup
+          data-testid="group"
+          aria-label="Fruits"
+          items={fruitsList.items}
+          selectionMode="multiple"
+          disabledKeys={[2, 3]}
+          onRemove={(keys) => fruitsList.remove(...keys)}>
+          <TagList items={fruitsList.items}>
+            {(item) => <MyTag item={item}>{item.name}</MyTag>}
+          </TagList>
+        </TagGroup>
+      );
+    }
+    function MyTag({children, item, ...props}) {
+      return (
+        <Tag textValue={item.name} {...props}>
+          {({isDisabled}) => (
+            <>
+              {children}
+              <Button slot="remove" isDisabled={isDisabled} aria-label={'remove'} />
+            </>
+          )}
+        </Tag>
+      );
+    }
+    let {getByRole} = render(<MyTagGroup />);
+    let grid = getByRole('grid');
+    await user.tab();
+    await user.keyboard('{Backspace}');
+    expect(grid).toHaveFocus();
   });
 });

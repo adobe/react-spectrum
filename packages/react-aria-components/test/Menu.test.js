@@ -60,6 +60,32 @@ describe('Menu', () => {
     act(() => {jest.runAllTimers();});
   });
 
+  it('should have the base set of aria and data attributes', () => {
+    let {getByRole, getAllByRole} = render(
+      <Menu aria-label="Animals">
+        <MenuItem id="cat">Cat</MenuItem>
+        <MenuItem id="dog">Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+        <Section>
+          <Header>Fish</Header>
+          <MenuItem id="salmon">Salmon</MenuItem>
+          <MenuItem id="tuna">Tuna</MenuItem>
+          <MenuItem id="cod">Cod</MenuItem>
+        </Section>
+      </Menu>
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-rac');
+
+    for (let group of getAllByRole('group')) {
+      expect(group).toHaveAttribute('data-rac');
+    }
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('data-rac');
+    }
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderMenu();
     let menu = getByRole('menu');
@@ -116,7 +142,7 @@ describe('Menu', () => {
     let itemRef = React.createRef();
     render(
       <Menu aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <Section ref={sectionRef} aria-label="Felines">
           <MenuItem ref={itemRef}>Cat</MenuItem>
         </Section>
       </Menu>
@@ -124,6 +150,7 @@ describe('Menu', () => {
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
     expect(sectionRef.current).toBeInstanceOf(HTMLElement);
     expect(itemRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toHaveAttribute('aria-label', 'Felines');
   });
 
   it('should support hover', async () => {
@@ -343,7 +370,24 @@ describe('Menu', () => {
     );
     let items = getAllByRole('menuitem');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on menu and menu items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <Menu aria-label="Test" onAction={onAction}>
+        <MenuItem id="cat" onAction={itemAction}>Cat</MenuItem>
+        <MenuItem id="dog">Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+
+    let items = getAllByRole('menuitem');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support menu trigger', async () => {
