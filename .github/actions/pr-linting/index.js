@@ -23,7 +23,7 @@ async function run() {
     core.info('Success');
   }
   else {
-    core.info('Sorry this failed, please read our PR naming guide to see how to correctly name your PR');
+    core.info('PR title validation failed. Please read our PR naming guide to see how to correctly name your PR');
     core.setFailed();
   }
 }
