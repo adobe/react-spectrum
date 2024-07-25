@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 import {MacroContext} from '@parcel/macros';
+import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
 function colorToken(token: typeof tokens['gray-25']) {
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
@@ -22,27 +22,29 @@ function weirdColorToken(token: typeof tokens['background-layer-2-color']) {
 }
 
 export function generatePageStyles(this: MacroContext | void) {
-  this?.addAsset({
-    type: 'css',
-    content: `html {
-      color-scheme: light dark;
-      background: ${colorToken(tokens['background-base-color'])};
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: `html {
+        color-scheme: light dark;
+        background: ${colorToken(tokens['background-base-color'])};
 
-      &[data-color-scheme=light] {
-        color-scheme: light;
-      }
+        &[data-color-scheme=light] {
+          color-scheme: light;
+        }
 
-      &[data-color-scheme=dark] {
-        color-scheme: dark;
-      }
+        &[data-color-scheme=dark] {
+          color-scheme: dark;
+        }
 
-      &[data-background=layer-1] {
-        background: ${colorToken(tokens['background-layer-1-color'])};
-      }
+        &[data-background=layer-1] {
+          background: ${colorToken(tokens['background-layer-1-color'])};
+        }
 
-      &[data-background=layer-2] {
-        background: ${weirdColorToken(tokens['background-layer-2-color'])};
-      }
-    }`
-  });
+        &[data-background=layer-2] {
+          background: ${weirdColorToken(tokens['background-layer-2-color'])};
+        }
+      }`
+    });
+  }
 }

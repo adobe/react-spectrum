@@ -11,13 +11,13 @@
  */
 
 import {
+  RangeCalendar as AriaRangeCalendar,
+  RangeCalendarProps as AriaRangeCalendarProps,
   Button,
   CalendarCell,
   CalendarGrid,
   DateValue,
   Heading,
-  RangeCalendar as AriaRangeCalendar,
-  RangeCalendarProps as AriaRangeCalendarProps,
   Text
 } from 'react-aria-components';
 

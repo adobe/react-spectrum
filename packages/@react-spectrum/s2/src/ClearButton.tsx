@@ -16,10 +16,10 @@ import {
   ButtonRenderProps
 } from 'react-aria-components';
 import CrossIcon from '../ui-icons/Cross';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {FocusableRef} from '@react-types/shared';
-import {useFocusableRef} from '@react-spectrum/utils';
 import {forwardRef} from 'react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useFocusableRef} from '@react-spectrum/utils';
 
 interface ClearButtonStyleProps {
   /**

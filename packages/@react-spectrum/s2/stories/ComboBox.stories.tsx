@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta, StoryObj} from '@storybook/react';
-import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Form, Footer, Header, Heading, Link, Text} from '../src';
-import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
-import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
+import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
 import {categorizeArgTypes} from './utils';
+import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
+import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import type {Meta, StoryObj} from '@storybook/react';
 
-const meta: Meta<typeof ComboBox> = {
+const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
     layout: 'centered'
@@ -28,7 +28,7 @@ const meta: Meta<typeof ComboBox> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ComboBox>;
+type Story = StoryObj<typeof ComboBox<any>>;
 
 export const Example: Story = {
   render: (args) => (

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRef} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {forwardRef, ReactNode} from 'react';
 import {LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode, forwardRef} from 'react';
-import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
 interface LinkStyleProps {

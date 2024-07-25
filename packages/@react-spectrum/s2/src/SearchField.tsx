@@ -15,19 +15,19 @@ import {
   SearchFieldProps as AriaSearchFieldProps,
   Provider
 } from 'react-aria-components';
-import {ClearButton} from './ClearButton';
-import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import SearchIcon from '../s2wf-icons/assets/svg/S2_Icon_Search_20_N.svg';
-import {raw} from '../style/style-macro' with {type: 'macro'};
-import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
-import {FormContext, useFormProps} from './Form';
-import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
-import {TextFieldRef} from '@react-types/textfield';
-import {createFocusableRef} from '@react-spectrum/utils';
-import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
+import {ClearButton} from './ClearButton';
+import {createFocusableRef} from '@react-spectrum/utils';
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {IconContext} from './Icon';
+import {raw} from '../style/style-macro' with {type: 'macro'};
+import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
+import {TextFieldRef} from '@react-types/textfield';
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**

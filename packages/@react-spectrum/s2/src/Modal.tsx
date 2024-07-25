@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Modal as RACModal, ModalOverlay, ModalOverlayProps, useLocale} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {colorScheme} from './style-utils' with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
-import {useDOMRef} from '@react-spectrum/utils';
-import {MutableRefObject, forwardRef, useCallback, useContext} from 'react';
 import {ColorSchemeContext} from './Provider';
+import {DOMRef} from '@react-types/shared';
+import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface ModalProps extends ModalOverlayProps {
   /**

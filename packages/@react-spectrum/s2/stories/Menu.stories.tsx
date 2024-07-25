@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, Button, Header, Heading, Text, Image, Keyboard} from '../src';
-import {CombinedMenu} from '../src/Menu';
-import ImgIcon from '../s2wf-icons/assets/svg/S2_Icon_Image_20_N.svg';
-import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
-import CopyIcon from '../s2wf-icons/assets/svg/S2_Icon_Copy_20_N.svg';
-import CommentTextIcon from '../s2wf-icons/assets/svg/S2_Icon_CommentText_20_N.svg';
-import ClockPendingIcon from '../s2wf-icons/assets/svg/S2_Icon_ClockPending_20_N.svg';
-import CommunityIcon from '../s2wf-icons/assets/svg/S2_Icon_Community_20_N.svg';
-import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
-import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
-import More from '../s2wf-icons/assets/svg/S2_Icon_More_20_N.svg';
-
-import type {Meta, StoryObj} from '@storybook/react';
+import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
 import {categorizeArgTypes} from './utils';
+import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
+import {CombinedMenu} from '../src/Menu';
+import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
+import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
+import CopyIcon from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
+import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
+import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
+import type {Meta, StoryObj} from '@storybook/react';
+
+import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,

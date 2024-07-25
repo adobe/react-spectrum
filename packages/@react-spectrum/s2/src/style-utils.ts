@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {StyleString} from '../style/types';
 import {CSSProperties} from 'react';
+import {StyleString} from '../style/types';
 
 export const focusRing = () => ({
   outlineStyle: {

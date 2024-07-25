@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider} from '../src/ColorSlider';
-
-import type {Meta} from '@storybook/react';
 import {categorizeArgTypes} from './utils';
+
+import {ColorSlider} from '../src/ColorSlider';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,

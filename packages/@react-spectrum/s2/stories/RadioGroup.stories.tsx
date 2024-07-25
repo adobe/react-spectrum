@@ -11,7 +11,7 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {RadioGroup, Radio} from '../src';
+import {Radio, RadioGroup} from '../src';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {

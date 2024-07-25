@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps, ContextValue, useContextProps, CheckboxGroupStateContext} from 'react-aria-components';
-import {style, baseColor} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useContextProps} from 'react-aria-components';
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
-import {useContext, useRef, forwardRef, createContext, ReactNode} from 'react';
-import {pressScale} from './pressScale';
-import {FormContext, useFormProps} from './Form';
 import {FocusableRef} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FormContext, useFormProps} from './Form';
+import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface CheckboxStyleProps {

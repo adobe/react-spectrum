@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, DOMRef} from '@react-types/shared';
+import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Button} from './Button';
 import {ButtonGroup} from './ButtonGroup';
+import {CenterBaseline} from './CenterBaseline';
+import {chain} from '@react-aria/utils';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
-import {UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {chain} from '@react-aria/utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import AlertTriangle from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
-import NoticeSquare from '../s2wf-icons/assets/svg/S2_Icon_Notice_20_N.svg';
-import {CenterBaseline} from './CenterBaseline';
-import {Provider} from 'react-aria-components';
 import {IconContext} from './Icon';
+import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
+import {Provider} from 'react-aria-components';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
   /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
@@ -110,7 +110,7 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
             <Heading slot="title">
               <CenterBaseline>
                 {/* TODO: Add translations */}
-                {variant === 'error' && <AlertTriangle aria-label="Alert" />} 
+                {variant === 'error' && <AlertTriangle aria-label="Alert" />}
                 {variant === 'warning' && <NoticeSquare aria-label="Alert" />}
                 {title}
               </CenterBaseline>
@@ -125,7 +125,7 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
                 fillStyle="outline"
                 autoFocus={autoFocusButton === 'cancel'}>
                 {cancelLabel}
-              </Button>  
+              </Button>
             }
             {secondaryActionLabel &&
               <Button

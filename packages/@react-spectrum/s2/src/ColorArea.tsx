@@ -14,12 +14,12 @@ import {
   ColorArea as AriaColorArea,
   ColorAreaProps as AriaColorAreaProps
 } from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {forwardRef} from 'react';
 import {ColorHandle} from './ColorHandle';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {forwardRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style'>, StyleProps {}
 

@@ -1,8 +1,8 @@
-import S2_AddSize50 from './S2_AddSize50.svg';
-import S2_AddSize75 from './S2_AddSize75.svg';
 import S2_AddSize100 from './S2_AddSize100.svg';
 import S2_AddSize200 from './S2_AddSize200.svg';
 import S2_AddSize300 from './S2_AddSize300.svg';
+import S2_AddSize50 from './S2_AddSize50.svg';
+import S2_AddSize75 from './S2_AddSize75.svg';
 import {SVGProps} from 'react';
 
 export default function Add({size, ...props}: {size: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'} & SVGProps<SVGSVGElement>) {

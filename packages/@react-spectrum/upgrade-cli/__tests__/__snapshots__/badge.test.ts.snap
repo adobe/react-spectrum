@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`No change 1`] = `
-"import { Badge } from "@react/experimental-s2";
+"import { Badge } from "@react-spectrum/s2";
 
 <div>
   <Badge variant="positive">Licensed</Badge>

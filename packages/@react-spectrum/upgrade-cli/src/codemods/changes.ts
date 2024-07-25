@@ -1,20 +1,20 @@
 import {
-  CommentOutPropOptions,
   AddCommentToElementOptions,
+  CommentOutPropOptions,
+  ConvertDimensionValueToPxOptions,
   MovePropToNewChildComponentOptions,
   MovePropToParentComponentOptions,
-  RemovePropOptions,
   MoveRenderPropsOptions,
+  RemoveComponentIfWithinParentOptions,
+  RemoveParentAndKeepChildrenOptions,
+  RemovePropOptions,
   UpdateComponentIfPropPresentOptions,
   UpdateComponentWithinCollectionOptions,
+  UpdatePlacementToSingleValueProps,
   UpdatePropNameAndValueOptions,
   UpdatePropNameOptions,
   UpdatePropValueAndAddNewPropOptions,
-  UpdateToNewComponentOptions,
-  ConvertDimensionValueToPxOptions,
-  UpdatePlacementToSingleValueProps,
-  RemoveComponentIfWithinParentOptions,
-  RemoveParentAndKeepChildrenOptions
+  UpdateToNewComponentOptions
 } from './transforms';
 
 type FunctionInfo =

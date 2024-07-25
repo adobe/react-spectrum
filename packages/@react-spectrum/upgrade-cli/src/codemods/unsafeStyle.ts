@@ -1,8 +1,8 @@
-import * as t from '@babel/types';
-import {convertUnsafeStyleColor} from './colors';
-import {StylePropValue, borderRadius, borderWidths} from './styleProps';
-import {convertUnsafeDimension} from './dimensions';
+import {borderRadius, borderWidths, StylePropValue} from './styleProps';
 import {capitalize, nameFromExpression} from './utils';
+import {convertUnsafeDimension} from './dimensions';
+import {convertUnsafeStyleColor} from './colors';
+import * as t from '@babel/types';
 
 export function transformUnsafeStyle(
   value: t.ObjectExpression,

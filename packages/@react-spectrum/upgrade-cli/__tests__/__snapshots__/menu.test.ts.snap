@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dynamic - Renames Item to MenuItem with Submenu, Section to MenuSection 1`] = `
-"import { MenuItem, MenuSection, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react/experimental-s2";
+"import { MenuItem, MenuSection, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react-spectrum/s2";
 import { Item, Section } from '@adobe/react-spectrum';
 const items = [
   { id: 'copy', name: 'Copy' },
@@ -67,7 +67,7 @@ const items = [
 `;
 
 exports[`Dynamic - Renames key to id 1`] = `
-"import { MenuItem, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react/experimental-s2";
+"import { MenuItem, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 const items = [
   { key: 'copy', name: 'Copy' },
@@ -107,7 +107,7 @@ const items = [
 exports[`Leaves comment if no parent component detected for a Section 1`] = `
 "import { Item, Section } from '@adobe/react-spectrum';
 
-import { Menu, MenuTrigger, Button } from "@react/experimental-s2";
+import { Menu, MenuTrigger, Button } from "@react-spectrum/s2";
 
 const sections = [
   { key: 'copy', name: 'Copy', children: [{key: 'item', name: 'Item'}] },
@@ -134,7 +134,7 @@ const sections = [
 exports[`Leaves comment if no parent component detected for an Item 1`] = `
 "import { Item } from '@adobe/react-spectrum';
 
-import { Menu, MenuTrigger, Button } from "@react/experimental-s2";
+import { Menu, MenuTrigger, Button } from "@react-spectrum/s2";
 
 const items = [
   { key: 'copy', name: 'Copy' },
@@ -163,7 +163,7 @@ exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
   Button,
   Header,
   Heading,
-} from "@react/experimental-s2";
+} from "@react-spectrum/s2";
 
 import { Item, Section } from '@adobe/react-spectrum';
 <div>
@@ -201,7 +201,7 @@ exports[`Static - Renames key to id 1`] = `
   Button,
   Header,
   Heading,
-} from "@react/experimental-s2";
+} from "@react-spectrum/s2";
 
 import { Item, Section } from '@adobe/react-spectrum';
 <div>

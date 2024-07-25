@@ -12,8 +12,8 @@
 
 import {ActionMenu, MenuItem} from '../src';
 
-import type {Meta, StoryObj} from '@storybook/react';
 import {categorizeArgTypes} from './utils';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
@@ -27,7 +27,7 @@ const meta: Meta<typeof ActionMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ActionMenu>;
+type Story = StoryObj<typeof ActionMenu<any>>;
 
 export const Example: Story = {
   render: (args) => {

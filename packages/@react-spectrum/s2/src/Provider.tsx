@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
-import {ReactNode, createContext, useContext} from 'react';
 import type {ColorScheme, Router} from '@react-types/provider';
-import {StyleString} from '../style/types';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {createContext, JSX, ReactNode, useContext} from 'react';
+import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {StyleString} from '../style/types';
 
 export interface ProviderProps extends UnsafeStyles {
   /** The content of the Provider. */

@@ -12,14 +12,14 @@
 
 import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem} from 'react-aria-components';
 import {Color} from '@react-types/color';
+import {ColorSwatchProps, SpectrumColorSwatchContext} from './ColorSwatch';
 import {DOMRef, ValueBase} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {forwardRef, ReactElement, ReactNode} from 'react';
-import {SpectrumColorSwatchContext, ColorSwatchProps} from './ColorSwatch';
-import {style, size as sizeValue} from '../style/spectrum-theme' with {type: 'macro'};
+import {size as sizeValue, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
-export interface ColorSwatchPickerProps extends ValueBase<string | Color | null, Color>, StyleProps {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, StyleProps {
   /** The ColorSwatches within the ColorSwatchPicker. */
   children: ReactNode,
   /**

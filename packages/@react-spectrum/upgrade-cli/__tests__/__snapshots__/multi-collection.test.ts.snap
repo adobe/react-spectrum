@@ -12,7 +12,7 @@ exports[`Static - Renames Item to Breadcrumb and adds import 1`] = `
   Button,
   Header,
   Heading,
-} from "@react/experimental-s2";
+} from "@react-spectrum/s2";
 
 import { Item, Section } from '@adobe/react-spectrum';
 

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Change variant info to informative 1`] = `
-"import { InlineAlert, Heading, Content } from "@react/experimental-s2";
+"import { InlineAlert, Heading, Content } from "@react-spectrum/s2";
 let variant = 'info';
 let props = {variant: 'info'};
 <div>

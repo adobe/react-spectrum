@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Removes showErrorIcon 1`] = `
-"import { Checkbox, CheckboxGroup } from "@react/experimental-s2";
+"import { Checkbox, CheckboxGroup } from "@react-spectrum/s2";
 let showErrorIcon = true;
 let props = {showErrorIcon: true};
 <div>

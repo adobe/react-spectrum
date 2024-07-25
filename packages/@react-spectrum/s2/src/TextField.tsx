@@ -11,24 +11,24 @@
  */
 
 import {
+  TextArea as AriaTextArea,
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
-  TextArea as AriaTextArea,
   composeRenderProps,
+  InputContext,
   TextAreaContext,
-  useSlottedContext,
-  InputContext
+  useSlottedContext
 } from 'react-aria-components';
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {StyleProps, centerPadding, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
-import {useContext, Ref, forwardRef, useRef, useImperativeHandle, ReactNode} from 'react';
-import {FormContext, useFormProps} from './Form';
-import {TextFieldRef} from '@react-types/textfield';
+import {centerPadding, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createFocusableRef} from '@react-spectrum/utils';
-import {StyleString} from '../style/types';
+import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {mergeRefs} from '@react-aria/utils';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {StyleString} from '../style/types';
+import {TextFieldRef} from '@react-types/textfield';
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**

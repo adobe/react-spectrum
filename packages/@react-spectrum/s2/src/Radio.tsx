@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {CenterBaseline} from './CenterBaseline';
-import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {FocusableRef} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {FormContext, useFormProps} from './Form';
-import {pressScale} from './pressScale';
 import {
   Radio as AriaRadio,
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {CenterBaseline} from './CenterBaseline';
+import {FocusableRef} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, ReactNode, useContext, useRef} from 'react';
+import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {

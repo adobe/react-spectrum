@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ProgressBar} from '../src';
 import type {Meta} from '@storybook/react';
+import {ProgressBar} from '../src';
 import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ProgressBar> = {

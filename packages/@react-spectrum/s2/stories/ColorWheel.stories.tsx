@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorWheel} from '../src/ColorWheel';
-
-import type {Meta} from '@storybook/react';
 import {categorizeArgTypes} from './utils';
+
+import {ColorWheel} from '../src/ColorWheel';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ColorWheel> = {
   component: ColorWheel,

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {SearchField} from '../src';
-import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {categorizeArgTypes} from './utils';
+import type {Meta} from '@storybook/react';
+import {SearchField} from '../src';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {
   component: SearchField,

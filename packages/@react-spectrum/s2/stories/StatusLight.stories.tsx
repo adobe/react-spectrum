@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {StatusLight} from '../src';
 import type {Meta} from '@storybook/react';
+import {StatusLight} from '../src';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof StatusLight> = {

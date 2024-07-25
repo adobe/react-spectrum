@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta, StoryObj} from '@storybook/react';
-import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
+import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import {LinkButton, Text} from '../src';
+import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
-import {StaticColorDecorator, categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof LinkButton> = {
   component: LinkButton,

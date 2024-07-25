@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {Toolbar} from '../src/Toolbar';
 import {
   Button,
   Checkbox,
@@ -18,8 +17,9 @@ import {
   Separator,
   ToggleButton
 } from 'react-aria-components';
-
 import type {Meta} from '@storybook/react';
+
+import {Toolbar} from '../src/Toolbar';
 
 const meta: Meta<typeof Toolbar> = {
   component: Toolbar,

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {RangeCalendar} from '../src/RangeCalendar';
-
 import type {Meta} from '@storybook/react';
+
+import {RangeCalendar} from '../src/RangeCalendar';
 
 const meta: Meta<typeof RangeCalendar> = {
   component: RangeCalendar,

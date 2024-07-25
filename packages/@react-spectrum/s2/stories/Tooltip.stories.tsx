@@ -12,8 +12,8 @@
 
 import {ActionButton, Button, Provider, Tooltip, TooltipTrigger} from '../src';
 import {CombinedTooltip} from '../src/Tooltip';
-import Crop from '../s2wf-icons/assets/svg/S2_Icon_Crop_20_N.svg';
-import LassoSelect from '../s2wf-icons/assets/svg/S2_Icon_LassoSelect_20_N.svg';
+import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
+import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 

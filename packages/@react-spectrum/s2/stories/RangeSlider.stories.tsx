@@ -13,8 +13,8 @@
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import {RangeSlider} from '../src';
 import type {Meta} from '@storybook/react';
+import {RangeSlider} from '../src';
 
 const meta: Meta<typeof RangeSlider> = {
   component: RangeSlider,

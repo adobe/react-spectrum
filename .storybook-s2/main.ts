@@ -16,8 +16,8 @@ import type { StorybookConfig } from "@storybook/types";
 
 const config: StorybookConfig = {
   stories: [
-    './Intro.mdx',
-    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    // './Intro.mdx',
+    "../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
     "@storybook/addon-links",

@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {mergeStyles} from '../style/runtime';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {
   ProgressBar as AriaProgressBar,
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
-import {FieldLabel} from './Field';
-import {ReactNode, forwardRef} from 'react';
-import {StyleProps, fieldLabel, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
+import {FieldLabel} from './Field';
+import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {forwardRef, ReactNode} from 'react';
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {mergeStyles} from '../style/runtime';
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 interface ProgressBarStyleProps {

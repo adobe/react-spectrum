@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ReactNode, forwardRef} from 'react';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {filterDOMProps} from '@react-aria/utils';
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
+import {filterDOMProps} from '@react-aria/utils';
+import {forwardRef, ReactNode} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface StatusLightStyleProps {
   /**

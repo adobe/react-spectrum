@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
+import {FocusableRef, RangeValue} from '@react-types/shared';
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, useContext, useRef} from 'react';
+import {pressScale} from './pressScale';
 import {
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
-import {SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, upperTrack, filledTrack, track} from './Slider';
-import {FocusableRef, RangeValue} from '@react-types/shared';
-import {useRef, forwardRef, useContext} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
-import {FormContext, useFormProps} from './Form';
-import {pressScale} from './pressScale';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {
   /**

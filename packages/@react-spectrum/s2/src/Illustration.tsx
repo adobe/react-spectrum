@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {cloneElement, createContext, ReactElement, SVGAttributes} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {cloneElement, createContext, ReactElement, SVGAttributes} from 'react';
 import {ContextValue, useContextProps} from 'react-aria-components';
+import {filterDOMProps} from '@react-aria/utils';
 
 export interface IllustrationProps extends DOMProps, AriaLabelingProps {
   /**
@@ -23,7 +23,7 @@ export interface IllustrationProps extends DOMProps, AriaLabelingProps {
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement,
+  children: ReactElement<any>,
   /**
    * A slot to place the illustration in.
    * @default 'illustration'
@@ -53,7 +53,7 @@ export function Illustration(props: IllustrationProps) {
   if (!ariaHidden) {
     ariaHidden = undefined;
   }
-  
+
   return cloneElement(children, {
     ...filterDOMProps(otherProps),
     focusable: 'false',

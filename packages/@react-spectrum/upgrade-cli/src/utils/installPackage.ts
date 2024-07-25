@@ -1,9 +1,9 @@
+import chalk from 'chalk';
 import fs from 'fs';
-const execa = require('execa');
 import logger from './logger.js';
 import path from 'path';
-import chalk from 'chalk';
 
+const execa = require('execa');
 function detectPackageManager() {
   let packageManagers = [
     {name: 'yarn', file: 'yarn.lock', installCommand: 'add'},

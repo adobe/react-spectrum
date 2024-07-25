@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Adds a comment to UNSAFE_className 1`] = `
-"import { Button } from "@react/experimental-s2";
+"import { Button } from "@react-spectrum/s2";
 
 <Button // TODO(S2-upgrade): check this UNSAFE_className
 UNSAFE_className="hi">
@@ -10,8 +10,8 @@ UNSAFE_className="hi">
 `;
 
 exports[`Adds a comment when a spread is used 1`] = `
-"import { Button } from "@react/experimental-s2";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { Button } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <Button
   // TODO(S2-upgrade): check this spread for style props
@@ -22,7 +22,7 @@ import { style } from "@react/experimental-s2/style" with { type: "macro" };
 `;
 
 exports[`Adds a comment when a variable is used 1`] = `
-"import { Button } from "@react/experimental-s2";
+"import { Button } from "@react-spectrum/s2";
 
 <Button // TODO(S2-upgrade): update this style prop
 marginX={margin}>Test</Button>"
@@ -46,7 +46,7 @@ exports[`Converts UNSAFE_className to className on View 1`] = `
 `;
 
 exports[`Handles Flex 1`] = `
-"import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={style({
@@ -59,7 +59,7 @@ exports[`Handles Flex 1`] = `
 `;
 
 exports[`Handles Grid 1`] = `
-"import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={style({
@@ -75,7 +75,7 @@ exports[`Handles Grid 1`] = `
 `;
 
 exports[`Handles UNSAFE_style 1`] = `
-"import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={style({
@@ -113,7 +113,7 @@ exports[`Handles UNSAFE_style 1`] = `
 `;
 
 exports[`Handles View 1`] = `
-"import { style, lightDark } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style, lightDark } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={style({
@@ -129,7 +129,7 @@ exports[`Handles View 1`] = `
 `;
 
 exports[`Handles View colorVersion={5} 1`] = `
-"import { style, lightDark } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style, lightDark } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={style({
@@ -144,7 +144,7 @@ exports[`Handles View colorVersion={5} 1`] = `
 `;
 
 exports[`Handles View colorVersion={6} 1`] = `
-"import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={style({
@@ -159,8 +159,8 @@ exports[`Handles View colorVersion={6} 1`] = `
 `;
 
 exports[`Handles dimensions 1`] = `
-"import { Button } from "@react/experimental-s2";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { Button } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <Button
   styles={style({
@@ -172,8 +172,8 @@ import { style } from "@react/experimental-s2/style" with { type: "macro" };
 `;
 
 exports[`Handles responsive style props 1`] = `
-"import { TextField } from "@react/experimental-s2";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <TextField label="Name" styles={style({
   width: {
@@ -184,8 +184,8 @@ import { style } from "@react/experimental-s2/style" with { type: "macro" };
 `;
 
 exports[`Handles responsive style props 2`] = `
-"import { TextField } from "@react/experimental-s2";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <TextField label="Name" styles={style({
   width: {
@@ -196,14 +196,14 @@ import { style } from "@react/experimental-s2/style" with { type: "macro" };
 `;
 
 exports[`Leaves comment for invalid style props 1`] = `
-"import { TextField } from "@react/experimental-s2";
+"import { TextField } from "@react-spectrum/s2";
 
 // TODO(S2-upgrade): Could not transform style prop automatically: Error: invalid dimension: 250
 <TextField label="Name" width="250" />"
 `;
 
 exports[`Merges UNSAFE_className with macro className 1`] = `
-"import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <div
   className={"hi" + style({
@@ -214,8 +214,8 @@ exports[`Merges UNSAFE_className with macro className 1`] = `
 `;
 
 exports[`Should keep import aliases 1`] = `
-"import { Button as RSPButton } from "@react/experimental-s2";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { Button as RSPButton } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <RSPButton
   styles={style({
@@ -226,8 +226,8 @@ import { style } from "@react/experimental-s2/style" with { type: "macro" };
 `;
 
 exports[`Updates left/right layout values to be start/end 1`] = `
-"import { Button } from "@react/experimental-s2";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
+"import { Button } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <>
   <div className={style({

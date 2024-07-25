@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ProgressCircle} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ProgressCircle} from '../src';
 import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ProgressCircle> = {

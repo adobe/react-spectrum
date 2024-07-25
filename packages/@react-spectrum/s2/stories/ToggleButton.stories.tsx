@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ToggleButton, Text} from '../src';
+import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryFn} from '@storybook/react';
-import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
-import {StaticColorDecorator, categorizeArgTypes} from './utils';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {Text, ToggleButton} from '../src';
 
 const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,

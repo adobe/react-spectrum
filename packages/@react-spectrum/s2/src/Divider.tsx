@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRef} from '@react-types/shared';
 import {forwardRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 /*
  * Adding as it's own type to deal with size being a part of the theme so we

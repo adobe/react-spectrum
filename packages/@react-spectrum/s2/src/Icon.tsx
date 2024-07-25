@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ReactNode, createContext} from 'react';
-import {ContextValue, SlotProps} from 'react-aria-components';
-import {UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {StyleString} from '../style/types';
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {ContextValue, SlotProps} from 'react-aria-components';
+import {createContext, ReactNode} from 'react';
+import {StyleString} from '../style/types';
+import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 export interface IconProps extends UnsafeStyles, SlotProps, AriaLabelingProps, DOMProps {
   'aria-hidden'?: boolean | 'false' | 'true'

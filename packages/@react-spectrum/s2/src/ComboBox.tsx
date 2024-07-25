@@ -10,50 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {
-  Button,
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
+  PopoverProps as AriaPopoverProps,
+  Section as AriaSection,
+  Button,
+  InputContext,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
-  Section as AriaSection,
-  PopoverProps as AriaPopoverProps,
   ListBoxProps,
   Provider,
-  SectionProps,
-  InputContext
+  SectionProps
 } from 'react-aria-components';
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {CSSProperties, ReactNode, createContext, forwardRef, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
-import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {pressScale} from './pressScale';
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
-  menuitem,
   description,
+  Divider,
   icon,
+  iconCenterWrapper,
   label,
+  menuitem,
   section,
   sectionHeader,
-  sectionHeading,
-  Divider,
-  iconCenterWrapper
+  sectionHeading
 } from './Menu';
-import {menu} from './Picker';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {centerBaseline} from './CenterBaseline';
-import {IconContext} from './Icon';
-import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
-import {Popover} from './Popover';
-import {Placement} from 'react-aria';
+import {createContext, CSSProperties, forwardRef, ReactNode, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
+import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
+import {IconContext} from './Icon';
+import {menu} from './Picker';
 import {mergeRefs, useResizeObserver} from '@react-aria/utils';
+import {Placement} from 'react-aria';
+import {Popover} from './Popover';
+import {pressScale} from './pressScale';
 
 
 export interface ComboboxStyleProps {

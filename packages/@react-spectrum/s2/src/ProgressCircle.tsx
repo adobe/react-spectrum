@@ -12,12 +12,12 @@
 
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {clamp} from '@react-aria/utils';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {CSSProperties, forwardRef} from 'react';
 import {DOMRef} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {useDOMRef} from '@react-spectrum/utils';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 export interface ProgressCircleStyleProps {
   /**

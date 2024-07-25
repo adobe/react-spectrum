@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {createColorProperty, createMappedProperty, createTheme, createArbitraryProperty, createRenamedProperty} from './style-macro';
+import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
 import type * as CSS from 'csstype';
-import {getToken, colorToken, weirdColorToken, colorScale, simpleColorScale, fontSizeToken} from './tokens' with {type: 'macro'};
 
 interface MacroContext {
   addAsset(asset: {type: string, content: string}): void

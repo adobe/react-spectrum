@@ -1,11 +1,17 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["parcel-resolver-storybook", "..."],
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-storybook", "..."],
   "transformers": {
-    "{src,stories}/*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": ["../parcel-transformer-react-docgen-typescript/ReactDocgenTSTransformer.ts", "..."],
-    "s2wf-icons/assets/svg/*.svg": ["../plugins/IconTransformer.js"],
+    "packages/@react-spectrum/s2/{src,stories}/*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": ["parcel-transformer-react-docgen-typescript", "..."],
+    "packages/@react-spectrum/s2/s2wf-icons/*.svg": ["parcel-transformer-icon"],
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    // Disable PostCSS from running over style macro output
+    "packages/@react-spectrum/s2/**/*.css": ["@parcel/transformer-css"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ],
     "*.svg": ["@parcel/transformer-svg-react"],
-    "*.{md,mdx}": ["parcel-transformer-mdx"],
     "raw:*": ["@parcel/transformer-raw"]
   }
 }

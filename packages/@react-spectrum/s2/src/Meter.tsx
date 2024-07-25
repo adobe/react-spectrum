@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
-import {FieldLabel} from './Field';
-import {forwardRef, ReactNode} from 'react';
-import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   Meter as AriaMeter,
   MeterProps as AriaMeterProps
 } from 'react-aria-components';
+import {bar, track} from './bar-utils'  with {type: 'macro'};
+import {DOMRef} from '@react-types/shared';
+import {FieldLabel} from './Field';
+import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {forwardRef, ReactNode} from 'react';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 

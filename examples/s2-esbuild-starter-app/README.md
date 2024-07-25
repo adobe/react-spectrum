@@ -50,5 +50,5 @@ To use the spectrum-theme via macros, pass your styles object to the style() mac
 Please include the page level CSS in the root of your application to configure and support the light and dark themes.
 
 ```
-import "@react/experimental-s2/page.css";
+import "@react-spectrum/s2/page.css";
 ```

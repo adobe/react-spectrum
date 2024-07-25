@@ -33,8 +33,8 @@ export const StaticColorDecorator = (Story: any, {args}: any) => (
   </StaticColorProvider>
 );
 
-export function categorizeArgTypes(category: string, args: string[]) {
-  return [...args].reduce((acc: {[key: string]: any}, key) => {
+export function categorizeArgTypes(category: string, args: string[]): any {
+  return args.reduce((acc: {[key: string]: any}, key) => {
     acc[key] = {table: {category}};
     return acc;
   }, {});

@@ -15,13 +15,13 @@ import {
   SwitchProps as AriaSwitchProps,
   SwitchRenderProps
 } from 'react-aria-components';
-import {useContext, useRef, forwardRef, ReactNode} from 'react';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {FormContext, useFormProps} from './Form';
 import {CenterBaseline} from './CenterBaseline';
-import {pressScale} from './pressScale';
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FocusableRef} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, ReactNode, useContext, useRef} from 'react';
+import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface SwitchStyleProps {

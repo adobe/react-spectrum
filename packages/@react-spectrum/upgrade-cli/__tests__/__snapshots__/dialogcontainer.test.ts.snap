@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Does nothing 1`] = `
-"import { AlertDialog } from '@adobe/react-spectrum';
-
-import { ActionButton, Text, DialogContainer } from "@react/experimental-s2";
+"import { ActionButton, Text, AlertDialog, DialogContainer } from "@react-spectrum/s2";
 
 function Example(props) {
   let [isOpen, setOpen] = React.useState(false);

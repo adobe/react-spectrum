@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_ChevronSize50 from './S2_ChevronSize50.svg';
-import S2_ChevronSize75 from './S2_ChevronSize75.svg';
 import S2_ChevronSize100 from './S2_ChevronSize100.svg';
 import S2_ChevronSize200 from './S2_ChevronSize200.svg';
 import S2_ChevronSize300 from './S2_ChevronSize300.svg';
+import S2_ChevronSize50 from './S2_ChevronSize50.svg';
+import S2_ChevronSize75 from './S2_ChevronSize75.svg';
 import {SVGProps} from 'react';
 
 export default function Chevron({size, ...props}: {size: 'XS' | 'S' | 'M' | 'L' | 'XL'} & SVGProps<SVGSVGElement>) {

@@ -1,5 +1,5 @@
-import path from 'node:path';
 import {run as jscodeshift} from 'jscodeshift/src/Runner.js';
+import path from 'node:path';
 
 const transformPath = path.join(__dirname, 'codemods', 'codemod.js');
 

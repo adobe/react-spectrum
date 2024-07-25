@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
-import {IllustratedMessage, Button, Illustration, Heading, Content, ButtonGroup} from '../src';
+import {Button, ButtonGroup, Content, Heading, IllustratedMessage, Illustration} from '../src';
 import Cloud from '../spectrum-illustrations/Cloud.svg';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,

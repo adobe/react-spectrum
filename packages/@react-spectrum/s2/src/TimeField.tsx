@@ -11,13 +11,13 @@
  */
 
 import {
+  TimeField as AriaTimeField,
+  TimeFieldProps as AriaTimeFieldProps,
   DateInput,
   DateSegment,
   FieldError,
   Label,
   Text,
-  TimeField as AriaTimeField,
-  TimeFieldProps as AriaTimeFieldProps,
   TimeValue
 } from 'react-aria-components';
 import {HelpTextProps} from '@react-types/shared';

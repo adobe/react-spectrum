@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
-import {DOMRef, DOMProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {createContext, forwardRef} from 'react';
-import {StylesPropWithHeight, StyleProps, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
 import {ContextValue, useContextProps} from 'react-aria-components';
+import {createContext, forwardRef} from 'react';
+import {DOMProps, DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface AvatarProps extends StyleProps, DOMProps {
   /** Text description of the avatar. */

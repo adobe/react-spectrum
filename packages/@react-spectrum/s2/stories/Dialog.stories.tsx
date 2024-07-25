@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button, ButtonGroup, Checkbox, Content, Dialog, DialogContainer, DialogTrigger, Footer, Header, Heading, Image, Provider} from '../src';
 import type {Meta} from '@storybook/react';
-import {Dialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Checkbox, Content, Footer, Heading, Header, Image, Provider} from '../src';
-import {useState} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useState} from 'react';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog as any,

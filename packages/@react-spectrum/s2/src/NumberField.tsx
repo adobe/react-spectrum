@@ -10,27 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import Add from '../ui-icons/Add';
 import {
-  InputContext,
+  ButtonProps as AriaButtonProps,
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
-  Text,
-  useContextProps,
   ButtonContext,
-  ButtonProps as AriaButtonProps
+  InputContext,
+  Text,
+  useContextProps
 } from 'react-aria-components';
-import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {CSSProperties, ForwardedRef, forwardRef, ReactNode, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import ChevronIcon from '../ui-icons/Chevron';
-import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {FormContext} from './Form';
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {pressScale} from './pressScale';
-import Add from '../ui-icons/Add';
-import Dash from '../ui-icons/Dash';
-import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {CSSProperties, ForwardedRef, forwardRef, ReactNode, useContext, useImperativeHandle, useMemo, useRef} from 'react';
+import Dash from '../ui-icons/Dash';
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
+import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FormContext} from './Form';
+import {pressScale} from './pressScale';
 import {useButton, useFocusRing, useHover} from 'react-aria';
 
 

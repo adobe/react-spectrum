@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {style} from '../spectrum-theme';
 import {mergeStyles} from '../runtime';
+import {style} from '../spectrum-theme';
 
 describe('mergeStyles', () => {
   it('should merge styles', () => {

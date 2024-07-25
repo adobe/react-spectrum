@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Divider} from '../src';
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Divider} from '../src';
 
 import type {Meta} from '@storybook/react';
 import {StaticColorDecorator} from './utils';

@@ -1,16 +1,16 @@
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
 import {ContentContext, FooterContext, HeadingContext} from './Content';
-import {ContextValue, Dialog as RACDialog, DEFAULT_SLOT, Provider, TextContext, useContextProps} from 'react-aria-components';
-import {ReactNode, createContext, forwardRef} from 'react';
+import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext, useContextProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
-import HelpIcon from '../s2wf-icons/assets/svg/S2_Icon_HelpCircle_20_N.svg';
-import InfoIcon from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
+import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
+import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {mergeStyles} from '../style/runtime';
 import {Popover, PopoverProps} from './Popover';
-import {size as styleSize, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style, size as styleSize} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useFocusableRef} from '@react-spectrum/utils';
 

@@ -17,13 +17,13 @@ import {
   SliderTrack,
   useLocale
 } from 'react-aria-components';
-import {FieldLabel} from './Field';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ColorHandle} from './ColorHandle';
-import {forwardRef, useRef} from 'react';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
+import {FieldLabel} from './Field';
+import {forwardRef, useRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style'>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
   label?: string

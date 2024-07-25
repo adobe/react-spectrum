@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  Tooltip as AriaTooltip,
+  TooltipProps as AriaTooltipProps,
+  TooltipTrigger as AriaTooltipTrigger,
+  TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps,
+  OverlayArrow,
+  TooltipRenderProps,
+  useLocale
+} from 'react-aria-components';
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {ColorScheme} from '@react-types/provider';
+import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {
-  OverlayArrow,
-  Tooltip as AriaTooltip,
-  TooltipProps as AriaTooltipProps,
-  TooltipRenderProps,
-  TooltipTrigger as AriaTooltipTrigger,
-  TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps,
-  useLocale
-} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {ColorScheme} from '@react-types/provider';
-import {ColorSchemeContext} from './Provider';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */

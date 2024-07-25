@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import "@react/experimental-s2/page.css";
-import { style } from "@react/experimental-s2/style" with { type: "macro" };
-import { Button } from "@react/experimental-s2";
+import "@react-spectrum/s2/page.css";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import { Button } from "@react-spectrum/s2";
 import React from "react";
 
 function App() {

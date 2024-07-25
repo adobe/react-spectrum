@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Column, Row, Table, TableHeader} from '../src/Table';
 import {Cell, TableBody} from 'react-aria-components';
+import {Column, Row, Table, TableHeader} from '../src/Table';
 
 import type {Meta} from '@storybook/react';
 

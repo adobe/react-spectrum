@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Form, TextArea, TextField, Button, Checkbox, SearchField, CheckboxGroup, Switch, Radio, RadioGroup, Slider, RangeSlider} from '../src';
+import {Button, Checkbox, CheckboxGroup, Form, Radio, RadioGroup, RangeSlider, SearchField, Slider, Switch, TextArea, TextField} from '../src';
+import {categorizeArgTypes} from './utils';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof Form> = {
   component: Form,

@@ -11,21 +11,21 @@
  */
 
 import {
-  OverlayArrow,
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
+  OverlayArrow,
   useLocale
 } from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {getAllowedOverrides, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {MutableRefObject, forwardRef, useCallback, useContext} from 'react';
-import {DOMRef} from '@react-types/shared';
-import {useDOMRef} from '@react-spectrum/utils';
+import {colorScheme, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {StyleString} from '../style/types' with {type: 'macro'};
+import {DOMRef} from '@react-types/shared';
+import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {StyleString} from '../style/types' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition'> {
   styles?: StyleString,

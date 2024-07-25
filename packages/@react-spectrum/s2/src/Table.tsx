@@ -11,15 +11,15 @@
  */
 
 import {
+  Column as AriaColumn,
+  Row as AriaRow,
+  Table as AriaTable,
+  TableHeader as AriaTableHeader,
   Button,
   Cell,
   Collection,
-  Column as AriaColumn,
   ColumnProps,
-  Row as AriaRow,
   RowProps,
-  Table as AriaTable,
-  TableHeader as AriaTableHeader,
   TableHeaderProps,
   TableProps,
   useTableOptions

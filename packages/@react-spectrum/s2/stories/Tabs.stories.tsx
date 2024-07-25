@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Tabs} from '../src/Tabs';
+import type {Meta} from '@storybook/react';
 import {Tab, TabList, TabPanel} from 'react-aria-components';
 
-import type {Meta} from '@storybook/react';
+import {Tabs} from '../src/Tabs';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,

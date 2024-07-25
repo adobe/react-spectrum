@@ -13,8 +13,8 @@
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import {Slider} from '../src/Slider';
 import type {Meta} from '@storybook/react';
+import {Slider} from '../src/Slider';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof Slider> = {

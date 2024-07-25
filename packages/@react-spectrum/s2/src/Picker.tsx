@@ -10,55 +10,55 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {
-  Button,
-  ButtonRenderProps,
-  ListBox,
-  ListBoxProps,
-  ListBoxItem,
+  PopoverProps as AriaPopoverProps,
   Section as AriaSection,
-  ListBoxItemProps,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
-  SelectValue,
-  PopoverProps as AriaPopoverProps,
+  Button,
+  ButtonRenderProps,
+  ListBox,
+  ListBoxItem,
+  ListBoxItemProps,
+  ListBoxProps,
   Provider,
-  SectionProps
+  SectionProps,
+  SelectValue
 } from 'react-aria-components';
+import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {centerBaseline} from './CenterBaseline';
+import {
+  checkmark,
+  description,
+  Divider,
+  icon,
+  iconCenterWrapper,
+  label,
+  menuitem,
+  section,
+  sectionHeader,
+  sectionHeading
+} from './Menu';
+import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {StyleProps, field, fieldInput, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
   HelpText
 } from './Field';
-import {SpectrumLabelableProps, HelpTextProps, FocusableRef} from '@react-types/shared';
+import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {pressScale} from './pressScale';
-import React, {ReactNode, createContext, forwardRef, useContext, useRef} from 'react';
-import {Popover} from './Popover';
-import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
-import CheckmarkIcon from '../ui-icons/Checkmark';
-import {
-  checkmark,
-  menuitem,
-  description,
-  icon,
-  label,
-  section,
-  sectionHeader,
-  sectionHeading,
-  Divider,
-  iconCenterWrapper
-} from './Menu';
-import {IconContext} from './Icon';
-import {centerBaseline} from './CenterBaseline';
 import {forwardRefType} from './types';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
+import {IconContext} from './Icon';
 import {Placement} from 'react-aria';
+import {Popover} from './Popover';
+import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
+import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 
 export interface PickerStyleProps {

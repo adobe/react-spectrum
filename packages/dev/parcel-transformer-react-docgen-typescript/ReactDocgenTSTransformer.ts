@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {generateDocgenCodeBlock} from 'react-docgen-typescript-plugin/dist/generateDocgenCodeBlock';
+import path from 'path';
 import {Transformer} from '@parcel/plugin';
 import ts from 'typescript';
-import path from 'path';
-import {generateDocgenCodeBlock} from 'react-docgen-typescript-plugin/dist/generateDocgenCodeBlock';
 import {withCompilerOptions} from 'react-docgen-typescript';
 
 let compilerOptions = {

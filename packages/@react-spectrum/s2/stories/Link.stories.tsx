@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import {Link} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StaticColorDecorator, categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof Link> = {
   component: Link,

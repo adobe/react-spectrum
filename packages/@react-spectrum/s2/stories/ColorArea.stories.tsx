@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {categorizeArgTypes} from './utils';
 import {ColorArea} from '../src/ColorArea';
 import type {Meta} from '@storybook/react';
-import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,

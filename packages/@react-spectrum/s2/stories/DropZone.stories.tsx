@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
-import {Button, ButtonGroup, DropZone, FileTrigger, Illustration, IllustratedMessage, Heading, Content} from '../src';
+import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage, Illustration} from '../src';
+import {categorizeArgTypes} from './utils';
+import Cloud from '../spectrum-illustrations/Cloud.svg';
+import DropToUpload from '../spectrum-illustrations/DropToUpload.svg';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import type {Meta} from '@storybook/react';
 import React, {useState} from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
-import DropToUpload from '../spectrum-illustrations/dropToUpload.svg';
-import Cloud from '../spectrum-illustrations/Cloud.svg';
-import {categorizeArgTypes} from './utils';
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
@@ -38,7 +38,7 @@ export const Example = (args: any) => {
   return (
     <>
       <Draggable />
-      <DropZone 
+      <DropZone
         {...args}
         className={style({width: '[320px]', height: '[280px]'})}
         isFilled={isFilled}
@@ -65,7 +65,7 @@ export const ExampleWithFileTrigger = (args: any) => {
   return (
     <>
       <Draggable />
-      <DropZone 
+      <DropZone
         {...args}
         className={style({width: '[380px]', height: '[280px]'})}
         isFilled={isFilled}
@@ -86,7 +86,7 @@ export const ExampleWithFileTrigger = (args: any) => {
               <Button variant="accent" >Browse files</Button>
             </FileTrigger>
           </ButtonGroup>
-        </IllustratedMessage> 
+        </IllustratedMessage>
       </DropZone>
     </>
   );
@@ -98,7 +98,7 @@ export const LongBanner = (args: any) => {
   return (
     <>
       <Draggable />
-      <DropZone 
+      <DropZone
         {...args}
         replaceMessage="A really long message that will show the text wrapping hopefully"
         className={style({width: '[320px]', height: '[280px]'})}

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dynamic - Renames Item to ComboboxItem 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Aerospace'},
@@ -17,7 +17,7 @@ let options = [
 `;
 
 exports[`Dynamic - Renames key to id 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -45,7 +45,7 @@ const items = [
 `;
 
 exports[`Removes isQuiet 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -79,7 +79,7 @@ let props = {isQuiet: true};
 `;
 
 exports[`Removes placeholder 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let placeholder = 'is this actually removed?';
 let props = {placeholder: 'is this actually removed?'};
@@ -105,7 +105,7 @@ let props = {placeholder: 'is this actually removed?'};
 `;
 
 exports[`Static - Converts menuWidth to px value 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let menuWidth = 'size-10';
 let props = {menuWidth: 'size-10'};
@@ -141,7 +141,7 @@ let props = {menuWidth: 'size-10'};
 `;
 
 exports[`Static - Renames Item to ComboboxItem 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 <div>
   <ComboBox label="Favorite Animal">
@@ -152,7 +152,7 @@ import { Item } from '@adobe/react-spectrum';
 `;
 
 exports[`Static - Renames key to id 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let externalKey = 'travel';
 <div>
@@ -164,7 +164,7 @@ let externalKey = 'travel';
 `;
 
 exports[`changes validationState to isInvalid or nothing 1`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -198,7 +198,7 @@ let props = {validationState: 'invalid'};
 `;
 
 exports[`changes validationState to isInvalid or nothing 2`] = `
-"import { ComboBoxItem, ComboBox } from "@react/experimental-s2";
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Comments out labelPosition 1`] = `
-"import { ProgressBar } from "@react/experimental-s2";
+"import { ProgressBar } from "@react-spectrum/s2";
 <div>
   // TODO(S2-upgrade): labelPosition has not been implemented yet.
   <ProgressBar />
@@ -11,7 +11,7 @@ exports[`Comments out labelPosition 1`] = `
 `;
 
 exports[`Removes showValueLabel 1`] = `
-"import { ProgressBar } from "@react/experimental-s2";
+"import { ProgressBar } from "@react-spectrum/s2";
 <div>
   <ProgressBar />
   <ProgressBar />
@@ -20,7 +20,7 @@ exports[`Removes showValueLabel 1`] = `
 `;
 
 exports[`Renames variants 1`] = `
-"import { ProgressBar } from "@react/experimental-s2";
+"import { ProgressBar } from "@react-spectrum/s2";
 <div>
   <ProgressBar staticColor="white"/>
 </div>"

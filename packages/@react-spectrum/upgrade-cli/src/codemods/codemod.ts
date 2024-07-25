@@ -1,12 +1,12 @@
 /* eslint-disable max-depth */
-import {API, FileInfo} from 'jscodeshift';
-import {transformStyleProps} from './styleProps';
-import * as t from '@babel/types';
-import traverse, {NodePath, Binding} from '@babel/traverse';
 import {addComment} from './utils';
-import {getComponents} from '../getComponents';
+import {API, FileInfo} from 'jscodeshift';
 import {changes as changesJSON} from './changes';
 import {functionMap} from './transforms';
+import {getComponents} from '../getComponents';
+import * as t from '@babel/types';
+import {transformStyleProps} from './styleProps';
+import traverse, {Binding, NodePath} from '@babel/traverse';
 
 // Determine list of available components in S2 from index.ts
 let availableComponents = getComponents();
@@ -151,7 +151,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
     }
     let macroImport = t.importDeclaration(
       specifiers,
-      t.stringLiteral('@react/experimental-s2/style')
+      t.stringLiteral('@react-spectrum/s2/style')
     );
 
     macroImport.assertions = [t.importAttribute(
@@ -163,13 +163,13 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   }
 
   if (importedComponents.size) {
-    // Add imports to existing @react/experimental-s2 import if it exists, otherwise add a new one.
+    // Add imports to existing @react-spectrum/s2 import if it exists, otherwise add a new one.
     let importSpecifiers = new Set([...importedComponents]
       .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section')
       .map(([, specifier]) => specifier));
 
     let existingImport = root.find(j.ImportDeclaration, {
-      source: {value: '@react/experimental-s2'}
+      source: {value: '@react-spectrum/s2'}
     });
 
     if (existingImport.length) {
@@ -189,7 +189,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
       if (importSpecifiers.size > 0) {
         let importDecl = t.importDeclaration(
           [...importSpecifiers],
-          t.stringLiteral('@react/experimental-s2')
+          t.stringLiteral('@react-spectrum/s2')
         );
 
         lastImportPath!.insertAfter(importDecl);

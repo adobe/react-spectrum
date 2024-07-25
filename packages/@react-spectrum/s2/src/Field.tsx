@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, Provider} from 'react-aria-components';
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ContextualHelpContext} from './ContextualHelp';
-import {StyleProps, UnsafeStyles, fieldInput, fieldLabel, focusRing} from './style-utils' with {type: 'macro'};
+import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
-import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
+import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
+import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
+import {ContextualHelpContext} from './ContextualHelp';
+import {fieldInput, fieldLabel, focusRing, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 import {mergeStyles} from '../style/runtime';
-import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
-import {NecessityIndicator, Alignment, DOMRef} from '@react-types/shared';
-import {forwardRef, ForwardedRef, ReactNode} from 'react';
+import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useId} from '@react-aria/utils';
-import {StyleString} from '../style/types';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
   isDisabled?: boolean,

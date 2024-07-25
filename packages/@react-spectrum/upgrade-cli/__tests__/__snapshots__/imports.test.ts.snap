@@ -6,13 +6,13 @@ import('@react-spectrum/button'))"
 `;
 
 exports[`should keep import aliases 1`] = `
-"import { Button as RSPButton } from "@react/experimental-s2";
+"import { Button as RSPButton } from "@react-spectrum/s2";
 
 <RSPButton>Test</RSPButton>"
 `;
 
 exports[`should keep namespace imports 1`] = `
-"import * as RSP from "@react/experimental-s2";
+"import * as RSP from "@react-spectrum/s2";
 
 <RSP.Button>Test</RSP.Button>"
 `;
@@ -20,7 +20,7 @@ exports[`should keep namespace imports 1`] = `
 exports[`should leave unimplemented components untouched 1`] = `
 "import { Fake } from '@adobe/react-spectrum';
 
-import { Button } from "@react/experimental-s2";
+import { Button } from "@react-spectrum/s2";
 
 <>
   <Button>Test</Button>
@@ -31,7 +31,7 @@ import { Button } from "@react/experimental-s2";
 exports[`should leave unimplemented components untouched in namespace imports 1`] = `
 "import * as RSP from '@adobe/react-spectrum';
 
-import * as RSP1 from "@react/experimental-s2";
+import * as RSP1 from "@react-spectrum/s2";
 
 <>
   <RSP.Button>Test</RSP.Button>
@@ -40,7 +40,7 @@ import * as RSP1 from "@react/experimental-s2";
 `;
 
 exports[`should not import Item from S2 1`] = `
-"import { MenuItem, Menu } from "@react/experimental-s2";
+"import { MenuItem, Menu } from "@react-spectrum/s2";
 import { ListView, Item } from '@adobe/react-spectrum';
 
 <div>
@@ -58,7 +58,7 @@ import { ListView, Item } from '@adobe/react-spectrum';
 `;
 
 exports[`should not import Section from S2 1`] = `
-"import { MenuSection, MenuItem, Menu } from "@react/experimental-s2";
+"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
 import { Section, Item, ListBox } from '@adobe/react-spectrum';
 
 <div>
@@ -78,7 +78,7 @@ import { Section, Item, ListBox } from '@adobe/react-spectrum';
 `;
 
 exports[`should not replace shadowed imports 1`] = `
-"import { Button } from "@react/experimental-s2";
+"import { Button } from "@react-spectrum/s2";
 
 function Test() {
   let Button = 'button';
@@ -92,7 +92,7 @@ exports[`should preserve leading comment if first line is removed 1`] = `
 "/*
  * Some comment
  */
-import { Button, StatusLight } from "@react/experimental-s2";
+import { StatusLight } from "@react-spectrum/s2";
 
 <>
   <Button>Test</Button>
@@ -101,19 +101,19 @@ import { Button, StatusLight } from "@react/experimental-s2";
 `;
 
 exports[`should replace named imports 1`] = `
-"import { Button } from "@react/experimental-s2";
+"import { Button } from "@react-spectrum/s2";
 
 <Button>Test</Button>"
 `;
 
 exports[`should replace named imports from individual packages 1`] = `
-"import { Button } from "@react/experimental-s2";
+"import { Button } from "@react-spectrum/s2";
 
 <Button>Test</Button>"
 `;
 
 exports[`should use unique alias if newly imported component name is already in scope 1`] = `
-"import { Tag as Tag1, TagGroup } from "@react/experimental-s2";
+"import { Tag as Tag1, TagGroup } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 
 const Tag = 'something else';

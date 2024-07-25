@@ -1,9 +1,9 @@
-import {ReactNode} from 'react';
-import {NodePath} from '@babel/traverse';
-import * as t from '@babel/types';
-import {getComponents} from '../getComponents';
-import {convertDimension} from './dimensions';
 import {addComment, addComponentImport, getName} from './utils';
+import {convertDimension} from './dimensions';
+import {getComponents} from '../getComponents';
+import {NodePath} from '@babel/traverse';
+import type {ReactNode} from 'react';
+import * as t from '@babel/types';
 
 let availableComponents = getComponents();
 

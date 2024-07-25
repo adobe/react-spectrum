@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ReactNode, forwardRef, createContext} from 'react';
-import {IllustratedMessageContext} from './IllustratedMessage';
-import {StylesPropWithHeight, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef} from '@react-types/shared';
+import {DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {IllustratedMessageContext} from './IllustratedMessage';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, UnsafeStyles, DOMProps {

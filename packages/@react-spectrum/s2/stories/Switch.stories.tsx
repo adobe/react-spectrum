@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Switch} from '../src';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Switch} from '../src';
 
 const meta: Meta<typeof Switch> = {
   component: Switch,

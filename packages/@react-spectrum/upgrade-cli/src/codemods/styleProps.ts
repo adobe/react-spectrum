@@ -1,8 +1,8 @@
-import * as t from '@babel/types';
-import {NodePath} from '@babel/traverse';
 import {addComment, getPropValue} from './utils';
-import {convertDimension, convertGridTrack} from './dimensions';
 import {convertColor} from './colors';
+import {convertDimension, convertGridTrack} from './dimensions';
+import {NodePath} from '@babel/traverse';
+import * as t from '@babel/types';
 import {transformUnsafeStyle} from './unsafeStyle';
 
 export const borderWidths = {
@@ -243,7 +243,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
             macroValues: [{key: mappedProp, value: value.value}]
           };
         } else if (value.type === 'ArrayExpression') {
-          let values = [];
+          let values: string[] = [];
           for (let element of value.elements) {
             if (element?.type === 'StringLiteral' || element?.type === 'NumericLiteral') {
               values.push(convertGridTrack(element.value));
@@ -647,7 +647,7 @@ export function transformStyleProps(path: NodePath<t.JSXElement>, element: strin
         )
       ]
     );
-    
+
     if (conditions.size) {
       macroCall = t.callExpression(
         macroCall,

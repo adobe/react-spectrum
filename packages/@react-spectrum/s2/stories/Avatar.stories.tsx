@@ -11,8 +11,8 @@
  */
 
 import {Avatar} from '../src';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import type {Meta} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,

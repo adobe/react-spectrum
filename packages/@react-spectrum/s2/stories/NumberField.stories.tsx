@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {NumberField} from '../src/NumberField';
-import type {Meta, StoryObj} from '@storybook/react';
 import {Button, Form} from '../src';
+import type {Meta, StoryObj} from '@storybook/react';
+import {NumberField} from '../src/NumberField';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {

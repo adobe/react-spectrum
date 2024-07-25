@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonProps} from 'react-aria-components';
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {Button, ButtonProps} from 'react-aria-components';
 import CrossIcon from '../ui-icons/Cross';
-import {pressScale} from './pressScale';
-import {forwardRef} from 'react';
 import {FocusableRef} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {forwardRef} from 'react';
+import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface CloseButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps {

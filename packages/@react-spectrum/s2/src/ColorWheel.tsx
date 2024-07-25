@@ -16,11 +16,11 @@ import {
   ColorWheelTrack
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
+import {DOMRef} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
-import {useDOMRef} from '@react-spectrum/utils';
 import {StyleProps} from './style-utils';
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius'>, StyleProps {
   /**

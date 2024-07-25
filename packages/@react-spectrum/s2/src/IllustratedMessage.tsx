@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {ButtonGroupContext} from './ButtonGroup';
+import {ContentContext, HeadingContext} from './Content';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {forwardRef, ReactNode, useContext, createContext} from 'react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Illustration';
 import {Provider} from 'react-aria-components';
-import {ContentContext, HeadingContext} from './Content';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {ButtonGroupContext} from './ButtonGroup';
-import {StylesPropWithHeight, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 interface IllustratedMessageStyleProps {
   /**

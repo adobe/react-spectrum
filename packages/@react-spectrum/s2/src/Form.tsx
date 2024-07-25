@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {createContext, useContext, forwardRef, ReactNode} from 'react';
-import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   /**

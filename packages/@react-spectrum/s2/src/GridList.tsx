@@ -11,9 +11,9 @@
  */
 
 import {
-  Button,
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
+  Button,
   GridListItemProps,
   GridListProps
 } from 'react-aria-components';

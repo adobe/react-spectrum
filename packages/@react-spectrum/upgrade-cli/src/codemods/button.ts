@@ -1,6 +1,6 @@
-import * as t from '@babel/types';
-import {NodePath} from '@babel/traverse';
 import {getPropValue} from './utils';
+import {NodePath} from '@babel/traverse';
+import * as t from '@babel/types';
 
 export function transformButton(path: NodePath<t.JSXElement>) {
   path.traverse({

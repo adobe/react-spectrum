@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
 import {ActionButton, AlertDialog, DialogTrigger} from '../src';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog as any,

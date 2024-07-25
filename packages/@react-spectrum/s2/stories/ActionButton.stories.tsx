@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta, StoryObj} from '@storybook/react';
 import {ActionButton, Text} from '../src';
-import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
-import {StaticColorDecorator, categorizeArgTypes} from './utils';
+import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import './unsafe.css';
 

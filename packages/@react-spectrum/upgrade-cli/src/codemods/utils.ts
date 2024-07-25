@@ -87,7 +87,7 @@ export function addComponentImport(path: NodePath<t.Program>, newComponent: stri
     localName = newName;
   }
 
-  let existingImport = path.node.body.find((node) => t.isImportDeclaration(node) && node.source.value === '@react/experimental-s2');
+  let existingImport = path.node.body.find((node) => t.isImportDeclaration(node) && node.source.value === '@react-spectrum/s2');
   if (existingImport && t.isImportDeclaration(existingImport)) {
     let specifier = existingImport.specifiers.find((specifier) => {
       return (
@@ -111,7 +111,7 @@ export function addComponentImport(path: NodePath<t.Program>, newComponent: stri
           t.identifier(newComponent)
         )
       ],
-      t.stringLiteral('@react/experimental-s2')
+      t.stringLiteral('@react-spectrum/s2')
     );
     path.node.body.unshift(importDeclaration);
   }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Value, CSSValue, CSSProperties, PropertyFunction, PropertyValueMap, Theme, Condition, StyleFunction, StyleValue, ThemeProperties, PropertyValueDefinition, CustomValue} from './types';
+import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
 
 let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
 export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
@@ -117,7 +117,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // Also allow style to be called as a normal function in tests.
     // @ts-ignore
     // eslint-disable-next-line
-    if (this == null || this === globalThis && process.env.NODE_ENV !== 'test') {
+    if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
       throw new Error('The style macro must be imported with {type: "macro"}.');
     }
 
@@ -258,7 +258,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       css += '}\n\n';
     }
 
-    if (typeof this?.addAsset === 'function') {
+    if (this && typeof this.addAsset === 'function') {
       this.addAsset({
         type: 'css',
         content: css
@@ -345,6 +345,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       }
       return [priority, rules];
     } else {
+      // @ts-ignore - broken in non-strict?
       return fn(value, parentPriority, currentConditions, skipConditions);
     }
   }
@@ -597,7 +598,7 @@ export function raw(this: MacroContext | void, css: string) {
   ${css}
   }
 }`;
-  if (typeof this?.addAsset === 'function') {
+  if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
       content: css
@@ -611,7 +612,7 @@ export function keyframes(this: MacroContext | void, css: string) {
   css = `@keyframes ${name} {
   ${css}
 }`;
-  if (typeof this?.addAsset === 'function') {
+  if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
       content: css

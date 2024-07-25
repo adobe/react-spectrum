@@ -10,32 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
+import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
-  TagList,
-  TagListProps,
   TagProps as AriaTagProps,
-  TextContext as RACTextContext,
   composeRenderProps,
-  Provider
+  Provider,
+  TextContext as RACTextContext,
+  TagList,
+  TagListProps
 } from 'react-aria-components';
-import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {FieldLabel} from './Field';
-import {FormContext, useFormProps} from './Form';
-import {SpectrumLabelableProps, DOMRef, HelpTextProps} from '@react-types/shared';
-import {ClearButton} from './ClearButton';
-import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
-import {pressScale} from './pressScale';
-import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
-import {useDOMRef} from '@react-spectrum/utils';
-import {Text, ImageContext, TextContext} from './Content';
-import {IconContext} from './Icon';
-import {CenterBaseline, centerBaseline} from './CenterBaseline';
-import {forwardRefType} from './types';
 import {AvatarContext} from './Avatar';
-import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
+import {CenterBaseline, centerBaseline} from './CenterBaseline';
+import {ClearButton} from './ClearButton';
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {DOMRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldLabel} from './Field';
+import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {FormContext, useFormProps} from './Form';
+import {forwardRefType} from './types';
+import {IconContext} from './Icon';
+import {ImageContext, Text, TextContext} from './Content';
+import {pressScale} from './pressScale';
+import {useDOMRef} from '@react-spectrum/utils';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
@@ -108,7 +108,7 @@ function TagGroup<T extends object>(
   let {size = 'M'} = props;
   let domRef = useDOMRef(ref);
 
-  let helpText = undefined;
+  let helpText: ReactNode = null;
   if (!isInvalid && description) {
     helpText =  (
       <Text

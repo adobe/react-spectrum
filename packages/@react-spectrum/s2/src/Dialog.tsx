@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dialog as RACDialog, DialogProps as RACDialogProps, Provider, composeRenderProps, PopoverProps as AriaPopoverProps} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
+import {PopoverProps as AriaPopoverProps, composeRenderProps, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
-import {useMediaQuery, useDOMRef} from '@react-spectrum/utils';
-import {createContext, useContext, forwardRef, RefObject} from 'react';
+import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
+import {createContext, forwardRef, RefObject, useContext} from 'react';
+import {DOMRef} from '@react-types/shared';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
-import {DOMRef} from '@react-types/shared';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils';
+import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
@@ -166,7 +166,7 @@ export const dialogInner = style({
   overflow: 'auto'
 });
 
-function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement>}) {
+function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement | null>}) {
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
   // pure CSS with display: none, but then the ref would go to two places.

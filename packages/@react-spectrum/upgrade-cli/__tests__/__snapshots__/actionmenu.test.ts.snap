@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dynamic - no change 1`] = `
-"import { MenuItem, ActionMenu } from "@react/experimental-s2";
+"import { MenuItem, ActionMenu } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let actionMenuItems = [
   {name: 'Cut'},
@@ -18,7 +18,7 @@ let actionMenuItems = [
 `;
 
 exports[`Static - no change 1`] = `
-"import { MenuItem, ActionMenu } from "@react/experimental-s2";
+"import { MenuItem, ActionMenu } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 
 <div>

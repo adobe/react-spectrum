@@ -11,13 +11,13 @@
  */
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
-import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
-import {StyleProps} from './style-utils' with { type: 'macro' };
-import {FocusableRef, DOMProps, AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRef} from 'react';
-import MoreIcon from '../s2wf-icons/assets/svg/S2_Icon_More_20_N.svg';
 import {forwardRefType} from './types';
+import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
+import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
+import {StyleProps} from './style-utils' with { type: 'macro' };
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,

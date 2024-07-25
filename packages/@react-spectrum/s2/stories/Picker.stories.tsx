@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Form, Button, Picker, PickerItem, PickerSection, Header, Heading, Text} from '../src';
+import {Button, Form, Header, Heading, Picker, PickerItem, PickerSection, Text} from '../src';
 
+import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
+import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {StaticColorDecorator, categorizeArgTypes} from './utils';
-import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
-import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof Picker> = {
+const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
     layout: 'centered'
@@ -31,7 +31,7 @@ const meta: Meta<typeof Picker> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Picker>;
+type Story = StoryObj<typeof Picker<any>>;
 
 export const Example = (args: any) => (
   <Picker {...args}>

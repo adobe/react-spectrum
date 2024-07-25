@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`No change 1`] = `
-"import { Content, ContextualHelp, Heading, TextField } from "@react/experimental-s2";
+"import { Content, ContextualHelp, Heading, TextField } from "@react-spectrum/s2";
 <TextField
   label="Password"
   type="password"

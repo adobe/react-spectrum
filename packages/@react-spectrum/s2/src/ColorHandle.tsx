@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {cloneElement, JSX, RefObject, useState} from 'react';
 import {ColorThumb} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {RefObject, cloneElement, useState} from 'react';
-import {useId, useLayoutEffect} from '@react-aria/utils';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useId, useLayoutEffect} from '@react-aria/utils';
 
 const HANDLE_SIZE = 16;
 const LOUPE_HEIGHT = 64; // Does not include borders
@@ -24,7 +24,7 @@ const LOUPE_BORDER_WIDTH = 1;
 const LOUPE_OFFSET = 12; // Offset from handle to loupe
 
 interface ColorHandleProps {
-  containerRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement | null>,
   getPosition: () => {x: number, y: number}
 }
 

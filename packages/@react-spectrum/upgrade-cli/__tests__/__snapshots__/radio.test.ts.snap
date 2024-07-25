@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Does nothing 1`] = `
-"import { Radio } from "@react/experimental-s2";
+"import { Radio } from "@react-spectrum/s2";
 
 <div>
   <Radio>Unsubscribe</Radio>

@@ -17,32 +17,32 @@ import {
   MenuProps as AriaMenuProps,
   MenuTrigger as AriaMenuTrigger,
   MenuTriggerProps as AriaMenuTriggerProps,
-  Separator,
-  Provider,
   Section as AriaSection,
-  SectionProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
+  Provider,
+  SectionProps,
+  Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {PressResponder} from '@react-aria/interactions';
+import {baseColor, edgeToText, fontRelative, size, space, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
-import {TextContext, HeadingContext, HeaderContext, Text, ImageContext, KeyboardContext} from './Content';
-import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style, baseColor, edgeToText, fontRelative, size, space} from '../style/spectrum-theme' with {type: 'macro'};
-import {mergeStyles} from '../style/runtime';
-import {Popover} from './Popover';
-import {pressScale} from './pressScale';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {IconContext} from './Icon';
-import CheckmarkIcon from '../ui-icons/Checkmark';
-import ChevronRightIcon from '../ui-icons/Chevron'; // chevron right removed??
-import LinkOutIcon from '../ui-icons/LinkOut';
-import {Placement} from 'react-aria';
-import {DOMRef} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
+import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import CheckmarkIcon from '../ui-icons/Checkmark';
+import ChevronRightIcon from '../ui-icons/Chevron';
+import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 import {divider} from './Divider';
+import {DOMRef} from '@react-types/shared';
 import {forwardRefType} from './types';
+import {HeaderContext, HeadingContext, ImageContext, KeyboardContext, Text, TextContext} from './Content';
+import {IconContext} from './Icon'; // chevron right removed??
+import LinkOutIcon from '../ui-icons/LinkOut';
+import {mergeStyles} from '../style/runtime';
+import {Placement} from 'react-aria';
+import {Popover} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
+import {pressScale} from './pressScale';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 

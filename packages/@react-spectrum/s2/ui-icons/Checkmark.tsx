@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_CheckmarkSize50 from './S2_CheckmarkSize50.svg';
-import S2_CheckmarkSize75 from './S2_CheckmarkSize75.svg';
 import S2_CheckmarkSize100 from './S2_CheckmarkSize100.svg';
 import S2_CheckmarkSize200 from './S2_CheckmarkSize200.svg';
 import S2_CheckmarkSize300 from './S2_CheckmarkSize300.svg';
+import S2_CheckmarkSize50 from './S2_CheckmarkSize50.svg';
+import S2_CheckmarkSize75 from './S2_CheckmarkSize75.svg';
 import {SVGProps} from 'react';
 
 export default function Checkmark({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL' | 'XXL'} & SVGProps<SVGSVGElement>) {

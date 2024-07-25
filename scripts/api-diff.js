@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const rainbowAPI = require('../dist/api.json');
+const rainbowAPI = require('../dist/branch-api/@react-spectrum/s2/dist/api.json');
 const v3API = {
   exports: {},
   links: {}
@@ -21,35 +21,35 @@ function merge(api) {
   Object.assign(v3API.links, api.links);
 }
 
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/badge/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/button/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/avatar/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/breadcrumbs/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/buttongroup/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/checkbox/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/color/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/combobox/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/contextualhelp/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/dialog/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/divider/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/dropzone/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/form/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/illustratedmessage/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/inlinealert/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/link/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/menu/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/meter/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/picker/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/progress/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/provider/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/radio/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/searchfield/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/slider/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/statuslight/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/switch/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/tag/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/textfield/dist/api.json'));
-merge(require('../../react-spectrum/dist/branch-api/@react-spectrum/tooltip/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/badge/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/button/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/avatar/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/breadcrumbs/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/buttongroup/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/checkbox/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/color/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/combobox/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/contextualhelp/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/dialog/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/divider/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/dropzone/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/form/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/illustratedmessage/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/inlinealert/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/link/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/menu/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/meter/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/picker/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/progress/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/provider/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/radio/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/searchfield/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/slider/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/statuslight/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/switch/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/tag/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/textfield/dist/api.json'));
+merge(require('../dist/branch-api/@react-spectrum/tooltip/dist/api.json'));
 
 const styleProps = new Set(['margin', 'marginStart', 'marginEnd', 'marginTop', 'marginBottom', 'marginX', 'marginY', 'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'justifySelf', 'alignSelf', 'order', 'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'position', 'zIndex', 'top', 'bottom', 'start', 'end', 'left', 'right', 'isHidden']);
 const skipStyleProps = process.argv.includes('--skip-style-props');
@@ -132,7 +132,7 @@ for (let name in v3API.exports) {
   }
 }
 
-require('fs').writeFileSync('api-diff.md', res);
+require('fs').writeFileSync('packages/@react-spectrum/s2/api-diff.md', res);
 
 function processType(value) {
   if (!value) {

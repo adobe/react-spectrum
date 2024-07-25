@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_DashSize50 from './S2_DashSize50.svg';
-import S2_DashSize75 from './S2_DashSize75.svg';
 import S2_DashSize100 from './S2_DashSize100.svg';
 import S2_DashSize200 from './S2_DashSize200.svg';
+import S2_DashSize50 from './S2_DashSize50.svg';
+import S2_DashSize75 from './S2_DashSize75.svg';
 import {SVGProps} from 'react';
 
 export default function Dash({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL'} & SVGProps<SVGSVGElement>) {

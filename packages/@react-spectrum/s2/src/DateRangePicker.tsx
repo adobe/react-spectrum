@@ -11,12 +11,12 @@
  */
 
 import {
+  DateRangePicker as AriaDateRangePicker,
+  DateRangePickerProps as AriaDateRangePickerProps,
   Button,
   CalendarCell,
   CalendarGrid,
   DateInput,
-  DateRangePicker as AriaDateRangePicker,
-  DateRangePickerProps as AriaDateRangePickerProps,
   DateSegment,
   DateValue,
   Dialog,

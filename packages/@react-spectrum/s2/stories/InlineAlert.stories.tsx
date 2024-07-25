@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {InlineAlert, Button, Heading, Content} from '../src';
+import {Button, Content, Heading, InlineAlert} from '../src';
 import type {Meta} from '@storybook/react';
 import {useState} from 'react';
 

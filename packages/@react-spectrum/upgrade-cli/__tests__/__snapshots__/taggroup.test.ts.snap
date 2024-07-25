@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dynamic - Renames Item to Tag 1`] = `
-"import { Tag, TagGroup } from "@react/experimental-s2";
+"import { Tag, TagGroup } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -18,7 +18,7 @@ const items = [
 `;
 
 exports[`Dynamic - Renames key to id 1`] = `
-"import { Tag, TagGroup } from "@react/experimental-s2";
+"import { Tag, TagGroup } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -41,7 +41,7 @@ const items = [
 `;
 
 exports[`Static - Renames Item to Tag 1`] = `
-"import { Tag, TagGroup } from "@react/experimental-s2";
+"import { Tag, TagGroup } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 
 <div>
@@ -55,7 +55,7 @@ import { Item } from '@adobe/react-spectrum';
 `;
 
 exports[`Static - Renames key to id 1`] = `
-"import { Tag, TagGroup } from "@react/experimental-s2";
+"import { Tag, TagGroup } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 
 let externalKey = 'travel';
@@ -70,7 +70,7 @@ let externalKey = 'travel';
 `;
 
 exports[`changes validationState to isInvalid or nothing 1`] = `
-"import { Tag, TagGroup } from "@react/experimental-s2";
+"import { Tag, TagGroup } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 
 let validationState = 'invalid';

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from '@react-types/color';
 import {
   ColorSwatch as AriaColorSwatch,
   ColorSwatchProps as AriaColorSwatchProps,
@@ -18,11 +17,12 @@ import {
   parseColor,
   useContextProps
 } from 'react-aria-components';
-import {DOMRef} from '@react-types/shared';
+import {Color} from '@react-types/color';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {StylesPropWithHeight, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style'>, UnsafeStyles {
   /**

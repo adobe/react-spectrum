@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+// package.json in this directory is not the real package.json. Lint rule not smart enough.
+// eslint-disable-next-line rulesdir/imports
 import * as tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
 export function getToken(name: keyof typeof tokens): string {

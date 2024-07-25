@@ -14,14 +14,14 @@ import {
   ColorField as AriaColorField,
   ColorFieldProps as AriaColorFieldProps
 } from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {FormContext, useFormProps} from './Form';
-import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {Ref, forwardRef, useContext, useImperativeHandle, useRef} from 'react';
-import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {TextFieldRef} from '@react-types/textfield';
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**

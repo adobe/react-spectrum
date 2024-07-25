@@ -11,11 +11,11 @@
  */
 
 import {
-  Button,
   Calendar as AriaCalendar,
+  CalendarProps as AriaCalendarProps,
+  Button,
   CalendarCell,
   CalendarGrid,
-  CalendarProps as AriaCalendarProps,
   DateValue,
   Heading,
   Text

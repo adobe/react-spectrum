@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {TimeField} from '../src/TimeField';
-
 import type {Meta} from '@storybook/react';
+
+import {TimeField} from '../src/TimeField';
 
 const meta: Meta<typeof TimeField> = {
   component: TimeField,

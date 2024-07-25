@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dynamic - Renames Item to PickerItem 1`] = `
-"import { PickerItem, Picker } from "@react/experimental-s2";
+"import { PickerItem, Picker } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Chocolate'},
@@ -27,7 +27,7 @@ let options = [
 `;
 
 exports[`Static - Converts menuWidth to px value 1`] = `
-"import { PickerItem, Picker } from "@react/experimental-s2";
+"import { PickerItem, Picker } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let menuWidth = 'size-10';
 let props = {menuWidth: 'size-10'};
@@ -63,7 +63,7 @@ let props = {menuWidth: 'size-10'};
 `;
 
 exports[`Static - Removes isQuiet 1`] = `
-"import { PickerItem, Picker } from "@react/experimental-s2";
+"import { PickerItem, Picker } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -93,7 +93,7 @@ let props = {isQuiet: true};
 `;
 
 exports[`Static - Renames Item to PickerItem 1`] = `
-"import { PickerItem, Picker } from "@react/experimental-s2";
+"import { PickerItem, Picker } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 <div>
   <Picker label="Ice Cream">
@@ -104,7 +104,7 @@ import { Item } from '@adobe/react-spectrum';
 `;
 
 exports[`Static - Renames key to id 1`] = `
-"import { PickerItem, Picker } from "@react/experimental-s2";
+"import { PickerItem, Picker } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 <div>
   <Picker label="Ice Cream">
@@ -115,7 +115,7 @@ import { Item } from '@adobe/react-spectrum';
 `;
 
 exports[`changes validationState to isInvalid or nothing 1`] = `
-"import { PickerItem, Picker } from "@react/experimental-s2";
+"import { PickerItem, Picker } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};

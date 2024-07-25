@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {ButtonContext} from './Button';
+import {ContextValue} from './Content';
+import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
+import {DOMProps, DOMRef} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Provider, SlotProps, useContextProps} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ReactNode, useRef, useCallback, forwardRef, createContext} from 'react';
-import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {
   useDOMRef,
   useResizeObserver
 } from '@react-spectrum/utils';
-import {ContextValue} from './Content';
-import {DOMProps, DOMRef} from '@react-types/shared';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ButtonContext} from './Button';
+import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 
 interface ButtonGroupStyleProps {
   /**
@@ -146,7 +146,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   }, [checkForOverflow]);
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
-  let parent = useRef<HTMLElement>();
+  let parent = useRef<HTMLElement | null>(null);
   useLayoutEffect(() => {
     if (domRef.current) {
       parent.current = domRef.current.parentElement as HTMLElement;

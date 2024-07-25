@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactElement, useContext, useState} from 'react';
-import {SpectrumDialogContainerProps} from '@react-types/dialog';
 import {DialogContext} from './Dialog';
 import {ModalContext, useSlottedContext} from 'react-aria-components';
+import React, {ReactElement, useContext, useState} from 'react';
+import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
 export interface DialogContainerProps extends SpectrumDialogContainerProps {}
 

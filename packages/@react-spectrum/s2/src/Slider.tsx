@@ -12,28 +12,28 @@
 
 import {
   Slider as AriaSlider,
-  SliderOutput,
   SliderProps as AriaSliderProps,
+  SliderOutput,
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
-import {FormContext, useFormProps} from './Form';
-import {FieldLabel} from './Field';
-import {ReactNode, useRef, forwardRef, RefObject, useContext} from 'react';
-import {FocusableRef, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
-import {useFocusableRef} from '@react-spectrum/utils';
-import {style, size} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, field, fieldInput, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {useNumberFormatter, useLocale} from '@react-aria/i18n';
 import {clamp} from '@react-aria/utils';
+import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FieldLabel} from './Field';
+import {FocusableRef, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FormContext, useFormProps} from './Form';
+import {forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useFocusableRef} from '@react-spectrum/utils';
+import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 
 export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
   children?: ReactNode,
   /**
    * The size of the Slider.
-   * 
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -43,13 +43,13 @@ export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' 
   isEmphasized?: boolean,
   /**
    * The style of the Slider's track.
-   * 
+   *
    * @default 'thin'
    */
   trackStyle?: 'thin' | 'thick', // TODO: add ramp
   /**
    * The style of the Slider's thumb.
-   * 
+   *
    * @default 'default'
    */
   thumbStyle?: 'default' | 'precise'
@@ -146,8 +146,8 @@ const output = style({
 
 export let track = style({
   ...fieldInput(),
-  gridArea: 'track', 
-  position: 'relative', 
+  gridArea: 'track',
+  position: 'relative',
   width: 'full',
   height: {
     size: {
@@ -315,24 +315,24 @@ export let filledTrack = style({
   translateY: '[-50%]'
 });
 
-export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement>}) {
+export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
-    label, 
-    labelPosition = 'top', 
+    label,
+    labelPosition = 'top',
     labelAlign = 'start',
     size = 'M',
     minValue = 0,
     maxValue = 100,
     formatOptions
-  } = props; 
+  } = props;
   let formatter = useNumberFormatter(formatOptions);
   let {direction} = useLocale();
 
   return (
-    <AriaSlider 
-      {...props} 
+    <AriaSlider
+      {...props}
       ref={props.sliderRef}
       className={renderProps => (props.UNSAFE_className || '') + mergeStyles(style(field())({labelPosition, isInForm: !!formContext}), slider({...renderProps, labelPosition, size, isInForm: !!formContext}, props.styles))}>
       {({state}) => {
@@ -391,13 +391,13 @@ function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
-    labelPosition = 'top', 
+    labelPosition = 'top',
     size = 'M',
     fillOffset,
     isEmphasized,
     trackStyle = 'thin',
     thumbStyle = 'default'
-  } = props; 
+  } = props;
   let thumbRef = useRef(null);
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
   let domRef = useFocusableRef(ref, inputRef);
@@ -414,18 +414,14 @@ function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
 
           fillOffset = fillOffset !== undefined ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : 0;
 
-          let fillWidth = undefined;
-          let offset = undefined; 
-          if (fillOffset != null) {
-            fillWidth = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
-            let isRightOfOffset = fillWidth > 0;
-            offset = isRightOfOffset ? state.getValuePercent(fillOffset) : state.getThumbPercent(0);
-          }
+          let fillWidth = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
+          let isRightOfOffset = fillWidth > 0;
+          let offset = isRightOfOffset ? state.getValuePercent(fillOffset) : state.getThumbPercent(0);
 
           return (
             <>
               <div className={upperTrack({isDisabled, trackStyle})} />
-              <div style={{width: `${Math.abs(fillWidth!) * 100}%`, [cssDirection]: `${offset! * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+              <div style={{width: `${Math.abs(fillWidth) * 100}%`, [cssDirection]: `${offset * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
               <SliderThumb  className={thumbContainer} index={0} name={props.name} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (
                   <div className={thumbHitArea({size})}>

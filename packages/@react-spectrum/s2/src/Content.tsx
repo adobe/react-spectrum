@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef} from 'react';
-import {Heading as RACHeading, HeadingProps, Header as RACHeader, useContextProps, Text as TextAria, Keyboard as KeyboardAria} from 'react-aria-components';
+import {createContext, ForwardedRef, forwardRef, HTMLAttributes, ImgHTMLAttributes} from 'react';
 import {DOMRef} from '@react-types/shared';
+import {HeadingProps, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, Text as TextAria, useContextProps} from 'react-aria-components';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: export these types from RAC?

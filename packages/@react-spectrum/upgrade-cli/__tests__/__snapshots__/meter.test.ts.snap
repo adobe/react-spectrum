@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Renames variants 1`] = `
-"import { Meter } from "@react/experimental-s2";
+"import { Meter } from "@react-spectrum/s2";
 
 <div>
   <Meter label="Space used" variant="critical"/>

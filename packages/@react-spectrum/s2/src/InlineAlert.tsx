@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertTriangle from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
-import CheckmarkCircle from '../s2wf-icons/assets/svg/S2_Icon_CheckmarkCircle_20_N.svg';
+import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
+import {ComponentType, forwardRef, ReactNode, useEffect, useRef} from 'react';
+import {ContentContext, HeadingContext} from './Content';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import InfoCircle from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
-import NoticeSquare from '../s2wf-icons/assets/svg/S2_Icon_Notice_20_N.svg';
-import {ReactNode, forwardRef, useEffect, useRef} from 'react';
-import {useDOMRef} from '@react-spectrum/utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useFocusRing} from 'react-aria';
-import {Provider} from 'react-aria-components';
-import {ContentContext, HeadingContext} from './Content';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
+import {Provider} from 'react-aria-components';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
+import {useFocusRing} from 'react-aria';
 
 export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
@@ -207,7 +207,7 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let Icon = null;
+  let Icon: ComponentType<any> | null | undefined = null;
   let iconAlt = '';
   if (variant in ICONS) {
     Icon = ICONS[variant];

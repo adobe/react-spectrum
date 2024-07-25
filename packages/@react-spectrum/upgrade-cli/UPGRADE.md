@@ -5,7 +5,7 @@ Use the following guide to manually upgrade v3 React Spectrum components to use 
 Note that `[PENDING]` indicates that future changes will occur before the final release, and the current solution should be considered temporary.
 
 ## All components
-- Update imports to use the `@react/experimental-s2` package instead of `@adobe/react-spectrum` or individual packages like `@react-spectrum/button`
+- Update imports to use the `@react-spectrum/s2` package instead of `@adobe/react-spectrum` or individual packages like `@react-spectrum/button`
 - Update style props to use style macro instead. See the [Style props](#style-props) section below
 
 ## Button
@@ -239,7 +239,7 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 - If within `Picker`:
   - Update `Section` to be a `ComboBoxSection`
   - Move `title` prop string to be a child of new `Heading` within a `Header`
-  
+
 ---
 
 ## Style props
@@ -250,8 +250,8 @@ Example:
 
 ```diff
 - import {ActionButton} from '@adobe/react-spectrum';
-+ import {ActionButton} from '@react/experimental-s2';
-+ import {style} from '@react/experimental-s2/style' with {type: 'macro'};
++ import {ActionButton} from '@react-spectrum/s2';
++ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 - <ActionButton marginStart="size-100">
 + <ActionButton styles={style({marginStart: 8})}>

@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs as RACBreadcrumbs, BreadcrumbsProps as AriaBreadcrumbsProps, Breadcrumb as AriaBreadcrumb, Provider, Link, HeadingContext} from 'react-aria-components';
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style/spectrum-theme' with { type: 'macro' };
-import {forwardRefType} from './types';
-import {Children, ReactElement, ReactNode, cloneElement, createContext, forwardRef, isValidElement, useContext, useRef} from 'react';
+import {Breadcrumb as AriaBreadcrumb, BreadcrumbsProps as AriaBreadcrumbsProps, HeadingContext, Link, Provider, Breadcrumbs as RACBreadcrumbs} from 'react-aria-components';
 import {AriaBreadcrumbItemProps} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
+import {Children, cloneElement, createContext, forwardRef, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {forwardRefType} from './types';
 import {LinkDOMProps} from '@react-types/shared';
+import {size, style} from '../style/spectrum-theme' with { type: 'macro' };
 
 interface BreadcrumbsStyleProps {
   /**

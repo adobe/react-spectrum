@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxGroup, Checkbox} from '../src';
+import {Checkbox, CheckboxGroup} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof CheckboxGroup> = {

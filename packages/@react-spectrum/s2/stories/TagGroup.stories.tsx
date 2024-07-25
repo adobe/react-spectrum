@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Tag, TagGroup, Text, Link, Avatar, Image} from '../src';
 import {action} from '@storybook/addon-actions';
-import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
+import {Avatar, Image, Link, Tag, TagGroup, Text} from '../src';
 import type {Meta} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof TagGroup> = {
+const meta: Meta<typeof TagGroup<any>> = {
   component: TagGroup,
   parameters: {
     layout: 'centered'
