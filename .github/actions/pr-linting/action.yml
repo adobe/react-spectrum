@@ -1,5 +1,8 @@
 name: 'Check PR title'
 description: 'Check if PR title meets the proper formatting'
+inputs:
+  pr-title:
+    description: The PR Title
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'index.js'
