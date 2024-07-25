@@ -41,6 +41,7 @@
           "./packages/@react-aria/l",
           "./packages/@react-aria/meter",
           "./packages/@react-aria/color",
+          "./packages/@react-aria/collections",
           "./packages/@react-aria/dialog",
           "./packages/@react-aria/e",
           "./packages/@react-aria/f",

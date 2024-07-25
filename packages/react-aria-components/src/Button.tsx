@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {
   AriaButtonProps,
   HoverEvents,
@@ -22,12 +23,12 @@ import {
 } from 'react-aria';
 import {
   ContextValue,
-  createHideableComponent,
   RenderProps,
   SlotProps,
   useContextProps,
   useRenderProps
 } from './utils';
+import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

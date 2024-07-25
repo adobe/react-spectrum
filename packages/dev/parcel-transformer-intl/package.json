@@ -7,7 +7,7 @@
     "parcel": "2.0.0-dev.1599"
   },
   "dependencies": {
-    "@parcel/plugin": "2.0.0-dev.1601",
-    "@internationalized/string-compiler": "^3.0.0"
+    "@internationalized/string-compiler": "^3.0.0",
+    "@parcel/plugin": "2.0.0-dev.1601"
   }
 }

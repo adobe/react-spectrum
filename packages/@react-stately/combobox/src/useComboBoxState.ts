@@ -321,7 +321,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
       valueOnFocus.current = inputValue;
-      if (menuTrigger === 'focus') {
+      if (menuTrigger === 'focus' && !props.isReadOnly) {
         open(null, 'focus');
       }
     } else {

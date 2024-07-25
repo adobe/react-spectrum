@@ -15,13 +15,13 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Key, LayoutDelegate, Rect, Size} from '@react-types/shared';
+import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
-import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
 import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMemo} from 'react';
 
 export interface AriaTableProps extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */

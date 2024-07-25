@@ -111,6 +111,20 @@ export const DragWithinScroll: ListViewStory = {
   name: 'Drag within list scrolling (Reorder)'
 };
 
+let manyItems = [];
+for (let i = 0; i < 100; i++) {
+  manyItems.push({id: 'item' + i, type: 'item', textValue: 'Item ' + i});
+}
+
+export const DragWithinMany: ListViewStory = {
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center" height={400}>
+      <ReorderExample {...args} items={manyItems} getAllowedDropOperationsAction={getAllowedDropOperationsAction} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+    </Flex>
+  ),
+  name: 'Drag within list with many items'
+};
+
 export const DragIntoFolder: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">

@@ -370,7 +370,24 @@ describe('Menu', () => {
     );
     let items = getAllByRole('menuitem');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on menu and menu items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <Menu aria-label="Test" onAction={onAction}>
+        <MenuItem id="cat" onAction={itemAction}>Cat</MenuItem>
+        <MenuItem id="dog">Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+
+    let items = getAllByRole('menuitem');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support menu trigger', async () => {

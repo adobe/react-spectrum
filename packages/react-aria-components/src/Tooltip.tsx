@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement} from '@react-types/shared';
-import {AriaPositionProps, mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
+import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
+import {ContextValue, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
@@ -42,7 +42,12 @@ export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'ar
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
    */
-  UNSTABLE_portalContainer?: Element
+  UNSTABLE_portalContainer?: Element,
+  /**
+   * The placement of the tooltip with respect to the trigger.
+   * @default 'top'
+   */
+  placement?: Placement
 }
 
 export interface TooltipRenderProps {

@@ -186,7 +186,7 @@ In addition to the built-in constraints, custom validation is supported by provi
 
 Usually, validation errors should be displayed to the user after the value is committed (e.g. on blur), or when the form is submitted. This avoids confusing the user with irrelevant errors while they are still entering a value.
 
-In some cases, validating in realtime can be desireable, such as when meeting password requirements. This can be accomplished by making the field value [controlled](#controlled-forms), and setting the `isInvalid` and `errorMessage` props accordingly.
+In some cases, validating in realtime can be desireable, such as when meeting password requirements. This can be accomplished by making the field value [controlled](#controlled-forms), and setting the `validationState` and `errorMessage` props accordingly.
 
 ```tsx example
 function Example() {
@@ -204,7 +204,7 @@ function Example() {
     <TextField
       label="Password"
       /*- begin highlight -*/
-      isInvalid={!!error}
+      validationState={!!error ? 'invalid' : undefined}
       errorMessage={error}
       /*- end highlight -*/
       value={password}
@@ -213,7 +213,7 @@ function Example() {
 }
 ```
 
-By default, the `isInvalid` prop does not block forms from being submitted. To block form submission, use the `validationBehavior="native"` prop on the [Form](Form.html) component.
+By default, the `validationState="invalid"` prop does not block forms from being submitted. To block form submission, use the `validationBehavior="native"` prop on the [Form](Form.html) component.
 
 ### Server validation
 
@@ -437,7 +437,7 @@ function App() {
             onBlur={onBlur}
             ref={ref}
             isRequired
-            isInvalid={invalid}
+            validationState={invalid ? 'invalid' : undefined}
             errorMessage={error?.message}
           />
         )}

@@ -31,7 +31,7 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from 'react-aria';
-import {DraggableCollectionProps, DroppableCollectionProps, Key} from '@react-types/shared';
+import {DraggableCollectionProps, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
 import {
   DraggableCollectionState,
   DraggableCollectionStateOptions,
@@ -41,7 +41,7 @@ import {
   useDroppableCollectionState
 } from 'react-stately';
 import {isVirtualDragging} from '@react-aria/dnd';
-import {JSX, RefObject, useMemo} from 'react';
+import {JSX, useMemo} from 'react';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
 

@@ -53,11 +53,6 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Write npmrc
@@ -69,12 +64,7 @@ jobs:
       - run:
           name: build
           command: |
-            yarn --pure-lockfile --cache-folder ~/.cache/yarn
-
-      - save_cache:
-         paths:
-           - ~/.cache/yarn
-         key: rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            yarn --immutable
 
       - save_cache:
           paths:
@@ -85,16 +75,18 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-16 --cache-folder ~/.cache/yarn
+            yarn install --immutable && yarn install-16
 
       - save_cache:
           paths:
@@ -105,16 +97,18 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
+            yarn install --immutable && yarn install-17
 
       - save_cache:
           paths:
@@ -125,16 +119,18 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-19 --cache-folder ~/.cache/yarn
+            yarn install --immutable && yarn install-19
 
       - save_cache:
           paths:
@@ -292,7 +288,7 @@ jobs:
           name: test
           command: |
             make build
-            yarn lerna run prepublishOnly
+            yarn workspaces foreach --all -pt run prepublishOnly
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
 
   lint:
@@ -350,7 +346,7 @@ jobs:
           command: |
             yarn test:parcel
             mkdir -p dist
-            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
+            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
 
       - persist_to_workspace:
           root: dist
@@ -479,6 +475,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/dist
+
       - run:
           name: deploy
           command: |

@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, CollectionBuilder, CollectionProps, CollectionRendererContext, createLeafComponent} from './Collection';
-import {ContextValue, createHideableComponent, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, usePersistedKeys} from './Collection';
+import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, RefObject, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
 
@@ -230,7 +231,7 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
       ref={objectRef}
       {...renderProps}
       data-orientation={orientation || undefined}>
-      <CollectionRoot collection={state.collection} focusedKey={state.selectionManager.focusedKey} />
+      <CollectionRoot collection={state.collection} persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)} />
     </div>
   );
 }
@@ -320,7 +321,15 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
       inert={!isSelected ? 'true' : undefined}
-      data-inert={!isSelected ? 'true' : undefined} />
+      data-inert={!isSelected ? 'true' : undefined}>
+      <Provider
+        values={[
+          [TabsContext, null],
+          [TabListStateContext, null]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </div>
   );
 }
 
