@@ -1,8 +1,10 @@
 const {chromium} = require('playwright');
 const {exec} = require('child_process');
 const http = require('http');
+const path = require('path');
+const glob = require('glob-promise');
 
-function startServer() {
+async function startServer() {
   return new Promise((resolve, reject) => {
     console.log('Starting documentation server...');
     const child = exec('yarn start:docs', {
@@ -46,96 +48,94 @@ function waitForServer(url, timeout = 30000, interval = 1000) {
   });
 }
 
-function removeHashFromUrl(url) {
-  const urlObj = new URL(url);
-  urlObj.hash = '';
-  return urlObj.toString();
-}
+async function getPageLinks() {
+  const packagePaths = [
+    'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx',
+    'packages/react-aria-components/docs/**/*.mdx',
+    'packages/@internationalized/*/docs/*.mdx'
+  ];
 
-function getRelativePath(baseUrl, fullUrl) {
-  return fullUrl.replace(baseUrl, '').replace(/^\//, '') || '/';
+  const rootPages = 'packages/dev/docs/pages/**/*.mdx';
+
+  let links = [];
+
+  for (const pattern of packagePaths) {
+    const files = await glob(pattern);
+    for (const file of files) {
+      const parts = file.split(path.sep);
+      const packageName = parts[1].replace('@', '');
+      const componentName = path.basename(file, '.mdx');
+      links.push(`/${packageName}/${componentName}.html`);
+    }
+  }
+
+  const rootFiles = await glob(rootPages);
+  for (const file of rootFiles) {
+    const relativePath = path.relative('packages/dev/docs/pages', file);
+    const urlPath = path.join('/', path.dirname(relativePath), path.basename(relativePath, '.mdx'));
+    links.push(`${urlPath}.html`);
+  }
+
+  return links;
 }
 
 async function testDocs() {
   let server;
   let browser;
   let messages = [];
+  let currentPage = '';
 
   try {
     server = await startServer();
     await waitForServer(server.baseUrl);
+
+    const pageLinks = await getPageLinks().then((links) => links.map((link) => `${server.baseUrl}${link}`));
+    console.log(`Found ${pageLinks.length} pages to test`);
 
     browser = await chromium.launch();
     const context = await browser.newContext();
 
     context.on('console', (msg) => {
       const msgUrl = msg.location().url;
-      if (msgUrl.startsWith(server.baseUrl)) {
-        const relativePath = getRelativePath(server.baseUrl, msgUrl);
-        if (msg.type() === 'error') {
-          console.error(`Console error on ${relativePath}: ${msg.text()}`);
-          messages.push({type: 'error', path: relativePath, text: msg.text()});
-        } else if (msg.type() === 'warning') {
-          console.warn(`Console warning on ${relativePath}: ${msg.text()}`);
-          messages.push({type: 'warning', path: relativePath, text: msg.text()});
-        }
+      if (msgUrl.startsWith(server.baseUrl) && (msg.type() === 'error' || msg.type() === 'warning')) {
+        console.log(`${msg.type().toUpperCase()} on ${currentPage}: ${msg.text()}`);
+        messages.push({type: msg.type(), path: currentPage, text: msg.text()});
       }
     });
 
-    const visitedUrls = new Set();
-    const urlsToVisit = [server.baseUrl];
+    for (let i = 0; i < pageLinks.length; i++) {
+      const url = pageLinks[i];
+      currentPage = new URL(url).pathname;
+      console.log(`Testing page (${i + 1}/${pageLinks.length}): ${currentPage}`);
 
-    while (urlsToVisit.length > 0) {
-      const currentUrl = urlsToVisit.pop();
-      const currentUrlWithoutHash = removeHashFromUrl(currentUrl);
-      
-      if (visitedUrls.has(currentUrlWithoutHash)) {
-        continue;
-      }
-
-      const relativePath = getRelativePath(server.baseUrl, currentUrl);
-      console.log(`Testing page: ${relativePath}`);
-      
       const page = await context.newPage();
 
       try {
-        const response = await page.goto(currentUrl, {
+        const response = await page.goto(url, {
           waitUntil: 'networkidle',
           timeout: 10000
         });
 
         if (!response.ok()) {
           console.error(
-            `Failed to load ${relativePath}: ${response.status()} ${response.statusText()}`
+            `Failed to load ${currentPage}: ${response.status()} ${response.statusText()}`
           );
-        } else {
-          visitedUrls.add(currentUrlWithoutHash);
-
-          const links = await page.evaluate(() => 
-            Array.from(document.links).map((link) => link.href)
-          );
-
-          links.forEach((link) => {
-            if (link.startsWith(server.baseUrl)) {
-              const linkWithoutHash = removeHashFromUrl(link);
-              if (!visitedUrls.has(linkWithoutHash)) {
-                urlsToVisit.push(linkWithoutHash);
-              }
-            }
-          });
         }
+
+        await page.waitForTimeout(1000);
       } catch (error) {
-        console.error(`Error on ${relativePath}:`, error.message);
+        console.error(`Error on ${currentPage}:`, error.message);
       } finally {
         await page.close();
       }
     }
 
     console.log('All pages tested successfully');
-    console.log(`Total pages visited: ${visitedUrls.size}`);
-    console.log(`Total errors: ${messages.length}`);
+    console.log(`Total pages visited: ${pageLinks.length}`);
+    console.log(`Total errors: ${messages.filter((msg) => msg.type === 'error').length}`);
+    console.log(`Total warnings: ${messages.filter((msg) => msg.type === 'warning').length}`);
     messages.forEach((msg) => {
-      console.log(`${msg.type} on ${msg.path}: ${msg.text}`);
+      console.log(`${msg.type.toUpperCase()} on ${msg.path}: ${msg.text}`);
     });
   } catch (error) {
     console.error('An error occurred during testing:', error);
