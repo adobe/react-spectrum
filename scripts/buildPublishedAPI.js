@@ -44,7 +44,7 @@ async function build() {
 
   // Generate a package.json containing just what we need to build the website
   let pkg = {
-    name: 'rsp-website',
+    name: 'react-spectrum-monorepo',
     version: '0.0.0',
     private: true,
     workspaces: [
@@ -58,7 +58,11 @@ async function build() {
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe')
+          name.startsWith('@adobe') ||
+          name === 'react' ||
+          name === 'react-dom' ||
+          name === 'tailwindcss' ||
+          name === 'typescript'
         )
     ),
     dependencies: {},
@@ -69,8 +73,11 @@ async function build() {
       postinstall: 'patch-package'
     }
   };
+
+  // create a package.json without any of our packages as dependencies, so they
+  // aren't reinstalled
   let cleanPkg = {
-    name: 'rsp-website',
+    name: 'react-spectrum-monorepo',
     version: '0.0.0',
     private: true,
     workspaces: [
@@ -84,7 +91,10 @@ async function build() {
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe')
+          name.startsWith('@adobe') ||
+          name === 'react' ||
+          name === 'react-dom' ||
+          name === 'typescript'
         )
     ),
     dependencies: {},
@@ -100,7 +110,7 @@ async function build() {
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
-  let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/**/package.json', {cwd: packagesDir, ignore: ['**/node_modules/**']});
   async function addDeps() {
     let promises = [];
     for (let p of packages) {
@@ -133,10 +143,12 @@ async function build() {
   cleanPkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
+  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
+  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Install dependencies from npm
   console.log('install our latest packages from npm');
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['install', '--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   fs.writeFileSync(path.join(dir, 'babel.config.json'), `{
     "plugins": [
@@ -147,6 +159,7 @@ async function build() {
   // Copy necessary code and configuration over
   fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'docs'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
@@ -161,6 +174,9 @@ async function build() {
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');
   for (let p of packages) {
+    if (p === 'react-stately' || p === 'react-aria' || p === 'react-aria-components' || p === 'tailwindcss-react-aria-components') {
+      continue;
+    }
     if (!p.includes('spectrum-css') && !p.includes('example-theme') && fs.existsSync(path.join(dir, 'node_modules', p))) {
       fs.moveSync(path.join(dir, 'node_modules', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
       fs.removeSync(path.join(dir, 'packages', path.dirname(p), 'dist'));
@@ -183,7 +199,8 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(cleanPkg, false, 2));
   fs.removeSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'));
   console.log('linking packages');
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['constraints', '--fix'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   // Build the website
   console.log('building api files');

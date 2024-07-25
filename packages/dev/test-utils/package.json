@@ -12,7 +12,9 @@
     "dist",
     "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
@@ -31,5 +33,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   }
 }

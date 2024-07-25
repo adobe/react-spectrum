@@ -15,7 +15,6 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "dependencies": {},
   "publishConfig": {
     "access": "public"
   }
