@@ -1,8 +1,18 @@
-const {chromium} = require('playwright');
+const {chromium, firefox, webkit} = require('playwright');
 const {exec} = require('child_process');
 const http = require('http');
 const path = require('path');
 const glob = require('glob-promise');
+
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const browser = args[0] || 'chromium';
+  if (!['chromium', 'firefox', 'webkit'].includes(browser)) {
+    console.error('Invalid browser specified. Must be "chromium", "firefox", or "webkit". Using "chromium" as default.');
+    return 'chromium';
+  }
+  return browser;
+}
 
 async function startServer() {
   return new Promise((resolve, reject) => {
@@ -85,6 +95,9 @@ async function testDocs() {
   let messages = [];
   let currentPage = '';
 
+  const browserType = parseArgs();
+  console.log(`Using ${browserType} browser for testing`);
+
   try {
     server = await startServer();
     await waitForServer(server.baseUrl);
@@ -92,7 +105,17 @@ async function testDocs() {
     const pageLinks = await getPageLinks().then((links) => links.map((link) => `${server.baseUrl}${link}`));
     console.log(`Found ${pageLinks.length} pages to test`);
 
-    browser = await chromium.launch();
+    switch (browserType) {
+      case 'firefox':
+        browser = await firefox.launch();
+        break;
+      case 'webkit':
+        browser = await webkit.launch();
+        break;
+      default:
+        browser = await chromium.launch();
+    }
+
     const context = await browser.newContext();
 
     context.on('console', (msg) => {
