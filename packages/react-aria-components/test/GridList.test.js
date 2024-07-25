@@ -20,6 +20,9 @@ import {
   GridListItem,
   UNSTABLE_ListLayout as ListLayout,
   RouterProvider,
+  Tag,
+  TagGroup,
+  TagList,
   useDragAndDrop,
   UNSTABLE_Virtualizer as Virtualizer
 } from '../';
@@ -413,6 +416,46 @@ describe('GridList', () => {
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
     expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
+  });
+
+  it('should support rendering a TagGroup inside a GridListItem', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test">
+        <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
+          <TagGroup aria-label="Tag group">
+            <TagList>
+              <Tag key="1">Tag 1</Tag>
+              <Tag key="2">Tag 2</Tag>
+              <Tag key="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('grid')[0].children;
+    let tags = within(items[0]).getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
   });
 
   describe('drag and drop', () => {
