@@ -15,6 +15,7 @@ run_chromatic:
 clean:
 	yarn clean:icons
 	rm -rf dist public src/dist
+	rm -rf storage
 
 clean_all:
 	$(MAKE) clean
@@ -26,10 +27,14 @@ clean_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 	rm -rf examples/*/node_modules
+	rm -rf starters/*/node_modules
 
 clean_dist:
 	rm -rf packages/*/*/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
+	rm -rf packages/@adobe/react-spectrum/i18n
+	rm -rf packages/@react-aria/i18n/server
 
 clean_parcel:
 	rm -rf .parcel-cache
@@ -96,7 +101,7 @@ publish-nightly: build
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
-	yarn lerna run prepublishOnly
+	yarn workspaces foreach --all -pt run prepublishOnly
 	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
 		do node scripts/buildEsm.js $$pkg; \
 	done
@@ -118,7 +123,7 @@ check-examples:
 
 starter:
 	node scripts/extractStarter.mjs
-	cd starters/docs && yarn && yarn tsc
+	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
@@ -129,7 +134,7 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-	cd starters/tailwind && yarn && yarn tsc
+	cd starters/tailwind && yarn --no-immutable && yarn tsc
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook

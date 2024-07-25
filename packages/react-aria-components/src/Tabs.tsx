@@ -321,7 +321,15 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
       inert={!isSelected ? 'true' : undefined}
-      data-inert={!isSelected ? 'true' : undefined} />
+      data-inert={!isSelected ? 'true' : undefined}>
+      <Provider
+        values={[
+          [TabsContext, null],
+          [TabListStateContext, null]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </div>
   );
 }
 

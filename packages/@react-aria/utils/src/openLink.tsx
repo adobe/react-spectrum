@@ -158,6 +158,18 @@ export function useSyntheticLinkProps(props: LinkDOMProps) {
   };
 }
 
+/** @deprecated - For backward compatibility. */
+export function getSyntheticLinkProps(props: LinkDOMProps) {
+  return {
+    'data-href': props.href,
+    'data-target': props.target,
+    'data-rel': props.rel,
+    'data-download': props.download,
+    'data-ping': props.ping,
+    'data-referrer-policy': props.referrerPolicy
+  };
+}
+
 export function useLinkProps(props: LinkDOMProps) {
   let router = useRouter();
   return {
