@@ -23,11 +23,14 @@
     "@react-aria/ssr": "^3.0.0",
     "@react-spectrum/test-utils": "1.0.0-alpha.1",
     "@swc/helpers": "^0.5.0",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^15.0.7",
+    "@testing-library/user-event": "^14.4.3",
+    "jest": "^29.5.0",
     "resolve": "^1.17.0"
   },
   "peerDependencies": {
-    "@testing-library/react": "^15.0.0",
-    "@testing-library/user-event": "^14.4.3",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   },
