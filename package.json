@@ -10,8 +10,8 @@
   "packageManager": "yarn@4.2.2",
   "scripts": {
     "check-types": "tsc && tsc-strict",
-    "install-16": "node scripts/react-16-install-prep.mjs && yarn add react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 && node scripts/oldReactSupport.mjs",
-    "install-17": "node scripts/react-17-install-prep.mjs && yarn add react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 && node scripts/oldReactSupport.mjs",
+    "install-16": "node scripts/react-16-install-prep.mjs && yarn add react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
+    "install-17": "node scripts/react-17-install-prep.mjs && yarn add react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-19": "node scripts/react-19-install-prep.mjs && yarn add react@next react-dom@next",
     "start": "cross-env NODE_ENV=storybook storybook dev -p 9003 --ci -c '.storybook'",
     "build:storybook": "storybook build -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
