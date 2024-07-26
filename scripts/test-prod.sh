@@ -8,7 +8,7 @@ commit_to_revert="HEAD"
 test_app='rsp-cra-18'
 
 # Generate dists for the packages
-yarn parcel build packages/@adobe/react-spectrum/ packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
+make build
 
 # Start verdaccio and send it to the background
 yarn verdaccio --config "./.verdaccio-ci.config.yml" --listen $port &>${output}&
