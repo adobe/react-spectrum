@@ -37,7 +37,9 @@ yarn config set npmRegistryServer $registry
 
 #install packages in test app
 cd examples/$test_app
-yarn install
+
+yarn config set npmRegistryServer $registry
+yarn install --no-immutable
 
 #build test app
 yarn build
