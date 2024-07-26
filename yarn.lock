@@ -27010,6 +27010,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"parcel-transformer-mdx-storybook@workspace:packages/dev/parcel-transformer-mdx-storybook":
+  version: 0.0.0-use.local
+  resolution: "parcel-transformer-mdx-storybook@workspace:packages/dev/parcel-transformer-mdx-storybook"
+  dependencies:
+    "@mdx-js/mdx": "npm:next"
+    "@mdx-js/react": "npm:next"
+  languageName: unknown
+  linkType: soft
+
 "parcel-transformer-react-docgen-typescript@workspace:packages/dev/parcel-transformer-react-docgen-typescript":
   version: 0.0.0-use.local
   resolution: "parcel-transformer-react-docgen-typescript@workspace:packages/dev/parcel-transformer-react-docgen-typescript"
