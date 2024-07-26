@@ -11,13 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Column, Row, Table, TableHeader, Cell, TableBody, useDragAndDrop} from '../src/Table';
+import {Cell, Column, Row, Table, TableBody, TableHeader, useDragAndDrop} from '../src/Table';
 import {Content, Heading, IllustratedMessage, Illustration, Link} from '../src';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList, useListData} from '@react-stately/data';
+import {useState} from 'react';
 
 const meta: Meta<typeof Table> = {
   component: Table,

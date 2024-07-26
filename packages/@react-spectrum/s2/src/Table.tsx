@@ -11,59 +11,56 @@
  */
 
 import {
+  DragAndDropOptions as AriaDragAndDropOptions,
   Button,
-  Cell as RACCell,
+  CellRenderProps,
   Collection,
+  ColumnRenderProps,
+  ColumnResizer,
+  DropIndicator,
+  DropTarget,
+  Key,
+  Provider,
+  Cell as RACCell,
+  CellProps as RACCellProps,
   Column as RACColumn,
   ColumnProps as RACColumnProps,
   Row as RACRow,
-  RowProps,
   Table as RACTable,
-  TableHeader as RACTableHeader,
-  TableHeaderProps,
-  TableProps as RACTableProps,
   TableBody as RACTableBody,
   TableBodyProps as RACTableBodyProps,
-  useTableOptions,
-  TableRenderProps,
-  CellProps as RACCellProps,
-  CellRenderProps,
-  TableBodyRenderProps,
-  RowRenderProps,
-  Provider,
-  Key,
+  TableHeader as RACTableHeader,
+  TableProps as RACTableProps,
   ResizableTableContainer,
-  ColumnResizer,
-  ColumnRenderProps,
-  useDragAndDrop as useAriaDragAndDrop,
-  DragAndDropOptions as AriaDragAndDropOptions,
-  DropIndicator,
-  DropTarget,
+  RowProps,
+  RowRenderProps,
+  TableBodyRenderProps,
+  TableHeaderProps,
+  TableRenderProps,
+  UNSTABLE_TableLayout,
   UNSTABLE_TableLoadingIndicator,
   UNSTABLE_Virtualizer,
-  UNSTABLE_TableLayout,
-  TableStateContext
+  useDragAndDrop as useAriaDragAndDrop,
+  useTableOptions
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
-import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import React, {createContext, ReactNode, useContext, useMemo, useRef, useState} from 'react';
-import {ProgressCircle} from './ProgressCircle';
-import SortDownArrow from '../s2wf-icons/assets/svg/S2_Icon_SortDown_20_N.svg';
-import SortUpArrow from '../s2wf-icons/assets/svg/S2_Icon_SortUp_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
-import {IconContext} from './Icon';
 import {ColumnSize} from '@react-types/table';
-import {Menu, MenuItem, MenuTrigger} from './Menu';
-import {LoadingState} from '@react-types/shared';
-import { mergeStyles } from '../style/runtime';
-import { useIsMobileDevice } from './utils';
-import {useLoadMore} from '@react-aria/utils';
-import { GridNode } from '@react-types/grid';
-import { LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import { Node} from '@react-types/shared';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {GridNode} from '@react-types/grid';
+import {IconContext} from './Icon';
 import {LayoutNode} from '@react-stately/layout';
-import {raw} from '../style/style-macro' with {type: 'macro'};
+import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {LoadingState, Node} from '@react-types/shared';
+import {Menu, MenuItem, MenuTrigger} from './Menu';
+import {mergeStyles} from '../style/runtime';
+import {ProgressCircle} from './ProgressCircle';
+import React, {createContext, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import {Rect} from '@react-stately/virtualizer';
+import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
+import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {useIsMobileDevice} from './utils';
+import {useLoadMore} from '@react-aria/utils';
 
 // TODO: things that still need to be handled
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
