@@ -4102,7 +4102,7 @@ __metadata:
 
 "@parcel/core@patch:@parcel/core@npm%3A2.0.0-dev.1599#~/.yarn/patches/@parcel-core-npm-2.0.0-dev.1599-d62d699a7e.patch, @parcel/core@patch:@parcel/core@npm:2.0.0-dev.1599#~/.yarn/patches/@parcel-core-npm-2.0.0-dev.1599-d62d699a7e.patch":
   version: 2.0.0-dev.1599
-  resolution: "@parcel/core@patch:@parcel/core@npm%3A2.0.0-dev.1599#~/.yarn/patches/@parcel-core-npm-2.0.0-dev.1599-d62d699a7e.patch::version=2.0.0-dev.1599&hash=2df6ac"
+  resolution: "@parcel/core@patch:@parcel/core@npm%3A2.0.0-dev.1599#~/.yarn/patches/@parcel-core-npm-2.0.0-dev.1599-d62d699a7e.patch::version=2.0.0-dev.1599&hash=de0dec"
   dependencies:
     "@mischnic/json-sourcemap": "npm:^0.1.0"
     "@parcel/cache": "npm:2.0.0-dev.1601+1f9adfe6b"
@@ -4129,7 +4129,7 @@ __metadata:
     msgpackr: "npm:^1.9.9"
     nullthrows: "npm:^1.1.1"
     semver: "npm:^7.5.2"
-  checksum: 10c0/886b2be3f6161dc991b288934a66a7bbb4d7de98407bbb092c0dd3888cc37355dc8288d0ba48135ac9fea26a45055244e6ab91737d2461dfce4208f1dd3d1d86
+  checksum: 10c0/13d8ca7addb9c5190a5f1b542f8c1ce17078cb6578df41c7463ea379ea190707af09f99acbed6e12a8caa94c8b9ecf40f1b7e8d38a296f67f489f62cd83cea21
   languageName: node
   linkType: hard
 
