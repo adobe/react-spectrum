@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {AvatarContext} from './Avatar';
 import {Children, ReactNode} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {AvatarContext} from './Avatar';
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 
 
 interface AvatarGroupProps extends StyleProps, DOMProps {
