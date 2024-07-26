@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Tabs, TabList, Tab, TabPanel} from '../src/Tabs';
-import Edit from '../s2wf-icons/assets/svg/S2_Icon_Edit_20_N.svg';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import type {Meta} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,

@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Tabs as RACTabs, TabsProps as AriaTabsProps, TabList as RACTabList, TabListProps as AriaTabListProps, Tab as RACTab, TabProps as AriaTabProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, Provider, TabListStateContext} from 'react-aria-components';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode, createContext, useContext, forwardRef, useRef, useEffect, useState, useCallback, useLayoutEffect} from 'react';
+import {TabListProps as AriaTabListProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, TabProps as AriaTabProps, TabsProps as AriaTabsProps, Provider, Tab as RACTab, TabList as RACTabList, Tabs as RACTabs, TabListStateContext} from 'react-aria-components';
+import {Collection, DOMRef, Key, Orientation} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import {DOMRef, Collection, Key, Orientation} from '@react-types/shared';
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, StyleProps { // is height a style prop we want to allow for tabs?
