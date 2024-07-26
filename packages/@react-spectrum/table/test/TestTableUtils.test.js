@@ -31,7 +31,7 @@ let columns = [
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  let testUtilUser = new User();
+  let testUtilRealTimer = new User();
 
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
@@ -74,7 +74,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilUser.createTester('TableTester');
+      let {setElement, setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilRealTimer.createTester('TableTester');
       setInteractionType(interactionType);
       setElement(screen.getByTestId('test'));
       await toggleRowSelection({index: 2});
@@ -105,7 +105,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSort} = testUtilUser.createTester('TableTester');
+      let {setElement, setInteractionType, toggleRowSelection, toggleSort} = testUtilRealTimer.createTester('TableTester');
       setInteractionType(interactionType);
       setElement(screen.getByTestId('test'));
       await toggleRowSelection({index: 2});
@@ -136,6 +136,7 @@ describe('Table ', function () {
     ${'keyboard'}
     ${'touch'}
   `('with fake timers, interactionType: $interactionType ', ({interactionType}) => {
+    let testUtilFakeTimer = new User({advanceTimer: async (time) => jest.advanceTimersByTime(time)});
     beforeAll(function () {
       jest.useFakeTimers();
     });
@@ -147,7 +148,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilUser.createTester('TableTester');
+      let {setElement, setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilFakeTimer.createTester('TableTester');
       setInteractionType(interactionType);
       setElement(screen.getByTestId('test'));
       await toggleRowSelection({index: 2});
@@ -178,7 +179,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSort} = testUtilUser.createTester('TableTester');
+      let {setElement, setInteractionType, toggleRowSelection, toggleSort} = testUtilFakeTimer.createTester('TableTester');
       setInteractionType(interactionType);
       setElement(screen.getByTestId('test'));
 

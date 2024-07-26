@@ -18,50 +18,34 @@ import {SelectTester} from './select';
 import {TableTester} from './table';
 import userEvent from '@testing-library/user-event';
 
-interface UserOpts {
-  interactionType?: 'mouse' | 'touch' | 'keyboard'
+// https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
+// curent way is like https://testing-library.com/docs/user-event/options/#advancetimers,
+export interface UserOpts {
+  interactionType?: 'mouse' | 'touch' | 'keyboard',
+  // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}
+  // A real timer user would pass async () => await new Promise((resolve) => setTimeout(resolve, waitTime))
+  // Time is in ms.
+  advanceTimer?: (time?: number) => Promise<unknown>
 }
 
 let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester};
-
+let defaultAdvanceTimer = async (waitTime: number) => await new Promise((resolve) => setTimeout(resolve, waitTime));
 export class User {
   user;
   interactionType: UserOpts['interactionType'];
-  // select: SelectTester;
-  // table: TableTester;
+  advanceTimer: UserOpts['advanceTimer'];
 
   constructor(opts: UserOpts = {}) {
-    let {interactionType} = opts;
+    let {interactionType, advanceTimer} = opts;
     this.user = userEvent.setup({delay: null, pointerMap});
     this.interactionType = interactionType;
-    // this.select = new SelectTester({user, interactionType});
-    // this.table = new TableTester({user, interactionType});
-
-    // TODO: calling these two will cause user.click to detected as a virtual click
-    // resulting in unexcepted behaviors (focus moves to picker's listbox option on open instad of focusing the listbox as awhole)
-    // Either rely on the user calling the below when they want to test drag/long press operations OR
-    // figure out what userevent interaction that would still be detected as a click/touch properly....
-    // installMouseEvent();
-    // installPointerEvent();
-    // don't mock screen width for now to keep this as a generic as possible
+    this.advanceTimer = advanceTimer || defaultAdvanceTimer;
   }
 
-
-  // TODO: add a setup/cleanup if need be
-
-  // TODO: provide the below so the user can call the stuff that installMouseEvent/installPointerEvent at the specific part of the test where they need it?
-  // Have it also return a cleanup function?
-  // setupMouseMock() {
-
-  // }
-
-  // setupPointerMock() {
-
-  // }
 
   // TODO: maybe I should just export the patterns themselves instead of this factory
   // TODO typescript
   createTester(patternName: string) {
-    return new (availablePatterns)[patternName]({user: this.user, interactionType: this.interactionType});
+    return new (availablePatterns)[patternName]({user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer});
   }
 }

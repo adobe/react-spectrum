@@ -11,24 +11,16 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {UserOpts} from './user';
 
-type InteractionType = 'mouse' | 'touch' | 'keyboard'
-
-interface SelectOptions {
-  // I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
-  user: any,
-  interactionType?: InteractionType
+interface SelectOptions extends UserOpts {
+  // TODO: I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
+  user: any
 }
 export class SelectTester {
   private user;
-  private _interactionType: InteractionType;
+  private _interactionType: UserOpts['interactionType'];
   private _trigger: HTMLElement;
-
-  // TODO: should we find the label/field error/etc for the user
-  // what about value placeholder? Not entirely sure that there is a ton of value in helping the
-  // user find those when they can be queried by getByText or by looking up the labeledby that the user already
-  // provided. Also since those aren't always kept up to date since it is grabbed by document.getElementById,
-  // it would be better for the user to not look for the specific node
 
   constructor(opts: SelectOptions) {
     this.user = opts.user;
@@ -44,7 +36,7 @@ export class SelectTester {
     this._trigger = triggerButton;
   };
 
-  setInteractionType = (type: InteractionType) => {
+  setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
   };
 
@@ -58,10 +50,6 @@ export class SelectTester {
       await this.user.pointer({target: this._trigger, keys: '[TouchA]'});
     }
 
-    // TODO: so far this seems to work with real and fake timers. If we do run into a situation where we need to advance timers in here,
-    // we can do something like detecting if fake timers (like in https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16)
-    // are enabled and advance by a specific amount of time (here it would be doing advanceTimersBy perhaps by the transtion time or runOnlyPendingTimers)
-    // Alternatively, maybe we need to accept an option for https://testing-library.com/docs/user-event/options/#advancetimers
     await waitFor(() => {
       if (this._trigger.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on select element trigger.');
@@ -88,7 +76,6 @@ export class SelectTester {
       let option = within(listbox).getByText(optionText);
       if (this._interactionType === 'keyboard') {
         if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
-          // @ts-ignore TODO figure out what it thinks listbox might not be defined here
           act(() => listbox.focus());
         }
 
@@ -106,7 +93,6 @@ export class SelectTester {
       }
 
       if (option.getAttribute('href') == null) {
-        // TODO: make reusuable version of these assertions since they will appear in a lot of places to replace jest assertions
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
@@ -141,10 +127,6 @@ export class SelectTester {
       throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
     }
   };
-
-  // TODO is it valuable to add support for a utility for pressing ArrowLeft/ArrowRight when the picker is closed to cycle through the options?
-  // Doesn't really feel that useful since it isn't very complicated and I don't think people really need access to every single supported interaction
-  // since we should already be testing them
 
   getTrigger = () => {
     if (!this._trigger) {

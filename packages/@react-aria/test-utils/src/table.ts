@@ -11,67 +11,32 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
-
-type InteractionType = 'mouse' | 'touch' | 'keyboard'
-
-interface TableOptions {
-  user: any,
-  interactionType?: InteractionType
+import {triggerLongPress} from './events';
+import {UserOpts} from './user';
+interface TableOptions extends UserOpts {
+  user: any
 }
 
-// TODO: move somewhere central if it ends up being used in multiple places
-// TODO: figure out how to replace this generically so it isn't jest specific
-function jestFakeTimersAreEnabled() {
-  if (typeof jest !== 'undefined' && jest !== null) {
-    // Logic for this is from https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
-    // ts ignore the _isMockFunction check
-    // @ts-ignore
-    return setTimeout._isMockFunction === true || // modern timers
-      // eslint-disable-next-line prefer-object-has-own -- No Object.hasOwn in all target environments we support.
-      Object.prototype.hasOwnProperty.call(setTimeout, 'clock');
-  }
-  return false;
-}
-
-async function triggerLongPress(element: HTMLElement, pointerOpts = {}, waitTime: number = 500) {
-  // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
-  // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
-  // util before first render. Will need to document it well
-
-  await fireEvent.pointerDown(element, {pointerType: 'touch', ...pointerOpts});
-  // TODO: if we can make this generic, perhaps the user should pass a parameter of some sort to indicate that fake timers are
-  // being used or not
-  if (!jestFakeTimersAreEnabled()) {
-    await act(async () => await new Promise((resolve) => setTimeout(resolve, waitTime)));
-  } else {
-    act(() => {
-      // TODO: make generic
-      jest.advanceTimersByTime(waitTime);
-    });
-  }
-
-  await fireEvent.pointerUp(element, {pointerType: 'touch', ...pointerOpts});
-  // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
-  // To reproduce, try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
-  // run Table.test's "should support long press to enter selection mode on touch" test to see what happens
-  await fireEvent.click(element);
-}
-
+// TODO: Previously used logic like https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
+// but https://github.com/testing-library/dom-testing-library/issues/987#issuecomment-891901804 indicates that it may falsely indicate that fake timers are enabled
+// when they aren't
 export class TableTester {
   private user;
-  private _interactionType;
+  private _interactionType: UserOpts['interactionType'];
+  private _advanceTimer: UserOpts['advanceTimer'];
   private _table: HTMLElement;
 
   constructor(opts: TableOptions) {
     this.user = opts.user;
     this._interactionType = opts.interactionType || 'mouse';
+    this._advanceTimer = opts.advanceTimer;
   }
 
   setElement = (element: HTMLElement) => {
     this._table = element;
   };
 
-  setInteractionType = (type: InteractionType) => {
+  setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
   };
 
@@ -102,17 +67,21 @@ export class TableTester {
       await this.pressElement(rowCheckbox);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      needsLongPress ? await triggerLongPress(cell) : await this.pressElement(cell);
+      if (needsLongPress) {
+        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer});
+        // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
+        // To reproduce, try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
+        // run Table.test's "should support long press to enter selection mode on touch" test to see what happens
+        await fireEvent.click(cell);
+      } else {
+        await this.pressElement(cell);
+      }
     }
 
     // Handle cases where the table may transition in response to the row selection/deselection
-    if (!jestFakeTimersAreEnabled()) {
-      await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
-    } else {
-      act(() => {
-        jest.runOnlyPendingTimers();
-      });
-    }
+    await act(async () => {
+      await this._advanceTimer(200);
+    });
   };
 
   toggleSort = async (opts: {index?: number, text?: string} = {}) => {
@@ -131,7 +100,6 @@ export class TableTester {
       }
     }
 
-    // TODO: this menu button pattern toggling should go into the menu tester class and reused
     let menuButton = within(columnheader).queryByRole('button');
     if (menuButton) {
       let currentSort = columnheader.getAttribute('aria-sort');
@@ -181,15 +149,9 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      // TODO: make this generic instead of specific to jest
-      // TODO: note that this was moved here because react 17 needs the timers run for the focus to make it onto the button in certain circumstances
-      if (!jestFakeTimersAreEnabled()) {
-        await act(async () => await new Promise((resolve) => setTimeout(resolve, 200)));
-      } else {
-        act(() => {
-          jest.runOnlyPendingTimers();
-        });
-      }
+      await act(async () => {
+        await this._advanceTimer(200);
+      });
 
       await waitFor(() => {
         if (document.activeElement !== menuButton) {
@@ -198,8 +160,6 @@ export class TableTester {
           return true;
         }
       });
-
-
     } else {
       await this.pressElement(columnheader);
     }
@@ -291,8 +251,6 @@ export class TableTester {
     return this._table;
   };
 
-  // TODO: for now make the getters always grab the latest set of elements, might be expesive though
-  // After some benchmark testing it doesn't seem to make much of a difference though, seemingly negligible
   getRowGroups = () => {
     let table = this._table;
     return table ? within(table).queryAllByRole('rowgroup') : [];

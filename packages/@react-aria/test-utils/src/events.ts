@@ -13,17 +13,20 @@
 import {act, fireEvent} from '@testing-library/react';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
-// TODO: make this not rely on jest
 
 /**
  * Simulates a "long press" event on a element.
- * @param element - Element to long press.
- * @param opts - Options to pass to the simulated event. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
+ * @param opts - Options for the long press.
+ * @param opts.element - Element to long press.
+ * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
+ * @param opts.pointeropts - Options to pass to the simulated event. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
-export function triggerLongPress(element: HTMLElement, opts = {}): void {
-  fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
-  act(() => {
-    jest.advanceTimersByTime(DEFAULT_LONG_PRESS_TIME);
-  });
-  fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
+export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time?: number) => void | Promise<unknown>, pointerOpts?: {}}) {
+  // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
+  // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
+  // util before first render. Will need to document it well
+  let {element, advanceTimer, pointerOpts = {}} = opts;
+  await fireEvent.pointerDown(element, {pointerType: 'touch', ...pointerOpts});
+  await act(async () => await advanceTimer(DEFAULT_LONG_PRESS_TIME));
+  await fireEvent.pointerUp(element, {pointerType: 'touch', ...pointerOpts});
 }

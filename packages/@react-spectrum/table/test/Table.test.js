@@ -144,7 +144,7 @@ function pointerEvent(type, opts) {
 export let tableTests = () => {
   let offsetWidth, offsetHeight;
   let user;
-  let testUtilUser = new User();
+  let testUtilUser = new User({advanceTimer: (time) => jest.advanceTimersByTime(time)});
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});

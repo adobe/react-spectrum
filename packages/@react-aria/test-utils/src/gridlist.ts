@@ -11,16 +11,14 @@
  */
 
 import {act, within} from '@testing-library/react';
+import {UserOpts} from './user';
 
-type InteractionType = 'mouse' | 'touch' | 'keyboard'
-
-interface GridListOptions {
-  user: any,
-  interactionType?: InteractionType
+interface GridListOptions extends UserOpts {
+  user: any
 }
 export class GridListTester {
   private user;
-  private _interactionType: InteractionType;
+  private _interactionType: UserOpts['interactionType'];
   private _gridlist: HTMLElement;
 
 
@@ -33,7 +31,7 @@ export class GridListTester {
     this._gridlist = element;
   };
 
-  setInteractionType = (type: InteractionType) => {
+  setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
   };
 
@@ -52,6 +50,8 @@ export class GridListTester {
   }
 
   // TODO: support long press? This is also pretty much the same as table's toggleRowSelection so maybe can share
+  // For now, don't include long press, see if people need it or if we should just expose long press as a separate util if it isn't very common
+  // If the current way of passing in the user specified advance timers is ok, then I'd be find including long press
   // Maybe also support an option to force the click to happen on a specific part of the element (checkbox or row). That way
   // the user can test a specific type of interaction?
   toggleRowSelection = async (opts: {index?: number, text?: string} = {}) => {

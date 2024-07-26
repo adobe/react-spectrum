@@ -11,21 +11,22 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {triggerLongPress} from './events';
+import {UserOpts} from './user';
 
-type InteractionType = 'mouse' | 'touch' | 'keyboard'
-
-interface MenuOptions {
-  user: any,
-  interactionType?: InteractionType
+interface MenuOptions extends UserOpts {
+  user: any
 }
 export class MenuTester {
   private user;
-  private _interactionType: InteractionType;
+  private _interactionType: UserOpts['interactionType'];
+  private _advanceTimer: UserOpts['advanceTimer'];
   private _trigger: HTMLElement;
 
   constructor(opts: MenuOptions) {
     this.user = opts.user;
     this._interactionType = opts.interactionType || 'mouse';
+    this._advanceTimer = opts.advanceTimer;
   }
 
   setElement = (element: HTMLElement) => {
@@ -45,7 +46,7 @@ export class MenuTester {
     }
   };
 
-  setInteractionType = (type: InteractionType) => {
+  setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
   };
 
@@ -58,7 +59,7 @@ export class MenuTester {
 
     if (this._interactionType === 'mouse') {
       if (needsLongPress) {
-        // TODO: add long press support once I figure out how to make it generic and not specific to jest
+        await triggerLongPress({element: this.getTrigger(), advanceTimer: this._advanceTimer});
       } else {
         await this.user.click(this.getTrigger());
       }

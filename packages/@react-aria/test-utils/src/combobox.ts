@@ -11,16 +11,16 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {UserOpts} from './user';
 
-type InteractionType = 'mouse' | 'touch' | 'keyboard'
-
-interface ComboBoxOptions {
-  user: any,
-  interactionType?: InteractionType
+interface ComboBoxOptions extends UserOpts {
+  user: any
 }
+// TODO: Probably should set up some base classes to reduce duplication of this setup (user/interactiontype)
+// advanceTimer isn't used in all places
 export class ComboBoxTester {
   private user;
-  private _interactionType: InteractionType;
+  private _interactionType: UserOpts['interactionType'];
   private _combobox: HTMLElement;
   private _trigger: HTMLElement;
 
@@ -48,7 +48,7 @@ export class ComboBoxTester {
     this._trigger = element;
   };
 
-  setInteractionType = (type: InteractionType) => {
+  setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
   };
 
