@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
-import {AlertBanner} from '../src/AlertBanner';
 import {action} from '@storybook/addon-actions';
+import {AlertBanner} from '../src/AlertBanner';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof AlertBanner> = {
   component: AlertBanner,

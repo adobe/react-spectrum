@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import type {DismissButtonProps} from 'react-aria';
-import {getAllowedOverrides} from './style-utils' with { type: 'macro' };
-import {DOMRef} from '@react-types/shared';
-import {forwardRef, ReactNode} from 'react';
+import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Button} from './Button';
-import AlertTriangle from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
-import InfoCircle from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
-import {IconContext} from './Icon';
-import {Provider} from 'react-aria-components';
-import {useDOMRef} from '@react-spectrum/utils';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {CloseButton} from './CloseButton';
+import type {DismissButtonProps} from 'react-aria';
+import {DOMRef} from '@react-types/shared';
+import {forwardRef, ReactNode} from 'react';
+import {getAllowedOverrides} from './style-utils' with { type: 'macro' };
+import {IconContext} from './Icon';
+import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+import {Provider} from 'react-aria-components';
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface AlertBannerProps extends DismissButtonProps {
   /** The content of the alert banner. */
