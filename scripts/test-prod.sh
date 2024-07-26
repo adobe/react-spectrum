@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 port=4873
 original_registry=`npm get registry`
@@ -11,19 +11,29 @@ test_app='rsp-cra-18'
 yarn parcel build packages/@adobe/react-spectrum/ packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
 
 # Start verdaccio and send it to the background
-yarn verdaccio --listen $port &>${output}&
+yarn verdaccio --config "./.verdaccio-ci.config.yml" --listen $port &>${output}&
+
+# Wait for verdaccio to start
+grep -q 'http address' <(tail -f $output)
 
 # Login as test user
-yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
+yarn config set npmPublishRegistry $registry
+yarn config set npmRegistryServer $registry
+yarn config set npmAlwaysAuth true
+yarn config set npmAuthIdent abc
+yarn config set npmAuthToken blah
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn lerna version minor --force-publish --allow-branch `git branch --show-current` --no-push --yes
-commit_to_revert="HEAD~1"
+yarn workspaces foreach --all --no-private version minor --deferred
+yarn version apply --all
+commit_to_revert="HEAD~0"
 
 # Publish packages to verdaccio
-yarn lerna publish from-package --registry $registry --yes
+yarn workspaces foreach --all --no-private -pt npm publish
 
+# set the npm registry because that will set it at a higher level, making local testing easier
 npm set registry $registry
+yarn config set npmRegistryServer $registry
 
 #install packages in test app
 cd examples/$test_app
@@ -38,7 +48,6 @@ lsof -ti tcp:4873 | xargs kill
 # Clean up generated dists if run locally
 rm -rf packages/**/dist
 rm -rf storage/ ~/.config/verdaccio/storage/ $output
-git tag -d $(git tag -l)
 git fetch
 git reset --hard $commit_to_revert
 npm set registry $original_registry
