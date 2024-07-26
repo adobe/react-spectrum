@@ -7,7 +7,7 @@
 #
 
 # path to a directory with all packages
-storage: ./verdaccio/storage
+storage: ./storage
 # path to a directory with plugins to include
 plugins: ./plugins
 # print logs
