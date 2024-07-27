@@ -104,7 +104,6 @@ describe('MenuTrigger', function () {
   async function verifyMenuToggle(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
     let tree = renderComponent(Component, triggerProps, menuProps);
     let {setElement, getMenu} = testUtilUser.createTester('MenuTester');
-    let a = testUtilUser.createTester('MenuTester');
     let triggerButton = tree.getByRole('button');
     setElement(triggerButton);
 
@@ -915,10 +914,7 @@ describe('MenuTrigger', function () {
     it('should focus the selected item on menu open', async function () {
       let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar'], selectionMode: 'single'});
       let button = tree.getByRole('button');
-      await act(async () => {
-        await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
-        jest.runAllTimers();
-      });
+      await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
       let menu = expectMenuItemToBeActive(tree, 1, 'single');
       await user.pointer({target: button, keys: '[TouchA]'});
       act(() => {
