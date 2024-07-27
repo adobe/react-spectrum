@@ -104,6 +104,7 @@ describe('MenuTrigger', function () {
   async function verifyMenuToggle(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
     let tree = renderComponent(Component, triggerProps, menuProps);
     let {setElement, getMenu} = testUtilUser.createTester('MenuTester');
+    let a = testUtilUser.createTester('MenuTester');
     let triggerButton = tree.getByRole('button');
     setElement(triggerButton);
 
@@ -823,17 +824,12 @@ describe('MenuTrigger', function () {
 
     it('should open the menu on longPress', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
-      let advanceTimer = async (time) => {
-        // triggerLongPress will wrap this in a act
-        // eslint-disable-next-line rsp-rules/act-events-test
-        jest.advanceTimersByTime(time);
-      };
       await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
         expect(button).toHaveAttribute('aria-describedby');
         expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Long press or press Alt + ArrowDown to open menu');
 
         if (!menu) {
-          await triggerLongPress({element: button, advanceTimer});
+          await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
         } else {
           await user.pointer({target: button, keys: '[TouchA]'});
         }
@@ -919,13 +915,8 @@ describe('MenuTrigger', function () {
     it('should focus the selected item on menu open', async function () {
       let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar'], selectionMode: 'single'});
       let button = tree.getByRole('button');
-      let advanceTimer = async (time) => {
-        // triggerLongPress will wrap this in a act
-        // eslint-disable-next-line rsp-rules/act-events-test
-        jest.advanceTimersByTime(time);
-      };
       await act(async () => {
-        await triggerLongPress({element: button, advanceTimer});
+        await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
         jest.runAllTimers();
       });
       let menu = expectMenuItemToBeActive(tree, 1, 'single');

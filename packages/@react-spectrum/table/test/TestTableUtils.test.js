@@ -136,7 +136,7 @@ describe('Table ', function () {
     ${'keyboard'}
     ${'touch'}
   `('with fake timers, interactionType: $interactionType ', ({interactionType}) => {
-    let testUtilFakeTimer = new User({advanceTimer: async (time) => jest.advanceTimersByTime(time)});
+    let testUtilFakeTimer = new User({advanceTimer: jest.advanceTimersByTime});
     beforeAll(function () {
       jest.useFakeTimers();
     });

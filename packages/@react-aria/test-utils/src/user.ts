@@ -28,8 +28,24 @@ export interface UserOpts {
   advanceTimer?: (time?: number) => Promise<unknown>
 }
 
-let availablePatterns = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester};
+let keyToUtil = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester} as const;
+export type PatternNames = keyof typeof keyToUtil;
+// TODO: ideally we'd be able to just use Testers below but not sure how to make typescript properly understand the return type
+// type Testers<T extends PatternNames> = typeof keyToUtil[T];
+// type Testers = typeof keyToUtil[PatternNames];
+
+// TODO: the below works and returns the proper type in the test but the return below complains...
+// Also its a bit gross how I have to define each condition for this conditional type
+type ObjectType<T> =
+    T extends 'SelectTester' ? SelectTester :
+    T extends 'TableTester' ? TableTester :
+    T extends 'MenuTester' ? MenuTester :
+    T extends 'ComboBoxTester' ? ComboBoxTester :
+    T extends 'GridListTester' ? GridListTester :
+    never;
+
 let defaultAdvanceTimer = async (waitTime: number) => await new Promise((resolve) => setTimeout(resolve, waitTime));
+
 export class User {
   user;
   interactionType: UserOpts['interactionType'];
@@ -42,10 +58,9 @@ export class User {
     this.advanceTimer = advanceTimer || defaultAdvanceTimer;
   }
 
-
-  // TODO: maybe I should just export the patterns themselves instead of this factory
-  // TODO typescript
-  createTester(patternName: string) {
-    return new (availablePatterns)[patternName]({user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer});
+  createTester<T extends PatternNames>(patternName: T): ObjectType<T> {
+  // // createTester<T extends PatternNames>(patternName: T): Testers<T> {
+  // createTester<T extends PatternNames>(patternName: T): typeof keyToUtil[T] {
+    return new (keyToUtil)[patternName]({user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as ObjectType<T>;
   }
 }

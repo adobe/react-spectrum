@@ -1791,13 +1791,8 @@ describe('Table', () => {
         expect(checkbox).toBeNull();
       }
 
-      let advanceTimer = async (time) => {
-        // triggerLongPress will wrap this in a act
-        // eslint-disable-next-line rsp-rules/act-events-test
-        jest.advanceTimersByTime(time);
-      };
       let row = getAllByRole('row')[1];
-      await triggerLongPress({element: row, advanceTimer});
+      await triggerLongPress({element: row, advanceTimer: jest.advanceTimersByTime});
       expect(row).toHaveAttribute('aria-selected', 'true');
 
       for (let row of getAllByRole('row')) {
