@@ -17,7 +17,7 @@ import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, PressEvent, RefObject} from '@react-types/shared';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -182,16 +182,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {
-          ...buttonProps,
-          ref: buttonRef,
-          isPressed: state.isOpen,
-          onPress: null,
-          onPressStart: (e: PressEvent) => {
-            inputRef.current.focus();
-            state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null, 'manual');
-          }
-        }],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
