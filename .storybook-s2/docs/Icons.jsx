@@ -22,7 +22,7 @@ export function Icons() {
             return (
               <ActionButton
                 key={icon}
-                onPress={() => navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/${name}';`)}>
+                onPress={() => navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/icons/${name}';`)}>
                 <Icon />
                 <Text>{name}</Text>
               </ActionButton>
