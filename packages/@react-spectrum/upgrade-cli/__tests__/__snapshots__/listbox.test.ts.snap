@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`No changes 1`] = `
+"import {ListBox, Item} from '@adobe/react-spectrum';
+<div>
+  <ListBox width="size-2400" aria-label="Alignment">
+    <Item>Left</Item>
+    <Item>Middle</Item>
+    <Item>Right</Item>
+  </ListBox>
+</div>"
+`;
