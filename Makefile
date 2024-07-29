@@ -35,6 +35,7 @@ clean_dist:
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
+	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons
 
 clean_parcel:
 	rm -rf .parcel-cache
@@ -116,6 +117,7 @@ website-production:
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) s2-docs
 
 check-examples:
 	node scripts/extractExamples.mjs
@@ -139,3 +141,10 @@ tailwind-starter:
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
+
+s2-docs:
+	yarn build:s2-docs -o dist/production/docs/s2
+
+s2-api-diff:
+	node scripts/buildBranchAPI.js
+	node scripts/api-diff.js --skip-same --skip-style-props

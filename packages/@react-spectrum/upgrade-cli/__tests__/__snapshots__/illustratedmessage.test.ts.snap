@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Does nothing 1`] = `
+"import { IllustratedMessage, Heading, Content } from "@react-spectrum/s2";
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+
+<div>
+  <IllustratedMessage>
+    <NotFound />
+    <Heading>No results</Heading>
+    <Content>Try another search</Content>
+  </IllustratedMessage>
+</div>"
+`;
