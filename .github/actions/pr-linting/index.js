@@ -16,7 +16,7 @@ async function run() {
     `🔎 Checking if the title of this PR "${title}" meets the requirements ...`
   );
 
-  if ((/^\[?wip\]?/i).test(title)) {
+  if ((/^\[?\(?wip\]?\)?/i).test(title)) {
     core.info('This PR is marked as a WIP. Skipping validation');
   } 
   else if ((/^(fix|feat|build|chore|docs|test|refactor|ci|localize|bump|revert)(\(([A-Za-z])\w+\))?:/gmi).test(title)) {
