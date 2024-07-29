@@ -56,21 +56,21 @@ const StaticTable = (args: any) => (
       <Column>B</Column>
     </TableHeader>
     <TableBody>
-      <Row id="1">
+      <Row>
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
         <Cell>Dummy content</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
-      <Row id="2">
+      <Row>
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
         <Cell>Dummy content</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
-      <Row id="3">
+      <Row>
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
@@ -243,9 +243,9 @@ const ReorderableTable = (args: any) => {
 
   return (
     <Table aria-label="reorderable table" {...args} dragAndDropHooks={dragAndDropHooks}>
-      <TableHeader columns={sortcolumns}>
+      <TableHeader columns={columns}>
         {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+          <Column id={column.id} isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={list.items}>

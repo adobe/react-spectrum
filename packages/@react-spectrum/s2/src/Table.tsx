@@ -69,13 +69,14 @@ import {useLoadMore} from '@react-aria/utils';
 // Add a complex table example with buttons and various icons,links,
 // Hide header support
 
-// loading more when items already exist (needs ability to append extra row with progress circle)
 // column dividers and text align (needs more info from rac so cells know if its parent column has showDivider)
 // drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
-// resizing (roughly implemented, but will probably change a bit with virtualization. Right now with wrapping)
-// overflow wrap (deferred till virtualization)
-// table scrolling/height/width (deferred till virtualization. Kinda works with the resizerable table container)
+// overflow wrap
+// - added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
+// it then can change the row's height drastically
+
+
 // summary row (to discuss, is this a separate row? What accessibility goes into this)
 // nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
 // Expandable rows support, will need to add this to RAC table
@@ -153,6 +154,11 @@ const table = style<TableRenderProps & S2TableProps>({
   borderRadius: {
     default: size(6),
     isQuiet: 'none'
+  },
+  // BLah
+  '--focusRingColor': {
+    type: 'backgroundColor',
+    value: 'focus-ring'
   }
 }, getAllowedOverrides({height: true}));
 
@@ -714,9 +720,6 @@ interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSor
   children: ReactNode
 }
 
-// TODOS for resizing still
-// need a blue line rendered for the column all the way down the body (need info in the cells of the column's resizing state)
-
 // TODO: placeholder, just copied over from v3. Will need to be adjusted to having the same kind of fill that the s2 icons use
 function Nubbin() {
   return (
@@ -919,6 +922,12 @@ const cell = style<CellRenderProps & S2TableProps>({
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  // marginTop: size(1),
+  // marginStart: {
+  //   default: size(1),
+  //   allowsDragging: 0
+  // },
+  marginBottom: size(1),
   paddingStart: 16,
   paddingEnd: {
     default: 8,
@@ -927,8 +936,9 @@ const checkboxCellStyle = style({
     }
   },
   alignContent: 'center',
-  // TODO: Figure out better way to make the background not cover the border of the row itself
-  height: '[calc(100% - 1px)]',
+  // TODO: Figure out better way to make the background not cover the inset boxshadow of the row top/bottom itself
+  // height: '[calc(100% - 1px)]',
+  height: '[calc(100% - 2px)]',
   borderBottomWidth: 0
 });
 
@@ -936,10 +946,14 @@ const checkboxCellStyle = style({
 const dragButtonCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
+  // marginTop: size(1),
+  // marginStart: size(1),
+  marginBottom: size(1),
   paddingX: 4,
   alignContent: 'center',
-  // TODO: Figure out better way to make the background not cover the border of the row itself
-  height: '[calc(100% - 1px)]',
+  // TODO: Figure out better way to make the background not cover the inset boxshadow of the row top/bottom itself
+  // height: '[calc(100% - 1px)]',
+  height: '[calc(100% - 2px)]',
   borderBottomWidth: 0
 });
 
@@ -968,11 +982,13 @@ const cellBackground = style({
 export interface CellProps extends RACCellProps {
   /** @private */
   isSticky?: boolean,
+  /** @private */
+  shouldRenderRowIndicator?: boolean,
   children: ReactNode
 }
 
 export function Cell(props: CellProps) {
-  let {children, isSticky, ...otherProps} = props;
+  let {children, isSticky, shouldRenderRowIndicator, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
 
   return (
@@ -991,7 +1007,8 @@ export function Cell(props: CellProps) {
             but can't have a div wrapping the cell here. I also want the padding applied on the RAC cell itself so a div wrapping the cell contents won't
             have the proper full height
           */}
-          <div role="presentation" className={cellBackground({isSticky})} />
+          {/* Problem with this way of renderin the row's indicator is that I don't know if the row has been visibly focused or not */}
+          <div role="presentation" style={{backgroundImage: false && 'linear-gradient(to right, var(--focusRingColor) 0 3px, transparent 3px)'}} className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
           <span className={cellContent({...tableVisualOptions})}>{children}</span>
         </>
@@ -1041,15 +1058,17 @@ const row = style<RowRenderProps & S2TableProps>({
   position: 'relative',
   boxSizing: 'border-box',
   backgroundImage: {
-    // TODO: will need the proper blue from tokens
-    isFocusVisible: 'linear-gradient(to right, blue 0 3px, transparent 3px)'
+    // TODO: will need the proper blue from tokens, maybe can source this from a css variable
+    isFocusVisible: 'linear-gradient(to right, var(--focusRingColor) 0 3px, transparent 3px)'
   },
   backgroundColor: rowBackgroundColor,
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
   },
-  outlineStyle: 'none',
+  // Blah
+  // '--focusOutline'
+
   // TODO: need to fix the row outlines
   // TODO: rough implementation for now, ideally this would just be the row outline or something.
   // will need to update the color to actually be a HCM style (Highlight)
@@ -1059,25 +1078,27 @@ const row = style<RowRenderProps & S2TableProps>({
   // the lines on the side. Ideally, the box shadow could go on a element within the row and be absolutely positioned + offset via inset-block-start so that
   // it would overlap with other borders/box shadows and solve the problem of adjacent rows but to do that I would need to be able to know
   // if a row was next to a selected row or not
-  // Also the current way will need proper colors and HCM colors
-  boxShadow: {
-    default: '[inset 0 -1px 0 0 gray]',
-    // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
-    // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
-    // isSelected: '[inset 0 0 0 1px blue]',
-    isSelected: '[inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue]',
-    forcedColors: {
-      default: '[inset 0 -1px 0 0 black]',
-      isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
-      isFocusVisible: '[inset 0 0 0 2px black, inset 0 -3px 0 0 black]'
-    }
-  },
+  // Also the current way will need proper colors and HCM colors (this could actually be handled via setting up css variables)
+  // outlineStyle: 'none',
+  // boxShadow: {
+  //   default: '[inset 0 -1px 0 0 gray]',
+  //   // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
+  //   // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
+  //   // isSelected: '[inset 0 0 0 1px blue]',
+  //   isSelected: '[inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue]',
+  //   forcedColors: {
+  //     default: '[inset 0 -1px 0 0 black]',
+  //     isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
+  //     isFocusVisible: '[inset 0 0 0 2px black, inset 0 -3px 0 0 black]'
+  //   }
+  // },
 
+  // Problem with this is we don't actually want the left/right outline since it will add to the gray outline of the table itself when selected
   // outlineWidth: 1,
   // outlineOffset: -1,
   // outlineStyle: 'solid',
   // outlineColor: {
-  //   isSelected: 'red-500',
+  //   isSelected: 'focus-ring',
   //   default: 'gray-300'
   // },
 
@@ -1085,6 +1106,34 @@ const row = style<RowRenderProps & S2TableProps>({
   // width: '[calc(100%-2px)]',
   // marginStart: '[1px]',
   // marginTop: '[-1px]',
+
+
+  outlineStyle: 'none',
+  // borderColor: {
+  //   isSelected: 'blue-300',
+  //   default: 'gray-300'
+  // },
+  borderWidth: 1,
+  borderStyle: 'solid',
+
+
+  // TODO: Current problem:
+  // - we want the non-selected state for the row to only have grey outline on the top and bottom, the left/right shouldn't have an outline since the table outline provides this
+  // - we want the whole outline to be blue when the row is selected. Additionally the top/bottom outline should merge with the row above/below
+  // - we want the selection cell/drag button cell to be sticky and COVER what gets scrolled under it. However, it shouldn't interfere/cover with the outline of the selected row
+  // - we also want a 4px blue line on the left of the row when keyboard focused. This needs to go over the selection cell/drag button cell.
+
+  // Limitations
+  // - we don't want to use pseudo elements/raw/etc. This makes it bit hard since v3 made use of those pseudo elements to generate sibling elements to the cells
+  // allowing z-index values to make those elements (the row focus indicator and box-shadows for the row outlines) sit on top of the selection cell.
+  // - we don't want to use things like box-shadows since we can't provide the proper color tokens to the,
+  // actually I could make use of css variables and have it work that way?
+
+
+  // Potential idea: every row has a inset border of 1px on top and bottom, a border of 1px on the right/left that is the color of the row (or maybe transparent) untill row is selected (becomes selected color) (possibly needs negative margin)
+  // the keyboard indication is then moved from the row to the first cell and applied as a background image so it doesn't get covered by the selection cell's background
+  // Problem with the above is that we don't have style macro for the borderColor for each specific border but I suppose we could add that
+
   forcedColorAdjust: 'none'
   // TODO: This is an alternative to having the tablebody + cells render an outline
   //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
@@ -1126,6 +1175,15 @@ export function Row<T extends object>(
   return (
     <RACRow
       id={id}
+      style={({isSelected}) => ({
+        borderTopColor: isSelected ? 'var(--focusRingColor)' : 'gray',
+        borderBottomColor: isSelected ? 'var(--focusRingColor)' : 'gray',
+        borderInlineStartColor: isSelected ? 'var(--focusRingColor)' : 'transparent',
+        borderInlineEndColor: isSelected ? 'var(--focusRingColor)' : 'transparent',
+        // TODO: This margin is needed so that there isn't a wiggle when scrolling to the right but then it hides the selected border
+        // borderInlineStartWidth: isSelected ? 0 : 1,
+        // marginInlineStart: isSelected ? 0 : -1
+      })}
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
@@ -1139,7 +1197,8 @@ export function Row<T extends object>(
         </Cell>
       )}
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-        <Cell isSticky className={checkboxCellStyle({scale: tableVisualOptions.scale})}>
+        // BLAH
+        <Cell isSticky shouldRenderRowIndicator={!allowsDragging} className={checkboxCellStyle({scale: tableVisualOptions.scale, allowsDragging})}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>
       )}
