@@ -14,6 +14,7 @@ import {act} from '@testing-library/react';
 import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, Popover, Section, Text} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
@@ -35,6 +36,8 @@ let TestComboBox = (props) => (
 
 describe('ComboBox', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -92,7 +95,7 @@ describe('ComboBox', () => {
   });
 
   it('should support filtering sections', async () => {
-    let {getByRole} = render(
+    let tree = render(
       <ComboBox>
         <Label>Preferred fruit or vegetable</Label>
         <Input />
@@ -114,14 +117,14 @@ describe('ComboBox', () => {
       </ComboBox>
     );
 
-    let input = getByRole('combobox');
+    let {setElement, getCombobox, getSections} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
     act(() => {
-      input.focus();
+      getCombobox().focus();
     });
     await user.keyboard('p');
 
-    let listbox = getByRole('listbox');
-    let groups = within(listbox).getAllByRole('group');
+    let groups = getSections();
     expect(groups).toHaveLength(1);
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
@@ -136,7 +139,7 @@ describe('ComboBox', () => {
       {id: 2, name: 'Dog'},
       {id: 3, name: 'Kangaroo'}
     ];
-    let {getByRole} = render(
+    let tree = render(
       <ComboBox defaultItems={defaultItems}>
         <Label>Favorite Animal</Label>
         <Input />
@@ -151,14 +154,13 @@ describe('ComboBox', () => {
       </ComboBox>
     );
 
-    let input = getByRole('combobox');
+    let {setElement, getCombobox, getOptions} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
     act(() => {
-      input.focus();
+      getCombobox().focus();
     });
     await user.keyboard('c');
-
-    let listbox = getByRole('listbox');
-    let options = within(listbox).getAllByRole('option');
+    let options = getOptions();
     expect(options).toHaveLength(1);
   });
 
@@ -213,7 +215,7 @@ describe('ComboBox', () => {
   });
 
   it('should support validation errors', async () => {
-    let {getByRole, getByTestId} = render(
+    let tree = render(
       <form data-testid="form">
         <ComboBox isRequired>
           <Label>Favorite Animal</Label>
@@ -231,32 +233,37 @@ describe('ComboBox', () => {
       </form>
     );
 
-    let input = getByRole('combobox');
-    let combobox = input.closest('.react-aria-ComboBox');
-    expect(input).toHaveAttribute('required');
-    expect(input).not.toHaveAttribute('aria-required');
-    expect(input).not.toHaveAttribute('aria-describedby');
-    expect(input.validity.valid).toBe(false);
+    let {setElement, getCombobox, getOptions} = testUtilUser.createTester('ComboBoxTester');
+    setElement(tree.container);
+    let combobox = getCombobox();
+
+    expect(combobox).toHaveAttribute('required');
+    expect(combobox).not.toHaveAttribute('aria-required');
+    expect(combobox).not.toHaveAttribute('aria-describedby');
+    expect(combobox.validity.valid).toBe(false);
     expect(combobox).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {tree.getByTestId('form').checkValidity();});
 
-    expect(document.activeElement).toBe(input);
-    expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
-    expect(combobox).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(combobox);
+    expect(combobox).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(combobox.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    let comboboxWrapper = combobox.closest('.react-aria-ComboBox');
+    expect(comboboxWrapper).toHaveAttribute('data-invalid');
 
+    act(() => {
+      getCombobox().focus();
+    });
     await user.keyboard('C');
 
-    let listbox = getByRole('listbox');
-    let options = within(listbox).getAllByRole('option');
+    let options = getOptions();
     await user.click(options[0]);
 
-    expect(input).toHaveAttribute('aria-describedby');
-    expect(input.validity.valid).toBe(true);
+    expect(combobox).toHaveAttribute('aria-describedby');
+    expect(combobox.validity.valid).toBe(true);
 
     await user.tab();
-    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(combobox).not.toHaveAttribute('aria-describedby');
     expect(combobox).not.toHaveAttribute('data-invalid');
   });
 

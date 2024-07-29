@@ -13,3 +13,4 @@
 export * from './events';
 export * from './testSetup';
 export * from './userEventMaps';
+export * from './user';

@@ -35,6 +35,7 @@ import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -143,6 +144,7 @@ function pointerEvent(type, opts) {
 export let tableTests = () => {
   let offsetWidth, offsetHeight;
   let user;
+  let testUtilUser = new User({advanceTimer: (time) => jest.advanceTimersByTime(time)});
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
@@ -2391,16 +2393,20 @@ export let tableTests = () => {
 
     describe('select all', function () {
       it('should support selecting all via the checkbox', async function () {
+        let {setElement, setInteractionType, getRows, getSelectedRows, toggleSelectAll} = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
+        setInteractionType('keyboard');
+        setElement(tree.getByRole('grid'));
 
         checkSelectAll(tree, 'unchecked');
 
-        let rows = tree.getAllByRole('row');
+        let rows = getRows();
         checkRowSelection(rows.slice(1), false);
+        expect(getSelectedRows()).toHaveLength(0);
 
-        await user.click(tree.getByLabelText('Select All'));
-
+        await toggleSelectAll();
+        expect(getSelectedRows()).toHaveLength(getRows().length);
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
         checkRowSelection(rows.slice(1), true);
@@ -2837,35 +2843,30 @@ export let tableTests = () => {
       describe('needs PointerEvent defined', () => {
         installPointerEvent();
         it('should support long press to enter selection mode on touch', async function () {
+          let {setElement, setInteractionType, toggleRowSelection} = testUtilUser.createTester('TableTester');
+          setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
-          let tree = renderTable({onSelectionChange, onAction});
+          let tree = renderTable({onSelectionChange, onAction, selectionStyle: 'highlight'});
+
+          setElement(tree.getByRole('grid'));
           act(() => jest.runAllTimers());
           await user.pointer({target: document.body, keys: '[TouchA]'});
 
-          let cellBaz5 = getCell(tree, 'Foo 5');
-
-          fireEvent.pointerDown(cellBaz5, {pointerType: 'touch'});
-          expect(onSelectionChange).not.toHaveBeenCalled();
-          expect(onAction).not.toHaveBeenCalled();
-
-          act(() => jest.runAllTimers());
-
+          await toggleRowSelection({text: 'Foo 5', needsLongPress: true});
           checkSelection(onSelectionChange, ['Foo 5']);
           expect(onAction).not.toHaveBeenCalled();
-
-          fireEvent.pointerUp(cellBaz5, {pointerType: 'touch'});
-          fireEvent.click(cellBaz5, {pointerType: 'touch'});
           onSelectionChange.mockReset();
 
-          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          await toggleRowSelection({text: 'Foo 10', needsLongPress: false});
           checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
           // Deselect all to exit selection mode
-          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
           onSelectionChange.mockReset();
-          await user.pointer({target: cellBaz5, keys: '[TouchA]'});
-
+          await toggleRowSelection({text: 'Foo 10', needsLongPress: false});
+          checkSelection(onSelectionChange, ['Foo 5']);
+          onSelectionChange.mockReset();
+          await toggleRowSelection({text: 'Foo 5', needsLongPress: false});
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, []);
           expect(onAction).not.toHaveBeenCalled();
@@ -2981,18 +2982,19 @@ export let tableTests = () => {
 
       describe('needs pointerEvents', function () {
         installPointerEvent();
-
         it('should toggle selection with touch', async function () {
+          let {setElement, setInteractionType, toggleRowSelection} = testUtilUser.createTester('TableTester');
+          setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
-
+          setElement(tree.getByRole('grid'));
           expect(tree.queryByLabelText('Select All')).toBeNull();
 
-          await user.pointer({target: getCell(tree, 'Baz 5'), keys: '[TouchA]'});
+          await toggleRowSelection({text: 'Baz 5'});
           expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
           expect(announce).toHaveBeenCalledTimes(1);
           onSelectionChange.mockReset();
-          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          await toggleRowSelection({text: 'Foo 10'});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
           expect(announce).toHaveBeenCalledTimes(2);
 
@@ -3013,11 +3015,13 @@ export let tableTests = () => {
       });
 
       it('should support double click to perform onAction with mouse', async function () {
+        let {setElement, toggleRowSelection, triggerRowAction} = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+        setElement(tree.getByRole('grid'));
 
-        await user.click(getCell(tree, 'Baz 5'));
+        await toggleRowSelection({text: 'Foo 5'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -3025,7 +3029,7 @@ export let tableTests = () => {
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        await user.dblClick(getCell(tree, 'Baz 5'));
+        await triggerRowAction({text: 'Foo 5', needsDoubleClick: true});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -3129,16 +3133,19 @@ export let tableTests = () => {
         describe('still needs pointer events install', function () {
           installPointerEvent();
           it('should support long press to enter selection mode on touch', async function () {
+            let {setElement, setInteractionType, findCell, toggleRowSelection} = testUtilUser.createTester('TableTester');
+            setInteractionType('touch');
             let onSelectionChange = jest.fn();
             let onAction = jest.fn();
             let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-
+            setElement(tree.getByRole('grid'));
             act(() => {
               jest.runAllTimers();
             });
             await user.click(document.body);
 
-            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            // TODO: Not replacing this with util for long press since it tests various things in the middle of the press
+            fireEvent.pointerDown(findCell({text: 'Baz 5'}), {pointerType: 'touch'});
             let description = tree.getByText('Long press to enter selection mode.');
             expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
             expect(announce).not.toHaveBeenCalled();
@@ -3171,26 +3178,15 @@ export let tableTests = () => {
             checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
             // Deselect all to exit selection mode
-            await user.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-            act(() => {
-              jest.runAllTimers();
-            });
+            await toggleRowSelection({text: 'Foo 10'});
             expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
             expect(announce).toHaveBeenCalledTimes(3);
             onSelectionChange.mockReset();
 
-            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            fireEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            act(() => {
-              jest.runAllTimers();
-            });
+            await toggleRowSelection({text: 'Foo 5'});
             expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
             expect(announce).toHaveBeenCalledTimes(4);
 
-            act(() => {
-              jest.runAllTimers();
-            });
             checkSelection(onSelectionChange, []);
             expect(onAction).not.toHaveBeenCalled();
             expect(tree.queryByLabelText('Select All')).toBeNull();
@@ -4337,11 +4333,12 @@ export let tableTests = () => {
     });
 
     it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
+      let {setElement, setInteractionType, getColumns, toggleSort} = testUtilUser.createTester('TableTester');
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
-
-      let table = tree.getByRole('grid');
-      let columnheaders = within(table).getAllByRole('columnheader');
+      setInteractionType('keyboard');
+      setElement(tree.getByRole('grid'));
+      let columnheaders = getColumns();
       expect(columnheaders).toHaveLength(3);
       expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
@@ -4352,7 +4349,7 @@ export let tableTests = () => {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      await user.click(columnheaders[1]);
+      await toggleSort({index: 1});
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
 
       uaMock.mockRestore();

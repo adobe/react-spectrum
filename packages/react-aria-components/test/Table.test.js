@@ -19,6 +19,7 @@ import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
 import * as stories from '../stories/Table.stories';
 import {useLoadMore} from '@react-aria/utils';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -177,6 +178,7 @@ let renderTable = (props) => render(<TestTable {...props} />);
 
 describe('Table', () => {
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -190,28 +192,30 @@ describe('Table', () => {
   });
 
   it('should render with default classes', () => {
-    let {getByRole, getAllByRole} = renderTable();
-    let table = getByRole('grid');
+    let {getByRole} = renderTable();
+    let {setElement, getTable, getRows, getRowGroups, getColumns, getRowHeaders, getCells} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
+    let table = getTable();
     expect(table).toHaveAttribute('class', 'react-aria-Table');
 
-    for (let row of getAllByRole('row').slice(1)) {
+    for (let row of getRows()) {
       expect(row).toHaveAttribute('class', 'react-aria-Row');
     }
 
-    let rowGroups = getAllByRole('rowgroup');
+    let rowGroups = getRowGroups();
     expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('class', 'react-aria-TableHeader');
     expect(rowGroups[1]).toHaveAttribute('class', 'react-aria-TableBody');
 
-    for (let cell of getAllByRole('columnheader')) {
+    for (let cell of getColumns()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Column');
     }
 
-    for (let cell of getAllByRole('rowheader')) {
+    for (let cell of getRowHeaders()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of getAllByRole('gridcell')) {
+    for (let cell of getCells()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -592,7 +596,7 @@ describe('Table', () => {
 
   it('should support onAction on items', async () => {
     let onAction = jest.fn();
-    let {getAllByRole} = render(
+    let {getByRole} = render(
       <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
         <MyTableHeader>
           <Column isRowHeader>Foo</Column>
@@ -613,24 +617,34 @@ describe('Table', () => {
         </TableBody>
       </Table>
     );
-    let items = getAllByRole('row');
-    await user.click(items[1]);
+
+    let {setElement, triggerRowAction} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
+    await triggerRowAction({index: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
-  it('should support sorting', () => {
-    let {getAllByRole} = renderTable({
-      tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange: jest.fn()},
+  it('should support sorting', async () => {
+    let onSortChange = jest.fn();
+    let {getByRole} = renderTable({
+      tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange},
       columnProps: {allowsSorting: true}
     });
 
-    let columns = getAllByRole('columnheader');
+    let {setElement, getColumns, toggleSort} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
+
+    let columns = getColumns();
     expect(columns[0]).toHaveAttribute('aria-sort', 'ascending');
     expect(columns[0]).toHaveTextContent('▲');
     expect(columns[1]).toHaveAttribute('aria-sort', 'none');
     expect(columns[1]).not.toHaveTextContent('▲');
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
+
+    await toggleSort({index: 0});
+    expect(onSortChange).toHaveBeenCalledTimes(1);
+    expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });
 
   it('should support empty state', () => {
@@ -653,16 +667,17 @@ describe('Table', () => {
   });
 
   it('supports removing rows', async () => {
-    let {getAllByRole, rerender} = render(<DynamicTable tableBodyProps={{rows}} />);
+    let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
 
+    let {setElement, getRows} = testUtilUser.createTester('TableTester');
+    setElement(getByRole('grid'));
     await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-    let body = getAllByRole('rowgroup')[1];
-    let gridRows = within(body).getAllByRole('row');
+    let gridRows = getRows();
     expect(gridRows).toHaveLength(4);
     let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('Program Files');
@@ -670,7 +685,7 @@ describe('Table', () => {
 
     rerender(<DynamicTable tableBodyProps={{items: [rows[0], ...rows.slice(2)]}} />);
 
-    gridRows = within(body).getAllByRole('row');
+    gridRows = getRows();
     expect(gridRows).toHaveLength(3);
     cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('bootmgr');
@@ -1777,7 +1792,7 @@ describe('Table', () => {
       }
 
       let row = getAllByRole('row')[1];
-      triggerLongPress(row);
+      await triggerLongPress({element: row, advanceTimer: jest.advanceTimersByTime});
       expect(row).toHaveAttribute('aria-selected', 'true');
 
       for (let row of getAllByRole('row')) {
