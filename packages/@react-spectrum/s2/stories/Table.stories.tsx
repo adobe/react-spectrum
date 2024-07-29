@@ -163,7 +163,23 @@ let sortitems = [
   {id: 1, name: 'A', height: '1', weight: '3'},
   {id: 2, name: 'B', height: '2', weight: '1'},
   {id: 3, name: 'C', height: '3', weight: '4'},
-  {id: 4, name: 'D', height: '4', weight: '2'}
+  {id: 4, name: 'D', height: '4', weight: '2'},
+  {id: 5, name: 'E', height: '5', weight: '3'},
+  {id: 6, name: 'F', height: '6', weight: '1'},
+  {id: 7, name: 'G', height: '7', weight: '4'},
+  {id: 8, name: 'H', height: '8', weight: '2'},
+  {id: 9, name: 'I', height: '9', weight: '3'},
+  {id: 10, name: 'J', height: '10', weight: '1'},
+  {id: 11, name: 'K', height: '11', weight: '4'},
+  {id: 12, name: 'L', height: '12', weight: '2'},
+  {id: 13, name: 'M', height: '13', weight: '3'},
+  {id: 14, name: 'N', height: '14', weight: '1'},
+  {id: 15, name: 'O', height: '15', weight: '4'},
+  {id: 16, name: 'P', height: '16', weight: '2'},
+  {id: 17, name: 'Q', height: '17', weight: '3'},
+  {id: 18, name: 'R', height: '18', weight: '1'},
+  {id: 19, name: 'S', height: '19', weight: '4'},
+  {id: 20, name: 'T', height: '20', weight: '2'}
 ];
 
 const SortableTable = (args: any) => {
@@ -366,7 +382,7 @@ const OnLoadMoreTable = (args: any) => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 20000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {

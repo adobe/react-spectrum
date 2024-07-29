@@ -32,6 +32,7 @@ import {
   TableHeader as RACTableHeader,
   TableProps as RACTableProps,
   ResizableTableContainer,
+  ResizableTableContainerContext,
   RowProps,
   RowRenderProps,
   TableBodyRenderProps,
@@ -273,6 +274,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
     let {children, layoutInfo} = layoutNode;
+    // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
     if (children?.length === 0) {
@@ -286,12 +288,20 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   protected buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
     let layoutNode = super.buildRow(node, x, y);
     layoutNode.layoutInfo.allowOverflow = true;
-
+    // Needs overflow for sticky selection/drag cells
     return layoutNode;
   }
 
   protected buildTableHeader(): LayoutNode {
     let layoutNode = super.buildTableHeader();
+    // Needs overflow for sticky selection/drag column
+    layoutNode.layoutInfo.allowOverflow = true;
+    return layoutNode;
+  }
+
+  protected buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
+    let layoutNode = super.buildColumn(node, x, y);
+    // Needs overflow for the resize handle
     layoutNode.layoutInfo.allowOverflow = true;
     return layoutNode;
   }
@@ -383,6 +393,8 @@ export function Table(props: TableProps) {
     </UNSTABLE_Virtualizer>
   );
 
+  // TODO: for the resizer line indicator, can't do it at this level with the ResizableTableContainerContext because
+  // that just gives the actual useTableColumnResizeState hook but I need the actual caluclated layout state
   if (columnsResizable) {
     baseTable = (
       <ResizableTableContainer
@@ -663,7 +675,6 @@ const resizerHandle = style({
     isFocusVisible: 'focus-ring',
     isResizing: 'focus-ring'
   },
-  height: 'full',
   width: size(2),
   position: 'absolute',
   left: size(5)
@@ -763,13 +774,20 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
         <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection}) => resizerHandleContainer({resizableDirection})}>
           {({isFocusVisible, isResizing}) => (
             <>
-              <div className={resizerHandle({isFocusVisible, isHovered, isResizing})} />
+              <ResizerIndicator isFocusVisible={isFocusVisible} isHovered={isHovered} isResizing={isResizing} />
               {isFocusVisible && isResizing && <div className={nubbin}><Nubbin /></div>}
             </>
         )}
         </ColumnResizer>
       </div>
     </>
+  );
+}
+
+function ResizerIndicator({isFocusVisible, isHovered, isResizing}) {
+  let state = useContext(ResizableTableContainerContext);
+  return (
+    <div style={{height: isResizing ? state.tableHeight : '100%'}} className={resizerHandle({isFocusVisible, isHovered, isResizing})} />
   );
 }
 
