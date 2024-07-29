@@ -47,7 +47,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/card');
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
@@ -79,8 +78,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   cardViewLayout.collection = gridCollection;
   cardViewLayout.disabledKeys = state.disabledKeys;
-  cardViewLayout.isLoading = isLoading;
-  cardViewLayout.direction = direction;
 
   let {gridProps} = useGrid({
     ...props,
@@ -89,7 +86,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   }, state, domRef);
 
   type View = ReusableView<Node<T>, ReactNode>;
-  let renderWrapper = (parent: View, reusableView: View) => (
+  let renderWrapper = useCallback((parent: View, reusableView: View) => (
     <VirtualizerItem
       key={reusableView.key}
       layoutInfo={reusableView.layoutInfo}
@@ -97,7 +94,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
       parent={parent?.layoutInfo}>
       {reusableView.rendered}
     </VirtualizerItem>
-  );
+  ), []);
 
   let focusedKey = state.selectionManager.focusedKey;
   let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
@@ -105,61 +102,68 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     focusedKey = focusedItem.parentKey;
   }
 
-  let margin = cardViewLayout.margin || 0;
-  let virtualizer = cardViewLayout.virtualizer;
-  let scrollToItem = useCallback((key) => {
-    virtualizer && virtualizer.scrollToItem(key, {
-      duration: 0,
-      offsetY: margin
-    });
-  }, [margin, virtualizer]);
+  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
-    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation}}>
+    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation, renderEmptyState}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
         className={classNames(styles, 'spectrum-CardView')}
         ref={domRef}
-        focusedKey={focusedKey}
+        persistedKeys={persistedKeys}
         scrollDirection="vertical"
         layout={cardViewLayout}
         collection={gridCollection}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
+        layoutOptions={useMemo(() => ({isLoading, direction}), [isLoading, direction])}
         renderWrapper={renderWrapper}
-        transitionDuration={isLoading ? 160 : 220}
-        scrollToItem={scrollToItem}>
-        {(type, item) => {
+        style={{
+          ...styleProps.style,
+          scrollPaddingTop: cardViewLayout.margin || 0
+        }}>
+        {useCallback((type, item) => {
           if (type === 'item') {
             return (
               <InternalCard item={item} />
             );
           } else if (type === 'loader') {
-            return (
-              <CenteredWrapper>
-                <ProgressCircle
-                  isIndeterminate
-                  aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
-              </CenteredWrapper>
-            );
+            return <LoadingState />;
           } else if (type === 'placeholder') {
-            let emptyState = renderEmptyState ? renderEmptyState() : null;
-            if (emptyState == null) {
-              return null;
-            }
-
-            return (
-              <CenteredWrapper>
-                {emptyState}
-              </CenteredWrapper>
-            );
+            return <EmptyState />;
           }
-        }}
+        }, [])}
       </Virtualizer>
     </CardViewContext.Provider>
 
+  );
+}
+
+function LoadingState() {
+  let {state} = useCardViewContext();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/card');
+  return (
+    <CenteredWrapper>
+      <ProgressCircle
+        isIndeterminate
+        aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
+    </CenteredWrapper>
+  );
+}
+
+function EmptyState() {
+  let {renderEmptyState} = useCardViewContext();
+  let emptyState = renderEmptyState ? renderEmptyState() : null;
+  if (emptyState == null) {
+    return null;
+  }
+
+  return (
+    <CenteredWrapper>
+      {emptyState}
+    </CenteredWrapper>
   );
 }
 
@@ -185,8 +189,8 @@ function InternalCard(props) {
   let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
   let layoutType = layout.layoutType;
-  let rowRef = useRef();
-  let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let rowRef = useRef(undefined);
+  let cellRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
   let unwrappedRef = useUnwrapDOMRef(cellRef);
 
   let {rowProps: gridRowProps} = useGridRow({

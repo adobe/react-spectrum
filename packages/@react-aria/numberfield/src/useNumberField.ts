@@ -55,7 +55,7 @@ export interface NumberFieldAria extends ValidationResult {
  * Provides the behavior and accessibility implementation for a number field component.
  * Number fields allow users to enter a number, and increment or decrement the value using stepper buttons.
  */
-export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldState, inputRef: RefObject<HTMLInputElement>): NumberFieldAria {
+export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldState, inputRef: RefObject<HTMLInputElement | null>): NumberFieldAria {
   let {
     id,
     decrementAriaLabel,
@@ -153,7 +153,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   // Browsers and operating systems are quite inconsistent about what keys are available, however.
   // We choose between numeric and decimal based on whether we allow negative and fractional numbers,
   // and based on testing on various devices to determine what keys are available in each inputMode.
-  let hasDecimals = intlOptions.maximumFractionDigits > 0;
+  let hasDecimals = (intlOptions.maximumFractionDigits ?? 0) > 0;
   let hasNegative = (state.minValue === undefined || isNaN(state.minValue)) || state.minValue < 0;
   let inputMode: TextInputDOMProps['inputMode'] = 'numeric';
   if (isIPhone()) {

@@ -11,11 +11,12 @@
  */
 
 import {getScrollParent, isIOS, isScrollable, isWebKit} from '@react-aria/utils';
-import {RefObject, useCallback, useEffect, useRef} from 'react';
+import {RefObject} from '@react-types/shared';
+import {useCallback, useEffect, useRef} from 'react';
 
 const AUTOSCROLL_AREA_SIZE = 20;
 
-export function useAutoScroll(ref: RefObject<Element>) {
+export function useAutoScroll(ref: RefObject<Element | null>) {
   let scrollableRef = useRef<Element>(null);
   let scrollableX = useRef(true);
   let scrollableY = useRef(true);

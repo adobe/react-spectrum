@@ -5,7 +5,7 @@ export default {
   transpilePackages: [
     '@adobe/react-spectrum',
     '@react-spectrum/*',
-    '@spectrum-icons/*',
+    '@spectrum-icons/*'
   ].flatMap(spec => glob.sync(`${spec}`, { cwd: 'node_modules/' })),
   basePath:
     process.env.VERDACCIO && process.env.CIRCLE_SHA1

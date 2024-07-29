@@ -1546,6 +1546,7 @@ function TableWithBreadcrumbs(props) {
       </Breadcrumbs>
       <TableView
         width="400px"
+        height="300px"
         aria-label="table"
         {...props}
         selectedKeys={selection}
@@ -2040,7 +2041,7 @@ export const Links = (args) => {
 
 export const ColumnHeaderFocusRingTable = {
   render: () => <LoadingTable />,
-  storyName: 'column header focus after loading',
+  name: 'column header focus after loading',
   parameters: {
     description: {
       data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
@@ -2082,3 +2083,5 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+export {Performance} from './Performance';

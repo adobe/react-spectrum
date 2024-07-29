@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement} from '@react-types/shared';
-import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
+import {FocusableElement, RefObject} from '@react-types/shared';
+import React, {ReactNode, useEffect, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
@@ -40,12 +40,23 @@ export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
   state: SelectState<T>,
 
   /** A ref to the trigger element. */
-  triggerRef: RefObject<FocusableElement>
+  triggerRef: RefObject<FocusableElement | null>
 }
 
 export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
   /** A ref to the hidden `<select>` element. */
-  selectRef?: RefObject<HTMLSelectElement>
+  selectRef?: RefObject<HTMLSelectElement | null>
+}
+
+export interface HiddenSelectAria {
+  /** Props for the container element. */
+  containerProps: React.HTMLAttributes<FocusableElement>,
+
+  /** Props for the hidden input element. */
+  inputProps: React.InputHTMLAttributes<HTMLInputElement>,
+
+  /** Props for the hidden select element. */
+  selectProps: React.SelectHTMLAttributes<HTMLSelectElement>
 }
 
 /**
@@ -53,7 +64,7 @@ export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
+export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement | null>): HiddenSelectAria {
   let data = selectData.get(state) || {};
   let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
@@ -88,7 +99,9 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
     containerProps: {
       ...visuallyHiddenProps,
       'aria-hidden': true,
+      // @ts-ignore
       ['data-react-aria-prevent-focus']: true,
+      // @ts-ignore
       ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {

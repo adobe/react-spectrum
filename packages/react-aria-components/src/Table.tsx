@@ -1,29 +1,32 @@
-import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {ContextValue, DEFAULT_SLOT, DOMProps, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
-import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
+  rows: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: NodeValue<T> = new NodeValue('tableheader', -1);
-  body: NodeValue<T> = new NodeValue('tablebody', -2);
+  head: CollectionNode<T> = new CollectionNode('tableheader', -1);
+  body: CollectionNode<T> = new CollectionNode('tablebody', -2);
   columnsDirty = true;
 
-  addNode(node: NodeValue<T>) {
+  addNode(node: CollectionNode<T>) {
     super.addNode(node);
 
     this.columnsDirty ||= node.type === 'column';
@@ -39,6 +42,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
     super.commit(firstKey, lastKey, isSSR);
+    this.rows = [...this.getChildren(this.body.key)];
   }
 
   private updateColumns(isSSR: boolean) {
@@ -84,25 +88,25 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     return this.columns.length;
   }
 
-  get rows() {
-    return [...this.getChildren(this.body.key)];
-  }
-
   *[Symbol.iterator]() {
-    yield* this.getChildren(this.body.key);
+    // Wait until the collection is initialized.
+    if (this.head.key === -1) {
+      return;
+    }
+    yield this.head;
+    yield this.body;
   }
 
   get size() {
-    return [...this.getChildren(this.body.key)].length;
+    return this.rows.length;
   }
 
   getFirstKey() {
-    return [...this.getChildren(this.body.key)][0]?.key;
+    return this.body.firstChildKey;
   }
 
   getLastKey() {
-    let rows = [...this.getChildren(this.body.key)];
-    return rows[rows.length - 1]?.key;
+    return this.body.lastChildKey;
   }
 
   getKeyAfter(key: Key) {
@@ -181,6 +185,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
 interface ResizableTableContainerContextValue {
   tableWidth: number,
+  tableRef: RefObject<HTMLTableElement | null>,
+  scrollRef: RefObject<HTMLElement | null>,
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
   useTableColumnResizeState: typeof useTableColumnResizeState,
   onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
@@ -209,31 +215,50 @@ export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<
 }
 
 function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
-  let objectRef = useObjectRef(ref);
+  let containerRef = useObjectRef(ref);
+  let tableRef = useRef<HTMLTableElement>(null);
+  let scrollRef = useRef<HTMLElement | null>(null);
   let [width, setWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    // Walk up the DOM from the Table to the ResizableTableContainer and stop
+    // when we reach the first scrollable element. This is what we'll measure
+    // to determine column widths (important due to width of scrollbars).
+    // This will usually be the ResizableTableContainer for native tables, and
+    // the Table itself for virtualized tables.
+    let table = tableRef.current as HTMLElement | null;
+    while (table && table !== containerRef.current && !isScrollable(table)) {
+      table = table.parentElement;
+    }
+    scrollRef.current = table;
+  }, [containerRef]);
+
   useResizeObserver({
-    ref: objectRef,
+    ref: scrollRef,
+    box: 'border-box',
     onResize() {
-      setWidth(objectRef.current?.clientWidth ?? 0);
+      setWidth(scrollRef.current?.clientWidth ?? 0);
     }
   });
 
   useLayoutEffect(() => {
-    setWidth(objectRef.current?.clientWidth ?? 0);
-  }, [objectRef]);
+    setWidth(scrollRef.current?.clientWidth ?? 0);
+  }, []);
 
   let ctx = useMemo(() => ({
+    tableRef,
+    scrollRef,
     tableWidth: width,
     useTableColumnResizeState,
     onResizeStart: props.onResizeStart,
     onResize: props.onResize,
     onResizeEnd: props.onResizeEnd
-  }), [width, props.onResizeStart, props.onResize, props.onResizeEnd]);
+  }), [tableRef, width, props.onResizeStart, props.onResize, props.onResizeEnd]);
 
   return (
     <div
       {...filterDOMProps(props as any)}
-      ref={objectRef}
+      ref={containerRef}
       className={props.className || 'react-aria-ResizableTableContainer'}
       style={props.style}
       onScroll={props.onScroll}>
@@ -248,7 +273,7 @@ const _ResizableTableContainer = forwardRef(ResizableTableContainer);
 export {_ResizableTableContainer as ResizableTableContainer};
 
 export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
-export const TableStateContext = createContext<TableState<unknown> | null>(null);
+export const TableStateContext = createContext<TableState<any> | null>(null);
 export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
 export interface TableRenderProps {
@@ -294,17 +319,56 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
 
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
-  let initialCollection = useMemo(() => new TableCollection<any>(), []);
-  let {portal, collection} = useCollection(props, initialCollection);
+
+  // Separate selection state so we have access to it from collection components via useTableOptions.
+  let selectionState = useMultipleSelectionState(props);
+  let {selectionBehavior, selectionMode, disallowEmptySelection} = selectionState;
+  let hasDragHooks = !!props.dragAndDropHooks?.useDraggableCollectionState;
+  let ctx = useMemo(() => ({
+    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
+    selectionMode,
+    disallowEmptySelection,
+    allowsDragging: hasDragHooks
+  }), [selectionBehavior, selectionMode, disallowEmptySelection, hasDragHooks]);
+
+  let content = (
+    <TableOptionsContext.Provider value={ctx}>
+      <Collection {...props} />
+    </TableOptionsContext.Provider>
+  );
+
+  return (
+    <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()}>
+      {collection => <TableInner props={props} forwardedRef={ref} selectionState={selectionState} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+interface TableInnerProps {
+  props: TableProps,
+  forwardedRef: ForwardedRef<HTMLTableElement>,
+  selectionState: MultipleSelectionState,
+  collection: ITableCollection<Node<object>>
+}
+
+
+function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
+  let tableContainerContext = useContext(ResizableTableContainerContext);
+  ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
   let state = useTableState({
     ...props,
     collection,
-    children: undefined
+    children: undefined,
+    UNSAFE_selectionState: selectionState
   });
 
-  let {gridProps} = useTable(props, state, ref);
-
+  let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
   let {dragAndDropHooks} = props;
+  let {gridProps} = useTable({
+    ...props,
+    layoutDelegate,
+    isVirtualized
+  }, state, ref);
   let selectionManager = state.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -350,9 +414,10 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       collection,
       disabledKeys: selectionManager.disabledKeys,
       disabledBehavior: selectionManager.disabledBehavior,
-      ref
+      ref,
+      layoutDelegate
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection.rows, ref);
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
@@ -375,62 +440,53 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   });
 
   let isListDraggable = !!(hasDragHooks && !dragState?.isDisabled);
-  let isListDroppable = !!(hasDropHooks && !dropState?.isDisabled);
-
-  let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
-  let ctx = useMemo(() => ({
-    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
-    selectionMode,
-    disallowEmptySelection,
-    allowsDragging: hasDragHooks
-  }), [selectionBehavior, selectionMode, disallowEmptySelection, hasDragHooks]);
 
   let style = renderProps.style;
-  let tableContainerContext = useContext(ResizableTableContainerContext);
   let layoutState: TableColumnResizeState<unknown> | null = null;
   if (tableContainerContext) {
     layoutState = tableContainerContext.useTableColumnResizeState({
       tableWidth: tableContainerContext.tableWidth
     }, state);
-    style = {
-      ...style,
-      tableLayout: 'fixed',
-      width: 'fit-content'
-    };
+    if (!isVirtualized) {
+      style = {
+        ...style,
+        tableLayout: 'fixed',
+        width: 'fit-content'
+      };
+    }
   }
 
+  let ElementType = useElementType('table');
+
   return (
-    <>
-      <TableOptionsContext.Provider value={ctx}>
-        {portal}
-      </TableOptionsContext.Provider>
-      <Provider
-        values={[
-          [TableStateContext, state],
-          [TableColumnResizeStateContext, layoutState],
-          [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-          [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
-        ]}>
-        <FocusScope>
-          <table
-            {...filterDOMProps(props)}
-            {...renderProps}
-            {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
-            style={style}
-            ref={ref}
-            slot={props.slot || undefined}
-            onScroll={props.onScroll}
-            data-allows-dragging={isListDraggable || undefined}
-            data-drop-target={isRootDropTarget || undefined}
-            data-focused={isFocused || undefined}
-            data-focus-visible={isFocusVisible || undefined}>
-            <TableHeaderRowGroup collection={collection} />
-            <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
-          </table>
-        </FocusScope>
-        {dragPreview}
-      </Provider>
-    </>
+    <Provider
+      values={[
+        [TableStateContext, state],
+        [TableColumnResizeStateContext, layoutState],
+        [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
+        [DropIndicatorContext, {render: TableDropIndicatorWrapper}]
+      ]}>
+      <FocusScope>
+        <ElementType
+          {...filterDOMProps(props)}
+          {...renderProps}
+          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
+          style={style}
+          ref={ref}
+          slot={props.slot || undefined}
+          onScroll={props.onScroll}
+          data-allows-dragging={isListDraggable || undefined}
+          data-drop-target={isRootDropTarget || undefined}
+          data-focused={isFocused || undefined}
+          data-focus-visible={isFocusVisible || undefined}>
+          <CollectionRoot
+            collection={collection}
+            scrollRef={tableContainerContext?.scrollRef ?? ref}
+            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
+        </ElementType>
+      </FocusScope>
+      {dragPreview}
+    </Provider>
   );
 }
 
@@ -440,6 +496,11 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
  */
 const _Table = forwardRef(Table);
 export {_Table as Table};
+
+function useElementType<E extends keyof JSX.IntrinsicElements>(element: E): E | 'div' {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  return isVirtualized ? 'div' : element;
+}
 
 export interface TableOptionsContextValue {
   /** The type of selection that is allowed in the table. */
@@ -461,7 +522,15 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
-export interface TableHeaderProps<T> extends StyleProps {
+export interface TableHeaderRenderProps {
+  /**
+   * Whether the table header is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean
+}
+
+export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -470,26 +539,82 @@ export interface TableHeaderProps<T> extends StyleProps {
   dependencies?: any[]
 }
 
-function TableHeader<T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) {
-  let children = useCollectionChildren({
-    children: props.children,
-    items: props.columns,
-    dependencies: props.dependencies
-  });
-
-  let renderer = typeof props.children === 'function' ? props.children : null;
-  return (
-    <CollectionRendererContext.Provider value={renderer}>
-      {useSSRCollectionNode('tableheader', props, ref, null, children)}
-    </CollectionRendererContext.Provider>
-  );
-}
-
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-const _TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(TableHeader);
-export {_TableHeader as TableHeader};
+export const TableHeader =  /*#__PURE__*/ createBranchComponent(
+  'tableheader',
+  <T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
+    let collection = useContext(TableStateContext)!.collection as TableCollection<unknown>;
+    let headerRows = useCachedChildren({
+      items: collection.headerRows,
+      children: useCallback((item: Node<unknown>) => {
+        switch (item.type) {
+          case 'headerrow':
+            return <TableHeaderRow item={item} />;
+          default:
+            throw new Error('Unsupported node type in TableHeader: ' + item.type);
+        }
+      }, [])
+    });
+
+    let THead = useElementType('thead');
+    let {rowGroupProps} = useTableRowGroup();
+    let {hoverProps, isHovered} = useHover({
+      onHoverStart: props.onHoverStart,
+      onHoverChange: props.onHoverChange,
+      onHoverEnd: props.onHoverEnd
+    });
+
+    let renderProps = useRenderProps({
+      className: props.className,
+      style: props.style,
+      defaultClassName: 'react-aria-TableHeader',
+      values: {
+        isHovered
+      }
+    });
+
+    return (
+      <THead
+        {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
+        {...renderProps}
+        ref={ref}
+        data-hovered={isHovered || undefined}>
+        {headerRows}
+      </THead>
+    );
+  },
+  props => (
+    <Collection dependencies={props.dependencies} items={props.columns}>
+      {props.children}
+    </Collection>
+  )
+);
+
+function TableHeaderRow({item}: {item: GridNode<any>}) {
+  let ref = useRef<HTMLTableRowElement>(null);
+  let state = useContext(TableStateContext)!;
+  let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+  let {rowProps} = useTableHeaderRow({node: item, isVirtualized}, state, ref);
+  let {checkboxProps} = useTableSelectAllCheckbox(state);
+  let TR = useElementType('tr');
+
+  return (
+    <TR {...rowProps} ref={ref}>
+      <Provider
+        values={[
+          [CheckboxContext, {
+            slots: {
+              selection: checkboxProps
+            }
+          }]
+        ]}>
+        <CollectionBranch collection={state.collection} parent={item} />
+      </Provider>
+    </TR>
+  );
+}
 
 export interface ColumnRenderProps {
   /**
@@ -551,261 +676,15 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps> {
   maxWidth?: ColumnStaticSize | null
 }
 
-function Column(props: ColumnProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
-  return useSSRCollectionNode('column', props, ref, props.children);
-}
-
 /**
  * A column within a `<Table>`.
  */
-const _Column = /*#__PURE__*/ (forwardRef as forwardRefType)(Column);
-export {_Column as Column};
-
-export interface TableBodyRenderProps {
-  /**
-   * Whether the table body has no rows and should display its empty state.
-   * @selector [data-empty]
-   */
-  isEmpty: boolean,
-  /**
-   * Whether the Table is currently the active drop target.
-   * @selector [data-drop-target]
-   */
-  isDropTarget: boolean
-}
-
-export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
-  /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
-}
-
-function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
-  let children = useCollectionChildren(props);
-  return useSSRCollectionNode('tablebody', props, ref, null, children);
-}
-
-/**
- * The body of a `<Table>`, containing the table rows.
- */
-const _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
-export {_TableBody as TableBody};
-
-export interface RowRenderProps extends ItemRenderProps {}
-
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
-  /** The unique id of the row. */
-  id?: Key,
-  /** A list of columns used when dynamically rendering cells. */
-  columns?: Iterable<T>,
-  /** The cells within the row. Supports static items or a function for dynamic rendering. */
-  children?: ReactNode | ((item: T) => ReactElement),
-  /** The object value that this row represents. When using dynamic collections, this is set automatically. */
-  value?: T,
-  /** Values that should invalidate the cell cache when using dynamic collections. */
-  dependencies?: any[],
-  /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string,
-  /** Whether the row is disabled. */
-  isDisabled?: boolean,
-  /**
-   * Handler that is called when a user performs an action on the row. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
-   */
-  onAction?: () => void
-}
-
-function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
-  let dependencies = [props.value].concat(props.dependencies);
-  let children = useCollectionChildren({
-    dependencies,
-    children: props.children,
-    items: props.columns,
-    idScope: props.id
-  });
-
-  let ctx = useMemo(() => ({idScope: props.id, dependencies}), [props.id, ...dependencies]);
-
-  return useSSRCollectionNode('item', props, ref, null, (
-    <CollectionContext.Provider value={ctx}>
-      {children}
-    </CollectionContext.Provider>
-  ));
-}
-
-/**
- * A row within a `<Table>`.
- */
-const _Row = /*#__PURE__*/ (forwardRef as forwardRefType)(Row);
-export {_Row as Row};
-
-export interface CellRenderProps {
-  /**
-   * Whether the cell is currently in a pressed state.
-   * @selector [data-pressed]
-   */
-  isPressed: boolean,
-  /**
-   * Whether the cell is currently focused.
-   * @selector [data-focused]
-   */
-  isFocused: boolean,
-  /**
-   * Whether the cell is currently keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  isFocusVisible: boolean,
-  /**
-   * Whether the cell is currently hovered with a mouse.
-   * @selector [data-hovered]
-   */
-  isHovered: boolean
-}
-
-export interface CellProps extends RenderProps<CellRenderProps> {
-  /** The unique id of the cell. */
-  id?: Key,
-  /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
-}
-
-function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
-  return useSSRCollectionNode('cell', props, ref, props.children);
-}
-
-/**
- * A cell within a table row.
- */
-const _Cell = /*#__PURE__*/ (forwardRef as forwardRefType)(Cell);
-export {_Cell as Cell};
-
-function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) {
-  let headerRows = useCachedChildren({
-    items: collection.headerRows,
-    children: useCallback((item: Node<T>) => {
-      switch (item.type) {
-        case 'headerrow':
-          return <TableHeaderRow item={item} />;
-        default:
-          throw new Error('Unsupported node type in TableHeader: ' + item.type);
-      }
-    }, [])
-  });
-
-  let {rowGroupProps} = useTableRowGroup();
-  return (
-    <thead
-      {...filterDOMProps(collection.head.props)}
-      {...rowGroupProps}
-      ref={collection.head.props.ref}
-      className={collection.head.props.className ?? 'react-aria-TableHeader'}
-      style={collection.head.props.style}>
-      {headerRows}
-    </thead>
-  );
-}
-
-function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppable: boolean}) {
-  let {collection, isDroppable} = props;
-  let bodyRows = useCachedChildren({
-    items: collection.rows,
-    children: useCallback((item: Node<T>) => {
-      switch (item.type) {
-        case 'item':
-          return <TableRow item={item} />;
-        default:
-          throw new Error('Unsupported node type in TableBody: ' + item.type);
-      }
-    }, [])
-  });
-
-  let state = useContext(TableStateContext);
-  let {dropState} = useContext(DragAndDropContext);
-  let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
-
-  let bodyProps: TableBodyProps<T> = collection.body.props;
-  let renderValues = {
-    isDropTarget: isRootDropTarget,
-    isEmpty: collection.size === 0
-  };
-  let renderProps = useRenderProps({
-    ...bodyProps,
-    id: undefined,
-    children: undefined,
-    defaultClassName: 'react-aria-TableBody',
-    values: renderValues
-  });
-
-  let emptyState;
-  if (collection.size === 0 && bodyProps.renderEmptyState && state) {
-    emptyState = (
-      <tr role="row">
-        <td role="gridcell" colSpan={collection.columnCount}>
-          {bodyProps.renderEmptyState(renderValues)}
-        </td>
-      </tr>
-    );
-  }
-
-  let {rowGroupProps} = useTableRowGroup();
-  return (
-    <tbody
-      {...mergeProps(filterDOMProps(bodyProps as any), rowGroupProps)}
-      {...renderProps}
-      ref={collection.body.props.ref}
-      data-empty={collection.size === 0 || undefined}>
-      {isDroppable && <RootDropIndicator />}
-      {bodyRows}
-      {emptyState}
-    </tbody>
-  );
-}
-
-function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useRef<HTMLTableRowElement>(null);
+export const Column = /*#__PURE__*/ createLeafComponent('column', (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, column: GridNode<unknown>) => {
+  let ref = useObjectRef<HTMLTableHeaderCellElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
-  let {rowProps} = useTableHeaderRow({node: item}, state, ref);
-  let {checkboxProps} = useTableSelectAllCheckbox(state);
-
-  let cells = useCachedChildren({
-    items: state.collection.getChildren!(item.key),
-    children: (item) => {
-      switch (item.type) {
-        case 'column':
-          return <TableColumnHeader column={item} />;
-        default:
-          throw new Error('Unsupported node type in Row: ' + item.type);
-      }
-    }
-  });
-
-  return (
-    <tr {...rowProps} ref={ref}>
-      <Provider
-        values={[
-          [CheckboxContext, {
-            slots: {
-              selection: checkboxProps
-            }
-          }]
-        ]}>
-        {cells}
-      </Provider>
-    </tr>
-  );
-}
-
-interface ColumnResizerContextValue {
-  column: GridNode<unknown>,
-  triggerRef: RefObject<HTMLDivElement>
-}
-
-const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
-
-function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
-  let ref = useObjectRef<HTMLTableHeaderCellElement>(column.props.ref);
-  let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let {columnHeaderProps} = useTableColumnHeader(
-    {node: column},
+    {node: column, isVirtualized},
     state,
     ref
   );
@@ -823,7 +702,6 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     }
   }
 
-  let props: ColumnProps = column.props;
   let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
   let renderProps = useRenderProps({
     ...props,
@@ -858,8 +736,10 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     style = {...style, width: layoutState.getColumnWidth(column.key)};
   }
 
+  let TH = useElementType('th');
+
   return (
-    <th
+    <TH
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
@@ -871,12 +751,16 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       data-resizing={isResizing || undefined}
       data-allows-sorting={column.props.allowsSorting || undefined}
       data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
-      <ColumnResizerContext.Provider value={{column, triggerRef: ref}}>
+      <Provider
+        values={[
+          [ColumnResizerContext, {column, triggerRef: ref}],
+          [CollectionRendererContext, DefaultCollectionRenderer]
+        ]}>
         {renderProps.children}
-      </ColumnResizerContext.Provider>
-    </th>
+      </Provider>
+    </TH>
   );
-}
+});
 
 export interface ColumnResizerRenderProps {
   /**
@@ -910,6 +794,13 @@ export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResiz
   /** A custom accessibility label for the resizer. */
   'aria-label'?: string
 }
+
+interface ColumnResizerContextValue {
+  column: GridNode<unknown>,
+  triggerRef: RefObject<HTMLDivElement | null>
+}
+
+const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
 
 function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
   let layoutState = useContext(TableColumnResizeStateContext);
@@ -985,6 +876,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     <div
       ref={objectRef}
       role="presentation"
+      {...filterDOMProps(props as any)}
       {...renderProps}
       {...mergeProps(resizerProps, {onPointerDown}, hoverProps)}
       data-hovered={isHovered || undefined}
@@ -1004,157 +896,314 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
 const _ColumnResizer = forwardRef(ColumnResizer);
 export {_ColumnResizer as ColumnResizer};
 
-function TableRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useObjectRef<HTMLTableRowElement>(item.props.ref);
-  let state = useContext(TableStateContext)!;
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
-  let {rowProps, ...states} = useTableRow(
-    {
-      node: item,
-      shouldSelectOnPressUp: !!dragState
-    },
-    state,
-    ref
-  );
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
-    onHoverStart: item.props.onHoverStart,
-    onHoverChange: item.props.onHoverChange,
-    onHoverEnd: item.props.onHoverEnd
-  });
-
-  let {checkboxProps} = useTableSelectionCheckbox(
-    {key: item.key},
-    state
-  );
-
-  let draggableItem: DraggableItemResult | undefined = undefined;
-  if (dragState && dragAndDropHooks) {
-    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
-  }
-
-  let dropIndicator: DropIndicatorAria | undefined = undefined;
-  let dropIndicatorRef = useRef<HTMLDivElement>(null);
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  if (dropState && dragAndDropHooks) {
-    dropIndicator = dragAndDropHooks.useDropIndicator!({
-      target: {type: 'item', key: item.key, dropPosition: 'on'}
-    }, dropState, dropIndicatorRef);
-  }
-
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
-  let dragButtonRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (dragState && !dragButtonRef.current) {
-      console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
-    }
-  // eslint-disable-next-line
-  }, []);
-
-  let props = item.props as RowProps<unknown>;
-  let isDragging = dragState && dragState.isDragging(item.key);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children: _, ...restProps} = props;
-  let renderProps = useRenderProps({
-    ...restProps,
-    id: undefined,
-    defaultClassName: 'react-aria-Row',
-    values: {
-      ...states,
-      isHovered,
-      isFocused,
-      isFocusVisible,
-      selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior,
-      isDragging,
-      isDropTarget: dropIndicator?.isDropTarget
-    }
-  });
-
-  let cells = useCachedChildren({
-    items: state.collection.getChildren!(item.key),
-    children: (item: Node<unknown>) => {
-      switch (item.type) {
-        case 'cell':
-          return <TableCell cell={item} />;
-        default:
-          throw new Error('Unsupported node type in Row: ' + item.type);
-      }
-    }
-  });
-
-  return (
-    <>
-      {dragAndDropHooks?.useDropIndicator &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'before'})
-      }
-      {dropIndicator && !dropIndicator.isHidden && (
-        <tr role="row" style={{height: 0}}>
-          <td role="gridcell" colSpan={state.collection.columnCount} style={{padding: 0}}>
-            <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
-          </td>
-        </tr>
-      )}
-      <tr
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
-        {...renderProps}
-        ref={ref}
-        data-disabled={states.isDisabled || undefined}
-        data-selected={states.isSelected || undefined}
-        data-hovered={isHovered || undefined}
-        data-focused={states.isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}
-        data-pressed={states.isPressed || undefined}
-        data-dragging={isDragging || undefined}
-        data-drop-target={dropIndicator?.isDropTarget || undefined}
-        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-        <Provider
-          values={[
-            [CheckboxContext, {
-              slots: {
-                selection: checkboxProps
-              }
-            }],
-            [ButtonContext, {
-              slots: {
-                [DEFAULT_SLOT]: {},
-                drag: {
-                  ...draggableItem?.dragButtonProps,
-                  ref: dragButtonRef,
-                  style: {
-                    pointerEvents: 'none'
-                  }
-                }
-              }
-            }]
-          ]}>
-          {cells}
-        </Provider>
-      </tr>
-      {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
-        renderDropIndicator({type: 'item', key: item.key, dropPosition: 'after'})
-      }
-    </>
-  );
+export interface TableBodyRenderProps {
+  /**
+   * Whether the table body has no rows and should display its empty state.
+   * @selector [data-empty]
+   */
+  isEmpty: boolean,
+  /**
+   * Whether the Table is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
-function TableCell<T>({cell}: {cell: GridNode<T>}) {
-  let ref = useObjectRef<HTMLTableCellElement>(cell.props.ref);
+export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
+  /** Provides content to display when there are no rows in the table. */
+  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
+}
+/**
+ * The body of a `<Table>`, containing the table rows.
+ */
+export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) => {
+  let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  let collection = state.collection;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
+  let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
+  let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: collection.size === 0
+  };
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
+    defaultClassName: 'react-aria-TableBody',
+    values: renderValues
+  });
+
+  let emptyState;
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let numColumns = collection.columnCount;
+  if (collection.size === 0 && props.renderEmptyState && state) {
+    let rowProps = {};
+    let rowHeaderProps = {};
+    let style = {};
+    if (isVirtualized) {
+      rowProps['aria-rowindex'] = collection.headerRows.length + 1;
+      rowHeaderProps['aria-colspan'] = numColumns;
+      style = {display: 'contents'};
+    } else {
+      rowHeaderProps['colSpan'] = numColumns;
+    }
+
+    emptyState = (
+      <TR role="row" {...rowProps} style={style}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
+          {props.renderEmptyState(renderValues)}
+        </TD>
+      </TR>
+    );
+  }
+
+  let {rowGroupProps} = useTableRowGroup();
+  let TBody = useElementType('tbody');
+
+  // TODO: TableBody doesn't support being the scrollable body of the table yet, to revisit if needed. Would need to
+  // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
+  return (
+    <TBody
+      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
+      {...renderProps}
+      ref={ref}
+      data-empty={collection.size === 0 || undefined}>
+      {isDroppable && <RootDropIndicator />}
+      <CollectionBranch
+        collection={collection}
+        parent={collection.body}
+        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+      {emptyState}
+    </TBody>
+  );
+});
+
+export interface RowRenderProps extends ItemRenderProps {
+  /** Whether the row's children have keyboard focus. */
+  isFocusVisibleWithin: boolean
+}
+
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
+  /** The unique id of the row. */
+  id?: Key,
+  /** A list of columns used when dynamically rendering cells. */
+  columns?: Iterable<T>,
+  /** The cells within the row. Supports static items or a function for dynamic rendering. */
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** The object value that this row represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** Values that should invalidate the cell cache when using dynamic collections. */
+  dependencies?: any[],
+  /** A string representation of the row's contents, used for features like typeahead. */
+  textValue?: string,
+  /** Whether the row is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the row. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
+}
+
+/**
+ * A row within a `<Table>`.
+ */
+export const Row = /*#__PURE__*/ createBranchComponent(
+  'item',
+  <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement>, item: GridNode<T>) => {
+    let ref = useObjectRef<HTMLTableRowElement>(forwardedRef);
+    let state = useContext(TableStateContext)!;
+    let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
+    let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+    let {rowProps, ...states} = useTableRow(
+      {
+        node: item,
+        shouldSelectOnPressUp: !!dragState,
+        isVirtualized
+      },
+      state,
+      ref
+    );
+    let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+    let {
+      isFocusVisible: isFocusVisibleWithin,
+      focusProps: focusWithinProps
+    } = useFocusRing({within: true});
+    let {hoverProps, isHovered} = useHover({
+      isDisabled: !states.allowsSelection && !states.hasAction,
+      onHoverStart: props.onHoverStart,
+      onHoverChange: props.onHoverChange,
+      onHoverEnd: props.onHoverEnd
+    });
+
+    let {checkboxProps} = useTableSelectionCheckbox(
+      {key: item.key},
+      state
+    );
+
+    let draggableItem: DraggableItemResult | undefined = undefined;
+    if (dragState && dragAndDropHooks) {
+      draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
+    }
+
+    let dropIndicator: DropIndicatorAria | undefined = undefined;
+    let dropIndicatorRef = useRef<HTMLDivElement>(null);
+    let {visuallyHiddenProps} = useVisuallyHidden();
+    if (dropState && dragAndDropHooks) {
+      dropIndicator = dragAndDropHooks.useDropIndicator!({
+        target: {type: 'item', key: item.key, dropPosition: 'on'}
+      }, dropState, dropIndicatorRef);
+    }
+
+    let dragButtonRef = useRef<HTMLButtonElement>(null);
+    useEffect(() => {
+      if (dragState && !dragButtonRef.current) {
+        console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
+      }
+    // eslint-disable-next-line
+    }, []);
+
+    let isDragging = dragState && dragState.isDragging(item.key);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {children: _, ...restProps} = props;
+    let renderProps = useRenderProps({
+      ...restProps,
+      id: undefined,
+      defaultClassName: 'react-aria-Row',
+      values: {
+        ...states,
+        isHovered,
+        isFocused,
+        isFocusVisible,
+        selectionMode: state.selectionManager.selectionMode,
+        selectionBehavior: state.selectionManager.selectionBehavior,
+        isDragging,
+        isDropTarget: dropIndicator?.isDropTarget,
+        isFocusVisibleWithin
+      }
+    });
+
+    let TR = useElementType('tr');
+    let TD = useElementType('td');
+
+    return (
+      <>
+        {dropIndicator && !dropIndicator.isHidden && (
+          <TR role="row" style={{height: 0}}>
+            <TD role="gridcell" colSpan={state.collection.columnCount} style={{padding: 0}}>
+              <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+            </TD>
+          </TR>
+        )}
+        <TR
+          {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
+          {...renderProps}
+          ref={ref}
+          data-disabled={states.isDisabled || undefined}
+          data-selected={states.isSelected || undefined}
+          data-hovered={isHovered || undefined}
+          data-focused={states.isFocused || undefined}
+          data-focus-visible={isFocusVisible || undefined}
+          data-pressed={states.isPressed || undefined}
+          data-dragging={isDragging || undefined}
+          data-drop-target={dropIndicator?.isDropTarget || undefined}
+          data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+          data-focus-visible-within={isFocusVisibleWithin || undefined}>
+          <Provider
+            values={[
+              [CheckboxContext, {
+                slots: {
+                  selection: checkboxProps
+                }
+              }],
+              [ButtonContext, {
+                slots: {
+                  [DEFAULT_SLOT]: {},
+                  drag: {
+                    ...draggableItem?.dragButtonProps,
+                    ref: dragButtonRef,
+                    style: {
+                      pointerEvents: 'none'
+                    }
+                  }
+                }
+              }]
+            ]}>
+            <CollectionBranch collection={state.collection} parent={item} />
+          </Provider>
+        </TR>
+      </>
+    );
+  },
+  props => {
+    if (props.id == null && typeof props.children === 'function') {
+      console.warn('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+    }
+
+    let dependencies = [props.value].concat(props.dependencies);
+    return (
+      <Collection dependencies={dependencies} items={props.columns} idScope={props.id}>
+        {props.children}
+      </Collection>
+    );
+  }
+);
+
+export interface CellRenderProps {
+  /**
+   * Whether the cell is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean,
+  /**
+   * Whether the cell is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the cell is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the cell is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean
+}
+
+export interface CellProps extends RenderProps<CellRenderProps> {
+  /** The unique id of the cell. */
+  id?: Key,
+  /** A string representation of the cell's contents, used for features like typeahead. */
+  textValue?: string
+}
+
+/**
+ * A cell within a table row.
+ */
+export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement>, cell: GridNode<unknown>) => {
+  let ref = useObjectRef<HTMLTableCellElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
+  let {isVirtualized} = useContext(CollectionRendererContext);
 
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
   let {gridCellProps, isPressed} = useTableCell({
     node: cell,
-    shouldSelectOnPressUp: !!dragState
+    shouldSelectOnPressUp: !!dragState,
+    isVirtualized
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
 
-  let props: CellProps = cell.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -1167,18 +1216,22 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     }
   });
 
+  let TD = useElementType('td');
+
   return (
-    <td
+    <TD
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
-      {renderProps.children}
-    </td>
+      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+        {renderProps.children}
+      </CollectionRendererContext.Provider>
+    </TD>
   );
-}
+});
 
 function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
@@ -1202,7 +1255,7 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
 interface TableDropIndicatorProps extends DropIndicatorProps {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
   isDropTarget: boolean,
-  buttonRef: RefObject<HTMLDivElement>
+  buttonRef: RefObject<HTMLDivElement | null>
 }
 
 function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
@@ -1223,21 +1276,24 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
     }
   });
 
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+
   return (
-    <tr
+    <TR
       {...filterDOMProps(props as any)}
       {...renderProps}
       role="row"
-      ref={ref as RefObject<HTMLTableRowElement>}
+      ref={ref as RefObject<HTMLTableRowElement | null>}
       data-drop-target={isDropTarget || undefined}>
-      <td
+      <TD
         role="gridcell"
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
-      </td>
-    </tr>
+      </TD>
+    </TR>
   );
 }
 
@@ -1252,22 +1308,69 @@ function RootDropIndicator() {
   }, dropState!, ref);
   let isDropTarget = dropState!.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
 
   if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
     return null;
   }
 
   return (
-    <tr
+    <TR
       role="row"
       aria-hidden={dropIndicatorProps['aria-hidden']}
       style={{height: 0}}>
-      <td
+      <TD
         role="gridcell"
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
-      </td>
-    </tr>
+      </TD>
+    </TR>
   );
 }
+
+export interface TableLoadingIndicatorProps extends StyleProps {
+  children?: ReactNode
+}
+
+export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+  let state = useContext(TableStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  let numColumns = state.collection.columns.length;
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-TableLoadingIndicator',
+    values: null
+  });
+  let TR = useElementType('tr');
+  let TD = useElementType('td');
+  let rowProps = {};
+  let rowHeaderProps = {};
+  let style = {};
+
+  if (isVirtualized) {
+    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowHeaderProps['aria-colspan'] = numColumns;
+    style = {display: 'contents'};
+  } else {
+    rowHeaderProps['colSpan'] = numColumns;
+  }
+
+  return (
+    <>
+      <TR
+        role="row"
+        ref={ref}
+        {...mergeProps(filterDOMProps(props as any), rowProps)}
+        {...renderProps}>
+        <TD role="rowheader" {...rowHeaderProps} style={style}>
+          {renderProps.children}
+        </TD>
+      </TR>
+    </>
+  );
+});

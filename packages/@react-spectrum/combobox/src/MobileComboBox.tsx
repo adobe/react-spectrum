@@ -21,7 +21,7 @@ import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, RefObject, ValidationState} from '@react-types/shared';
 import {FocusRing, focusSafely, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -29,7 +29,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -73,7 +73,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     shouldCloseOnBlur: false
   });
 
-  let buttonRef = useRef<HTMLElement>();
+  let buttonRef = useRef<HTMLElement>(undefined);
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
@@ -166,7 +166,7 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   className?: string
 }
 
-const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement>) {
+const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement | null>) {
   let {
     isQuiet,
     isDisabled,
@@ -207,13 +207,13 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
   }, ref);
 
   return (
-    <FocusRing
+    (<FocusRing
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...mergeProps(hoverProps, buttonProps)}
         aria-haspopup="dialog"
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref as RefObject<HTMLDivElement | null>}
         style={{...style, outline: 'none'}}
         className={
           classNames(
@@ -303,7 +303,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
         </div>
       </div>
-    </FocusRing>
+    </FocusRing>)
   );
 });
 
@@ -329,19 +329,19 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
-  let inputRef = useRef<HTMLInputElement>();
-  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
-  let popoverRef = useRef<HTMLDivElement>();
-  let listBoxRef = useRef<HTMLDivElement>();
+  let inputRef = useRef<HTMLInputElement>(undefined);
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>(undefined);
+  let popoverRef = useRef<HTMLDivElement>(undefined);
+  let listBoxRef = useRef<HTMLDivElement>(undefined);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let layout = useListBoxLayout(state, isLoading);
+  let layout = useListBoxLayout();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
 
   let {inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       // completionMode,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
       listBoxRef,

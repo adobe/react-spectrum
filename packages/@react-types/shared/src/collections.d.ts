@@ -123,6 +123,28 @@ export interface KeyboardDelegate {
   getKeyForSearch?(search: string, fromKey?: Key): Key | null
 }
 
+export interface Rect {
+  x: number,
+  y: number,
+  width: number,
+  height: number
+}
+
+export interface Size {
+  width: number,
+  height: number
+}
+
+/** A LayoutDelegate provides layout information for collection items. */
+export interface LayoutDelegate {
+  /** Returns a rectangle for the item with the given key. */
+  getItemRect(key: Key): Rect | null,
+  /** Returns the visible rectangle of the collection. */
+  getVisibleRect(): Rect,
+  /** Returns the size of the scrollable content in the collection. */
+  getContentSize(): Size
+}
+
 /**
  * A generic interface to access a readonly sequential
  * collection of unique keyed items.
@@ -194,5 +216,7 @@ export interface Node<T> {
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */
-  shouldInvalidate?: (context: unknown) => boolean
+  shouldInvalidate?: (context: unknown) => boolean,
+  /** A function that renders this node to a React Element in the DOM. */
+  render?: (node: Node<any>) => ReactElement
 }

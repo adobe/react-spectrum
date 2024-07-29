@@ -1,4 +1,4 @@
 {
   "close": "Κλείσιμο",
-  "notifications": "Ειδοποιήσεις"
+  "notifications": "{count, plural, one {# ειδοποίηση} other {# ειδοποιήσεις}}."
 }
