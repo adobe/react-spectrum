@@ -69,13 +69,12 @@ import {useLoadMore} from '@react-aria/utils';
 // Add a complex table example with buttons and various icons,links,
 // Hide header support
 
-// loading more when items already exist (needs ability to append extra row with progress circle)
 // column dividers and text align (needs more info from rac so cells know if its parent column has showDivider)
 // drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
-// resizing (roughly implemented, but will probably change a bit with virtualization. Right now with wrapping)
-// overflow wrap (deferred till virtualization)
-// table scrolling/height/width (deferred till virtualization. Kinda works with the resizerable table container)
+// overflow wrap
+// - added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
+// it then can change the row's height drastically
 // summary row (to discuss, is this a separate row? What accessibility goes into this)
 // nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
 // Expandable rows support, will need to add this to RAC table
@@ -126,7 +125,7 @@ interface S2TableProps {
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
-let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale}>({});
+let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale, layout?: S2TableLayout<unknown>}>({});
 
 const tableWrapper = style({
   width: 'full'
@@ -340,20 +339,8 @@ export function Table(props: TableProps) {
       );
     };
   }
-
-  let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
   // TODO: perhaps just make a useScale
   let scale = (useIsMobileDevice() ? 'large' : 'medium') as Scale;
-  let context = useMemo(() => ({
-    isQuiet,
-    density,
-    overflowMode,
-    selectionStyle,
-    loadingState,
-    columnsResizable,
-    scale
-  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale]);
-
   let layout = useMemo(() => {
     return new S2TableLayout({
       rowHeight: overflowMode === 'wrap'
@@ -367,6 +354,17 @@ export function Table(props: TableProps) {
     });
   }, [overflowMode, density, scale]);
 
+  let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
+  let context = useMemo(() => ({
+    isQuiet,
+    density,
+    overflowMode,
+    selectionStyle,
+    loadingState,
+    columnsResizable,
+    scale,
+    layout
+  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale, layout]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef(null);
@@ -565,6 +563,7 @@ export function Column(props: ColumnProps) {
   let isColumResizable = columnsResizable && isResizable;
 
   return (
+    // TODO: add default width and min width for hide header here
     <RACColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
@@ -713,9 +712,6 @@ const nubbin = style({
 interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'> {
   children: ReactNode
 }
-
-// TODOS for resizing still
-// need a blue line rendered for the column all the way down the body (need info in the cells of the column's resizing state)
 
 // TODO: placeholder, just copied over from v3. Will need to be adjusted to having the same kind of fill that the s2 icons use
 function Nubbin() {
@@ -962,6 +958,10 @@ const cellBackground = style({
   backgroundColor: {
     default: 'transparent',
     isSticky: '--rowBackgroundColor'
+  },
+  '--dividerColor': {
+    type: 'borderColor',
+    value: 'gray-300'
   }
 });
 
@@ -985,13 +985,15 @@ export function Cell(props: CellProps) {
         ...tableVisualOptions
       })}
       {...otherProps}>
-      {({isFocusVisible}) => (
+      {({isFocusVisible, columnProps}) => (
         <>
           {/* Reason for doing it this way is because ideally I'd have a wrapper around the cell that is full width that serves as a background
             but can't have a div wrapping the cell here. I also want the padding applied on the RAC cell itself so a div wrapping the cell contents won't
             have the proper full height
           */}
-          <div role="presentation" className={cellBackground({isSticky})} />
+          {/* TODO hack to render the dividers on cell if the column has the show divider prop, confirm if this is the way we want to go with this.
+          Unable to move the divider to the column level because then the line covers the checkboxes when scrolled horizontally */}
+          <div role="presentation" style={{borderColor: columnProps.showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: 1, borderRightStyle: columnProps.showDivider ? 'solid' : 'none'}} className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
           <span className={cellContent({...tableVisualOptions})}>{children}</span>
         </>

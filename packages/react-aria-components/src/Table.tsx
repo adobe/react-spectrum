@@ -1178,7 +1178,8 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean,
+  columnProps: any
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -1196,7 +1197,6 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
-
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
@@ -1216,7 +1216,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      columnProps: cell.column.props
     }
   });
 

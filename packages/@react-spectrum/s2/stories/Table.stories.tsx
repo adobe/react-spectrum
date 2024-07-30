@@ -243,7 +243,7 @@ const ReorderableTable = (args: any) => {
 
   return (
     <Table aria-label="reorderable table" {...args} dragAndDropHooks={dragAndDropHooks}>
-      <TableHeader columns={sortcolumns}>
+      <TableHeader columns={columns}>
         {(column) => (
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
@@ -367,6 +367,37 @@ export const LoadingStateWithItemsStatic = {
   },
   name: 'loading state, static items'
 };
+
+const ShowDividers = (args: any) => {
+  return (
+    <Table aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} showDivider>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const ShowDividersStory = {
+  render: ShowDividers,
+  args: {
+    ...Example.args
+  },
+  name: 'show dividers'
+};
+
 interface Character {
   name: string,
   height: number,
