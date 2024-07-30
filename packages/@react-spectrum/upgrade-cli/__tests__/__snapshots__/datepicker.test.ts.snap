@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Does nothing 1`] = `
+"import {DatePicker} from '@adobe/react-spectrum';
+
+<div>
+  <DatePicker label="Event date" />
+</div>"
+`;
