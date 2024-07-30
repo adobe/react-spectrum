@@ -36,7 +36,7 @@ type MappedDateValue<T> =
   T extends CalendarDate ? CalendarDate :
   never;
 
-export type Granularity = 'day' | 'hour' | 'minute' | 'second';
+export type Granularity = 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second';
 interface DateFieldBase<T extends DateValue> extends InputBase, Validation<MappedDateValue<T>>, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
