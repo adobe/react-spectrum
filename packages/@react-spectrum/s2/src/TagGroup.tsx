@@ -20,12 +20,12 @@ import {
   Provider,
   TextContext as RACTextContext,
   TagList,
-  TagListProps
+  TagListProps, useLocale
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {DOMRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
@@ -35,7 +35,12 @@ import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
 import {pressScale} from './pressScale';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef, useResizeObserver, useValueEffect} from '@react-spectrum/utils';
+import {CollectionBuilder} from '@react-aria/collections';
+import {Button} from './Button';
+import {useCallback, useEffect} from 'react';
+import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {hidden} from 'chalk';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
@@ -59,7 +64,9 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   /** Whether the tags are displayed in a error state. */
   isInvalid?: boolean,
   /** An error message for the field. */
-  errorMessage?: ReactNode
+  errorMessage?: ReactNode,
+  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  maxRows?: number
 }
 
 const TagGroupContext = createContext<TagGroupProps<any>>({});
@@ -85,14 +92,38 @@ const helpTextStyles = style({
   cursor: 'text'
 });
 
-function TagGroup<T extends object>(
-  {
+function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+  return (
+    <CustomTagGroup {...props} ref={ref}>
+      <TagList style={{display: 'flex', gap: 4}}>
+        {props.children}
+      </TagList>
+    </CustomTagGroup>
+  );
+}
+
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
+export {_TagGroup as TagGroup};
+
+interface CustomTagGroupProps<T> extends TagGroupProps<T> {
+
+}
+
+let CustomTagGroup = forwardRef((props: CustomTagGroupProps, ref: ForwardedRef<HTMLDivElement>) => {
+  return (
+    <CollectionBuilder content={props.children}>
+      {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
+    </CollectionBuilder>
+  );
+});
+
+function TagGroupInner<T>({
+  props: {
     label,
     description,
-    items,
     labelPosition = 'top',
     labelAlign = 'start',
-    children,
     renderEmptyState,
     isEmphasized,
     isInvalid,
@@ -100,9 +131,109 @@ function TagGroup<T extends object>(
     UNSAFE_className = '',
     UNSAFE_style,
     ...props
-  }: TagGroupProps<T>,
-  ref: DOMRef<HTMLDivElement>
-) {
+  },
+  forwardedRef: ref,
+  collection
+}: {props: CustomTagGroupProps<T>, forwardedRef: any, collection: any}) {
+  let {maxRows= 2} = props;
+  let {direction} = useLocale();
+  let containerRef = useRef(null);
+  let tagsRef = useRef<HTMLDivElement | null>(null);
+  let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
+  let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: false});
+  let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
+  console.log(tagState)
+
+  let allItems = useMemo(
+    () => Array.from(collection),
+    [collection]
+  );
+  let items = useMemo(
+    () => Array.from(collection).slice(0, !isCollapsed ? collection.size : tagState.visibleTagCount),
+    [collection, tagState.visibleTagCount, isCollapsed]
+  );
+
+  let updateVisibleTagCount = useEffectEvent(() => {
+    if (maxRows && maxRows > 0) {
+      let computeVisibleTagCount = () => {
+        // Refs can be null at runtime.
+        let currContainerRef: HTMLDivElement | null = containerRef.current;
+        let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
+        let currActionsRef: HTMLDivElement | null = true; // actionsRef.current;
+        if (!currContainerRef || !currTagsRef || !currActionsRef || collection.size === 0) {
+          return {
+            visibleTagCount: 0,
+            showCollapseButton: false
+          };
+        }
+
+        // Count rows and show tags until we hit the maxRows.
+        // I think this is still a safe assumption, and we don't need to queryAll for role=tag
+        let tags = [...currTagsRef.children];
+        let currY = -Infinity;
+        let rowCount = 0;
+        let index = 0;
+        let tagWidths: number[] = [];
+        for (let tag of tags) {
+          let {width, y} = tag.getBoundingClientRect();
+
+          if (y !== currY) {
+            currY = y;
+            rowCount++;
+          }
+
+          if (maxRows && rowCount > maxRows) {
+            break;
+          }
+          tagWidths.push(width);
+          index++;
+        }
+
+        // Remove tags until there is space for the collapse button and action button (if present) on the last row.
+        let buttons = []; //[...currActionsRef.children];
+        if (maxRows && buttons.length > 0 && rowCount >= maxRows) {
+          let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+          // buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
+          let end = direction === 'ltr' ? 'right' : 'left';
+          let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
+          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+          // lastTagEnd += TAG_STYLES[scale].margin;
+          let availableWidth = containerEnd - lastTagEnd;
+
+          while (availableWidth < buttonsWidth && index > 0) {
+            availableWidth += tagWidths.pop();
+            index--;
+          }
+        }
+
+        return {
+          visibleTagCount: Math.max(index, 1),
+          showCollapseButton: index < collection.size
+        };
+      };
+      let result = computeVisibleTagCount();
+      setTagState(result);
+    }
+  });
+
+  // useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
+  //
+  // useLayoutEffect(() => {
+  //   if (collection.size > 0) {
+  //     updateVisibleTagCount();
+  //   }
+  // }, [collection.size, updateVisibleTagCount]);
+
+  useEffect(() => {
+    // Recalculate visible tags when fonts are loaded.
+    document.fonts?.ready.then(() => updateVisibleTagCount());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  let handlePressCollapse = () => {
+    setIsCollapsed(prevCollapsed => !prevCollapsed);
+  };
+
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {size = 'M'} = props;
@@ -131,8 +262,6 @@ function TagGroup<T extends object>(
     );
   }
 
-  // TODO collapse behavior, need a custom collection render so we can limit the number of children
-  // but this isn't possible yet
   return (
     <AriaTagGroup
       {...props}
@@ -151,13 +280,14 @@ function TagGroup<T extends object>(
         {label}
       </FieldLabel>
       <div
+        ref={containerRef}
         className={style({
           gridArea: 'input',
           display: 'flex',
           flexWrap: 'wrap',
           minWidth: 'full',
-          // TODO: what should this gap be?
-          gap: 16
+          gap: 16,
+          position: 'relative'
         })}>
         <FormContext.Provider value={{...formContext, size}}>
           <Provider
@@ -165,12 +295,34 @@ function TagGroup<T extends object>(
               [RACTextContext, undefined],
               [TagGroupContext, {size, isEmphasized}]
             ]}>
+            {/* invisible collection for measuring */}
             <TagList
+              ref={hiddenTagsRef}
+              items={allItems}
+              className={style({
+                marginX:  -4,
+                display: 'flex',
+                flexWrap: 'wrap',
+                fontFamily: 'sans',
+                position: 'absolute',
+                visibility: 'hidden',
+                overflow: 'hidden',
+                minWidth: 'full'
+              })}>
+              {item => {
+                // pull off individual props as an allow list, don't want refs or other props getting through
+                // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
+                return <Tag style={item.props.style} className={item.props.className} children={item.props.children} />;
+              }}
+            </TagList>
+            {/* real tag list */}
+            <TagList
+              ref={tagsRef}
               items={items}
               renderEmptyState={renderEmptyState}
               className={({isEmpty}) => style({
                 marginX: {
-                  default: -4, // use negative number when theme TS is ready
+                  default: -4,
                   isEmpty: 0
                 },
                 display: 'flex',
@@ -178,8 +330,9 @@ function TagGroup<T extends object>(
                 flexWrap: 'wrap',
                 fontFamily: 'sans'
               })({isEmpty})}>
-              {children}
+              {item => <Tag {...item.props} />}
             </TagList>
+            {tagState.showCollapseButton && <Button onPress={handlePressCollapse}>{!isCollapsed ? 'Collapse' : 'Show All'}</Button>}
           </Provider>
         </FormContext.Provider>
       </div>
@@ -187,10 +340,6 @@ function TagGroup<T extends object>(
     </AriaTagGroup>
   );
 }
-
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
-export {_TagGroup as TagGroup};
 
 const tagStyles = style({
   ...focusRing(),

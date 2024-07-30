@@ -42,12 +42,32 @@ export let Example = {
       args.onRemove = action('remove');
     }
     return (
-      <TagGroup {...args}>
-        <Tag>Chocolate</Tag>
-        <Tag>Mint</Tag>
-        <Tag>Strawberry</Tag>
-        <Tag>Vanilla</Tag>
-      </TagGroup>
+      <div style={{width: 320}}>
+        <TagGroup {...args}>
+          <Tag>Chocolate</Tag>
+          <Tag>Mint</Tag>
+          <Tag>Strawberry</Tag>
+          <Tag>Vanilla</Tag>
+          <Tag>Cookie dough</Tag>
+          <Tag>Rose</Tag>
+          <Tag>Nutella</Tag>
+          <Tag>Pistachio</Tag>
+          <Tag>Oreo</Tag>
+          <Tag>Caramel</Tag>
+          <Tag>Peanut butter</Tag>
+          <Tag>Cinnamon</Tag>
+          <Tag>Cardamom</Tag>
+          <Tag>Licorice</Tag>
+          <Tag>Marshmallow</Tag>
+          <Tag>Coffee</Tag>
+          <Tag>Toffee</Tag>
+          <Tag>Bubblegum</Tag>
+          <Tag>Peach</Tag>
+          <Tag>Raspberry</Tag>
+          <Tag>Strawberry</Tag>
+          <Tag>Blackberry</Tag>
+        </TagGroup>
+      </div>
     );
   },
   args: {
