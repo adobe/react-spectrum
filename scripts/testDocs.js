@@ -169,6 +169,7 @@ async function testDocs() {
     if (server && server.process) {
       server.process.kill();
     }
+    process.exit(0);
   }
 }
 
