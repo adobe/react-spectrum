@@ -534,7 +534,13 @@ const columnStyles = style({
     isColumResizable: 0
   },
   // TODO: need to support text align and that would need to apply to all cells in the column, need to figure out how
-  textAlign: 'start',
+  textAlign: {
+    align: {
+      start: 'start',
+      center: 'center',
+      end: 'end'
+    }
+  },
   outlineStyle: 'none',
   position: 'relative',
   fontSize: 'control',
@@ -553,18 +559,19 @@ export interface ColumnProps extends RACColumnProps {
   // TODO: still need to figure out a way to do this, perhaps if I get the resize indicator to span the table then we can do something similar here
   showDivider?: boolean,
   isResizable?: boolean,
+  align?: 'start' | 'center' | 'end',
   children?: ReactNode
 }
 
 export function Column(props: ColumnProps) {
   let {isQuiet, columnsResizable} = useContext(InternalTableContext);
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
-  let {isResizable, children} = props;
+  let {isResizable, children, align = 'start'} = props;
   let isColumResizable = columnsResizable && isResizable;
 
   return (
     // TODO: add default width and min width for hide header here
-    <RACColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable})}>
+    <RACColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable, align})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
@@ -587,7 +594,7 @@ export function Column(props: ColumnProps) {
   );
 }
 
-const columnContent = style({
+const columnContentWrapper = style({
   minWidth: 0,
   display: 'flex',
   alignItems: 'center',
@@ -601,7 +608,7 @@ function ColumnContents(props: ColumnContentProps) {
   let {allowsSorting, sortDirection, children} = props;
 
   return (
-    <div className={columnContent}>
+    <div className={columnContentWrapper}>
       {allowsSorting && (
         <Provider
           values={[
@@ -619,7 +626,7 @@ function ColumnContents(props: ColumnContentProps) {
           )}
         </Provider>
       )}
-      <span className={style({truncate: true})}>
+      <span className={style({truncate: true, width: 'full'})}>
         {children}
       </span>
     </div>
@@ -674,7 +681,7 @@ const resizerHandle = style({
     isFocusVisible: 'focus-ring',
     isResizing: 'focus-ring'
   },
-  width: size(2),
+  width: size(1),
   position: 'absolute',
   left: size(5)
 });
@@ -946,7 +953,15 @@ const cellContent = style({
     overflowMode: {
       wrap: 'normal'
     }
-  }
+  },
+  textAlign: {
+    align: {
+      start: 'start',
+      center: 'center',
+      end: 'end'
+    }
+  },
+  width: 'full'
 });
 
 const cellBackground = style({
@@ -995,7 +1010,7 @@ export function Cell(props: CellProps) {
           Unable to move the divider to the column level because then the line covers the checkboxes when scrolled horizontally */}
           <div role="presentation" style={{borderColor: columnProps.showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: 1, borderRightStyle: columnProps.showDivider ? 'solid' : 'none'}} className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
-          <span className={cellContent({...tableVisualOptions})}>{children}</span>
+          <span className={cellContent({...tableVisualOptions, align: columnProps.align || 'start'})}>{children}</span>
         </>
       )}
     </RACCell>

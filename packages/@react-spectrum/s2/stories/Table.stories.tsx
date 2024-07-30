@@ -263,7 +263,7 @@ const ReorderableTable = (args: any) => {
 };
 
 let sortResizeColumns = [
-  {name: 'Name', id: 'name', isRowHeader: true, isResizable: true},
+  {name: 'Name', id: 'name', isRowHeader: true, isResizable: true, showDivider: true},
   {name: 'Height', id: 'height'},
   {name: 'Weight', id: 'weight', isResizable: true}
 ];
@@ -291,7 +291,7 @@ const SortableResizableTable = (args: any) => {
     <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 320})}>
       <TableHeader columns={sortResizeColumns}>
         {(column) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable}>{column.name}</Column>
+          <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable} showDivider={column.showDivider}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
@@ -368,10 +368,18 @@ export const LoadingStateWithItemsStatic = {
   name: 'loading state, static items'
 };
 
+
+let dividerColumns = [
+  {name: 'Foo', id: 'foo', isRowHeader: true, showDivider: true},
+  {name: 'Bar', id: 'bar'},
+  {name: 'Baz', id: 'baz', showDivider: true},
+  {name: 'Yah', id: 'yah'}
+];
+
 const ShowDividers = (args: any) => {
   return (
     <Table aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
-      <TableHeader columns={columns}>
+      <TableHeader columns={dividerColumns}>
         {(column) => (
           <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} showDivider>{column.name}</Column>
         )}
@@ -396,6 +404,43 @@ export const ShowDividersStory = {
     ...Example.args
   },
   name: 'show dividers'
+};
+
+let alignColumns = [
+  {name: 'Foo', id: 'foo', isRowHeader: true},
+  {name: 'Bar', id: 'bar', align: 'center'},
+  {name: 'Baz', id: 'baz', align: 'end'},
+  {name: 'Yah', id: 'yah', align: 'end'}
+];
+
+const TextAlign = (args: any) => {
+  return (
+    <Table aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
+      <TableHeader columns={alignColumns}>
+        {(column) => (
+          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} showDivider align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const TextAlignStory = {
+  render: TextAlign,
+  args: {
+    ...Example.args
+  },
+  name: 'text align'
 };
 
 interface Character {
