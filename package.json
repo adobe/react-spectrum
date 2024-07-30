@@ -246,11 +246,12 @@
     "@types/lodash@npm:^4.14.167": "patch:@types/lodash@npm:4.14.194#~/.yarn/patches/@types-lodash-npm-4.14.194-f099c0742e.patch",
     "@types/mdx@npm:^2.0.0": "patch:@types/mdx@npm:2.0.1#~/.yarn/patches/@types-mdx-npm-2.0.1-93f8844bdf.patch",
     "ast-types": "0.16.1",
-    "ast-types@npm:^0.16.1": "patch:ast-types@npm:0.16.1#~/.yarn/patches/ast-types-npm-0.16.1-596f974e68.patch",
     "postcss-custom-properties@npm:^6.0.1": "patch:postcss-custom-properties@npm:13.2.0#~/.yarn/patches/postcss-custom-properties-npm-13.2.0-04f4883a93.patch",
     "recast@npm:^0.20.3": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
     "recast@npm:^0.23.3": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
-    "recast@npm:^0.23.1": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch"
+    "recast@npm:^0.23.1": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
+    "ast-types@npm:^0.14.1": "patch:ast-types@npm%3A0.16.1#~/.yarn/patches/ast-types-npm-0.16.1-596f974e68.patch",
+    "ast-types@npm:^0.16.1": "patch:ast-types@npm%3A0.16.1#~/.yarn/patches/ast-types-npm-0.16.1-596f974e68.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {
