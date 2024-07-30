@@ -1,0 +1,118 @@
+{
+  "name": "@react-spectrum/s2",
+  "version": "0.2.0",
+  "description": "Spectrum 2 UI components in React",
+  "license": "Apache-2.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "main": "dist/main.cjs",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "page": "dist/page.cjs",
+  "style-module": "style/dist/module.mjs",
+  "style-main": "style/dist/main.cjs",
+  "style-types": "style/dist/types.d.ts",
+  "source": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "module": "./dist/module.mjs",
+      "import": "./dist/module.mjs",
+      "require": "./dist/main.cjs"
+    },
+    "./page.css": "./page.css",
+    "./style": {
+      "types": "./style/dist/types.d.ts",
+      "module": "./style/dist/module.mjs",
+      "import": "./style/dist/module.mjs",
+      "require": "./style/dist/main.cjs"
+    },
+    "./icons/*": {
+      "types": "./icon.d.ts",
+      "module": "./icons/*.mjs",
+      "import": "./icons/*.mjs",
+      "require": "./icons/*.cjs"
+    }
+  },
+  "targets": {
+    "module": {},
+    "main": {},
+    "types": {},
+    "page": {
+      "source": "src/page.ts",
+      "isLibrary": true
+    },
+    "style-module": {
+      "source": "style/spectrum-theme.ts",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "context": "node"
+    },
+    "style-main": {
+      "source": "style/spectrum-theme.ts",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "context": "node"
+    },
+    "style-types": {
+      "source": "style/spectrum-theme.ts"
+    },
+    "icons-module": {
+      "source": "s2wf-icons/*.svg",
+      "distDir": "icons",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "icons-main": {
+      "source": "s2wf-icons/*.svg",
+      "distDir": "icons",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    }
+  },
+  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "style/dist",
+    "style/package.json",
+    "page.css",
+    "icons",
+    "icon.d.ts",
+    "src"
+  ],
+  "scripts": {
+    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/page*.css page.css || true",
+    "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
+    "postpack": "git checkout -- package.json"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-tokens": "^13.0.0-beta.34",
+    "@parcel/macros": "2.12.1-canary.3165"
+  },
+  "dependencies": {
+    "@react-aria/i18n": "^3.11.0",
+    "@react-aria/interactions": "^3.22.0",
+    "@react-aria/utils": "^3.23.0",
+    "@react-spectrum/utils": "^3.11.3",
+    "@react-types/color": "3.0.0-rc.1",
+    "@react-types/dialog": "^3.5.8",
+    "@react-types/provider": "^3.7.2",
+    "@react-types/shared": "^3.22.1",
+    "@react-types/textfield": "^3.9.1",
+    "csstype": "^3.0.2",
+    "react-aria": "^3.31.1",
+    "react-aria-components": "^1.2.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  }
+}

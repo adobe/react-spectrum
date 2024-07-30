@@ -97,6 +97,12 @@ module.exports = {
         }
       ]
     }
+  },
+  {
+    files: ['packages/@react-spectrum/s2/**'],
+    rules: {
+      'react/react-in-jsx-scope': OFF
+    }
   }],
   env: {
     'browser': true,

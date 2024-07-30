@@ -22,6 +22,10 @@
     "build:chromatic": "CHROMATIC=1 storybook build -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
     "start:chromatic-fc": "CHROMATIC=1 NODE_ENV=storybook storybook dev -p 9005 --ci -c '.chromatic-fc'",
     "build:chromatic-fc": "CHROMATIC=1 storybook build -c .chromatic-fc -o dist/$(git rev-parse HEAD)/chromatic-fc",
+    "start:s2": "NODE_ENV=storybook storybook dev -p 6006 --ci -c '.storybook-s2'",
+    "build:storybook-s2": "NODE_ENV=storybook storybook build -c .storybook-s2 -o dist/$(git rev-parse HEAD)/storybook-s2",
+    "build:s2-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
+    "build:chromatic-s2": "CHROMATIC=1 NODE_ENV=storybook storybook build -c .storybook-s2 --test",
     "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "test": "cross-env STRICT_MODE=1 yarn jest",
@@ -39,6 +43,7 @@
     "plop": "plop --plopfile scripts/plopfile.js",
     "chromatic": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_PROJECT_TOKEN --build-script-name 'build:chromatic'",
     "chromatic:forced-colors": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_FC_PROJECT_TOKEN --build-script-name 'build:chromatic-fc'",
+    "chromatic:s2": "NODE_ENV=production CHROMATIC=1 chromatic --buildScriptName='build:chromatic-s2' --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
     "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push --no-verify-access",
@@ -93,7 +98,11 @@
     "@storybook/addon-a11y": "^7.6.19",
     "@storybook/addon-actions": "^7.6.19",
     "@storybook/addon-controls": "^7.6.19",
+    "@storybook/addon-essentials": "7.6.19",
+    "@storybook/addon-interactions": "7.6.19",
     "@storybook/addon-links": "^7.6.19",
+    "@storybook/addon-onboarding": "1.0.8",
+    "@storybook/addon-themes": "7.6.19",
     "@storybook/api": "^7.6.19",
     "@storybook/components": "^7.6.19",
     "@storybook/manager-api": "^7.6.19",
@@ -173,7 +182,7 @@
     "react-dom": "^18.2.0",
     "react-frame-component": "^5.0.0",
     "react-test-renderer": "^16.9.0",
-    "recast": "^0.23",
+    "recast": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",
@@ -236,8 +245,12 @@
     "@storybook/types@npm:7.6.17": "patch:@storybook/types@npm:7.6.19#~/.yarn/patches/@storybook-types-npm-7.6.19-0bfc48b098.patch",
     "@types/lodash@npm:^4.14.167": "patch:@types/lodash@npm:4.14.194#~/.yarn/patches/@types-lodash-npm-4.14.194-f099c0742e.patch",
     "@types/mdx@npm:^2.0.0": "patch:@types/mdx@npm:2.0.1#~/.yarn/patches/@types-mdx-npm-2.0.1-93f8844bdf.patch",
+    "ast-types": "0.16.1",
     "ast-types@npm:^0.16.1": "patch:ast-types@npm:0.16.1#~/.yarn/patches/ast-types-npm-0.16.1-596f974e68.patch",
-    "postcss-custom-properties@npm:^6.0.1": "patch:postcss-custom-properties@npm:13.2.0#~/.yarn/patches/postcss-custom-properties-npm-13.2.0-04f4883a93.patch"
+    "postcss-custom-properties@npm:^6.0.1": "patch:postcss-custom-properties@npm:13.2.0#~/.yarn/patches/postcss-custom-properties-npm-13.2.0-04f4883a93.patch",
+    "recast@npm:^0.20.3": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
+    "recast@npm:^0.23.3": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
+    "recast@npm:^0.23.1": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {
@@ -247,7 +260,9 @@
         "packages/@react-aria/example-theme/**",
         "packages/@react-spectrum/style-macro-s1/**",
         "packages/@react-spectrum/tree/**",
-        "packages/@react-spectrum/color/src/*.tsx"
+        "packages/@react-spectrum/color/src/*.tsx",
+        "packages/@react-spectrum/s2/**",
+        ".storybook-s2/**"
       ]
     },
     "drafts": {
