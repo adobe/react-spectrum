@@ -245,7 +245,6 @@
     "@storybook/types@npm:7.6.17": "patch:@storybook/types@npm:7.6.19#~/.yarn/patches/@storybook-types-npm-7.6.19-0bfc48b098.patch",
     "@types/lodash@npm:^4.14.167": "patch:@types/lodash@npm:4.14.194#~/.yarn/patches/@types-lodash-npm-4.14.194-f099c0742e.patch",
     "@types/mdx@npm:^2.0.0": "patch:@types/mdx@npm:2.0.1#~/.yarn/patches/@types-mdx-npm-2.0.1-93f8844bdf.patch",
-    "ast-types": "0.16.1",
     "postcss-custom-properties@npm:^6.0.1": "patch:postcss-custom-properties@npm:13.2.0#~/.yarn/patches/postcss-custom-properties-npm-13.2.0-04f4883a93.patch",
     "recast@npm:^0.20.3": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",
     "recast@npm:^0.23.3": "patch:recast@npm%3A0.23.6#~/.yarn/patches/recast-npm-0.23.6-518fb470cb.patch",

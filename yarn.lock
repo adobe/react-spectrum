@@ -12595,6 +12595,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ast-types@patch:ast-types@npm%3A0.16.1#~/.yarn/patches/ast-types-npm-0.16.1-596f974e68.patch":
+  version: 0.16.1
+  resolution: "ast-types@patch:ast-types@npm%3A0.16.1#~/.yarn/patches/ast-types-npm-0.16.1-596f974e68.patch::version=0.16.1&hash=538845"
+  dependencies:
+    tslib: "npm:^2.0.1"
+  checksum: 10c0/acf3efad1808ae63d8b27615bba0a5e417c7896c761c9a39fc629e904a10e0ade2ed8f497f0fbc22bdd26c7d90f8485a1465f4c330c359cda5aa171a833aad0f
+  languageName: node
+  linkType: hard
+
 "astring@npm:^1.6.0":
   version: 1.8.1
   resolution: "astring@npm:1.8.1"
