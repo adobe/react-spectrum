@@ -76,7 +76,7 @@ module.exports = {
                 currentLocalMemberName < previousLocalMemberName
               ) {
                 context.report({
-                  node,
+                  node: statement,
                   message: 'Imports should be sorted alphabetically.',
                   fix(fixer) {
                     let allImports = [];
