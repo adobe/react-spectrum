@@ -106,6 +106,7 @@ import ReactDOM from 'react-dom/client';
   }
 }
 
+fs.copyFileSync('lib/svg.d.ts', `${distDir}/svg.d.ts`);
 fs.writeFileSync(`${distDir}/tsconfig.json`, `{
   "compilerOptions": {
     "target": "es2018",

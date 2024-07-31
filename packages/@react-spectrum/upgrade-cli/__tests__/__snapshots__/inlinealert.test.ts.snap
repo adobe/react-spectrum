@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Change variant info to informative 1`] = `
+"import { InlineAlert, Heading, Content } from "@react-spectrum/s2";
+let variant = 'info';
+let props = {variant: 'info'};
+<div>
+  <InlineAlert variant="informative">
+    <Heading>Payment Information</Heading>
+    <Content>
+      Enter your billing address, shipping address, and payment method to
+      complete your purchase.
+    </Content>
+  </InlineAlert>
+  <InlineAlert variant={"informative"}>
+    <Heading>Payment Information</Heading>
+    <Content>
+      Enter your billing address, shipping address, and payment method to
+      complete your purchase.
+    </Content>
+  </InlineAlert>
+  <InlineAlert // TODO(S2-upgrade): Prop variant could not be automatically updated because variant could not be followed.
+  variant={variant}>
+    <Heading>Payment Information</Heading>
+    <Content>
+      Enter your billing address, shipping address, and payment method to
+      complete your purchase.
+    </Content>
+  </InlineAlert>
+  <InlineAlert // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <Heading>Payment Information</Heading>
+    <Content>
+      Enter your billing address, shipping address, and payment method to
+      complete your purchase.
+    </Content>
+  </InlineAlert>
+</div>"
+`;

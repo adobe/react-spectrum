@@ -20,6 +20,8 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
+        } else if (dependency.workspace.ident === '@react-spectrum/s2') {
+          dependency.update('^18.0.0 || ^19.0.0');
         } else {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0');
         }
@@ -43,7 +45,10 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       && workspace.ident !== 'react-aria'
       && workspace.ident !== 'react-stately'
       && workspace.ident !== '@internationalized/string-compiler'
-      && workspace.ident !== 'tailwindcss-react-aria-components') {
+      && workspace.ident !== 'tailwindcss-react-aria-components'
+      && workspace.ident !== '@react-spectrum/s2'
+      && workspace.ident !== '@react-spectrum/upgrade-cli'
+    ) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
       workspace.set('dependencies.@adobe/spectrum-css-temp');
@@ -206,14 +211,20 @@ function enforceExports({Yarn}) {
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (isPublishing(workspace)) {
+      let moduleExt = name === '@react-spectrum/s2' ? '.mjs' : '.js';
+      let cjsExt = name === '@react-spectrum/s2' ? '.cjs' : '.js';
       if (workspace.manifest.main) {
-        workspace.set('main', setExtension(workspace.manifest.main));
+        workspace.set('main', setExtension(workspace.manifest.main, cjsExt));
       } else {
-        workspace.set('main', 'dist/main.js');
+        workspace.set('main', setExtension('dist/main.js', cjsExt));
       }
 
-      if (name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
-        workspace.set('module', 'dist/module.js');
+      if (
+        name !== '@internationalized/string-compiler' &&
+        name !== 'tailwindcss-react-aria-components' &&
+        name !== '@react-spectrum/upgrade-cli'
+      ) {
+        workspace.set('module', setExtension('dist/module.js', moduleExt));
       }
 
       let exportsRequire = workspace.manifest?.exports?.require;
@@ -222,15 +233,15 @@ function enforceExports({Yarn}) {
         for (let key in workspace.manifest.exports) {
           let subExportsRequire = workspace.manifest.exports[key].require;
           let subExportsImport = workspace.manifest.exports[key].import;
-          workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire));
+          workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
           workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
         }
       } else {
-        workspace.set('exports.require', setExtension(exportsRequire));
+        workspace.set('exports.require', setExtension(exportsRequire, cjsExt));
         workspace.set('exports.import', setExtension(exportsImport, '.mjs'));
       }
 
-      if (!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts')) {
+      if ((!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts')) && name !== '@react-spectrum/upgrade-cli') {
         workspace.set('types', 'dist/types.d.ts');
       }
 
@@ -238,9 +249,9 @@ function enforceExports({Yarn}) {
         workspace.set('source', 'src/index.ts');
       }
 
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
-        if (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src')) {
-          workspace.set('files', [...workspace.manifest.files, 'dist', 'src']);
+      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components' && name !== '@react-spectrum/upgrade-cli') {
+        if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
+          workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
         } else if (!workspace.manifest.files.includes('dist')) {
           workspace.set('files', [...workspace.manifest.files, 'dist']);
         } else if (!workspace.manifest.files.includes('src')) {
@@ -249,7 +260,7 @@ function enforceExports({Yarn}) {
       }
 
       // better to do in enforceCSS? it doesn't match the set of packages handled
-      if (name !== 'react-aria-components') {
+      if (name !== 'react-aria-components' && name !== '@react-spectrum/upgrade-cli') {
         if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
           workspace.set('sideEffects', ['*.css']);
         } else {

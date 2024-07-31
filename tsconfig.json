@@ -5,7 +5,11 @@
     // maybe bump to 'esNext'?
     "target": "es2018",
     // allows react jsx in tsx files
-    "jsx": "react",
+    // this is set to preserve so that different packages can use different JSX runtimes
+    // depending on the React version they support. ESLint will ensure that React is imported
+    // in packages using the old JSX runtime. Parcel will compile JSX according to the React
+    // version specified in the package.json of each package.
+    "jsx": "preserve",
     // Eventually turn off, one we have no more assumed default exports.
     // Allow default imports from modules with no default export.
     "allowSyntheticDefaultImports": true,
@@ -91,6 +95,7 @@
           "./packages/@react-spectrum/numberfield",
           "./packages/@react-spectrum/progress",
           "./packages/@react-spectrum/radio",
+          "./packages/@react-spectrum/s2",
           "./packages/@react-spectrum/searchfield",
           "./packages/@react-spectrum/searchwithin",
           "./packages/@react-spectrum/statuslight",
@@ -103,6 +108,7 @@
           "./packages/@react-spectrum/theme-dark",
           "./packages/@react-spectrum/theme-default",
           "./packages/@react-spectrum/theme-light",
+          "./packages/@react-spectrum/upgrade-cli",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
           "./packages/@react-stately/calendar",
@@ -146,10 +152,13 @@
     }
   },
   "include": [
-    "packages"
+    "packages",
+    "lib/svg.d.ts"
   ],
   "exclude": [
     "**/node_modules",
-    "packages/dev/optimize-locales-plugin"
+    "packages/dev/optimize-locales-plugin",
+    "packages/@react-spectrum/s2/s2wf-icons",
+    "packages/@react-spectrum/s2/icon.d.ts"
   ]
 }
