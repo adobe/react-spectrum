@@ -8,6 +8,10 @@
     "parcel-namer-icon": "^1.0.0",
     "parcel-transformer-icon": "^1.0.0"
   },
+  "files": [
+    "index.js",
+    ".parcelrc"
+  ],
   "engines": {
     "node": ">=18.0.0"
   }
