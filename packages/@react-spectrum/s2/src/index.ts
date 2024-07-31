@@ -50,6 +50,7 @@ export {Radio} from './Radio';
 export {RadioGroup} from './RadioGroup';
 export {RangeSlider} from './RangeSlider';
 export {SearchField} from './SearchField';
+export {SegmentedControl, ControlItem} from './SegmentedControl';
 export {Slider} from './Slider';
 export {StatusLight} from './StatusLight';
 export {Switch} from './Switch';
