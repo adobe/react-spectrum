@@ -138,7 +138,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
-  } 
+  }
 });
 
 const quietFocusLine = style({
