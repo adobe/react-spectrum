@@ -35,7 +35,7 @@ export function Migrating() {
           <ul className="sb-unstyled">
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>trigger</Code> (it has not been implemented yet)</li>
-            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>MenuItem</Code></li>
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
           </ul>
 
           <H3>Avatar</H3>
@@ -50,6 +50,7 @@ export function Migrating() {
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isMultiline</Code> (it has not been implemented yet)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>autoFocusCurrent</Code> (it has not been implemented yet)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>size="S"</Code> (Small is no longer a supported size in Spectrum 2)</li>
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>Breadcrumb</Code></li>
           </ul>
 
           <H3>Button</H3>
@@ -97,7 +98,7 @@ export function Migrating() {
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>size</Code> and instead provide a size via the style macro (i.e. <Code>{`styles={style({size: 20})}`}</Code>)</li>
           </ul>
 
-          <H3>Combobox</H3>
+          <H3>ComboBox</H3>
           <ul className="sb-unstyled">
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
@@ -106,6 +107,7 @@ export function Migrating() {
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
           </ul>
 
           <H3>Dialog</H3>
@@ -172,6 +174,11 @@ export function Migrating() {
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant=“overBackground”</Code> to <Code>staticColor=“white”</Code></li>
           </ul>
 
+          <H3>ListBox</H3>
+          <ul className="sb-unstyled">
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
+          </ul>
+
           <H3>Menu</H3>
           <ul className="sb-unstyled">
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
@@ -190,6 +197,7 @@ export function Migrating() {
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isLoading</Code> (it has not been implemented yet)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
           </ul>
 
           <H3>ProgressBar</H3>
@@ -253,6 +261,12 @@ export function Migrating() {
           <H3>Switch</H3>
           <P>No updates needed.</P>
 
+          <H3>Tabs</H3>
+          <ul className="sb-unstyled">
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Inside <Code>TabList</Code>: Update <Code>Item</Code> to be <Code>Tab</Code></li>
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Inside <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove the surrounding <Code>TabPanels</Code></li>
+          </ul>
+
           <H3>TagGroup</H3>
           <ul className="sb-unstyled">
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>actionLabel</Code> (it has not been implemented yet)</li>
@@ -261,6 +275,7 @@ export function Migrating() {
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>errorMessage</Code> (it has not been implemented yet)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isInvalid</Code> (it has not been implemented yet)</li>
             <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>validationState</Code> (<Code>isInvalid</Code> should be used when it becomes available)</li>
+            <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>Tag</Code></li>
           </ul>
 
           <H3>TextArea</H3>
