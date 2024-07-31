@@ -42,7 +42,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -67,7 +67,12 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Whether the picker should be displayed with a quiet style.
+   * 
+   */
+  isQuiet?: boolean
 }
 
 export interface PickerProps<T extends object> extends
@@ -101,6 +106,11 @@ interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
   ...fieldInput(),
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid',
+    isQuiet: 'none'
+  },
   position: 'relative',
   fontFamily: 'sans',
   fontSize: 'control',
@@ -111,18 +121,38 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   alignItems: 'center',
   height: 'control',
   transition: 'default',
-  columnGap: 'text-to-control',
-  paddingX: 'edge-to-text',
+  columnGap: {
+    default: 'text-to-control',
+    isQuiet: 'text-to-visual'
+  },
+  paddingX: {
+    default: 'edge-to-text',
+    isQuiet: centerPadding()
+  },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    isQuiet: 'transparent'
   },
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
-  }
+  } 
 });
+
+const quietFocusLine = style({
+  width: 'full',
+  // Use pixels since we are emulating a border.
+  height: '[2px]',
+  position: 'absolute',
+  bottom: 0,
+  borderRadius: 'full',
+  backgroundColor: {
+    default: 'blue-800',
+    forcedColors: 'Highlight'
+  }
+})
 
 export let menu = style({
   outlineStyle: 'none',
@@ -195,7 +225,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     necessityIndicator,
     UNSAFE_className = '',
     UNSAFE_style,
-    placeholder = 'Select an option...',
+    placeholder = 'Select...',
+    isQuiet,
     ...pickerProps
   } = props;
 
@@ -221,7 +252,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
         labelPosition,
         size
       }, props.styles)}>
-      {({isDisabled, isOpen, isInvalid, isRequired}) => (
+      {({isDisabled, isOpen, isFocusVisible, isInvalid, isRequired}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
@@ -240,7 +271,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               className={renderProps => inputButton({
                 ...renderProps,
                 size: size,
-                isOpen
+                isOpen,
+                isQuiet
               })}>
               {(renderProps) => (
                 <>
@@ -279,7 +311,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                   <ChevronIcon
                     size={size}
                     className={iconStyles} />
-                  {isInvalid && !isDisabled &&
+                  {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+                  {isInvalid && !isDisabled && !isQuiet && 
                     // @ts-ignore known limitation detecting functions from the theme
                     <div className={invalidBorder({...renderProps, size})} />
                   }
@@ -299,14 +332,18 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               UNSAFE_style={{
-                width: menuWidth ? `${menuWidth}px` : undefined
+                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
               }}
               styles={style({
+                marginStart: {
+                  isQuiet: -12
+                },
                 minWidth: {
-                  default: '[var(--trigger-width)]'
+                  default: '[var(--trigger-width)]',
+                  isQuiet: 192
                 },
                 width: '[var(--trigger-width)]'
-              })}>
+              })(props)}>
               <Provider
                 values={[
                   [HeaderContext, {className: sectionHeader({size})}],
