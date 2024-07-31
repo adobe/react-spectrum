@@ -1,11 +1,11 @@
 {
-  "name": "@react-spectrum/upgrade-cli",
+  "name": "@react-spectrum/codemods",
   "version": "0.0.1",
   "private": true,
   "source": "src/index.ts",
   "main": "dist/index.js",
   "bin": {
-    "upgrade-react-spectrum": "./dist/index.js"
+    "s1-to-s2": "./dist/index.js"
   },
   "scripts": {
     "start": "node --loader=ts-node/esm src/index.ts"

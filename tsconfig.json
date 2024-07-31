@@ -108,7 +108,7 @@
           "./packages/@react-spectrum/theme-dark",
           "./packages/@react-spectrum/theme-default",
           "./packages/@react-spectrum/theme-light",
-          "./packages/@react-spectrum/upgrade-cli",
+          "./packages/@react-spectrum/codemods",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
           "./packages/@react-stately/calendar",

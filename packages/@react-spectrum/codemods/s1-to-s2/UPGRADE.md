@@ -85,7 +85,6 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 - Remove `isReadOnly` (it is no longer supported)
 - Remove `validationState` (it is no longer supported)
 - Remove `validationBehavior` (it is no longer supported)
-- TODO: Clarify/verify the above
 
 ## Grid
 - Update `Grid` to be a `div` and apply grid styles using the style macro

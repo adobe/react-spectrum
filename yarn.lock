@@ -7949,9 +7949,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/upgrade-cli@workspace:packages/@react-spectrum/upgrade-cli":
+"@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods":
   version: 0.0.0-use.local
-  resolution: "@react-spectrum/upgrade-cli@workspace:packages/@react-spectrum/upgrade-cli"
+  resolution: "@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods"
   dependencies:
     "@babel/parser": "npm:^7.24.5"
     "@babel/traverse": "npm:^7.24.5"

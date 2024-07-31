@@ -6,7 +6,7 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to ComboboxItem', `
+test('Static - Renames Item to ComboBoxItem', `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 <div>
   <ComboBox label="Favorite Animal">
@@ -27,7 +27,7 @@ let externalKey = 'travel';
 </div>
 `);
 
-test('Dynamic - Renames Item to ComboboxItem', `
+test('Dynamic - Renames Item to ComboBoxItem', `
 import {ComboBox, Item} from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Aerospace'},

@@ -4,7 +4,7 @@ A CLI tool for upgrading React Spectrum components to Spectrum 2.
 
 ## Usage
 
-Run `npx @react-spectrum/upgrade-cli` from the directory you want to upgrade.
+Run `npx @react-spectrum/codemods s1-to-s2` from the directory you want to upgrade.
 
 ### Options
 
