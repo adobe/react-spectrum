@@ -21,7 +21,7 @@ export function P({children}) {
 }
 
 export function Code({children}) {
-  return <code className={style({fontFamily: 'code', fontSize: 'code-sm', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{children}</code>;
+  return <code className={style({fontFamily: 'code', fontSize: 'code-sm', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
 }
 
 export function Pre({children}) {
