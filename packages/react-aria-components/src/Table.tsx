@@ -1178,8 +1178,7 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
-  columnProps: any
+  isHovered: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -1216,8 +1215,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered,
-      columnProps: cell.column.props
+      isHovered
     }
   });
 

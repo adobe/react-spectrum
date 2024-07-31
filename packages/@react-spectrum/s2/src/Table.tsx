@@ -69,7 +69,6 @@ import {useLoadMore} from '@react-aria/utils';
 // Add a complex table example with buttons and various icons,links,
 // Hide header support
 
-// column dividers and text align (needs more info from rac so cells know if its parent column has showDivider)
 // drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
 // overflow wrap
@@ -531,7 +530,7 @@ const columnStyles = style({
   },
   paddingX: {
     default: 16,
-    isColumResizable: 0
+    isColumnResizable: 0
   },
   // TODO: need to support text align and that would need to apply to all cells in the column, need to figure out how
   textAlign: {
@@ -549,9 +548,13 @@ const columnStyles = style({
   display: 'flex',
   // TODO: this border isn't perfect because it is flush with the first row's blue selected outline and the text is 17.5px instead of 18px
   borderColor: 'gray-300',
-  borderXWidth: 0,
   borderTopWidth: 0,
   borderBottomWidth: 1,
+  borderStartWidth: 0,
+  borderEndWidth: {
+    default: 0,
+    isColumnResizable: 1
+  },
   borderStyle: 'solid'
 });
 
@@ -567,11 +570,11 @@ export function Column(props: ColumnProps) {
   let {isQuiet, columnsResizable} = useContext(InternalTableContext);
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
   let {isResizable, children, align = 'start'} = props;
-  let isColumResizable = columnsResizable && isResizable;
+  let isColumnResizable = columnsResizable && isResizable;
 
   return (
     // TODO: add default width and min width for hide header here
-    <RACColumn {...props} className={renderProps => columnStyles({...renderProps, isQuiet, isColumResizable, align})}>
+    <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isQuiet, isColumnResizable, align})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
@@ -683,7 +686,7 @@ const resizerHandle = style({
   },
   width: size(1),
   position: 'absolute',
-  left: size(5)
+  left: size(6)
 });
 
 const sortIcon = style({
@@ -916,7 +919,11 @@ const cell = style<CellRenderProps & S2TableProps>({
   width: 'full',
   fontSize: 'control',
   alignItems: 'center',
-  display: 'flex'
+  display: 'flex',
+  '--dividerColor': {
+    type: 'borderColor',
+    value: 'gray-300'
+  }
 });
 
 const checkboxCellStyle = style({
@@ -973,21 +980,19 @@ const cellBackground = style({
   backgroundColor: {
     default: 'transparent',
     isSticky: '--rowBackgroundColor'
-  },
-  '--dividerColor': {
-    type: 'borderColor',
-    value: 'gray-300'
   }
 });
 
 export interface CellProps extends RACCellProps {
   /** @private */
   isSticky?: boolean,
+  showDivider?: boolean,
+  align?: 'start' | 'middle' | 'end',
   children: ReactNode
 }
 
 export function Cell(props: CellProps) {
-  let {children, isSticky, ...otherProps} = props;
+  let {children, isSticky, showDivider, align, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
 
   return (
@@ -995,22 +1000,23 @@ export function Cell(props: CellProps) {
       // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
       // @ts-ignore
       isSticky={isSticky}
+      // This is a inline style because it needs to set properties ONLY for the end border (don't want to set a color for the bottom border)
+      style={{borderInlineEndColor: showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: showDivider ? 1 : 0, borderRightStyle: showDivider ? 'solid' : 'none'}}
       className={renderProps => cell({
         ...renderProps,
         ...tableVisualOptions
       })}
       {...otherProps}>
-      {({isFocusVisible, columnProps}) => (
+      {({isFocusVisible}) => (
         <>
+          {/* TODO: retry moving some of these styles to the Cell itself */}
           {/* Reason for doing it this way is because ideally I'd have a wrapper around the cell that is full width that serves as a background
             but can't have a div wrapping the cell here. I also want the padding applied on the RAC cell itself so a div wrapping the cell contents won't
             have the proper full height
           */}
-          {/* TODO hack to render the dividers on cell if the column has the show divider prop, confirm if this is the way we want to go with this.
-          Unable to move the divider to the column level because then the line covers the checkboxes when scrolled horizontally */}
-          <div role="presentation" style={{borderColor: columnProps.showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: 1, borderRightStyle: columnProps.showDivider ? 'solid' : 'none'}} className={cellBackground({isSticky})} />
+          <div role="presentation" className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
-          <span className={cellContent({...tableVisualOptions, align: columnProps.align || 'start'})}>{children}</span>
+          <span className={cellContent({...tableVisualOptions, align: align || 'start'})}>{children}</span>
         </>
       )}
     </RACCell>

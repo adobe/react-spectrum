@@ -291,15 +291,15 @@ const SortableResizableTable = (args: any) => {
     <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 320})}>
       <TableHeader columns={sortResizeColumns}>
         {(column) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable} showDivider={column.showDivider}>{column.name}</Column>
+          <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
-          <Row id={item.id} columns={sortcolumns}>
+          <Row id={item.id} columns={sortResizeColumns}>
             {(column) => {
               // @ts-ignore figure out later
-              return <Cell>{item[column.id]}</Cell>;
+              return <Cell showDivider={column.showDivider}>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
@@ -381,15 +381,15 @@ const ShowDividers = (args: any) => {
     <Table aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={dividerColumns}>
         {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} showDivider>{column.name}</Column>
+          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
-          <Row id={item.id} columns={columns}>
+          <Row id={item.id} columns={dividerColumns}>
             {(column) => {
               // @ts-ignore figure out later
-              return <Cell>{item[column.id]}</Cell>;
+              return <Cell showDivider={column.showDivider}>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
@@ -418,15 +418,15 @@ const TextAlign = (args: any) => {
     <Table aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
         {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} showDivider align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
-          <Row id={item.id} columns={columns}>
+          <Row id={item.id} columns={alignColumns}>
             {(column) => {
               // @ts-ignore figure out later
-              return <Cell>{item[column.id]}</Cell>;
+              return <Cell showDivider align={column?.align as 'start' | 'center' | 'end'}>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
