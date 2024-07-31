@@ -66,7 +66,7 @@ function template(asset, iconName, svg) {
   }
   return (
 `
-import {IconProps, IconContext, IconContextValue} from '~/src/Icon';
+import {IconProps, IconContext, IconContextValue} from '@react-spectrum/s2';
 import {SVGProps, useRef} from 'react';
 import {useContextProps} from 'react-aria-components';
 

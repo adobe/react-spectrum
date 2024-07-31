@@ -1,0 +1,14 @@
+{
+  "name": "@react-spectrum/s2-icon-builder",
+  "version": "1.0.0",
+  "bin": {
+    "transform-icons": "index.js"
+  },
+  "dependencies": {
+    "parcel-namer-icon": "^1.0.0",
+    "parcel-transformer-icon": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

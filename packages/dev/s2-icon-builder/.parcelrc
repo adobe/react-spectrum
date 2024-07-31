@@ -1,0 +1,17 @@
+{
+  "namers": ["parcel-namer-icon"],
+  "bundler": "@parcel/bundler-library",
+  "transformers": {
+    "*.svg": ["parcel-transformer-icon"],
+    "*.tsx": ["@parcel/transformer-raw"]
+  },
+  "packagers": {
+    "*": "@parcel/packager-raw"
+  },
+  "reporters": ["@parcel/reporter-cli"],
+  "resolvers": ["@parcel/resolver-default"],
+  "optimizers": {},
+  "compressors": {
+    "*": ["@parcel/compressor-raw"]
+  }
+}

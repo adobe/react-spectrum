@@ -7492,6 +7492,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/s2-icon-builder@npm:^1.0.0, @react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder"
+  dependencies:
+    parcel-namer-icon: "npm:^1.0.0"
+    parcel-transformer-icon: "npm:^1.0.0"
+  bin:
+    transform-icons: index.js
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
@@ -26882,7 +26893,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel-namer-icon@workspace:packages/dev/parcel-namer-icon":
+"parcel-namer-icon@npm:^1.0.0, parcel-namer-icon@workspace:packages/dev/parcel-namer-icon":
   version: 0.0.0-use.local
   resolution: "parcel-namer-icon@workspace:packages/dev/parcel-namer-icon"
   dependencies:
@@ -26967,7 +26978,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel-transformer-icon@workspace:packages/dev/parcel-transformer-icon":
+"parcel-transformer-icon@npm:^1.0.0, parcel-transformer-icon@workspace:packages/dev/parcel-transformer-icon":
   version: 0.0.0-use.local
   resolution: "parcel-transformer-icon@workspace:packages/dev/parcel-transformer-icon"
   dependencies:
@@ -28962,6 +28973,7 @@ __metadata:
     "@parcel/transformer-inline-string": "npm:2.0.0-dev.1601"
     "@parcel/transformer-svg-react": "npm:2.12.1-dev.3224"
     "@parcel/transformer-typescript-types": "npm:2.0.0-dev.1601"
+    "@react-spectrum/s2-icon-builder": "npm:^1.0.0"
     "@spectrum-css/component-builder": "npm:1.0.1"
     "@spectrum-css/vars": "npm:^2.3.0"
     "@storybook/addon-a11y": "npm:^7.6.19"
