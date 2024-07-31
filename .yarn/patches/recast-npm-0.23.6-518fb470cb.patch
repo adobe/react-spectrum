@@ -1,7 +1,7 @@
-diff --git a/node_modules/recast/lib/printer.js b/node_modules/recast/lib/printer.js
-index 9bedd42..33941b0 100644
---- a/node_modules/recast/lib/printer.js
-+++ b/node_modules/recast/lib/printer.js
+diff --git a/lib/printer.js b/lib/printer.js
+index 9bedd42e89db78c2fbb3848ba294eee5d3883ffe..33941b0b9be27f4efcaeb67573d104c189ff96f2 100644
+--- a/lib/printer.js
++++ b/lib/printer.js
 @@ -2199,7 +2199,7 @@ function printFunctionParams(path, options, print) {
  function maybePrintImportAssertions(path, options, print) {
      var n = path.getValue();
