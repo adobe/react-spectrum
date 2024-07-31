@@ -1,7 +1,6 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {Link} from '@react-spectrum/s2';
 import {P, Code, Pre, H3, H2} from './typography';
-import {highlight} from './highlight' with {type: 'macro'};
 
 export function Migrating() {
   return (
@@ -320,24 +319,24 @@ export function Migrating() {
           <H2>Style props</H2>
           <P>React Spectrum v3 supported a limited set of <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props">style props</Link> for layout and positioning using Spectrum-defined values. Usage of these should be updated to instead use the style macro.</P>
           <P>Example:</P>
-          <Code>
-            {`- import {ActionButton} from '@adobe/react-spectrum';
-+ import {ActionButton} from '@react-spectrum/s2';
-+ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
-- <ActionButton marginStart="size-100">
-+ <ActionButton styles={style({marginStart: 8})}>
-  Edit
-</ActionButton>`}
-          </Code>
+          <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+            <div className={style({backgroundColor: 'red-200'})}>{`- import {ActionButton} from '@adobe/react-spectrum';`}</div>
+            <div className={style({backgroundColor: 'green-200'})}>{`+ import {ActionButton} from '@react-spectrum/s2';`}</div>
+            <div className={style({backgroundColor: 'green-200'})}>{`+ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};`}</div>
+            <div>{'\n'}</div>
+            <div className={style({backgroundColor: 'red-200'})}>{`- <ActionButton marginStart="size-100">`}</div>
+            <div className={style({backgroundColor: 'green-200'})}>{`+ <ActionButton styles={style({marginStart: 8})}>`}</div>
+            <div>{`    Edit`}</div>
+            <div>{`  </ActionButton>`}</div>
+          </pre>
 
           <H3>Border width</H3>
           <P>Affected style props: <Code>borderWidth</Code>, <Code>borderStartWidth</Code>, <Code>borderEndWidth</Code>, <Code>borderTopWidth</Code>, <Code>orderBottomWidth</Code>, <Code>borderXWidth</Code>, <Code>borderYWidth</Code>.</P>
           <P>Example:</P>
-          <Code>
-            {`- <View borderWidth="thin"  />
-+ <div className={style({borderWidth: 1})} />`}
-          </Code>
+          <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+            <div className={style({backgroundColor: 'red-200'})}>{`- <View borderWidth="thin"  />`}</div>
+            <div className={style({backgroundColor: 'green-200'})}>{`+ <div className={style({borderWidth: 1})} />`}</div>
+          </pre>
           <P>Border widths should be updated to use pixel values. Use the following mappings:</P>
           <table>
             <tr>
@@ -369,10 +368,10 @@ export function Migrating() {
           <H3>Border radius</H3>
           <P>Affected style props: <Code>borderRadius</Code>, <Code>borderTopStartRadius</Code>, <Code>borderTopEndRadius</Code>, <Code>borderBottomStartRadius</Code>, <Code>borderBottomEndRadius</Code>.</P>
           <P>Example:</P>
-          <Code>
-            {`- <View borderRadius="small"  />
-+ <div className={style({borderRadius: 'sm'})} />`}
-          </Code>
+          <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+            <div className={style({backgroundColor: 'red-200'})}>{`- <View borderRadius="small"  />`}</div>
+            <div className={style({backgroundColor: 'green-200'})}>{`+ <div className={style({borderRadius: 'sm'})} />`}</div>
+          </pre>
           <P>Border radius values should be updated to use pixel values. Use the following mappings:</P>
            <table>
             <tr>
@@ -765,9 +764,10 @@ export function Migrating() {
             </tr>
           </table>
           <P>Example:</P>
-          <Code>{`- <View width={{ base: 'size-2000', L: 'size-5000' }} />
-+ <div className={style({width: {default: 160, lg: '[400px]'}) />`}
-          </Code>
+          <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+            <div className={style({backgroundColor: 'red-200'})}>{`- <View width={{ base: 'size-2000', L: 'size-5000' }} />`}</div>
+            <div className={style({backgroundColor: 'green-200'})}>{`+ <div className={style({width: {default: 160, lg: '[400px]'}) />`}</div>
+          </pre>
         </details>
       </div>
     </div>
