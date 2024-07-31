@@ -21,7 +21,7 @@ type MappedDateValue<T> =
   T extends CalendarDate ? CalendarDate :
   never;
 
-export interface CalendarPropsBase extends AriaLabelingProps {
+export interface CalendarPropsBase {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
