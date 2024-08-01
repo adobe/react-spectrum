@@ -13,7 +13,7 @@
 import {TabListProps as AriaTabListProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, TabProps as AriaTabProps, TabsProps as AriaTabsProps, Provider, Tab as RACTab, TabList as RACTabList, Tabs as RACTabs, TabListStateContext} from 'react-aria-components';
 import {Collection, DOMRef, Key, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -21,7 +21,10 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, StyleProps { // is height a style prop we want to allow for tabs?
+interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight,
+  /** The content to display in the tabs. */
   children?: ReactNode,
   density?: 'compact' | 'regular'
 }
@@ -51,7 +54,11 @@ const tab = style({
     default: 'neutral-subdued',
     isSelected: 'neutral',
     isHovered: 'neutral-subdued',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      isSelected: 'Highlight',
+      isDisabled: 'GrayText'
+    }
   },
   borderRadius: 'sm',
   gap: size(6),
@@ -127,7 +134,6 @@ const tablist = style({
       vertical: 12
     }
   },
-  borderColor: 'gray-400'
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
@@ -195,7 +201,11 @@ const selectedIndicator = style({
   position: 'absolute',
   color: {
     default: 'neutral',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'Highlight',
+      isDisabled: 'GrayText'
+    }
   },
   height: size(2),
   bottom: {
