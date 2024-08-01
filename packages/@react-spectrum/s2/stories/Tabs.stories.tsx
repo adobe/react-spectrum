@@ -11,6 +11,8 @@
  */
 
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
+import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
@@ -66,8 +68,8 @@ export const Icons = (args: any) => (
   <Tabs {...args} styles={style({width: 320})}>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR"><Edit /></Tab>
-      <Tab id="MaR"><Edit /></Tab>
-      <Tab id="Emp"><Edit /></Tab>
+      <Tab id="MaR"><Bell /></Tab>
+      <Tab id="Emp"><Heart /></Tab>
     </TabList>
     <TabPanel id="FoR">
       Arma virumque cano, Troiae qui primus ab oris.

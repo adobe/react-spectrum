@@ -276,6 +276,7 @@ function TabLine(props: TabLineProps) {
 
 const tabs = style({
   display: 'flex',
+  flexShrink: 0,
   fontFamily: 'sans',
   flexDirection: {
     orientation: {
