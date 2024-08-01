@@ -35,12 +35,15 @@ import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
 import {pressScale} from './pressScale';
-import {useDOMRef, useResizeObserver, useValueEffect} from '@react-spectrum/utils';
-import {CollectionBuilder} from '@react-aria/collections';
-import {Button} from './Button';
-import {useCallback, useEffect} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
-import {hidden} from 'chalk';
+import {useDOMRef} from '@react-spectrum/utils';
+import {CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {useEffect} from 'react';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {ActionButton} from './ActionButton';
+import { flushSync } from 'react-dom';
+import { ListState } from '../../../react-stately';
+import { create } from '../../../dev/eslint-plugin-rsp-rules/rules/act-events-test';
+import { all } from '../../avatar/chromatic-fc/Avatar.stories';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
@@ -92,13 +95,18 @@ const helpTextStyles = style({
   cursor: 'text'
 });
 
+const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
+
 function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let {onRemove} = props;
   return (
-    <CustomTagGroup {...props} ref={ref}>
-      <TagList style={{display: 'flex', gap: 4}}>
-        {props.children}
-      </TagList>
-    </CustomTagGroup>
+    <InternalTagGroupContext.Provider value={{onRemove}}>
+      <CustomTagGroup {...props} ref={ref}>
+        <TagList style={{display: 'flex', gap: 4}}>
+          {props.children}
+        </TagList>
+      </CustomTagGroup>
+    </InternalTagGroupContext.Provider>
   );
 }
 
@@ -142,7 +150,7 @@ function TagGroupInner<T>({
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
   let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: false});
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
-  console.log(tagState)
+  let {onRemove} = useContext(InternalTagGroupContext);
 
   let allItems = useMemo(
     () => Array.from(collection),
@@ -212,17 +220,19 @@ function TagGroupInner<T>({
         };
       };
       let result = computeVisibleTagCount();
-      setTagState(result);
+      flushSync(() => {
+        setTagState(result);
+      });
     }
   });
 
-  // useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
-  //
-  // useLayoutEffect(() => {
-  //   if (collection.size > 0) {
-  //     updateVisibleTagCount();
-  //   }
-  // }, [collection.size, updateVisibleTagCount]);
+  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
+
+  useLayoutEffect(() => {
+    if (collection.size > 0) {
+      queueMicrotask(updateVisibleTagCount);
+    }
+  }, [collection.size, updateVisibleTagCount]);
 
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
@@ -286,7 +296,7 @@ function TagGroupInner<T>({
           display: 'flex',
           flexWrap: 'wrap',
           minWidth: 'full',
-          gap: 16,
+          gap: 4,
           position: 'relative'
         })}>
         <FormContext.Provider value={{...formContext, size}}>
@@ -296,25 +306,27 @@ function TagGroupInner<T>({
               [TagGroupContext, {size, isEmphasized}]
             ]}>
             {/* invisible collection for measuring */}
-            <TagList
+            <div
+              inert
               ref={hiddenTagsRef}
-              items={allItems}
               className={style({
                 marginX:  -4,
                 display: 'flex',
                 flexWrap: 'wrap',
                 fontFamily: 'sans',
                 position: 'absolute',
+                inset: 0,
                 visibility: 'hidden',
-                overflow: 'hidden',
-                minWidth: 'full'
+                overflow: 'hidden'
               })}>
-              {item => {
+                <FakeTagContext.Provider value={{isFake: true, allowsRemoving: Boolean(onRemove)}}>
+              {allItems.map(item => {
                 // pull off individual props as an allow list, don't want refs or other props getting through
                 // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
-                return <Tag style={item.props.style} className={item.props.className} children={item.props.children} />;
-              }}
-            </TagList>
+                return item.render(item);
+              })}
+              </FakeTagContext.Provider>
+            </div>
             {/* real tag list */}
             <TagList
               ref={tagsRef}
@@ -330,9 +342,9 @@ function TagGroupInner<T>({
                 flexWrap: 'wrap',
                 fontFamily: 'sans'
               })({isEmpty})}>
-              {item => <Tag {...item.props} />}
+              {item => item.render(item)}
             </TagList>
-            {tagState.showCollapseButton && <Button onPress={handlePressCollapse}>{!isCollapsed ? 'Collapse' : 'Show All'}</Button>}
+            {tagState.showCollapseButton && <ActionButton isQuiet onPress={handlePressCollapse}>{!isCollapsed ? 'Collapse' : 'Show All'}</ActionButton>}
           </Provider>
         </FormContext.Provider>
       </div>
@@ -340,6 +352,8 @@ function TagGroupInner<T>({
     </AriaTagGroup>
   );
 }
+
+const FakeTagContext = createContext<TagGroupProps<any>>({isFake: false, allowsRemoving: false});
 
 const tagStyles = style({
   ...focusRing(),
@@ -413,12 +427,54 @@ const tagStyles = style({
   }
 });
 
-export function Tag({children, ...props}: TagProps) {
+export const Tag = createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
+  return <Tag2 {...props}></Tag2>;
+});
+
+export function Tag2({children, ...props}: TagProps) {
+  let {isFake, allowsRemoving} = useContext(FakeTagContext);
   let textValue = typeof children === 'string' ? children : undefined;
   let {size = 'M', isEmphasized} = useContext(TagGroupContext);
 
   let ref = useRef(null);
   let isLink = props.href != null;
+  if (isFake) {
+    <div>
+       <>
+          <div
+            className={style({
+              display: 'flex',
+              minWidth: 0,
+              alignItems: 'center',
+              gap: 'text-to-visual',
+              forcedColorAdjust: 'none',
+              backgroundColor: 'transparent'
+            })}>
+            <Provider
+              values={[
+                [TextContext, {className: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+                [IconContext, {
+                  render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+                  styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+                }],
+                [AvatarContext, {
+                  styles: style({size: fontRelative(20), flexShrink: 0, order: 0})
+                }],
+                [ImageContext, {
+                  className: style({size: fontRelative(20), flexShrink: 0, order: 0, aspectRatio: 'square', objectFit: 'contain'})
+                }]
+              ]}>
+              {typeof children === 'string' ? <Text>{children}</Text> : children}
+            </Provider>
+          </div>
+          {allowsRemoving && (
+            <ClearButton
+              slot="remove"
+              size={size} />
+          )}
+        </>
+    </div>
+  }
   return (
     <AriaTag
       textValue={textValue}

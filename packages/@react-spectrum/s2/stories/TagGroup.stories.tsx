@@ -42,7 +42,7 @@ export let Example = {
       args.onRemove = action('remove');
     }
     return (
-      <div style={{width: 320}}>
+      <div style={{width: 320, resize: 'horizontal', overflow: 'hidden'}}>
         <TagGroup {...args}>
           <Tag>Chocolate</Tag>
           <Tag>Mint</Tag>
