@@ -22,11 +22,16 @@
     "build:chromatic": "CHROMATIC=1 storybook build -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
     "start:chromatic-fc": "CHROMATIC=1 NODE_ENV=storybook storybook dev -p 9005 --ci -c '.chromatic-fc'",
     "build:chromatic-fc": "CHROMATIC=1 storybook build -c .chromatic-fc -o dist/$(git rev-parse HEAD)/chromatic-fc",
+    "start:s2": "NODE_ENV=storybook storybook dev -p 6006 --ci -c '.storybook-s2'",
+    "build:storybook-s2": "NODE_ENV=storybook storybook build -c .storybook-s2 -o dist/$(git rev-parse HEAD)/storybook-s2",
+    "build:s2-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
+    "build:chromatic-s2": "CHROMATIC=1 NODE_ENV=storybook storybook build -c .storybook-s2 --test",
     "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "test": "cross-env STRICT_MODE=1 yarn jest",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
     "test-storybook": "test-storybook --url http://localhost:9003  --browsers chromium --no-cache",
+    "test:docs": "yarn playwright install && node scripts/testDocs.js",
     "build": "make build",
     "test:ssr": "cross-env STRICT_MODE=1 yarn jest --config jest.ssr.config.js",
     "ci-test": "cross-env STRICT_MODE=1 yarn jest --maxWorkers=2 && cross-env STRICT_MODE=1 yarn test:ssr --runInBand",
@@ -39,6 +44,7 @@
     "plop": "plop --plopfile scripts/plopfile.js",
     "chromatic": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_PROJECT_TOKEN --build-script-name 'build:chromatic'",
     "chromatic:forced-colors": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_FC_PROJECT_TOKEN --build-script-name 'build:chromatic-fc'",
+    "chromatic:s2": "NODE_ENV=production CHROMATIC=1 chromatic --buildScriptName='build:chromatic-s2' --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
     "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push --no-verify-access",
@@ -93,7 +99,11 @@
     "@storybook/addon-a11y": "^7.6.19",
     "@storybook/addon-actions": "^7.6.19",
     "@storybook/addon-controls": "^7.6.19",
+    "@storybook/addon-essentials": "7.6.19",
+    "@storybook/addon-interactions": "7.6.19",
     "@storybook/addon-links": "^7.6.19",
+    "@storybook/addon-onboarding": "1.0.8",
+    "@storybook/addon-themes": "7.6.19",
     "@storybook/api": "^7.6.19",
     "@storybook/components": "^7.6.19",
     "@storybook/manager-api": "^7.6.19",
@@ -163,6 +173,7 @@
     "parcel": "2.0.0-dev.1599",
     "parcel-resolver-storybook": "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master",
     "patch-package": "^6.2.0",
+    "playwright": "^1.45.3",
     "plop": "^2.4.0",
     "postcss": "^8.4.24",
     "postcss-custom-properties": "^13.2.0",
@@ -228,7 +239,9 @@
     "@parcel/utils": "2.0.0-dev.1601",
     "@parcel/workers": "2.0.0-dev.1601",
     "@types/react": "npm:types-react@19.0.0-rc.0",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
+    "recast": "0.23.6",
+    "ast-types": "0.16.1"
   },
   "@parcel/transformer-css": {
     "cssModules": {
@@ -238,7 +251,9 @@
         "packages/@react-aria/example-theme/**",
         "packages/@react-spectrum/style-macro-s1/**",
         "packages/@react-spectrum/tree/**",
-        "packages/@react-spectrum/color/src/*.tsx"
+        "packages/@react-spectrum/color/src/*.tsx",
+        "packages/@react-spectrum/s2/**",
+        ".storybook-s2/**"
       ]
     },
     "drafts": {

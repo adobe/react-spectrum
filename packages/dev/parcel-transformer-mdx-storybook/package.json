@@ -1,0 +1,13 @@
+{
+  "name": "parcel-transformer-mdx-storybook",
+  "version": "1.0.0",
+  "private": true,
+  "main": "StorybookMDXTransformer.mjs",
+  "engines": {
+    "parcel": "2.0.0-dev.1599"
+  },
+  "dependencies": {
+    "@mdx-js/mdx": "next",
+    "@mdx-js/react": "next"
+  }
+}
