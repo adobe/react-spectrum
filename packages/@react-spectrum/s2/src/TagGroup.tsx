@@ -315,13 +315,15 @@ function TagGroupInner<T>({
                 position: 'absolute',
                 inset: 0,
                 visibility: 'hidden',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                opacity: 0
               })}>
               {allItems.map(item => {
                 // pull off individual props as an allow list, don't want refs or other props getting through
                 // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
                 return (
                   <div
+                    style={item.props.UNSAFE_style}
                     key={item.key}
                     className={item.props.className({size, allowsRemoving: Boolean(onRemove)})}>
                     {item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})}
@@ -440,8 +442,8 @@ export function Tag({children, ...props}: TagProps) {
       textValue={textValue}
       {...props}
       ref={ref}
-      style={pressScale(ref)}
-      className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
+      style={{...pressScale(ref), ...props.UNSAFE_style}}
+      className={renderProps => props.UNSAFE_className || '' + tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
         <TagWrapper isInCtx={isInCtx} size={size} {...renderProps}>{children}</TagWrapper>
       ))}

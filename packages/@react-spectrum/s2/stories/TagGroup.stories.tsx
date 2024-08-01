@@ -45,7 +45,7 @@ export let Example = {
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden'}}>
         <TagGroup {...args}>
-          <Tag id="chocolate"><div id="foo">Chocolate</div></Tag>
+          <Tag id="chocolate" UNSAFE_style={{minWidth: '200px', visibility: 'visible'}}><div id="foo">Chocolate</div></Tag>
           <Tag>Mint</Tag>
           <Tag>Strawberry</Tag>
           <Tag>Vanilla</Tag>
