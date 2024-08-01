@@ -924,6 +924,14 @@ const cell = style<CellRenderProps & S2TableProps>({
     type: 'borderColor',
     value: 'gray-300'
   }
+  // outlineStyle: {
+  //   default: 'none',
+  //   isFocusVisible: 'solid'
+  // },
+  // outlineOffset: -2,
+  // outlineWidth: 2,
+  // outlineColor: 'focus-ring',
+  // borderRadius: size(6)
 });
 
 const checkboxCellStyle = style({
@@ -940,6 +948,12 @@ const checkboxCellStyle = style({
   // TODO: Figure out better way to make the background not cover the border of the row itself
   height: '[calc(100% - 1px)]',
   borderBottomWidth: 0
+  // TODO: problem with having the checkbox cell itself use the row background color directly instead
+  // of having a separate white rectangle div base below a div with the row background color set above it as a mask
+  // is that it doesn't come out as the same color as the other cells because the base below the sticky cell will be the blue of the
+  // other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
+  // then this would be possible
+  // backgroundColor: '--rowBackgroundColor'
 });
 
 // TODO: placeholder styles until we confirm the design
@@ -1009,10 +1023,14 @@ export function Cell(props: CellProps) {
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
-          {/* TODO: retry moving some of these styles to the Cell itself */}
-          {/* Reason for doing it this way is because ideally I'd have a wrapper around the cell that is full width that serves as a background
-            but can't have a div wrapping the cell here. I also want the padding applied on the RAC cell itself so a div wrapping the cell contents won't
-            have the proper full height
+          {/*
+            // TODO: problem with having the checkbox cell itself use the row background color directly instead
+            of having a separate white rectangle div base below a div with the row background color set above it as a mask
+            is that it doesn't come out as the same color as the other cells because the base below the sticky cell when other selected cells are scrolled below it will be the blue of the
+            other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
+            then I could do away with this styling. To reproduce this, comment out the stickyCell gray-25, get rid of the below div and apply backgroundColor: '--rowBackgroundColor' to checkboxCellStyle.
+            Having the CellFocusRing here instead of applying a outline on the cell directly also makes it NOT overlap with the border (can be remedied with a -3px outline offset) and applying a border radius to get the curved outline focus ring messes
+            with the divider rendered on the cell since those are also borders
           */}
           <div role="presentation" className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
