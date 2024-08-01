@@ -41,10 +41,11 @@ export let Example = {
     if (args.onRemove) {
       args.onRemove = action('remove');
     }
+    // TODO how to fix hidden/inert dom containing an element with a duplicate id? "foo" will be rendered into real dom twice
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden'}}>
         <TagGroup {...args}>
-          <Tag>Chocolate</Tag>
+          <Tag id="chocolate"><div id="foo">Chocolate</div></Tag>
           <Tag>Mint</Tag>
           <Tag>Strawberry</Tag>
           <Tag>Vanilla</Tag>
