@@ -176,18 +176,18 @@ function isAllTabsDisabled<T>(collection: Collection<T> | null, disabledKeys: Se
     selectedKey = collection.getFirstKey();
     
     let index = 0;
-    while (index < collection.size) {
+    while (selectedKey && index < collection.size) {
       if (selectedKey && !disabledKeys.has(selectedKey)) {
         return false;
       }
 
-      // @ts-ignore
+      // Argument of type 'Key | null' is not assignable to parameter of type 'Key'.
       selectedKey = collection.getKeyAfter(selectedKey);
       index++;
     }
+    return true;
   }
-
-  return true;
+  return false
 }
 
 interface TabLineProps {
@@ -232,7 +232,7 @@ function TabLine(props: TabLineProps) {
   // We want to add disabled styling to the selection indicator only if all the Tabs are disabled
   let [isDisabled, setIsDisabled] = useState<boolean>(false);
   useEffect(() => {
-    let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
+    let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection || null, disabledKeys ? new Set(disabledKeys) : new Set(null));
     setIsDisabled(isDisabled);
   }, [state?.collection, disabledKeys, isTabsDisabled, setIsDisabled]);
 
