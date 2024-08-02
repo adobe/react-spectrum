@@ -12,14 +12,14 @@
 
 import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {ContextValue, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
+export interface TooltipTriggerComponentProps extends TooltipTriggerProps, SlotProps {
   children: ReactNode
 }
 
@@ -82,16 +82,18 @@ export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivEl
  */
 export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   let state = useTooltipTriggerState(props);
-  let ref = useRef<FocusableElement>(null);
-  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+  let triggerRef = useRef<FocusableElement>(null);
+  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, triggerRef);
+  let tooltipRef = useRef<HTMLDivElement>(null);
+  [tooltipProps, tooltipRef] = useContextProps({...tooltipProps, slot: props.slot}, tooltipRef, TooltipContext);
 
   return (
     <Provider
       values={[
         [TooltipTriggerStateContext, state],
-        [TooltipContext, {...tooltipProps, triggerRef: ref}]
+        [TooltipContext, {...tooltipProps, ref: tooltipRef, triggerRef}]
       ]}>
-      <FocusableProvider {...triggerProps} ref={ref}>
+      <FocusableProvider {...triggerProps} ref={triggerRef}>
         {props.children}
       </FocusableProvider>
     </Provider>

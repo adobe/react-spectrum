@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, OverlayArrow, Provider, Tooltip, TooltipContext, TooltipTrigger} from 'react-aria-components';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -20,12 +20,16 @@ function TestTooltip(props) {
     <TooltipTrigger delay={0}>
       <Button><span aria-hidden="true">✏️</span></Button>
       <Tooltip data-test="tooltip" {...props}>
-        <OverlayArrow>
-          <svg width={8} height={8}>
-            <path d="M0 0,L4 4,L8 0" />
-          </svg>
-        </OverlayArrow>
-        Edit
+        {props.children ?? (
+          <>
+            <OverlayArrow>
+              <svg width={8} height={8}>
+                <path d="M0 0,L4 4,L8 0" />
+              </svg>
+            </OverlayArrow>
+            Edit
+          </>
+        )}
       </Tooltip>
     </TooltipTrigger>
   );
@@ -77,12 +81,7 @@ describe('Tooltip', () => {
   });
 
   it('should support render props', async () => {
-    const {getByRole} = render(
-      <TooltipTrigger delay={0}>
-        <Button><span aria-hidden="true">✏️</span></Button>
-        <Tooltip placement="bottom start">{({placement}) => `Content at ${placement}`}</Tooltip>
-      </TooltipTrigger>
-    );
+    const {getByRole} = renderTooltip({children: ({placement}) => `Content at ${placement}`, placement: 'bottom start'});
 
     await user.tab();
 
@@ -91,7 +90,7 @@ describe('Tooltip', () => {
   });
 
   it('supports isEntering and isExiting props', async () => {
-    let {getByRole, rerender} = render(<TestTooltip isEntering />);
+    let {getByRole, rerender} = renderTooltip({isEntering: true});
 
     let button = getByRole('button');
 
@@ -117,7 +116,7 @@ describe('Tooltip', () => {
   });
 
   it('supports overriding styles', async () => {
-    let {getByRole} = render(<TestTooltip style={{zIndex: 5}} />);
+    let {getByRole} = renderTooltip({style: {zIndex: 5}});
 
     let button = getByRole('button');
 
@@ -130,6 +129,18 @@ describe('Tooltip', () => {
 
     await user.unhover(button);
     act(() => jest.runAllTimers());
+  });
+
+  it('supports overriding props from context', async () => {
+    let props = {placement: 'right'};
+    let {getByRole} = render(<Provider values={[[TooltipContext, props]]}><TestTooltip /></Provider>);
+    let button = getByRole('button');
+
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveAttribute('data-placement', props.placement);
   });
 
 
