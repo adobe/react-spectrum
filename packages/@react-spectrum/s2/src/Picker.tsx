@@ -26,7 +26,7 @@ import {
   SectionProps,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -70,6 +70,7 @@ export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * Whether the picker should be displayed with a quiet style.
+   * @private
    */
   isQuiet?: boolean
 }
@@ -135,13 +136,16 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
+  },
+  width: {
+    isQuiet: 'fit'
   }
 });
 
 const quietFocusLine = style({
   width: 'full',
   // Use pixels since we are emulating a border.
-  height: '[2px]',
+  height: size(2),
   position: 'absolute',
   bottom: 0,
   borderRadius: 'full',
@@ -185,7 +189,10 @@ const invalidBorder = style({
 });
 
 const valueStyles = style({
-  flexGrow: 1,
+  flexGrow: {
+    default: 1,
+    isQuiet: 0
+  },
   truncate: true,
   display: 'flex',
   alignItems: 'center'
@@ -258,6 +265,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               size={size}
               labelPosition={labelPosition}
               labelAlign={labelAlign}
+              isQuiet={isQuiet}
               necessityIndicator={necessityIndicator}
               contextualHelp={props.contextualHelp}>
               {label}
@@ -273,7 +281,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               })}>
               {(renderProps) => (
                 <>
-                  <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                  <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
                     {({defaultChildren}) => {
                       return (
                         <Provider
@@ -332,9 +340,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
               }}
               styles={style({
-                marginStart: {
-                  isQuiet: -12
-                },
                 minWidth: {
                   default: '[var(--trigger-width)]',
                   isQuiet: 192
