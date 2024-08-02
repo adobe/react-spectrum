@@ -38,10 +38,11 @@ import {pressScale} from './pressScale';
 import {useDOMRef} from '@react-spectrum/utils';
 import {CollectionBuilder} from '@react-aria/collections';
 import {useEffect} from 'react';
-import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {ActionButton} from './ActionButton';
 import { flushSync } from 'react-dom';
-import { ListStateContext } from 'react-aria-components';
+import { TagListContext } from 'react-aria-components';
+import { use } from 'react';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
@@ -146,10 +147,13 @@ function TagGroupInner<T>({
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
+  let actionsRef = useRef(null);
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
-  let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: false});
+  let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: true});
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let {onRemove} = useContext(InternalTagGroupContext);
+  let isEmpty = collection.size === 0;
+  let showActions = tagState.showCollapseButton || tagState.visibleTagCount < collection.size;
 
   let allItems = useMemo(
     () => Array.from(collection),
@@ -163,11 +167,10 @@ function TagGroupInner<T>({
   let updateVisibleTagCount = useEffectEvent(() => {
     if (maxRows && maxRows > 0) {
       let computeVisibleTagCount = () => {
-        // Refs can be null at runtime.
-        let currContainerRef: HTMLDivElement | null = containerRef.current;
+        let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
-        let currActionsRef: HTMLDivElement | null = true; // actionsRef.current;
-        if (!currContainerRef || !currTagsRef || !currActionsRef || collection.size === 0) {
+        let currActionsRef: HTMLDivElement | null = actionsRef.current;
+        if (!currContainerRef || !currTagsRef || collection.size === 0) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -197,17 +200,18 @@ function TagGroupInner<T>({
         }
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
-        let buttons = []; //[...currActionsRef.children];
+        let buttons = currActionsRef ? [...currActionsRef.children] : [];
         if (maxRows && buttons.length > 0 && rowCount >= maxRows) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
-          // buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
+          let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
+          buttonsWidth += margins * 2;
           let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
+          let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end] - margins;
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-          // lastTagEnd += TAG_STYLES[scale].margin;
+          lastTagEnd += margins;
           let availableWidth = containerEnd - lastTagEnd;
 
-          while (availableWidth < buttonsWidth && index > 0) {
+          while (availableWidth <= buttonsWidth && index > 0) {
             availableWidth += tagWidths.pop();
             index--;
           }
@@ -291,10 +295,9 @@ function TagGroupInner<T>({
         ref={containerRef}
         className={style({
           gridArea: 'input',
-          display: 'flex',
-          flexWrap: 'wrap',
           minWidth: 'full',
-          gap: 4,
+          marginStart: -4,
+          marginEnd: 4,
           position: 'relative'
         })}>
         <FormContext.Provider value={{...formContext, size}}>
@@ -308,12 +311,14 @@ function TagGroupInner<T>({
               inert="true"
               ref={hiddenTagsRef}
               className={style({
-                marginX:  -4,
-                display: 'flex',
+                display: 'inline',
                 flexWrap: 'wrap',
                 fontFamily: 'sans',
                 position: 'absolute',
-                inset: 0,
+                top: 0,
+                bottom: 0,
+                start: -4,
+                end: 4,
                 visibility: 'hidden',
                 overflow: 'hidden',
                 opacity: 0
@@ -336,25 +341,62 @@ function TagGroupInner<T>({
               ref={tagsRef}
               items={items}
               renderEmptyState={renderEmptyState}
-              className={({isEmpty}) => style({
-                marginX: {
-                  default: -4,
-                  isEmpty: 0
-                },
-                display: 'flex',
+              className={style({
+                display: 'inline',
                 minWidth: 'full',
-                flexWrap: 'wrap',
                 fontFamily: 'sans'
-              })({isEmpty})}>
+              })}>
               {item => <Tag {...item.props} />}
             </TagList>
-            {tagState.showCollapseButton && <ActionButton isQuiet onPress={handlePressCollapse}>{!isCollapsed ? 'Collapse' : 'Show All'}</ActionButton>}
+            {showActions && !isEmpty &&
+              <ActionGroup
+                actionsRef={actionsRef}
+                tagState={tagState}
+                size={size}
+                isCollapsed={isCollapsed}
+                handlePressCollapse={handlePressCollapse} />
+            }
           </Provider>
         </FormContext.Provider>
       </div>
       {helpText}
     </AriaTagGroup>
   );
+}
+
+function ActionGroup(props) {
+  let {
+    actionsRef,
+    tagState,
+    size,
+    isCollapsed,
+    handlePressCollapse
+  } = props;
+  let tagListCtx = useContext(TagListContext);
+  let {id: gridId} = tagListCtx ?? {};
+  let actionsId = useId();
+  return (
+    <div
+      role="group"
+      ref={actionsRef}
+      id={actionsId}
+      aria-label={'Actions'}
+      aria-labelledby={`${gridId} ${actionsId}`}
+      className={style({
+        display: 'inline'
+      })}>
+      {tagState.showCollapseButton &&
+        <ActionButton
+          isQuiet
+          size={size}
+          styles={style({margin: 4})}
+          UNSAFE_style={{display: 'inline-flex'}}
+          onPress={handlePressCollapse}>
+          {isCollapsed ? 'Show all' : 'Collapse'}
+        </ActionButton>
+      }
+    </div>
+  )
 }
 
 const tagStyles = style({
@@ -458,7 +500,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
         {isInCtx && (
           <div
             className={style({
-              display: 'flex',
+              display: 'inline',
               minWidth: 0,
               alignItems: 'center',
               gap: 'text-to-visual',
