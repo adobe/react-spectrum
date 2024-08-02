@@ -33,10 +33,10 @@ import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
+import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria/virtualizer';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Nubbin} from './Nubbin';
@@ -574,14 +574,11 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     }), [columnResizeState.columnWidths])
   });
 
-  let memoedVirtualizerProps = useMemo(() => ({
-    tabIndex: otherProps.tabIndex,
-    persistedKeys,
-    isLoading,
-    onLoadMore
-  }), [otherProps.tabIndex, persistedKeys, isLoading, onLoadMore]);
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, bodyRef);
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+  }, [state]);
 
-  let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, domRef);
   let onVisibleRectChangeMemo = useCallback(rect => {
     setTableWidth(rect.width);
     onVisibleRectChange(rect);
@@ -622,7 +619,6 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   }), [resizingColumnWidth, columnResizeState.resizingColumn]);
   let mergedProps = mergeProps(
     otherProps,
-    virtualizerProps,
     isVirtualDragging && {tabIndex: null}
   );
 

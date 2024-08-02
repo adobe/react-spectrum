@@ -33,11 +33,16 @@ export interface CollectionBuilderProps<C extends BaseCollection<object>> {
 /**
  * Builds a `Collection` from the children provided to the `content` prop, and passes it to the child render prop function.
  */
-export function CollectionBuilder<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>) {
+export function CollectionBuilder<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>): ReactElement {
   // If a document was provided above us, we're already in a hidden tree. Just render the content.
   let doc = useContext(CollectionDocumentContext);
   if (doc) {
-    return props.content;
+    // The React types prior to 18 did not allow returning ReactNode from components
+    // even though the actual implementation since React 16 did.
+    // We must return ReactElement so that TS does not complain that <CollectionBuilder>
+    // is not a valid JSX element with React 16 and 17 types.
+    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+    return props.content as ReactElement;
   }
 
   // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
@@ -151,9 +156,9 @@ function useSSRCollectionNode<T extends Element>(Type: string, props: object, re
   return <Type ref={itemRef}>{children}</Type>;
 }
 
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => ReactNode): (props: P & React.RefAttributes<T>) => ReactNode | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactNode): (props: P & React.RefAttributes<T>) => ReactNode | null;
-export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactNode) {
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => ReactElement): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement): (props: P & React.RefAttributes<T>) => ReactElement | null;
+export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let isShallow = useContext(ShallowRenderContext);
@@ -171,7 +176,7 @@ export function createLeafComponent<P extends object, E extends Element>(type: s
   return Result;
 }
 
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactNode, useChildren: (props: P) => ReactNode = useCollectionChildren) {
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement, useChildren: (props: P) => ReactNode = useCollectionChildren) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);

@@ -95,7 +95,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
       }
     }
 
-    let items = [...this.collection];
+    // TODO: assume that only item type items are valid drop targets. This is to prevent a crash when dragging over the loader
+    // row since it doesn't have a data-key set on it. Will eventually need to handle the case with drag and drop and loaders located between rows aka tree.
+    // Can see https://github.com/adobe/react-spectrum/pull/4210/files#diff-21e555e0c597a28215e36137f5be076a65a1e1456c92cd0fdd60f866929aae2a for additional logic
+    // that may need to happen then
+    let items = [...this.collection].filter(item => item.type === 'item');
     let low = 0;
     let high = items.length;
     while (low < high) {

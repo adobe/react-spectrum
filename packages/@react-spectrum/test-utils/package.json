@@ -35,5 +35,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   }
 }
