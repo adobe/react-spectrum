@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import {PressResponder} from '@react-aria/interactions';
+import {PressProvider} from '@react-aria/interactions';
 import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -96,9 +96,9 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   return (
     <Fragment>
       <SlotProvider slots={{actionButton: {holdAffordance: trigger === 'longPress'}}}>
-        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
+        <PressProvider {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
           {menuTrigger}
-        </PressResponder>
+        </PressProvider>
       </SlotProvider>
       <MenuContext.Provider value={menuContext}>
         {overlay}

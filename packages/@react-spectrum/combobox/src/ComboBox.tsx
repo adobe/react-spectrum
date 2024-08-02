@@ -30,7 +30,7 @@ import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Popover} from '@react-spectrum/overlays';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressProvider, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   InputHTMLAttributes,
@@ -339,7 +339,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle}
           disableFocusRing />
-        <PressResponder preventFocusOnPress isPressed={isOpen}>
+        <PressProvider preventFocusOnPress isPressed={isOpen}>
           <FieldButton
             {...triggerProps}
             ref={triggerRef}
@@ -353,7 +353,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
             validationState={validationState}>
             <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
           </FieldButton>
-        </PressResponder>
+        </PressProvider>
       </div>
     </FocusRing>)
   );
