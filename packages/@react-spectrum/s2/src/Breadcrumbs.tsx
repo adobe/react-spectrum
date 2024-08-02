@@ -146,8 +146,7 @@ const linkStyles = style({
     }
   },
   transition: 'default',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   fontWeight: {
     default: 'normal',
     isCurrent: 'bold'
@@ -187,8 +186,7 @@ const currentStyles = style({
     forcedColors: 'ButtonText'
   },
   transition: 'default',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   fontWeight: 'bold',
   marginTop: {
     default: {
@@ -211,8 +209,7 @@ const currentStyles = style({
 // TODO: support user heading size customization, for now just set it to large
 const heading = style({
   margin: 0,
-  fontFamily: 'sans',
-  fontSize: 'heading-lg',
+  font: 'heading-lg',
   fontWeight: 'extra-bold'
 });
 
