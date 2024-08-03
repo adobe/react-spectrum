@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from './ActionButton';
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {
   Tag as AriaTag,
@@ -18,17 +19,21 @@ import {
   TagProps as AriaTagProps,
   composeRenderProps,
   Provider,
+  TagListContext,
   TextContext as RACTextContext,
   TagList,
-  TagListProps, useLocale
+  TagListProps,
+  useLocale
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import {CollectionBuilder} from '@react-aria/collections';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
+import {flushSync} from 'react-dom';
 import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -36,13 +41,7 @@ import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
 import {pressScale} from './pressScale';
 import {useDOMRef} from '@react-spectrum/utils';
-import {CollectionBuilder} from '@react-aria/collections';
-import {useEffect} from 'react';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import {ActionButton} from './ActionButton';
-import { flushSync } from 'react-dom';
-import { TagListContext } from 'react-aria-components';
-import { use } from 'react';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
@@ -100,7 +99,7 @@ function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDiv
   let {onRemove} = props;
   return (
     <InternalTagGroupContext.Provider value={{onRemove}}>
-      <CustomTagGroup {...props} ref={ref}>
+      <CustomTagGroup {...props} forwardRef={ref}>
         <TagList style={{display: 'flex', gap: 4}}>
           {props.children}
         </TagList>
@@ -114,16 +113,16 @@ let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
 
 interface CustomTagGroupProps<T> extends TagGroupProps<T> {
-
+  forwardRef: DOMRef<HTMLDivElement>
 }
 
-let CustomTagGroup = forwardRef((props: CustomTagGroupProps, ref: ForwardedRef<HTMLDivElement>) => {
+function CustomTagGroup<T>(props: CustomTagGroupProps<T>) {
   return (
     <CollectionBuilder content={props.children}>
-      {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
+      {collection => <TagGroupInner props={props} forwardedRef={forwardRef} collection={collection} />}
     </CollectionBuilder>
   );
-});
+}
 
 function TagGroupInner<T>({
   props: {
@@ -143,7 +142,7 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: CustomTagGroupProps<T>, forwardedRef: any, collection: any}) {
-  let {maxRows= 2} = props;
+  let {maxRows = 2} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
@@ -308,6 +307,7 @@ function TagGroupInner<T>({
             ]}>
             {/* invisible collection for measuring */}
             <div
+              // @ts-ignore
               inert="true"
               ref={hiddenTagsRef}
               className={style({
@@ -396,7 +396,7 @@ function ActionGroup(props) {
         </ActionButton>
       }
     </div>
-  )
+  );
 }
 
 const tagStyles = style({
@@ -496,42 +496,42 @@ export function Tag({children, ...props}: TagProps) {
 function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
   let {size = 'M'} = useContext(TagGroupContext);
   return (
-      <>
-        {isInCtx && (
-          <div
-            className={style({
-              display: 'inline',
-              minWidth: 0,
-              alignItems: 'center',
-              gap: 'text-to-visual',
-              forcedColorAdjust: 'none',
-              backgroundColor: 'transparent'
-            })}>
-            <Provider
-              values={[
+    <>
+      {isInCtx && (
+      <div
+        className={style({
+          display: 'inline',
+          minWidth: 0,
+          alignItems: 'center',
+          gap: 'text-to-visual',
+          forcedColorAdjust: 'none',
+          backgroundColor: 'transparent'
+        })}>
+        <Provider
+          values={[
                 [TextContext, {className: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
-                [IconContext, {
-                  render: centerBaseline({slot: 'icon', className: style({order: 0})}),
-                  styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-                }],
-                [AvatarContext, {
-                  styles: style({size: fontRelative(20), flexShrink: 0, order: 0})
-                }],
-                [ImageContext, {
-                  className: style({size: fontRelative(20), flexShrink: 0, order: 0, aspectRatio: 'square', objectFit: 'contain'})
-                }]
-              ]}>
-              {typeof children === 'string' ? <Text>{children}</Text> : children}
-            </Provider>
-          </div>
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            }],
+            [AvatarContext, {
+              styles: style({size: fontRelative(20), flexShrink: 0, order: 0})
+            }],
+            [ImageContext, {
+              className: style({size: fontRelative(20), flexShrink: 0, order: 0, aspectRatio: 'square', objectFit: 'contain'})
+            }]
+          ]}>
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
+        </Provider>
+      </div>
         )}
-        {!isInCtx && children}
-        {allowsRemoving && isInCtx && (
-          <ClearButton
-            slot="remove"
-            size={size}
-            isDisabled={isDisabled} />
+      {!isInCtx && children}
+      {allowsRemoving && isInCtx && (
+      <ClearButton
+        slot="remove"
+        size={size}
+        isDisabled={isDisabled} />
         )}
-      </>
+    </>
   );
 }
