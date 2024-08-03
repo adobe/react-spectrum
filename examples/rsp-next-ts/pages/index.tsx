@@ -78,9 +78,7 @@ import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 import {
   ColorArea,
-  ColorEditor,
   ColorField,
-  ColorPicker,
   ColorSlider,
   ColorSwatch,
   ColorSwatchPicker,
@@ -244,9 +242,6 @@ export default function Home() {
 
           <Section title="Color">
             <ColorField label="Primary Color" />
-            <ColorPicker label="Fill" defaultValue="#5100FF">
-              <ColorEditor />
-            </ColorPicker>
             <ColorSwatchPicker>
               <ColorSwatch color="#A00" />
               <ColorSwatch color="#f80" />
