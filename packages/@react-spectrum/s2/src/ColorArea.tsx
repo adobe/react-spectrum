@@ -1,0 +1,72 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  ColorArea as AriaColorArea,
+  ColorAreaProps as AriaColorAreaProps
+} from 'react-aria-components';
+import {ColorHandle} from './ColorHandle';
+import {DOMRef} from '@react-types/shared';
+import {forwardRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
+
+export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style'>, StyleProps {}
+
+function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
+  let {UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let containerRef = useDOMRef(ref);
+  return (
+    <AriaColorArea
+      {...props}
+      ref={containerRef}
+      style={({defaultStyle, isDisabled}) => ({
+        ...defaultStyle,
+        background: isDisabled ? undefined : defaultStyle.background,
+        // Move position: relative to style macro so it can be overridden.
+        position: undefined,
+        ...UNSAFE_style
+      })}
+      className={renderProps => UNSAFE_className + style({
+        position: 'relative',
+        size: 192,
+        minSize: 64,
+        borderRadius: 'default',
+        outlineColor: {
+          default: 'gray-1000/10',
+          forcedColors: 'ButtonBorder'
+        },
+        outlineWidth: 1,
+        outlineOffset: -1,
+        outlineStyle: {
+          default: 'solid',
+          isDisabled: 'none'
+        },
+        backgroundColor: {
+          isDisabled: 'disabled'
+        }
+      }, getAllowedOverrides({height: true}))(renderProps, styles)}>
+      {({state}) =>
+        (<ColorHandle
+          containerRef={containerRef}
+          getPosition={() => state.getThumbPosition()} />)
+      }
+    </AriaColorArea>
+  );
+}
+
+/**
+ * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ */
+let _ColorArea = forwardRef(ColorArea);
+export {_ColorArea as ColorArea};

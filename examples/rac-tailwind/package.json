@@ -1,6 +1,7 @@
 {
   "name": "rac-tailwind-example",
   "private": true,
+  "packageManager": "yarn@4.2.2",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html",
