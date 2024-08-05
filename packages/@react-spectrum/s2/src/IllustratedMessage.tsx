@@ -132,7 +132,13 @@ const heading = style<IllustratedMessageStyleProps>({
 });
 
 const content = style({
-  color: 'gray-800',
+  font: {
+    size: {
+      S: 'body-xs',
+      M: 'body-sm',
+      L: 'body-sm'
+    }
+  },
   gridArea: 'content',
   alignSelf: 'start'
 });
@@ -177,7 +183,7 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       <Provider
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
-          [ContentContext, {className: content}],
+          [ContentContext, {className: content({size})}],
           [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
           [ButtonGroupContext, {styles: buttonGroup}]
         ]}>

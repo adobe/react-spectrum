@@ -131,6 +131,7 @@ export let menuitem = style({
   ...focusRing(),
   boxSizing: 'border-box',
   borderRadius: 'control',
+  font: 'ui',
   '--labelPadding': {
     type: 'paddingTop',
     value: centerPadding()
