@@ -6801,6 +6801,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods"
+  dependencies:
+    "@babel/parser": "npm:^7.24.5"
+    "@babel/traverse": "npm:^7.24.5"
+    "@babel/types": "npm:^7.24.5"
+    "@react-types/shared": "npm:^3.24.0"
+    "@types/jscodeshift": "npm:^0.11.11"
+    boxen: "npm:^5.1.2"
+    build: "npm:^0.1.4"
+    chalk: "npm:^4.0.0"
+    commander: "npm:^12.0.0"
+    execa: "npm:^5.1.1"
+    jscodeshift: "npm:^0.15.2"
+    ts-node: "npm:^10.9.2"
+    uuid: "npm:^9.0.1"
+  bin:
+    s1-to-s2: ./dist/index.js
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/color@workspace:packages/@react-spectrum/color":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/color@workspace:packages/@react-spectrum/color"
@@ -7946,28 +7968,6 @@ __metadata:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods":
-  version: 0.0.0-use.local
-  resolution: "@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods"
-  dependencies:
-    "@babel/parser": "npm:^7.24.5"
-    "@babel/traverse": "npm:^7.24.5"
-    "@babel/types": "npm:^7.24.5"
-    "@react-types/shared": "npm:^3.24.0"
-    "@types/jscodeshift": "npm:^0.11.11"
-    boxen: "npm:^5.1.2"
-    build: "npm:^0.1.4"
-    chalk: "npm:^4.0.0"
-    commander: "npm:^12.0.0"
-    execa: "npm:^5.1.1"
-    jscodeshift: "npm:^0.15.2"
-    ts-node: "npm:^10.9.2"
-    uuid: "npm:^9.0.1"
-  bin:
-    upgrade-react-spectrum: ./dist/index.js
   languageName: unknown
   linkType: soft
 
