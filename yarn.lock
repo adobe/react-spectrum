@@ -18591,6 +18591,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:2.3.2, fsevents@npm:^2.3.2, fsevents@npm:~2.3.2":
+  version: 2.3.2
+  resolution: "fsevents@npm:2.3.2"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 10c0/be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^1.2.7":
   version: 1.2.12
   resolution: "fsevents@npm:1.2.12"
@@ -18604,12 +18614,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:^2.3.2, fsevents@npm:~2.3.2":
+"fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A^2.3.2#optional!builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.2#optional!builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@npm:2.3.2"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: "npm:latest"
-  checksum: 10c0/be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -18622,15 +18631,6 @@ __metadata:
     nan: "npm:^2.12.1"
     node-gyp: "npm:latest"
     node-pre-gyp: "npm:*"
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"fsevents@patch:fsevents@npm%3A^2.3.2#optional!builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.2#optional!builtin<compat/fsevents>":
-  version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
-  dependencies:
-    node-gyp: "npm:latest"
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -27614,6 +27614,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.45.3":
+  version: 1.45.3
+  resolution: "playwright-core@npm:1.45.3"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/39cc5920b27c42300e13a0646ca723578085d85940fc1f03e858fa348b5ac06f2eadf34cf15a0c0f4443e63ae188097d3ddbeb4389e7bbf5ae3438d8f6ed23e1
+  languageName: node
+  linkType: hard
+
 "playwright@npm:^1.14.0":
   version: 1.36.1
   resolution: "playwright@npm:1.36.1"
@@ -27622,6 +27631,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/0a9161f5365cb627aa1e002c7eb36548778a509e9d89deef3dfd6325936770fdeb153763d070ca047dc192dfd4cb9d537689a941c31e7d4cbd18ccd4462005e9
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.45.3":
+  version: 1.45.3
+  resolution: "playwright@npm:1.45.3"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.45.3"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10c0/3516ca49deb589171ac6525c0367f2ff948514d791d197f3cc0a135154c2df08a4d7cd11a810e187f35ae9ca490b37ca3a92fb3eb51560f03aefcaca0613efdb
   languageName: node
   linkType: hard
 
@@ -29041,6 +29065,7 @@ __metadata:
     parcel: "npm:2.0.0-dev.1599"
     parcel-resolver-storybook: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
     patch-package: "npm:^6.2.0"
+    playwright: "npm:^1.45.3"
     plop: "npm:^2.4.0"
     postcss: "npm:^8.4.24"
     postcss-custom-properties: "npm:^13.2.0"
