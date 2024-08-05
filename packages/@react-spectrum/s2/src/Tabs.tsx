@@ -15,7 +15,7 @@ import {Collection, DOMRef, Key, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {raw} from '../style/style-macro' with {type: 'macro'};
+import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -219,6 +219,11 @@ const selectedIndicator = style({
   boxSizing: 'border-box'
 });
 
+const selectionAnimation = style({
+  transitionDuration: 130,
+  transitionTimingFunction: 'in-out',
+});
+
 function TabLine(props: TabLineProps) {
   let {
     disabledKeys,
@@ -270,7 +275,7 @@ function TabLine(props: TabLineProps) {
   }, [onResize, state?.selectedKey, state, orientation]);
   
   return (
-    <div style={{...style}} className={selectedIndicator({isDisabled, orientation}) + ' ' + raw('transition: transform 130ms ease-in-out 0s, width 130ms ease-in-out 0s')} />
+    <div style={{...style}} className={selectedIndicator({isDisabled, orientation}) + ' ' + selectionAnimation} />
   );
 }
 
