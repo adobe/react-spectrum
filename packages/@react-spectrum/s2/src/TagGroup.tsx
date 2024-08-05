@@ -19,9 +19,9 @@ import {
   TagProps as AriaTagProps,
   composeRenderProps,
   Provider,
-  TagListContext,
   TextContext as RACTextContext,
   TagList,
+  TagListContext,
   TagListProps,
   useLocale
 } from 'react-aria-components';
@@ -29,8 +29,8 @@ import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {CollectionBuilder} from '@react-aria/collections';
-import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {DOMRef, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
 import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {flushSync} from 'react-dom';
@@ -44,7 +44,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 
 // Get types from RSP and extend those?
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'>, StyleProps {
   /** The children of the tag. */
   children?: ReactNode
 }
@@ -96,10 +96,11 @@ const helpTextStyles = style({
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
 function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+  props = useFormProps(props);
   let {onRemove} = props;
   return (
     <InternalTagGroupContext.Provider value={{onRemove}}>
-      <CustomTagGroup {...props} forwardRef={ref}>
+      <CustomTagGroup {...props} forwardedRef={ref}>
         <TagList style={{display: 'flex', gap: 4}}>
           {props.children}
         </TagList>
@@ -113,13 +114,14 @@ let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
 
 interface CustomTagGroupProps<T> extends TagGroupProps<T> {
-  forwardRef: DOMRef<HTMLDivElement>
+  forwardedRef: DOMRef<HTMLDivElement>
 }
 
 function CustomTagGroup<T>(props: CustomTagGroupProps<T>) {
   return (
+    // @ts-ignore how do i fix this one?
     <CollectionBuilder content={props.children}>
-      {collection => <TagGroupInner props={props} forwardedRef={forwardRef} collection={collection} />}
+      {collection => <TagGroupInner props={props} forwardedRef={props.forwardedRef} collection={collection} />}
     </CollectionBuilder>
   );
 }
@@ -141,25 +143,27 @@ function TagGroupInner<T>({
   },
   forwardedRef: ref,
   collection
-}: {props: CustomTagGroupProps<T>, forwardedRef: any, collection: any}) {
+}: {props: CustomTagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
   let {maxRows = 2} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
-  let actionsRef = useRef(null);
+  let actionsRef = useRef<HTMLDivElement | null>(null);
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
   let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: true});
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let {onRemove} = useContext(InternalTagGroupContext);
   let isEmpty = collection.size === 0;
   let showActions = tagState.showCollapseButton || tagState.visibleTagCount < collection.size;
+  let formContext = useContext(FormContext);
+  let domRef = useDOMRef(ref);
 
   let allItems = useMemo(
-    () => Array.from(collection),
+    () => Array.from(collection) as Array<Node<T>>,
     [collection]
   );
   let items = useMemo(
-    () => Array.from(collection).slice(0, !isCollapsed ? collection.size : tagState.visibleTagCount),
+    () => Array.from(collection).slice(0, !isCollapsed ? collection.size : tagState.visibleTagCount) as Array<Node<T>>,
     [collection, tagState.visibleTagCount, isCollapsed]
   );
 
@@ -169,7 +173,7 @@ function TagGroupInner<T>({
         let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currActionsRef: HTMLDivElement | null = actionsRef.current;
-        if (!currContainerRef || !currTagsRef || collection.size === 0) {
+        if (!currContainerRef || !currTagsRef || collection.size === 0 || currContainerRef.parentElement == null) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -205,13 +209,16 @@ function TagGroupInner<T>({
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
           buttonsWidth += margins * 2;
           let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end] - margins;
+          let containerEnd = currContainerRef.parentElement?.getBoundingClientRect()[end] - margins;
           let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
           lastTagEnd += margins;
           let availableWidth = containerEnd - lastTagEnd;
 
           while (availableWidth <= buttonsWidth && index > 0) {
-            availableWidth += tagWidths.pop();
+            let tagWidth = tagWidths.pop();
+            if (tagWidth != null) {
+              availableWidth += tagWidth;
+            }
             index--;
           }
         }
@@ -246,23 +253,19 @@ function TagGroupInner<T>({
     setIsCollapsed(prevCollapsed => !prevCollapsed);
   };
 
-  let formContext = useContext(FormContext);
-  props = useFormProps(props);
-  let domRef = useDOMRef(ref);
-
   let helpText: ReactNode = null;
   if (!isInvalid && description) {
     helpText =  (
       <Text
         slot="description"
-        className={helpTextStyles({size: props.size || 'M'})}>
+        className={helpTextStyles({size})}>
         {description}
       </Text>
     );
   } else if (isInvalid) {
     helpText = (
       <div
-        className={helpTextStyles({size: props.size || 'M', isInvalid})}>
+        className={helpTextStyles({size: size || 'M', isInvalid})}>
         <CenterBaseline>
           <AlertIcon />
         </CenterBaseline>
@@ -373,6 +376,7 @@ function ActionGroup(props) {
     handlePressCollapse
   } = props;
   let tagListCtx = useContext(TagListContext);
+  // @ts-ignore how do I fix this one?
   let {id: gridId} = tagListCtx ?? {};
   let actionsId = useId();
   return (
@@ -484,10 +488,10 @@ export function Tag({children, ...props}: TagProps) {
       textValue={textValue}
       {...props}
       ref={ref}
-      style={{...pressScale(ref), ...props.UNSAFE_style}}
+      style={{...props.UNSAFE_style, ...pressScale(ref)}}
       className={renderProps => props.UNSAFE_className || '' + tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
-        <TagWrapper isInCtx={isInCtx} size={size} {...renderProps}>{children}</TagWrapper>
+        <TagWrapper isInCtx={isInCtx} {...renderProps}>{children}</TagWrapper>
       ))}
     </AriaTag>
   );
