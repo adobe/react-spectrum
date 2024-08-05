@@ -8,7 +8,8 @@
     "s1-to-s2": "./dist/index.js"
   },
   "scripts": {
-    "start": "node --loader=ts-node/esm src/index.ts"
+    "build": "tsc",
+    "prepublishOnly": "yarn build"
   },
   "files": [
     "dist"

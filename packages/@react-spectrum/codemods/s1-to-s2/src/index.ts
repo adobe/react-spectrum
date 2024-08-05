@@ -52,7 +52,7 @@ let {
   path
 } = program.opts();
 
-async function main() {
+export async function s1_to_s2() {
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +
@@ -124,7 +124,3 @@ async function main() {
   process.exit(0);
 }
 
-main().catch((err) => {
-  logger.error(err);
-  process.exit(1);
-});
