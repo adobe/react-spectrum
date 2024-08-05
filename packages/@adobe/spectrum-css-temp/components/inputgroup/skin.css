@@ -148,7 +148,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.spectrum-InputGroup {
+  &.spectrum-InputGroup.spectrum-InputGroup {
     &.spectrum-InputGroup--invalid {
       .spectrum-FieldButton:before,
       .spectrum-InputGroup-input {
