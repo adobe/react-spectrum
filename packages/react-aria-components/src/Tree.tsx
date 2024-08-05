@@ -92,7 +92,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
 
   getTextValue(key: Key): string {
     let item = this.getItem(key);
-    return item ? item.textValue : '';
+    return item ? item.textValue ?? '' : '';
   }
 }
 
