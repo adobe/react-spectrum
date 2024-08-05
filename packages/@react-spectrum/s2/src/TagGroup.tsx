@@ -173,7 +173,8 @@ function TagGroup<T extends object>(
                 },
                 display: 'flex',
                 minWidth: 'full',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                font: 'ui'
               })({isEmpty})}>
               {children}
             </TagList>

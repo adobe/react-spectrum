@@ -120,12 +120,11 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
 
 const heading = style<IllustratedMessageStyleProps>({
   gridArea: 'heading',
-  color: 'heading',
-  fontSize: {
+  font: {
     size: {
-      S: 'body',
-      M: 'body-xl',
-      L: 'body-2xl'
+      S: 'title',
+      M: 'title-xl',
+      L: 'title-2xl'
     }
   },
   alignSelf: 'end',
