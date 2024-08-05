@@ -46,10 +46,10 @@ export const Example = (args: any) => (
 );
 
 export const Disabled = (args: any) => (
-  <Tabs {...args} >
+  <Tabs {...args} disabledKeys={['FoR', 'MaR', 'Emp']}>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR"><Edit />Founding of Rome</Tab>
-      <Tab isDisabled id="MaR">Monarchy and Republic</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
       <Tab id="Emp">Empire</Tab>
     </TabList>
     <TabPanel id="FoR">

@@ -11,7 +11,7 @@
  */
 
 import {TabListProps as AriaTabListProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, TabProps as AriaTabProps, TabsProps as AriaTabsProps, Provider, Tab as RACTab, TabList as RACTabList, Tabs as RACTabs, TabListStateContext} from 'react-aria-components';
-import {Collection, DOMRef, Key, Orientation} from '@react-types/shared';
+import {Collection, DOMRef, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -167,27 +167,24 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   );
 }
 
-function isAllTabsDisabled<T>(collection: Collection<T> | null, disabledKeys: Set<Key>) {
+function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
   let selectedKey: Key | null = null;
   if (collection) {
-    if (disabledKeys.size < collection.size) {
-      return false;
-    }
     selectedKey = collection.getFirstKey();
     
     let index = 0;
     while (selectedKey && index < collection.size) {
-      if (selectedKey && !disabledKeys.has(selectedKey)) {
+      // We have to check if the item in the collection has a key in disabledKeys or has the isDisabled prop set directly on it
+      if (!disabledKeys.has(selectedKey) && !collection.getItem(selectedKey)?.props?.isDisabled) {
         return false;
       }
 
-      // Argument of type 'Key | null' is not assignable to parameter of type 'Key'.
-      selectedKey = collection.getKeyAfter(selectedKey);
+      selectedKey = collection.getKeyAfter(selectedKey)
       index++;
     }
     return true;
   }
-  return false
+  return false;
 }
 
 interface TabLineProps {
