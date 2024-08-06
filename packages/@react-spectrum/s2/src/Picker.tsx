@@ -125,7 +125,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   },
   paddingX: {
     default: 'edge-to-text',
-    isQuiet: centerPadding()
+    isQuiet: 0
   },
   backgroundColor: {
     default: baseColor('gray-100'),
@@ -145,7 +145,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
 const quietFocusLine = style({
   width: 'full',
   // Use pixels since we are emulating a border.
-  height: size(2),
+  height: `[2px]`,
   position: 'absolute',
   bottom: 0,
   borderRadius: 'full',
