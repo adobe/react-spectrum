@@ -43,7 +43,7 @@ export let Example = {
     }
     // TODO how to fix hidden/inert dom containing an element with a duplicate id? "foo" will be rendered into real dom twice
     return (
-      <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
+      <div style={{width: 320, resize: 'horizontal', overflow: 'hidden'}}>
         <TagGroup {...args}>
           <Tag id="chocolate">Chocolate</Tag>
           <Tag>Mint</Tag>

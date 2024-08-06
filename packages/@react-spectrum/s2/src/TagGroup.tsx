@@ -67,11 +67,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   /** An error message for the field. */
   errorMessage?: ReactNode,
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
-  maxRows?: number,
-  /** The label to display on the action button.  */
-  actionLabel?: string,
-  /** Handler that is called when the action button is pressed. */
-  onAction?: () => void
+  maxRows?: number
 }
 
 const TagGroupContext = createContext<TagGroupProps<any>>({});
@@ -148,13 +144,13 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: CustomTagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
-  let {maxRows, actionLabel, onAction} = props;
+  let {maxRows = 2} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
   let actionsRef = useRef<HTMLDivElement | null>(null);
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
-  let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: false});
+  let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: true});
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let {onRemove} = useContext(InternalTagGroupContext);
   let isEmpty = collection.size === 0;
@@ -172,7 +168,7 @@ function TagGroupInner<T>({
   );
 
   let updateVisibleTagCount = useEffectEvent(() => {
-    if (maxRows != null && maxRows > 0) {
+    if (maxRows && maxRows > 0) {
       let computeVisibleTagCount = () => {
         let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
@@ -199,7 +195,7 @@ function TagGroupInner<T>({
             rowCount++;
           }
 
-          if (rowCount > maxRows) {
+          if (maxRows && rowCount > maxRows) {
             break;
           }
           tagWidths.push(width);
@@ -208,7 +204,7 @@ function TagGroupInner<T>({
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = currActionsRef ? [...currActionsRef.children] : [];
-        if (buttons.length > 0 && rowCount >= maxRows) {
+        if (maxRows && buttons.length > 0 && rowCount >= maxRows) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
           buttonsWidth += margins * 2;
@@ -242,10 +238,10 @@ function TagGroupInner<T>({
   useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
 
   useLayoutEffect(() => {
-    if (collection.size > 0 && (maxRows != null && maxRows > 0)) {
+    if (collection.size > 0) {
       queueMicrotask(updateVisibleTagCount);
     }
-  }, [collection.size, updateVisibleTagCount, maxRows]);
+  }, [collection.size, updateVisibleTagCount]);
 
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
@@ -361,9 +357,7 @@ function TagGroupInner<T>({
                 tagState={tagState}
                 size={size}
                 isCollapsed={isCollapsed}
-                handlePressCollapse={handlePressCollapse}
-                onAction={onAction}
-                actionLabel={actionLabel} />
+                handlePressCollapse={handlePressCollapse} />
             }
           </Provider>
         </FormContext.Provider>
@@ -379,9 +373,7 @@ function ActionGroup(props) {
     tagState,
     size,
     isCollapsed,
-    handlePressCollapse,
-    onAction,
-    actionLabel
+    handlePressCollapse
   } = props;
   let tagListCtx = useContext(TagListContext);
   // @ts-ignore how do I fix this one?
@@ -405,16 +397,6 @@ function ActionGroup(props) {
           UNSAFE_style={{display: 'inline-flex'}}
           onPress={handlePressCollapse}>
           {isCollapsed ? 'Show all' : 'Collapse'}
-        </ActionButton>
-      }
-      {actionLabel && onAction &&
-        <ActionButton
-          isQuiet
-          size={size}
-          styles={style({margin: 4})}
-          UNSAFE_style={{display: 'inline-flex'}}
-          onPress={() => onAction?.()}>
-          {actionLabel}
         </ActionButton>
       }
     </div>
