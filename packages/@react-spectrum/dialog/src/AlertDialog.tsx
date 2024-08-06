@@ -50,6 +50,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     onCancel = () => {},
     onPrimaryAction = () => {},
     onSecondaryAction = () => {},
+    pendingAction,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -91,6 +92,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
         }
         {secondaryActionLabel &&
           <Button
+            isPending={pendingAction === 'secondary'}
             variant="secondary"
             onPress={() => chain(onClose(), onSecondaryAction())}
             isDisabled={isSecondaryActionDisabled}
@@ -99,6 +101,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
           </Button>
         }
         <Button
+          isPending={pendingAction === 'primary'}
           variant={confirmVariant}
           onPress={() => chain(onClose(), onPrimaryAction())}
           isDisabled={isPrimaryActionDisabled}

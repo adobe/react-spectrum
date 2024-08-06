@@ -10,16 +10,56 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
 import {AlertDialog} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {composeStories} from '@storybook/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import * as stories from '../stories/AlertDialog.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
+let {
+  WithPending: PendingAlert
+} = composeStories(stories);
+
 describe('AlertDialog', function () {
+  let user;
+  let warnMock;
+
+  beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
+    simulateDesktop();
+    if (process.env.STRICT_MODE) {
+      warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
+    }
+  });
+
+  afterEach(() => {
+    // Ensure we close any dialogs before unmounting to avoid warning.
+    let dialog = document.querySelector('[role="dialog"]');
+    if (dialog) {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
+      act(() => {
+        jest.runAllTimers();
+      });
+    }
+
+    if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
+      expect(warnMock).toHaveBeenCalledTimes(1);
+      expect(warnMock).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      warnMock.mockRestore();
+    }
+    act(() => {jest.runAllTimers();});
+  });
+
+
   it('renders alert dialog with onPrimaryAction', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
     let onPrimaryAction = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -39,7 +79,6 @@ describe('AlertDialog', function () {
   });
 
   it('renders 2 button alert dialog with onPrimaryAction / onCancel', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
     let onCancelSpy = jest.fn();
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
@@ -67,7 +106,6 @@ describe('AlertDialog', function () {
   });
 
   it('renders a 3 button alert dialog with onPrimaryAction / onCancel', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
     let onCancelSpy = jest.fn();
     let onPrimaryAction = jest.fn();
     let onSecondaryAction = jest.fn();
@@ -102,7 +140,6 @@ describe('AlertDialog', function () {
   });
 
   it('disable its confirm button', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
@@ -147,7 +184,6 @@ describe('AlertDialog', function () {
   });
 
   it('disable its secondary button', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
@@ -176,5 +212,115 @@ describe('AlertDialog', function () {
 
     let button = getByText('secondary').closest('button');
     expect(document.activeElement).toBe(button);
+  });
+
+  it('render the primary button as pending', async function () {
+    let {getByRole, getAllByRole, queryByRole, rerender} = render(
+      <Provider theme={theme}>
+        <PendingAlert pendingAction="primary" />
+      </Provider>
+    );
+
+    expect(queryByRole('dialog')).toBeNull();
+    let triggerButton = getByRole('button');
+    await user.click(triggerButton);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('alertdialog');
+    expect(document.activeElement).toBe(dialog);
+
+    let buttons = getAllByRole('button');
+    expect(buttons).toHaveLength(3);
+
+    let pendingButton = buttons[2];
+    expect(pendingButton).toHaveTextContent('Accept');
+    expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
+    let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
+    expect(spinner).toBeVisible();
+
+    await user.click(buttons[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(dialog).not.toBeVisible();
+
+    rerender(
+      <Provider theme={theme}>
+        <PendingAlert />
+      </Provider>
+    );
+
+    expect(queryByRole('dialog')).toBeNull();
+    triggerButton = getByRole('button');
+    await user.click(triggerButton);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    dialog = getByRole('alertdialog');
+    expect(document.activeElement).toBe(dialog);
+    buttons = getAllByRole('button');
+    expect(buttons).toHaveLength(3);
+    pendingButton = buttons[2];
+    expect(pendingButton).not.toHaveAttribute('aria-disabled', 'true');
+    expect(within(pendingButton).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+  });
+
+  it('render the secondary button as pending', async function () {
+    let {getByRole, getAllByRole, queryByRole, rerender} = render(
+      <Provider theme={theme}>
+        <PendingAlert pendingAction="secondary" />
+      </Provider>
+    );
+
+    expect(queryByRole('dialog')).toBeNull();
+    let triggerButton = getByRole('button');
+    await user.click(triggerButton);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('alertdialog');
+    expect(document.activeElement).toBe(dialog);
+
+    let buttons = getAllByRole('button');
+    expect(buttons).toHaveLength(3);
+
+    let pendingButton = buttons[1];
+    expect(pendingButton).toHaveTextContent('Secondary');
+    expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
+    let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
+    expect(spinner).toBeVisible();
+
+    await user.click(buttons[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(dialog).not.toBeVisible();
+
+    rerender(
+      <Provider theme={theme}>
+        <PendingAlert />
+      </Provider>
+    );
+
+    expect(queryByRole('dialog')).toBeNull();
+    triggerButton = getByRole('button');
+    await user.click(triggerButton);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    dialog = getByRole('alertdialog');
+    expect(document.activeElement).toBe(dialog);
+    buttons = getAllByRole('button');
+    expect(buttons).toHaveLength(3);
+    pendingButton = buttons[1];
+    expect(pendingButton).not.toHaveAttribute('aria-disabled', 'true');
+    expect(within(pendingButton).queryByRole('progressbar', {hidden: true})).toBeFalsy();
   });
 });
