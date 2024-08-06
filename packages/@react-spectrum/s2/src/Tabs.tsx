@@ -100,16 +100,6 @@ export function Tab(props: TabProps) {
 
 const tablist = style({
   display: 'flex',
-  height: {
-    orientation: {
-      horizontal: {
-        density: {
-          compact: 32,
-          regular: 48
-        }
-      }
-    }
-  },
   gap: {
     orientation: {
       horizontal: {
