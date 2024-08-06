@@ -10,7 +10,7 @@ export function Migrating() {
           Migrating to Spectrum 2
         </h1>
         <P>An automated upgrade assistant is available by running the following command in the project you want to upgrade:</P>
-        <Pre>npx @react-spectrum/scripts s1-to-s2</Pre>
+        <Pre>npx @react-spectrum/codemods s1-to-s2</Pre>
         <details>
           <summary>Manually Upgrading</summary>
 
