@@ -15,11 +15,11 @@ import {Collection, DOMRef, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import { mergeStyles } from '../style/runtime';
 
 interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -30,21 +30,24 @@ interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'childre
   density?: 'compact' | 'regular'
 }
 
-interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'> {
+interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
   children?: ReactNode
 }
 
-interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>{
+interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>, StyleProps {
   children?: ReactNode
 }
 
-interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>{
+interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, StyleProps {
   children?: ReactNode
 }
 
 export function TabPanel(props: TabPanelProps) {
   return (
-    <AriaTabPanel {...props} className={style({marginTop: 4, color: 'neutral'})} />
+    <AriaTabPanel 
+      {...props}
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + mergeStyles(style({marginTop: 4, color: 'neutral'}), props.styles)} />
   );
 }
 
@@ -71,7 +74,7 @@ const tab = style({
   },
   alignItems: 'center',
   position: 'relative'
-});
+}, getAllowedOverrides());
 
 const icon = style({
   paddingEnd: 4,
@@ -87,7 +90,8 @@ export function Tab(props: TabProps) {
   return (
     <RACTab 
       {...props}
-      className={renderProps => tab({...renderProps, density})}>
+      style={props.UNSAFE_style}
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
       <Provider
         values={[
           [IconContext, {styles: icon}]
@@ -145,7 +149,9 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   }, [tablistRef, state?.selectedItem]);
 
   return (
-    <div className={style({position: 'relative'})}>
+    <div
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + mergeStyles(style({position: 'relative'}), props.styles)}>
       {orientation === 'vertical' && 
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} />}
       <RACTabList 
@@ -263,7 +269,7 @@ function TabLine(props: TabLineProps) {
   }, [onResize, state?.selectedKey, state, orientation]);
   
   return (
-    <div style={{...style}} className={selectedIndicator({isDisabled, orientation}) + ' ' + selectionAnimation} />
+    <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}), selectionAnimation)} />
   );
 }
 
@@ -287,6 +293,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
     <RACTabs 
       {...props}
       ref={domRef}
+      style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
       <Provider
         values={[ 
