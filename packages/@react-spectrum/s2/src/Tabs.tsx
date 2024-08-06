@@ -26,6 +26,7 @@ interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'childre
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
   children?: ReactNode,
+  /** The amount of space between the tabs. */
   density?: 'compact' | 'regular'
 }
 
@@ -168,18 +169,18 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 }
 
 function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
-  let selectedKey: Key | null = null;
-  if (collection) {
-    selectedKey = collection.getFirstKey();
+  let testKey: Key | null = null;
+  if (collection && collection.size > 0) {
+    testKey = collection.getFirstKey();
     
     let index = 0;
-    while (selectedKey && index < collection.size) {
+    while (testKey && index < collection.size) {
       // We have to check if the item in the collection has a key in disabledKeys or has the isDisabled prop set directly on it
-      if (!disabledKeys.has(selectedKey) && !collection.getItem(selectedKey)?.props?.isDisabled) {
+      if (!disabledKeys.has(testKey) && !collection.getItem(testKey)?.props?.isDisabled) {
         return false;
       }
 
-      selectedKey = collection.getKeyAfter(selectedKey)
+      testKey = collection.getKeyAfter(testKey)
       index++;
     }
     return true;
@@ -204,14 +205,14 @@ const selectedIndicator = style({
       isDisabled: 'GrayText'
     }
   },
-  height: size(2),
+  height: '[2px]',
   bottom: {
     orientation: {
       horizontal: 0
     }
   },
   borderStyle: 'solid',
-  borderRadius: 'lg',
+  borderRadius: 'full',
   borderWidth: '[1px]',
   boxSizing: 'border-box'
 });
@@ -307,5 +308,8 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ */
 const _Tabs = forwardRef(Tabs);
 export {_Tabs as Tabs};
