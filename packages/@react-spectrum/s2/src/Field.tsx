@@ -35,6 +35,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   includeNecessityIndicatorInAccessibilityName?: boolean,
   staticColor?: 'white' | 'black',
   contextualHelp?: ReactNode,
+  isQuiet?: boolean,
   children?: ReactNode
 }
 

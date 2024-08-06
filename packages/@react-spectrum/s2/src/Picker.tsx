@@ -137,8 +137,8 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     default: 'neutral',
     isDisabled: 'disabled'
   },
-  width: {
-    isQuiet: 'fit'
+  maxWidth: {
+    isQuiet: 'max'
   }
 });
 
