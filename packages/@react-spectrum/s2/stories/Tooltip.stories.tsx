@@ -27,7 +27,7 @@ const meta: Meta<typeof CombinedTooltip> = {
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
   },
-  decorators: [(Story) => <div style={{padding: '50px 10px 10px'}}><Story /></div>]
+  decorators: [(Story) => <div style={{height: '100px', padding: '20px', display: 'flex', alignItems: 'end'}}><Story /></div>]
 };
 
 export default meta;
