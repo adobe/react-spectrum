@@ -16,6 +16,7 @@ import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
@@ -76,6 +77,12 @@ export const Example = (args: any) => {
       </TooltipTrigger>
     </div>
   );
+};
+
+Example.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('tooltip');
 };
 
 export const LongLabel = (args: any) => {
