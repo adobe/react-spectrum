@@ -11,15 +11,17 @@
  */
 
 import {TabListProps as AriaTabListProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, TabProps as AriaTabProps, TabsProps as AriaTabsProps, Provider, Tab as RACTab, TabList as RACTabList, Tabs as RACTabs, TabListStateContext} from 'react-aria-components';
+import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {mergeStyles} from '../style/runtime';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
-import { mergeStyles } from '../style/runtime';
 
 interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -78,6 +80,7 @@ const tab = style({
 
 const icon = style({
   paddingEnd: 4,
+  flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -94,7 +97,11 @@ export function Tab(props: TabProps) {
       className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
       <Provider
         values={[
-          [IconContext, {styles: icon}]
+          [TextContext, {className: style({order: 1})}],
+          [IconContext, {
+            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            styles: icon
+          }]
         ]}>
         {props.children}
       </Provider>
@@ -201,16 +208,23 @@ const selectedIndicator = style({
       isDisabled: 'GrayText'
     }
   },
-  height: '[2px]',
+  height: {
+    orientation: {
+      horizontal: '[2px]'
+    }
+  },
+  width: {
+    orientation: {
+      vertical: '[2px]'
+    }
+  },
   bottom: {
     orientation: {
       horizontal: 0
     }
   },
   borderStyle: 'none',
-  borderRadius: 'full',
-  // borderWidth: '[1px]',
-  // boxSizing: 'border-box'
+  borderRadius: 'full'
 });
 
 const selectionAnimation = style({
@@ -266,7 +280,7 @@ function TabLine(props: TabLineProps) {
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedKey, state, orientation]);
+  }, [onResize, state?.selectedKey, direction, orientation]);
   
   return (
     <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}), selectionAnimation)} />
@@ -299,7 +313,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
         values={[ 
           [TabsInternalContext, {density: props.density || 'regular', isDisabled: props.isDisabled, disabledKeys: props.disabledKeys, orientation: props.orientation}]
         ]}>
-        {props.children}
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
     </RACTabs>
   );
