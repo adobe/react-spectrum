@@ -1,6 +1,10 @@
 
 module.exports = {
-  stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'],
+  stories: [
+    '../packages/@{react-aria,react-stately,spectrum-icons}/*/stories/*.stories.{js,jsx,ts,tsx}',
+    '../packages/@react-spectrum/!(s2)/stories/*.stories.{js,jsx,ts,tsx}',
+    '../packages/react-aria-components/stories/*.stories.{js,jsx,ts,tsx}'
+  ],
 
   addons: [
     "@storybook/addon-actions",

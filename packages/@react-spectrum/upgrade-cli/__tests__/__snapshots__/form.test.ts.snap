@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes isQuiet and isReadOnly 1`] = `
+"import { Form, TextField, Checkbox } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <Form>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+</div>"
+`;
+
+exports[`removes validationState and validationBehavior 1`] = `
+"import { TextArea } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let validationBehavior = 'native';
+let props = {validationState: 'invalid', validationBehavior: 'native'};
+<div>
+  <Form validationState="invalid" validationBehavior="aria">
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form validationState="valid" validationBehavior="native">
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form validationState={validationState} validationBehavior={validationBehavior}>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+  <Form {...props}>
+    <TextField label="Email" />
+    <TextField label="Password" />
+    <Checkbox>Remember me</Checkbox>
+  </Form>
+</div>"
+`;

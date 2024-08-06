@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Static - Renames Item to Breadcrumb and adds import 1`] = `
+"import {
+  Breadcrumb,
+  MenuItem,
+  MenuSection,
+  Breadcrumbs,
+  Menu,
+  MenuTrigger,
+  SubmenuTrigger,
+  Button,
+  Header,
+  Heading,
+} from "@react-spectrum/s2";
+
+import { Item, Section } from '@adobe/react-spectrum';
+
+<div>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs>
+    <Breadcrumb id="home">Home</Breadcrumb>
+    <Breadcrumb id="trendy">Trendy</Breadcrumb>
+    <Breadcrumb id="march 2020 assets">March 2020 Assets</Breadcrumb>
+  </Breadcrumbs>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      <MenuItem>Cut</MenuItem>
+      <MenuItem>Copy</MenuItem>
+      <MenuItem>Paste</MenuItem>
+      <SubmenuTrigger>
+        <MenuItem>Share</MenuItem>
+        <Menu>
+          <MenuItem>SMS</MenuItem>
+          <MenuItem>Email</MenuItem>
+        </Menu>
+      </SubmenuTrigger>
+      <MenuSection>
+        <Header>
+          <Heading>Section heading</Heading>
+        </Header>
+        <MenuItem>Save</MenuItem>
+      </MenuSection>
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;

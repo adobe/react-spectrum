@@ -133,6 +133,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
     if (item?.props?.onAction) {
       item.props.onAction();
+    } else if (props.onAction) {
+      props.onAction(key);
     }
 
     if (data.onAction) {
