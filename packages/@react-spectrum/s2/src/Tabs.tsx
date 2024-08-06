@@ -47,7 +47,7 @@ export function TabPanel(props: TabPanelProps) {
     <AriaTabPanel 
       {...props}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + mergeStyles(style({marginTop: 4, color: 'neutral'}), props.styles)} />
+      className={(props.UNSAFE_className || '') + mergeStyles(style({marginTop: 4, color: 'gray-800'}), props.styles)} />
   );
 }
 
@@ -193,7 +193,7 @@ interface TabLineProps {
 
 const selectedIndicator = style({
   position: 'absolute',
-  color: {
+  backgroundColor: {
     default: 'neutral',
     isDisabled: 'disabled',
     forcedColors: {
@@ -207,10 +207,10 @@ const selectedIndicator = style({
       horizontal: 0
     }
   },
-  borderStyle: 'solid',
+  borderStyle: 'none',
   borderRadius: 'full',
-  borderWidth: '[1px]',
-  boxSizing: 'border-box'
+  // borderWidth: '[1px]',
+  // boxSizing: 'border-box'
 });
 
 const selectionAnimation = style({
