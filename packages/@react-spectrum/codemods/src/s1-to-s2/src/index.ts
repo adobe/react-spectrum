@@ -7,7 +7,7 @@ import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
-const components = new Set([
+const componentOptions = new Set([
   'Button',
   'ActionButton',
   'ToggleButton',
@@ -43,12 +43,12 @@ const components = new Set([
 program
   .name('upgrade-react-spectrum')
   .description('Upgrade React Spectrum components from v3 to Spectrum 2')
-  .option('-c, --components <components>', `Comma separated list of components to upgrade (i.e. Button,TableView). Options include: ${[...components].join(', ')}`, (val) => val.split(','))
+  .option('-c, --components <components>', `Comma separated list of components to upgrade (i.e. Button,TableView). Options include: ${[...componentOptions].join(', ')}`, (val) => val.split(','))
   .argument('[path]', 'Path to the files to upgrade', '.')
   .parse(process.argv);
 
 let {
-  components: componentSubset,
+  components,
   path
 } = program.opts();
 
@@ -76,7 +76,7 @@ export async function s1_to_s2() {
 
   logger.info('Upgrading components...');
   await transform({
-    componentSubset,
+    components,
     path,
     ignorePattern: '**/node_modules/**',
     parser: 'tsx'
