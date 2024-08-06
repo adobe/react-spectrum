@@ -88,13 +88,13 @@ keywords: [tree, grid]
 ```
 
 ## Content
-TreeView is a [collection component](../react-stately/collections.html) that provides users with a way to navigate nested hierarchical information.
+TreeView is a [collection component](../react-aria/collections.html) that provides users with a way to navigate nested hierarchical information.
 
 Basic usage of TreeView, seen in the example above, shows the use of a static collection where the contents of the TreeView are hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source, such as an API, or update over time. Providing the data in this way allows TreeView to automatically cache the rendering of each item, which dramatically improves performance.
 
 Items can be statically defined as children, or generated dynamically using a function based on the data passed to the `items` prop.
 
-Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](../react-aria/collections.html#unique-ids) to learn more keys in dynamic collections.
 
 ```tsx example
 
@@ -138,7 +138,7 @@ An `aria-label` must be provided to the TreeView for accessibility. If the TreeV
 
 ## Expansion
 
-By default, TreeView items are initially collapsed. Use `defaultExpandedKeys` to provide a default set of expanded items. Note that the value of the expended keys must match the `id` prop of the TreeViewItem.
+By default, TreeView items are initially collapsed. Use `defaultExpandedKeys` to provide a default set of expanded items. Note that the value of the expanded keys must match the `id` prop of the TreeViewItem.
 
 The example below uses `defaultExpandedKeys` to select the items with keys "documents" and "photos".
 
@@ -408,7 +408,7 @@ In the highlight selection style, however, clicking a item with the mouse _repla
 modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
 keys may not be available.
 
-These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/#keyboardinteraction).
 
 ```tsx example
 <ExampleTree selectionMode="multiple" selectionStyle="highlight" />
