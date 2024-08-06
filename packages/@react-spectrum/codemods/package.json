@@ -4,9 +4,7 @@
   "private": true,
   "source": "src/index.ts",
   "main": "dist/index.js",
-  "bin": {
-    "s1-to-s2": "./dist/index.js"
-  },
+  "bin": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "yarn build"
@@ -35,6 +33,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/jscodeshift": "^0.11.11"
+    "@types/jscodeshift": "^0.11.11",
+    "typescript": "^5.5.0"
   }
 }
