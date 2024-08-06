@@ -55,7 +55,7 @@ export function TabPanel(props: TabPanelProps) {
 
 const tab = style({
   ...focusRing(),
-  display: 'inline-flex',
+  display: 'flex',
   color: {
     default: 'neutral-subdued',
     isSelected: 'neutral',
@@ -75,11 +75,11 @@ const tab = style({
     }
   },
   alignItems: 'center',
-  position: 'relative'
+  position: 'relative',
+  cursor: 'default'
 }, getAllowedOverrides());
 
 const icon = style({
-  paddingEnd: 4,
   flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
@@ -166,7 +166,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, density})} />
       {orientation === 'horizontal' && 
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density}/>}
     </div>
   );
 }
@@ -195,7 +195,8 @@ interface TabLineProps {
   disabledKeys: Iterable<Key> | undefined,
   isDisabled: boolean | undefined,
   selectedTab: HTMLElement | undefined,
-  orientation?: Orientation
+  orientation?: Orientation,
+  density?: 'compact' | 'regular'
 }
 
 const selectedIndicator = style({
@@ -237,7 +238,8 @@ function TabLine(props: TabLineProps) {
     disabledKeys,
     isDisabled: isTabsDisabled,
     selectedTab,
-    orientation
+    orientation,
+    density
   } = props;
   let {direction} = useLocale();
   let state = useContext(TabListStateContext);
@@ -280,7 +282,7 @@ function TabLine(props: TabLineProps) {
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedKey, direction, orientation]);
+  }, [onResize, state?.selectedKey, direction, orientation, density]);
   
   return (
     <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}), selectionAnimation)} />
