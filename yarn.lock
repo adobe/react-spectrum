@@ -6820,7 +6820,7 @@ __metadata:
     typescript: "npm:^5.5.0"
     uuid: "npm:^9.0.1"
   bin:
-    s1-to-s2: ./dist/index.js
+    codemods: dist/index.js
   languageName: unknown
   linkType: soft
 
