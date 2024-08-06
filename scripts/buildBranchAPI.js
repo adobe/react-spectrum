@@ -152,7 +152,7 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/react-aria-components', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});
