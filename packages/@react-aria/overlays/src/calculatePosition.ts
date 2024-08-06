@@ -424,12 +424,13 @@ export function calculatePositionInternal(
 
   // Min/Max position limits for the arrow with respect to the overlay
   const arrowMinPosition = arrowSize / 2 + arrowBoundaryOffset;
-  // overlaySize[crossSize] - margins['left'] - margins['right'] = true size of the overlay
-  const arrowMaxPosition = (overlaySize[crossSize] - margins['left'] - margins['right']) - (arrowSize / 2) - arrowBoundaryOffset ;
+  // overlaySize[crossSize] - margins = true size of the overlay
+  const overlayMargin = AXIS[crossAxis] === 'left' ? margins.left + margins.right : margins.top + margins.bottom;
+  const arrowMaxPosition = overlaySize[crossSize] - overlayMargin - (arrowSize / 2) - arrowBoundaryOffset ;
 
   // Min/Max position limits for the arrow with respect to the trigger/overlay anchor element
   // Same margin accomodation done here as well as for the preferredArrowPosition
-  const arrowOverlappingChildMinEdge = childOffset[crossAxis] + (arrowSize / 2) - (position[crossAxis] + margins[AXIS[crossAxis]])  ;
+  const arrowOverlappingChildMinEdge = childOffset[crossAxis] + (arrowSize / 2) - (position[crossAxis] + margins[AXIS[crossAxis]]);
   const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - (arrowSize / 2) - (position[crossAxis] + margins[AXIS[crossAxis]]);
 
   // Clamp the arrow positioning so that it always is within the bounds of the anchor and the overlay
