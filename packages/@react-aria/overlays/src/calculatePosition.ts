@@ -426,7 +426,7 @@ export function calculatePositionInternal(
   const arrowMinPosition = arrowSize / 2 + arrowBoundaryOffset;
   // overlaySize[crossSize] - margins = true size of the overlay
   const overlayMargin = AXIS[crossAxis] === 'left' ? margins.left + margins.right : margins.top + margins.bottom;
-  const arrowMaxPosition = overlaySize[crossSize] - overlayMargin - (arrowSize / 2) - arrowBoundaryOffset ;
+  const arrowMaxPosition = overlaySize[crossSize] - overlayMargin - (arrowSize / 2) - arrowBoundaryOffset;
 
   // Min/Max position limits for the arrow with respect to the trigger/overlay anchor element
   // Same margin accomodation done here as well as for the preferredArrowPosition
