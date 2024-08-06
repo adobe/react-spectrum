@@ -42,7 +42,7 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, forwardRef, ReactNode, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
@@ -240,19 +240,12 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: FocusableRef<H
               isInvalid={isInvalid}
               size={size}
               styles={style({
+                ...fieldInput(),
                 paddingStart: 'edge-to-text',
                 // better way to do this one? it's not actually half, they are
                 // [9, 4], [12, 6], [15, 8], [18, 8]
                 // also noticed that our measurement is including the border, making the padding too much
-                paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]',
-                width: {
-                  default: 208,
-                  size: {
-                    S: 192,
-                    L: 224,
-                    XL: 240
-                  }
-                }
+                paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]'
               })({size})}>
               <InputContext.Consumer>
                 {ctx => (
