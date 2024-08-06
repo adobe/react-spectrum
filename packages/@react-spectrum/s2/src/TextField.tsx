@@ -198,7 +198,7 @@ function TextAreaInput() {
         fontFamily: '[inherit]',
         fontSize: '[inherit]',
         fontWeight: '[inherit]',
-        lineHeight: 'ui',
+        lineHeight: '[inherit]',
         flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',
