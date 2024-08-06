@@ -6817,6 +6817,7 @@ __metadata:
     execa: "npm:^5.1.1"
     jscodeshift: "npm:^0.15.2"
     ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.5.0"
     uuid: "npm:^9.0.1"
   bin:
     s1-to-s2: ./dist/index.js
