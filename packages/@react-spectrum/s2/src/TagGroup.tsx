@@ -269,7 +269,7 @@ function TagGroupInner<T>({
   } else if (isInvalid) {
     helpText = (
       <div
-        className={helpTextStyles({size: size || 'M', isInvalid})}>
+        className={helpTextStyles({size, isInvalid})}>
         <CenterBaseline>
           <AlertIcon />
         </CenterBaseline>
