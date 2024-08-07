@@ -340,6 +340,9 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
               }}
               styles={style({
+                marginStart: {
+                  isQuiet: -12
+                },
                 minWidth: {
                   default: '[var(--trigger-width)]',
                   isQuiet: 192
