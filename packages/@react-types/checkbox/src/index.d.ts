@@ -45,7 +45,7 @@ export interface ToggleStateOptions extends InputBase {
   onChange?: (isSelected: boolean) => void
 }
 
-export interface ToggleProps extends ToggleStateProps, Validation, FocusableProps {
+export interface ToggleProps extends ToggleStateOptions, Validation, FocusableProps {
   /**
    * The label for the element.
    */
