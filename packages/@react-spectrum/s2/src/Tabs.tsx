@@ -49,7 +49,7 @@ export function TabPanel(props: TabPanelProps) {
     <AriaTabPanel 
       {...props}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + mergeStyles(style({marginTop: 4, color: 'gray-800'}), props.styles)} />
+      className={(props.UNSAFE_className || '') + style({marginTop: 4, color: 'gray-800'}, getAllowedOverrides())(null, props.styles)} />
   );
 }
 
@@ -76,7 +76,8 @@ const tab = style({
   },
   alignItems: 'center',
   position: 'relative',
-  cursor: 'default'
+  cursor: 'default',
+  width: 'max'
 }, getAllowedOverrides());
 
 const icon = style({
@@ -152,13 +153,12 @@ export function TabList<T extends object>(props: TabListProps<T>) {
         setSelectedTab(tab);
       }
     }
-
   }, [tablistRef, state?.selectedItem]);
 
   return (
     <div
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + mergeStyles(style({position: 'relative'}), props.styles)}>
+      className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
       {orientation === 'vertical' && 
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} />}
       <RACTabList 
@@ -293,6 +293,7 @@ const tabs = style({
   display: 'flex',
   flexShrink: 0,
   fontFamily: 'sans',
+  fontWeight: 'normal',
   flexDirection: {
     orientation: {
       horizontal: 'column'
