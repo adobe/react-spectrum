@@ -73,7 +73,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(props: TreeGridState
   }), [children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  let nodes = useMemo(() => builder.build({children: children as ReactElement[]}, context), [builder, children, context]);
+  let nodes = useMemo(() => builder.build({children: children as ReactElement<any>[]}, context), [builder, children, context]);
   let treeGridCollection = useMemo(() => {
     return generateTreeGridCollection<T>(nodes, {showSelectionCheckboxes, showDragButtons, expandedKeys});
   }, [nodes, showSelectionCheckboxes, showDragButtons, expandedKeys]);

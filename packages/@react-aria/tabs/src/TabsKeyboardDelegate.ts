@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, Key, KeyboardDelegate, Orientation} from '@react-types/shared';
+import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
 
 export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: Collection<T>;
+  private collection: Collection<Node<T>>;
   private flipDirection: boolean;
   private disabledKeys: Set<Key>;
   private tabDirection: boolean;
 
-  constructor(collection: Collection<T>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
+  constructor(collection: Collection<Node<T>>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
     this.disabledKeys = disabledKeys;
@@ -40,9 +40,13 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
 
+  private isDisabled(key: Key) {
+    return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;
+  }
+
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    if (key != null && this.disabledKeys.has(key)) {
+    if (key != null && this.isDisabled(key)) {
       key = this.getNextKey(key);
     }
     return key;
@@ -50,7 +54,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    if (key != null && this.disabledKeys.has(key)) {
+    if (key != null && this.isDisabled(key)) {
       key = this.getPreviousKey(key);
     }
     return key;
@@ -76,7 +80,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       if (key == null) {
         key = this.collection.getFirstKey();
       }
-    } while (this.disabledKeys.has(key));
+    } while (this.isDisabled(key));
     return key;
   }
 
@@ -86,7 +90,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       if (key == null) {
         key = this.collection.getLastKey();
       }
-    } while (this.disabledKeys.has(key));
+    } while (this.isDisabled(key));
     return key;
   }
 }

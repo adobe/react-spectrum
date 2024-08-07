@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out isPending 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+<div>
+  // TODO(S2-upgrade): isPending has not been implemented yet.
+  <Button>Test</Button>
+  // TODO(S2-upgrade): isPending has not been implemented yet.
+  <Button>Test</Button>
+</div>"
+`;
+
+exports[`Converts Button to LinkButton if it has href prop 1`] = `
+"import { LinkButton, Button } from "@react-spectrum/s2";
+
+<div>
+  <Button>Test</Button>
+  <LinkButton href="/">Test</LinkButton>
+</div>"
+`;
+
+exports[`Does not change nested components with same prop name 1`] = `
+"import { Button } from "@react-spectrum/s2";
+import {FakeComponent} from 'fake-package';
+
+<div>
+  <Button variant="accent">
+    Test
+    <FakeComponent variant="cta">Test</FakeComponent>
+  </Button>
+  <Button variant="primary" staticColor="white">
+    Test
+    <FakeComponent variant="overBackground">Test</FakeComponent>
+  </Button>
+</div>"
+`;
+
+exports[`Renames variants 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+<div>
+  <Button variant="accent">Test</Button>
+  <Button variant="primary" staticColor="white">Test</Button>
+</div>"
+`;
+
+exports[`Renames variants with aliased import 1`] = `
+"import { Button as RSPButton } from "@react-spectrum/s2";
+
+<div>
+  <RSPButton variant="accent">Test</RSPButton>
+  <RSPButton variant="primary" staticColor="white">Test</RSPButton>
+</div>"
+`;

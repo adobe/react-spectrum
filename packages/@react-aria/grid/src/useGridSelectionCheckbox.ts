@@ -31,7 +31,8 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
   let isDisabled = !state.selectionManager.canSelectItem(key);
   let isSelected = state.selectionManager.isSelected(key);
 
-  let onChange = () => manager.select(key);
+  // Checkbox should always toggle selection, regardless of selectionBehavior.
+  let onChange = () => manager.toggleSelection(key);
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
 

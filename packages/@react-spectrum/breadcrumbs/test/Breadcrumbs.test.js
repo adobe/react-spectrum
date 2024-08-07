@@ -10,15 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 describe('Breadcrumbs', function () {
+  let user;
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
   beforeEach(() => {
@@ -295,7 +298,7 @@ describe('Breadcrumbs', function () {
   });
 
 
-  it('can open the menu', () => {
+  it('can open the menu', async () => {
     let onAction = jest.fn();
     let {getAllByText, getByRole, getAllByRole} = render(
       <Provider theme={theme}>
@@ -310,7 +313,7 @@ describe('Breadcrumbs', function () {
     );
 
     let menuButton = getByRole('button');
-    triggerPress(menuButton);
+    await user.click(menuButton);
     act(() => {jest.runAllTimers();});
 
     let menu = getByRole('menu');
@@ -323,19 +326,19 @@ describe('Breadcrumbs', function () {
 
     // breadcrumb root item
     expect(item1[0]).toHaveAttribute('role', 'link');
-    triggerPress(item1[0]);
+    await user.click(item1[0]);
     // first press closes the menu, second press
     act(() => {jest.runAllTimers();});
-    triggerPress(item1[0]);
+    await user.click(item1[0]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
 
     // menu item
-    expect(item1[1]).not.toHaveAttribute('role');
-    triggerPress(item1[1]);
+    expect(item1[1]).toHaveAttribute('role', 'none');
+    await user.click(item1[1]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
   });
 
-  it('clicking on current folder does not trigger onAction', () => {
+  it('clicking on current folder does not trigger onAction', async () => {
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
@@ -350,7 +353,7 @@ describe('Breadcrumbs', function () {
     );
 
     let menuButton = getByRole('button');
-    triggerPress(menuButton);
+    await user.click(menuButton);
 
     let menu = getByRole('menu');
     expect(menu).toBeTruthy();
@@ -361,7 +364,7 @@ describe('Breadcrumbs', function () {
 
     let item = menuItems[4];
     expect(item).toHaveAttribute('aria-checked', 'true');
-    triggerPress(item);
+    await user.click(item);
     expect(onAction).not.toHaveBeenCalled();
   });
 
@@ -411,7 +414,7 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbs).toHaveAttribute('data-testid', 'test');
   });
 
-  it('should support links', function () {
+  it('should support links', async function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
         <Breadcrumbs>
@@ -431,7 +434,7 @@ describe('Breadcrumbs', function () {
     expect(links[2]).toHaveAttribute('href', 'https://example.com/foo/bar/baz/qux');
 
     let menuButton = getByRole('button');
-    triggerPress(menuButton);
+    await user.click(menuButton);
     act(() => {jest.runAllTimers();});
 
     let menu = getByRole('menu');
@@ -441,32 +444,35 @@ describe('Breadcrumbs', function () {
     expect(items[0]).toHaveAttribute('href', 'https://example.com');
   });
 
-  it('should support RouterProvider', () => {
+  it('should support RouterProvider', async () => {
     let navigate = jest.fn();
+    let useHref = href => '/base' + href;
     let {getByRole, getAllByRole} = render(
-      <Provider theme={theme} router={{navigate}}>
+      <Provider theme={theme} router={{navigate, useHref}}>
         <Breadcrumbs>
-          <Item href="/">Example.com</Item>
-          <Item href="/foo">Foo</Item>
-          <Item href="/foo/bar">Bar</Item>
-          <Item href="/foo/bar/baz">Baz</Item>
-          <Item href="/foo/bar/baz/qux">Qux</Item>
+          <Item href="/" routerOptions={{foo: 'bar'}}>Example.com</Item>
+          <Item href="/foo" routerOptions={{foo: 'foo'}}>Foo</Item>
+          <Item href="/foo/bar" routerOptions={{foo: 'bar'}}>Bar</Item>
+          <Item href="/foo/bar/baz" routerOptions={{foo: 'bar'}}>Baz</Item>
+          <Item href="/foo/bar/baz/qux" routerOptions={{foo: 'bar'}}>Qux</Item>
         </Breadcrumbs>
       </Provider>
     );
 
     let links = getAllByRole('link');
-    triggerPress(links[0]);
-    expect(navigate).toHaveBeenCalledWith('/foo/bar');
+    expect(links[0]).toHaveAttribute('href', '/base/foo/bar');
+    await user.click(links[0]);
+    expect(navigate).toHaveBeenCalledWith('/foo/bar', {foo: 'bar'});
     navigate.mockReset();
 
     let menuButton = getByRole('button');
-    triggerPress(menuButton);
+    await user.click(menuButton);
     act(() => {jest.runAllTimers();});
 
     let menu = getByRole('menu');
     let items = within(menu).getAllByRole('menuitemradio');
-    triggerPress(items[1]);
-    expect(navigate).toHaveBeenCalledWith('/foo');
+    expect(items[1]).toHaveAttribute('href', '/base/foo');
+    await user.click(items[1]);
+    expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'foo'});
   });
 });

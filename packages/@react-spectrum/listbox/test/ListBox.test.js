@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {FocusExample} from '../stories/ListBox.stories';
 import {Item, ListBox, Section} from '../';
@@ -18,6 +18,8 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
+import {useAsyncList} from '@react-stately/data';
+import userEvent from '@testing-library/user-event';
 
 let withSection = [
   {name: 'Heading 1', children: [
@@ -270,14 +272,15 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports using click to change item selection', function () {
+    it('supports using click to change item selection', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'single'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
 
       // Trigger a menu item via press
       let item = options[4];
-      triggerPress(item);
+      await user.click(item);
       expect(item).toHaveAttribute('aria-selected', 'true');
       let checkmark = within(item).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
@@ -291,14 +294,15 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports disabled items', function () {
+    it('supports disabled items', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'single', disabledKeys: ['Baz'], autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
 
       // Attempt to trigger the disabled item
       let disabledItem = options[2];
-      triggerPress(disabledItem);
+      await user.click(disabledItem);
       expect(disabledItem).toHaveAttribute('aria-selected', 'false');
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
 
@@ -323,7 +327,8 @@ describe('ListBox', function () {
   });
 
   describe('supports multi selection', function () {
-    it('supports selecting multiple items', function () {
+    it('supports selecting multiple items', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple'});
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
@@ -334,14 +339,14 @@ describe('ListBox', function () {
 
       let options = within(listbox).getAllByRole('option');
       let firstItem = options[3];
-      triggerPress(firstItem);
+      await user.click(firstItem);
       expect(firstItem).toHaveAttribute('aria-selected', 'true');
       let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Select a different menu item
       let secondItem = options[1];
-      triggerPress(secondItem);
+      await user.click(secondItem);
       expect(secondItem).toHaveAttribute('aria-selected', 'true');
       checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
@@ -355,7 +360,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
     });
 
-    it('supports multiple defaultSelectedKeys (uncontrolled)', function () {
+    it('supports multiple defaultSelectedKeys (uncontrolled)', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']});
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
@@ -381,7 +387,7 @@ describe('ListBox', function () {
 
       // Select a different menu item
       let thirdItem = options[4];
-      triggerPress(thirdItem);
+      await user.click(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-selected', 'true');
       checkmark = within(thirdItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
@@ -396,7 +402,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bar')).toBeTruthy();
     });
 
-    it('supports multiple selectedKeys (controlled)', function () {
+    it('supports multiple selectedKeys (controlled)', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', selectedKeys: ['Foo', 'Bar']});
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
@@ -422,7 +429,7 @@ describe('ListBox', function () {
 
       // Select a different menu item
       let thirdItem = options[4];
-      triggerPress(thirdItem);
+      await user.click(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-selected', 'false');
       checkmark = within(thirdItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
@@ -435,7 +442,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports deselection', function () {
+    it('supports deselection', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']});
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
@@ -460,7 +468,7 @@ describe('ListBox', function () {
       expect(checkmark).toBeTruthy();
 
       // Deselect the first item
-      triggerPress(firstItem);
+      await user.click(firstItem);
       expect(firstItem).toHaveAttribute('aria-selected', 'false');
       checkmark = within(firstItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
@@ -473,7 +481,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bar')).toBeTruthy();
     });
 
-    it('supports disabledKeys', function () {
+    it('supports disabledKeys', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar'], disabledKeys: ['Baz']});
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
@@ -481,7 +490,7 @@ describe('ListBox', function () {
       // Attempt to trigger disabled item
       let options = within(listbox).getAllByRole('option');
       let disabledItem = options[2];
-      triggerPress(disabledItem);
+      await user.click(disabledItem);
 
       expect(disabledItem).toHaveAttribute('aria-selected', 'false');
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
@@ -495,7 +504,8 @@ describe('ListBox', function () {
   });
 
   describe('supports no selection', function () {
-    it('prevents selection of any items', function () {
+    it('prevents selection of any items', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent({onSelectionChange, selectionMode: 'none'});
       let listbox = tree.getByRole('listbox');
 
@@ -508,7 +518,7 @@ describe('ListBox', function () {
       let firstItem = options[3];
       let secondItem = options[4];
       let thirdItem = options[1];
-      triggerPress(firstItem);
+      await user.click(firstItem);
       fireEvent.keyDown(secondItem, {key: ' ', code: 32, charCode: 32});
       fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
       expect(firstItem).not.toHaveAttribute('aria-selected', 'true');
@@ -749,6 +759,60 @@ describe('ListBox', function () {
     expect(option.id).not.toEqual('Foo');
   });
 
+  it('should handle when an item changes sections', function () {
+    let sections = [
+      {
+        id: 'foo',
+        title: 'Foo',
+        children: [
+          {id: 'foo-1', title: 'Foo 1'},
+          {id: 'foo-2', title: 'Foo 2'}
+        ]
+      },
+      {
+        id: 'bar',
+        title: 'Bar',
+        children: [
+          {id: 'bar-1', title: 'Bar 1'},
+          {id: 'bar-2', title: 'Bar 2'}
+        ]
+      }
+    ];
+
+    function Example({sections}) {
+      return (
+        <Provider theme={theme}>
+          <ListBox aria-label="listbox" items={sections}>
+            {section => (
+              <Section title={section.title} items={section.children}>
+                {item => <Item>{item.title}</Item>}
+              </Section>
+            )}
+          </ListBox>
+        </Provider>
+      );
+    }
+
+    let {getByText, rerender} = render(<Example sections={sections} />);
+    let item = getByText('Foo 1');
+    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Foo');
+
+    let sections2 = [
+      {
+        ...sections[0],
+        children: [sections[0].children[1]]
+      },
+      {
+        ...sections[1],
+        children: [...sections[1].children, sections[0].children[0]]
+      }
+    ];
+
+    rerender(<Example sections={sections2} />);
+    item = getByText('Foo 1');
+    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Bar');
+  });
+
   describe('async loading', function () {
     it('should display a spinner while loading', async function () {
       let {getByRole, rerender} = render(
@@ -828,7 +892,13 @@ describe('ListBox', function () {
         items.push({name: 'Test ' + i});
       }
       // total height if all are rendered would be about 100 * 48px = 4800px
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return 4800;
+        }
 
+        return 48;
+      });
       let {getByRole} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
@@ -841,7 +911,7 @@ describe('ListBox', function () {
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
-      expect(options.length).toBe(5); // each row is 48px tall, listbox is 200px. 5 rows fit.
+      expect(options.length).toBe(6); // each row is 48px tall, listbox is 200px. 5 rows fit. + 1/3 overscan
 
       listbox.scrollTop = 250;
       fireEvent.scroll(listbox);
@@ -858,38 +928,90 @@ describe('ListBox', function () {
       act(() => jest.runAllTimers());
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
       // Mock clientHeight to match maxHeight prop
       let maxHeight = 300;
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function () {
+        // @ts-ignore
+        if (this.getAttribute('role') === 'listbox') {
+          // First load should match the clientHeight since the number of items doesn't exceed the listbox height
+          return 300;
+        }
 
+        return 40;
+      });
       let onLoadMore = jest.fn();
-      let items = [];
-      for (let i = 1; i <= 5; i++) {
-        items.push({name: 'Test ' + i});
+      let load = jest.fn().mockImplementationOnce(() => {
+        return Promise.resolve({
+          items: [
+            {name: 'Test 1'},
+            {name: 'Test 2'},
+            {name: 'Test 3'},
+            {name: 'Test 4'},
+            {name: 'Test 5'}
+          ],
+          cursor: '1'
+        });
+      }).mockImplementationOnce(() => {
+        onLoadMore();
+        offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function () {
+          // @ts-ignore
+          if (this.getAttribute('role') === 'listbox') {
+            // Second load we need to update the height of the scrollable body otherwise we will keep calling loading more
+            return 600;
+          }
+
+          return 40;
+        });
+        return Promise.resolve({
+          items: [
+            {name: 'Test 6'},
+            {name: 'Test 7'},
+            {name: 'Test 8'},
+            {name: 'Test 9'},
+            {name: 'Test 10'}
+          ],
+          cursor: '2'
+        });
+      }).mockImplementation(() => {
+        onLoadMore();
+        return Promise.resolve({cursor: '3'});
+      });
+
+      function AsyncListBox() {
+        let list = useAsyncList({
+          load: load
+        });
+        return (
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox" items={list.items} isLoading={list.loadingState === 'loading' || list.loadingState === 'loadingMore'} maxHeight={maxHeight} onLoadMore={list.loadMore}>
+              {item => <Item key={item.name}>{item.name}</Item>}
+            </ListBox>
+          </Provider>
+        );
       }
 
       let {getByRole} = render(
-        <Provider theme={theme}>
-          <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
-            {item => <Item key={item.name}>{item.name}</Item>}
-          </ListBox>
-        </Provider>
+        <AsyncListBox />
       );
-      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
-      act(() => jest.runAllTimers());
+      await act(async () => {
+        jest.runAllTimers();
+      });
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
-      expect(options.length).toBe(5);
+      expect(options.length).toBe(10);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('When focused item is removed', function () {
-    it('should move focus to the next item that is not disabled', () => {
+    it('should move focus to the next item that is not disabled', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = render(<Provider theme={theme}><FocusExample /></Provider>);
       act(() => jest.runAllTimers());
       let listbox = tree.getByRole('listbox');
@@ -904,13 +1026,13 @@ describe('ListBox', function () {
       expect(removeButton).toBeInTheDocument();
       act(() => {removeButton.focus();});
       expect(document.activeElement).toBe(removeButton);
-      triggerPress(removeButton);
+      await user.click(removeButton);
       act(() => jest.runAllTimers());
       let confirmationDialog = tree.getByRole('alertdialog');
       expect(document.activeElement).toBe(confirmationDialog);
       let confirmationDialogButton = within(confirmationDialog).getByRole('button');
       expect(confirmationDialogButton).toBeInTheDocument();
-      triggerPress(confirmationDialogButton);
+      await user.click(confirmationDialogButton);
       act(() => jest.runAllTimers());
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
@@ -930,13 +1052,13 @@ describe('ListBox', function () {
       expect(removeButton).toBeInTheDocument();
       act(() => {removeButton.focus();});
       expect(document.activeElement).toBe(removeButton);
-      triggerPress(removeButton);
+      await user.click(removeButton);
       act(() => jest.runAllTimers());
       confirmationDialog = tree.getByRole('alertdialog');
       expect(document.activeElement).toBe(confirmationDialog);
       confirmationDialogButton = within(confirmationDialog).getByRole('button');
       expect(confirmationDialogButton).toBeInTheDocument();
-      triggerPress(confirmationDialogButton);
+      await user.click(confirmationDialogButton);
       act(() => jest.runAllTimers());
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(3);
@@ -950,16 +1072,17 @@ describe('ListBox', function () {
 
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      let trigger = (item) => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let trigger = async (item) => {
         if (type === 'mouse') {
-          triggerPress(item);
+          await user.click(item);
         } else {
           fireEvent.keyDown(item, {key: 'Enter'});
           fireEvent.keyUp(item, {key: 'Enter'});
         }
       };
 
-      it('should support links with selectionMode="none"', function () {
+      it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <ListBox aria-label="listbox">
@@ -976,13 +1099,13 @@ describe('ListBox', function () {
         }
 
         let onClick = mockClickDefault();
-        trigger(items[0]);
+        await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionMode="%s"', function (selectionMode) {
+      it.each(['single', 'multiple'])('should support links with selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <ListBox aria-label="listbox" selectionMode={selectionMode}>
@@ -999,13 +1122,13 @@ describe('ListBox', function () {
         }
 
         let onClick = mockClickDefault();
-        trigger(items[0]);
+        await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
-        trigger(items[1]);
+        await trigger(items[1]);
         expect(onClick).toHaveBeenCalledTimes(2);
         expect(onClick.mock.calls[1][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[1][0].target.href).toBe('https://adobe.com/');
@@ -1014,23 +1137,25 @@ describe('ListBox', function () {
 
       it('works with RouterProvider', async () => {
         let navigate = jest.fn();
+        let useHref = href => href.startsWith('http') ? href : '/base' + href;
         let {getAllByRole} = render(
-          <Provider theme={theme} router={{navigate}}>
+          <Provider theme={theme} router={{navigate, useHref}}>
             <ListBox aria-label="listbox">
-              <Item href="/one">One</Item>
+              <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
               <Item href="https://adobe.com">Two</Item>
             </ListBox>
           </Provider>
         );
 
         let items = getAllByRole('option');
-        trigger(items[0]);
-        expect(navigate).toHaveBeenCalledWith('/one');
+        expect(items[0]).toHaveAttribute('href', '/base/one');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
 
         navigate.mockReset();
         let onClick = mockClickDefault();
 
-        trigger(items[1]);
+        await trigger(items[1]);
         expect(navigate).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
       });

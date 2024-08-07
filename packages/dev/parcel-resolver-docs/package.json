@@ -4,10 +4,10 @@
   "private": true,
   "main": "DocsResolver.js",
   "engines": {
-    "parcel": "^2.12.0"
+    "parcel": "2.0.0-dev.1599"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.12.0",
-    "@parcel/node-resolver-core": "^3.1.2"
+    "@parcel/node-resolver-core": "3.3.1-dev.3224",
+    "@parcel/plugin": "2.0.0-dev.1601"
   }
 }

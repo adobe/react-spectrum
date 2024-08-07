@@ -11,9 +11,11 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
@@ -52,6 +54,8 @@ export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLD
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
   let [inputElementType, setInputElementType] = useState('input');
@@ -59,7 +63,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     ...removeDataAttributes(props),
     inputElementType,
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, inputRef);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
@@ -82,9 +86,12 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     defaultClassName: 'react-aria-TextField'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...filterDOMProps(props)}
+      {...DOMProps}
       {...renderProps}
       ref={ref}
       slot={props.slot || undefined}

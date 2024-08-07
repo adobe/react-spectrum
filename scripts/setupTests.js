@@ -33,10 +33,14 @@ if (!process.env.LISTENING_TO_UNHANDLED_REJECTION) {
   process.env.LISTENING_TO_UNHANDLED_REJECTION = true;
 }
 const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  'ReactDOM.render is no longer supported in React 18'
+  'ReactDOM.render is no longer supported in React 18',
+  'ReactDOM.render has not been supported since React 18',
+  '`ReactDOMTestUtils.act` is deprecated in favor of `React.act`'
 ];
 
-const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [];
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
+  'Browserslist: caniuse-lite is outdated'
+];
 
 function failTestOnConsoleError() {
   const error = console.error;

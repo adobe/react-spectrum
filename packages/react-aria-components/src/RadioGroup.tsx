@@ -11,16 +11,23 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps {}
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps {
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: MutableRefObject<HTMLInputElement>
+}
 
 export interface RadioGroupRenderProps {
   /**
@@ -108,16 +115,18 @@ export const RadioGroupStateContext = createContext<RadioGroupState | null>(null
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useRadioGroupState({
     ...props,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let [labelRef, label] = useSlot();
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useRadioGroup({
     ...props,
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state);
 
   let renderProps = useRenderProps({
@@ -163,9 +172,13 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
-  [props, ref] = useContextProps(props, ref, RadioContext);
+  let {
+    inputRef: userProvidedInputRef = null,
+    ...otherProps
+  } = props;
+  [props, ref] = useContextProps(otherProps, ref, RadioContext);
   let state = React.useContext(RadioGroupStateContext)!;
-  let inputRef = useRef<HTMLInputElement>(null);
+  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
     ...removeDataAttributes<RadioProps>(props),
     // ReactNode type doesn't allow function children.

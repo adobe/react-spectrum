@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToggleButtonProps, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
+import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
 import {ButtonRenderProps} from './Button';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {forwardRefType} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
@@ -28,7 +29,7 @@ export interface ToggleButtonRenderProps extends ButtonRenderProps {
   state: ToggleState
 }
 
-export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
+export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps> {}
 
 export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
 

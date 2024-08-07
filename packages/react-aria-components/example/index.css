@@ -453,3 +453,12 @@ html {
     opacity: 0.4;
   }
 }
+
+.textfieldExample {
+  display: flex;
+  flex-direction: column;
+
+  .errorMessage {
+    padding-bottom: 10px;
+  }
+}

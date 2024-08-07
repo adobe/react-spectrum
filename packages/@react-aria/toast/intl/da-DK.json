@@ -1,4 +1,4 @@
 {
   "close": "Luk",
-  "notifications": "Påmindelser"
+  "notifications": "{count, plural, one {# besked} other {# beskeder}}."
 }

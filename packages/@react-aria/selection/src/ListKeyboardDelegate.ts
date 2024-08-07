@@ -10,30 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {Collection, Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Orientation, Rect, RefObject} from '@react-types/shared';
+import {DOMLayoutDelegate} from './DOMLayoutDelegate';
 import {isScrollable} from '@react-aria/utils';
-import {RefObject} from 'react';
 
 interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>,
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   collator?: Intl.Collator,
   layout?: 'stack' | 'grid',
   orientation?: Orientation,
   direction?: Direction,
-  disabledKeys?: Set<Key>
+  disabledKeys?: Set<Key>,
+  disabledBehavior?: DisabledBehavior,
+  layoutDelegate?: LayoutDelegate
 }
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
-  private ref: RefObject<HTMLElement>;
+  private disabledBehavior: DisabledBehavior;
+  private ref: RefObject<HTMLElement | null>;
   private collator: Intl.Collator | undefined;
   private layout: 'stack' | 'grid';
   private orientation?: Orientation;
   private direction?: Direction;
+  private layoutDelegate: LayoutDelegate;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator);
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator);
   constructor(options: ListKeyboardDelegateOptions<T>);
   constructor(...args: any[]) {
     if (args.length === 1) {
@@ -42,9 +46,11 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.ref = opts.ref;
       this.collator = opts.collator;
       this.disabledKeys = opts.disabledKeys || new Set();
-      this.orientation = opts.orientation;
+      this.disabledBehavior = opts.disabledBehavior || 'all';
+      this.orientation = opts.orientation || 'vertical';
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
+      this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref);
     } else {
       this.collection = args[0];
       this.disabledKeys = args[1];
@@ -52,6 +58,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.collator = args[3];
       this.layout = 'stack';
       this.orientation = 'vertical';
+      this.disabledBehavior = 'all';
+      this.layoutDelegate = new DOMLayoutDelegate(this.ref);
     }
 
     // If this is a vertical stack, remove the left/right methods completely
@@ -62,11 +70,15 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
   }
 
+  private isDisabled(item: Node<unknown>) {
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+  }
+
   getNextKey(key: Key) {
     key = this.collection.getKeyAfter(key);
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -80,7 +92,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     key = this.collection.getKeyBefore(key);
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -93,29 +105,29 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private findKey(
     key: Key,
     nextKey: (key: Key) => Key,
-    shouldSkip: (prevRect: DOMRect, itemRect: DOMRect) => boolean
+    shouldSkip: (prevRect: Rect, itemRect: Rect) => boolean
   ) {
-    let item = this.getItem(key);
-    if (!item) {
+    let itemRect = this.layoutDelegate.getItemRect(key);
+    if (!itemRect) {
       return null;
     }
 
     // Find the item above or below in the same column.
-    let prevRect = item.getBoundingClientRect();
+    let prevRect = itemRect;
     do {
       key = nextKey(key);
-      item = this.getItem(key);
-    } while (item && shouldSkip(prevRect, item.getBoundingClientRect()));
+      itemRect = this.layoutDelegate.getItemRect(key);
+    } while (itemRect && shouldSkip(prevRect, itemRect));
 
     return key;
   }
 
-  private isSameRow(prevRect: DOMRect, itemRect: DOMRect) {
-    return prevRect.top === itemRect.top || prevRect.left !== itemRect.left;
+  private isSameRow(prevRect: Rect, itemRect: Rect) {
+    return prevRect.y === itemRect.y || prevRect.x !== itemRect.x;
   }
 
-  private isSameColumn(prevRect: DOMRect, itemRect: DOMRect) {
-    return prevRect.left === itemRect.left || prevRect.top !== itemRect.top;
+  private isSameColumn(prevRect: Rect, itemRect: Rect) {
+    return prevRect.x === itemRect.x || prevRect.y !== itemRect.y;
   }
 
   getKeyBelow(key: Key) {
@@ -170,7 +182,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getFirstKey();
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item?.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item?.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -184,7 +196,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getLastKey();
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -194,14 +206,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
-  }
-
   getKeyPageAbove(key: Key) {
     let menu = this.ref.current;
-    let item = this.getItem(key);
-    if (!item) {
+    let itemRect = this.layoutDelegate.getItemRect(key);
+    if (!itemRect) {
       return null;
     }
 
@@ -209,25 +217,19 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return this.getFirstKey();
     }
 
-    let containerRect = menu.getBoundingClientRect();
-    let itemRect = item.getBoundingClientRect();
     if (this.orientation === 'horizontal') {
-      let containerX = containerRect.x - menu.scrollLeft;
-      let pageX = Math.max(0, (itemRect.x - containerX) + itemRect.width - containerRect.width);
+      let pageX = Math.max(0, itemRect.x + itemRect.width - this.layoutDelegate.getVisibleRect().width);
 
-      while (item && (itemRect.x - containerX) > pageX) {
+      while (itemRect && itemRect.x > pageX) {
         key = this.getKeyAbove(key);
-        item = key == null ? null : this.getItem(key);
-        itemRect = item?.getBoundingClientRect();
+        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
       }
     } else {
-      let containerY = containerRect.y - menu.scrollTop;
-      let pageY = Math.max(0, (itemRect.y - containerY) + itemRect.height - containerRect.height);
+      let pageY = Math.max(0, itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height);
 
-      while (item && (itemRect.y - containerY) > pageY) {
+      while (itemRect && itemRect.y > pageY) {
         key = this.getKeyAbove(key);
-        item = key == null ? null : this.getItem(key);
-        itemRect = item?.getBoundingClientRect();
+        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
       }
     }
 
@@ -236,8 +238,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyPageBelow(key: Key) {
     let menu = this.ref.current;
-    let item = this.getItem(key);
-    if (!item) {
+    let itemRect = this.layoutDelegate.getItemRect(key);
+    if (!itemRect) {
       return null;
     }
 
@@ -245,25 +247,19 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return this.getLastKey();
     }
 
-    let containerRect = menu.getBoundingClientRect();
-    let itemRect = item.getBoundingClientRect();
     if (this.orientation === 'horizontal') {
-      let containerX = containerRect.x - menu.scrollLeft;
-      let pageX = Math.min(menu.scrollWidth, (itemRect.x - containerX) - itemRect.width + containerRect.width);
+      let pageX = Math.min(this.layoutDelegate.getContentSize().width, itemRect.y - itemRect.width + this.layoutDelegate.getVisibleRect().width);
 
-      while (item && (itemRect.x - containerX) < pageX) {
+      while (itemRect && itemRect.x < pageX) {
         key = this.getKeyBelow(key);
-        item = key == null ? null : this.getItem(key);
-        itemRect = item?.getBoundingClientRect();
+        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
       }
     } else {
-      let containerY = containerRect.y - menu.scrollTop;
-      let pageY = Math.min(menu.scrollHeight, (itemRect.y - containerY) - itemRect.height + containerRect.height);
+      let pageY = Math.min(this.layoutDelegate.getContentSize().height, itemRect.y - itemRect.height + this.layoutDelegate.getVisibleRect().height);
 
-      while (item && (itemRect.y - containerY) < pageY) {
+      while (itemRect && itemRect.y < pageY) {
         key = this.getKeyBelow(key);
-        item = key == null ? null : this.getItem(key);
-        itemRect = item?.getBoundingClientRect();
+        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
       }
     }
 

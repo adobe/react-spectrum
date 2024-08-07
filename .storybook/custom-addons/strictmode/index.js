@@ -1,5 +1,5 @@
-import {addons, makeDecorator} from '@storybook/addons';
-import {getQueryParams} from '@storybook/client-api';
+import {addons, makeDecorator} from '@storybook/preview-api';
+import {getQueryParams} from '@storybook/preview-api';
 import React, {StrictMode, useEffect, useState} from 'react';
 
 function StrictModeDecorator(props) {

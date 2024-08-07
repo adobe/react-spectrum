@@ -19,7 +19,7 @@ import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropEvent, FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {DropZone} from '../';
 import File from '@spectrum-icons/illustrations/File';
-import {FileTrigger, Text} from 'react-aria-components';
+import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';
@@ -125,9 +125,7 @@ function Example(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag a file here
-            </Text>
+            Drag a file here
           </Heading>
           <Content>
             <FileTrigger
@@ -194,9 +192,7 @@ function DropZoneWithDraggable(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag and Drop here
-            </Text>
+            Drag and Drop here
           </Heading>
         </IllustratedMessage>
         {filledSrc}
@@ -233,9 +229,7 @@ function DropZoneWithButton(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag and Drop here
-            </Text>
+            Drag and Drop here
           </Heading>
           <Content>
             <FileTrigger

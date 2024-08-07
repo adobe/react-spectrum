@@ -11,9 +11,9 @@
  */
 
 import {AriaLinkProps} from '@react-types/link';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {filterDOMProps, mergeProps, shouldClientNavigate, useRouter} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {filterDOMProps, mergeProps, shouldClientNavigate, useLinkProps, useRouter} from '@react-aria/utils';
+import React from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
@@ -39,7 +39,7 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement | null>): LinkAria {
   let {
     elementType = 'a',
     onPress,
@@ -60,13 +60,14 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
   }
   let {focusableProps} = useFocusable(props, ref);
   let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
-  let domProps = filterDOMProps(otherProps, {labelable: true, isLink: elementType === 'a'});
+  let domProps = filterDOMProps(otherProps, {labelable: true});
   let interactionHandlers = mergeProps(focusableProps, pressProps);
   let router = useRouter();
+  let routerLinkProps = useLinkProps(props);
 
   return {
     isPressed, // Used to indicate press state for visual
-    linkProps: mergeProps(domProps, {
+    linkProps: mergeProps(domProps, routerLinkProps, {
       ...interactionHandlers,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,
@@ -85,10 +86,11 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
           e.currentTarget.href &&
           // If props are applied to a router Link component, it may have already prevented default.
           !e.isDefaultPrevented() &&
-          shouldClientNavigate(e.currentTarget, e)
+          shouldClientNavigate(e.currentTarget, e) &&
+          props.href
         ) {
           e.preventDefault();
-          router.open(e.currentTarget, e);
+          router.open(e.currentTarget, e, props.href, props.routerOptions);
         }
       }
     })
