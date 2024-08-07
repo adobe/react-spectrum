@@ -168,7 +168,7 @@ export const WithPending = {
   argTypes: {
     pendingAction: {
       control: 'radio',
-      options: ['primary', 'secondary', 'none']
+      options: ['primary', 'secondary', undefined]
     }
   }
 };

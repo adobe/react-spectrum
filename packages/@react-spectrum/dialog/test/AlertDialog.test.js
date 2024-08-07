@@ -225,27 +225,33 @@ describe('AlertDialog', function () {
     let triggerButton = getByRole('button');
     await user.click(triggerButton);
     act(() => {
-      jest.runAllTimers();
+      jest.advanceTimersToNextTimer();
     });
 
     let dialog = getByRole('alertdialog');
     expect(document.activeElement).toBe(dialog);
 
     let buttons = getAllByRole('button');
-    expect(buttons).toHaveLength(3);
-
     let pendingButton = buttons[2];
-    expect(pendingButton).toHaveTextContent('Accept');
-    expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
-    let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
-    expect(spinner).toBeVisible();
+    expect(buttons).toHaveLength(3);
+    for (let button of buttons) {
+      expect(button).not.toBeDisabled();
+    }
 
-    await user.click(buttons[0]);
     act(() => {
       jest.runAllTimers();
     });
 
-    expect(dialog).not.toBeVisible();
+    for (let button of buttons) {
+      if (button !== pendingButton) {
+        expect(button).toBeDisabled();
+      }
+    }
+
+    expect(pendingButton).toHaveTextContent('Accept');
+    expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
+    let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
+    expect(spinner).toBeVisible();
 
     rerender(
       <Provider theme={theme}>
@@ -253,7 +259,12 @@ describe('AlertDialog', function () {
       </Provider>
     );
 
-    expect(queryByRole('dialog')).toBeNull();
+    await user.click(buttons[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(dialog).not.toBeVisible();
     triggerButton = getByRole('button');
     await user.click(triggerButton);
     act(() => {
@@ -280,27 +291,33 @@ describe('AlertDialog', function () {
     let triggerButton = getByRole('button');
     await user.click(triggerButton);
     act(() => {
-      jest.runAllTimers();
+      jest.advanceTimersToNextTimer();
     });
 
     let dialog = getByRole('alertdialog');
     expect(document.activeElement).toBe(dialog);
 
     let buttons = getAllByRole('button');
-    expect(buttons).toHaveLength(3);
-
     let pendingButton = buttons[1];
-    expect(pendingButton).toHaveTextContent('Secondary');
-    expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
-    let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
-    expect(spinner).toBeVisible();
+    expect(buttons).toHaveLength(3);
+    for (let button of buttons) {
+      expect(button).not.toBeDisabled();
+    }
 
-    await user.click(buttons[0]);
     act(() => {
       jest.runAllTimers();
     });
 
-    expect(dialog).not.toBeVisible();
+    for (let button of buttons) {
+      if (button !== pendingButton) {
+        expect(button).toBeDisabled();
+      }
+    }
+
+    expect(pendingButton).toHaveTextContent('Secondary');
+    expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
+    let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
+    expect(spinner).toBeVisible();
 
     rerender(
       <Provider theme={theme}>
@@ -308,7 +325,12 @@ describe('AlertDialog', function () {
       </Provider>
     );
 
-    expect(queryByRole('dialog')).toBeNull();
+    await user.click(buttons[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(dialog).not.toBeVisible();
     triggerButton = getByRole('button');
     await user.click(triggerButton);
     act(() => {

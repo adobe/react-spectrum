@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Button} from '@react-spectrum/button';
+import {Button, pendingDelay} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
@@ -23,7 +23,7 @@ import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {forwardRef, useContext} from 'react';
+import React, {forwardRef, useContext, useEffect, useState} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
@@ -65,6 +65,24 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     }
   }
 
+  let [disabledByPending, setDisabledByPending] = useState(false);
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    if (pendingAction != null) {
+      // Delay visually disabling other buttons until pending button enters its pending state
+      timeout = setTimeout(() => {
+        setDisabledByPending(true);
+      }, pendingDelay);
+    } else {
+      // Enable dialog buttons when pending action is removed.
+      setDisabledByPending(false);
+    }
+    return () => {
+      // Clean up on unmount or when user clears/changes pendingAction prop before entering pending state.
+      clearTimeout(timeout);
+    };
+  }, [pendingAction]);
+
   return (
     <Dialog
       UNSAFE_style={styleProps.style}
@@ -85,7 +103,8 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
         {cancelLabel &&
           <Button
             variant="secondary"
-            onPress={() => chain(onClose(), onCancel())}
+            isDisabled={disabledByPending}
+            onPress={() => pendingAction == null && chain(onClose(), onCancel())}
             autoFocus={autoFocusButton === 'cancel'}>
             {cancelLabel}
           </Button>
@@ -94,8 +113,8 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
           <Button
             isPending={pendingAction === 'secondary'}
             variant="secondary"
-            onPress={() => chain(onClose(), onSecondaryAction())}
-            isDisabled={isSecondaryActionDisabled}
+            onPress={() => pendingAction == null && chain(onClose(), onSecondaryAction())}
+            isDisabled={isSecondaryActionDisabled || (pendingAction !== 'secondary' && disabledByPending)}
             autoFocus={autoFocusButton === 'secondary'}>
             {secondaryActionLabel}
           </Button>
@@ -103,8 +122,8 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
         <Button
           isPending={pendingAction === 'primary'}
           variant={confirmVariant}
-          onPress={() => chain(onClose(), onPrimaryAction())}
-          isDisabled={isPrimaryActionDisabled}
+          onPress={() => pendingAction == null && chain(onClose(), onPrimaryAction())}
+          isDisabled={isPrimaryActionDisabled || (pendingAction !== 'primary' && disabledByPending)}
           autoFocus={autoFocusButton === 'primary'}>
           {primaryActionLabel}
         </Button>

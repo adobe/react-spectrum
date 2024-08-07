@@ -49,6 +49,8 @@ function disablePendingProps(props) {
   return props;
 }
 
+export const pendingDelay = 1000;
+
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
@@ -89,9 +91,9 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       // Start timer when isPending is set to true.
       timeout = setTimeout(() => {
         setIsProgressVisible(true);
-      }, 1000);
+      }, pendingDelay);
     } else {
-      // Exit loading state when isPending is set to false. */
+      // Exit loading state when isPending is set to false.
       setIsProgressVisible(false);
     }
     return () => {
@@ -122,7 +124,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       }
     }
   } : {
-    // no-op. 
+    // no-op.
     // Not sure why, but TypeScript wouldn't allow to have an empty object `{}`.
     onClick: () => {}
   };
