@@ -1,58 +1,13 @@
 import {addMacroSupport} from './utils/addMacroSupport.js';
 import chalk from 'chalk';
+import {CodemodOptions} from '../../index.js';
 import installPackage from './utils/installPackage.js';
 import logger from './utils/logger.js';
-import {program} from 'commander';
 import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
-const componentOptions = new Set([
-  'Button',
-  'ActionButton',
-  'ToggleButton',
-  'Avatar',
-  'ButtonGroup',
-  'Checkbox',
-  'CheckboxGroup',
-  'Dialog',
-  'DialogTrigger',
-  'Divider',
-  'Form',
-  'IllustratedMessage',
-  'InlineAlert',
-  'Link',
-  'MenuTrigger',
-  'SubmenuTrigger',
-  'Menu',
-  'ActionMenu',
-  'ProgressBar',
-  'ProgressCircle',
-  'Radio',
-  'RadioGroup',
-  'SearchField',
-  'StatusLight',
-  'Switch',
-  'TagGroup',
-  'TextArea',
-  'TextField',
-  'Tooltip',
-  'TooltipTrigger'
-]);
-
-program
-  .name('upgrade-react-spectrum')
-  .description('Upgrade React Spectrum components from v3 to Spectrum 2')
-  .option('-c, --components <components>', `Comma separated list of components to upgrade (i.e. Button,TableView). Options include: ${[...componentOptions].join(', ')}`, (val) => val.split(','))
-  .argument('[path]', 'Path to the files to upgrade', '.')
-  .parse(process.argv);
-
-let {
-  components,
-  path
-} = program.opts();
-
-export async function s1_to_s2() {
+export async function s1_to_s2(options: CodemodOptions) {
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +
@@ -75,12 +30,7 @@ export async function s1_to_s2() {
   await waitForKeypress();
 
   logger.info('Upgrading components...');
-  await transform({
-    components,
-    path,
-    ignorePattern: '**/node_modules/**',
-    parser: 'tsx'
-  });
+  await transform(options);
 
   logger.success('Upgrade complete!');
 
