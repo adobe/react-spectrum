@@ -11,6 +11,7 @@
  */
 
 // needs to be imported first
+// eslint-disable-next-line
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rsp-rules/sort-imports
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
