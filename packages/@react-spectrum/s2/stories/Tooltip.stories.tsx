@@ -25,8 +25,7 @@ const meta: Meta<typeof CombinedTooltip> = {
   tags: ['autodocs'],
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
-  },
-  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center'}}><Story /></div>]
+  }
 };
 
 export default meta;
@@ -80,9 +79,6 @@ export const Example = (args: any) => {
 };
 
 Example.story = {
-  args: {
-    isOpen: true
-  },
   argTypes: {
     isOpen: {
       control: 'select',
@@ -128,9 +124,6 @@ export const LongLabel = (args: any) => {
 };
 
 LongLabel.story = {
-  args: {
-    isOpen: true
-  },
   argTypes: {
     isOpen: {
       control: 'select',
@@ -146,9 +139,6 @@ export const ColorScheme = (args: any) => (
 );
 
 ColorScheme.story = {
-  args: {
-    isOpen: true
-  },
   argTypes: {
     isOpen: {
       control: 'select',
