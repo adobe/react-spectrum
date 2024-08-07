@@ -123,10 +123,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let onKeyDown = (e: KeyboardEvent) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
     if (e.altKey && e.key === 'Tab') {
-      // allowing default behavior for above and below key
-      if (!delegate.getKeyAbove || !delegate.getKeyBelow) {
-        e.preventDefault();
-      }
+      e.preventDefault();
     }
 
     // Keyboard events bubble through portals. Don't handle keyboard events
@@ -167,49 +164,57 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
-          e.preventDefault();
           let nextKey = manager.focusedKey != null
-              ? delegate.getKeyBelow(manager.focusedKey)
+              ? delegate.getKeyBelow?.(manager.focusedKey)
               : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = delegate.getFirstKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       }
       case 'ArrowUp': {
         if (delegate.getKeyAbove) {
-          e.preventDefault();
           let nextKey = manager.focusedKey != null
-              ? delegate.getKeyAbove(manager.focusedKey)
+              ? delegate.getKeyAbove?.(manager.focusedKey)
               : delegate.getLastKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = delegate.getLastKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       }
       case 'ArrowLeft': {
         if (delegate.getKeyLeftOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+          let nextKey = delegate.getKeyLeftOf?.(manager.focusedKey);
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+          }
         }
         break;
       }
       case 'ArrowRight': {
         if (delegate.getKeyRightOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+          let nextKey = delegate.getKeyRightOf?.(manager.focusedKey);
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          }
         }
         break;
       }
@@ -239,16 +244,20 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       case 'PageDown':
         if (delegate.getKeyPageBelow) {
-          e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       case 'PageUp':
         if (delegate.getKeyPageAbove) {
-          e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       case 'a':
