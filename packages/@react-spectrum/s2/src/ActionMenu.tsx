@@ -45,6 +45,7 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
         isDisabled={props.isDisabled}
         autoFocus={props.autoFocus}
         isQuiet={props.isQuiet}
+        styles={props.styles}
         {...buttonProps}>
         <MoreIcon />
       </ActionButton>

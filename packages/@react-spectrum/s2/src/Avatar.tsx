@@ -14,15 +14,18 @@ import {ContextValue, useContextProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {Image} from './Image';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 
-export interface AvatarProps extends StyleProps, DOMProps {
+export interface AvatarProps extends UnsafeStyles, DOMProps {
   /** Text description of the avatar. */
   alt?: string,
   /** The image URL for the avatar. */
-  src?: string
+  src?: string,
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight
 }
 
 export interface AvatarContextProps extends UnsafeStyles, DOMProps {
@@ -37,12 +40,15 @@ export interface AvatarContextProps extends UnsafeStyles, DOMProps {
 const imageStyles = style({
   borderRadius: 'full',
   size: 20,
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  pointerEvents: 'none',
+  userSelect: 'none',
+  flexShrink: 0
 }, getAllowedOverrides({height: true}));
 
-export const AvatarContext = createContext<ContextValue<AvatarContextProps, HTMLImageElement>>({});
+export const AvatarContext = createContext<ContextValue<AvatarContextProps, HTMLDivElement>>({});
 
-function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
+function Avatar(props: AvatarProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   [props, domRef] = useContextProps(props, domRef, AvatarContext);
   let {
@@ -55,12 +61,13 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   const domProps = filterDOMProps(otherProps);
 
   return (
-    <img
+    <Image
       {...domProps}
       ref={domRef}
       alt={alt}
-      style={UNSAFE_style}
-      className={UNSAFE_className + imageStyles(null, props.styles)}
+      UNSAFE_style={UNSAFE_style}
+      UNSAFE_className={UNSAFE_className}
+      styles={imageStyles(null, props.styles)}
       src={src} />
   );
 }

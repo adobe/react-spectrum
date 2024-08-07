@@ -101,7 +101,7 @@ function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} 
 
 const baseSpacing = generateSpacing([
   0,
-  // 2, // spacing-50 !! TODO: should we support this?
+  2, // spacing-50
   4, // spacing-75
   8, // spacing-100
   12, // spacing-200
@@ -513,7 +513,8 @@ export const style = createTheme({
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color')
+      pasteboard: weirdColorToken('background-pasteboard-color'),
+      elevated: weirdColorToken('background-elevated-color')
     }),
     borderColor: createColorProperty({
       ...color,

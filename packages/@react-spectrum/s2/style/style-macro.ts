@@ -224,6 +224,9 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       for (let property of allowedOverrides) {
         if (themePropertyMap.has(property as string)) {
           allowedOverridesSet.add(themePropertyMap.get(property as string)!);
+          // Merge custom properties for self() references too.
+          // TODO: optimize this
+          allowedOverridesSet.add(generateArbitraryValueSelector(`--${themePropertyMap.get(property)}`, true) + '_' + themePropertyMap.get(property as string)!);
         }
       }
 

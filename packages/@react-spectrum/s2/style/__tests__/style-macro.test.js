@@ -42,7 +42,7 @@ describe('style-macro', () => {
       @layer _.a, _.b, _.c, UNSAFE_overrides;
 
       @layer _.b {
-        .A-13alit4b {
+        .A-13alit4c {
           &:first-child {
             margin-top: 0.25rem;
           }
@@ -51,7 +51,7 @@ describe('style-macro', () => {
 
       @layer _.c.e {
         @media (min-width: 1024px) {
-          .A-13alit4ec {
+          .A-13alit4ed {
             &:first-child {
               margin-top: 0.5rem;
             }
@@ -61,7 +61,7 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" . A-13alit4b A-13alit4ec"');
+    expect(js).toMatchInlineSnapshot('" . A-13alit4c A-13alit4ed"');
   });
 
   it('should support self references', () => {
@@ -102,7 +102,7 @@ describe('style-macro', () => {
         }
 
 
-        .DH {
+        .DI {
           padding-inline-end: calc(var(--k, var(--o)) * 3 / 8);
         }
 
@@ -117,7 +117,7 @@ describe('style-macro', () => {
         }
 
 
-        .-_375tnm_C-H {
+        .-_375tnm_C-I {
           --C: calc(var(--k, var(--o)) * 3 / 8);
         }
       }

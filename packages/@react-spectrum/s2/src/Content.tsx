@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {createContext, ForwardedRef, forwardRef, HTMLAttributes, ImgHTMLAttributes} from 'react';
+import {createContext, ForwardedRef, forwardRef, HTMLAttributes, ImgHTMLAttributes, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
-import {HeadingProps, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, Text as TextAria, useContextProps} from 'react-aria-components';
+import {HeadingProps, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, Text as TextAria, useContextProps} from 'react-aria-components';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: export these types from RAC?
@@ -72,10 +72,12 @@ export const TextContext = createContext<ContextValue<HTMLAttributes<HTMLElement
 
 function Text(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextContext);
+  let racContext = useContext(RACTextContext);
   if (props.hidden) {
     return null;
   }
-  return <TextAria {...props} ref={ref} />;
+  let slot = props.slot && racContext && 'slots' in racContext && !racContext.slots?.[props.slot] ? undefined : props.slot;
+  return <TextAria {...props} slot={slot} ref={ref} />;
 }
 
 const _Text = forwardRef(Text);
@@ -109,24 +111,3 @@ const _Footer = forwardRef(Footer);
 export {_Footer as Footer};
 
 export const ImageContext = createContext<ContextValue<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>>({});
-
-function Image(props: ImgHTMLAttributes<HTMLImageElement>, ref: DOMRef<HTMLImageElement>) {
-  let domRef = useDOMRef(ref);
-  [props, domRef] = useContextProps(props, domRef, ImageContext);
-  if (props.hidden) {
-    return null;
-  }
-
-  if (props.alt == null) {
-    console.warn(
-      'The `alt` prop was not provided to an image. ' +
-      'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
-      'is decorative or redundant with displayed text and should not be announced by screen readers.'
-    );
-  }
-
-  return <img alt={props.alt} {...props} ref={domRef} />;
-}
-
-const _Image = forwardRef(Image);
-export {_Image as Image};

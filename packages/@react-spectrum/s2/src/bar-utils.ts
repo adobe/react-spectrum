@@ -15,26 +15,26 @@ import {centerPadding} from './style-utils' with {type: 'macro'};
 export const bar = () => ({
   position: 'relative',
   display: 'grid',
+  gridTemplateAreas: ['label value'],
   gridTemplateColumns: '1fr auto',
-  gridTemplateAreas: [
-    'label value',
-    'bar bar'
-  ],
+  rowGap: 4,
   isolation: 'isolate',
   minWidth: 48, // progress-bar-minimum-width
   maxWidth: '[768px]', // progress-bar-maximum-width
-  minHeight: 'control',
+  '--min-height': {
+    type: 'minHeight',
+    value: 'control'
+  },
   '--field-gap': {
     type: 'rowGap',
-    value: centerPadding()
+    value: centerPadding('var(--min-height)')
   },
   columnGap: 12 // spacing-200
 } as const);
 
 export const track = () => ({
-  gridArea: 'bar',
   overflow: 'hidden',
-  marginTop: 4,
+  gridColumnEnd: 'span 2',
   borderRadius: 'full',
   backgroundColor: {
     default: 'gray-300',
