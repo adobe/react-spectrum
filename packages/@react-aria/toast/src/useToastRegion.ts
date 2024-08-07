@@ -1,10 +1,10 @@
-import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useEffect, useRef} from 'react';
 import {ToastState} from '@react-stately/toast';
+import {useEffect, useRef} from 'react';
 import {useLandmark} from '@react-aria/landmark';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -25,7 +25,7 @@ export interface ToastRegionAria {
  * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement>): ToastRegionAria {
+export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement | null>): ToastRegionAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
   let {landmarkProps} = useLandmark({
     role: 'region',

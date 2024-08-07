@@ -11,11 +11,10 @@
  */
 
 import {chain} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
@@ -45,7 +44,7 @@ export interface GridRowAria extends SelectableItemStates {
  * @param props - Props for the row.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S, ref: RefObject<FocusableElement>): GridRowAria {
+export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S, ref: RefObject<FocusableElement | null>): GridRowAria {
   let {
     node,
     isVirtualized,

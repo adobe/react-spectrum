@@ -18,12 +18,13 @@ import {
   DOMProps,
   Key,
   KeyboardDelegate,
-  MultipleSelection
+  LayoutDelegate,
+  MultipleSelection,
+  RefObject
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
@@ -56,6 +57,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    */
   keyboardDelegate?: KeyboardDelegate,
   /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate,
+  /**
    * Whether focus should wrap around when the end/start is reached.
    * @default false
    */
@@ -82,10 +89,11 @@ export interface GridListAria {
  * @param state - State for the list, as returned by `useListState`.
  * @param ref - The ref attached to the list element.
  */
-export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): GridListAria {
+export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListAria {
   let {
     isVirtualized,
     keyboardDelegate,
+    layoutDelegate,
     onAction,
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow'
@@ -100,7 +108,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref,
-    keyboardDelegate: keyboardDelegate,
+    keyboardDelegate,
+    layoutDelegate,
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,

@@ -12,11 +12,10 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react-aria/gridlist';
-import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid} from '@react-aria/utils';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -42,7 +41,7 @@ export interface TreeGridListItemAria extends GridListItemAria {
  * @param state - State of the parent list, as returned by `useTreeState`.
  * @param ref - The ref attached to the row element.
  */
-export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement>): TreeGridListItemAria {
+export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement | null>): TreeGridListItemAria {
   let {node} = props;
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;

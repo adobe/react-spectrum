@@ -37,12 +37,12 @@ import {Size} from './Size';
  * to render elements for each layout info. The virtualizer manages a set of {@link ReusableView} objects,
  * which are reused as the user scrolls by swapping their content with cached elements returned by the delegate.
  */
-export class Virtualizer<T extends object, V, W> {
+export class Virtualizer<T extends object, V> {
   /**
    * The virtualizer delegate. The delegate is used by the virtualizer
    * to create and configure views.
    */
-  delegate: VirtualizerDelegate<T, V, W>;
+  delegate: VirtualizerDelegate<T, V>;
 
   /** The current content of the virtualizer. */
   readonly collection: Collection<T>;
@@ -62,7 +62,7 @@ export class Virtualizer<T extends object, V, W> {
   private _invalidationContext: InvalidationContext | null;
   private _overscanManager: OverscanManager;
 
-  constructor(delegate: VirtualizerDelegate<T, V, W>) {
+  constructor(delegate: VirtualizerDelegate<T, V>) {
     this.delegate = delegate;
     this.contentSize = new Size;
     this.visibleRect = new Rect;
@@ -101,8 +101,12 @@ export class Virtualizer<T extends object, V, W> {
     return false;
   }
 
+  private getParentView(layoutInfo: LayoutInfo): ReusableView<T, V> | undefined {
+    return layoutInfo.parentKey != null ? this._visibleViews.get(layoutInfo.parentKey) : this._rootView;
+  }
+
   private getReusableView(layoutInfo: LayoutInfo): ReusableView<T, V> {
-    let parentView = layoutInfo.parentKey != null ? this._visibleViews.get(layoutInfo.parentKey) : this._rootView;
+    let parentView = this.getParentView(layoutInfo)!;
     let view = parentView.getReusableView(layoutInfo.type);
     view.layoutInfo = layoutInfo;
     this._renderView(view);
@@ -147,8 +151,8 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   private relayout(context: InvalidationContext = {}) {
-    // Validate the layout
-    this.layout.validate(context);
+    // Update the layout
+    this.layout.update(context);
     (this as Mutable<this>).contentSize = this.layout.getContentSize();
 
     // Constrain scroll position.
@@ -194,7 +198,9 @@ export class Virtualizer<T extends object, V, W> {
 
     let removed = new Set<ReusableView<T, V>>();
     for (let [key, view] of this._visibleViews) {
-      if (!visibleLayoutInfos.has(key)) {
+      let layoutInfo = visibleLayoutInfos.get(key);
+      // If a view's parent changed, treat it as a delete and re-create in the new parent.
+      if (!layoutInfo || view.parent !== this.getParentView(layoutInfo)) {
         this._visibleViews.delete(key);
         view.parent.reuseChild(view);
         removed.add(view); // Defer removing in case we reuse this view.
@@ -242,7 +248,7 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   /** Performs layout and updates visible views as needed. */
-  render(opts: VirtualizerRenderOptions<T>): W[] {
+  render(opts: VirtualizerRenderOptions<T>): ReusableView<T, V>[] {
     let mutableThis: Mutable<this> = this;
     let needsLayout = false;
     let offsetChanged = false;
@@ -315,21 +321,11 @@ export class Virtualizer<T extends object, V, W> {
       this.updateSubviews();
     }
 
-    return this.getChildren(null);
+    return Array.from(this._rootView.children);
   }
 
-  getChildren(key: Key | null): W[] {
-    let parent = key == null ? this._rootView : this._visibleViews.get(key);
-    let renderChildren = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]) => views.map(view => {
-      return this.delegate.renderWrapper(
-        parent,
-        view,
-        view.children ? Array.from(view.children) : [],
-        childViews => renderChildren(view, childViews)
-      );
-    });
-
-    return renderChildren(parent, Array.from(parent.children));
+  getVisibleView(key: Key): ReusableView<T, V> | undefined {
+    return this._visibleViews.get(key);
   }
 
   invalidate(context: InvalidationContext) {

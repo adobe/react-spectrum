@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
-import {RefObject} from 'react';
+import {Key, RefObject} from '@react-types/shared';
 
 export interface DragDropEvent {
   /** The x coordinate of the event, relative to the target element. */
@@ -281,7 +280,7 @@ export interface DraggableCollectionProps {
   /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */
-  preview?: RefObject<DragPreviewRenderer>,
+  preview?: RefObject<DragPreviewRenderer | null>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[]
 }

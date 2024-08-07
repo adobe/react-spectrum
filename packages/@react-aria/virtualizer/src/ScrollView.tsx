@@ -15,6 +15,7 @@ import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
 import React, {
   CSSProperties,
+  ForwardedRef,
   HTMLAttributes,
   ReactNode,
   RefObject,
@@ -24,35 +25,46 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
   onVisibleRectChange: (rect: Rect) => void,
-  children: ReactNode,
+  children?: ReactNode,
   innerStyle?: CSSProperties,
-  sizeToFit?: 'width' | 'height',
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
+function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
+  ref = useObjectRef(ref);
+  let {scrollViewProps, contentProps} = useScrollView(props, ref);
+
+  return (
+    <div role="presentation" {...scrollViewProps} ref={ref}>
+      <div role="presentation" {...contentProps}>
+        {props.children}
+      </div>
+    </div>
+  );
+}
+
+const ScrollViewForwardRef = React.forwardRef(ScrollView);
+export {ScrollViewForwardRef as ScrollView};
+
+export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>) {
   let {
     contentSize,
     onVisibleRectChange,
-    children,
     innerStyle,
-    sizeToFit,
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
     ...otherProps
   } = props;
 
-  let defaultRef = useRef();
-  ref = ref || defaultRef;
   let state = useRef({
     scrollTop: 0,
     scrollLeft: 0,
@@ -88,6 +100,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         state.isScrolling = true;
         setScrolling(true);
 
+        // Pause typekit MutationObserver during scrolling.
+        window.dispatchEvent(new Event('tk.disconnect-observer'));
         if (onScrollStart) {
           onScrollStart();
         }
@@ -106,6 +120,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
           setScrolling(false);
           state.scrollTimeout = null;
 
+          window.dispatchEvent(new Event('tk.connect-observer'));
           if (onScrollEnd) {
             onScrollEnd();
           }
@@ -114,10 +129,16 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     });
   }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
+  // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
+  useEvent(ref, 'scroll', onScroll);
+
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
       clearTimeout(state.scrollTimeout);
+      if (state.isScrolling) {
+        window.dispatchEvent(new Event('tk.connect-observer'));
+      }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -135,14 +156,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     let clientHeight = dom.clientHeight;
     let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
     let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
-
-    if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
-      if (sizeToFit === 'width') {
-        w = Math.min(w, contentSize.width);
-      } else if (sizeToFit === 'height') {
-        h = Math.min(h, contentSize.height);
-      }
-    }
 
     if (state.width !== w || state.height !== h) {
       state.width = w;
@@ -166,16 +179,29 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     }
   });
 
+  let didUpdateSize = useRef(false);
   useLayoutEffect(() => {
-    // React doesn't allow flushSync inside effects so pass an identity function instead.
-    // This only happens on initial render. The resize observer will also call updateSize
-    // once it initializes, but we need earlier initialization in a layout effect to avoid
-    // a flash of missing content.
-    updateSize(fn => fn());
+    // React doesn't allow flushSync inside effects, so queue a microtask.
+    // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
+    queueMicrotask(() => {
+      if (!didUpdateSize.current) {
+        didUpdateSize.current = true;
+        updateSize(flushSync);
+      }
+    });
+  }, [updateSize]);
+  useEffect(() => {
+    if (!didUpdateSize.current) {
+      // If useEffect ran before the above microtask, we are in a synchronous render (e.g. act).
+      // Update the size here so that you don't need to mock timers in tests.
+      didUpdateSize.current = true;
+      updateSize(fn => fn());
+    }
   }, [updateSize]);
   let onResize = useCallback(() => {
     updateSize(flushSync);
   }, [updateSize]);
+
   // Watch border-box instead of of content-box so that we don't go into
   // an infinite loop when scrollbars appear or disappear.
   useResizeObserver({ref, box: 'border-box', onResize});
@@ -207,14 +233,14 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     ...innerStyle
   };
 
-  return (
-    <div role="presentation" {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={innerStyle}>
-        {children}
-      </div>
-    </div>
-  );
+  return {
+    scrollViewProps: {
+      ...otherProps,
+      style
+    },
+    contentProps: {
+      role: 'presentation',
+      style: innerStyle
+    }
+  };
 }
-
-const ScrollViewForwardRef = React.forwardRef(ScrollView);
-export {ScrollViewForwardRef as ScrollView};

@@ -13,9 +13,9 @@
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
-import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent} from '@react-types/shared';
-import {RefObject, useCallback, useRef} from 'react';
+import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
 import type {SubmenuTriggerState} from '@react-stately/menu';
+import {useCallback, useRef} from 'react';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
@@ -31,9 +31,9 @@ export interface AriaSubmenuTriggerProps {
   /** The type of the contents that the submenu trigger opens. */
   type?: 'dialog' | 'menu',
   /** Ref of the menu that contains the submenu trigger. */
-  parentMenuRef: RefObject<HTMLElement>,
+  parentMenuRef: RefObject<HTMLElement | null>,
   /** Ref of the submenu opened by the submenu trigger. */
-  submenuRef: RefObject<HTMLElement>,
+  submenuRef: RefObject<HTMLElement | null>,
   /**
    * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
    * @default 200
@@ -66,12 +66,12 @@ export interface SubmenuTriggerAria<T> {
  * @param state - State for the submenu trigger.
  * @param ref - Ref to the submenu trigger element.
  */
-export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
+export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement | null>): SubmenuTriggerAria<T> {
   let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
-  let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+  let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let cancelOpenTimeout = useCallback(() => {
     if (openTimeout.current) {
       clearTimeout(openTimeout.current);

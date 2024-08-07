@@ -12,13 +12,13 @@
 
 import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, StyleProps} from '@react-types/shared';
+import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
 
@@ -47,7 +47,7 @@ interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
 interface ArrowProps {
   arrowProps: PopoverAria['arrowProps'],
   isLandscape: boolean,
-  arrowRef?: RefObject<SVGSVGElement>,
+  arrowRef?: RefObject<SVGSVGElement | null>,
   primary: number,
   secondary: number,
   borderDiagonal: number
@@ -85,7 +85,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
+const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement | null>) => {
   let {
     children,
     isOpen,
@@ -166,7 +166,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   );
 });
 
-function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement>) {
+function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement | null>) {
   let [borderRadius, setBorderRadius] = useState(0);
   useLayoutEffect(() => {
     if (popoverRef.current) {

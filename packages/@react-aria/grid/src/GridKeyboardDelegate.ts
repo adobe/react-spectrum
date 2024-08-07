@@ -10,20 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, DisabledBehavior, Key, KeyboardDelegate, Node} from '@react-types/shared';
+import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, RefObject, Size} from '@react-types/shared';
+import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
-import {Layout, Rect} from '@react-stately/virtualizer';
-import {RefObject} from 'react';
 
-export interface GridKeyboardDelegateOptions<T, C> {
+export interface GridKeyboardDelegateOptions<C> {
   collection: C,
   disabledKeys: Set<Key>,
   disabledBehavior?: DisabledBehavior,
-  ref?: RefObject<HTMLElement>,
+  ref?: RefObject<HTMLElement | null>,
   direction: Direction,
   collator?: Intl.Collator,
-  layout?: Layout<Node<T>>,
+  layoutDelegate?: LayoutDelegate,
+  /** @deprecated - Use layoutDelegate instead. */
+  layout?: DeprecatedLayout,
   focusMode?: 'row' | 'cell'
 }
 
@@ -31,20 +32,18 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   collection: C;
   protected disabledKeys: Set<Key>;
   protected disabledBehavior: DisabledBehavior;
-  protected ref: RefObject<HTMLElement>;
   protected direction: Direction;
   protected collator: Intl.Collator;
-  protected layout: Layout<Node<T>>;
+  protected layoutDelegate: LayoutDelegate;
   protected focusMode;
 
-  constructor(options: GridKeyboardDelegateOptions<T, C>) {
+  constructor(options: GridKeyboardDelegateOptions<C>) {
     this.collection = options.collection;
     this.disabledKeys = options.disabledKeys;
     this.disabledBehavior = options.disabledBehavior || 'all';
-    this.ref = options.ref;
     this.direction = options.direction;
     this.collator = options.collator;
-    this.layout = options.layout;
+    this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref));
     this.focusMode = options.focusMode || 'row';
   }
 
@@ -102,7 +101,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key);
+    key = this.findNextKey(key, (item => item.type === 'item'));
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -129,7 +128,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the previous item
-    key = this.findPreviousKey(key);
+    key = this.findPreviousKey(key, item => item.type === 'item');
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -233,7 +232,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the first row
-    key = this.findNextKey();
+    key = this.findNextKey(null, item => item.type === 'item');
 
     // If global flag is set (or if focus mode is cell), focus the first cell in the first row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -263,7 +262,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the last row
-    key = this.findPreviousKey();
+    key = this.findPreviousKey(null, item => item.type === 'item');
 
     // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -276,72 +275,41 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
-  }
-
-  private getItemRect(key: Key): Rect {
-    if (this.layout) {
-      return this.layout.getLayoutInfo(key)?.rect;
-    }
-
-    let item = this.getItem(key);
-    if (item) {
-      return new Rect(item.offsetLeft, item.offsetTop, item.offsetWidth, item.offsetHeight);
-    }
-  }
-
-  private getPageHeight(): number {
-    if (this.layout) {
-      return this.layout.virtualizer?.visibleRect.height;
-    }
-
-    return this.ref?.current?.offsetHeight;
-  }
-
-  private getContentHeight(): number {
-    if (this.layout) {
-      return this.layout.getContentSize().height;
-    }
-
-    return this.ref?.current?.scrollHeight;
-  }
-
   getKeyPageAbove(key: Key) {
-    let itemRect = this.getItemRect(key);
+    let itemRect = this.layoutDelegate.getItemRect(key);
     if (!itemRect) {
       return null;
     }
 
-    let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
+    let pageY = Math.max(0, itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height);
 
     while (itemRect && itemRect.y > pageY) {
       key = this.getKeyAbove(key);
-      itemRect = this.getItemRect(key);
+      itemRect = this.layoutDelegate.getItemRect(key);
     }
 
     return key;
   }
 
   getKeyPageBelow(key: Key) {
-    let itemRect = this.getItemRect(key);
+    let itemRect = this.layoutDelegate.getItemRect(key);
 
     if (!itemRect) {
       return null;
     }
 
-    let pageHeight = this.getPageHeight();
-    let pageY = Math.min(this.getContentHeight(), itemRect.y + pageHeight);
+    let pageHeight = this.layoutDelegate.getVisibleRect().height;
+    let pageY = Math.min(this.layoutDelegate.getContentSize().height, itemRect.y + pageHeight);
 
-    while (itemRect && itemRect.maxY < pageY) {
+    while (itemRect && (itemRect.y + itemRect.height) < pageY) {
       let nextKey = this.getKeyBelow(key);
-      itemRect = this.getItemRect(nextKey);
-
-      // Guard against case where maxY of the last key is barely less than pageY due to rounding
-      // and thus it attempts to set key to null
-      if (nextKey != null) {
-        key = nextKey;
+      // If nextKey is undefined, we've reached the last row already
+      if (nextKey == null) {
+        break;
       }
+
+      itemRect = this.layoutDelegate.getItemRect(nextKey);
+      key = nextKey;
     }
 
     return key;
@@ -377,7 +345,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         }
       }
 
-      key = this.findNextKey(key);
+      key = this.findNextKey(key, item => item.type === 'item');
 
       // Wrap around when reaching the end of the collection
       if (key == null && !hasWrapped) {
@@ -387,5 +355,40 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     return null;
+  }
+}
+
+/* Backward compatibility for old Virtualizer Layout interface. */
+interface DeprecatedLayout {
+  getLayoutInfo(key: Key): DeprecatedLayoutInfo,
+  getContentSize(): Size,
+  virtualizer: DeprecatedVirtualizer
+}
+
+interface DeprecatedLayoutInfo {
+  rect: Rect
+}
+
+interface DeprecatedVirtualizer {
+  visibleRect: Rect
+}
+
+class DeprecatedLayoutDelegate implements LayoutDelegate {
+  layout: DeprecatedLayout;
+
+  constructor(layout: DeprecatedLayout) {
+    this.layout = layout;
+  }
+
+  getContentSize(): Size {
+    return this.layout.getContentSize();
+  }
+
+  getItemRect(key: Key): Rect | null {
+    return this.layout.getLayoutInfo(key)?.rect || null;
+  }
+
+  getVisibleRect(): Rect {
+    return this.layout.virtualizer.visibleRect;
   }
 }

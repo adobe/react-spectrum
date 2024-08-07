@@ -137,6 +137,6 @@ export declare function createLocalizedStringDictionary(packages: string[]): Loc
 `);
 }
 
-build('{@react-aria,@react-stately,@react-spectrum}/*', '@adobe/react-spectrum');
+build('{@react-aria/*,@react-stately/*,@react-spectrum/*,react-aria-components}', '@adobe/react-spectrum');
 build('{@react-aria/*,@react-stately/*,react-aria-components}', 'react-aria-components');
 build('{@react-aria,@react-stately}/*', 'react-aria');

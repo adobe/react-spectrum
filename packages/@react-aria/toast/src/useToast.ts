@@ -11,11 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {RefObject, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -42,7 +42,7 @@ export interface ToastAria {
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
+export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement | null>): ToastAria {
   let {
     key,
     timer,

@@ -12,11 +12,11 @@
 
 import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
+import {createPortal} from 'react-dom';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
@@ -3268,13 +3268,9 @@ describe('usePress', function () {
     });
 
     const IframeExample = (props) => {
-      React.useEffect(() => {
-        ReactDOMRender(<Example
-          {...props}
-          data-testid="example" />, iframeRoot);
-      }, [props]);
-
-      return null;
+      return createPortal(<Example
+        {...props}
+        data-testid="example" />, iframeRoot);
     };
 
     describe('Pointer events', () => {
