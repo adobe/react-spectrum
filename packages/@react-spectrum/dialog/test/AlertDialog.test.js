@@ -253,6 +253,12 @@ describe('AlertDialog', function () {
     let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
     expect(spinner).toBeVisible();
 
+    await user.keyboard('{Escape}');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).toBeVisible();
+
     rerender(
       <Provider theme={theme}>
         <PendingAlert />
@@ -278,6 +284,12 @@ describe('AlertDialog', function () {
     pendingButton = buttons[2];
     expect(pendingButton).not.toHaveAttribute('aria-disabled', 'true');
     expect(within(pendingButton).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+
+    await user.keyboard('{Escape}');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).not.toBeVisible();
   });
 
   it('render the secondary button as pending', async function () {
@@ -318,6 +330,11 @@ describe('AlertDialog', function () {
     expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
     let spinner = within(pendingButton).queryByRole('progressbar', {hidden: true});
     expect(spinner).toBeVisible();
+    await user.keyboard('{Escape}');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).toBeVisible();
 
     rerender(
       <Provider theme={theme}>
@@ -344,5 +361,11 @@ describe('AlertDialog', function () {
     pendingButton = buttons[1];
     expect(pendingButton).not.toHaveAttribute('aria-disabled', 'true');
     expect(within(pendingButton).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+
+    await user.keyboard('{Escape}');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(dialog).not.toBeVisible();
   });
 });

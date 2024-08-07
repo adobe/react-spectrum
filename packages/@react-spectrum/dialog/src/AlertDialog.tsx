@@ -13,7 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, pendingDelay} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {chain} from '@react-aria/utils';
+import {chain, useEvent} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
@@ -23,7 +23,7 @@ import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {forwardRef, useContext, useEffect, useState} from 'react';
+import React, {forwardRef, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
@@ -82,6 +82,14 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       clearTimeout(timeout);
     };
   }, [pendingAction]);
+
+  // Prevent Escape from closing the Dialog until pending action is finished
+  let windowRef = useRef(typeof window !== 'undefined' ? window : null);
+  useEvent(windowRef, 'keydown', e => {
+    if (e.key === 'Escape' && pendingAction != null) {
+      e.stopPropagation();
+    }
+  }, {capture: true});
 
   return (
     <Dialog

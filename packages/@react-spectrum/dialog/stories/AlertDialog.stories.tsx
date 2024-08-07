@@ -13,6 +13,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {AlertDialog, DialogTrigger} from '../';
 import React from 'react';
+import {SearchField} from '@adobe/react-spectrum';
 import {singleParagraph} from './Dialog.stories';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 
@@ -158,12 +159,17 @@ function renderAlert({...props}: SpectrumAlertDialogProps) {
   );
 }
 
-// TODO: should the button be immediately pending? Right now there is a delay
 export const WithPending = {
   render: renderAlert,
   args: {
     ...Confirmation.args,
-    secondaryActionLabel: 'Secondary button'
+    secondaryActionLabel: 'Secondary button',
+    children: (
+      <>
+        {singleParagraph()}
+        <SearchField label="Search" />
+      </>
+    )
   },
   argTypes: {
     pendingAction: {
