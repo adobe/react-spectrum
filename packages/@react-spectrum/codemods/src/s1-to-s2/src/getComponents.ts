@@ -1,12 +1,13 @@
 import {parse} from '@babel/parser';
-import path from 'path';
+const path = require('path');
 import {readFileSync} from 'fs';
 import traverse from '@babel/traverse';
 
 export function getComponents(): Set<string> {
   // Determine list of available components in S2 from index.ts
   let availableComponents = new Set<string>();
-  const indexPath = process.env.NODE_ENV === 'test' ? path.resolve(__dirname, '../../../../../@react-spectrum/s2/src/index.ts') : require.resolve('@react-spectrum/s2/src/index.ts');
+  const packagePath = require.resolve('@react-spectrum/s2');
+  const indexPath = path.join(path.dirname(packagePath), 'src/index.ts');
   let index = parse(readFileSync(indexPath, 'utf8'), {sourceType: 'module', plugins: ['typescript']});
   traverse(index, {
     ExportNamedDeclaration(path) {
