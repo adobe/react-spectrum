@@ -18,14 +18,14 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   private firstKey: Key;
   private lastKey: Key;
 
-  constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: 'all' | Set<Key>} = {}) {
+  constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: Set<Key>} = {}) {
     this.iterable = nodes;
     expandedKeys = expandedKeys || new Set();
 
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
 
-      if (node.childNodes && (node.type === 'section' || (expandedKeys === 'all' || expandedKeys.has(node.key)))) {
+      if (node.childNodes && (node.type === 'section' || expandedKeys.has(node.key))) {
         for (let child of node.childNodes) {
           visit(child);
         }

@@ -75,6 +75,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let {
     value,
     defaultValue,
+    colorSpace,
     xChannel,
     yChannel,
     onChange,
@@ -84,8 +85,16 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   if (!value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
   }
+  if (value) {
+    value = normalizeColor(value);
+  }
+  if (defaultValue) {
+    defaultValue = normalizeColor(defaultValue);
+  }
 
-  let [color, setColorState] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
+  // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we assign a default
+  let [colorValue, setColorState] = useControlledState<Color>(value as Color, defaultValue as Color, onChange);
+  let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
   let valueRef = useRef(color);
   let setColor = (color: Color) => {
     valueRef.current = color;
@@ -139,7 +148,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     setColorFromPoint(x: number, y: number) {
       let newXValue = minValueX + clamp(x, 0, 1) * (maxValueX - minValueX);
       let newYValue = minValueY + (1 - clamp(y, 0, 1)) * (maxValueY - minValueY);
-      let newColor:Color;
+      let newColor: Color | undefined;
       if (newXValue !== xValue) {
         // Round new value to multiple of step, clamp value between min and max
         newXValue = snapValueToStep(newXValue, minValueX, maxValueX, stepX);
@@ -159,16 +168,16 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let y = 1 - (yValue - minValueY) / (maxValueY - minValueY);
       return {x, y};
     },
-    incrementX(stepSize) {
+    incrementX(stepSize = 1) {
       setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepX));
     },
-    incrementY(stepSize) {
+    incrementY(stepSize = 1) {
       setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepY));
     },
-    decrementX(stepSize) {
+    decrementX(stepSize = 1) {
       setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepX));
     },
-    decrementY(stepSize) {
+    decrementY(stepSize = 1) {
       setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, stepY));
     },
     setDragging(isDragging) {

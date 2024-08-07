@@ -17,7 +17,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
-  parent?: LayoutInfo,
+  parent?: LayoutInfo | null,
   className?: string,
   children: ReactNode
 }
@@ -25,7 +25,7 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
 export function VirtualizerItem(props: VirtualizerItemProps) {
   let {className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
-  let ref = useRef();
+  let ref = useRef(undefined);
   useVirtualizerItem({
     layoutInfo,
     virtualizer,
@@ -75,10 +75,6 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
     display: layoutInfo.isSticky ? 'inline-block' : undefined,
     overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
-    transition: 'all',
-    WebkitTransition: 'all',
-    WebkitTransitionDuration: 'inherit',
-    transitionDuration: 'inherit',
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,

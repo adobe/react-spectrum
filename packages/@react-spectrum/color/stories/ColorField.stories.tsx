@@ -90,6 +90,14 @@ export default {
     },
     width: {
       control: 'text'
+    },
+    colorSpace: {
+      control: 'select',
+      options: ['rgb', 'hsl', 'hsb']
+    },
+    channel: {
+      control: 'select',
+      options: [null, 'red', 'green', 'blue', 'hue', 'saturation', 'lightness', 'brightness']
     }
   }
 } as ComponentMeta<typeof ColorField>;
@@ -143,7 +151,7 @@ export const ContextualHelpStory: ColorFieldStory = {
 };
 
 function ControlledColorField(props: SpectrumColorFieldProps) {
-  let [color, setColor] = useState<string | Color | null | undefined>(props.value);
+  let [color, setColor] = useState<string | Color | null | undefined>(props.value || '#000000');
   let onChange = (color: Color | null) => {
     setColor(color);
     if (props.onChange) { props.onChange(color); }

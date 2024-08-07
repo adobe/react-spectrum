@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
 function Example({triggerTop = 250, ...props}) {
-  let targetRef = useRef();
-  let containerRef = useRef();
-  let overlayRef = useRef();
+  let targetRef = useRef(undefined);
+  let containerRef = useRef(undefined);
+  let overlayRef = useRef(undefined);
   let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, overlayRef, arrowSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (

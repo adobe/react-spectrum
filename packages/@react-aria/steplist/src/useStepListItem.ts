@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject} from 'react';
-import {Key} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
+import {Key, RefObject} from '@react-types/shared';
 import {StepListState} from '@react-stately/steplist';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -28,7 +28,7 @@ export interface StepListItemAria {
   stepStateText?: String
 }
 
-export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement>): StepListItemAria {
+export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement | null>): StepListItemAria {
   const {key} = props;
   let {selectionManager: manager, selectedKey} = state;
 

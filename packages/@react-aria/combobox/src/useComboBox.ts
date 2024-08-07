@@ -15,10 +15,10 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent, ValidationResult} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -30,15 +30,21 @@ import {useTextField} from '@react-aria/textfield';
 
 export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the list box popover. */
-  popoverRef: RefObject<Element>,
+  popoverRef: RefObject<Element | null>,
   /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
+  listBoxRef: RefObject<HTMLElement | null>,
   /** The ref for the optional list box popup trigger button.  */
-  buttonRef?: RefObject<Element>,
+  buttonRef?: RefObject<Element | null>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate
 }
 
 export interface ComboBoxAria<T> extends ValidationResult {
@@ -69,6 +75,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     inputRef,
     listBoxRef,
     keyboardDelegate,
+    layoutDelegate,
     // completionMode = 'suggest',
     shouldFocusWrap,
     isReadOnly,
@@ -90,10 +97,16 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
-  let delegate = useMemo(() =>
-    keyboardDelegate ||
-    new ListKeyboardDelegate(state.collection, state.disabledKeys, listBoxRef)
-  , [keyboardDelegate, state.collection, state.disabledKeys, listBoxRef]);
+  let {collection} = state;
+  let {disabledKeys} = state.selectionManager;
+  let delegate = useMemo(() => (
+    keyboardDelegate || new ListKeyboardDelegate({
+      collection,
+      disabledKeys,
+      ref: listBoxRef,
+      layoutDelegate
+    })
+  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, listBoxRef]);
 
   // Use useSelectableCollection to get the keyboard handlers to apply to the textfield
   let {collectionProps} = useSelectableCollection({
@@ -111,6 +124,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
     switch (e.key) {
       case 'Enter':
       case 'Tab':
@@ -124,7 +140,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
           if (e.key === 'Enter') {
             let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
-              router.open(item, e);
+              let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
           }
 
@@ -329,6 +346,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       ...menuTriggerProps,
       ...triggerLabelProps,
       excludeFromTabOrder: true,
+      // @ts-ignore - undocumented
+      preventFocusOnPress: true,
       onPress,
       onPressStart,
       isDisabled: isDisabled || isReadOnly

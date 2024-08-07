@@ -1,8 +1,8 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
 import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
-import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useKeyboard, useMove} from '@react-aria/interactions';
@@ -29,9 +29,9 @@ export interface SliderThumbAria {
 
 export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
-  trackRef: RefObject<Element>,
+  trackRef: RefObject<Element | null>,
   /** A ref to the thumb input element. */
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement | null>
 }
 
 /**

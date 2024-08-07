@@ -105,9 +105,10 @@ export function getRangeValidationResult(
 
   let result = mergeValidation(startValidation, endValidation);
   if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') || dictionary;
     result = mergeValidation(result, {
       isInvalid: true,
-      validationErrors: [dictionary.getStringForLocale('rangeReversed', getLocale())],
+      validationErrors: [strings.getStringForLocale('rangeReversed', getLocale())],
       validationDetails: {
         ...VALID_VALIDITY_STATE,
         rangeUnderflow: true,
@@ -121,7 +122,7 @@ export function getRangeValidationResult(
 }
 
 export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;
-interface FormatterOptions {
+export interface FormatterOptions {
   timeZone?: string,
   hideTimeZone?: boolean,
   granularity?: DatePickerProps<any>['granularity'],

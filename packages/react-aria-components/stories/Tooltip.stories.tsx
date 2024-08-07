@@ -31,7 +31,7 @@ export const TooltipExample = () => (
       }}>
       <OverlayArrow style={{transform: 'translateX(-50%)'}}>
         <svg width="8" height="8" style={{display: 'block'}}>
-          <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+          <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
         </svg>
       </OverlayArrow>
       I am a tooltip
@@ -40,9 +40,18 @@ export const TooltipExample = () => (
 );
 
 export const TooltipArrowBoundaryOffsetExample = {
+  args: {
+    topLeft: 25,
+    topRight: 25,
+    leftTop: 15,
+    leftBottom: 15,
+    rightTop: 15,
+    rightBottom: 15,
+    bottomLeft: 25,
+    bottomRight: 25
+  },
   argTypes: {
     topLeft: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -50,7 +59,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     topRight: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -58,7 +66,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     leftTop: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -66,7 +73,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     leftBotton: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -74,7 +80,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     rightTop: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -82,7 +87,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     rightBottom: {
-      defaultValue: 15,
       control: {
         type: 'range',
         min: -100,
@@ -90,7 +94,6 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     bottomLeft: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
@@ -98,15 +101,14 @@ export const TooltipArrowBoundaryOffsetExample = {
       }
     },
     bottomRight: {
-      defaultValue: 25,
       control: {
         type: 'range',
         min: -100,
         max: 100
       }
     }
-  }, 
-  render: ({topLeft, topRight, leftTop, leftBotton, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
+  },
+  render: ({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex'}}>
@@ -115,6 +117,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Top left</Button>
               <Tooltip
                 placement="top left"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={topLeft}
                 style={{
@@ -126,7 +129,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Top left
@@ -138,6 +141,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Top right</Button>
               <Tooltip
                 placement="top right"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={topRight}
                 style={{
@@ -149,7 +153,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Top right
@@ -163,6 +167,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Left top</Button>
               <Tooltip
                 placement="left top"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={leftTop}
                 style={{
@@ -174,7 +179,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Left top
@@ -186,8 +191,9 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Left bottom</Button>
               <Tooltip
                 placement="left bottom"
+                shouldFlip={false}
                 offset={7}
-                arrowBoundaryOffset={leftBotton}
+                arrowBoundaryOffset={leftBottom}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -197,7 +203,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Left bottom
@@ -211,6 +217,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Right top</Button>
               <Tooltip
                 placement="right top"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={rightTop}
                 style={{
@@ -222,7 +229,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Right top
@@ -234,6 +241,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Right bottom</Button>
               <Tooltip
                 placement="right bottom"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={rightBottom}
                 style={{
@@ -245,7 +253,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Right bottom
@@ -259,6 +267,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Bottom left</Button>
               <Tooltip
                 placement="bottom left"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={bottomLeft}
                 style={{
@@ -270,7 +279,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Bottom left
@@ -282,6 +291,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Bottom right</Button>
               <Tooltip
                 placement="bottom right"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={bottomRight}
                 style={{
@@ -293,7 +303,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Bottom right

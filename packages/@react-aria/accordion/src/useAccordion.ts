@@ -11,8 +11,8 @@
  */
 
 import {AriaAccordionProps} from '@react-types/accordion';
-import {ButtonHTMLAttributes, RefObject} from 'react';
-import {DOMAttributes, Node} from '@react-types/shared';
+import {ButtonHTMLAttributes} from 'react';
+import {DOMAttributes, Node, RefObject} from '@react-types/shared';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
@@ -34,7 +34,7 @@ export interface AccordionItemAria {
   regionProps: DOMAttributes
 }
 
-export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement>): AccordionItemAria {
+export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): AccordionItemAria {
   let {item} = props;
   let buttonId = useId();
   let regionId = useId();
@@ -50,7 +50,7 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
     isDisabled,
     onPress: () => state.toggleKey(item.key)
   }), ref);
-  let isExpanded = state.expandedKeys === 'all' || state.expandedKeys.has(item.key);
+  let isExpanded = state.expandedKeys.has(item.key);
   return {
     buttonProps: {
       ...buttonProps,
@@ -65,7 +65,7 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
   };
 }
 
-export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement>): AccordionAria {
+export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement | null>): AccordionAria {
   let {listProps} = useSelectableList({
     ...props,
     ...state,

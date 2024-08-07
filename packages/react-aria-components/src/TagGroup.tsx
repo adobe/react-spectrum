@@ -12,10 +12,11 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, CollectionProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
@@ -56,9 +57,22 @@ export const TagListContext = createContext<ContextValue<TagListProps<any>, HTML
 
 function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TagGroupContext);
+  return (
+    <CollectionBuilder content={props.children}>
+      {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+interface TagGroupInnerProps {
+  props: TagGroupProps,
+  forwardedRef: ForwardedRef<HTMLDivElement>,
+  collection
+}
+
+function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
   let tagListRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
-  let {collection, document} = useCollectionDocument();
   let state = useListState({
     ...props,
     children: undefined,
@@ -91,7 +105,6 @@ function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
           [TagListContext, {...gridProps, ref: tagListRef}],
           [ListStateContext, state],
-          [CollectionDocumentContext, document],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -111,15 +124,11 @@ function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 const _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
 
-function TagList<T extends object>(props: TagListProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>) {
-  // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  let portal = useCollectionPortal(props);
-  return (
-    <>
-      {portal}
-      <TagListInner props={props} forwardedRef={forwardedRef} />
-    </>
-  );
+function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+  let state = useContext(ListStateContext);
+  return state
+    ? <TagListInner props={props} forwardedRef={ref} />
+    : <Collection {...props} />;
 }
 
 interface TagListInnerProps<T> {
@@ -129,21 +138,10 @@ interface TagListInnerProps<T> {
 
 function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
   let state = useContext(ListStateContext)!;
+  let {CollectionRoot} = useContext(CollectionRendererContext);
   let [gridProps, ref] = useContextProps(props, forwardedRef, TagListContext);
   delete gridProps.items;
   delete gridProps.renderEmptyState;
-
-  let children = useCachedChildren({
-    items: state.collection,
-    children: (item: Node<T>) => {
-      switch (item.type) {
-        case 'item':
-          return <TagItem item={item} />;
-        default:
-          throw new Error('Unsupported node type in TagList: ' + item.type);
-      }
-    }
-  });
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
@@ -159,6 +157,8 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
     values: renderValues
   });
 
+  let persistedKeys = usePersistedKeys(state.selectionManager.focusedKey);
+
   return (
     <div
       {...mergeProps(gridProps, focusProps)}
@@ -167,7 +167,9 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState(renderValues) : children}
+      {state.collection.size === 0 && props.renderEmptyState
+        ? props.renderEmptyState(renderValues)
+        : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
     </div>
   );
 }
@@ -186,37 +188,34 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
   allowsRemoving: boolean
 }
 
-export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
+export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, HoverEvents {
   /** A unique id for the tag. */
   id?: Key,
   /**
    * A string representation of the tags's contents, used for accessibility.
    * Required if children is not a plain text string.
    */
-  textValue?: string
-}
-
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
-  return useSSRCollectionNode('item', props, ref, props.children);
+  textValue?: string,
+  /** Whether the tag is disabled. */
+  isDisabled?: boolean
 }
 
 /**
  * A Tag is an individual item within a TagList.
  */
-const _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
-export {_Tag as Tag};
-
-function TagItem({item}) {
+export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
   let state = useContext(ListStateContext)!;
-  let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection
+    isDisabled: !states.allowsSelection,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
-  let props: TagProps = item.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -257,11 +256,12 @@ function TagItem({item}) {
               slots: {
                 remove: removeButtonProps
               }
-            }]
+            }],
+            [CollectionRendererContext, DefaultCollectionRenderer]
           ]}>
           {renderProps.children}
         </Provider>
       </div>
     </div>
   );
-}
+});

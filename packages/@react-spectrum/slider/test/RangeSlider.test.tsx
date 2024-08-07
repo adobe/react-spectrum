@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';

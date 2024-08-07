@@ -11,8 +11,8 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
-import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
+import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent, RefObject} from '@react-types/shared';
+import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
@@ -31,14 +31,18 @@ export interface DragOptions {
   /** A function that returns the items being dragged. */
   getItems: () => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */
-  preview?: RefObject<DragPreviewRenderer>,
+  preview?: RefObject<DragPreviewRenderer | null>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
   /**
    * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop mode.
    * If true, the dragProps will omit these event handlers, and they will be applied to dragButtonProps instead.
    */
-  hasDragButton?: boolean
+  hasDragButton?: boolean,
+  /**
+   * Whether the drag operation is disabled. If true, the element will not be draggable.
+   */
+  isDisabled?: boolean
 }
 
 export interface DragResult {
@@ -70,7 +74,7 @@ const MESSAGES = {
  * based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
 export function useDrag(options: DragOptions): DragResult {
-  let {hasDragButton} = options;
+  let {hasDragButton, isDisabled} = options;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let state = useRef({
     options,
@@ -329,6 +333,16 @@ export function useDrag(options: DragOptions): DragResult {
           startDragging(e.target as HTMLElement);
         }
       }
+    };
+  }
+
+  if (isDisabled) {
+    return {
+      dragProps: {
+        draggable: 'false'
+      },
+      dragButtonProps: {},
+      isDragging: false
     };
   }
 

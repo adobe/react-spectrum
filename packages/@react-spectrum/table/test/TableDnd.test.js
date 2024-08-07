@@ -18,7 +18,7 @@ import {
   render as renderComponent,
   waitFor,
   within
-} from '@react-spectrum/test-utils';
+} from '@react-spectrum/test-utils-internal';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
@@ -2588,13 +2588,11 @@ describe('TableView', function () {
         grid = getByRole('grid');
         rowgroups = within(grid).getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
-        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
-        // TODO
-        // expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Dodie');
-        // expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
-        // expect(within(rows[3]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
-
-        // expect(document.activeElement).toBe(rows[3]);
+        expect(within(rows[0]).getAllByRole('rowheader')[0]).toHaveTextContent('Robbi');
+        expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Vin');
+        expect(within(rows[2]).getAllByRole('rowheader')[0]).toHaveTextContent('Lexy');
+        expect(within(rows[3]).getAllByRole('rowheader')[0]).toHaveTextContent('Dodie');
+        expect(document.activeElement).toBe(rows[2]);
       });
 
       it('should allow moving one row into another table', async function () {

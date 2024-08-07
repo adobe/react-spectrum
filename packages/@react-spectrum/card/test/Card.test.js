@@ -11,15 +11,17 @@
  */
 
 import {Card} from '../src';
-import {composeStories} from '@storybook/testing-react';
-import * as defaultStories from '../chromatic/Card.chromatic';
-import {pointerMap, render} from '@react-spectrum/test-utils';
-import * as quietStories from '../chromatic/QuietCard.chromatic';
+import {composeStories} from '@storybook/react';
+import * as defaultStories from '../chromatic/Card.stories';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import * as quietStories from '../chromatic/QuietCard.stories';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let {Default, DefaultPreviewAlt, NoDescription} = composeStories(defaultStories);
 let {Quiet} = composeStories(quietStories);
+
+let isOldReact = parseInt(React.version, 10) < 18;
 
 describe('Card', function () {
   let user;
@@ -30,7 +32,7 @@ describe('Card', function () {
     let {getByRole, getByLabelText, getAllByRole} = render(<Card {...Default.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let images = getAllByRole('img');
+    let images = getAllByRole(isOldReact ? 'img' : 'presentation');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
@@ -63,7 +65,7 @@ describe('Card', function () {
     let {getByRole, getAllByRole, getByLabelText} = render(<Card {...Quiet.args} />);
     let card = getByRole('article');
     let heading = getByRole('heading', {level: 3});
-    let images = getAllByRole('img');
+    let images = getAllByRole(isOldReact ? 'img' : 'presentation');
     let labelledCard = getByLabelText(heading.textContent);
     expect(card).toBe(labelledCard);
     expect(card).toHaveAccessibleDescription('Description');
