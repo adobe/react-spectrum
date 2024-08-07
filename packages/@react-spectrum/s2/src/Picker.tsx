@@ -102,8 +102,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
   ...fieldInput(),
   position: 'relative',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   display: 'flex',
   textAlign: 'start',
   borderStyle: 'none',
@@ -174,6 +173,7 @@ const iconStyles = style({
 });
 
 let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
+let InsideSelectValueContext = createContext(false);
 
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
@@ -266,7 +266,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                                   truncate: true
                                 })}
                               }
-                            }]
+                            }],
+                            [InsideSelectValueContext, true]
                           ]}>
                           {defaultChildren}
                         </Provider>
@@ -310,7 +311,12 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               <Provider
                 values={[
                   [HeaderContext, {className: sectionHeader({size})}],
-                  [HeadingContext, {className: sectionHeading}]
+                  [HeadingContext, {className: sectionHeading}],
+                  [TextContext, {
+                    slots: {
+                      description: {className: description({size})}
+                    }
+                  }]
                 ]}>
                 <ListBox
                   items={items}
@@ -373,11 +379,10 @@ export function PickerItem(props: PickerItemProps) {
   );
 }
 
-// A Context.Provider that only sets a value if one is not already set higher in the tree.
-// This is so the slots can be overridden inside of SelectValue.
+// A Context.Provider that only sets a value if not inside SelectValue.
 function DefaultProvider({context, value, children}: {context: React.Context<any>, value: any, children: any}) {
-  let cur = useContext(context);
-  if (Object.keys(cur).length) {
+  let inSelectValue = useContext(InsideSelectValueContext);
+  if (inSelectValue) {
     return children;
   }
 

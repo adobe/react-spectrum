@@ -49,8 +49,7 @@ const wrapper = style({
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   transition: 'colors',
   color: {
     default: 'neutral',
