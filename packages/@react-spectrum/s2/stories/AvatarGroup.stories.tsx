@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Avatar, AvatarGroup} from '../src';
+import {AvatarGroup, AvatarGroupItem} from '../src';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof AvatarGroup> = {
@@ -31,18 +31,18 @@ const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
 export const Example = (args: any) => (
   <AvatarGroup {...args}>
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="design provided" src={SRC_URL_2} />
+    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
+    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
+    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
+    <AvatarGroupItem alt="design provided" src={SRC_URL_2} />
   </AvatarGroup>
 );
 
 export const WithLabel = (args: any) => (
   <AvatarGroup label="145 members" {...args}>
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="default adobe" src={SRC_URL_1} />
-    <Avatar alt="design provided" src={SRC_URL_2} />
+    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
+    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
+    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
+    <AvatarGroupItem alt="design provided" src={SRC_URL_2} />
   </AvatarGroup>
 );
