@@ -1,5 +1,6 @@
 name: Manual nightly deploy
 on:
+  push:
   workflow_dispatch:
 
 jobs:
