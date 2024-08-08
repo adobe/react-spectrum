@@ -22,7 +22,7 @@ function areSpecifiersAlphabetized(specifiers: ImportSpecifier[]) {
  *
  * Run this from a directory where the relevant packages are installed in node_modules so it knows which monopackage exports are available to use (since exports may vary by version).
  */
-export default function transformer(file: FileInfo, api: API, options: Options) {
+export default function transformerUseMonopackages(file: FileInfo, api: API, options: Options) {
   const j = api.jscodeshift;
   const root = j(file.source);
 
@@ -176,4 +176,4 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   return root.toSource();
 }
 
-transformer.parser = 'tsx';
+transformerUseMonopackages.parser = 'tsx';
