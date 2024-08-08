@@ -1,5 +1,5 @@
 import {run as jscodeshift} from 'jscodeshift/src/Runner.js';
-import path from 'node:path';
+import path from 'path';
 import {UseMonopackagesCodemodOptions} from '../..';
 
 const transformPath = path.join(__dirname, 'codemod.js');
