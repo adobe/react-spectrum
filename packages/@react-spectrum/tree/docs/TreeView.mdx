@@ -22,10 +22,14 @@ import {Flex} from '@react-spectrum/layout';
 import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import GlobeOutline from '@spectrum-icons/workflow/GlobeOutline';
 import Image from '@spectrum-icons/workflow/Image';
+import Edit from '@spectrum-icons/workflow/Edit';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Text} from '@react-spectrum/text';
 import {TreeView, TreeViewItem} from '@react-spectrum/tree';
 import {JSX} from "react";
 import {Key} from "@react-types/shared";
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {ActionMenu} from '@react-spectrum/menu';
 ```
 
 ---
@@ -414,7 +418,9 @@ These selection styles implement the behaviors defined in [Aria Practices](https
 <ExampleTree selectionMode="multiple" selectionStyle="highlight" />
 ```
 
-## Item actions
+## Actions
+
+### Item actions
 
 TreeView supports item actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the TreeView performs actions by default when clicking or tapping a item.
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the TreeView is in selection mode,
@@ -457,6 +463,92 @@ Tree items may also be links to another page or website. This can be achieved by
 #### Client side routing
 
 The `<TreeViewItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+### With action groups
+
+```tsx example
+type MyItem = {
+  id: string,
+  name: string,
+  icon: JSX.Element,
+  childItems?: MyItem[]
+};
+
+let items: MyItem[] = [
+  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
+    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
+    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
+      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
+      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
+    ]}
+  ]},
+  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
+    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
+  ]}
+];
+
+<TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items}>
+  {(item: MyItem) => (
+    <TreeViewItem childItems={item.childItems} textValue={item.name}>
+      <Text>{item.name}</Text>
+      {item.icon}
+      <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+        <Item key="edit" textValue="Edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete" textValue="Delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionGroup>
+    </TreeViewItem>
+  )}
+</TreeView>
+```
+
+### With action menus
+
+```tsx example
+type MyItem = {
+  id: string,
+  name: string,
+  icon: JSX.Element,
+  childItems?: MyItem[]
+};
+
+let items: MyItem[] = [
+  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
+    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
+    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
+      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
+      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
+    ]}
+  ]},
+  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
+    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
+  ]}
+];
+
+<TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items}>
+  {(item: MyItem) => (
+    <TreeViewItem childItems={item.childItems} textValue={item.name}>
+      <Text>{item.name}</Text>
+      {item.icon}
+      <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+        <Item key="edit" textValue="Edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete" textValue="Delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionMenu>
+    </TreeViewItem>
+  )}
+</TreeView>
+```
 
 ## Props
 
