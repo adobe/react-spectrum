@@ -88,9 +88,7 @@ export const field = () => ({
 } as const);
 
 export const fieldLabel = () => ({
-  fontFamily: 'sans',
-  fontSize: 'control',
-  lineHeight: 'ui',
+  font: 'control',
   cursor: 'default',
   color: {
     default: 'neutral-subdued',
