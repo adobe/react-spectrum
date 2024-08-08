@@ -117,7 +117,7 @@ export interface ItemDropTarget {
   /** The drop target type. */
   type: 'item',
   /** The item key. */
-  key?: Key | null,
+  key: Key,
   /** The drop position relative to the item. */
   dropPosition: DropPosition
 }

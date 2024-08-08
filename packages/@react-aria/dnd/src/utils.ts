@@ -76,10 +76,7 @@ export function getDragModality() {
   return mapModality(getInteractionModality());
 }
 
-export function writeToDataTransfer(dataTransfer: DataTransfer | null, items: DragItem[]) {
-  if (!dataTransfer) {
-    return;
-  }
+export function writeToDataTransfer(dataTransfer: DataTransfer, items: DragItem[]) {
   // The data transfer API doesn't support more than one item of a given type at once.
   // In addition, only a small set of types are supported natively for transfer between applications.
   // We allow for both multiple items, as well as multiple representations of a single item.
@@ -178,7 +175,7 @@ export class DragTypes implements IDragTypes {
   }
 }
 
-export function readFromDataTransfer(dataTransfer: DataTransfer | null) {
+export function readFromDataTransfer(dataTransfer: DataTransfer) {
   let items: DropItem[] = [];
   if (!dataTransfer) {
     return items;

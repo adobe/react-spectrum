@@ -81,6 +81,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isReadOnly,
     isDisabled
   } = props;
+  let backupBtnRef = useRef(null);
+  buttonRef = buttonRef ?? backupBtnRef;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
@@ -89,14 +91,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       isDisabled: isDisabled || isReadOnly
     },
     state,
-    // useMenuTrigger shouldn't have an optional ref, but because we handle the keyboard
-    // we can omit this. Maybe useComboboxMenuTrigger should be created?
-    // @ts-ignore
     buttonRef
   );
 
-  // Do we throw an error if menuProps.id doesn't exist? that would mean a change in useMenuTrigger which
-  // currently always returns an id.
   // Set listbox id so it can be used when calling getItemId later
   listData.set(state, {id: menuProps.id});
 
@@ -142,13 +139,11 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
-          if (e.key === 'Enter') {
-            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-            if (item instanceof HTMLAnchorElement) {
-              let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-              if (collectionItem) {
-                router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
-              }
+          let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+          if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
+            let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+            if (collectionItem) {
+              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
           }
 

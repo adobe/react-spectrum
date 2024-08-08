@@ -73,9 +73,9 @@ export function DroppableListBoxExample(props) {
 
       if (e.target.type === 'root') {
         list.prepend(...items);
-      } else if (e.target.dropPosition === 'before' && e.target.key != null) {
+      } else if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...items);
-      } else if (e.target.key != null) {
+      } else {
         list.insertAfter(e.target.key, ...items);
       }
     }

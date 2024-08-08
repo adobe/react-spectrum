@@ -29,9 +29,9 @@ interface DropTarget {
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
-  onDropTargetEnter?: (target?: DroppableCollectionTarget) => void,
-  onDropActivate?: (e: DropActivateEvent, target?: DroppableCollectionTarget) => void,
-  onDrop?: (e: DropEvent, target?: DroppableCollectionTarget) => void,
+  onDropTargetEnter?: (target: DroppableCollectionTarget | null) => void,
+  onDropActivate?: (e: DropActivateEvent, target: DroppableCollectionTarget | null) => void,
+  onDrop?: (e: DropEvent, target: DroppableCollectionTarget | null) => void,
   onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void
 }
 
@@ -157,11 +157,11 @@ const MESSAGES = {
 class DragSession {
   dragTarget: DragTarget;
   validDropTargets: DropTarget[] = [];
-  currentDropTarget: DropTarget | undefined;
-  currentDropItem: DroppableItem | undefined;
-  dropOperation: DropOperation | undefined;
-  private mutationObserver: MutationObserver | undefined;
-  private restoreAriaHidden: (() => void) | undefined;
+  currentDropTarget: DropTarget | null = null;
+  currentDropItem: DroppableItem | null = null;
+  dropOperation: DropOperation | null = null;
+  private mutationObserver: MutationObserver | null = null;
+  private restoreAriaHidden: (() => void) | null = null;
   private stringFormatter: LocalizedStringFormatter;
   private isVirtualClick: boolean = false;
   private initialFocused: boolean;
@@ -398,7 +398,7 @@ class DragSession {
     // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === this.validDropTargets.length - 1) {
       if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
-        this.setCurrentDropTarget(undefined);
+        this.setCurrentDropTarget(null);
         this.dragTarget.element.focus();
       } else {
         this.setCurrentDropTarget(this.validDropTargets[0]);
@@ -424,7 +424,7 @@ class DragSession {
     // This lets the user cancel the drag in case they don't have an Escape key (e.g. iPad keyboard case).
     if (index === 0) {
       if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
-        this.setCurrentDropTarget(undefined);
+        this.setCurrentDropTarget(null);
         this.dragTarget.element.focus();
       } else {
         this.setCurrentDropTarget(this.validDropTargets[this.validDropTargets.length - 1]);
@@ -454,7 +454,7 @@ class DragSession {
     return nearest;
   }
 
-  setCurrentDropTarget(dropTarget?: DropTarget, item?: DroppableItem) {
+  setCurrentDropTarget(dropTarget: DropTarget | null, item?: DroppableItem) {
     if (dropTarget !== this.currentDropTarget) {
       if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
         let rect = this.currentDropTarget.element.getBoundingClientRect();
@@ -483,12 +483,12 @@ class DragSession {
       }
     }
 
-    if (item !== this.currentDropItem) {
-      if (item && this.currentDropTarget && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
-        this.currentDropTarget.onDropTargetEnter(item?.target);
+    if (item != null && item !== this.currentDropItem) {
+      if (this.currentDropTarget && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
+        this.currentDropTarget.onDropTargetEnter(item.target);
       }
 
-      item?.element.focus();
+      item.element.focus();
       this.currentDropItem = item;
 
       // Announce first drop target after drag start announcement finishes.
@@ -525,11 +525,11 @@ class DragSession {
       document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 
-    this.setCurrentDropTarget(undefined);
+    this.setCurrentDropTarget(null);
   }
 
   cancel() {
-    this.setCurrentDropTarget(undefined);
+    this.setCurrentDropTarget(null);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();
@@ -569,7 +569,7 @@ class DragSession {
         y: rect.top + (rect.height / 2),
         items,
         dropOperation: this.dropOperation
-      }, item?.target);
+      }, item?.target ?? null);
     }
 
     this.end();
@@ -583,7 +583,7 @@ class DragSession {
         type: 'dropactivate',
         x: rect.left + (rect.width / 2),
         y: rect.top + (rect.height / 2)
-      });
+      }, null);
     }
   }
 }

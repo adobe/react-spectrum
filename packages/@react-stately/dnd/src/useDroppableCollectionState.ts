@@ -15,7 +15,7 @@ import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCallback, useRef, useState} from 'react';
 
 interface DropOperationEvent {
-  target?: DropTarget | null,
+  target: DropTarget,
   types: DragTypes,
   allowedOperations: DropOperation[],
   isInternal: boolean,
@@ -37,13 +37,13 @@ export interface DroppableCollectionState {
   /** An interface for reading and updating multiple selection state. */
   selectionManager: MultipleSelectionManager,
   /** The current drop target. */
-  target?: DropTarget | null,
+  target: DropTarget | null,
   /** Whether drop events are disabled. */
   isDisabled?: boolean,
   /** Sets the current drop target. */
-  setTarget(target?: DropTarget | null): void,
+  setTarget(target: DropTarget | null): void,
   /** Returns whether the given target is equivalent to the current drop target. */
-  isDropTarget(target?: DropTarget | null): boolean,
+  isDropTarget(target: DropTarget): boolean,
   /** Returns the drop operation for the given parameters. */
   getDropOperation(e: DropOperationEvent): DropOperation
 }

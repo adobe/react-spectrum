@@ -154,10 +154,14 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   let {dropProps} = useDrop({
     ref,
     onDropEnter() {
-      state.setTarget(localState.nextTarget);
+      if (localState.nextTarget != null) {
+        state.setTarget(localState.nextTarget);
+      }
     },
     onDropMove(e) {
-      state.setTarget(localState.nextTarget);
+      if (localState.nextTarget != null) {
+        state.setTarget(localState.nextTarget);
+      }
       autoScroll.move(e.x, e.y);
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
@@ -166,7 +170,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let isValidDropTarget = (target) => state.getDropOperation({target, types, allowedOperations, isInternal, draggingKeys}) !== 'cancel';
       let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
       if (!target) {
-        localState.dropOperation = 'cancel' as DropOperation;
+        localState.dropOperation = 'cancel';
         localState.nextTarget = null;
         return 'cancel';
       }
@@ -276,7 +280,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         draggingKeys.has(state.collection.getItem(prevFocusedKey)?.parentKey)
       ) {
         // Focus row instead of cell when reordering.
-        state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey)?.parentKey);
+        state.selectionManager.setFocusedKey(state.collection.getItem(prevFocusedKey)?.parentKey ?? null);
         setInteractionModality('keyboard');
       } else if (
         state.selectionManager.focusedKey === prevFocusedKey &&
@@ -652,7 +656,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageBelow(
                   target.type === 'item'
                     ? target.key
-                    : keyboardDelegate.getFirstKey?.()
+                    : keyboardDelegate.getFirstKey?.() ?? null
                 );
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
@@ -662,6 +666,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                   dropPosition = 'after';
                 }
 
+                if (nextKey == null) {
+                  break;
+                }
                 target = {
                   type: 'item',
                   key: nextKey,
@@ -705,6 +712,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                   dropPosition = 'before';
                 }
 
+                if (nextKey == null) {
+                  break;
+                }
                 target = {
                   type: 'item',
                   key: nextKey,

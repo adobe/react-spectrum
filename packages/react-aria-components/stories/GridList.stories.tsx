@@ -128,9 +128,9 @@ export function VirtualizedGridList() {
       return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
     },
     onReorder(e) {
-      if (e.target.dropPosition === 'before' && e.target.key != null) {
+      if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after' && e.target.key != null) {
+      } else if (e.target.dropPosition === 'after') {
         list.moveAfter(e.target.key, e.keys);
       }
     },

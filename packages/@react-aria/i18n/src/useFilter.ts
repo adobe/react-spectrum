@@ -15,11 +15,11 @@ import {useCollator} from './useCollator';
 
 export interface Filter {
   /** Returns whether a string starts with a given substring. */
-  startsWith(string: string, substring?: string | null): boolean,
+  startsWith(string: string, substring: string): boolean,
   /** Returns whether a string ends with a given substring. */
-  endsWith(string: string, substring?: string | null): boolean,
+  endsWith(string: string, substring: string): boolean,
   /** Returns whether a string contains a given substring. */
-  contains(string: string, substring?: string | null): boolean
+  contains(string: string, substring: string): boolean
 }
 
 /**
@@ -34,7 +34,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
 
   // TODO(later): these methods don't currently support the ignorePunctuation option.
   let startsWith = useCallback((string, substring) => {
-    if (substring == null || substring.length === 0) {
+    if (substring.length === 0) {
       return true;
     }
 
@@ -46,7 +46,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
   }, [collator]);
 
   let endsWith = useCallback((string, substring) => {
-    if (substring == null || substring.length === 0) {
+    if (substring.length === 0) {
       return true;
     }
 
@@ -56,7 +56,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
   }, [collator]);
 
   let contains = useCallback((string, substring) => {
-    if (substring == null || substring.length === 0) {
+    if (substring.length === 0) {
       return true;
     }
 
