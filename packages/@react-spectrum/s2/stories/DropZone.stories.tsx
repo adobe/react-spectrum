@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage, Illustration} from '../src';
+import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
 import {categorizeArgTypes} from './utils';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from '../spectrum-illustrations/gradient/S2_fill_cloudUpload_generic1_160.svg';
@@ -45,9 +45,7 @@ export const Example = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <DropToUpload />
-          </Illustration>
+          <DropToUpload />
           <Heading>
             Drag and drop your file
           </Heading>
@@ -72,9 +70,7 @@ export const ExampleWithFileTrigger = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <Cloud />
-          </Illustration>
+          <Cloud />
           <Heading>
             Drag and drop your file
           </Heading>
@@ -106,9 +102,7 @@ export const LongBanner = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <DropToUpload />
-          </Illustration>
+          <DropToUpload />
           <Heading>
             Drag and drop your file
           </Heading>
@@ -133,9 +127,7 @@ export const Gradient = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <CloudUpload />
-          </Illustration>
+          <CloudUpload />
           <Heading>
             Drag and drop your file
           </Heading>

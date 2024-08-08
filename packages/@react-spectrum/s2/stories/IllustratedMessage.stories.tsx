@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, Heading, IllustratedMessage, Illustration} from '../src';
+import {Button, ButtonGroup, Content, Heading, IllustratedMessage} from '../src';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import Folder from '../spectrum-illustrations/gradient/S2_fill_folderOpen_generic2_160.svg';
 import type {Meta} from '@storybook/react';
@@ -27,9 +27,7 @@ export default meta;
 
 export const Example = (args: any) => (
   <IllustratedMessage {...args}>
-    <Illustration>
-      <Cloud />
-    </Illustration>
+    <Cloud />
     <Heading>
       Illustrated message title
     </Heading>
@@ -44,9 +42,7 @@ export const Example = (args: any) => (
 
 export const NoButtonLongText = (args: any) => (
   <IllustratedMessage {...args}>
-    <Illustration>
-      <Cloud />
-    </Illustration>
+    <Cloud />
     <Heading>
       Error 403: Access not allowed
     </Heading>
@@ -58,9 +54,7 @@ export const NoButtonLongText = (args: any) => (
 
 export const NoButtonShortText = (args: any) => (
   <IllustratedMessage {...args}>
-    <Illustration>
-      <Cloud />
-    </Illustration>
+    <Cloud />
     <Heading>
       Error 504: Server timeout
     </Heading>
@@ -72,9 +66,7 @@ export const NoButtonShortText = (args: any) => (
 
 export const Gradient = (args: any) => (
   <IllustratedMessage {...args}>
-    <Illustration>
-      <Folder />
-    </Illustration>
+    <Folder />
     <Heading>
       Illustrated message title
     </Heading>
