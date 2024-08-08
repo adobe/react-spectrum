@@ -6808,7 +6808,7 @@ __metadata:
     "@babel/parser": "npm:^7.24.5"
     "@babel/traverse": "npm:^7.24.5"
     "@babel/types": "npm:^7.24.5"
-    "@react-spectrum/s2": "workspace:^"
+    "@react-spectrum/s2": "npm:^0.2.0"
     "@react-types/shared": "npm:^3.24.0"
     "@types/jscodeshift": "npm:^0.11.11"
     boxen: "npm:^5.1.2"
@@ -7515,7 +7515,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@workspace:^, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:^0.2.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
