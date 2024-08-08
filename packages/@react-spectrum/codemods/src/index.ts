@@ -1,5 +1,6 @@
 const {parseArgs} = require('node:util');
 import {s1_to_s2} from './s1-to-s2/src';
+import {use_monopackages} from './use-monopackages';
 
 export interface CodemodOptions {
   /**
@@ -34,7 +35,8 @@ export interface CodemodOptions {
 }
 
 const codemods: Record<string, (options: CodemodOptions) => void> = {
-  's1-to-s2': s1_to_s2
+  's1-to-s2': s1_to_s2,
+  'use-monopackages': use_monopackages
 };
 
 // https://github.com/facebook/jscodeshift?tab=readme-ov-file#usage-cli

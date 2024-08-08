@@ -1,7 +1,8 @@
+import {API, FileInfo, ImportSpecifier, Options} from 'jscodeshift';
 const fs = require('fs');
 const path = require('path');
 
-function areSpecifiersAlphabetized(specifiers) {
+function areSpecifiersAlphabetized(specifiers: ImportSpecifier[]) {
   const specifierNames = specifiers.map(
     (specifier) => specifier.imported.name
   );
@@ -24,11 +25,11 @@ function areSpecifiersAlphabetized(specifiers) {
  * 1. Install jscodeshift: `npm i -g jscodeshift`
  * 2. Run: `jscodeshift -t /path/to/use-monopackages.ts src/`.
  */
-module.exports = function transformer(file, api, options) {
+module.exports = function transformer(file: FileInfo, api: API, options: Options) {
   const j = api.jscodeshift;
   const root = j(file.source);
 
-  const packages = {
+  const packages: Record<string, { monopackage: string, individualPrefix: string }> = {
     'react-spectrum': {
       monopackage: '@adobe/react-spectrum',
       individualPrefix: '@react-spectrum/'
@@ -44,11 +45,11 @@ module.exports = function transformer(file, api, options) {
   };
 
   const selectedPackages =
-    options?.packages?.split(',').filter((pkg) => packages[pkg]) ||
+    (options?.packages as string)?.split(',').filter((pkg) => packages[pkg]) ||
     Object.keys(packages);
 
   let anyIndexFound = false;
-  const monopackageExports = {};
+  const monopackageExports: Record<string, string[]> = {};
 
   selectedPackages.forEach((pkg) => {
     const indexPath = path.join(
@@ -64,8 +65,8 @@ module.exports = function transformer(file, api, options) {
       monopackageExports[pkg] = [];
       // Collect all named exports from the monopackage index file
       indexRoot.find(j.ExportNamedDeclaration).forEach((path) => {
-        path.node.specifiers.forEach((specifier) => {
-          monopackageExports[pkg].push(specifier.exported.name);
+        path.node.specifiers?.forEach((specifier) => {
+          monopackageExports[pkg].push(specifier.exported.name as string);
         });
       });
 
@@ -77,8 +78,8 @@ module.exports = function transformer(file, api, options) {
           }
         })
         .forEach((path) => {
-          path.node.specifiers.forEach((specifier) => {
-            monopackageExports[pkg].push(specifier.exported.name);
+          path.node.specifiers?.forEach((specifier) => {
+            monopackageExports[pkg].push(specifier.exported.name as string);
           });
         });
     } else if (options?.packages?.split(',').includes(pkg)) {
@@ -100,7 +101,7 @@ module.exports = function transformer(file, api, options) {
     const individualPackageImports = root
       .find(j.ImportDeclaration)
       .filter((path) => {
-        return path.node.source.value.startsWith(
+        return (path.node.source.value as string)?.startsWith(
           packages[pkg].individualPrefix
         );
       });
@@ -113,25 +114,25 @@ module.exports = function transformer(file, api, options) {
     const importedSpecifiers = individualPackageImports
       .nodes()
       .reduce((acc, node) => {
-        node.specifiers.forEach((specifier) => {
-          if (monopackageExports[pkg].includes(specifier.imported.name)) {
-            acc.push(specifier);
+        node.specifiers?.forEach((specifier) => {
+          if (monopackageExports[pkg].includes((specifier as ImportSpecifier).imported.name as string)) {
+            acc.push(specifier as ImportSpecifier);
           }
         });
         return acc;
-      }, []);
+      }, [] as ImportSpecifier[]);
 
     // Remove the old imports if they are present in monopackage exports
     individualPackageImports.forEach((path) => {
-      path.node.specifiers = path.node.specifiers.filter(
+      path.node.specifiers = path.node.specifiers?.filter(
         (specifier) =>
-          !monopackageExports[pkg].includes(specifier.imported.name)
+          !monopackageExports[pkg].includes((specifier as ImportSpecifier).imported.name as string)
       );
     });
 
     // Remove import declarations with no specifiers left
     individualPackageImports
-      .filter((path) => path.node.specifiers.length === 0)
+      .filter((path) => path.node.specifiers?.length === 0)
       .remove();
 
     // Find existing monopackage import if it exists
@@ -141,7 +142,7 @@ module.exports = function transformer(file, api, options) {
 
     if (monopackageImport.size() > 0) {
       const existingImport = monopackageImport.at(0).get().node;
-      const specifiers = existingImport.specifiers;
+      const specifiers = existingImport.specifiers as ImportSpecifier[];
       if (areSpecifiersAlphabetized(specifiers)) {
         // If imports are sorted, add the new import in sorted order
         importedSpecifiers.forEach((newSpecifier) => {
