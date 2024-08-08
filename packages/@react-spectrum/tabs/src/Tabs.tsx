@@ -22,7 +22,6 @@ import React, {
   MutableRefObject,
   ReactElement,
   ReactNode,
-  RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -335,19 +334,11 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
  * TabPanels is used within Tabs as a container for the content of each tab.
  * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
-export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
+export function TabPanels<T extends object>(props: SpectrumTabPanelsProps<T>) {
   const {tabState, tabProps} = useContext(TabContext);
   const {tabListState} = tabState;
 
-  const factory = useCallback(nodes => new ListCollection(nodes), []);
-  /**
-   * [0]         Type '(item: T) => CollectionElement<T>' is not assignable to type '(item: object) => ReactElement<any, string | JSXElementConstructor<any>>'.
-   * [0]           Types of parameters 'item' and 'item' are incompatible.
-   * [0]             Type 'object' is not assignable to type 'T'.
-   * [0]               'T' could be instantiated with an arbitrary type which could be unrelated to 'object'.
-   */
-  // TODO: how to fix this one?
-  // @ts-ignore
+  const factory = useCallback((nodes: Iterable<Node<T>>) => new ListCollection(nodes), []);
   const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
   const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
 
@@ -405,11 +396,11 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     visible
   } = props;
 
-  let ref = useRef(null) as DOMRef<HTMLDivElement> | undefined;
+  let ref = useRef<DOMRefValue<HTMLDivElement>>(null);
   let [pickerNode, setPickerNode] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    let node = unwrapDOMRef(ref as RefObject<DOMRefValue<HTMLElement>>);
+    let node = unwrapDOMRef(ref);
     setPickerNode(node.current);
   }, [ref]);
 
