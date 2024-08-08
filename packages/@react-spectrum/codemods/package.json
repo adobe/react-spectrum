@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "source": "src/index.ts",
   "bin": "dist/index.js",
+  "targets": {
+    "main": false
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "yarn build"
