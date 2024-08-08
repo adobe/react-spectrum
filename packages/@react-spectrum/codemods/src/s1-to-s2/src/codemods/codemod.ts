@@ -29,7 +29,7 @@ interface Options {
   components?: string
 }
 
-export default function transformerS1ToS2(file: FileInfo, api: API, options: Options) {
+export default function transformer(file: FileInfo, api: API, options: Options) {
   let j = api.jscodeshift;
   let root = j(file.source);
   let componentsToTransform = options.components ? new Set(options.components.split(',').filter(s => availableComponents.has(s))) : availableComponents;
@@ -220,4 +220,4 @@ export default function transformerS1ToS2(file: FileInfo, api: API, options: Opt
   return root.toSource();
 }
 
-transformerS1ToS2.parser = 'tsx';
+transformer.parser = 'tsx';
