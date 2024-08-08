@@ -12,14 +12,14 @@
 
 import {AriaTabPanelProps, SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject, StyleProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import React, {
   CSSProperties,
-  MutableRefObject,
+  HTMLAttributes,
   ReactElement,
   ReactNode,
   useCallback,
@@ -41,22 +41,20 @@ import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 interface TabsContext<T> {
   tabProps: SpectrumTabsProps<T>,
   tabState: {
-    tabListState: TabListState<T>,
+    tabListState: TabListState<T> | null,
     setTabListState: (state: TabListState<T>) => void,
-    selectedTab: HTMLElement,
+    selectedTab: HTMLElement | null,
     collapsed: boolean
   },
   refs: {
-    wrapperRef: MutableRefObject<HTMLDivElement>,
-    tablistRef: MutableRefObject<HTMLDivElement>
+    wrapperRef: RefObject<HTMLDivElement | null>,
+    tablistRef: RefObject<HTMLDivElement | null>
   },
-  tabPanelProps: {
-    'aria-labelledby': string
-  },
+  tabPanelProps: HTMLAttributes<HTMLElement>,
   tabLineState: Array<DOMRect>
 }
 
-const TabContext = React.createContext<TabsContext<any> | {[key: string]: any}>({});
+const TabContext = React.createContext<TabsContext<any> | null>(null);
 
 function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -68,8 +66,8 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
   } = props;
 
   let domRef = useDOMRef(ref);
-  let tablistRef = useRef<HTMLDivElement>(undefined);
-  let wrapperRef = useRef<HTMLDivElement>(undefined);
+  let tablistRef = useRef<HTMLDivElement>(null);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
@@ -115,7 +113,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
   useResizeObserver({ref: wrapperRef, onResize: checkShouldCollapse});
 
-  let tabPanelProps: {'aria-labelledby'?: string} = {
+  let tabPanelProps: HTMLAttributes<HTMLElement> = {
     'aria-labelledby': undefined
   };
 
@@ -204,7 +202,7 @@ function Tab<T>(props: TabProps<T>) {
 
 interface TabLineProps {
   orientation?: Orientation,
-  selectedTab?: HTMLElement,
+  selectedTab?: HTMLElement | null,
   selectedKey?: Key | null
 }
 
@@ -220,7 +218,7 @@ function TabLine(props: TabLineProps) {
 
   let {direction} = useLocale();
   let {scale} = useProvider();
-  let {tabLineState} = useContext(TabContext);
+  let {tabLineState} = useContext(TabContext)!;
 
   let [style, setStyle] = useState<CSSProperties>({
     width: undefined,
@@ -259,11 +257,12 @@ function TabLine(props: TabLineProps) {
  * The keys of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
 export function TabList<T>(props: SpectrumTabListProps<T>) {
-  const tabContext = useContext(TabContext);
+  const tabContext = useContext(TabContext)!;
   const {refs, tabState, tabProps, tabPanelProps} = tabContext;
   const {isQuiet, density, isEmphasized, orientation} = tabProps;
   const {selectedTab, collapsed, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
+  console.log(tablistRef, wrapperRef)
   // Pass original Tab props but override children to create the collection.
   const state = useTabListState({...tabProps, children: props.children});
 
@@ -335,12 +334,12 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
  * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
 export function TabPanels<T extends object>(props: SpectrumTabPanelsProps<T>) {
-  const {tabState, tabProps} = useContext(TabContext);
+  const {tabState, tabProps} = useContext(TabContext)!;
   const {tabListState} = tabState;
 
   const factory = useCallback((nodes: Iterable<Node<T>>) => new ListCollection(nodes), []);
   const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
-  const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
+  const selectedItem = tabListState && tabListState.selectedKey != null ? collection.getItem(tabListState.selectedKey) : null;
 
   return (
     <TabPanel {...props} key={tabListState?.selectedKey}>
@@ -355,7 +354,7 @@ interface TabPanelProps extends AriaTabPanelProps, StyleProps {
 
 // @private
 function TabPanel(props: TabPanelProps) {
-  const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
+  const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext)!;
   const {tabListState} = tabState;
   let ref = useRef<HTMLDivElement | null>(null);
   const {tabPanelProps} = useTabPanel(props, tabListState, ref);

@@ -190,14 +190,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   let [lastValue, setLastValue] = useState(inputValue);
   let resetInputValue = () => {
-    let itemText = selectedKey ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+    let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
     setLastValue(itemText);
     setInputValue(itemText);
   };
 
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   let lastSelectedKeyText = useRef(
-    selectedKey ? collection.getItem(selectedKey)?.textValue ?? '' : ''
+    selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : ''
   );
   // intentional omit dependency array, want this to happen on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -261,7 +261,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // This is to handle cases where a selectedKey is specified but the items aren't available (async loading) or the selected item's text value updates.
     // Only reset if the user isn't currently within the field so we don't erroneously modify user input.
     // If inputValue is controlled, it is the user's responsibility to update the inputValue when items change.
-    let selectedItemText = selectedKey ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+    let selectedItemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
     if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastSelectedKey.current) {
       if (lastSelectedKeyText.current !== selectedItemText) {
         setLastValue(selectedItemText);
@@ -299,7 +299,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       props.onSelectionChange?.(selectedKey);
 
       // Stop menu from reopening from useEffect
-      let itemText = selectedKey ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+      let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       setLastValue(itemText);
       closeMenu();
     } else {
@@ -311,7 +311,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   const commitValue = () => {
     if (allowsCustomValue) {
-      const itemText = selectedKey ? collection.getItem(selectedKey)?.textValue ?? '' : '';
+      const itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
       (inputValue === itemText) ? commitSelection() : commitCustomValue();
     } else {
       // Reset inputValue and close menu
