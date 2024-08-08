@@ -46,7 +46,7 @@ function generate(dir) {
         throw new Error('Unexpected file ' + file);
       }
       let [, name, size] = match;
-      name = name[0].toUpperCase() + name.slice(1);
+      name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
       if (!icons.has(name)) {
         icons.set(name, {});
       }

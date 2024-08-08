@@ -11,20 +11,20 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import MegaphonePromote_Expressive_L from './S2_lin_megaphonePromote_Expressive_160.svg';
-import MegaphonePromote_Expressive_M from './S2_lin_megaphonePromote_Expressive_96.svg';
-import MegaphonePromote_Expressive_S from './S2_lin_megaphonePromote_Expressive_48.svg';
+import MegaphonePromoteExpressive_L from './S2_lin_megaphonePromote_Expressive_160.svg';
+import MegaphonePromoteExpressive_M from './S2_lin_megaphonePromote_Expressive_96.svg';
+import MegaphonePromoteExpressive_S from './S2_lin_megaphonePromote_Expressive_48.svg';
 import {useContextProps} from 'react-aria-components';
 
-export default function MegaphonePromote_Expressive(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function MegaphonePromoteExpressive(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'L':
-      return <MegaphonePromote_Expressive_L {...otherProps} />;
+      return <MegaphonePromoteExpressive_L {...otherProps} />;
     case 'S':
-      return <MegaphonePromote_Expressive_S {...otherProps} />;
+      return <MegaphonePromoteExpressive_S {...otherProps} />;
     case 'M':
-      return <MegaphonePromote_Expressive_M {...otherProps} />;
+      return <MegaphonePromoteExpressive_M {...otherProps} />;
   }
 }
