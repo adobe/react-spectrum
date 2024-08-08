@@ -1,0 +1,25 @@
+name: PR Title Lint
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+permissions:
+  pull-requests: read
+jobs:
+  pr-title-lint:
+    runs-on: ubuntu-latest
+    name: Lint PR Title
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Use Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: install
+        run: yarn install
+      - name: Lint PR
+        uses: ./.github/actions/pr-linting
+        with:
+          pr-title: ${{ github.event.pull_request.title }}
