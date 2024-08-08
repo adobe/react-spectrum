@@ -180,7 +180,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   };
 
-  let onBlur = (e: FocusEvent) => {
+  let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
     let blurIntoPopover = popoverRef.current?.contains(e.relatedTarget);
     // Ignore blur if focused moved to the button(if exists) or into the popover.
@@ -189,19 +189,19 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
 
     if (props.onBlur) {
-      props.onBlur(e as FocusEvent<HTMLInputElement>);
+      props.onBlur(e);
     }
 
     state.setFocused(false);
   };
 
-  let onFocus = (e: FocusEvent) => {
+  let onFocus = (e: FocusEvent<HTMLInputElement>) => {
     if (state.isFocused) {
       return;
     }
 
     if (props.onFocus) {
-      props.onFocus(e as FocusEvent<HTMLInputElement>);
+      props.onFocus(e);
     }
 
     state.setFocused(true);
