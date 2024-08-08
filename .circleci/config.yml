@@ -708,4 +708,3 @@ workflows:
         - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
-      - publish-nightly
