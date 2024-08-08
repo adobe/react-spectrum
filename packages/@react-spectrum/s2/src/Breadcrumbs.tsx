@@ -146,8 +146,7 @@ const linkStyles = style({
     }
   },
   transition: 'default',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   fontWeight: {
     default: 'normal',
     isCurrent: 'bold'
@@ -166,53 +165,23 @@ const linkStyles = style({
     default: 'focus-ring',
     forcedColors: 'Highlight'
   },
-  disableTapHighlight: true,
-  marginTop: {
-    size: {
-      M: size(6), // component-top-to-text-100
-      L: size(9) // component-top-to-text-200
-    }
-  },
-  marginBottom: {
-    size: {
-      M: size(8), // component-bottom-to-text-100
-      L: size(11) // component-bottom-to-text-200
-    }
-  }
+  disableTapHighlight: true
 });
 
-const currentStyles = style({
+const currentStyles = style<{size: string}>({
   color: {
     default: 'neutral',
     forcedColors: 'ButtonText'
   },
   transition: 'default',
-  fontFamily: 'sans',
-  fontSize: 'control',
-  fontWeight: 'bold',
-  marginTop: {
-    default: {
-      size: {
-        M: size(6), // component-top-to-text-100
-        L: size(9) // component-top-to-text-200
-      }
-    }
-  },
-  marginBottom: {
-    default: {
-      size: {
-        M: size(9), // component-bottom-to-text-100
-        L: size(11) // component-bottom-to-text-200
-      }
-    }
-  }
+  font: 'control',
+  fontWeight: 'bold'
 });
 
 // TODO: support user heading size customization, for now just set it to large
 const heading = style({
   margin: 0,
-  fontFamily: 'sans',
-  fontSize: 'heading-lg',
+  font: 'heading-lg',
   fontWeight: 'extra-bold'
 });
 
@@ -234,7 +203,7 @@ export function Breadcrumb({children, ...props}: BreadcrumbProps) {
       className={breadcrumbStyles({size, isCurrent})} >
       {isCurrent ?
         <span
-          className={currentStyles({size, isCurrent})}>
+          className={currentStyles({size})}>
           <Provider
             values={[
               [HeadingContext, {className: heading}]

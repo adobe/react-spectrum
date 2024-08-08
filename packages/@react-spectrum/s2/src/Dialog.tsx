@@ -45,15 +45,11 @@ const image = style({
 const heading = style({
   flexGrow: 1,
   marginY: 0,
-  fontSize: 'heading',
-  lineHeight: 'heading',
-  color: 'heading'
+  font: 'heading'
 });
 
 const header = style({
-  fontSize: 'body-lg',
-  color: 'body',
-  lineHeight: 'body'
+  font: 'body-lg'
 });
 
 const content =  style({
@@ -66,9 +62,7 @@ const content =  style({
       popover: 'visible'
     }
   },
-  fontSize: 'body',
-  lineHeight: 'body',
-  color: 'body',
+  font: 'body',
   // TODO: adjust margin on mobile?
   marginX: {
     default: 32
@@ -77,9 +71,7 @@ const content =  style({
 
 const footer = style({
   flexGrow: 1,
-  fontSize: 'body',
-  lineHeight: 'body',
-  color: 'body'
+  font: 'body'
 });
 
 const buttonGroup = style({

@@ -65,8 +65,7 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
 }
 
 const slider = style({
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   alignItems: {
     labelPosition: {
       side: 'center'
