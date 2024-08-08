@@ -22,7 +22,7 @@
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
-    "@react-spectrum/s2": "workspace:^",
+    "@react-spectrum/s2": "^0.2.0",
     "@react-types/shared": "^3.24.0",
     "boxen": "^5.1.2",
     "build": "^0.1.4",
