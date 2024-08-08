@@ -13,10 +13,12 @@
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
+import {DateValue} from '@react-types/calendar';
+import {RangeValue} from '@react-types/shared';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
+let TestCalendar = ({calendarProps = {}, gridProps = {}, cellProps = {}}) => (
   <RangeCalendar aria-label="Trip dates" {...calendarProps}>
     <header>
       <Button slot="previous">◀</Button>
@@ -29,7 +31,7 @@ let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
   </RangeCalendar>
 );
 
-let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
+let renderCalendar = (calendarProps = {}, gridProps = {}, cellProps = {}) => render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
 
 describe('RangeCalendar', () => {
   let user;
@@ -280,6 +282,72 @@ describe('RangeCalendar', () => {
     expect(cells[8]).not.toHaveClass('start');
     expect(cells[8]).not.toHaveAttribute('data-selection-end', 'true');
     expect(cells[8]).not.toHaveClass('end');
+  });
+
+  it('should support controlled selected range states', async () => {
+    function ControlledCalendar() {
+      let [value, setValue] = React.useState<RangeValue<DateValue> | null>(null);
+
+      return (
+        <>
+          <RangeCalendar aria-label="Trip dates" value={value} onChange={setValue}>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid>
+              {(date) => <CalendarCell date={date} className={({isSelectionStart, isSelectionEnd}) => `${isSelectionStart ? 'start' : ''} ${isSelectionEnd ? 'end' : ''}`} />}
+            </CalendarGrid>
+          </RangeCalendar>
+          <Button onPress={() => setValue(null)}>Reset</Button>
+        </>
+      );
+    }
+    let {getByRole} = render(
+      <ControlledCalendar />
+    );
+
+    let resetBtn = getByRole('button', {name: 'Reset'});
+    let grid = getByRole('grid');
+    let cells = within(grid).getAllByRole('button');
+
+    expect(cells[7]).not.toHaveAttribute('data-selection-start');
+    expect(cells[7]).not.toHaveClass('start');
+    expect(cells[7]).not.toHaveClass('end');
+
+    await user.click(cells[7]);
+    expect(cells[7]).toHaveAttribute('data-selection-start', 'true');
+    expect(cells[7]).toHaveClass('start');
+    expect(cells[7]).toHaveAttribute('data-selection-end', 'true');
+    expect(cells[7]).toHaveClass('end');
+
+    expect(cells[8]).not.toHaveAttribute('data-selection-start', 'true');
+    expect(cells[8]).not.toHaveClass('start');
+    expect(cells[8]).not.toHaveAttribute('data-selection-end', 'true');
+    expect(cells[8]).not.toHaveClass('end');
+
+    await user.click(cells[10]);
+    expect(cells[7]).toHaveAttribute('data-selection-start', 'true');
+    expect(cells[7]).toHaveClass('start');
+    expect(cells[7]).not.toHaveAttribute('data-selection-end', 'true');
+    expect(cells[7]).not.toHaveClass('end');
+    expect(cells[10]).toHaveAttribute('data-selection-end', 'true');
+    expect(cells[10]).toHaveClass('end');
+
+    expect(cells[8]).not.toHaveAttribute('data-selection-start', 'true');
+    expect(cells[8]).not.toHaveClass('start');
+    expect(cells[8]).not.toHaveAttribute('data-selection-end', 'true');
+    expect(cells[8]).not.toHaveClass('end');
+
+    await user.click(resetBtn);
+
+    expect(cells[7]).not.toHaveAttribute('data-selection-start');
+    expect(cells[7]).not.toHaveClass('start');
+    expect(cells[7]).not.toHaveClass('end');
+    expect(cells[10]).not.toHaveAttribute('data-selection-end');
+    expect(cells[10]).not.toHaveClass('end');
+
   });
 
   it('should support unavailable state', () => {

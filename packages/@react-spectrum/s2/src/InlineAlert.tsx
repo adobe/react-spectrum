@@ -55,8 +55,6 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   position: 'relative',
   boxSizing: 'border-box',
   maxWidth: 320,
-  fontSize: 'ui',
-  fontFamily: 'sans',
   padding: 24,
   borderRadius: 'lg',
   borderStyle: 'solid',
@@ -111,17 +109,6 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
           border: 'gray-25',
           subtleFill: 'neutral-subtle',
           boldFill: 'neutral-subdued'
-        }
-      }
-    }
-  },
-  color: {
-    default: 'gray-900',
-    fillStyle: {
-      boldFill: {
-        default: 'white',
-        variant: {
-          notice: 'black'
         }
       }
     }
@@ -186,15 +173,34 @@ let ICONS = {
 const heading = style({
   marginTop: 0,
   gridArea: 'heading',
-  fontSize: 'ui',
-  lineHeight: 'ui',
-  color: '[inherit]'
+  font: 'title-sm',
+  color: {
+    default: 'title',
+    fillStyle: {
+      boldFill: {
+        default: 'white',
+        variant: {
+          notice: 'black'
+        }
+      }
+    }
+  }
 });
 
 const content = style({
   gridArea: 'content',
-  fontSize: 'body-sm',
-  lineHeight: 'body'
+  font: 'body-sm',
+  color: {
+    default: 'body',
+    fillStyle: {
+      boldFill: {
+        default: 'white',
+        variant: {
+          notice: 'black'
+        }
+      }
+    }
+  }
 });
 
 function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
@@ -241,8 +247,8 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
         className={grid}>
         <Provider
           values={[
-            [HeadingContext, {className: heading}],
-            [ContentContext, {className: content}],
+            [HeadingContext, {className: heading({fillStyle})}],
+            [ContentContext, {className: content({fillStyle})}],
             [IconContext, {styles: icon({variant, fillStyle})}]
           ]}>
           {Icon && <Icon aria-label={iconAlt} />}

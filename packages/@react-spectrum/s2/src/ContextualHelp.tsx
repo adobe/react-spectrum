@@ -105,23 +105,15 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
                 }
               }],
               [HeadingContext, {className: style({
-                fontSize: 'heading-xs',
-                fontWeight: 'heading',
-                lineHeight: 'heading',
-                color: 'heading',
+                font: 'heading-xs',
                 margin: 0,
                 marginBottom: styleSize(8) // This only makes it 10px on mobile and should be 12px
               })}],
               [ContentContext, {className: style({
-                fontSize: 'ui',
-                fontWeight: 'normal',
-                lineHeight: 'body',
-                color: 'body'
+                font: 'body-sm'
               })}],
               [FooterContext, {className: style({
-                fontSize: 'ui',
-                lineHeight: 'body',
-                color: 'body',
+                font: 'body-sm',
                 marginTop: 16
               })}]
             ]}>
