@@ -349,11 +349,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 },
                 width: {
                   default: '[var(--trigger-width)]',
-                  isQuiet: '[calc(var(--trigger-width) + var(--quietOffset))]'
-                },
-                '--quietOffset': {
-                  type: 'width',
-                  value: 24
+                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
                 }
               })(props)}>
               <Provider
