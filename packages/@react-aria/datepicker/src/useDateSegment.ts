@@ -177,7 +177,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     return eras;
   }, [eraFormatter, state.calendar, segment.type]);
 
-  let onInput = (key: string | null) => {
+  let onInput = (key: string) => {
     if (state.isDisabled || state.isReadOnly) {
       return;
     }
@@ -219,13 +219,13 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
           switch (state.dateFormatter.resolvedOptions().hourCycle) {
             case 'h11':
-              if (numberValue > 11 && typeof key === 'string') {
+              if (numberValue > 11) {
                 segmentValue = parser.parse(key);
               }
               break;
             case 'h12':
               allowsZero = false;
-              if (numberValue > 12 && typeof key === 'string') {
+              if (numberValue > 12) {
                 segmentValue = parser.parse(key);
               }
               break;
@@ -234,7 +234,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
           if (segment.value !== undefined && segment.value >= 12 && numberValue > 1) {
             numberValue += 12;
           }
-        } else if (segment.maxValue !== undefined && numberValue > segment.maxValue && typeof key === 'string') {
+        } else if (segment.maxValue !== undefined && numberValue > segment.maxValue) {
           segmentValue = parser.parse(key);
         }
 
@@ -322,7 +322,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
         // Android sometimes fires key presses of letters as composition events. Need to handle am/pm keys here too.
         // Can also happen e.g. with Pinyin keyboard on iOS.
-        if (startsWith(am, data) || startsWith(pm, data)) {
+        if (data != null && (startsWith(am, data) || startsWith(pm, data))) {
           onInput(data);
         }
         break;
