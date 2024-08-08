@@ -67,7 +67,7 @@ const tab = style({
     }
   },
   borderRadius: 'sm',
-  gap: size(6),
+  gap: 'text-to-visual',
   height: {
     density: {
       compact: 32,
