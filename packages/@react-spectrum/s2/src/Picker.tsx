@@ -26,7 +26,7 @@ import {
   SectionProps,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
