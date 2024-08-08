@@ -6814,7 +6814,6 @@ __metadata:
     boxen: "npm:^5.1.2"
     build: "npm:^0.1.4"
     chalk: "npm:^4.0.0"
-    commander: "npm:^12.0.0"
     execa: "npm:^5.1.1"
     jscodeshift: "npm:^0.15.2"
     ts-node: "npm:^10.9.2"
@@ -14521,13 +14520,6 @@ __metadata:
   version: 2.20.0
   resolution: "commander@npm:2.20.0"
   checksum: 10c0/c037420cdf8c8bbadf37749fe129298eda5b5c004e81805057d87ff508f9dbfb680d30aebe1bbcdfc54b579eaf6182dd90077e506add74d6b26ef52c7e22d41d
-  languageName: node
-  linkType: hard
-
-"commander@npm:^12.0.0":
-  version: 12.1.0
-  resolution: "commander@npm:12.1.0"
-  checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
   languageName: node
   linkType: hard
 
