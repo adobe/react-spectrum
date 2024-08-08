@@ -1,10 +1,10 @@
-import {CodemodOptions} from '../..';
 import {run as jscodeshift} from 'jscodeshift/src/Runner.js';
 import path from 'node:path';
+import {S1ToS2CodemodOptions} from '../..';
 
 const transformPath = path.join(__dirname, 'codemods', 'codemod.js');
 
-export async function transform(options: CodemodOptions) {
+export async function transform(options: S1ToS2CodemodOptions) {
   let {
     path: filePath = '.',
     ...rest

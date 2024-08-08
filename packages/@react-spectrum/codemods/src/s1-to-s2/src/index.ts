@@ -1,13 +1,13 @@
 import {addMacroSupport} from './utils/addMacroSupport.js';
 import chalk from 'chalk';
-import {CodemodOptions} from '../../index.js';
 import installPackage from './utils/installPackage.js';
 import logger from './utils/logger.js';
+import {S1ToS2CodemodOptions} from '../../index.js';
 import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
-export async function s1_to_s2(options: CodemodOptions) {
+export async function s1_to_s2(options: S1ToS2CodemodOptions) {
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +

@@ -1,10 +1,10 @@
-import {CodemodOptions} from '..';
 import {run as jscodeshift} from 'jscodeshift/src/Runner.js';
 import path from 'node:path';
+import {UseMonopackagesCodemodOptions} from '../..';
 
-const transformPath = path.join(__dirname, 'use-monopackages.js');
+const transformPath = path.join(__dirname, 'codemod.js');
 
-export async function use_monopackages(options: CodemodOptions) {
+export async function use_monopackages(options: UseMonopackagesCodemodOptions) {
   let {
     path: filePath = '.',
     ...rest

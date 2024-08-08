@@ -1,8 +1,8 @@
 const {parseArgs} = require('node:util');
 import {s1_to_s2} from './s1-to-s2/src';
-import {use_monopackages} from './use-monopackages';
+import {use_monopackages} from './use-monopackages/src';
 
-export interface CodemodOptions {
+interface JSCodeshiftOptions {
   /**
    * The parser for jscodeshift to use for parsing the source files: https://github.com/facebook/jscodeshift?tab=readme-ov-file#parser.
    * 
@@ -26,15 +26,25 @@ export interface CodemodOptions {
    * 
    * @default '.'
    */
-  path?: string,
+  path?: string
+}
+
+export interface S1ToS2CodemodOptions extends JSCodeshiftOptions {
   /**
-   * An optional subset of components to have the codemod apply to.
+   * An optional subset of components to have the s1-to-s2 codemod apply to.
    * Provide a comma-separated list of component names.
    */
   components?: string
 }
 
-const codemods: Record<string, (options: CodemodOptions) => void> = {
+export interface UseMonopackagesCodemodOptions extends JSCodeshiftOptions {
+  /**
+   * The packages to apply the use-monopackages codemod to.
+   */
+  packages?: string
+}
+
+const codemods: Record<string, (options: S1ToS2CodemodOptions | UseMonopackagesCodemodOptions) => void> = {
   's1-to-s2': s1_to_s2,
   'use-monopackages': use_monopackages
 };

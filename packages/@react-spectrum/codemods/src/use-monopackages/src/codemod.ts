@@ -21,9 +21,6 @@ function areSpecifiersAlphabetized(specifiers: ImportSpecifier[]) {
  * By default this will apply to all the above packages, or optionally you can specify which packages to apply this by passing a comma-separated list to the packages option: `--packages=react-aria,react-stately,react-spectrum`.
  *
  * Run this from a directory where the relevant packages are installed in node_modules so it knows which monopackage exports are available to use (since exports may vary by version).
- *
- * 1. Install jscodeshift: `npm i -g jscodeshift`
- * 2. Run: `jscodeshift -t /path/to/use-monopackages.ts src/`.
  */
 module.exports = function transformer(file: FileInfo, api: API, options: Options) {
   const j = api.jscodeshift;
