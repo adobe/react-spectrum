@@ -1,7 +1,6 @@
 name: Manual nightly deploy
 on:
-  push:
-  workflow_dispatch:
+  workflow_dispatch
 
 jobs:
   trigger-circleci:
