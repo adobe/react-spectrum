@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="-28.686" x2="194.756" y1="137.748" y2="-6.308" gradientUnits="userSpaceOnUse">
+      <stop offset=".06" stop-color="#8480FE"/>
+      <stop offset=".6" stop-color="#8480FE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="156.583" x2="63.669" y1="42.682" y2="148.555" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="36.223" x2="206.785" y1="157.049" y2="55.798" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FC7D00" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#FC7D00"/>
+      <stop offset=".609" stop-color="#FC7D00"/>
+      <stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="matrix(0 58.2973 -61.7778 0 61.778 58.297)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#FF709F"/>
+      <stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="matrix(0 58.2973 -61.7778 0 61.778 58.297)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="a">
+      <rect width="142" height="134" x="7" y="18" fill="#fff" rx="3.461"/>
+    </clipPath>
+    <clipPath id="c">
+      <path fill="#fff" d="M7 18h142v134H7z"/>
+    </clipPath>
+  </defs>
+  <mask id="b" width="122" height="106" x="19" y="27" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="M35.75 27.93h48.07c8.84 0 16 7.16 16 16v88.13H73.83v-20.58c0-4.42-3.58-8-8-8H53.74c-4.42 0-8 3.58-8 8v20.58H19.75V43.93c0-8.84 7.16-16 16-16Zm12.79 56.56c2.21 0 4-1.79 4-4v-5.76c0-2.21-1.79-4-4-4h-5.76c-2.21 0-4 1.79-4 4v5.76c0 2.21 1.79 4 4 4h5.76Zm0-28.06c2.21 0 4-1.79 4-4v-5.76c0-2.21-1.79-4-4-4h-5.76c-2.21 0-4 1.79-4 4v5.76c0 2.21 1.79 4 4 4h5.76ZM76.8 84.49c2.21 0 4-1.79 4-4v-5.76c0-2.21-1.79-4-4-4h-5.76c-2.21 0-4 1.79-4 4v5.76c0 2.21 1.79 4 4 4h5.76Zm0-28.06c2.21 0 4-1.79 4-4v-5.76c0-2.21-1.79-4-4-4h-5.76c-2.21 0-4 1.79-4 4v5.76c0 2.21 1.79 4 4 4h5.76Zm47.44-6.87c8.84 0 16 7.16 16 16v66.5h-32.41v-82.5h16.41Zm-1.33 62.16c2.21 0 4-1.79 4-4v-5.76c0-2.21-1.79-4-4-4h-5.76c-2.21 0-4 1.79-4 4v5.76c0 2.21 1.79 4 4 4h5.76Zm0-28.06c2.21 0 4-1.79 4-4V73.9c0-2.21-1.79-4-4-4h-5.76c-2.21 0-4 1.79-4 4v5.76c0 2.21 1.79 4 4 4h5.76Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <rect width="142" height="134" x="7" y="18" fill="#FFECCF" rx="3.461"/>
+    <g clip-path="url(#c)">
+      <path fill="#FFECCF" d="M7 18h142v134H7z"/>
+      <ellipse cx="61.778" cy="58.297" fill="url(#d)" rx="61.778" ry="58.297" transform="matrix(1 0 .00016 1 25.426 -35.018)"/>
+      <path fill="url(#e)" d="M61.199-5.67c-10.906-6.368-24.723-6.407-35.67-.1L-83.95 57.307c-10.722 6.178-10.74 20.76-.032 26.961l108.756 62.99c10.93 6.329 24.747 6.321 35.667-.023l108.532-63.048c10.651-6.188 10.671-20.689.033-26.9L61.199-5.67Z"/>
+      <path fill="url(#f)" d="M27.464 81.62c2.427-50.026 47.37-88.723 100.383-86.433 53.013 2.29 94.02 44.701 91.593 94.727-2.427 50.026-47.369 88.724-100.382 86.434-53.013-2.291-94.02-44.702-91.594-94.728Z"/>
+      <path fill="url(#g)" d="M-50.53 114.605c21.072-8.483 43.799-8.119 63.489-.699 39.4 14.885 62.325 5.682 78.225-31.413 7.92-18.614 23.384-34.378 44.48-42.871 42.179-16.954 90.873 1.442 108.814 41.127 17.941 39.685-1.696 85.563-43.865 102.539-21.144 8.512-43.914 8.114-63.634.627-39.336-14.806-62.218-5.568-78.098 31.571-7.94 18.57-23.4 34.28-44.473 42.764-42.145 16.966-90.84-1.43-108.77-41.093-17.931-39.663 1.686-85.585 43.831-102.552Z"/>
+      <ellipse cx="61.778" cy="58.297" fill="url(#h)" rx="61.778" ry="58.297" transform="matrix(1 0 .00016 1 78.86 -16.007)"/>
+    </g>
+  </g>
+</svg>

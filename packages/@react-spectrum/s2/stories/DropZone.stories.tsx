@@ -12,8 +12,9 @@
 
 import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage, Illustration} from '../src';
 import {categorizeArgTypes} from './utils';
-import Cloud from '../spectrum-illustrations/Cloud.svg';
-import DropToUpload from '../spectrum-illustrations/DropToUpload.svg';
+import Cloud from '../spectrum-illustrations/linear/Cloud';
+import CloudUpload from '../spectrum-illustrations/gradient/S2_fill_cloudUpload_generic1_160.svg';
+import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import type {Meta} from '@storybook/react';
 import React, {useState} from 'react';
@@ -120,6 +121,32 @@ export const LongBanner = (args: any) => {
   );
 };
 
+export const Gradient = (args: any) => {
+  let [isFilled, setIsFilled] = useState(false);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        {...args}
+        className={style({width: '[320px]', height: '[280px]'})}
+        isFilled={isFilled}
+        onDrop={() => setIsFilled(true)}>
+        <IllustratedMessage>
+          <Illustration>
+            <CloudUpload />
+          </Illustration>
+          <Heading>
+            Drag and drop your file
+          </Heading>
+          <Content>
+            Or, select a file from your computer
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    </>
+  );
+};
 
 function Draggable() {
   let {dragProps} = useDrag({

@@ -10,21 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_DashSize100 from './S2_DashSize100.svg';
-import S2_DashSize200 from './S2_DashSize200.svg';
-import S2_DashSize50 from './S2_DashSize50.svg';
-import S2_DashSize75 from './S2_DashSize75.svg';
+import Dash_L from './S2_DashSize200.svg';
+import Dash_M from './S2_DashSize100.svg';
+import Dash_S from './S2_DashSize75.svg';
+import Dash_XL from './S2_DashSize300.svg';
+import Dash_XS from './S2_DashSize50.svg';
 import {SVGProps} from 'react';
 
-export default function Dash({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL'} & SVGProps<SVGSVGElement>) {
+export default function Dash(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}) {
+  let {size = 'M', ...otherProps} = props;
   switch (size) {
-    case 'S':
-      return <S2_DashSize50 {...props} />;
     case 'M':
-      return <S2_DashSize75 {...props} />;
+      return <Dash_M {...otherProps} />;
     case 'L':
-      return <S2_DashSize100 {...props} />;
+      return <Dash_L {...otherProps} />;
     case 'XL':
-      return <S2_DashSize200 {...props} />;
+      return <Dash_XL {...otherProps} />;
+    case 'XS':
+      return <Dash_XS {...otherProps} />;
+    case 'S':
+      return <Dash_S {...otherProps} />;
   }
 }

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="109.455" x2="31.852" y1="4.691" y2="105.305" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4885"/>
+      <stop offset="1" stop-color="#FF4885" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="62.177" x2="77.147" y1="-41.628" y2="54.18" gradientUnits="userSpaceOnUse">
+      <stop offset=".156" stop-color="#7A6AFD"/>
+      <stop offset="1" stop-color="#7A6AFD" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="-110.557" x2="141.324" y1="150.991" y2="101.21" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#30A7FE" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#30A7FE" stop-opacity=".995"/>
+      <stop offset=".609" stop-color="#30A7FE"/>
+      <stop offset="1" stop-color="#30A7FE" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="a">
+      <rect width="134" height="134" x="12.5" y="9" fill="#fff" rx="10"/>
+    </clipPath>
+    <clipPath id="c">
+      <rect width="134" height="134" x="12.5" y="9" fill="#fff" rx="10"/>
+    </clipPath>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="rotate(90 17.425 114.52) scale(193.472)" gradientUnits="userSpaceOnUse">
+      <stop offset=".089" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <mask id="b" width="160" height="160" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" d="M108.008 26c-15.463.01-27.996 12.659-27.996 28.262-.004.014-.008.045-.012.065-.004-.02-.008-.05-.012-.065 0-15.603-12.533-28.253-27.996-28.262-17.052-.01-29.247 14.7-27.889 31.848 2.458 31.016 35.866 65.837 49.824 77.019a9.682 9.682 0 0 0 12.123.001c13.964-11.181 47.39-46.005 49.847-77.023 1.358-17.148-10.838-31.856-27.889-31.845Z"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <g clip-path="url(#c)">
+      <rect width="134" height="134" x="12.5" y="9" fill="#D9F4FD" rx="10"/>
+      <circle cx="131.945" cy="97.094" r="193.472" fill="url(#d)"/>
+      <path fill="url(#e)" d="M.44 50.97C-1.711 4.654 34.092-34.637 80.409-36.787c46.316-2.151 85.606 33.652 87.757 79.969 2.15 46.316-33.653 85.606-79.97 87.757C41.88 133.089 2.59 97.286.44 50.969Z"/>
+      <path fill="url(#f)" d="M46.352-83.724a32.664 32.664 0 0 0-34.174-.102l-104.89 64.043c-10.273 6.272-10.29 21.077-.031 27.373L11.454 71.542a32.663 32.663 0 0 0 34.172-.023L149.609 7.507c10.204-6.282 10.223-21.005.031-27.311L46.352-83.724Z"/>
+      <path fill="url(#g)" d="M-54.301 73.093c21.62 0 41.203 8.75 55.381 22.866 28.358 28.28 51.867 28.304 80.225.072 14.178-14.188 33.786-22.962 55.43-22.962 43.263.024 78.31 34.975 78.31 78.121 0 43.145-35.047 78.072-78.31 78.072-21.692 0-41.3-8.798-55.479-22.986-28.333-28.184-51.818-28.16-80.176.121-14.178 14.14-33.762 22.865-55.381 22.865-43.239 0-78.286-34.951-78.286-78.072s35.047-78.097 78.286-78.097Z"/>
+    </g>
+  </g>
+</svg>

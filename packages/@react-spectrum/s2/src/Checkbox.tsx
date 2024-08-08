@@ -118,6 +118,13 @@ export const iconStyles = style({
   }
 });
 
+const iconSize = {
+  S: 'XS',
+  M: 'S',
+  L: 'M',
+  XL: 'L'
+} as const;
+
 function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let boxRef = useRef(null);
   let domRef = useFocusableRef(ref);
@@ -146,10 +153,10 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
                 isEmphasized: isInCheckboxGroup ? ctx.isEmphasized : props.isEmphasized
               })}>
               {renderProps.isIndeterminate &&
-                <DashIcon size={props.size || 'M'} className={iconStyles} />
+                <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
               }
               {renderProps.isSelected && !renderProps.isIndeterminate &&
-                <CheckmarkIcon size={props.size || 'M'} className={iconStyles} />
+                <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
               }
             </div>
           </CenterBaseline>

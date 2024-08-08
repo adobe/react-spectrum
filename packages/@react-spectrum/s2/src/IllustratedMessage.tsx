@@ -16,7 +16,7 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {IllustrationContext} from './Illustration';
+import {IllustrationContext} from './Icon';
 import {Provider} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -110,11 +110,14 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
     }
   },
   alignSelf: 'center',
-  color: {
-    // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
-    default: 'gray-800',
-    isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
-    isDropTarget: 'accent'
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
+      default: 'gray-800',
+      isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
+      isDropTarget: 'accent'
+    }
   }
 });
 
@@ -184,7 +187,7 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
           [ContentContext, {className: content({size})}],
-          [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
+          [IllustrationContext, {size: size === 'L' ? 'L' : 'M', styles: illustration({orientation, size, isInDropZone, isDropTarget})}],
           [ButtonGroupContext, {styles: buttonGroup}]
         ]}>
         {children}

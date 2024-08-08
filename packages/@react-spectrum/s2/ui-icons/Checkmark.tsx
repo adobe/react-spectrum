@@ -10,24 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_CheckmarkSize100 from './S2_CheckmarkSize100.svg';
-import S2_CheckmarkSize200 from './S2_CheckmarkSize200.svg';
-import S2_CheckmarkSize300 from './S2_CheckmarkSize300.svg';
-import S2_CheckmarkSize50 from './S2_CheckmarkSize50.svg';
-import S2_CheckmarkSize75 from './S2_CheckmarkSize75.svg';
+import Checkmark_L from './S2_CheckmarkSize200.svg';
+import Checkmark_M from './S2_CheckmarkSize100.svg';
+import Checkmark_S from './S2_CheckmarkSize75.svg';
+import Checkmark_XL from './S2_CheckmarkSize300.svg';
+import Checkmark_XS from './S2_CheckmarkSize50.svg';
+import Checkmark_XXL from './S2_CheckmarkSize400.svg';
 import {SVGProps} from 'react';
 
-export default function Checkmark({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL' | 'XXL'} & SVGProps<SVGSVGElement>) {
+export default function Checkmark(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}) {
+  let {size = 'M', ...otherProps} = props;
   switch (size) {
-    case 'S':
-      return <S2_CheckmarkSize50 {...props} />;
     case 'M':
-      return <S2_CheckmarkSize75 {...props} />;
+      return <Checkmark_M {...otherProps} />;
     case 'L':
-      return <S2_CheckmarkSize100 {...props} />;
+      return <Checkmark_L {...otherProps} />;
     case 'XL':
-      return <S2_CheckmarkSize200 {...props} />;
+      return <Checkmark_XL {...otherProps} />;
     case 'XXL':
-      return <S2_CheckmarkSize300 {...props} />;
+      return <Checkmark_XXL {...otherProps} />;
+    case 'XS':
+      return <Checkmark_XS {...otherProps} />;
+    case 'S':
+      return <Checkmark_S {...otherProps} />;
   }
 }

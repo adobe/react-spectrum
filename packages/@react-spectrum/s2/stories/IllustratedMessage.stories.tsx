@@ -11,7 +11,8 @@
  */
 
 import {Button, ButtonGroup, Content, Heading, IllustratedMessage, Illustration} from '../src';
-import Cloud from '../spectrum-illustrations/Cloud.svg';
+import Cloud from '../spectrum-illustrations/linear/Cloud';
+import Folder from '../spectrum-illustrations/gradient/S2_fill_folderOpen_generic2_160.svg';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof IllustratedMessage> = {
@@ -69,3 +70,19 @@ export const NoButtonShortText = (args: any) => (
   </IllustratedMessage>
 );
 
+export const Gradient = (args: any) => (
+  <IllustratedMessage {...args}>
+    <Illustration>
+      <Folder />
+    </Illustration>
+    <Heading>
+      Illustrated message title
+    </Heading>
+    <Content>
+      Illustrated message description. Give more information about what a user can do, expect, or how to make items appear.    </Content>
+    <ButtonGroup>
+      <Button variant="secondary" >Label</Button>
+      <Button variant="accent" >Label</Button>
+    </ButtonGroup>
+  </IllustratedMessage>
+);

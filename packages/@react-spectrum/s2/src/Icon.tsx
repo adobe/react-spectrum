@@ -25,4 +25,9 @@ export interface IconContextValue extends UnsafeStyles, SlotProps {
   render?: (icon: ReactNode) => ReactNode
 }
 
+export interface IllustrationContextValue extends IconContextValue {
+  size?: 'S' | 'M' | 'L'
+}
+
 export const IconContext = createContext<ContextValue<IconContextValue, SVGElement>>({});
+export const IllustrationContext = createContext<ContextValue<IllustrationContextValue, SVGElement>>({});

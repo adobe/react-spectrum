@@ -416,6 +416,20 @@ export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'sty
   children: ReactNode
 }
 
+const checkmarkIconSize = {
+  S: 'XS',
+  M: 'M',
+  L: 'L',
+  XL: 'XL'
+} as const;
+
+const linkIconSize = {
+  S: 'M',
+  M: 'L',
+  L: 'XL',
+  XL: 'XL'
+} as const;
+
 export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -451,14 +465,14 @@ export function MenuItem(props: MenuItemProps) {
                 [KeyboardContext, {className: keyboard({size, isDisabled: renderProps.isDisabled})}],
                 [ImageContext, {className: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLink && <LinkOutIcon size={size} className={descriptor} />}
+              {isLink && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
               {renderProps.hasSubmenu && <div slot="descriptor" className={descriptor}><ChevronRightIcon size={size} /></div>}
             </Provider>
           </>

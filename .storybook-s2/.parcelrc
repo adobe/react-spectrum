@@ -3,7 +3,7 @@
   "resolvers": ["@parcel/resolver-glob", "parcel-resolver-storybook", "..."],
   "transformers": {
     "packages/@react-spectrum/s2/{src,stories}/*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": ["parcel-transformer-react-docgen-typescript", "..."],
-    "packages/@react-spectrum/s2/s2wf-icons/*.svg": ["parcel-transformer-icon"],
+    "packages/@react-spectrum/s2/{s2wf-icons,spectrum-illustrations}/**/*.svg": ["parcel-transformer-icon"],
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     // Disable PostCSS from running over style macro output
     "*.css": ["@parcel/transformer-css"],
