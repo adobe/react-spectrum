@@ -170,7 +170,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           validationState={props.validationState || (isInvalid ? 'invalid' : null)}
           ref={inputGroupRef} />
       </Field>
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
       <Popover
         state={state}
         UNSAFE_style={style}

@@ -737,7 +737,7 @@ function Example() {
       onRootDrop={onRootDrop}
       onInsert={onInsert}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -813,7 +813,7 @@ function Example() {
       ///- end highlight -///
       onRootDrop={onRootDrop}>
       {item => (
-        <Item key={item.name}>
+        <Item key={item.name} textValue={item.name}>
           <div className="dir-item">
             {item.kind === 'directory' ? <Folder /> : <File />}
             <span>{item.name}</span>
@@ -897,7 +897,7 @@ function Example() {
       acceptedDragTypes={['image/png']}
       onRootDrop={onRootDrop}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1015,7 +1015,7 @@ function Example() {
       getDropOperation={getDropOperation}
       onDrop={onDrop}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           <div className="dir-item">
             <Folder />
             <span>{item.name} ({item.contains} items)</span>
