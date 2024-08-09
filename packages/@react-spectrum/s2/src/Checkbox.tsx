@@ -79,6 +79,7 @@ export const box = style<RenderProps>({
   forcedColorAdjust: 'none',
   backgroundColor: {
     default: 'gray-25',
+    forcedColors: 'Background',
     isSelected: {
       default: 'neutral',
       isEmphasized: baseColor('accent-900'),

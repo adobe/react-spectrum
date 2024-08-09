@@ -44,7 +44,7 @@ export function createRenamedProperty<T extends CSSValue>(name: string, values: 
   return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values);
 }
 
-type Color<C extends string> = C | `${string}/${number}`;
+export type Color<C extends string> = C | `${string}/${number}`;
 export function createColorProperty<C extends string>(colors: PropertyValueMap<C>, property?: keyof CSSProperties): PropertyFunction<Color<C>> {
   let valueMap = createValueLookup(Object.values(colors).flatMap((v: any) => typeof v === 'object' ? Object.values(v) : [v]));
   return (value: Color<C>, key: string) => {
