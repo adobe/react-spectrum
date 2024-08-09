@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Button} from './Button';
+export {Button, pendingDelay} from './Button';
 export {ActionButton} from './ActionButton';
 export {FieldButton} from './FieldButton';
 export {LogicButton} from './LogicButton';
