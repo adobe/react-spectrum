@@ -122,6 +122,7 @@ export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
 });
 
 export let sectionHeading = style({
+  font: 'ui',
   fontWeight: 'bold',
   margin: 0
 });
@@ -130,6 +131,7 @@ export let menuitem = style({
   ...focusRing(),
   boxSizing: 'border-box',
   borderRadius: 'control',
+  font: 'ui',
   '--labelPadding': {
     type: 'paddingTop',
     value: centerPadding()
@@ -237,6 +239,8 @@ let image = style({
 
 export let label = style({
   gridArea: 'label',
+  font: 'ui',
+  color: '[inherit]',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding'
@@ -244,16 +248,7 @@ export let label = style({
 
 export let description = style({
   gridArea: 'description',
-  fontFamily: 'sans',
-  color: {
-    default: 'neutral-subdued',
-    // Ideally this would use the same token as hover, but we don't have access to that here.
-    // TODO: should we always consider isHovered and isFocused to be the same thing?
-    isFocused: 'gray-800',
-    isDisabled: 'disabled'
-  },
-  transition: 'default',
-  fontSize: {
+  font: {
     default: 'ui-sm',
     size: {
       S: 'ui-xs',
@@ -261,7 +256,15 @@ export let description = style({
       L: 'ui',
       XL: 'ui-lg'
     }
-  }
+  },
+  color: {
+    default: 'neutral-subdued',
+    // Ideally this would use the same token as hover, but we don't have access to that here.
+    // TODO: should we always consider isHovered and isFocused to be the same thing?
+    isFocused: 'gray-800',
+    isDisabled: 'disabled'
+  },
+  transition: 'default'
 });
 
 let value = style({
@@ -272,6 +275,8 @@ let value = style({
 let keyboard = style({
   gridArea: 'keyboard',
   marginStart: 8,
+  font: 'ui',
+  fontWeight: 'light',
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',
@@ -279,9 +284,7 @@ let keyboard = style({
       isDisabled: 'GrayText'
     }
   },
-  fontFamily: 'sans',
   background: 'gray-25',
-  fontWeight: 'light',
   unicodeBidi: 'plaintext'
 });
 

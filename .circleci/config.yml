@@ -697,3 +697,12 @@ workflows:
     jobs:
       - install
       - publish-nightly
+
+  nightly-manual:
+    when:
+      and:
+        - equal: [ "nightly", << pipeline.parameters.GHA_Action >> ]
+        - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
+    jobs:
+      - install
+      - publish-nightly
