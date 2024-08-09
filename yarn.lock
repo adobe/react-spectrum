@@ -7417,6 +7417,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/@react-spectrum/parcel-transformer-s2-icon"
   dependencies:
+    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.34"
     "@parcel/plugin": "npm:2.0.0-dev.1601"
   languageName: unknown
   linkType: soft
