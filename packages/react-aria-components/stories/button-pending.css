@@ -24,11 +24,14 @@
 
 .spinner {
   position: absolute;
-  top: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+}
+.spinner-pending {
   animation: 1s load;
   animation-fill-mode: forwards;
-
-  visibility: hidden;
 }
 
 .pending {

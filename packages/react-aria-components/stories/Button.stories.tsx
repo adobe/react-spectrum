@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from 'react-aria-components';
+import {Button, ProgressBar, Text} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
@@ -57,32 +57,46 @@ export const PendingButtonComplexChildren = {
 function PendingButtonExample(props) {
   let [isPending, setPending] = useState(false);
 
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let handlePress = (e) => {
     action('pressed')(e);
     setPending(true);
+    timeout.current = setTimeout(() => {
+      // setPending(false);
+      // timeout.current = undefined;
+    }, 10000);
   };
 
   useEffect(() => {
-    if (isPending) {
-      let timeout = setTimeout(() => {
-        setPending(false);
-      }, 10000);
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
 
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [isPending]);
+  let [hideOthers, setHideOthers] = useState(false);
 
   return (
-    <Button
-      {...props}
-      isPending={isPending}
-      onPress={handlePress}
-      className={styles2['button']}
-      renderPendingState={() => <div className={styles2['spinner']}>pending</div>}>
-      <div className={isPending ? styles2['pending'] : undefined}>{props.children}</div>
-    </Button>
+    <>
+    {!hideOthers && (
+      <Button
+        {...props}
+        isPending={isPending}
+        onPress={handlePress}
+        className={styles2['button']}>
+          {({isPending}) => (
+            <>
+              <Text className={isPending ? styles2['pending'] : undefined}>{props.children}</Text>
+              <ProgressBar
+                isIndeterminate
+                className={[styles2['spinner'], (isPending ? styles2['spinner-pending'] : '')].join(' ')}>
+                  loading
+              </ProgressBar>
+            </>
+          )}
+      </Button>
+    )}
+    <Button onPress={() => setHideOthers(prev => !prev)}>Toggle others</Button>
+    </>
   );
 }
 

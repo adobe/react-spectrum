@@ -23,16 +23,18 @@ import {
 } from 'react-aria';
 import {
   ContextValue,
+  Provider,
   RenderProps,
   SlotProps,
   useContextProps,
   useRenderProps
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
-import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
+import {filterDOMProps, isAppleDevice, isFirefox, useEffectEvent} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, ReactNode} from 'react';
+import React, {createContext, ForwardedRef, ReactNode, useCallback, useEffect, useMemo, useRef} from 'react';
+import { ProgressBarContext, TextContext } from 'react-aria-components';
 
 export interface ButtonRenderProps {
   /**
@@ -138,6 +140,31 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     ariaLive = 'off';
   }
 
+  let textRef = useRef(null);
+  let progressRef = useRef(null);
+  let textCallbackRef = useCallback(node => {
+    textRef.current = node;
+    // use a microtask so the unmounting has time to complete before we throw an error
+    queueMicrotask(() => {
+      if (!textRef.current && ref.current && isPending) {
+        throw new Error('Expected <Text> to be used with pending button');
+      }
+    });
+  }, [isPending, ref]);
+  let progressCallbackRef = useCallback(node => {
+    progressRef.current = node;
+    queueMicrotask(() => {
+      if (!progressRef.current && ref.current && isPending) {
+        throw new Error('Expected <Progress> to be used with pending button');
+      }
+    });
+  }, [isPending, ref]);
+  useEffect(() => {
+    if (isPending && (!textRef.current || !progressRef.current)) {
+      throw new Error('Expected <Text> and <Progress> to be used with pending button');
+    }
+  }, [isPending, textRef, progressRef]);
+
   return (
     <button
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
@@ -155,33 +182,25 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      <div
-        style={{display: 'contents'}}
-        id={containerId}
-        aria-atomic>
+      <Provider
+        values={[
+          [TextContext, {id: containerId, 'aria-atomic': 'true', ref: textCallbackRef}],
+          [ProgressBarContext, {'aria-hidden': 'true', style: {display: isPending ? undefined : 'none'}, ref: progressCallbackRef}]
+        ]}>
         {renderProps.children}
-      </div>
-      {renderPendingState &&
-        <>
-          <div
-            aria-hidden
-            style={{display: !isPending ? 'none' : 'contents'}}>
-            {isPending && renderPendingState(renderValues)}
-          </div>
-          <VisuallyHidden>
-            <div aria-live={isFocused ? ariaLive : 'off'}>
-              {isPending &&
-                <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
-              }
-            </div>
-            {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
-          Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
-          https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
-          The aria-live may cause extra announcements in other browsers. */}
-            <div id={spinnerId} role="img" aria-label={isPending ? isPendingAriaLiveLabel : undefined} />
-          </VisuallyHidden>
-        </>
-      }
+      </Provider>
+      <VisuallyHidden>
+        <div aria-live={isFocused ? ariaLive : 'off'}>
+          {isPending &&
+            <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
+          }
+        </div>
+        {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
+      Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
+      https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
+      The aria-live may cause extra announcements in other browsers. */}
+        <div id={spinnerId} role="img" aria-label={isPending ? isPendingAriaLiveLabel : undefined} />
+      </VisuallyHidden>
     </button>
   );
 }
