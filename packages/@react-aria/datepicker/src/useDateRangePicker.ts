@@ -205,6 +205,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     calendarProps: {
       autoFocus: true,
       value: state.dateRange,
+      // @ts-ignore how to fix error TS2322: Type '(value: DateRange) => void' is not assignable to type '(value: RangeValue<DateValue> | null) => void'
       onChange: state.setDateRange,
       minValue: props.minValue,
       maxValue: props.maxValue,

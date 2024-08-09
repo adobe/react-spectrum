@@ -14,7 +14,7 @@ import {Key} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
 
 interface ListData {
-  id: string,
+  id?: string,
   shouldSelectOnPressUp?: boolean,
   shouldFocusOnHover?: boolean,
   shouldUseVirtualFocus?: boolean,
