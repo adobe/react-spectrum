@@ -51,7 +51,7 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/chromatic-fc/**', '**/__tests__/**'],
     rules: {
       'rsp-rules/no-react-key': [ERROR],
       'rsp-rules/act-events-test': ERROR,
@@ -96,6 +96,12 @@ module.exports = {
           'message': 'Use getOwnerDocument from @react-aria/utils instead.'
         }
       ]
+    }
+  },
+  {
+    files: ['packages/@react-spectrum/s2/**'],
+    rules: {
+      'react/react-in-jsx-scope': OFF
     }
   }],
   env: {

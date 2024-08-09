@@ -35,8 +35,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let [trigger, tooltip] = React.Children.toArray(children) as [ReactElement, ReactElement];
   let state = useTooltipTriggerState(props);
 
-  let tooltipTriggerRef = useRef<HTMLElement>();
-  let overlayRef = useRef<HTMLDivElement>();
+  let tooltipTriggerRef = useRef<HTMLElement>(undefined);
+  let overlayRef = useRef<HTMLDivElement>(undefined);
 
   let {triggerProps, tooltipProps} = useTooltipTrigger({
     isDisabled,
@@ -98,7 +98,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
 
 // Support TooltipTrigger inside components using CollectionBuilder.
 TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps) {
-  // Replaced the use of React.Childern.toArray because it mutates the key prop.
+  // Replaced the use of React.Children.toArray because it mutates the key prop.
   let childArray: ReactElement[] = [];
   React.Children.forEach(props.children, child => {
     if (React.isValidElement(child)) {

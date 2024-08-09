@@ -11,10 +11,9 @@
  */
 
 import {AriaTabProps} from '@react-types/tabs';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLinkProps} from '@react-aria/utils';
 import {generateId} from './utils';
-import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -36,7 +35,7 @@ export interface TabAria {
 export function useTab<T>(
   props: AriaTabProps,
   state: TabListState<T>,
-  ref: RefObject<FocusableElement>
+  ref: RefObject<FocusableElement | null>
 ): TabAria {
   let {key, isDisabled: propsDisabled, shouldSelectOnPressUp} = props;
   let {selectionManager: manager, selectedKey} = state;

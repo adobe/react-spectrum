@@ -146,6 +146,19 @@ function openSyntheticLink(target: Element, modifiers: Modifiers) {
   getSyntheticLink(target, link => openLink(link, modifiers));
 }
 
+export function useSyntheticLinkProps(props: LinkDOMProps) {
+  let router = useRouter();
+  return {
+    'data-href': props.href ? router.useHref(props.href) : undefined,
+    'data-target': props.target,
+    'data-rel': props.rel,
+    'data-download': props.download,
+    'data-ping': props.ping,
+    'data-referrer-policy': props.referrerPolicy
+  };
+}
+
+/** @deprecated - For backward compatibility. */
 export function getSyntheticLinkProps(props: LinkDOMProps) {
   return {
     'data-href': props.href,

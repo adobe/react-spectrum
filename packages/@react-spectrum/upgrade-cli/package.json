@@ -1,0 +1,39 @@
+{
+  "name": "@react-spectrum/upgrade-cli",
+  "version": "0.0.1",
+  "private": true,
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "bin": {
+    "upgrade-react-spectrum": "./dist/index.js"
+  },
+  "scripts": {
+    "start": "node --loader=ts-node/esm src/index.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "commonjs",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.24.5",
+    "@babel/traverse": "^7.24.5",
+    "@babel/types": "^7.24.5",
+    "@react-types/shared": "^3.24.0",
+    "boxen": "^5.1.2",
+    "build": "^0.1.4",
+    "chalk": "^4.0.0",
+    "commander": "^12.0.0",
+    "execa": "^5.1.1",
+    "jscodeshift": "^0.15.2",
+    "ts-node": "^10.9.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/jscodeshift": "^0.11.11"
+  }
+}

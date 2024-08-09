@@ -11,10 +11,11 @@
  */
 
 import {AriaSliderProps, AriaSliderThumbProps, HoverEvents, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
 export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps {
@@ -210,18 +211,27 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps> {}
+export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps> {
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: RefObject<HTMLInputElement | null>
+}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {
+    inputRef: userInputRef = null
+  } = props;
   let state = useContext(SliderStateContext)!;
   let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
-  let inputRef = useRef<HTMLInputElement>(null);
+  let defaultInputRef = useRef<HTMLInputElement>(null);
+  let inputRef = userInputRef || defaultInputRef;
   let [labelRef, label] = useSlot();
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
     index,
-    trackRef: trackRef as RefObject<HTMLDivElement>,
+    trackRef: trackRef as RefObject<HTMLDivElement | null>,
     inputRef,
     label
   }, state);

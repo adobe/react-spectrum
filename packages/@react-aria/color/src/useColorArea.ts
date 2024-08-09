@@ -12,11 +12,11 @@
 
 import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
 import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -35,11 +35,11 @@ export interface ColorAreaAria {
 
 export interface AriaColorAreaOptions extends AriaColorAreaProps {
   /** A ref to the input that represents the x axis of the color area. */
-  inputXRef: RefObject<HTMLInputElement>,
+  inputXRef: RefObject<HTMLInputElement | null>,
   /** A ref to the input that represents the y axis of the color area. */
-  inputYRef: RefObject<HTMLInputElement>,
+  inputYRef: RefObject<HTMLInputElement | null>,
   /** A ref to the color area containing element. */
-  containerRef: RefObject<Element>
+  containerRef: RefObject<Element | null>
 }
 
 /**
@@ -63,7 +63,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let {direction, locale} = useLocale();
 
   let [focusedInput, setFocusedInput] = useState<'x' | 'y' | null>(null);
-  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement> = inputXRef) => {
+  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement | null> = inputXRef) => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }

@@ -15,6 +15,7 @@ run_chromatic:
 clean:
 	yarn clean:icons
 	rm -rf dist public src/dist
+	rm -rf storage
 
 clean_all:
 	$(MAKE) clean
@@ -26,10 +27,15 @@ clean_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
 	rm -rf examples/*/node_modules
+	rm -rf starters/*/node_modules
 
 clean_dist:
 	rm -rf packages/*/*/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
+	rm -rf packages/@adobe/react-spectrum/i18n
+	rm -rf packages/@react-aria/i18n/server
+	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons
 
 clean_parcel:
 	rm -rf .parcel-cache
@@ -81,6 +87,9 @@ storybook-16:
 storybook-17:
 	yarn build:storybook-17
 
+storybook-19:
+	yarn build:storybook-19
+
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish
@@ -93,7 +102,7 @@ publish-nightly: build
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
-	yarn lerna run prepublishOnly
+	yarn workspaces foreach --all -pt run prepublishOnly
 	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
 		do node scripts/buildEsm.js $$pkg; \
 	done
@@ -108,6 +117,7 @@ website-production:
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) s2-docs
 
 check-examples:
 	node scripts/extractExamples.mjs
@@ -115,7 +125,7 @@ check-examples:
 
 starter:
 	node scripts/extractStarter.mjs
-	cd starters/docs && yarn && yarn tsc
+	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
@@ -126,8 +136,15 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-	cd starters/tailwind && yarn && yarn tsc
+	cd starters/tailwind && yarn --no-immutable && yarn tsc
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
+
+s2-docs:
+	yarn build:s2-docs -o dist/production/docs/s2
+
+s2-api-diff:
+	node scripts/buildBranchAPI.js
+	node scripts/api-diff.js --skip-same --skip-style-props

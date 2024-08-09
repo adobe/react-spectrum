@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
+import {Key, RefObject} from '@react-types/shared';
 import {LayoutInfo, Size} from '@react-stately/virtualizer';
-import {RefObject, useCallback} from 'react';
+import {useCallback} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 interface IVirtualizer {
@@ -22,19 +22,21 @@ interface IVirtualizer {
 export interface VirtualizerItemOptions {
   layoutInfo: LayoutInfo,
   virtualizer: IVirtualizer,
-  ref: RefObject<HTMLElement>
+  ref: RefObject<HTMLElement | null>
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions) {
   let {layoutInfo, virtualizer, ref} = options;
 
   let updateSize = useCallback(() => {
-    let size = getSize(ref.current);
-    virtualizer.updateItemSize(layoutInfo.key, size);
-  }, [virtualizer, layoutInfo.key, ref]);
+    if (layoutInfo) {
+      let size = getSize(ref.current);
+      virtualizer.updateItemSize(layoutInfo.key, size);
+    }
+  }, [virtualizer, layoutInfo?.key, ref]);
 
   useLayoutEffect(() => {
-    if (layoutInfo.estimatedSize) {
+    if (layoutInfo?.estimatedSize) {
       updateSize();
     }
   });
