@@ -246,7 +246,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
           let values: string[] = [];
           for (let element of value.elements) {
             if (element?.type === 'StringLiteral' || element?.type === 'NumericLiteral') {
-              values.push(convertGridTrack(element.value));
+              values.push(convertGridTrack(element.value) as string);
             } else if (element?.type === 'CallExpression') {
               // TODO: match to import using scope
               if (

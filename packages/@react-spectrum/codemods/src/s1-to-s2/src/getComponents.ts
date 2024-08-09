@@ -1,12 +1,14 @@
 import {parse} from '@babel/parser';
+const path = require('path');
 import {readFileSync} from 'fs';
 import traverse from '@babel/traverse';
 
-export function getComponents() {
+export function getComponents(): Set<string> {
   // Determine list of available components in S2 from index.ts
-  let availableComponents = new Set();
-  // TODO: this won't work once we publish the upgrade-cli (dir structure will be different).
-  let index = parse(readFileSync(__dirname + '/../../s2/src/index.ts', 'utf8'), {sourceType: 'module', plugins: ['typescript']});
+  let availableComponents = new Set<string>();
+  const packagePath = require.resolve('@react-spectrum/s2');
+  const indexPath = path.join(path.dirname(packagePath), 'src/index.ts');
+  let index = parse(readFileSync(indexPath, 'utf8'), {sourceType: 'module', plugins: ['typescript']});
   traverse(index, {
     ExportNamedDeclaration(path) {
       if (path.node.exportKind === 'value') {

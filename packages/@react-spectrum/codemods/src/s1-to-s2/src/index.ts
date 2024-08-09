@@ -2,57 +2,12 @@ import {addMacroSupport} from './utils/addMacroSupport.js';
 import chalk from 'chalk';
 import installPackage from './utils/installPackage.js';
 import logger from './utils/logger.js';
-import {program} from 'commander';
-import {transform} from './transform';
+import {S1ToS2CodemodOptions} from '../../index.js';
+import {transform} from './transform.js';
 import {waitForKeypress} from './utils/waitForKeypress.js';
 const boxen = require('boxen');
 
-const components = new Set([
-  'Button',
-  'ActionButton',
-  'ToggleButton',
-  'Avatar',
-  'ButtonGroup',
-  'Checkbox',
-  'CheckboxGroup',
-  'Dialog',
-  'DialogTrigger',
-  'Divider',
-  'Form',
-  'IllustratedMessage',
-  'InlineAlert',
-  'Link',
-  'MenuTrigger',
-  'SubmenuTrigger',
-  'Menu',
-  'ActionMenu',
-  'ProgressBar',
-  'ProgressCircle',
-  'Radio',
-  'RadioGroup',
-  'SearchField',
-  'StatusLight',
-  'Switch',
-  'TagGroup',
-  'TextArea',
-  'TextField',
-  'Tooltip',
-  'TooltipTrigger'
-]);
-
-program
-  .name('upgrade-react-spectrum')
-  .description('Upgrade React Spectrum components from v3 to Spectrum 2')
-  .option('-c, --components <components>', `Comma separated list of components to upgrade (i.e. Button,TableView). Options include: ${[...components].join(', ')}`, (val) => val.split(','))
-  .argument('[path]', 'Path to the files to upgrade', '.')
-  .parse(process.argv);
-
-let {
-  components: componentSubset,
-  path
-} = program.opts();
-
-async function main() {
+export async function s1_to_s2(options: S1ToS2CodemodOptions) {
   console.log(boxen(
     'Welcome to the React Spectrum v3 to Spectrum 2 upgrade assistant!\n\n' +
     'This tool will:\n\n' +
@@ -75,12 +30,7 @@ async function main() {
   await waitForKeypress();
 
   logger.info('Upgrading components...');
-  await transform({
-    componentSubset,
-    path,
-    ignorePattern: '**/node_modules/**',
-    parser: 'tsx'
-  });
+  await transform(options);
 
   logger.success('Upgrade complete!');
 
@@ -113,7 +63,7 @@ async function main() {
     `${chalk.bold('TODO(S2-upgrade)')}\n\n` +
     'You should be able to search your codebase and handle these manually. \n\n' +
     'We also recommend running your project\'s code formatter (i.e. Prettier, ESLint) after the upgrade process to clean up any extraneous formatting from the codemod.\n\n' +
-    `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/packages/@react-spectrum/upgrade-cli/UPGRADE.md')}`
+    `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/packages/@react-spectrum/codemods/s1-to-s2/UPGRADE.md')}`
   );
 
   console.log(boxen(
@@ -124,7 +74,3 @@ async function main() {
   process.exit(0);
 }
 
-main().catch((err) => {
-  logger.error(err);
-  process.exit(1);
-});

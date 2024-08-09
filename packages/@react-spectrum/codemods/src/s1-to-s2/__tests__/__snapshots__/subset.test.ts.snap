@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Should not update components that are not provided to --components option 1`] = `
+"import {Button, TextArea} from '@adobe/react-spectrum';
+
+<div>
+  <Button variant="cta">Test</Button>
+  <Button variant="overBackground">Test</Button>
+  <TextArea isQuiet />
+</div>"
+`;
+
+exports[`Should only update components provided to --components option 1`] = `
+"import { TextArea } from '@adobe/react-spectrum';
+
+import { Button } from "@react-spectrum/s2";
+
+<div>
+  <Button variant="accent">Test</Button>
+  <Button variant="primary" staticColor="white">Test</Button>
+  <TextArea isQuiet />
+</div>"
+`;
+
+exports[`Should update multiple components provided to --components option 1`] = `
+"import { Button, TextArea } from "@react-spectrum/s2";
+
+<div>
+  <Button variant="accent">Test</Button>
+  <Button variant="primary" staticColor="white">Test</Button>
+  <TextArea />
+</div>"
+`;

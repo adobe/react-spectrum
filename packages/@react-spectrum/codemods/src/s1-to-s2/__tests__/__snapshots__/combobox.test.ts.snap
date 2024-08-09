@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Dynamic - Renames Item to ComboboxItem 1`] = `
+exports[`Dynamic - Renames Item to ComboBoxItem 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 let options = [
@@ -140,7 +140,7 @@ let props = {menuWidth: 'size-10'};
 </div>"
 `;
 
-exports[`Static - Renames Item to ComboboxItem 1`] = `
+exports[`Static - Renames Item to ComboBoxItem 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
 import { Item } from '@adobe/react-spectrum';
 <div>
