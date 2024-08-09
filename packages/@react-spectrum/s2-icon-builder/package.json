@@ -1,6 +1,11 @@
 {
   "name": "@react-spectrum/s2-icon-builder",
   "version": "1.0.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
   "bin": {
     "transform-icons": "index.js"
   },
@@ -14,5 +19,8 @@
   ],
   "engines": {
     "node": ">=18.0.0"
+  },
+  "rsp": {
+    "type": "cli"
   }
 }

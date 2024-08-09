@@ -2,7 +2,6 @@
 
 let {Parcel} = require('@parcel/core');
 let {parseArgs} = require('util');
-let path = require('path');
 
 const args = parseArgs({
   options: {
