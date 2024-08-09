@@ -84,7 +84,7 @@ export const Example = (args: CardViewProps<any>) => {
           </CardPreview>
           <Content>
             <Text slot="title">{item.description || item.alt_description}</Text>
-            <ActionMenu size="S" isQuiet>
+            <ActionMenu>
               <MenuItem>Test</MenuItem>
             </ActionMenu>
             <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 8})}>

@@ -36,7 +36,7 @@ import {StyleString} from './types';
 //   };
 // }
 
-export function mergeStyles(...styles: (StyleString | null | undefined)[]): string {
+export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {
   let definedStyles = styles.filter(Boolean) as StyleString[];
   if (definedStyles.length === 1) {
     return definedStyles[0];
@@ -53,7 +53,7 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): stri
   for (let value of map.values()) {
     res += value;
   }
-  return res;
+  return res as StyleString;
 }
 
 function parse(s: string) {

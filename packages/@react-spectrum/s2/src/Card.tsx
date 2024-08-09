@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionMenuContext} from './ActionMenu';
 import {AvatarContext} from './Avatar';
 import {Button, ContextValue, GridListItemProps, Provider, useContextProps} from 'react-aria-components';
+import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {createContext, ElementType, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {focusRing, StyleProps} from './style-utils' with {type: 'macro'};
+import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {mergeStyles} from '../style/runtime';
@@ -307,6 +310,14 @@ const InternalCardContext = createContext<InternalCardContextValue>({
   isFocusVisible: false
 });
 
+const actionButtonSize = {
+  XS: 'XS',
+  S: 'XS',
+  M: 'S',
+  L: 'M',
+  XL: 'L'
+} as const;
+
 export function Card(props: CardProps) {
   [props] = useContextProps(props, null, CardContext);
   let {density = 'regular', size = 'M', variant = 'primary', orientation = 'vertical'} = props;
@@ -323,7 +334,8 @@ export function Card(props: CardProps) {
         }],
         [ContentContext, {styles: content({size})}],
         [DividerContext, {size: 'S'}],
-        [FooterContext, {styles: footer}]
+        [FooterContext, {styles: footer}],
+        [ActionMenuContext, {isQuiet: true, size: actionButtonSize[size]}]
       ]}>
       <ImageCoordinator>
         {props.children}
@@ -437,6 +449,28 @@ export function AssetCard(props: CardProps) {
               pointerEvents: 'none',
               userSelect: 'none'
             })
+          }],
+          [IllustrationContext, {
+            render(icon) {
+              return (
+                <div 
+                  className={style({
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'gray-100',
+                    aspectRatio: 'square'
+                  })}>
+                  {icon}
+                </div>
+              );
+            },
+            styles: style({
+              height: 'auto',
+              maxSize: 160,
+              // TODO: this is made up.
+              width: '[50%]'
+            })
           }]
         ]}>
         {props.children}
@@ -496,6 +530,14 @@ export function UserCard(props: CardProps) {
     </Card>
   );
 }
+
+const buttonSize = {
+  XS: 'S',
+  S: 'M',
+  M: 'M',
+  L: 'M',
+  XL: 'L'
+} as const;
 
 export function ProductCard(props: CardProps) {
   let {size = 'M'} = props;
@@ -558,7 +600,9 @@ export function ProductCard(props: CardProps) {
             styles: mergeStyles(footer, style({
               justifyContent: 'end'
             }))
-          }]
+          }],
+          [ButtonContext, {size: buttonSize[size]}],
+          [LinkButtonContext, {size: buttonSize[size]}]
         ]}>
         {props.children}
       </Provider>

@@ -13,6 +13,7 @@
 import {ActionMenu, Avatar, Badge, Button, Content, Divider, Footer, Image, MenuItem, Meter, StatusLight, Text} from '../src';
 import {AssetCard, Card, CardPreview, CollectionCardPreview, ProductCard, UserCard} from '../src/Card';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import FolderGradient from '../spectrum-illustrations/gradient/S2_fill_folderClose_generic2_160.svg';
 import type {Meta} from '@storybook/react';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
@@ -28,14 +29,14 @@ const meta: Meta<typeof Card> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center'}}>
+  <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'end', justifyContent: 'center'}}>
     <Card {...args}>
       <CardPreview>
         <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
       </CardPreview>
       <Content>
         <Text slot="title">Card title</Text>
-        <ActionMenu isQuiet size="S">
+        <ActionMenu>
           <MenuItem>Test</MenuItem>
         </ActionMenu>
         <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
@@ -76,15 +77,26 @@ const specificArgTypes = {
 };
 
 export const Asset = (args: any) => (
-  <AssetCard {...args}>
-    <CardPreview>
-      <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
-    </CardPreview>
-    <Content>
-      <Text slot="title">Desert Sunset</Text>
-      <Text slot="description">PNG • 2/3/2024</Text>
-    </Content>
-  </AssetCard>
+  <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'end', justifyContent: 'center'}}>
+    <AssetCard {...args}>
+      <CardPreview>
+        <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+      </CardPreview>
+      <Content>
+        <Text slot="title">Desert Sunset</Text>
+        <Text slot="description">PNG • 2/3/2024</Text>
+      </Content>
+    </AssetCard>
+    <AssetCard {...args}>
+      <CardPreview>
+        <FolderGradient />
+      </CardPreview>
+      <Content>
+        <Text slot="title">Projects</Text>
+        <Text slot="description">10 items • 6/14/2024</Text>
+      </Content>
+    </AssetCard>
+  </div>
 );
 
 Asset.argTypes = specificArgTypes;
