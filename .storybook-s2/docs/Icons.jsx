@@ -6,9 +6,9 @@ import {highlight} from './highlight' with {type: 'macro'};
 
 export function Icons() {
   return (
-    <div className={style({maxWidth: 'lg', marginX: 'auto', fontFamily: 'sans'})}>
+    <div className={style({maxWidth: 'lg', marginX: 'auto'})}>
       <div className={style({marginX: 48})}>
-        <h1 className={style({fontSize: 'heading-2xl', color: 'heading', marginBottom: 48})}>
+        <h1 className={style({font: 'heading-2xl', marginBottom: 48})}>
           Workflow icons
         </h1>
         <P>Spectrum 2 offers a subset of the icons currently available in React Spectrum v3. These icons can be imported from <Code>@react-spectrum/s2/icons</Code>.</P>
