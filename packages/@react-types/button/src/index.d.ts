@@ -59,7 +59,14 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * The behavior of the button when used in an HTML form.
    * @default 'button'
    */
-  type?: 'button' | 'submit' | 'reset'
+  type?: 'button' | 'submit' | 'reset',
+  /**
+   * Whether to prevent focus from moving to the button when pressing it.
+   *
+   * Caution, this can make the button inaccessible and should only be used when alternative keyboard interaction is provided,
+   * such as ComboBox's MenuTrigger or a NumberField's increment/decrement control.
+   */
+  preventFocusOnPress?: boolean
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
