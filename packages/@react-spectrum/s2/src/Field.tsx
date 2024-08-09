@@ -63,6 +63,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelProps.id = fallbackLabelPropsId;
   }
 
+  if (!props.children) {
+    return null;
+  }
+
   return (
     <div
       className={style({
