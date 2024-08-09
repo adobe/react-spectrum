@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ContextValue, DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMProps, DOMRef} from '@react-types/shared';
-import {DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, UnsafeStyles, DOMProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -28,6 +29,8 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
   replaceMessage?: string
 }
+
+export const DropZoneContext = createContext<ContextValue<DropZoneProps, DOMRefValue<HTMLDivElement>>>(null);
 
 const dropzone = style<DropZoneRenderProps>({
   display: 'flex',
@@ -70,9 +73,8 @@ const banner = style<DropZoneRenderProps>({
   padding: '[calc((self(minHeight))/1.5)]'
 });
 
-export const S2DropZoneContext = createContext<DropZoneRenderProps | null>(null);
-
 function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let domRef = useDOMRef(ref);
 
   return (

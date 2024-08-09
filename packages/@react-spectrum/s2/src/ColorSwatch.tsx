@@ -13,16 +13,16 @@
 import {
   ColorSwatch as AriaColorSwatch,
   ColorSwatchProps as AriaColorSwatchProps,
-  ColorSwatchContext,
-  parseColor,
-  useContextProps
+  ContextValue,
+  parseColor
 } from 'react-aria-components';
 import {Color} from '@react-types/color';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style'>, UnsafeStyles {
   /**
@@ -43,12 +43,13 @@ interface SpectrumColorSwatchContextValue extends Pick<ColorSwatchProps, 'size' 
   useWrapper: (swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) => JSX.Element
 }
 
-export const SpectrumColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
+export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, DOMRefValue<HTMLDivElement>>>(null);
+export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
 
 function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
+  [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchContext);
   let domRef = useDOMRef(ref);
-  [props, domRef] = useContextProps(props, domRef, ColorSwatchContext);
-  let ctx = useContext(SpectrumColorSwatchContext);
+  let ctx = useContext(InternalColorSwatchContext);
   let {
     size = ctx?.size || 'M',
     rounding = ctx?.rounding || 'default',

@@ -13,14 +13,16 @@
 import {
   ColorWheel as AriaColorWheel,
   ColorWheelProps as AriaColorWheelProps,
-  ColorWheelTrack
+  ColorWheelTrack,
+  ContextValue
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
-import {DOMRef} from '@react-types/shared';
-import {forwardRef} from 'react';
+import {createContext, forwardRef} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius'>, StyleProps {
   /**
@@ -29,7 +31,10 @@ export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 
   size?: number
 }
 
+export const ColorWheelContext = createContext<ContextValue<ColorWheelProps, DOMRefValue<HTMLDivElement>>>(null);
+
 function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ColorWheelContext);
   let {UNSAFE_className = '', UNSAFE_style, styles = ''} = props;
   let containerRef = useDOMRef(ref);
   // TODO: how to do mobile scaling?

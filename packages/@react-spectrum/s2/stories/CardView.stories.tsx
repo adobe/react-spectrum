@@ -87,7 +87,7 @@ export const Example = (args: CardViewProps<any>) => {
             <ActionMenu size="S" isQuiet>
               <MenuItem>Test</MenuItem>
             </ActionMenu>
-            <Text slot="description" className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+            <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 8})}>
               <Avatar src={item.user.profile_image.small} />
               {item.user.name}
             </Text>

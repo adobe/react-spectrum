@@ -54,7 +54,7 @@ export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<Aria
 
 export interface SpectrumTextAreaProps extends Omit<SpectrumTextFieldProps, 'type' | 'pattern'> {}
 
-export interface TextFieldRef extends FocusableRefValue<HTMLInputElement | HTMLTextAreaElement, HTMLDivElement> {
+export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,
-  getInputElement(): HTMLInputElement | HTMLTextAreaElement | null
+  getInputElement(): T | null
 }

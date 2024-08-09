@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef} from '@react-types/shared';
+import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode} from 'react';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
-import {LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface LinkStyleProps {
   /**
@@ -34,6 +35,8 @@ interface LinkStyleProps {
 export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, LinkStyleProps {
   children?: ReactNode
 }
+
+export const LinkContext = createContext<ContextValue<LinkProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const link = style<LinkRenderProps & LinkStyleProps>({
   ...focusRing(),
@@ -78,10 +81,11 @@ const link = style<LinkRenderProps & LinkStyleProps>({
   disableTapHighlight: true
 }, getAllowedOverrides());
 
-function Link(props: LinkProps, ref: DOMRef<HTMLAnchorElement>) {
+function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, LinkContext);
   let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles} = props;
 
-  let domRef = useDOMRef(ref);
+  let domRef = useFocusableRef(ref);
   return (
     <RACLink
       {...props}

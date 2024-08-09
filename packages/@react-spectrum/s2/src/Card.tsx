@@ -317,13 +317,13 @@ export function Card(props: CardProps) {
         [ImageContext, {alt: '', styles: image}],
         [TextContext, {
           slots: {
-            title: {className: title({size})},
-            description: {className: description({size})}
+            title: {styles: title({size})},
+            description: {styles: description({size})}
           }
         }],
-        [ContentContext, {className: content({size})}],
+        [ContentContext, {styles: content({size})}],
         [DividerContext, {size: 'S'}],
-        [FooterContext, {className: footer}]
+        [FooterContext, {styles: footer}]
       ]}>
       <ImageCoordinator>
         {props.children}
@@ -555,7 +555,7 @@ export function ProductCard(props: CardProps) {
             }
           }],
           [FooterContext, {
-            className: mergeStyles(footer, style({
+            styles: mergeStyles(footer, style({
               justifyContent: 'end'
             }))
           }]

@@ -20,6 +20,7 @@ import {
   Section as AriaSection,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
+  ContextValue,
   Provider,
   SectionProps,
   Separator,
@@ -33,7 +34,7 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 import {divider} from './Divider';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
@@ -44,6 +45,7 @@ import {Placement} from 'react-aria';
 import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 
@@ -80,6 +82,8 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
    */
   children?: ReactNode | ((item: T) => ReactNode)
 }
+
+export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
 export let menu = style({
   outlineStyle: 'none',
@@ -132,7 +136,7 @@ export let menuitem = style({
   ...focusRing(),
   boxSizing: 'border-box',
   borderRadius: 'control',
-  font: 'ui',
+  font: 'control',
   '--labelPadding': {
     type: 'paddingTop',
     value: centerPadding()
@@ -239,9 +243,9 @@ let image = style({
   objectFit: 'contain'
 });
 
-export let label = style({
+export let label = style<{size: string}>({
   gridArea: 'label',
-  font: 'ui',
+  font: 'control',
   color: '[inherit]',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
@@ -303,6 +307,7 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'>>({});
 
 function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
     children,
@@ -349,11 +354,11 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
       <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
         <Provider
           values={[
-            [HeaderContext, {className: sectionHeader({size})}],
-            [HeadingContext, {className: sectionHeading}],
+            [HeaderContext, {styles: sectionHeader({size})}],
+            [HeadingContext, {styles: sectionHeading}],
             [TextContext, {
               slots: {
-                'description': {className: description({size})}
+                'description': {styles: description({size})}
               }
             }]
           ]}>
@@ -453,18 +458,18 @@ export function MenuItem(props: MenuItemProps) {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}, // fix className to css?
-                    descriptor: {render: centerBaseline({slot: 'descriptor', className: descriptor})} // TODO: remove once we have default?
+                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon},
+                    descriptor: {render: centerBaseline({slot: 'descriptor', styles: descriptor})} // TODO: remove once we have default?
                   }
                 }],
                 [TextContext, {
                   slots: {
-                    label: {className: label},
-                    description: {className: description({...renderProps, size})},
-                    value: {className: value}
+                    label: {styles: label({size})},
+                    description: {styles: description({...renderProps, size})},
+                    value: {styles: value}
                   }
                 }],
-                [KeyboardContext, {className: keyboard({size, isDisabled: renderProps.isDisabled})}],
+                [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
               {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}

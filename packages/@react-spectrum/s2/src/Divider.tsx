@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, Separator as RACSeparator, SeparatorProps as RACSeparatorProps, useContextProps} from 'react-aria-components';
+import {ContextValue, Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 /*
  * Adding as it's own type to deal with size being a part of the theme so we
@@ -39,7 +40,7 @@ interface DividerSpectrumProps {
 // TODO: allow overriding height (only when orientation is vertical)??
 export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
 
-export const DividerContext = createContext<ContextValue<DividerProps, HTMLElement>>(null);
+export const DividerContext = createContext<ContextValue<DividerProps, DOMRefValue>>(null);
 
 export const divider = style<DividerSpectrumProps>({
   alignSelf: 'stretch',
@@ -93,8 +94,8 @@ export const divider = style<DividerSpectrumProps>({
 }, getAllowedOverrides());
 
 function Divider(props: DividerProps, ref: DOMRef) {
+  [props, ref] = useSpectrumContextProps(props, ref, DividerContext);
   let domRef = useDOMRef(ref);
-  [props, domRef] = useContextProps(props, domRef, DividerContext);
 
   return (
     <RACSeparator

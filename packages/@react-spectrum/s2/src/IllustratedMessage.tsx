@@ -12,14 +12,15 @@
 
 import {ButtonGroupContext} from './ButtonGroup';
 import {ContentContext, HeadingContext} from './Content';
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {ContextValue, Provider} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode} from 'react';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
-import {Provider} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface IllustratedMessageStyleProps {
   /**
@@ -151,28 +152,26 @@ const buttonGroup = style({
   marginTop: 16
 });
 
-interface IllustratedMessageContextProps extends Omit<S2SpectrumIllustratedMessageProps, 'children'> {
+interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMessageProps> {
   isInDropZone?: boolean,
   isDropTarget?: boolean
 }
 
-export const IllustratedMessageContext = createContext<IllustratedMessageContextProps | null>(null);
+export const IllustratedMessageContext = createContext<ContextValue<IllustratedMessageContextProps, DOMRefValue<HTMLDivElement>>>(null);
 
 function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, IllustratedMessageContext);
+  let domRef = useDOMRef(ref);
   let {
     children,
     orientation = 'horizontal',
     size = 'M',
     UNSAFE_className = '',
     UNSAFE_style,
+    isInDropZone = false,
+    isDropTarget = false,
     ...otherProps
-  } = props;
-
-  let domRef = useDOMRef(ref);
-
-  let ctx = useContext(IllustratedMessageContext);
-  let isInDropZone = !!ctx;
-  let isDropTarget = ctx ? ctx.isDropTarget : false;
+  } = props as IllustratedMessageContextProps;
 
   return (
     <div
@@ -185,8 +184,8 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       ref={domRef}>
       <Provider
         values={[
-          [HeadingContext, {className: heading({orientation, size})}],
-          [ContentContext, {className: content({size})}],
+          [HeadingContext, {styles: heading({orientation, size})}],
+          [ContentContext, {styles: content({size})}],
           [IllustrationContext, {size: size === 'L' ? 'L' : 'M', styles: illustration({orientation, size, isInDropZone, isDropTarget})}],
           [ButtonGroupContext, {styles: buttonGroup}]
         ]}>

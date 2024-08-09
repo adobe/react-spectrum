@@ -12,15 +12,16 @@
 
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
-import {FocusableRef} from '@react-types/shared';
+import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode} from 'react';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
-import {Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
@@ -29,7 +30,10 @@ export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className
   isEmphasized?: boolean
 }
 
+export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+
 function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   let domRef = useFocusableRef(ref);
   return (
     <RACToggleButton
@@ -45,9 +49,9 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
       }, props.styles)}>
       <Provider
         values={[
-          [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
-            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>

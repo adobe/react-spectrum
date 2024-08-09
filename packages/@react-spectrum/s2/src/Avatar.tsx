@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from 'react-aria-components';
+import {ContextValue} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Image} from './Image';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface AvatarProps extends UnsafeStyles, DOMProps {
   /** Text description of the avatar. */
@@ -46,11 +47,11 @@ const imageStyles = style({
   flexShrink: 0
 }, getAllowedOverrides({height: true}));
 
-export const AvatarContext = createContext<ContextValue<AvatarContextProps, HTMLDivElement>>({});
+export const AvatarContext = createContext<ContextValue<AvatarContextProps, DOMRefValue<HTMLDivElement>>>(null);
 
 function Avatar(props: AvatarProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
   let domRef = useDOMRef(ref);
-  [props, domRef] = useContextProps(props, domRef, AvatarContext);
   let {
     alt = '',
     src,

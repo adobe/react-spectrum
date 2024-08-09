@@ -105,7 +105,8 @@ const circle = style<RenderProps>({
 function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
-  let domRef = useFocusableRef(ref);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let domRef = useFocusableRef(ref, inputRef);
   let isInForm = !!useContext(FormContext);
   let {
     size = 'M',
@@ -116,6 +117,7 @@ function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
     <AriaRadio
       {...allProps}
       ref={domRef}
+      inputRef={inputRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.styles)}>
       {renderProps => (

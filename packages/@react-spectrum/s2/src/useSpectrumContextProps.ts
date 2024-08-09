@@ -17,7 +17,7 @@ import {mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {RefObject} from '@react-types/shared';
 
-export function useSpectrumContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
+export function useSpectrumContextProps<T, U extends SlotProps, E>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, ...contextProps} = ctx as any;

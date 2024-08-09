@@ -18,6 +18,7 @@ import {
   SelectRenderProps as AriaSelectRenderProps,
   Button,
   ButtonRenderProps,
+  ContextValue,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
@@ -48,7 +49,7 @@ import {
   FieldLabel,
   HelpText
 } from './Field';
-import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -59,6 +60,7 @@ import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface PickerStyleProps {
@@ -67,7 +69,12 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Whether the picker should be displayed with a quiet style.
+   * @private
+   */
+  isQuiet?: boolean
 }
 
 export interface PickerProps<T extends object> extends
@@ -98,9 +105,14 @@ export interface PickerProps<T extends object> extends
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 
+export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
   ...fieldInput(),
+  outlineStyle: {
+    isQuiet: 'none'
+  },
   position: 'relative',
   font: 'control',
   display: 'flex',
@@ -110,16 +122,39 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   alignItems: 'center',
   height: 'control',
   transition: 'default',
-  columnGap: 'text-to-control',
-  paddingX: 'edge-to-text',
+  columnGap: {
+    default: 'text-to-control',
+    isQuiet: 'text-to-visual'
+  },
+  paddingX: {
+    default: 'edge-to-text',
+    isQuiet: 0
+  },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    isQuiet: 'transparent'
   },
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
+  },
+  maxWidth: {
+    isQuiet: 'max'
+  }
+});
+
+const quietFocusLine = style({
+  width: 'full',
+  // Use pixels since we are emulating a border.
+  height: '[2px]',
+  position: 'absolute',
+  bottom: 0,
+  borderRadius: 'full',
+  backgroundColor: {
+    default: 'blue-800',
+    forcedColors: 'Highlight'
   }
 });
 
@@ -157,7 +192,10 @@ const invalidBorder = style({
 });
 
 const valueStyles = style({
-  flexGrow: 1,
+  flexGrow: {
+    default: 1,
+    isQuiet: 0
+  },
   truncate: true,
   display: 'flex',
   alignItems: 'center'
@@ -176,6 +214,7 @@ let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size:
 let InsideSelectValueContext = createContext(false);
 
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -195,7 +234,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     necessityIndicator,
     UNSAFE_className = '',
     UNSAFE_style,
-    placeholder = 'Select an option...',
+    placeholder = 'Select...',
+    isQuiet,
     ...pickerProps
   } = props;
 
@@ -221,7 +261,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
         labelPosition,
         size
       }, props.styles)}>
-      {({isDisabled, isOpen, isInvalid, isRequired}) => (
+      {({isDisabled, isOpen, isFocusVisible, isInvalid, isRequired}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
@@ -230,6 +270,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               size={size}
               labelPosition={labelPosition}
               labelAlign={labelAlign}
+              isQuiet={isQuiet}
               necessityIndicator={necessityIndicator}
               contextualHelp={props.contextualHelp}>
               {label}
@@ -240,11 +281,12 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               className={renderProps => inputButton({
                 ...renderProps,
                 size: size,
-                isOpen
+                isOpen,
+                isQuiet
               })}>
               {(renderProps) => (
                 <>
-                  <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                  <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
                     {({defaultChildren}) => {
                       return (
                         <Provider
@@ -252,7 +294,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                             [IconContext, {
                               slots: {
                                 icon: {
-                                  render: centerBaseline({slot: 'icon', className: iconCenterWrapper}),
+                                  render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
                                   styles: icon
                                 }
                               }
@@ -260,7 +302,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                             [TextContext, {
                               slots: {
                                 description: {},
-                                label: {className: style({
+                                label: {styles: style({
                                   display: 'block',
                                   flexGrow: 1,
                                   truncate: true
@@ -280,7 +322,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                   <ChevronIcon
                     size={size}
                     className={iconStyles} />
-                  {isInvalid && !isDisabled &&
+                  {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+                  {isInvalid && !isDisabled && !isQuiet && 
                     // @ts-ignore known limitation detecting functions from the theme
                     <div className={invalidBorder({...renderProps, size})} />
                   }
@@ -300,21 +343,28 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               UNSAFE_style={{
-                width: menuWidth ? `${menuWidth}px` : undefined
+                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
               }}
               styles={style({
-                minWidth: {
-                  default: '[var(--trigger-width)]'
+                marginStart: {
+                  isQuiet: -12
                 },
-                width: '[var(--trigger-width)]'
-              })}>
+                minWidth: {
+                  default: '[var(--trigger-width)]',
+                  isQuiet: 192
+                },
+                width: {
+                  default: '[var(--trigger-width)]',
+                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                }
+              })(props)}>
               <Provider
                 values={[
-                  [HeaderContext, {className: sectionHeader({size})}],
-                  [HeadingContext, {className: sectionHeading}],
+                  [HeaderContext, {styles: sectionHeader({size})}],
+                  [HeadingContext, {styles: sectionHeading}],
                   [TextContext, {
                     slots: {
-                      description: {className: description({size})}
+                      description: {styles: description({size})}
                     }
                   }]
                 ]}>
@@ -366,14 +416,14 @@ export function PickerItem(props: PickerItemProps) {
           <DefaultProvider
             context={IconContext} 
             value={{slots: {
-              icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
+              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
             }}}>
             <DefaultProvider
               context={TextContext}
               value={{
                 slots: {
-                  label: {className: label},
-                  description: {className: description({...renderProps, size})}
+                  label: {styles: label({size})},
+                  description: {styles: description({...renderProps, size})}
                 }
               }}>
               {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}

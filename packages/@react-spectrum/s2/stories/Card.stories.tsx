@@ -166,7 +166,7 @@ export const Collection = (args: any) => (
       </CollectionCardPreview>
       <Content>
         <Text slot="title">Travel</Text>
-        <Text slot="description" className={style({display: 'flex', alignItems: 'center', gap: 8})}><Folder /> 20 photos</Text>
+        <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 8})}><Folder /> 20 photos</Text>
       </Content>
     </Card>
     <Card {...args}>
@@ -177,7 +177,7 @@ export const Collection = (args: any) => (
       </CollectionCardPreview>
       <Content>
         <Text slot="title">Architecture</Text>
-        <Text slot="description" className={style({display: 'flex', alignItems: 'center', gap: 8})}><Folder /> 15 photos</Text>
+        <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 8})}><Folder /> 15 photos</Text>
       </Content>
     </Card>
   </div>
@@ -218,7 +218,7 @@ export const Custom = (args: any) => (
       </CardPreview>
       <Content>
         <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'space-between'})}>
-          <Text slot="description" className={style({display: 'flex', alignItems: 'center', gap: 4})}><Select /> Click through rate</Text>
+          <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 4})}><Select /> Click through rate</Text>
           <div className={style({display: 'flex', flexDirection: 'column'})}>
             <span className={style({font: 'title-xl'})}>1.012%</span>
             <span className={style({font: 'ui-sm', color: 'positive-900'})}>21% ↑ average</span>
@@ -234,12 +234,12 @@ export const Custom = (args: any) => (
       </CardPreview>
       <Content>
         <Text slot="title">Yummburger</Text>
-        <Text slot="description" className={style({display: 'flex', alignItems: 'center', gap: 4})}>
+        <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 4})}>
           <Project />
           <span><span className={style({fontWeight: 'bold'})}>35k</span> experiences use this</span>
         </Text>
       </Content>
-      <Footer style={{flexDirection: 'column', alignItems: 'start', gap: 4}}>
+      <Footer styles={style({flexDirection: 'column', alignItems: 'start', gap: 4})}>
         <span className={style({font: 'ui-sm'})}><span className={style({font: 'title-xl'})}>25%</span> click through rate</span>
         <Meter variant="positive" value={25} styles={style({marginY: 4})} />
         <span className={style({font: 'ui-sm'})}><span className={style({fontWeight: 'bold'})}>56k</span> clicks</span>

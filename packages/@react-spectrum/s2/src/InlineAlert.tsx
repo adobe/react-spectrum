@@ -12,20 +12,21 @@
 
 import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
-import {ComponentType, forwardRef, ReactNode, useEffect, useRef} from 'react';
+import {ComponentType, createContext, forwardRef, ReactNode, useEffect, useRef} from 'react';
 import {ContentContext, HeadingContext} from './Content';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
-import {Provider} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useFocusRing} from 'react-aria';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
+export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps, SlotProps {
   /**
    * The contents of the Inline Alert.
    */
@@ -48,6 +49,8 @@ interface InlineStylesProps {
    */
   fillStyle?: 'border' | 'subtleFill' | 'boldFill'
 }
+
+export const InlineAlertContext = createContext<ContextValue<Partial<InlineAlertProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   ...focusRing(),
@@ -204,6 +207,7 @@ const content = style({
 });
 
 function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, InlineAlertContext);
   let {
     children,
     variant = 'neutral',
@@ -247,8 +251,8 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
         className={grid}>
         <Provider
           values={[
-            [HeadingContext, {className: heading({fillStyle})}],
-            [ContentContext, {className: content({fillStyle})}],
+            [HeadingContext, {styles: heading({fillStyle})}],
+            [ContentContext, {styles: content({fillStyle})}],
             [IconContext, {styles: icon({variant, fillStyle})}]
           ]}>
           {Icon && <Icon aria-label={iconAlt} />}

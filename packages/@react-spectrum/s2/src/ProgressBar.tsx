@@ -12,17 +12,19 @@
 
 import {
   ProgressBar as AriaProgressBar,
-  ProgressBarProps as AriaProgressBarProps
+  ProgressBarProps as AriaProgressBarProps,
+  ContextValue
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ProgressBarStyleProps {
   /**
@@ -43,6 +45,8 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
   /** The content to display as the label. */
   label?: ReactNode
 }
+
+export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, DOMRefValue<HTMLDivElement>>>(null);
 
 // TODO:
 // var(--spectrum-global-dimension-size-1700) -> 136px
@@ -112,6 +116,7 @@ const indeterminateAnimation = style({
 });
 
 function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {label, size = 'M', staticColor, isIndeterminate, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
   return (
