@@ -6801,9 +6801,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods":
+"@react-spectrum/codemods@workspace:packages/dev/codemods":
   version: 0.0.0-use.local
-  resolution: "@react-spectrum/codemods@workspace:packages/@react-spectrum/codemods"
+  resolution: "@react-spectrum/codemods@workspace:packages/dev/codemods"
   dependencies:
     "@babel/parser": "npm:^7.24.5"
     "@babel/traverse": "npm:^7.24.5"
