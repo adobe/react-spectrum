@@ -25,7 +25,7 @@ import ChevronIcon from '../ui-icons/Chevron';
 import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
 import {CSSProperties, ForwardedRef, forwardRef, ReactNode, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import Dash from '../ui-icons/Dash';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -284,19 +284,11 @@ function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>)
                   isInvalid={isInvalid}
                   size={size}
                   styles={style({
+                    ...fieldInput(),
                     paddingStart: 'edge-to-text',
                     paddingEnd: 0,
-                    width: {
-                      default: 'full',
-                      size: {
-                        S: 192,
-                        M: 208,
-                        L: 224,
-                        XL: 240
-                      }
-                    },
                     cursor: 'default'
-                  })({size, isCollapsed})}>
+                  })({size})}>
                   <InputContext.Consumer>
                     {ctx => (
                       <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>

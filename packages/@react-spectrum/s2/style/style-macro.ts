@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
+import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
 
 let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
 export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
@@ -69,6 +69,22 @@ function mapConditionalValue<T, U>(value: PropertyValueDefinition<T>, fn: (value
     let res: PropertyValueDefinition<U> = {};
     for (let condition in value) {
       res[condition] = mapConditionalValue((value as any)[condition], fn);
+    }
+    return res;
+  } else {
+    return fn(value);
+  }
+}
+
+function mapConditionalShorthand<T, C extends string, R extends RenderProps<string>>(value: PropertyValueDefinition<T>, fn: ShorthandProperty<T>): {[property: string]: StyleValue<Value, C, R>} {
+  if (typeof value === 'object') {
+    let res = {};
+    for (let condition in value) {
+      let properties = mapConditionalShorthand(value[condition], fn);
+      for (let property in properties) {
+        res[property] ??= {};
+        res[property][condition] = properties[property];
+      }
     }
     return res;
   } else {
@@ -147,7 +163,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       if (theme.shorthands[key]) {
         let shorthand = theme.shorthands[key];
         if (typeof shorthand === 'function') {
-          let expanded = shorthand(value);
+          let expanded = mapConditionalShorthand(value, shorthand);
           for (let k in expanded) {
             let v = expanded[k];
             values.set(k, v);
