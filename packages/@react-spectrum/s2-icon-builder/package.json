@@ -5,8 +5,8 @@
     "transform-icons": "index.js"
   },
   "dependencies": {
-    "parcel-namer-icon": "^1.0.0",
-    "parcel-transformer-icon": "^1.0.0"
+    "@react-spectrum/parcel-namer-s2-icon": "^1.0.0",
+    "@react-spectrum/parcel-transformer-s2-icon": "^1.0.0"
   },
   "files": [
     "index.js",
