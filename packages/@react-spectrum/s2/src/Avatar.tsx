@@ -60,7 +60,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
       ref={domRef}
       alt={alt}
       style={UNSAFE_style}
-      className={UNSAFE_className + imageStyles(null, props.styles)}
+      className={(UNSAFE_className ?? '') + imageStyles(null, props.styles)}
       src={src} />
   );
 }
