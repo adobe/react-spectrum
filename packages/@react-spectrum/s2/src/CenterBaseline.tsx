@@ -11,18 +11,29 @@
  */
 
 import {CSSProperties, ReactNode} from 'react';
+import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {StyleString} from '../style/types';
 
 interface CenterBaselineProps {
   style?: CSSProperties,
-  className?: string,
+  styles?: StyleString,
   children: ReactNode,
   slot?: string
 }
 
+const styles = style({
+  display: 'flex',
+  alignItems: 'center'
+});
+
 export function CenterBaseline(props: CenterBaselineProps) {
   return (
-    <div slot={props.slot} style={props.style} className={(props.className || '') + ' ' + raw('display: flex; align-items: center; &::before { content: "\u00a0"; width: 0; visibility: hidden }')}>
+    <div
+      slot={props.slot}
+      style={props.style}
+      className={mergeStyles(styles, props.styles) + ' ' + centerBaselineBefore}>
       {props.children}
     </div>
   );

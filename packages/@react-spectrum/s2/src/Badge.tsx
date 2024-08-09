@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
 import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {Provider} from 'react-aria-components';
-import React, {forwardRef, ReactNode} from 'react';
+import React, {createContext, forwardRef, ReactNode} from 'react';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface BadgeStyleProps {
   /**
@@ -36,12 +37,14 @@ export interface BadgeStyleProps {
   variant: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver'
 }
 
-export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, BadgeStyleProps{
+export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, BadgeStyleProps, SlotProps {
   /**
    * The content to display in the badge.
    */
   children: ReactNode
 }
+
+export const BadgeContext = createContext<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const badge = style<BadgeStyleProps>({
   display: 'flex',
@@ -115,6 +118,7 @@ const badge = style<BadgeStyleProps>({
 }, getAllowedOverrides());
 
 function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, BadgeContext);
   let {
     children,
     variant = 'neutral',
@@ -127,9 +131,9 @@ function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+        [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
         [IconContext, {
-          render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+          render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
           styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
         }]
       ]}>

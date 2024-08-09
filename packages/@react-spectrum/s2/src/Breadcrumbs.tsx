@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumb as AriaBreadcrumb, BreadcrumbsProps as AriaBreadcrumbsProps, HeadingContext, Link, Provider, Breadcrumbs as RACBreadcrumbs} from 'react-aria-components';
+import {Breadcrumb as AriaBreadcrumb, BreadcrumbsProps as AriaBreadcrumbsProps, ContextValue, HeadingContext, Link, Provider, Breadcrumbs as RACBreadcrumbs, useSlottedContext} from 'react-aria-components';
 import {AriaBreadcrumbItemProps} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
-import {Children, cloneElement, createContext, forwardRef, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useRef} from 'react';
+import {DOMRefValue, LinkDOMProps} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {forwardRefType} from './types';
-import {LinkDOMProps} from '@react-types/shared';
 import {size, style} from '../style/spectrum-theme' with { type: 'macro' };
 
 interface BreadcrumbsStyleProps {
@@ -40,6 +40,8 @@ export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'chil
   /** The children of the Breadcrumbs. */
   children?: ReactNode
 }
+
+export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   display: 'flex',
@@ -67,38 +69,27 @@ const wrapper = style<BreadcrumbsStyleProps>({
   }
 }, getAllowedOverrides());
 
-const BreadcrumbsInternalContext = createContext<BreadcrumbsProps<any> & {length: number}>({length: 0});
-
-function Breadcrumbs<T extends object>({
+function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>) {
+  let {
     UNSAFE_className = '',
     UNSAFE_style,
     styles,
-    ...props
-}: BreadcrumbsProps<T>) {
-  let {size = 'M', isDisabled} = props;
+    size = 'M',
+    children,
+    ...otherProps
+  } = props;
   let ref = useRef(null);
-  // TODO: Remove when https://github.com/adobe/react-spectrum/pull/6440 is released
-  let childArray: ReactElement[] = [];
-  Children.forEach(props.children, (child, index) => {
-    if (isValidElement<{index: number}>(child)) {
-      child = cloneElement(child, {key: index, index});
-      childArray.push(child);
-    }
-  });
   return (
     <RACBreadcrumbs
-      {...props}
+      {...otherProps}
       ref={ref}
       style={UNSAFE_style}
       className={UNSAFE_className + wrapper({
         size
       }, styles)}>
-      <Provider
-        values={[
-          [BreadcrumbsInternalContext, {size, isDisabled, length: childArray.length}]
-        ]}>
-        {childArray}
-      </Provider>
+      <BreadcrumbsContext.Provider value={props}>
+        {children}
+      </BreadcrumbsContext.Provider>
     </RACBreadcrumbs>
   );
 }
@@ -192,43 +183,43 @@ export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children
 
 export function Breadcrumb({children, ...props}: BreadcrumbProps) {
   let {href, target, rel, download, ping, referrerPolicy, ...other} = props;
-  let {size = 'M', length, isDisabled} = useContext(BreadcrumbsInternalContext);
+  let {size = 'M', isDisabled} = useSlottedContext(BreadcrumbsContext)!;
   let ref = useRef(null);
-  // TODO: use isCurrent render prop when https://github.com/adobe/react-spectrum/pull/6440 is released
-  let isCurrent = (props as BreadcrumbProps & {index: number}).index === length - 1;
   return (
     <AriaBreadcrumb
       {...other}
       ref={ref}
-      className={breadcrumbStyles({size, isCurrent})} >
-      {isCurrent ?
-        <span
-          className={currentStyles({size})}>
-          <Provider
-            values={[
-              [HeadingContext, {className: heading}]
-            ]}>
-            {children}
-          </Provider>
-        </span>
-        : (
-          <>
-            <Link
-              style={({isFocusVisible}) => ({clipPath: isFocusVisible ? 'none' : 'margin-box'})}
-              href={href}
-              target={target}
-              rel={rel}
-              download={download}
-              ping={ping}
-              referrerPolicy={referrerPolicy}
-              isDisabled={isDisabled || isCurrent}
-              className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isCurrent, isPressed})}>
+      className={({isCurrent}) => breadcrumbStyles({size, isCurrent})}>
+      {({isCurrent}) => (
+        isCurrent ?
+          <span
+            className={currentStyles({size})}>
+            <Provider
+              values={[
+                [HeadingContext, {className: heading}]
+              ]}>
               {children}
-            </Link>
-            <ChevronIcon
-              size="M"
-              className={chevronStyles} />
-          </>
+            </Provider>
+          </span>
+          : (
+            <>
+              <Link
+                style={({isFocusVisible}) => ({clipPath: isFocusVisible ? 'none' : 'margin-box'})}
+                href={href}
+                target={target}
+                rel={rel}
+                download={download}
+                ping={ping}
+                referrerPolicy={referrerPolicy}
+                isDisabled={isDisabled || isCurrent}
+                className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isCurrent, isPressed})}>
+                {children}
+              </Link>
+              <ChevronIcon
+                size="M"
+                className={chevronStyles} />
+            </>
+          )
         )}
     </AriaBreadcrumb>
   );

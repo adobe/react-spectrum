@@ -13,21 +13,23 @@
 import {
   Slider as AriaSlider,
   SliderProps as AriaSliderProps,
+  ContextValue,
   SliderOutput,
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
+import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
-import {FocusableRef, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
   children?: ReactNode,
@@ -63,6 +65,8 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
    */
   fillOffset?: number
 }
+
+export const SliderContext = createContext<ContextValue<SliderProps, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
   font: 'control',
@@ -387,6 +391,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
 }
 
 function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {

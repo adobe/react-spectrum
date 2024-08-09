@@ -16,9 +16,9 @@ import {ContextValue, Provider, RACValidation, RenderProps, SlotProps, useContex
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
@@ -26,7 +26,7 @@ export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'val
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: MutableRefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export interface CheckboxGroupRenderProps {
