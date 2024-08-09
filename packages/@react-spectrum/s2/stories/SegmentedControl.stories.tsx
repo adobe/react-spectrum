@@ -49,3 +49,11 @@ export const OnlyIcons = (args: any) => (
     <ControlItem value="control 3"><EditIcon /></ControlItem>
   </SegmentedControl>
 )
+
+export const CustomWidth = (args: any) => (
+  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+    <ControlItem value="control 1">Control 1</ControlItem>
+    <ControlItem value="control 2">Control 2</ControlItem>
+    <ControlItem value="control 3">Control 3</ControlItem>
+  </SegmentedControl>
+)
