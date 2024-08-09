@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Farbfelder",
   "dropzoneLabel": "Ablegebereich",
   "selectPlaceholder": "Element wählen",
-  "tableResizer": "Größenanpassung"
+  "tableResizer": "Größenanpassung",
+  "pending": "Ausstehend"
 }

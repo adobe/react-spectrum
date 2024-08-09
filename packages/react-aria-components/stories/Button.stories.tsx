@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {Button, ProgressBar, Text} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
+import * as styles2 from './button-pending.css';
 
 export default {
   title: 'React Aria Components'
@@ -24,6 +26,79 @@ export const ButtonExample = () => {
     <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
   );
 };
+
+export const PendingButton = {
+  render: (args) => <PendingButtonExample {...args} />,
+  args: {
+    children: 'Press me',
+    className: ({defaultClassName}) => `${defaultClassName} pending-button`
+  }
+};
+
+export const PendingButtonComplexChildren = {
+  render: (args) => <PendingButtonExample {...args} />,
+  args: {
+    children: (
+      <div style={{display: 'flex', gap: '5px'}}>
+        <span>
+          <svg aria-label="circle" height="10" width="10" xmlns="http://www.w3.org/2000/svg">
+            <circle r="5" cx="5" cy="5" fill="red" />
+          </svg>
+        </span>
+        <span>
+          circle dot dot
+        </span>
+      </div>
+    ),
+    className: ({defaultClassName}) => `${defaultClassName} pending-button`
+  }
+};
+
+function PendingButtonExample(props) {
+  let [isPending, setPending] = useState(false);
+
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let handlePress = (e) => {
+    action('pressed')(e);
+    setPending(true);
+    timeout.current = setTimeout(() => {
+      // setPending(false);
+      // timeout.current = undefined;
+    }, 10000);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  let [hideOthers, setHideOthers] = useState(false);
+
+  return (
+    <>
+    {!hideOthers && (
+      <Button
+        {...props}
+        isPending={isPending}
+        onPress={handlePress}
+        className={styles2['button']}>
+          {({isPending}) => (
+            <>
+              <Text className={isPending ? styles2['pending'] : undefined}>{props.children}</Text>
+              <ProgressBar
+                isIndeterminate
+                className={[styles2['spinner'], (isPending ? styles2['spinner-pending'] : '')].join(' ')}>
+                  loading
+              </ProgressBar>
+            </>
+          )}
+      </Button>
+    )}
+    <Button onPress={() => setHideOthers(prev => !prev)}>Toggle others</Button>
+    </>
+  );
+}
 
 export const RippleButtonExample = () => {
   return (

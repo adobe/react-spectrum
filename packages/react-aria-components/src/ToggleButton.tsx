@@ -17,7 +17,7 @@ import {forwardRefType} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface ToggleButtonRenderProps extends ButtonRenderProps {
+export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
   /**
    * Whether the button is currently selected.
    * @selector [data-selected]

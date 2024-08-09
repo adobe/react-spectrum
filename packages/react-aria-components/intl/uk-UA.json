@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Зразки кольорів",
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Виберіть елемент",
-  "tableResizer": "Засіб змінення розміру"
+  "tableResizer": "Засіб змінення розміру",
+  "pending": "в очікуванні"
 }

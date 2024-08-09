@@ -2,5 +2,6 @@
   "colorSwatchPicker": "Farveprøver",
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "Vælg et element",
-  "tableResizer": "Størrelsesændring"
+  "tableResizer": "Størrelsesændring",
+  "pending": "afventende"
 }

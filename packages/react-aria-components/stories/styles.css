@@ -387,3 +387,14 @@
     height: 100%;
   }
 }
+
+:global(.pending-button) {
+  position: relative;
+}
+
+:global(.react-aria-ButtonPending) {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
