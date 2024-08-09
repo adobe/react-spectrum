@@ -30,11 +30,11 @@ import {
   useRenderProps
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
-import {filterDOMProps, isAppleDevice, isFirefox, useEffectEvent} from '@react-aria/utils';
+import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, ReactNode, useCallback, useEffect, useMemo, useRef} from 'react';
-import { ProgressBarContext, TextContext } from 'react-aria-components';
+import {ProgressBarContext, TextContext} from 'react-aria-components';
+import React, {createContext, ForwardedRef, useCallback, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -95,11 +95,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /**
    * Whether to disable events immediately and display a `renderPendingState` after a `pendingDelay`.
    */
-  isPending?: boolean,
-  /**
-   * What to render as children while pending state is true.
-   */
-  renderPendingState?: (props: ButtonRenderProps) => ReactNode
+  isPending?: boolean
 }
 
 interface ButtonContextValue extends ButtonProps {
@@ -114,7 +110,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
-  let {isPending, renderPendingState} = ctx;
+  let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
@@ -185,7 +181,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       <Provider
         values={[
           [TextContext, {id: containerId, 'aria-atomic': 'true', ref: textCallbackRef}],
-          [ProgressBarContext, {'aria-hidden': 'true', style: {display: isPending ? undefined : 'none'}, ref: progressCallbackRef}]
+          [ProgressBarContext, {style: {display: isPending ? undefined : 'none'}, ref: progressCallbackRef}]
         ]}>
         {renderProps.children}
       </Provider>

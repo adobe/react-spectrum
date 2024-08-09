@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext} from '../';
+import {Button, ButtonContext, ProgressBar, Text} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -146,12 +146,22 @@ describe('Button', () => {
       let [pending, setPending] = useState(false);
       return (
         <Button
-          onPress={(pending) => {
+          onPress={() => {
             setPending(true);
             onPressSpy();
           }}
           isPending={pending}>
-          Click me
+          {({isPending}) => (
+            <>
+              <Text style={{visibility: isPending ? 'hidden' : undefined}}>Test</Text>
+              <ProgressBar
+                aria-label="loading"
+                style={{visibility: isPending ? undefined : 'hidden'}}
+                isIndeterminate>
+                loading
+              </ProgressBar>
+            </>
+          )}
         </Button>
       );
     }
@@ -174,7 +184,17 @@ describe('Button', () => {
   it('removes href attribute from anchor element when isPending is true', () => {
     let {getByRole} = render(
       <Button href="//example.com" isPending>
-        Click Me
+        {({isPending}) => (
+          <>
+            <Text style={{visibility: isPending ? 'hidden' : undefined}}>Click me</Text>
+            <ProgressBar
+              aria-label="loading"
+              style={{visibility: isPending ? undefined : 'hidden'}}
+              isIndeterminate>
+              loading
+            </ProgressBar>
+          </>
+        )}
       </Button>
     );
     let button = getByRole('button');

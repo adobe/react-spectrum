@@ -77,7 +77,7 @@ function PendingButtonExample(props) {
 
   return (
     <>
-    {!hideOthers && (
+      {!hideOthers && (
       <Button
         {...props}
         isPending={isPending}
@@ -87,15 +87,16 @@ function PendingButtonExample(props) {
             <>
               <Text className={isPending ? styles2['pending'] : undefined}>{props.children}</Text>
               <ProgressBar
+                aria-label="loading"
                 isIndeterminate
                 className={[styles2['spinner'], (isPending ? styles2['spinner-pending'] : '')].join(' ')}>
-                  loading
+                loading
               </ProgressBar>
             </>
           )}
       </Button>
     )}
-    <Button onPress={() => setHideOthers(prev => !prev)}>Toggle others</Button>
+      <Button onPress={() => setHideOthers(prev => !prev)}>Toggle others</Button>
     </>
   );
 }
