@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Children, ReactNode, createContext, useContext, forwardRef} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, useId} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ContextValue} from 'react-aria-components';
 import type {StyleString} from '../style/types';
-import {filterDOMProps, useId} from '@react-aria/utils';
 
 
 interface AvatarGroupProps extends StyleProps, DOMProps {
@@ -49,18 +48,18 @@ interface AvatarGroupContextProps extends Pick<AvatarGroupProps, 'strokeColor'> 
 }
 
 const avatar = style({
+  flexShrink: 0,
+  flexGrow: 0,
   marginStart: {
-    default: {
-      size: {
-        S: size(-5),
-        M: size(-6),
-        L: size(-7),
-        XL: size(-8),
-        XXL: size(-9),
-        XXXL: size(-10)
-      }
+    size: {
+      S: size(-5),
+      M: size(-6),
+      L: size(-7),
+      XL: size(-8),
+      XXL: size(-9),
+      XXXL: size(-10)
     },
-    isFirst: 0
+    ':first-child': 0
   },
   size: {
     size: {
@@ -77,6 +76,9 @@ const avatar = style({
 const text = style({
   marginStart: 8,
   fontFamily: 'sans',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
   fontSize: {
     size: {
       S: 'ui-sm',
@@ -114,32 +116,28 @@ const AvatarGroupContext = createContext<AvatarGroupContextProps>({});
 const container = style({
   display: 'flex',
   alignItems: 'center',
-  listStyleType: 'none',
-  paddingStart: 0,
   margin: 0
 }, getAllowedOverrides());
 
 function AvatarGroup(props: AvatarGroupProps) {
   let {children, label, size = 'M', strokeColor = 'base', styles, UNSAFE_style, UNSAFE_className, ...otherProps} = props;
+  let groupId = useId();
   let labelId = useId();
 
   return (
-    <ul
-      aria-labelledby={labelId}
-      {...filterDOMProps(otherProps)}
-      tabIndex={0}
-      role="group"
-      className={(UNSAFE_className ?? '') + container(null, styles)}
-      style={UNSAFE_style}>
-      {
-        Children.map(children, (child, index) => (
-          <AvatarGroupContext.Provider value={{styles: avatar({size, isFirst: index === 0}), strokeColor}}>
-            {child}
-          </AvatarGroupContext.Provider>
-        ))
-      }
-      {label && <span id={labelId} className={text({size})}>{label}</span>}
-    </ul>
+    <AvatarGroupContext.Provider value={{styles: avatar({size}), strokeColor}}>
+      <div
+        id={groupId}
+        aria-labelledby={`${groupId} ${labelId}`}
+        aria-label="online members"
+        {...filterDOMProps(otherProps)}
+        role="group"
+        className={(UNSAFE_className ?? '') + container(null, styles)}
+        style={UNSAFE_style}>
+        {children}
+        {label && <span id={labelId} className={text({size})}>{label}</span>}
+      </div>
+    </AvatarGroupContext.Provider>
   );
 }
 
@@ -153,11 +151,9 @@ export function AvatarGroupItem(props: AvatarGroupItemProps) {
   } = props;
   let {styles, strokeColor} = useContext(AvatarGroupContext);
   return (
-    <li className={style({display: 'flex'})}>
-      <img
-        alt={alt}
-        className={styles + imageStyles({strokeColor})}
-        src={src} />
-    </li>
+    <img
+      alt={alt}
+      className={styles + imageStyles({strokeColor})}
+      src={src} />
   );
 }
