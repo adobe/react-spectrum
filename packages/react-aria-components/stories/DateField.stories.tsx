@@ -27,7 +27,7 @@ export default {
     },
     granularity: {
       control: 'select',
-      options: ['day', 'hour', 'minute', 'second']
+      options: ['year', 'month', 'day', 'hour', 'minute', 'second']
     },
     minValue: {
       control: 'date'
