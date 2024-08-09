@@ -23,10 +23,11 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'size'>,
-  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus'>,
+  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
+  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
   StyleProps, DOMProps, AriaLabelingProps {
-  }
+  menuSize?: 'S' | 'M' | 'L' | 'XL'
+}
 
 export const ActionMenuContext = createContext<ContextValue<ActionMenuProps<any>, FocusableRefValue<HTMLButtonElement>>>(null);
 
@@ -58,7 +59,7 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.size}>
+        size={props.menuSize}>
         {/* @ts-ignore TODO: fix type, right now this component is the same as Menu */}
         {props.children}
       </Menu>
