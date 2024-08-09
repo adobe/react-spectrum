@@ -36,7 +36,6 @@ export {Divider} from './Divider';
 export {DropZone} from './DropZone';
 export {Form} from './Form';
 export {IllustratedMessage} from './IllustratedMessage';
-export {Illustration} from './Illustration';
 export {InlineAlert} from './InlineAlert';
 export {Link} from './Link';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger} from './Menu';

@@ -97,7 +97,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
             &nbsp;
             {necessityIndicator === 'icon' &&
               <AsteriskIcon
-                size={size}
+                size={size === 'S' ? 'M' : size}
                 className={style({
                   '--iconPrimary': {
                     type: 'fill',

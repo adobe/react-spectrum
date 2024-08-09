@@ -10,24 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_ChevronSize100 from './S2_ChevronSize100.svg';
-import S2_ChevronSize200 from './S2_ChevronSize200.svg';
-import S2_ChevronSize300 from './S2_ChevronSize300.svg';
-import S2_ChevronSize50 from './S2_ChevronSize50.svg';
-import S2_ChevronSize75 from './S2_ChevronSize75.svg';
+import Chevron_L from './S2_ChevronSize200.svg';
+import Chevron_M from './S2_ChevronSize100.svg';
+import Chevron_S from './S2_ChevronSize75.svg';
+import Chevron_XL from './S2_ChevronSize300.svg';
+import Chevron_XS from './S2_ChevronSize50.svg';
+import Chevron_XXL from './S2_ChevronSize400.svg';
 import {SVGProps} from 'react';
 
-export default function Chevron({size, ...props}: {size: 'XS' | 'S' | 'M' | 'L' | 'XL'} & SVGProps<SVGSVGElement>) {
+export default function Chevron(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}) {
+  let {size = 'M', ...otherProps} = props;
   switch (size) {
-    case 'XS':
-      return <S2_ChevronSize50 {...props} />;
-    case 'S':
-      return <S2_ChevronSize75 {...props} />;
     case 'M':
-      return <S2_ChevronSize100 {...props} />;
+      return <Chevron_M {...otherProps} />;
     case 'L':
-      return <S2_ChevronSize200 {...props} />;
+      return <Chevron_L {...otherProps} />;
     case 'XL':
-      return <S2_ChevronSize300 {...props} />;
+      return <Chevron_XL {...otherProps} />;
+    case 'XXL':
+      return <Chevron_XXL {...otherProps} />;
+    case 'XS':
+      return <Chevron_XS {...otherProps} />;
+    case 'S':
+      return <Chevron_S {...otherProps} />;
   }
 }

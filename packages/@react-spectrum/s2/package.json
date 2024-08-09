@@ -30,11 +30,18 @@
       "require": "./style/dist/main.cjs"
     },
     "./icons/*": {
-      "types": "./icon.d.ts",
+      "types": "./icons/*.d.ts",
       "module": "./icons/*.mjs",
       "import": "./icons/*.mjs",
       "require": "./icons/*.cjs"
-    }
+    },
+    "./illustrations/*": {
+      "types": "./illustrations/*.d.ts",
+      "module": "./illustrations/*.mjs",
+      "import": "./illustrations/*.mjs",
+      "require": "./illustrations/*.cjs"
+    },
+    "./illustrations/linear/internal/*": null
   },
   "targets": {
     "module": {},
@@ -72,6 +79,20 @@
       "isLibrary": true,
       "outputFormat": "commonjs",
       "includeNodeModules": false
+    },
+    "illustrations-module": {
+      "source": ["spectrum-illustrations/gradient/*.svg", "spectrum-illustrations/linear/*.tsx"],
+      "distDir": "illustrations",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "illustrations-main": {
+      "source": ["spectrum-illustrations/gradient/*.svg", "spectrum-illustrations/linear/*.tsx"],
+      "distDir": "illustrations",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
     }
   },
   "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
@@ -84,7 +105,7 @@
     "style/package.json",
     "page.css",
     "icons",
-    "icon.d.ts",
+    "illustrations",
     "src"
   ],
   "scripts": {

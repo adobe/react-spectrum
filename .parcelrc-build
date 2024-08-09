@@ -6,7 +6,7 @@
     "style-types:*.ts": ["@parcel/transformer-typescript-types"],
     "packages/**/intl/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
-    "packages/@react-spectrum/s2/s2wf-icons/*.svg": ["parcel-transformer-icon"],
+    "packages/@react-spectrum/s2/{s2wf-icons,spectrum-illustrations}/**/*.svg": ["parcel-transformer-icon"],
     // Disable PostCSS from running over style macro output
     "packages/@react-spectrum/s2/**/*.css": ["@parcel/transformer-css"],
     "*.svg": ["@parcel/transformer-svg-react"],

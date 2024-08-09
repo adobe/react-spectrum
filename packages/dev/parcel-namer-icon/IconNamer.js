@@ -24,7 +24,21 @@ module.exports = new Namer({
       if (bundle.type === 'js') {
         ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
       }
-      return path.basename(mainAsset.filePath, path.extname(mainAsset.filePath)).replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1') + ext;
+      let originalExt = path.extname(mainAsset.filePath);
+      let name = path.basename(mainAsset.filePath, originalExt);
+      if (mainAsset.filePath.includes('spectrum-illustrations/linear')) {
+        if (originalExt === '.svg') {
+          return 'linear/internal/' + name + ext;
+        }
+        return 'linear/' + name + ext;
+      }
+      return name
+        .replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1')
+        .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
+          name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
+          return 'gradient/' + style + '/' + name;
+        })
+        + ext;
     }
   }
 });

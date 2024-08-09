@@ -43,7 +43,8 @@ module.exports = new Transformer({
           ]
         },
         replaceAttrValues: {
-          'var(--iconPrimary, #222)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`
+          'var(--iconPrimary, #222)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--spectrum-global-color-gray-800, #292929)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`
         },
         typescript: true,
         plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']
@@ -59,14 +60,17 @@ module.exports = new Transformer({
 });
 
 function template(asset, iconName, svg) {
-  let importName = iconName.replace('S2_Icon_', '').replace(/_\d+\d+_N/, '');
+  let importName = iconName
+    .replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1')
+    .replace(/^S2_(fill|lin)_(.+)_(generic\d_)?(\d+).svg/, (m, name) => name[0].toUpperCase() + name.slice(1));
   let iconRename = importName;
   if (/^[0-9]/.test(importName)) {
     iconRename = '_' + importName;
   }
+  let context = asset.filePath.includes('spectrum-illustrations') ? 'IllustrationContext' : 'IconContext';
   return (
 `
-import {IconProps, IconContext, IconContextValue} from '~/src/Icon';
+import {IconProps, ${context}, IconContextValue} from '~/src/Icon';
 import {SVGProps, useRef} from 'react';
 import {useContextProps} from 'react-aria-components';
 
@@ -76,7 +80,7 @@ export default function ${iconRename}(props: IconProps) {
   let ref = useRef<SVGElement>(null);
   let ctx;
   // TODO: remove this default once we release RAC and use DEFAULT_SLOT.
-  [ctx, ref] = useContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, IconContext);
+  [ctx, ref] = useContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, ${context});
   let {render, styles} = ctx;
   let {
     UNSAFE_className,
