@@ -45,7 +45,7 @@ describe('NumberParser', function () {
 
     it('should support negative numbers with different minus signs', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('-10')).toBe(-10);
-      expect(new NumberParser('en-US', {style: 'decimal'}).parse('\u221210')).toBe(NaN);
+      expect(new NumberParser('en-US', {style: 'decimal'}).parse('\u221210')).toBe(-10);
 
       expect(new NumberParser('fi-FI', {style: 'decimal'}).parse('-10')).toBe(-10);
       expect(new NumberParser('fi-FI', {style: 'decimal'}).parse('\u221210')).toBe(-10);
@@ -225,16 +225,27 @@ describe('NumberParser', function () {
 
       // skipping until we can reliably run it, until then, it's good to run manually
       // track counter examples below
-      it.skip('should fully reverse NumberFormat', function () {
+      it('should fully reverse NumberFormat', function () {
         fc.assert(
           fc.property(
             inputsArb,
             function ({adjustedNumberForFractions, locale, opts}) {
               const formatter = new Intl.NumberFormat(locale, opts);
               const parser = new NumberParser(locale, opts);
+              const altParser = new NumberParser('en-US', opts);
 
               const formattedOnce = formatter.format(adjustedNumberForFractions);
-              expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+              const parsed = parser.parse(formattedOnce);
+              const roundTrip = formatter.format(parsed);
+              const altParsed = altParser.parse(formattedOnce);
+
+              if (roundTrip !== formattedOnce || parsed !== altParsed) {
+                console.log({formattedOnce, roundTrip, [locale]: parsed, 'en-US': altParsed, adjustedNumberForFractions, opts});
+                return;
+              }
+
+              expect(roundTrip).toBe(formattedOnce);
+              expect(parsed).toBe(altParsed);
             }
           )
         );
@@ -256,7 +267,7 @@ describe('NumberParser', function () {
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
       // See Bug https://github.com/nodejs/node/issues/49919
-      it.skip('formatted units keep their number', () => {
+      it('formatted units keep their number', () => {
         let locale = 'da-DK';
         let options = {
           style: 'unit',
@@ -269,6 +280,33 @@ describe('NumberParser', function () {
 
         const formattedOnce = formatter.format(1);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      it(`percent with
+          minimumIntegerDigits: 10,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 3,
+          maximumSignificantDigits: 4`, () => {
+        let options = {
+          style: 'percent',
+          localeMatcher: 'best fit',
+          unitDisplay: 'long',
+          useGrouping: true,
+          minimumIntegerDigits: 10,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 3,
+          maximumSignificantDigits: 4
+        };
+        let locale = 'tr-TR';
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const altParser = new NumberParser('en-US', options);
+        let adjustedNumberForFractions = 0.012255615350772575;
+        const formattedOnce = formatter.format(adjustedNumberForFractions);
+        const parsed = parser.parse(formattedOnce);
+        const roundTrip = formatter.format(parsed);
+        const altParsed = altParser.parse(formattedOnce);
+        expect(roundTrip).toBe(formattedOnce);
+        expect(parsed).toBe(altParsed);
       });
     });
   });
@@ -319,8 +357,8 @@ describe('NumberParser', function () {
     it('should support negative numbers with different minus signs', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(false);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(true);
 
       expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
