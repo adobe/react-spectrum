@@ -281,7 +281,7 @@ function getDiff(pair) {
 ${joinedResult}
 \`\`\``;
     }
-    diffs.push({iname, result: joinedResult, simplifiedName});
+    diffs.push({iname, result: joinedResult, simplifiedName: `${name.replace('/dist/api.json', '')}:${simplifiedName}`});
   });
 
   return {diffs, name};
