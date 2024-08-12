@@ -33,8 +33,9 @@ import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ProgressBarContext, TextContext} from './';
+import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useCallback, useEffect, useRef} from 'react';
+import {TextContext} from './Text';
 
 export interface ButtonRenderProps {
   /**
