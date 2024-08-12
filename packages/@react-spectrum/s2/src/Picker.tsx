@@ -144,7 +144,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
 const quietFocusLine = style({
   width: 'full',
   // Use pixels since we are emulating a border.
-  height: `[2px]`,
+  height: '[2px]',
   position: 'absolute',
   bottom: 0,
   borderRadius: 'full',
@@ -152,7 +152,7 @@ const quietFocusLine = style({
     default: 'blue-800',
     forcedColors: 'Highlight'
   }
-})
+});
 
 export let menu = style({
   outlineStyle: 'none',
@@ -318,7 +318,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                     size={size}
                     className={iconStyles} />
                   {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-                  {isInvalid && !isDisabled && !isQuiet && 
+                  {isInvalid && !isDisabled && !isQuiet &&
                     // @ts-ignore known limitation detecting functions from the theme
                     <div className={invalidBorder({...renderProps, size})} />
                   }
@@ -402,7 +402,7 @@ export function PickerItem(props: PickerItemProps) {
         let {children} = props;
         return (
           <DefaultProvider
-            context={IconContext} 
+            context={IconContext}
             value={{slots: {
               icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
             }}}>

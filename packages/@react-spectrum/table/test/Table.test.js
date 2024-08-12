@@ -3638,8 +3638,8 @@ export let tableTests = () => {
       expect(row.className.includes('is-hovered')).toBeTruthy();
     });
 
-    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none" and disabledBehavior="all"', function () {
+      let tree = render(<TableWithBreadcrumbs disabledBehavior="all" selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -3647,6 +3647,37 @@ export let tableTests = () => {
       fireEvent.mouseEnter(row);
       expect(row.className.includes('is-hovered')).toBeFalsy();
     });
+
+    it('shows pressed/hover styles when row is pressed/hovered and selection mode is "none", disabledBehavior="selection" and has a action', function () {
+      let tree = render(<TableWithBreadcrumbs onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      fireEvent.mouseDown(row, {detail: 1});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      fireEvent.mouseEnter(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered, disabledBehavior="selection", row is disabled and has a action', function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      fireEvent.mouseDown(row, {detail: 1});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      fireEvent.mouseEnter(row);
+      expect(row.className.includes('is-active')).toBeTruthy();
+    });
+
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered, has a action, but is disabled and disabledBehavior="all"', function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="all" selectionMode="multiple" />);
+
+      let row = tree.getAllByRole('row')[1];
+      fireEvent.mouseDown(row, {detail: 1});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      fireEvent.mouseEnter(row);
+      expect(row.className.includes('is-hovered')).toBeFalsy();
+    });
+
   });
 
   describe('CRUD', function () {
