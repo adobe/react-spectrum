@@ -100,8 +100,9 @@ Items can be statically defined as children, or generated dynamically using a fu
 
 Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](../react-aria/collections.html#unique-ids) to learn more about keys in dynamic collections.
 
-```tsx example
+<strong>Note: Asyncronous tree loading (i.e, loading by level or infinite scrolling) is not yet supported in TreeView.</strong>
 
+```tsx example export=true
 type MyItem = {
   id: string,
   name: string,
@@ -122,14 +123,18 @@ let items: MyItem[] = [
   ]}
 ];
 
-<TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <Text>{item.name}</Text>
-      {item.icon}
-    </TreeViewItem>
-  )}
-</TreeView>
+function ExampleTree(props) {
+  return (
+    <TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items} {...props}>
+      {(item: MyItem) => (
+        <TreeViewItem childItems={item.childItems} textValue={item.name}>
+          <Text>{item.name}</Text>
+          {item.icon}
+        </TreeViewItem>
+      )}
+    </TreeView>
+  );
+}
 ```
 
 ### Internationalization
@@ -147,49 +152,12 @@ By default, TreeView items are initially collapsed. Use `defaultExpandedKeys` to
 The example below uses `defaultExpandedKeys` to select the items with keys "documents" and "photos".
 
 ```tsx example
-<TreeView
-  aria-label="Example tree with default expanded keys"
+<ExampleTree
+  aria-label="Example tree with default expanded items"
   /*- begin highlight -*/
-  defaultExpandedKeys={['documents', 'photos']}
+  defaultExpandedKeys={['projects', 'reports']}
   /*- end highlight -*/
-  height="size-3600">
-  <TreeViewItem id="documents" textValue="Documents">
-    <Text>Documents</Text>
-    <Folder />
-    <TreeViewItem id="project-a" textValue="Project A">
-      <Text>Project A</Text>
-      <Folder />
-      <TreeViewItem id="weekly-report" textValue="Weekly-Report">
-        <Text>Weekly Report</Text>
-        <FileTxt />
-      </TreeViewItem>
-    </TreeViewItem>
-    <TreeViewItem id="document-1" textValue="Document 1">
-      <Text>Document 1</Text>
-      <FileTxt />
-    </TreeViewItem>
-    <TreeViewItem id="document-2" textValue="Document 2">
-      <Text>Document 2</Text>
-      <FileTxt />
-    </TreeViewItem>
-  </TreeViewItem>
-  <TreeViewItem id="photos" textValue="Photos">
-    <Text>Photos</Text>
-    <Folder />
-    <TreeViewItem id="image-1" textValue="Image 1">
-      <Text>Image 1</Text>
-      <Image />
-    </TreeViewItem>
-    <TreeViewItem id="image-2" textValue="Image 2">
-      <Text>Image 2</Text>
-      <Image />
-    </TreeViewItem>
-    <TreeViewItem id="image-3" textValue="Image 3">
-      <Text>Image 3</Text>
-      <Image />
-    </TreeViewItem>
-  </TreeViewItem>
-</TreeView>
+/>
 ```
 
 ### Controlled expansion
@@ -200,54 +168,17 @@ be passed into the callback when the item is pressed, allowing you to update sta
 Here is how you would control expansion for the above example.
 
 ```tsx example
-function Example(props) {
-  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['documents', 'photos']));
+function ControlledExpansion() {
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['projects', 'reports']));
 
   return (
-    <TreeView
-      aria-label="Example tree with default expanded keys"
+    <ExampleTree
+      aria-label="Example tree with controlled expanded items"
       /*- begin highlight -*/
       expandedKeys={expandedKeys}
       onExpandedChange={setExpandedKeys}
       /*- end highlight -*/
-      height="size-3600">
-      <TreeViewItem id="documents" textValue="Documents">
-        <Text>Documents</Text>
-        <Folder />
-        <TreeViewItem id="project-a" textValue="Project A">
-          <Text>Project A</Text>
-          <Folder />
-          <TreeViewItem id="weekly-report" textValue="Weekly-Report">
-            <Text>Weekly Report</Text>
-            <FileTxt />
-          </TreeViewItem>
-        </TreeViewItem>
-        <TreeViewItem id="document-1" textValue="Document 1">
-          <Text>Document 1</Text>
-          <FileTxt />
-        </TreeViewItem>
-        <TreeViewItem id="document-2" textValue="Document 2">
-          <Text>Document 2</Text>
-          <FileTxt />
-        </TreeViewItem>
-      </TreeViewItem>
-      <TreeViewItem id="photos" textValue="Photos">
-        <Text>Photos</Text>
-        <Folder />
-        <TreeViewItem id="image-1" textValue="Image 1">
-          <Text>Image 1</Text>
-          <Image />
-        </TreeViewItem>
-        <TreeViewItem id="image-2" textValue="Image 2">
-          <Text>Image 2</Text>
-          <Image />
-        </TreeViewItem>
-        <TreeViewItem id="image-3" textValue="Image 3">
-          <Text>Image 3</Text>
-          <Image />
-        </TreeViewItem>
-      </TreeViewItem>
-    </TreeView>
+    />
   );
 }
 ```
@@ -257,54 +188,17 @@ function Example(props) {
 By default, TreeView doesn't allow item selection but this can be enabled using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items. Note that the value of the selected keys must match the `id` prop of the TreeViewItem.
 
-The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the items with keys "document-1" and "document-2".
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the items with keys "document-a" and "document-b".
 
 ```tsx example
-<TreeView
+<ExampleTree
   aria-label="Example tree with selection"
+  defaultExpandedKeys={['projects', 'project-2']}
   /*- begin highlight -*/
   selectionMode="multiple"
-  defaultSelectedKeys={['document-1', 'document-2']}
+  defaultSelectedKeys={['document-a', 'document-b']}
   /*- end highlight -*/
-  defaultExpandedKeys={new Set(['documents', 'photos'])}
-  height="size-3600">
-  <TreeViewItem id="documents" textValue="Documents">
-    <Text>Documents</Text>
-    <Folder />
-    <TreeViewItem id="project-a" textValue="Project A">
-      <Text>Project A</Text>
-      <Folder />
-      <TreeViewItem id="weekly-report" textValue="Weekly-Report">
-        <Text>Weekly Report</Text>
-        <FileTxt />
-      </TreeViewItem>
-    </TreeViewItem>
-    <TreeViewItem id="document-1" textValue="Document 1">
-      <Text>Document 1</Text>
-      <FileTxt />
-    </TreeViewItem>
-    <TreeViewItem id="document-2" textValue="Document 2">
-      <Text>Document 2</Text>
-      <FileTxt />
-    </TreeViewItem>
-  </TreeViewItem>
-  <TreeViewItem id="photos" textValue="Photos">
-    <Text>Photos</Text>
-    <Folder />
-    <TreeViewItem id="image-1" textValue="Image 1">
-      <Text>Image 1</Text>
-      <Image />
-    </TreeViewItem>
-    <TreeViewItem id="image-2" textValue="Image 2">
-      <Text>Image 2</Text>
-      <Image />
-    </TreeViewItem>
-    <TreeViewItem id="image-3" textValue="Image 3">
-      <Text>Image 3</Text>
-      <Image />
-    </TreeViewItem>
-  </TreeViewItem>
-</TreeView>
+/>
 ```
 
 ### Controlled selection
@@ -314,60 +208,22 @@ be passed into the callback when the item is pressed, allowing you to update sta
 
 Here is how you would control selection for the above example.
 
-```tsx example export=true
+```tsx example
 import type {Selection} from '@adobe/react-spectrum';
 
-function ExampleTree(props) {
-  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['documents']));
+function ControlledSelection() {
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['document-a', 'document-b']));
 
   return (
-    <TreeView
+    <ExampleTree
       aria-label="Example tree with controlled selection"
+      defaultExpandedKeys={['projects', 'project-2']}
       /*- begin highlight -*/
-      selectionMode="multiple"
+      selectionMode="multiple"      
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
       /*- end highlight -*/
-      defaultExpandedKeys={new Set(['documents', 'photos'])}
-      height="size-3600"
-      {...props}>
-      <TreeViewItem id="documents" textValue="Documents">
-        <Text>Documents</Text>
-        <Folder />
-        <TreeViewItem id="project-a" textValue="Project A">
-          <Text>Project A</Text>
-          <Folder />
-          <TreeViewItem id="weekly-report" textValue="Weekly-Report">
-            <Text>Weekly Report</Text>
-            <FileTxt />
-          </TreeViewItem>
-        </TreeViewItem>
-        <TreeViewItem id="document-1" textValue="Document 1">
-          <Text>Document 1</Text>
-          <FileTxt />
-        </TreeViewItem>
-        <TreeViewItem id="document-2" textValue="Document 2">
-          <Text>Document 2</Text>
-          <FileTxt />
-        </TreeViewItem>
-      </TreeViewItem>
-      <TreeViewItem id="photos" textValue="Photos">
-        <Text>Photos</Text>
-        <Folder />
-        <TreeViewItem id="image-1" textValue="Image 1">
-          <Text>Image 1</Text>
-          <Image />
-        </TreeViewItem>
-        <TreeViewItem id="image-2" textValue="Image 2">
-          <Text>Image 2</Text>
-          <Image />
-        </TreeViewItem>
-        <TreeViewItem id="image-3" textValue="Image 3">
-          <Text>Image 3</Text>
-          <Image />
-        </TreeViewItem>
-      </TreeViewItem>
-    </TreeView>
+    />
   );
 }
 ```
@@ -378,7 +234,13 @@ To limit users to selecting only a single item at a time, `selectionMode` can be
 
 ```tsx example
 // Using the same tree as above
-<ExampleTree selectionMode="single" />
+<ExampleTree
+  aria-label="Example tree with single selection"
+  defaultExpandedKeys={['projects', 'project-2']}
+  /*- begin highlight -*/
+  selectionMode="single"
+  /*- end highlight -*/
+/>
 ```
 
 ### Disallow empty selection
@@ -388,7 +250,15 @@ In this mode, if a single item is selected and the user presses it, it will not 
 
 ```tsx example
 // Using the same tree as above
-<ExampleTree disallowEmptySelection />
+<ExampleTree
+  aria-label="Example tree with disallowed empty selection"
+  defaultExpandedKeys={['projects', 'project-2']}
+  selectionMode="single"
+  defaultSelectedKeys={['document-a']}
+  /*- begin highlight -*/
+  disallowEmptySelection
+  /*- end highlight -*/
+/>
 ```
 
 ### Disabled items
@@ -397,7 +267,14 @@ You can disable specific items by providing an array of keys to TreeView via the
 
 ```tsx example
 // Using the same tree as above
-<ExampleTree selectionMode="multiple" disabledKeys={['document-1', 'document-2']} />
+<ExampleTree
+  aria-label="Example tree with disabled items"
+  defaultExpandedKeys={['projects', 'project-2']}
+  selectionMode="single"
+  /*- begin highlight -*/
+  disabledKeys={['document-a', 'document-b']}
+  /*- end highlight -*/
+/>
 ```
 
 ### Highlight selection
@@ -415,7 +292,15 @@ keys may not be available.
 These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/#keyboardinteraction).
 
 ```tsx example
-<ExampleTree selectionMode="multiple" selectionStyle="highlight" />
+<ExampleTree
+  aria-label="Example tree with highlight selection"
+  defaultExpandedKeys={['projects', 'project-2']}
+  selectionMode="multiple"
+  defaultSelectedKeys={['document-a', 'document-b']}
+  /*- begin highlight -*/
+  selectionStyle="highlight"
+  /*- end highlight -*/
+/>
 ```
 
 ## Actions
@@ -430,8 +315,23 @@ This behavior is slightly different in the highlight selection style, where sing
 
 ```tsx example
 <Flex direction="column" gap="size-300">
-  <ExampleTree aria-label="Example tree with item actions and checkbox selection" selectionMode="multiple" onAction={key => alert(`Opening item ${key}...`)} />
-  <ExampleTree aria-label="Example tree with item actions and highlight selection" selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
+  <ExampleTree
+    aria-label="Example tree with item actions and checkbox selection"
+    defaultExpandedKeys={['projects', 'project-2']}
+    /*- begin highlight -*/
+    selectionMode="multiple"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
+  <ExampleTree
+    aria-label="Example tree with item actions and highlight selection"
+    defaultExpandedKeys={['projects', 'project-2']}
+    /*- begin highlight -*/
+    selectionMode="multiple"
+    selectionStyle="highlight"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
 </Flex>
 ```
 
@@ -440,7 +340,7 @@ This behavior is slightly different in the highlight selection style, where sing
 Tree items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<TreeViewItem>` component. Links behave the same way as described above for item actions depending on the `selectionMode` and `selectionStyle`.
 
 ```tsx example
-<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={new Set(['bookmarks'])} height="size-2000">
+<TreeView aria-label="Example tree with links" defaultExpandedKeys={new Set(['bookmarks'])} height="size-2000">
   <TreeViewItem id="bookmarks" textValue="Bookmarks">
     <Text>Bookmarks</Text>
     <Folder />
@@ -487,7 +387,7 @@ let items: MyItem[] = [
   ]}
 ];
 
-<TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items}>
+<TreeView aria-label="Example tree with action groups" height="size-3000" items={items}>
   {(item: MyItem) => (
     <TreeViewItem childItems={item.childItems} textValue={item.name}>
       <Text>{item.name}</Text>
@@ -530,7 +430,7 @@ let items: MyItem[] = [
   ]}
 ];
 
-<TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items}>
+<TreeView aria-label="Example tree with action menus" height="size-3000" items={items}>
   {(item: MyItem) => (
     <TreeViewItem childItems={item.childItems} textValue={item.name}>
       <Text>{item.name}</Text>
@@ -587,16 +487,13 @@ function renderEmptyState() {
 
 ## Testing
 
-The TreeView features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
-It also features long press interactions on its items depending on the item actions provided and if user is interacting with the list on
+The TreeView features long press interactions on its items depending on the item actions provided and if user is interacting with the list on
 a touch device. Please see the following sections in the testing docs for more information on how to handle these
 behaviors in your test suite.
 
 [Timers](./testing.html#timers)
 
 [Desktop vs Mobile](./testing.html#desktop-vs-mobile)
-
-[Virtualized Components](./testing.html#virtualized-components)
 
 [Long press](./testing.html#simulating-user-long-press)
 
