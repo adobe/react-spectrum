@@ -19,6 +19,8 @@ import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {IconContext} from './Icon';
 import { useRadioGroupState } from 'react-stately';
+import {raw} from '../style/style-macro' with {type: 'macro'};
+
 
 interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
   children?: ReactNode,
@@ -61,8 +63,10 @@ const controlItem = style({
     isSelected: 'neutral',
     isDisabled: 'disabled',
     forcedColors: {
-      isDisabled: 'GrayText'
-    }
+      default: 'ButtonText',
+      isDisabled: 'GrayText',
+      isSelected: 'HighlightText'
+    },
   },
   backgroundColor: {
     trackStyle: {
@@ -73,10 +77,10 @@ const controlItem = style({
           isDisabled: 'disabled'
         },
         forcedColors: {
+          isSelected: 'Highlight',
           isDisabled: {
             isSelected: 'GrayText'
-          },
-          isSelected: 'Highlight'
+          }
         }
       }, 
       track: {
@@ -84,10 +88,10 @@ const controlItem = style({
           default: 'gray-25'
         },
         forcedColors: {
+          isSelected: 'Highlight',
           isDisabled: {
             isSelected: 'GrayText'
           },
-          isSelected: 'Highlight'
         }
       }
     },
@@ -99,6 +103,7 @@ const controlItem = style({
     }
   },
   paddingY: 8,
+  alignItems: 'center',
   boxSizing: 'border-box',
   borderStyle: {
     trackStyle: {
@@ -108,7 +113,7 @@ const controlItem = style({
   borderWidth: {
     trackStyle: {
       track: 2
-    }
+    },
   },
   borderColor: {
     trackStyle: {
@@ -120,7 +125,10 @@ const controlItem = style({
         },
         forcedColors: {
           isDisabled: 'GrayText',
-          isSelected: 'Highlight'
+          isSelected: {
+            default: 'Highlight',
+            isDisabled: 'GrayText'
+          }
         }
       }
     }
@@ -168,7 +176,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
     <RadioGroup 
       {...props}
       ref={domRef}
-      className={segmentedControl({trackStyle: props.trackStyle}, props.styles)} // DOUBLE CHECK THIS
+      className={segmentedControl({trackStyle: props.trackStyle}, props.styles)}
       aria-label={props['aria-label'] || 'Segmented Control'}>
       <Provider
         values={[
@@ -191,8 +199,10 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
     <Radio 
       {...props} 
       ref={domRef} 
-      inputRef={inputRef} 
-      className={renderProps => controlItem({...renderProps, trackStyle}, props.styles)} >
+      inputRef={inputRef}
+      style={props.UNSAFE_style}
+      // adding forced-color-adjust prevents the background from being partially filled aka leaving the text with a black background while the rest is colored differently
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, trackStyle}, props.styles) + ' ' + raw('forced-color-adjust: preserve-parent-color')} >
       <Provider values={[
           [IconContext, {
             render: centerBaseline({slot: 'icon', className: style({order: 0, flexShrink: 0})}),
