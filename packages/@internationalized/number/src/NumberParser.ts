@@ -311,6 +311,7 @@ class NumberParserImpl {
           decimalPartMatches?.groups?.digits?.length < 3 ||
           decimalPartMatches?.groups?.digits?.length > 3 ||
           integerPart.length > 3 ||
+          (integerPart.length === 0 && decimalPartMatches?.groups?.digits?.length === 3) ||
           (integerPart === '0' || integerPart === '\u0660' || integerPart === '\u3007')
         )
       ) {
