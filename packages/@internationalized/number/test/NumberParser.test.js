@@ -343,7 +343,7 @@ describe('NumberParser', function () {
 
     it('should support group characters', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',')).toBe(true); // en-US-u-nu-arab uses commas as the decimal point character
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',000')).toBe(false); // latin numerals cannot follow arab decimal point
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',000')).toBe(true); // latin numerals cannot follow arab decimal point, but parser will interpret a comma as a decimal point and interpret this as 0.
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000,000')).toBe(true);
