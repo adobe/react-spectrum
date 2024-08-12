@@ -67,7 +67,12 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Whether the picker should be displayed with a quiet style.
+   * @private
+   */
+  isQuiet?: boolean
 }
 
 export interface PickerProps<T extends object> extends
@@ -101,6 +106,9 @@ interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
   ...fieldInput(),
+  outlineStyle: {
+    isQuiet: 'none'
+  },
   position: 'relative',
   font: 'control',
   display: 'flex',
@@ -110,18 +118,41 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   alignItems: 'center',
   height: 'control',
   transition: 'default',
-  columnGap: 'text-to-control',
-  paddingX: 'edge-to-text',
+  columnGap: {
+    default: 'text-to-control',
+    isQuiet: 'text-to-visual'
+  },
+  paddingX: {
+    default: 'edge-to-text',
+    isQuiet: 0
+  },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    isQuiet: 'transparent'
   },
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
+  },
+  maxWidth: {
+    isQuiet: 'max'
   }
 });
+
+const quietFocusLine = style({
+  width: 'full',
+  // Use pixels since we are emulating a border.
+  height: `[2px]`,
+  position: 'absolute',
+  bottom: 0,
+  borderRadius: 'full',
+  backgroundColor: {
+    default: 'blue-800',
+    forcedColors: 'Highlight'
+  }
+})
 
 export let menu = style({
   outlineStyle: 'none',
@@ -157,7 +188,10 @@ const invalidBorder = style({
 });
 
 const valueStyles = style({
-  flexGrow: 1,
+  flexGrow: {
+    default: 1,
+    isQuiet: 0
+  },
   truncate: true,
   display: 'flex',
   alignItems: 'center'
@@ -195,7 +229,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     necessityIndicator,
     UNSAFE_className = '',
     UNSAFE_style,
-    placeholder = 'Select an option...',
+    placeholder = 'Select...',
+    isQuiet,
     ...pickerProps
   } = props;
 
@@ -221,7 +256,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
         labelPosition,
         size
       }, props.styles)}>
-      {({isDisabled, isOpen, isInvalid, isRequired}) => (
+      {({isDisabled, isOpen, isFocusVisible, isInvalid, isRequired}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
@@ -230,6 +265,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               size={size}
               labelPosition={labelPosition}
               labelAlign={labelAlign}
+              isQuiet={isQuiet}
               necessityIndicator={necessityIndicator}
               contextualHelp={props.contextualHelp}>
               {label}
@@ -240,11 +276,12 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               className={renderProps => inputButton({
                 ...renderProps,
                 size: size,
-                isOpen
+                isOpen,
+                isQuiet
               })}>
               {(renderProps) => (
                 <>
-                  <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                  <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
                     {({defaultChildren}) => {
                       return (
                         <Provider
@@ -280,7 +317,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                   <ChevronIcon
                     size={size}
                     className={iconStyles} />
-                  {isInvalid && !isDisabled &&
+                  {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+                  {isInvalid && !isDisabled && !isQuiet && 
                     // @ts-ignore known limitation detecting functions from the theme
                     <div className={invalidBorder({...renderProps, size})} />
                   }
@@ -300,14 +338,21 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               UNSAFE_style={{
-                width: menuWidth ? `${menuWidth}px` : undefined
+                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
               }}
               styles={style({
-                minWidth: {
-                  default: '[var(--trigger-width)]'
+                marginStart: {
+                  isQuiet: -12
                 },
-                width: '[var(--trigger-width)]'
-              })}>
+                minWidth: {
+                  default: '[var(--trigger-width)]',
+                  isQuiet: 192
+                },
+                width: {
+                  default: '[var(--trigger-width)]',
+                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                }
+              })(props)}>
               <Provider
                 values={[
                   [HeaderContext, {className: sectionHeader({size})}],
