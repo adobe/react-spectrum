@@ -35,6 +35,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   includeNecessityIndicatorInAccessibilityName?: boolean,
   staticColor?: 'white' | 'black',
   contextualHelp?: ReactNode,
+  isQuiet?: boolean,
   children?: ReactNode
 }
 
@@ -49,6 +50,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelPosition,
     staticColor,
     contextualHelp,
+    isQuiet,
     UNSAFE_style,
     UNSAFE_className = '',
     ...labelProps
@@ -80,9 +82,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         contain: {
           labelPosition: {
             top: 'inline-size'
-          }
+          },
+          isQuiet: 'none'
         }
-      })({labelAlign, labelPosition})}>
+      })({labelAlign, labelPosition, isQuiet})}>
       <Label
         {...labelProps}
         ref={domRef}
@@ -153,8 +156,7 @@ const fieldGroupStyles = style({
   height: 'control',
   boxSizing: 'border-box',
   paddingX: 'edge-to-text',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   borderRadius: 'control',
   borderWidth: 2,
   borderStyle: 'solid',
@@ -227,6 +229,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         color: '[inherit]',
         fontFamily: '[inherit]',
         fontSize: '[inherit]',
+        fontWeight: '[inherit]',
         flexGrow: 1,
         flexShrink: 1,
         minWidth: 0,
@@ -253,10 +256,8 @@ const helpTextStyles = style({
   gridArea: 'helptext',
   display: 'flex',
   alignItems: 'baseline',
-  lineHeight: 'ui',
   gap: 'text-to-visual',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   color: {
     default: 'neutral-subdued',
     isInvalid: 'negative',
