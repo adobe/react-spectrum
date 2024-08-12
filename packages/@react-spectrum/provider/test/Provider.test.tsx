@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// needs to be imported first
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 // eslint-disable-next-line rsp-rules/sort-imports
 import {ActionButton, Button} from '@react-spectrum/button';
