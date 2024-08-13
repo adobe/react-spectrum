@@ -17,7 +17,7 @@ import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {mergeStyles} from '../style/runtime';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
