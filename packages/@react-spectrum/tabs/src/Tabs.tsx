@@ -262,7 +262,6 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   const {isQuiet, density, isEmphasized, orientation} = tabProps;
   const {selectedTab, collapsed, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
-  console.log(tablistRef, wrapperRef)
   // Pass original Tab props but override children to create the collection.
   const state = useTabListState({...tabProps, children: props.children});
 
