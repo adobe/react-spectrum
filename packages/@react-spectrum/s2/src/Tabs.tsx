@@ -161,7 +161,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (tablistRef?.current) {
       let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
 
@@ -169,7 +169,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
         setSelectedTab(tab);
       }
     }
-  }, [tablistRef, state?.selectedItem]);
+  }, [tablistRef, state?.selectedItem?.key]);
 
   return (
     <div
@@ -298,7 +298,7 @@ function TabLine(props: TabLineProps) {
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedKey, direction, orientation, density]);
+  }, [onResize, state?.selectedItem?.key, direction, orientation, density]);
 
   return (
     <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}), selectionAnimation)} />
