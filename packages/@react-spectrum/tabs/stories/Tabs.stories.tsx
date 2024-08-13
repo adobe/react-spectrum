@@ -456,7 +456,7 @@ function render(props = {}) {
     <Tabs
       {...props}
       aria-label="Tab example"
-      maxWidth={240}
+      maxWidth={500}
       onSelectionChange={action('onSelectionChange')}>
       <TabList>
         <Item key="val1">Tab 1</Item>
