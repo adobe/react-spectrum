@@ -113,18 +113,11 @@ export const Fonts: Story = {
     return (
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, auto)', alignItems: 'center', justifyItems: 'start', gap: 8}}>
         <div lang="en-US" style={{display: 'contents'}}>
-          English (adobe-colin)
+          English (adobe-clean-vf)
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].button}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].copy}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
-        </div>
-        <div lang="en-US" style={{display: 'contents'}}>
-          English (adobe-clean)
-          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].button}</Text></ActionButton>
-          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].copy}</Text></ActionButton>
-          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
-          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
         </div>
         <div lang="ar-AR" dir="rtl" style={{display: 'contents'}}>
           Arabic (myriad-arabic)

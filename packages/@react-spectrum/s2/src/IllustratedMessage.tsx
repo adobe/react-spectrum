@@ -120,12 +120,11 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
 
 const heading = style<IllustratedMessageStyleProps>({
   gridArea: 'heading',
-  color: 'heading',
-  fontSize: {
+  font: {
     size: {
-      S: 'body',
-      M: 'body-xl',
-      L: 'body-2xl'
+      S: 'title',
+      M: 'title-xl',
+      L: 'title-2xl'
     }
   },
   alignSelf: 'end',
@@ -133,7 +132,13 @@ const heading = style<IllustratedMessageStyleProps>({
 });
 
 const content = style({
-  color: 'gray-800',
+  font: {
+    size: {
+      S: 'body-xs',
+      M: 'body-sm',
+      L: 'body-sm'
+    }
+  },
   gridArea: 'content',
   alignSelf: 'start'
 });
@@ -178,7 +183,7 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       <Provider
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
-          [ContentContext, {className: content}],
+          [ContentContext, {className: content({size})}],
           [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
           [ButtonGroupContext, {styles: buttonGroup}]
         ]}>

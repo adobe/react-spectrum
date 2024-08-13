@@ -72,9 +72,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   justifyContent: 'center',
   textAlign: 'start',
   columnGap: 'text-to-visual',
-  fontFamily: 'sans',
+  font: 'control',
   fontWeight: 'bold',
-  fontSize: 'control',
   userSelect: 'none',
   minHeight: 'control',
   minWidth: {

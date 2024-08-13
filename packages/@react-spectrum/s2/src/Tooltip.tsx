@@ -63,6 +63,7 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   maxWidth: 160,
   minHeight: 24,
   boxSizing: 'border-box',
+  font: 'ui-sm',
   color: {
     default: 'gray-25',
     forcedColors: 'ButtonText'
@@ -78,9 +79,6 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   },
   backgroundColor: 'neutral',
   borderRadius: 'control',
-  fontFamily: 'sans',
-  fontWeight: 'normal',
-  fontSize: 'ui-sm',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,

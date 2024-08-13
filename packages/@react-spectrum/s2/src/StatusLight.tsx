@@ -50,8 +50,7 @@ const wrapper = style<StatusLightStyleProps>({
   gap: 'text-to-visual',
   alignItems: 'baseline',
   width: 'fit',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   color: {
     default: 'neutral',
     variant: {

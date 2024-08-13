@@ -80,9 +80,7 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
           <SliderOutput
             className={style({
               gridArea: 'output',
-              fontFamily: 'sans',
-              fontSize: 'control',
-              lineHeight: 'ui',
+              font: 'control',
               cursor: 'default',
               color: {
                 default: 'neutral-subdued',

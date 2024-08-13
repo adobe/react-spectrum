@@ -68,10 +68,8 @@ const helpTextStyles = style({
   gridArea: 'helptext',
   display: 'flex',
   alignItems: 'baseline',
-  lineHeight: 'ui',
   gap: 'text-to-visual',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   color: {
     default: 'neutral-subdued',
     isInvalid: 'negative'
@@ -176,7 +174,7 @@ function TagGroup<T extends object>(
                 display: 'flex',
                 minWidth: 'full',
                 flexWrap: 'wrap',
-                fontFamily: 'sans'
+                font: 'ui'
               })({isEmpty})}>
               {children}
             </TagList>
@@ -197,9 +195,7 @@ const tagStyles = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontFamily: 'sans',
-  fontWeight: 'medium',
-  fontSize: 'control',
+  font: 'control',
   height: 'control',
   transition: 'default',
   minWidth: 0,

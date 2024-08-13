@@ -338,6 +338,65 @@ const i18nFonts = {
   ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
 } as const;
 
+const fontSize = {
+  // The default font size scale is for use within UI components.
+  'ui-xs': fontSizeToken('font-size-50'),
+  'ui-sm': fontSizeToken('font-size-75'),
+  ui: fontSizeToken('font-size-100'),
+  'ui-lg': fontSizeToken('font-size-200'),
+  'ui-xl': fontSizeToken('font-size-300'),
+  'ui-2xl': fontSizeToken('font-size-400'),
+  'ui-3xl': fontSizeToken('font-size-500'),
+
+  control: {
+    default: fontSizeToken('font-size-100'),
+    size: {
+      XS: fontSizeToken('font-size-50'),
+      S: fontSizeToken('font-size-75'),
+      L: fontSizeToken('font-size-200'),
+      XL: fontSizeToken('font-size-300')
+    }
+  },
+
+  'heading-2xs': fontSizeToken('heading-size-xxs'),
+  'heading-xs': fontSizeToken('heading-size-xs'),
+  'heading-sm': fontSizeToken('heading-size-s'),
+  heading: fontSizeToken('heading-size-m'),
+  'heading-lg': fontSizeToken('heading-size-l'),
+  'heading-xl': fontSizeToken('heading-size-xl'),
+  'heading-2xl': fontSizeToken('heading-size-xxl'),
+  'heading-3xl': fontSizeToken('heading-size-xxxl'),
+
+  'title-xs': fontSizeToken('title-size-xs'),
+  'title-sm': fontSizeToken('title-size-s'),
+  title: fontSizeToken('title-size-m'),
+  'title-lg': fontSizeToken('title-size-l'),
+  'title-xl': fontSizeToken('title-size-xl'),
+  'title-2xl': fontSizeToken('title-size-xxl'),
+  'title-3xl': fontSizeToken('title-size-xxxl'),
+
+  // Body is for large blocks of text, e.g. paragraphs, not in UI components.
+  'body-2xs': fontSizeToken('font-size-50'), // TODO: seems like there is no token for this
+  'body-xs': fontSizeToken('body-size-xs'),
+  'body-sm': fontSizeToken('body-size-s'),
+  body: fontSizeToken('body-size-m'),
+  'body-lg': fontSizeToken('body-size-l'),
+  'body-xl': fontSizeToken('body-size-xl'),
+  'body-2xl': fontSizeToken('body-size-xxl'),
+  'body-3xl': fontSizeToken('body-size-xxxl'),
+
+  'detail-sm': fontSizeToken('detail-size-s'),
+  detail: fontSizeToken('detail-size-m'),
+  'detail-lg': fontSizeToken('detail-size-l'),
+  'detail-xl': fontSizeToken('detail-size-xl'),
+
+  'code-xs': fontSizeToken('code-size-xs'),
+  'code-sm': fontSizeToken('code-size-s'),
+  code: fontSizeToken('code-size-m'),
+  'code-lg': fontSizeToken('code-size-l'),
+  'code-xl': fontSizeToken('code-size-xl')
+} as const;
+
 export const style = createTheme({
   properties: {
     // colors
@@ -375,6 +434,7 @@ export const style = createTheme({
         // forcedColors: 'GrayText'
       },
       heading: colorToken('heading-color'),
+      title: colorToken('title-color'),
       body: colorToken('body-color'),
       detail: colorToken('detail-color'),
       code: colorToken('code-color')
@@ -590,7 +650,7 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'Adobe Colin VF, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: 'adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
@@ -599,65 +659,33 @@ export const style = createTheme({
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize: {
-      // The default font size scale is for use within UI components.
-      'ui-xs': fontSizeToken('font-size-50'),
-      'ui-sm': fontSizeToken('font-size-75'),
-      ui: fontSizeToken('font-size-100'),
-      'ui-lg': fontSizeToken('font-size-200'),
-      'ui-xl': fontSizeToken('font-size-300'),
-      'ui-2xl': fontSizeToken('font-size-400'),
-      'ui-3xl': fontSizeToken('font-size-500'),
+    fontSize,
+    fontWeight: createMappedProperty((value, property) => {
+      if (property === 'fontWeight') {
+        return {
+          // Set font-variation-settings in addition to font-weight to work around typekit issue.
+          fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
+          fontWeight: value as any,
+          fontSynthesisWeight: 'none'
+        };
+      }
 
-      control: {
-        default: fontSizeToken('font-size-100'),
-        size: {
-          XS: fontSizeToken('font-size-50'),
-          S: fontSizeToken('font-size-75'),
-          L: fontSizeToken('font-size-200'),
-          XL: fontSizeToken('font-size-300')
-        }
-      },
-
-      'heading-xs': fontSizeToken('heading-size-xs'),
-      'heading-sm': fontSizeToken('heading-size-s'),
-      heading: fontSizeToken('heading-size-m'),
-      'heading-lg': fontSizeToken('heading-size-l'),
-      'heading-xl': fontSizeToken('heading-size-xl'),
-      'heading-2xl': fontSizeToken('heading-size-xxl'),
-      'heading-3xl': fontSizeToken('heading-size-xxxl'),
-
-      // Body is for large blocks of text, e.g. paragraphs, not in UI components.
-      'body-xs': fontSizeToken('body-size-xs'),
-      'body-sm': fontSizeToken('body-size-s'),
-      body: fontSizeToken('body-size-m'),
-      'body-lg': fontSizeToken('body-size-l'),
-      'body-xl': fontSizeToken('body-size-xl'),
-      'body-2xl': fontSizeToken('body-size-xxl'),
-      'body-3xl': fontSizeToken('body-size-xxxl'),
-
-      'detail-sm': fontSizeToken('detail-size-s'),
-      detail: fontSizeToken('detail-size-m'),
-      'detail-lg': fontSizeToken('detail-size-l'),
-      'detail-xl': fontSizeToken('detail-size-xl'),
-
-      'code-xs': fontSizeToken('code-size-xs'),
-      'code-sm': fontSizeToken('code-size-s'),
-      code: fontSizeToken('code-size-m'),
-      'code-lg': fontSizeToken('code-size-l'),
-      'code-xl': fontSizeToken('code-size-xl')
-    },
-    fontWeight: {
+      return {[property]: value};
+    }, {
       ...fontWeightBase,
       heading: {
         default: fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
       },
+      title: {
+        default: fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
+      },
       detail: {
         default: fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
       }
-    },
+    }),
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
@@ -667,6 +695,10 @@ export const style = createTheme({
       heading: {
         default: getToken('heading-line-height'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('heading-cjk-line-height')
+      },
+      title: {
+        default: getToken('title-line-height'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('title-cjk-line-height')
       },
       body: {
         default: getToken('body-line-height'),
@@ -888,7 +920,20 @@ export const style = createTheme({
       overflowY: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap'
-    })
+    }),
+    font: (value: keyof typeof fontSize) => {
+      let type = value.split('-')[0];
+      if (type === 'control') {
+        type = 'ui';
+      }
+      return {
+        fontFamily: type === 'code' ? 'code' : 'sans',
+        fontSize: value,
+        fontWeight: type === 'heading' || type === 'title' || type === 'detail' ? type : 'normal',
+        lineHeight: type,
+        color: type === 'ui' ? 'body' : type
+      };
+    }
   },
   conditions: {
     forcedColors: '@media (forced-colors: active)',
