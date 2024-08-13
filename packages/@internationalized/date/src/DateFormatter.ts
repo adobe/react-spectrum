@@ -13,7 +13,7 @@
 let formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 interface ResolvedDateTimeFormatOptions extends Intl.ResolvedDateTimeFormatOptions {
-  hourCycle?: Intl.DateTimeFormatOptions['hourCycle']
+  hourCycle?: NonNullable<Intl.DateTimeFormatOptions['hourCycle']>
 }
 
 interface DateRangeFormatPart extends Intl.DateTimeFormatPart {
