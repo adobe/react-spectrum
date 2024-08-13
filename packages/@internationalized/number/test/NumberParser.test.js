@@ -316,6 +316,28 @@ describe('NumberParser', function () {
         expect(roundTrip).toBe(formattedOnce);
         expect(parsed).toBe(altParsed);
       });
+      it(`decimal with
+        minimumFractionDigits: 0,
+        maximumSignificantDigits: 1`, () => {
+        let options = {
+          style: 'decimal',
+          minimumFractionDigits: 0,
+          maximumSignificantDigits: 1
+        };
+        let locale = 'ar-AE';
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const altParser = new NumberParser('en-US', options);
+        let adjustedNumberForFractions = -950000;
+        const formattedOnce = formatter.format(adjustedNumberForFractions);
+        const parsed = parser.parse(formattedOnce);
+        const roundTrip = formatter.format(parsed);
+        const altParsed = altParser.parse(formattedOnce);
+        console.log({locale, formattedOnce, parsed, roundTrip, altParsed});
+
+        expect(roundTrip).toBe(formattedOnce);
+        expect(parsed).toBe(altParsed);
+      });
     });
   });
 
