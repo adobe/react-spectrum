@@ -107,6 +107,8 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
   ...fieldInput(),
   outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid',
     isQuiet: 'none'
   },
   position: 'relative',
@@ -138,7 +140,8 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   },
   maxWidth: {
     isQuiet: 'max'
-  }
+  },
+  disableTapHighlight: true
 });
 
 const quietFocusLine = style({
