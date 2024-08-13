@@ -115,7 +115,7 @@ function TagGroup<T extends object>(
     helpText =  (
       <Text
         slot="description"
-        styles={helpTextStyles({size: props.size || 'M'})}>
+        styles={helpTextStyles({size})}>
         {description}
       </Text>
     );
