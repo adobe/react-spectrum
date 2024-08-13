@@ -111,7 +111,8 @@ export const fieldInput = () => ({
   contain: {
     // Only apply size containment if contain-intrinsic-width is supported.
     // In older browsers, this will fall back to the default browser intrinsic width.
-    '@supports (contain-intrinsic-width: 1px)': 'inline-size'
+    '@supports (contain-intrinsic-width: 1px)': 'inline-size',
+    isQuiet: 'none'
   },
   '--defaultWidth': {
     type: 'width',

@@ -47,7 +47,7 @@
     "chromatic:s2": "NODE_ENV=production CHROMATIC=1 chromatic --buildScriptName='build:chromatic-s2' --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
-    "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push --no-verify-access",
+    "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish='*' --no-push --no-verify-access",
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
