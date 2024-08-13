@@ -77,7 +77,7 @@ const tab = style({
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
-  width: 'max'
+  minWidth: 'max'
 }, getAllowedOverrides());
 
 const icon = style({
@@ -160,7 +160,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
       {orientation === 'vertical' && 
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density}/>}
       <RACTabList 
         {...props}
         ref={tablistRef}
@@ -304,6 +304,12 @@ const tabs = style({
 const TabsInternalContext = createContext<TabsProps>({});
 
 function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    density = 'regular',
+    isDisabled,
+    disabledKeys,
+    orientation
+  } = props
   let domRef = useDOMRef(ref);
 
   return (
@@ -314,7 +320,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
       <Provider
         values={[ 
-          [TabsInternalContext, {density: props.density || 'regular', isDisabled: props.isDisabled, disabledKeys: props.disabledKeys, orientation: props.orientation}]
+          [TabsInternalContext, {density, isDisabled, disabledKeys, orientation}]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
