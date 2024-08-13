@@ -76,9 +76,7 @@ const avatar = style({
 const text = style({
   marginStart: 8,
   fontFamily: 'sans',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
+  truncate: true,
   fontSize: {
     size: {
       S: 'ui-sm',
@@ -128,8 +126,7 @@ function AvatarGroup(props: AvatarGroupProps) {
     <AvatarGroupContext.Provider value={{styles: avatar({size}), strokeColor}}>
       <div
         id={groupId}
-        aria-labelledby={`${groupId} ${labelId}`}
-        aria-label="online members"
+        aria-labelledby={`${otherProps['aria-label'] ? groupId : ''} ${labelId}`}
         {...filterDOMProps(otherProps)}
         role="group"
         className={(UNSAFE_className ?? '') + container(null, styles)}
