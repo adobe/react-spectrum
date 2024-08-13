@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="110.676" x2="30.095" y1="5.525" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4885"/>
+      <stop offset="1" stop-color="#FF4885" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="61.583" x2="77.127" y1="-42.571" y2="56.914" gradientUnits="userSpaceOnUse">
+      <stop offset=".156" stop-color="#7A6AFD"/>
+      <stop offset="1" stop-color="#7A6AFD" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="-117.778" x2="143.767" y1="157.439" y2="105.748" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#30A7FE" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#30A7FE" stop-opacity=".995"/>
+      <stop offset=".609" stop-color="#30A7FE"/>
+      <stop offset="1" stop-color="#30A7FE" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="a">
+      <rect width="139.142" height="139.142" x="10" y="10" fill="#fff" rx="10"/>
+    </clipPath>
+    <clipPath id="c">
+      <rect width="139.142" height="139.142" x="10" y="10" fill="#fff" rx="10"/>
+    </clipPath>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="rotate(90 16.277 117.752) scale(200.895)" gradientUnits="userSpaceOnUse">
+      <stop offset=".089" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <mask id="b" width="120" height="92" x="20" y="34" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="M20 50v60c0 8.837 7.163 16 16 16h88c8.837 0 16-7.163 16-16V50c0-8.837-7.163-16-16-16H36c-8.837 0-16 7.163-16 16Zm99 1a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-17 0a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-17 0a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-17 0a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-19 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm-17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm19 47a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-19 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm34 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <g clip-path="url(#c)">
+      <rect width="139.142" height="139.142" x="10" y="10" fill="#D9F4FD" rx="10"/>
+      <circle cx="134.029" cy="101.474" r="200.895" fill="url(#d)"/>
+      <path fill="url(#e)" d="M-2.523 53.58C-4.756 5.487 32.42-35.31 80.514-37.544c48.094-2.233 88.891 34.944 91.125 83.037 2.233 48.094-34.944 88.891-83.038 91.124C40.508 138.851-.29 101.674-2.523 53.58Z"/>
+      <path fill="url(#f)" d="M45.15-86.282a33.917 33.917 0 0 0-35.484-.106l-108.915 66.5c-10.667 6.513-10.685 21.886-.032 28.424L8.914 74.942a33.917 33.917 0 0 0 35.483-.024L152.37 8.45c10.596-6.524 10.615-21.811.032-28.36L45.151-86.281Z"/>
+      <path fill="url(#g)" d="M-59.364 76.552c22.449 0 42.783 9.086 57.506 23.743 29.445 29.366 53.857 29.391 83.303.076 14.723-14.733 35.083-23.844 57.557-23.844 44.923.025 81.314 36.318 81.314 81.119s-36.391 81.068-81.314 81.068c-22.525 0-42.885-9.136-57.608-23.869-29.42-29.265-53.807-29.24-83.252.126-14.723 14.682-35.057 23.743-57.506 23.743-44.898 0-81.29-36.293-81.29-81.068 0-44.776 36.392-81.094 81.29-81.094Z"/>
+    </g>
+  </g>
+</svg>
