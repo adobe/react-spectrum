@@ -56,6 +56,7 @@ import {LoadingState, Node} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
 import {ProgressCircle} from './ProgressCircle';
+import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
@@ -532,7 +533,6 @@ const columnStyles = style({
     default: 16,
     isColumnResizable: 0
   },
-  // TODO: need to support text align and that would need to apply to all cells in the column, need to figure out how
   textAlign: {
     align: {
       start: 'start',
@@ -546,7 +546,6 @@ const columnStyles = style({
   fontFamily: 'sans',
   fontWeight: 'bold',
   display: 'flex',
-  // TODO: this border isn't perfect because it is flush with the first row's blue selected outline and the text is 17.5px instead of 18px
   borderColor: 'gray-300',
   borderTopWidth: 0,
   borderBottomWidth: 1,
@@ -559,7 +558,6 @@ const columnStyles = style({
 });
 
 export interface ColumnProps extends RACColumnProps {
-  // TODO: still need to figure out a way to do this, perhaps if I get the resize indicator to span the table then we can do something similar here
   showDivider?: boolean,
   isResizable?: boolean,
   align?: 'start' | 'center' | 'end',
@@ -817,7 +815,6 @@ const stickyCell = {
 } as const;
 
 const selectAllCheckboxColumn = style({
-  ...stickyCell,
   padding: 0,
   height: '[calc(100% - 1px)]',
   outlineStyle: 'none',
@@ -1074,38 +1071,40 @@ const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
-  backgroundImage: {
-    // TODO: will need the proper blue from tokens
-    // TODO: will need to move to a different element because it is covered by the sticky column masking element
-    isFocusVisible: 'linear-gradient(to right, blue 0 3px, transparent 3px)'
-  },
   backgroundColor: rowBackgroundColor,
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
   },
+  '--rowFocusIndicatorColor': {
+    type: 'backgroundColor',
+    value: 'focus-ring'
+  },
   // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
-  outlineWidth: {
-    forcedColors: {
-      isFocusVisible: 2
-    }
-  },
-  outlineOffset: {
-    forcedColors: {
-      isFocusVisible: -1
-    }
-  },
-  outlineColor: {
-    forcedColors: {
-      isFocusVisible: 'ButtonBorder'
-    }
-  },
-  outlineStyle: {
-    default: 'none',
-    forcedColors: {
-      isFocusVisible: 'solid'
-    }
-  },
+  // This doesn't quite work because it gets cut off by the checkbox cell background masking element, figure out another way. Could shrink the checkbox cell's content even more
+  // and offset it by margin top but that messes up the checkbox centering a bit
+  // outlineWidth: {
+  //   forcedColors: {
+  //     isFocusVisible: 2
+  //   }
+  // },
+  // outlineOffset: {
+  //   forcedColors: {
+  //     isFocusVisible: -1
+  //   }
+  // },
+  // outlineColor: {
+  //   forcedColors: {
+  //     isFocusVisible: 'ButtonBorder'
+  //   }
+  // },
+  // outlineStyle: {
+  //   default: 'none',
+  //   forcedColors: {
+  //     isFocusVisible: 'solid'
+  //   }
+  // },
+  outlineStyle: 'none',
   borderTopWidth: 0,
   borderBottomWidth: 1,
   borderStartWidth: 0,
@@ -1144,17 +1143,14 @@ export function Row<T extends object>(
 ) {
   let {selectionBehavior, allowsDragging, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
-  // TODO: something like the below we could do in the className where we could perhaps modify the color and inset-block-start 50 be gray and 0 vs -1px respectively depending on the renderProps for isSelected.
-  // However would need to be able to use the color variables for the proper coloring
-  // + ' ' + raw('&:after { content: ""; display: block; position: absolute; inset-inline-start: 0;  inset-inline-end: 0;  inset-block-end: 0; inset-block-start: -1px; z-index: 3; box-shadow: inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue')
+
   return (
     <RACRow
       id={id}
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      })}
-      // })  + ' ' + raw('&:after { content: ""; display: block; position: absolute; inset-inline-start: 0;  inset-inline-end: 0;  inset-block-end: 0; inset-block-start: -1px; z-index: 3; box-shadow: inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue')}
+      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {allowsDragging && (
         <Cell isSticky className={dragButtonCellStyle}>
