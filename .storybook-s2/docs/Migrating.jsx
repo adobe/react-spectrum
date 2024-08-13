@@ -60,8 +60,10 @@ export function Migrating() {
         </ul>
 
         <H3>ButtonGroup</H3>
+        <P>No updates needed.</P>
 
         <H3>Checkbox</H3>
+        <P>No updates needed.</P>
 
         <H3>CheckboxGroup</H3>
         <ul className="sb-unstyled">
@@ -87,6 +89,7 @@ export function Migrating() {
         </ul>
 
         <H3>ColorSwatch</H3>
+        <P>No updates needed.</P>
 
         <H3>ColorWheel</H3>
         <ul className="sb-unstyled">
@@ -234,6 +237,10 @@ export function Migrating() {
         </ul>
 
         <H3>Section</H3>
+        <ul className="sb-unstyled">
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Menu</Code>: Update <Code>Section</Code> to be a <Code>MenuSection</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Picker</Code>: Update <Code>Section</Code> to be a <Code>PickerSection</Code></li>
+        </ul>
 
         <H3>Slider</H3>
         <ul className="sb-unstyled">
@@ -327,7 +334,7 @@ export function Migrating() {
         </pre>
 
         <H3>Border width</H3>
-        <P>Affected style props: <Code>borderWidth</Code>, <Code>borderStartWidth</Code>, <Code>borderEndWidth</Code>, <Code>borderTopWidth</Code>, <Code>orderBottomWidth</Code>, <Code>borderXWidth</Code>, <Code>borderYWidth</Code>.</P>
+        <P>Affected style props: <Code>borderWidth</Code>, <Code>borderStartWidth</Code>, <Code>borderEndWidth</Code>, <Code>borderTopWidth</Code>, <Code>borderBottomWidth</Code>, <Code>borderXWidth</Code>, <Code>borderYWidth</Code>.</P>
         <P>Example:</P>
         <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
           <div className={style({backgroundColor: 'red-200'})}>{`- <View borderWidth="thin"  />`}</div>
@@ -356,7 +363,7 @@ export function Migrating() {
             <td><Code>4</Code></td>
           </tr>
           <tr>
-            <td><Code>'thickist'</Code></td>
+            <td><Code>'thickest'</Code></td>
             <td><Code>'[8px]'</Code></td>
           </tr>
         </table>
@@ -373,10 +380,6 @@ export function Migrating() {
           <tr>
             <th>Spectrum 1</th>
             <th>Spectrum 2</th>
-          </tr>
-          <tr>
-            <td><Code>'size-0'</Code></td>
-            <td><Code>0</Code></td>
           </tr>
           <tr>
             <td><Code>'xsmall'</Code></td>
@@ -403,6 +406,12 @@ export function Migrating() {
         <H3>Dimension values</H3>
         <P>Affected style props: <Code>width</Code>, <Code>minWidth</Code>, <Code>maxWidth</Code>, <Code>height</Code>, <Code>minHeight</Code>, <Code>maxHeight</Code>, <Code>margin</Code>, <Code>marginStart</Code>, <Code>marginEnd</Code>, <Code>marginTop</Code>, <Code>marginBottom</Code>, <Code>marginX</Code>, <Code>marginY</Code>, <Code>top</Code>, <Code>bottom</Code>, <Code>left</Code>, <Code>right</Code>, <Code>start</Code>, <Code>end</Code>, <Code>flexBasis</Code>, <Code>gap</Code>, <Code>columnGap</Code>, <Code>rowGap</Code>, <Code>padding</Code>, <Code>paddingX</Code>, <Code>paddingY</Code>, <Code>paddingStart</Code>, <Code>paddingEnd</Code>, <Code>paddingTop</Code>, <Code>paddingBottom</Code>.</P>
         <P>Example:</P>
+        <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+          <div className={style({backgroundColor: 'red-200'})}>{`- <ActionButton marginStart="size-100">`}</div>
+          <div className={style({backgroundColor: 'green-200'})}>{`+ <ActionButton styles={style({marginStart: 8})}>`}</div>
+          <div>{`    Edit`}</div>
+          <div>{`  </ActionButton>`}</div>
+        </pre>
         <P>Dimension values should be converted to pixel values. Use the following mappings:</P>
           <table>
           <tr>
