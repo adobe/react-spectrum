@@ -280,10 +280,9 @@ class NumberParserImpl {
       indexOfLastNumeral = abs.length - 1;
 
       let decimalPartMatches = abs.match(DECIMAL_PART_REGEX);
-      let groupSymbolMatch:Array<string> | undefined = abs.match(GROUPING_SYMBOLS_REGEX)?.filter((s: string, i: number) => i >= indexOfFirstNumeral - 1);
+      let groupSymbolMatch:Array<string> | undefined = abs.match(GROUPING_SYMBOLS_REGEX)?.filter((s: string) => abs.indexOf(s) >= indexOfFirstNumeral - 1);
       if (decimalPartMatches?.groups?.symbol && groupSymbolMatch?.[groupSymbolMatch.length - 1] === decimalPartMatches.groups?.symbol) {
-        groupSymbolMatch = groupSymbolMatch.slice(0, -1);
-        if (groupSymbolMatch.length === 0) {
+        if (groupSymbolMatch.length === 1) {
           groupSymbolMatch = undefined;
         } else {
           abs = replaceAll(abs, groupSymbolMatch[0], '');
