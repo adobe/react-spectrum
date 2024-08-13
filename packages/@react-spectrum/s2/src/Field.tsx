@@ -35,6 +35,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   includeNecessityIndicatorInAccessibilityName?: boolean,
   staticColor?: 'white' | 'black',
   contextualHelp?: ReactNode,
+  isQuiet?: boolean,
   children?: ReactNode
 }
 
@@ -49,6 +50,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelPosition,
     staticColor,
     contextualHelp,
+    isQuiet,
     UNSAFE_style,
     UNSAFE_className = '',
     ...labelProps
@@ -80,9 +82,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         contain: {
           labelPosition: {
             top: 'inline-size'
-          }
+          },
+          isQuiet: 'none'
         }
-      })({labelAlign, labelPosition})}>
+      })({labelAlign, labelPosition, isQuiet})}>
       <Label
         {...labelProps}
         ref={domRef}

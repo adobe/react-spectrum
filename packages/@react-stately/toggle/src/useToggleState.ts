@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ToggleProps} from '@react-types/checkbox';
+import {ToggleStateOptions} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
 
-export interface ToggleStateOptions extends Omit<ToggleProps, 'children'> {}
+export type {ToggleStateOptions};
 
 export interface ToggleState {
   /** Whether the toggle is selected. */
