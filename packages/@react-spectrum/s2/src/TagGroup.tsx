@@ -146,7 +146,7 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: CustomTagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
-  let {maxRows, actionLabel, onAction} = props;
+  let {maxRows, actionLabel, onAction, ...otherProps} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
@@ -280,7 +280,7 @@ function TagGroupInner<T>({
 
   return (
     <AriaTagGroup
-      {...props}
+      {...otherProps}
       ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
@@ -300,10 +300,16 @@ function TagGroupInner<T>({
         className={style({
           gridArea: 'input',
           minWidth: 'full',
-          marginStart: -4,
-          marginEnd: 4,
+          marginStart: {
+            default: -4,
+            isEmpty: 0
+          },
+          marginEnd: {
+            default: 4,
+            isEmpty: 0
+          },
           position: 'relative'
-        })}>
+        })({isEmpty})}>
         <FormContext.Provider value={{...formContext, size}}>
           <Provider
             values={[
@@ -422,6 +428,7 @@ function ActionGroup(props) {
 const tagStyles = style({
   ...focusRing(),
   display: 'inline-flex',
+  verticalAlign: 'middle',
   alignItems: 'center',
   justifyContent: 'center',
   font: 'control',
@@ -518,7 +525,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
       {isInCtx && (
       <div
         className={style({
-          display: 'inline',
+          display: 'flex',
           minWidth: 0,
           alignItems: 'center',
           gap: 'text-to-visual',
@@ -527,7 +534,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
         })}>
         <Provider
           values={[
-                [TextContext, {className: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+            [TextContext, {className: style({order: 1, truncate: true})}],
             [IconContext, {
               render: centerBaseline({slot: 'icon', className: style({order: 0})}),
               styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
@@ -545,11 +552,11 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
         )}
       {!isInCtx && children}
       {allowsRemoving && isInCtx && (
-      <ClearButton
-        slot="remove"
-        size={size}
-        isDisabled={isDisabled} />
-        )}
+        <ClearButton
+          slot="remove"
+          size={size}
+          isDisabled={isDisabled} />
+      )}
     </>
   );
 }
