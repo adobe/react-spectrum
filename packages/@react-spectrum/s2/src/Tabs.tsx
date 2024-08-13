@@ -33,14 +33,19 @@ interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'childre
 }
 
 interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
+  /** The content to display in the tab. */
   children?: ReactNode
 }
 
 interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>, StyleProps {
+  /** The content to display in the tablist. */
   children?: ReactNode
 }
 
-interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, StyleProps {
+interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {  
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight,
+  /** The content to display in the tab panels. */
   children?: ReactNode
 }
 
