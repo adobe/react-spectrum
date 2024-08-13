@@ -67,7 +67,6 @@ import {useLoadMore} from '@react-aria/utils';
 // styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
 // adding the types to the various style macros
 // Add a complex table example with buttons and various icons,links,
-// Hide header support
 
 // drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
@@ -142,7 +141,10 @@ const table = style<TableRenderProps & S2TableProps>({
     default: 'gray-25',
     isQuiet: 'transparent'
   },
-  outlineColor: 'gray-300',
+  outlineColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
   outlineWidth: {
     default: 1,
     isQuiet: 0
@@ -305,8 +307,6 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   }
 }
 
-// TODO: v3 had min widths for hide header columns, but RAC table's useTableColumnResizeState
-// call that happens internally doesn't accept options for that.
 export function Table(props: TableProps) {
   let {
     UNSAFE_style,
@@ -573,7 +573,6 @@ export function Column(props: ColumnProps) {
   let isColumnResizable = columnsResizable && isResizable;
 
   return (
-    // TODO: add default width and min width for hide header here
     <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isQuiet, isColumnResizable, align})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
@@ -800,7 +799,7 @@ function ResizerIndicator({isFocusVisible, isHovered, isResizing}) {
 const tableHeader = style({
   height: 'full',
   width: 'full',
-  backgroundColor: 'base'
+  backgroundColor: 'gray-100'
 });
 
 const selectAllCheckbox = style({
@@ -828,7 +827,8 @@ const selectAllCheckboxColumn = style({
   borderXWidth: 0,
   borderTopWidth: 0,
   borderBottomWidth: 1,
-  borderStyle: 'solid'
+  borderStyle: 'solid',
+  backgroundColor: 'gray-100'
 });
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
@@ -1070,19 +1070,13 @@ const rowBackgroundColor = {
   }
 } as const;
 
-
-// TODO: for the borders between the tables, try doing 4 box shadows, one for each side. For the top and bottom box shadows, make them thicker
-// in such a way that they overlap with the next/prev row, then just make it so the z-index of the selected one is higher so that it appears above the other
-// border
-
-// TODO: will also need to curve the first and last row, how to do this?
-// ideally i'd be able to determine it from the collection which I could do by grabbing the tablestate context perhaps?
 const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
   backgroundImage: {
     // TODO: will need the proper blue from tokens
+    // TODO: will need to move to a different element because it is covered by the sticky column masking element
     isFocusVisible: 'linear-gradient(to right, blue 0 3px, transparent 3px)'
   },
   backgroundColor: rowBackgroundColor,
@@ -1090,49 +1084,38 @@ const row = style<RowRenderProps & S2TableProps>({
     type: 'backgroundColor',
     value: rowBackgroundColor
   },
-  outlineStyle: 'none',
-  // TODO: need to fix the row outlines
-  // TODO: rough implementation for now, ideally this would just be the row outline or something.
-  // will need to update the color to actually be a HCM style (Highlight)
-  // TODO: for the overlapping issues, can do the same thing I did for ListView where I did 4 inset box shadows, one for each side
-  // (here maybe just need to have one for sides)
-  // TODO: I've replaced it with box shadow but still have the issue with the box shadow between two rows combining to make it thicker than
-  // the lines on the side. Ideally, the box shadow could go on a element within the row and be absolutely positioned + offset via inset-block-start so that
-  // it would overlap with other borders/box shadows and solve the problem of adjacent rows but to do that I would need to be able to know
-  // if a row was next to a selected row or not
-  // Also the current way will need proper colors and HCM colors
-  boxShadow: {
-    default: '[inset 0 -1px 0 0 gray]',
-    // TODO: ideally 1px from the top and bottom of the selected row would be blue and then 1px from the adjacent above/below row would also be blue to form
-    // this 2px selection outline. This however requires the rows to be able to know if an adjacent row is selected
-    // isSelected: '[inset 0 0 0 1px blue]',
-    isSelected: '[inset 1px 0 0 0 blue, inset -1px 0 0 0 blue, inset 0 -1px 0 0 blue, inset 0 1px 0 0 blue]',
+  // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
+  outlineWidth: {
     forcedColors: {
-      default: '[inset 0 -1px 0 0 black]',
-      isSelected: '[inset 0 0 0 1px black, inset 0 -2px 0 0 black]',
-      isFocusVisible: '[inset 0 0 0 2px black, inset 0 -3px 0 0 black]'
+      isFocusVisible: 2
     }
   },
-
-  // outlineWidth: 1,
-  // outlineOffset: -1,
-  // outlineStyle: 'solid',
-  // outlineColor: {
-  //   isSelected: 'red-500',
-  //   default: 'gray-300'
-  // },
-
-
-  // width: '[calc(100%-2px)]',
-  // marginStart: '[1px]',
-  // marginTop: '[-1px]',
+  outlineOffset: {
+    forcedColors: {
+      isFocusVisible: -1
+    }
+  },
+  outlineColor: {
+    forcedColors: {
+      isFocusVisible: 'ButtonBorder'
+    }
+  },
+  outlineStyle: {
+    default: 'none',
+    forcedColors: {
+      isFocusVisible: 'solid'
+    }
+  },
+  borderTopWidth: 0,
+  borderBottomWidth: 1,
+  borderStartWidth: 0,
+  borderEndWidth: 0,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
   forcedColorAdjust: 'none'
-  // TODO: This is an alternative to having the tablebody + cells render an outline
-  //  what to do here? should boxShadow be expanded? Or should I just get the raw rgba for gray-300 and do light-dark?
-  // Right now it is also getting cut off by the row, will need to curve first and last cell of the row but only if it is flush?
-  // See if I can stop the overflow
-  // boxShadow: '[0 0 0 1px black]',
-  // borderRadius: '[7px]',
 });
 
 // TODO: temp styles, roughly mimics v3
