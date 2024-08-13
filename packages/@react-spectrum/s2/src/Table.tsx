@@ -47,17 +47,17 @@ import {
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
+import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 import {LayoutNode} from '@react-stately/layout';
-import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {LoadingState, Node} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
@@ -65,12 +65,10 @@ import {useIsMobileDevice} from './utils';
 import {useLoadMore} from '@react-aria/utils';
 
 // TODO: things that still need to be handled
-// styling polish (outlines are overlapping/not being cut by table body/need blue outline for row selection)
 // adding the types to the various style macros
 // Add a complex table example with buttons and various icons,links,
 
 // drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
-
 // overflow wrap
 // - added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
 // it then can change the row's height drastically
@@ -124,7 +122,7 @@ interface S2TableProps {
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
-let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale, layout?: S2TableLayout<unknown>}>({});
+let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale, layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
 
 const tableWrapper = style({
   width: 'full'
@@ -140,7 +138,8 @@ const table = style<TableRenderProps & S2TableProps>({
   overflow: 'auto',
   backgroundColor: {
     default: 'gray-25',
-    isQuiet: 'transparent'
+    isQuiet: 'transparent',
+    forcedColors: 'Background'
   },
   outlineColor: {
     default: 'gray-300',
@@ -264,9 +263,6 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    // TODO: I'm not quite sure why the visible rect in the load more story stays as 320px instead of
-    // becomeing 305px when the scrollbar shows up... This doesn't seem to happen in the "loading state, has item" story,
-    // that one properly goes from 320px to 305px when the scrollbar renders
     layoutInfo.rect.width = this.virtualizer.visibleRect.width;
     layoutInfo.isSticky = true;
     return layoutNode;
@@ -319,9 +315,9 @@ export function Table(props: TableProps) {
     styles,
     loadingState,
     onLoadMore,
-    onResize,
-    onResizeEnd,
-    onResizeStart,
+    onResize: propsOnResize,
+    onResizeStart: propsOnResizeStart,
+    onResizeEnd: propsOnResizeEnd,
     dragAndDropHooks,
     ...otherProps
   } = props;
@@ -354,7 +350,18 @@ export function Table(props: TableProps) {
     });
   }, [overflowMode, density, scale]);
 
-  let columnsResizable = !!(onResize || onResizeEnd || onResizeStart);
+  let columnsResizable = !!(propsOnResize || propsOnResizeEnd || propsOnResizeStart);
+  // Starts when the user selects resize from the menu, ends when resizing ends
+  // used to control the visibility of the resizer Nubbin
+  let [isInResizeMode, setIsInResizeMode] = useState(false);
+  let onResizeStart = useCallback((widths) => {
+    propsOnResizeStart?.(widths);
+  }, [propsOnResizeStart]);
+  let onResizeEnd = useCallback((widths) => {
+    setIsInResizeMode(false);
+    propsOnResizeEnd?.(widths);
+  }, [propsOnResizeEnd, setIsInResizeMode]);
+
   let context = useMemo(() => ({
     isQuiet,
     density,
@@ -362,9 +369,11 @@ export function Table(props: TableProps) {
     selectionStyle,
     loadingState,
     columnsResizable,
+    isInResizeMode,
+    setIsInResizeMode,
     scale,
     layout
-  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale, layout]);
+  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale, layout, isInResizeMode, setIsInResizeMode]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef(null);
@@ -397,7 +406,7 @@ export function Table(props: TableProps) {
     baseTable = (
       <ResizableTableContainer
         ref={scrollRef}
-        onResize={onResize}
+        onResize={propsOnResize}
         onResizeEnd={onResizeEnd}
         onResizeStart={onResizeStart}
         className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
@@ -614,8 +623,7 @@ function ColumnContents(props: ColumnContentProps) {
           values={[
             [IconContext, {
               styles: style({
-                height: 16,
-                width: 16,
+                size: fontRelative(16),
                 marginEnd: 8,
                 verticalAlign: 'bottom'
               })
@@ -679,7 +687,13 @@ const resizerHandle = style({
     default: 'transparent',
     isHovered: 'gray-300',
     isFocusVisible: 'focus-ring',
-    isResizing: 'focus-ring'
+    isResizing: 'focus-ring',
+    forcedColors: {
+      default: 'Background',
+      isHovered: 'Highlight',
+      isFocusVisible: 'Highlight',
+      isResizing: 'Highlight'
+    }
   },
   width: size(1),
   position: 'absolute',
@@ -736,6 +750,7 @@ function Nubbin() {
 
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered} = props;
+  let {setIsInResizeMode, isInResizeMode} = useContext(InternalTableContext);
 
   return (
     <>
@@ -765,9 +780,11 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
             } else if (action === 'sortDescending') {
               sort('descending');
             } else if (action === 'resize') {
+              setIsInResizeMode(true);
               startResize();
             }
           }}>
+          {/* TODO: internationalize */}
           <MenuItem id="sortAscending">Sort Ascending</MenuItem>
           <MenuItem id="sortDescending">Sort Descending</MenuItem>
           <MenuItem id="resize">Resize</MenuItem>
@@ -778,7 +795,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
           {({isFocusVisible, isResizing}) => (
             <>
               <ResizerIndicator isFocusVisible={isFocusVisible} isHovered={isHovered} isResizing={isResizing} />
-              {isFocusVisible && isResizing && <div className={nubbin}><Nubbin /></div>}
+              {(isFocusVisible || isInResizeMode) && isResizing && <div className={nubbin}><Nubbin /></div>}
             </>
         )}
         </ColumnResizer>
@@ -794,10 +811,10 @@ function ResizerIndicator({isFocusVisible, isHovered, isResizing}) {
   );
 }
 
+// TODO: making the background of the column header causes the resizer to blend in, wait for design
 const tableHeader = style({
   height: 'full',
-  width: 'full',
-  backgroundColor: 'gray-100'
+  width: 'full'
 });
 
 const selectAllCheckbox = style({
@@ -824,8 +841,7 @@ const selectAllCheckboxColumn = style({
   borderXWidth: 0,
   borderTopWidth: 0,
   borderBottomWidth: 1,
-  borderStyle: 'solid',
-  backgroundColor: 'gray-100'
+  borderStyle: 'solid'
 });
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
@@ -919,7 +935,10 @@ const cell = style<CellRenderProps & S2TableProps>({
   display: 'flex',
   '--dividerColor': {
     type: 'borderColor',
-    value: 'gray-300'
+    value: {
+      default: 'gray-300',
+      forcedColors: 'ButtonBorder'
+    }
   }
   // outlineStyle: {
   //   default: 'none',
@@ -1038,6 +1057,7 @@ export function Cell(props: CellProps) {
   );
 }
 
+// TODO: reminder, these dark theme colors were grabbed from the spectrum tokens but they feel quite dark IMO. Will comment in design file
 const rowBackgroundColor = {
   default: 'gray-25',
   isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
@@ -1063,7 +1083,7 @@ const rowBackgroundColor = {
     }
   },
   forcedColors: {
-    default: 'transparent'
+    default: 'Background'
   }
 } as const;
 
@@ -1078,7 +1098,10 @@ const row = style<RowRenderProps & S2TableProps>({
   },
   '--rowFocusIndicatorColor': {
     type: 'backgroundColor',
-    value: 'focus-ring'
+    value: {
+      default: 'focus-ring',
+      forcedColors: 'Highlight'
+    }
   },
   // TODO: outline here is to emulate v3 forcedColors experience but runs into the same problem where the sticky column covers the outline
   // This doesn't quite work because it gets cut off by the checkbox cell background masking element, figure out another way. Could shrink the checkbox cell's content even more
@@ -1172,17 +1195,6 @@ export function Row<T extends object>(
 
 
 let rowDropIndicator = style({
-  // borderBottomWidth: 2,
-  // borderColor: {
-  //   default: 'transparent',
-  //   isDropTarget: 'focus-ring'
-  // },
-  // borderStyle: 'solid',
-  // forcedColorAdjust: 'none',
-  // width: 240,
-  // position: 'absolute',
-  // TODO: Follow the same strategy as in the RAC docs for table, this way has the width automatically determined. With
-  // absolute positioning it isn't as easy unless we get the caluclated width from somewhere (save for virtualization)
   outlineWidth: 1,
   outlineColor: 'focus-ring',
   outlineStyle: {
