@@ -44,12 +44,21 @@ interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | '
   children?: ReactNode
 }
 
+const tabPanel = style({
+  marginTop: 4,
+  color: 'gray-800',
+  flexGrow: 1,
+  flexBasis: '[0%]',
+  minHeight: 0,
+  minWidth: 0
+}, getAllowedOverrides({height: true}));
+
 export function TabPanel(props: TabPanelProps) {
   return (
-    <AriaTabPanel 
+    <AriaTabPanel
       {...props}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({marginTop: 4, color: 'gray-800'}, getAllowedOverrides())(null, props.styles)} />
+      className={(props.UNSAFE_className || '') + tabPanel(null , props.styles)} />
   );
 }
 
@@ -77,7 +86,18 @@ const tab = style({
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
-  minWidth: 'max'
+  flexGrow: {
+    orientation: {
+      default: 0,
+      vertical: 1
+    }
+  },
+  flexShrink: {
+    orientation: {
+      default: 1,
+      vertical: 0
+    }
+  }
 }, getAllowedOverrides());
 
 const icon = style({
@@ -92,7 +112,7 @@ export function Tab(props: TabProps) {
   let {density} = useContext(TabsInternalContext);
 
   return (
-    <RACTab 
+    <RACTab
       {...props}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
@@ -104,7 +124,7 @@ export function Tab(props: TabProps) {
             styles: icon
           }]
         ]}>
-        {props.children}
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
     </RACTab>
   );
@@ -137,15 +157,17 @@ const tablist = style({
       vertical: 12
     }
   },
+  flexShrink: 0,
+  flexBasis: '[0%]'
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation = 'horizontal'} = useContext(TabsInternalContext);
+  let {density, isDisabled, disabledKeys, orientation} = useContext(TabsInternalContext);
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {    
+  useEffect(() => {
     if (tablistRef?.current) {
       let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
 
@@ -159,13 +181,13 @@ export function TabList<T extends object>(props: TabListProps<T>) {
     <div
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
-      {orientation === 'vertical' && 
+      {orientation === 'vertical' &&
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density}/>}
-      <RACTabList 
+      <RACTabList
         {...props}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, density})} />
-      {orientation === 'horizontal' && 
+      {orientation === 'horizontal' &&
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density}/>}
     </div>
   );
@@ -175,7 +197,7 @@ function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKe
   let testKey: Key | null = null;
   if (collection && collection.size > 0) {
     testKey = collection.getFirstKey();
-    
+
     let index = 0;
     while (testKey && index < collection.size) {
       // We have to check if the item in the collection has a key in disabledKeys or has the isDisabled prop set directly on it
@@ -259,10 +281,10 @@ function TabLine(props: TabLineProps) {
 
   let onResize = useCallback(() => {
     if (selectedTab) {
-      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = { 
-        transform: undefined, 
-        width: undefined, 
-        height: undefined 
+      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
+        transform: undefined,
+        width: undefined,
+        height: undefined
       };
 
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
@@ -283,7 +305,7 @@ function TabLine(props: TabLineProps) {
   useLayoutEffect(() => {
     onResize();
   }, [onResize, state?.selectedKey, direction, orientation, density]);
-  
+
   return (
     <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}), selectionAnimation)} />
   );
@@ -299,7 +321,7 @@ const tabs = style({
       horizontal: 'column'
     }
   }
-}, getAllowedOverrides());
+}, getAllowedOverrides({height: true}));
 
 const TabsInternalContext = createContext<TabsProps>({});
 
@@ -308,21 +330,21 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
     density = 'regular',
     isDisabled,
     disabledKeys,
-    orientation
+    orientation = 'horizontal'
   } = props
   let domRef = useDOMRef(ref);
 
   return (
-    <RACTabs 
+    <RACTabs
       {...props}
       ref={domRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
       <Provider
-        values={[ 
+        values={[
           [TabsInternalContext, {density, isDisabled, disabledKeys, orientation}]
         ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        {props.children}
       </Provider>
     </RACTabs>
   );
