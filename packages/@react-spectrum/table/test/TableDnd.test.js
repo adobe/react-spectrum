@@ -417,7 +417,7 @@ describe('TableView', function () {
       it('should allow drag operations on a disabled row with disabledBehavior="selection"', function () {
         let {getByRole} = render(
           <DraggableTableView tableViewProps={{disabledBehavior: 'selection', disabledKeys: ['a']}} />
-      );
+        );
 
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -436,7 +436,7 @@ describe('TableView', function () {
       it('should not allow drag operations on a disabled row with disabledBehavior="all"', function () {
         let {getByRole} = render(
           <DraggableTableView tableViewProps={{disabledBehavior: 'all', disabledKeys: ['a']}} />
-      );
+        );
 
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -2849,11 +2849,11 @@ describe('TableView', function () {
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
 
-      fireEvent.pointerDown(rows[0], {pointerType: 'mouse', button: 0, pointerId: 1});
+      await user.pointer({target: rows[0], keys: '[MouseLeft>]'});
       dragHandle = within(rows[0]).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
-      fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
+      await user.pointer({target: rows[0], keys: '[/MouseLeft]'});
 
       fireEvent.pointerEnter(rows[0], {pointerType: 'mouse'});
       dragHandle = within(rows[0]).getAllByRole('button')[0];
@@ -2861,8 +2861,7 @@ describe('TableView', function () {
       expect(dragHandle.style.position).toBe('absolute');
 
       // If dragHandle doesn't have a position applied, it isn't visually hidden
-      fireEvent.keyDown(rows[0], {key: 'Enter'});
-      fireEvent.keyUp(rows[0], {key: 'Enter'});
+      await user.keyboard('{Enter}');
       dragHandle = within(rows[0]).getAllByRole('button')[0];
       expect(dragHandle.style.position).toBe('');
     });
@@ -2889,13 +2888,13 @@ describe('TableView', function () {
       moveFocus('ArrowDown');
       expect(hasDragHandle(rows[1])).toBeTruthy();
 
-      fireEvent.pointerDown(rows[0], {button: 0, pointerId: 1});
+      await user.pointer({target: rows[0], keys: '[MouseLeft>]'});
       expect(hasDragHandle(rows[0])).toBeTruthy();
-      fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
+      await user.pointer({target: rows[0], keys: '[/MouseLeft]'});
 
-      fireEvent.pointerDown(rows[1], {button: 0, pointerId: 1});
+      await user.pointer({target: rows[1], keys: '[MouseLeft>]'});
       expect(hasDragHandle(rows[1])).toBeTruthy();
-      fireEvent.pointerUp(rows[1], {button: 0, pointerId: 1});
+      await user.pointer({target: rows[1], keys: '[/MouseLeft]'});
 
       fireEvent.pointerEnter(rows[0]);
       expect(hasDragHandle(rows[0])).toBeTruthy();
