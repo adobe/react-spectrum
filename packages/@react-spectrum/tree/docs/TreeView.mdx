@@ -233,7 +233,6 @@ function ControlledSelection() {
 To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
 
 ```tsx example
-// Using the same tree as above
 <ExampleTree
   aria-label="Example tree with single selection"
   defaultExpandedKeys={['projects', 'project-2']}
@@ -249,7 +248,6 @@ TreeView also supports a `disallowEmptySelection` prop which forces the user to 
 In this mode, if a single item is selected and the user presses it, it will not be deselected.
 
 ```tsx example
-// Using the same tree as above
 <ExampleTree
   aria-label="Example tree with disallowed empty selection"
   defaultExpandedKeys={['projects', 'project-2']}
@@ -266,7 +264,6 @@ In this mode, if a single item is selected and the user presses it, it will not 
 You can disable specific items by providing an array of keys to TreeView via the `disabledKeys` prop. This will prevent items from being selectable as shown in the example below.
 
 ```tsx example
-// Using the same tree as above
 <ExampleTree
   aria-label="Example tree with disabled items"
   defaultExpandedKeys={['projects', 'project-2']}
