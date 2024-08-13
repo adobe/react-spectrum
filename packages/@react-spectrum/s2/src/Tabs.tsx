@@ -86,18 +86,7 @@ const tab = style({
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
-  flexGrow: {
-    orientation: {
-      default: 0,
-      vertical: 1
-    }
-  },
-  flexShrink: {
-    orientation: {
-      default: 1,
-      vertical: 0
-    }
-  }
+  flexShrink: 0
 }, getAllowedOverrides());
 
 const icon = style({
