@@ -13,6 +13,7 @@
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
 import {createContext, forwardRef, ImgHTMLAttributes, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -102,19 +103,26 @@ export const TextContext = createContext<ContextValue<ContentProps, DOMRefValue>
 function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, children, ...otherProps} = props;
   let racContext = useContext(RACTextContext);
+  let isSkeleton = useContext(SkeletonContext);
+  [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
   if (isHidden) {
     return null;
   }
+
   slot = slot && racContext && 'slots' in racContext && !racContext.slots?.[slot] ? undefined : slot;
   return (
     <TextAria
       {...otherProps}
       ref={domRef}
+      // @ts-ignore - compatibility with React < 19
+      inert={isSkeleton ? 'true' : undefined}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined} />
+      slot={slot || undefined}>
+      {children}
+    </TextAria>
   );
 }
 

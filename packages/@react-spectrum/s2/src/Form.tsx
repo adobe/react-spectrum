@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
+import {SkeletonContext} from './Skeleton';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -36,11 +37,29 @@ export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className
 export const FormContext = createContext<FormStyleProps | null>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
-  if (ctx) {
-    return {...ctx, ...props};
-  }
+  let isSkeleton = useContext(SkeletonContext);
+  return useMemo(() => {
+    let result: T = props;
+    if (ctx || isSkeleton) {
+      result = {...props};
+    }
 
-  return props;
+    if (ctx) {
+      // This is a subset of mergeProps. We just need to merge non-undefined values.
+      for (let key in ctx) {
+        if (result[key] === undefined) {
+          result[key] = ctx[key];
+        }
+      }
+    }
+
+    // Skeleton always wins over local props.
+    if (isSkeleton) {
+      result.isDisabled = true;
+    }
+
+    return result;
+  }, [ctx, props, isSkeleton]);
 }
 
 function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {

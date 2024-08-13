@@ -47,9 +47,10 @@ module.exports = new Transformer({
           'var(--spectrum-global-color-gray-800, #292929)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`
         },
         typescript: true,
+        ref: true,
         plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']
       })
-    ).replace('export default SvgComponent;', '');
+    ).replace('export default ForwardRef;', '');
     // will need to use svgr's templating to add ref support if we want that https://github.com/facebook/create-react-app/pull/5457
     let newFile = template(asset, iconName, optimized);
     return [{
@@ -73,6 +74,7 @@ function template(asset, iconName, svg) {
 import {IconProps, ${context}, IconContextValue} from '~/src/Icon';
 import {SVGProps, useRef} from 'react';
 import {useContextProps} from 'react-aria-components';
+import {SkeletonWrapper, useSkeletonIcon} from '~/src/Skeleton';
 
 ${svg.replace('import type { SVGProps } from "react";', '')}
 
@@ -96,15 +98,17 @@ export default function ${iconRename}(props: IconProps) {
   }
 
   let svg = (
-    <SvgComponent
-      {...otherProps}
-      focusable={false}
-      aria-label={ariaLabel}
-      aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
-      role="img"
-      data-slot={slot}
-      className={(UNSAFE_className ?? '') + ' ' + (styles || '')}
-      style={UNSAFE_style} />
+    <SkeletonWrapper>
+      <ForwardRef
+        {...otherProps}
+        focusable={false}
+        aria-label={ariaLabel}
+        aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
+        role="img"
+        data-slot={slot}
+        className={(UNSAFE_className ?? '') + ' ' + useSkeletonIcon(styles)}
+        style={UNSAFE_style} />
+    </SkeletonWrapper>
   );
 
   if (render) {

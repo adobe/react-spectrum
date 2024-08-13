@@ -86,7 +86,8 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
 
     let rows = Math.ceil(this.virtualizer.collection.size / this.numColumns);
     let iterator = this.virtualizer.collection[Symbol.iterator]();
-    let y = this.minSpace.height;
+    let y = rows > 0 ? this.minSpace.height : 0;
+    let newLayoutInfos = new Map();
     for (let row = 0; row < rows; row++) {
       let maxHeight = 0;
       let rowLayoutInfos: LayoutInfo[] = [];
@@ -109,7 +110,7 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
         let layoutInfo = new LayoutInfo('item', node.key, rect);
         layoutInfo.estimatedSize = estimatedSize;
         layoutInfo.allowOverflow = true;
-        this.layoutInfos.set(node.key, layoutInfo);
+        newLayoutInfos.set(node.key, layoutInfo);
         rowLayoutInfos.push(layoutInfo);
 
         maxHeight = Math.max(maxHeight, rect.height);
@@ -122,6 +123,7 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
       y += maxHeight + this.minSpace.height;
     }
 
+    this.layoutInfos = newLayoutInfos;
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
   }
 
@@ -213,6 +215,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
 
     // Setup an array of column heights
     let columnHeights = Array(this.numColumns).fill(this.minSpace.height);
+    let newLayoutInfos = new Map();
     for (let node of this.virtualizer.collection) {
       let key = node.key;
       let oldLayoutInfo = this.layoutInfos.get(key);
@@ -221,14 +224,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
       if (oldLayoutInfo) {
         height = oldLayoutInfo.rect.height;
         estimatedSize = invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize;
-      } /* else if (node.props.width && node.props.height) {
-        let nodeWidth = node.props.width;
-        let nodeHeight = node.props.height;
-        let scaledHeight = Math.round(nodeHeight * ((itemWidth) / nodeWidth));
-        // height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight));
-        height = scaledHeight;
-        console.log(nodeWidth, nodeHeight, scaledHeight)
-      }*/
+      }
 
       // Figure out which column to place the item in, and compute its position.
       let column = columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
@@ -239,7 +235,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
       let layoutInfo = new LayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
       layoutInfo.allowOverflow = true;
-      this.layoutInfos.set(key, layoutInfo);
+      newLayoutInfos.set(key, layoutInfo);
 
       columnHeights[column] += layoutInfo.rect.height + this.minSpace.height;
     }
@@ -247,6 +243,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
     // Reset all columns to the maximum for the next section
     let maxHeight = Math.max(...columnHeights);
     this.contentSize = new Size(this.virtualizer.visibleRect.width, maxHeight);
+    this.layoutInfos = newLayoutInfos;
   }
 
   getLayoutInfo(key: Key): LayoutInfo {
@@ -393,7 +390,23 @@ export function CardView<T extends object>(props: CardViewProps<T>) {
       <CardViewContext.Provider value={GridListItem}>
         <CardContext.Provider value={{size, variant}}>
           <ImageCoordinator>
-            <AriaGridList ref={ref} {...otherProps} layout="grid" className={style({scrollPadding: '[18px]'})}>
+            <AriaGridList
+              ref={ref}
+              {...otherProps}
+              layout="grid"
+              className={renderProps => style({
+                overflowY: {
+                  default: 'auto',
+                  isLoading: 'hidden'
+                },
+                scrollPadding: '[18px]',
+                display: {
+                  isEmpty: 'flex'
+                },
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              })({...renderProps, isLoading: props.isLoading})}>
               {children}
             </AriaGridList>
           </ImageCoordinator>

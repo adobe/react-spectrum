@@ -12,7 +12,7 @@
 
 import {ActionMenuContext} from './ActionMenu';
 import {AvatarContext} from './Avatar';
-import {Button, ContextValue, GridListItemProps, Provider, useContextProps} from 'react-aria-components';
+import {Button, ContextValue, DEFAULT_SLOT, GridListItemProps, Provider, useContextProps} from 'react-aria-components';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
@@ -26,8 +26,9 @@ import {ImageCoordinator} from './ImageCoordinator';
 import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {SkeletonContext, SkeletonWrapper} from './Skeleton';
 
-interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
   children: ReactNode,
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   density?: 'compact' | 'regular' | 'spacious',
@@ -318,16 +319,29 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
+const checkboxWrapper = style({
+  position: 'absolute',
+  top: 8,
+  zIndex: 2,
+  insetStart: 8,
+  padding: size(6),
+  backgroundColor: 'white/50',
+  borderRadius: 'default',
+  boxShadow: 'emphasized'
+});
+
 export function Card(props: CardProps) {
   [props] = useContextProps(props, null, CardContext);
   let {density = 'regular', size = 'M', variant = 'primary', orientation = 'vertical'} = props;
   let isQuiet = variant === 'quiet';
+  let isSkeleton = useContext(SkeletonContext);
   let children = (
     <Provider
       values={[
         [ImageContext, {alt: '', styles: image}],
         [TextContext, {
           slots: {
+            [DEFAULT_SLOT]: {},
             title: {styles: title({size})},
             description: {styles: description({size})}
           }
@@ -355,17 +369,21 @@ export function Card(props: CardProps) {
   }
 
   return (
-    <ElementType {...props} className={renderProps => card({...renderProps, isCardView: true, size, density, variant, orientation})}>
+    <ElementType 
+      {...props}
+      className={renderProps => card({...renderProps, isCardView: true, size, density, variant, orientation})}
+      isDisabled={isSkeleton || props.isDisabled}>
       {({selectionMode, selectionBehavior, allowsDragging, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider value={{size, isQuiet, isHovered, isFocusVisible, isSelected}}>
           {!isQuiet && <SelectionIndicator />}
           {allowsDragging && <Button slot="drag">≡</Button>}
           {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
             <PressResponder isPressed={isPressed}>
-              <Checkbox
-                slot="selection"
-                excludeFromTabOrder
-                styles={style({position: 'absolute', top: 8, zIndex: 2, insetStart: 8})} />
+              <div className={checkboxWrapper}>
+                <Checkbox
+                  slot="selection"
+                  excludeFromTabOrder />
+              </div>
             </PressResponder>
           )}
           {children}
@@ -453,16 +471,18 @@ export function AssetCard(props: CardProps) {
           [IllustrationContext, {
             render(icon) {
               return (
-                <div 
-                  className={style({
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'gray-100',
-                    aspectRatio: 'square'
-                  })}>
-                  {icon}
-                </div>
+                <SkeletonWrapper>
+                  <div
+                    className={style({
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'gray-100',
+                      aspectRatio: 'square'
+                    })}>
+                    {icon}
+                  </div>
+                </SkeletonWrapper>
               );
             },
             styles: style({

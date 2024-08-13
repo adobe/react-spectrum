@@ -11,19 +11,28 @@
  */
 
 import {ActionMenu, Avatar, Badge, Button, Content, Divider, Footer, Image, MenuItem, Meter, StatusLight, Text} from '../src';
-import {AssetCard, Card, CardPreview, CollectionCardPreview, ProductCard, UserCard} from '../src/Card';
+import {AssetCard, Card, CardPreview, CardProps, CollectionCardPreview, ProductCard, UserCard} from '../src/Card';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderGradient from '../spectrum-illustrations/gradient/S2_fill_folderClose_generic2_160.svg';
 import type {Meta} from '@storybook/react';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
+import {Skeleton} from '../src/Skeleton';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof Card> = {
+const meta: Meta<CardProps & {isLoading?: boolean}> = {
   component: Card,
   parameters: {
     layout: 'centered'
-  }
+  },
+  args: {
+    isLoading: false
+  },
+  decorators: (children, {args}) => (
+    <Skeleton isLoading={args.isLoading}>
+      {children(args)}
+    </Skeleton>
+  )
 };
 
 export default meta;
@@ -178,7 +187,10 @@ export const Collection = (args: any) => (
       </CollectionCardPreview>
       <Content>
         <Text slot="title">Travel</Text>
-        <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 8})}><Folder /> 20 photos</Text>
+        <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 8})}>
+          <Folder />
+          <Text slot="description">20 photos</Text>
+        </div>
       </Content>
     </Card>
     <Card {...args}>
@@ -189,7 +201,10 @@ export const Collection = (args: any) => (
       </CollectionCardPreview>
       <Content>
         <Text slot="title">Architecture</Text>
-        <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 8})}><Folder /> 15 photos</Text>
+        <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 8})}>
+          <Folder />
+          <Text slot="description">15 photos</Text>
+        </div>
       </Content>
     </Card>
   </div>
@@ -200,7 +215,7 @@ export const PreviewOverlay = (args: any) => (
     <CardPreview>
       <Image alt="" src={new URL('assets/preview.png', import.meta.url).toString()} styles={style({width: 'full', aspectRatio: '[1/1]', objectFit: 'cover', pointerEvents: 'none'})} />
       <Badge
-        variant="neutral"
+        variant="positive"
         styles={style({
           position: 'absolute',
           top: 16,
@@ -230,10 +245,13 @@ export const Custom = (args: any) => (
       </CardPreview>
       <Content>
         <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'space-between'})}>
-          <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 4})}><Select /> Click through rate</Text>
+          <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
+            <Select /> 
+            <Text slot="description">Click through rate</Text>
+          </div>
           <div className={style({display: 'flex', flexDirection: 'column'})}>
-            <span className={style({font: 'title-xl'})}>1.012%</span>
-            <span className={style({font: 'ui-sm', color: 'positive-900'})}>21% ↑ average</span>
+            <Text styles={style({font: 'title-xl'})}>1.012%</Text>
+            <Text styles={style({font: 'ui-sm', color: 'positive-900'})}>21% ↑ average</Text>
           </div>
         </div>
       </Content>
@@ -246,16 +264,16 @@ export const Custom = (args: any) => (
       </CardPreview>
       <Content>
         <Text slot="title">Yummburger</Text>
-        <Text slot="description" styles={style({display: 'flex', alignItems: 'center', gap: 4})}>
+        <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 4})}>
           <Project />
-          <span><span className={style({fontWeight: 'bold'})}>35k</span> experiences use this</span>
-        </Text>
+          <Text slot="description"><span className={style({fontWeight: 'bold'})}>35k</span> experiences use this</Text>
+        </div>
       </Content>
       <Footer styles={style({flexDirection: 'column', alignItems: 'start', gap: 4})}>
-        <span className={style({font: 'ui-sm'})}><span className={style({font: 'title-xl'})}>25%</span> click through rate</span>
+        <Text styles={style({font: 'ui-sm'})}><span className={style({font: 'title-xl'})}>25%</span> click through rate</Text>
         <Meter variant="positive" value={25} styles={style({marginY: 4})} />
-        <span className={style({font: 'ui-sm'})}><span className={style({fontWeight: 'bold'})}>56k</span> clicks</span>
-        <span className={style({font: 'ui-sm'})}><span className={style({fontWeight: 'bold', color: 'positive-900'})}>3.46%</span> last month</span>
+        <Text styles={style({font: 'ui-sm'})}><span className={style({fontWeight: 'bold'})}>56k</span> clicks</Text>
+        <Text styles={style({font: 'ui-sm'})}><span className={style({fontWeight: 'bold', color: 'positive-900'})}>3.46%</span> last month</Text>
       </Footer>
     </Card>
   </div>

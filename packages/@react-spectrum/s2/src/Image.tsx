@@ -1,7 +1,7 @@
-import {colorToken} from '../style/tokens' with {type: 'macro'};
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
+import {loadingStyle, SkeletonContext, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleString} from '../style/types';
@@ -84,12 +84,8 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-const loadingStyle = style({
-  backgroundImage: {
-    isLoading: `linear-gradient(to right, ${colorToken('gray-100')} 33%, light-dark(${colorToken('gray-25')}, ${colorToken('gray-300')}), ${colorToken('gray-100')} 66%)`
-  },
+const imageStyles = style({
   backgroundColor: 'gray-100',
-  backgroundSize: '[300%]',
   overflow: 'hidden'
 });
 
@@ -126,7 +122,6 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
   }
 
   let imgRef = useRef<HTMLImageElement | null>(null);
-  let animationRef = useRef<Animation | null>(null);
   useLayoutEffect(() => {
     if (hidden) {
       return;
@@ -138,7 +133,9 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
     };
   }, [hidden, register, unregister, src]);
 
-  let isAnimating = state === 'loading' || state === 'loaded';
+  let isSkeleton = useContext(SkeletonContext);
+  let isAnimating = isSkeleton || state === 'loading' || state === 'loaded';
+  let animation = useLoadingAnimation(isAnimating);
   useLayoutEffect(() => {
     if (hidden) {
       return;
@@ -151,25 +148,7 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
       queueMicrotask(onLoad);
     }
 
-    if (isAnimating && !animationRef.current && domRef.current) {
-      // Use web animation API instead of CSS animations so that we can
-      // synchronize it between all loading elements on the page (via startTime).
-      animationRef.current = domRef.current.animate(
-        [
-          {backgroundPosition: '100%'},
-          {backgroundPosition: '0%'}
-        ],
-        {
-          duration: 2000,
-          iterations: Infinity,
-          easing: 'ease-in-out'
-        }
-      );
-      animationRef.current.startTime = 0;
-    } else if (!isAnimating && animationRef.current) {
-      animationRef.current.cancel();
-      animationRef.current = null;
-    }
+    animation(domRef.current);
   });
 
   let onLoad = useCallback(() => {
@@ -190,14 +169,14 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
     );
   }
 
-  let errorState = state === 'error' && renderError?.();
-  let isRevealed = state === 'revealed';
+  let errorState = !isSkeleton && state === 'error' && renderError?.();
+  let isRevealed = state === 'revealed' && !isSkeleton;
   let transition = isRevealed && loadTime > 200 ? 'opacity 500ms' : undefined;
   return useMemo(() => hidden ? null : (
     <div
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(styles, loadingStyle({isLoading: isAnimating}))}>
+      className={UNSAFE_className + mergeStyles(imageStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
       {errorState}
       {!errorState && (
         <img

@@ -18,6 +18,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
 import React, {createContext, forwardRef, ReactNode} from 'react';
+import {SkeletonWrapper} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -137,17 +138,20 @@ function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
           styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
         }]
       ]}>
-      <span
-        {...filterDOMProps(otherProps)}
-        role="presentation"
-        className={(props.UNSAFE_className || '') + badge({variant, size}, props.styles)}
-        ref={domRef}>
-        {
-          typeof children === 'string' || isTextOnly
-            ? <Text>{children}</Text>
-            : children
-        }
-      </span>
+      <SkeletonWrapper>
+        <span
+          {...filterDOMProps(otherProps)}
+          role="presentation"
+          className={(props.UNSAFE_className || '') + badge({variant, size}, props.styles)}
+          style={props.UNSAFE_style}
+          ref={domRef}>
+          {
+            typeof children === 'string' || isTextOnly
+              ? <Text>{children}</Text>
+              : children
+          }
+        </span>
+      </SkeletonWrapper>
     </Provider>
   );
 }
