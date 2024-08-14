@@ -226,7 +226,7 @@ function TagGroupInner<T>({
     }
   });
 
-  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount, isDisabled: maxRows == null});
+  useResizeObserver({ref: maxRows != null ? containerRef : undefined, onResize: updateVisibleTagCount});
 
   useLayoutEffect(() => {
     if (collection.size > 0 && (maxRows != null && maxRows > 0)) {

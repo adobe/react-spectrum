@@ -9,16 +9,15 @@ function hasResizeObserver() {
 type useResizeObserverOptionsType<T> = {
   ref: RefObject<T | undefined | null> | undefined,
   box?: ResizeObserverBoxOptions,
-  onResize: () => void,
-  isDisabled?: boolean
+  onResize: () => void
 }
 
 export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
-  const {ref, box, onResize, isDisabled} = options;
+  const {ref, box, onResize} = options;
 
   useEffect(() => {
     let element = ref?.current;
-    if (!element || isDisabled) {
+    if (!element) {
       return;
     }
 
@@ -45,5 +44,5 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
       };
     }
 
-  }, [onResize, ref, box, isDisabled]);
+  }, [onResize, ref, box]);
 }
