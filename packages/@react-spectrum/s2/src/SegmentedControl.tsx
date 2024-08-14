@@ -15,10 +15,9 @@ import {Radio, RadioGroup, RadioProps, Provider} from "react-aria-components"
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {IconContext} from './Icon';
-import { useRadioGroupState } from 'react-stately';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 
 
