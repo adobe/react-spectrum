@@ -38,6 +38,7 @@ interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
 const segmentedControl = style({
   fontFamily: 'sans',
   fontSize: 'control',
+  fontWeight: 'normal',
   display: 'flex',
   minWidth: {
     trackStyle: {
@@ -168,8 +169,6 @@ const SegmentedControlInternalContext = createContext<SegmentedControlProps>({})
 
 function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement> ) {
   let domRef = useDOMRef(ref);
-  let state = useRadioGroupState(props);
-  console.log(state);
 
   return (
     <RadioGroup 
