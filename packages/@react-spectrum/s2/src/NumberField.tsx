@@ -16,22 +16,25 @@ import {
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
   ButtonContext,
+  ContextValue,
   InputContext,
   Text,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import ChevronIcon from '../ui-icons/Chevron';
-import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
-import {CSSProperties, ForwardedRef, forwardRef, ReactNode, useContext, useImperativeHandle, useMemo, useRef} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
+import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
-import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext} from './Form';
+import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
+import {TextFieldRef} from '@react-types/textfield';
 import {useButton, useFocusRing, useHover} from 'react-aria';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface NumberFieldProps extends
@@ -53,6 +56,8 @@ export interface NumberFieldProps extends
     size?: 'S' | 'M' | 'L' | 'XL',
     label?: ReactNode
 }
+
+export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, TextFieldRef>>(null);
 
 const inputButton = style({
   display: 'flex',
@@ -219,7 +224,8 @@ const chevronSize = {
   XL: 'XL'
 } as const;
 
-function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>) {
+function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
+  [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   let {
     label,
     description: descriptionMessage,
@@ -235,7 +241,7 @@ function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>)
     ...numberFieldProps
   } = props;
   let formContext = useContext(FormContext);
-  let domRef = useFocusableRef(ref);
+  let domRef = useRef<HTMLDivElement | null>(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let decrementButtonRef = useRef<HTMLDivElement | null>(null);
   let incrementButtonRef = useRef<HTMLDivElement | null>(null);
