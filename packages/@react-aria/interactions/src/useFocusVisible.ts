@@ -30,13 +30,25 @@ export interface FocusVisibleProps {
   autoFocus?: boolean
 }
 
+/**
+ * This function creates a type-safe event listener wrapper that ensures consistent function references for event handling.
+ * It uses a WeakMap to cache wrapped handlers, guaranteeing that the same function instance is always returned for a given handler, which is crucial for proper event listener cleanup and prevents unnecessary function creation.
+ */
+const handlerCache = new WeakMap<EventListenerObject | EventListener, EventListener>();
+function createEventListener<E extends Event>(handler: (e: E) => void): EventListener {
+  if (typeof handler === 'function') {
+    if (!handlerCache.has(handler)) {
+      const wrappedHandler: EventListener = (e: Event) => handler(e as E);
+      handlerCache.set(handler, wrappedHandler);
+    }
+    return handlerCache.get(handler)!;
+  }
+  return handler;
+}
+
 export interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
   isFocusVisible: boolean
-}
-
-function createEventListener<T extends Event>(handler: (e: T) => void): EventListener {
-  return (e: Event) => handler(e as T);
 }
 
 let currentModality: null | Modality = null;
