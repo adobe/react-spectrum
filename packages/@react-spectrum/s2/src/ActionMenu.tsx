@@ -15,9 +15,12 @@ import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRef} from 'react';
 import {forwardRefType} from './types';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import {StyleProps} from './style-utils' with { type: 'macro' };
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
@@ -27,7 +30,11 @@ export interface ActionMenuProps<T> extends
   }
 
 function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let buttonProps = filterDOMProps(props, {labelable: true});
+  if (buttonProps['aria-label'] === undefined) {
+    buttonProps['aria-label'] = stringFormatter.format('menu.moreActions');
+  }
 
   // size independently controlled?
   return (

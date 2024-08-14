@@ -19,11 +19,14 @@ import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useFocusRing} from 'react-aria';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
@@ -204,6 +207,7 @@ const content = style({
 });
 
 function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     children,
     variant = 'neutral',
@@ -217,7 +221,9 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   let iconAlt = '';
   if (variant in ICONS) {
     Icon = ICONS[variant];
-    iconAlt = variant;
+    if (Icon) {
+      iconAlt = stringFormatter.format(`inlinealert.${variant}`);
+    }
   }
 
   let {isFocusVisible, focusProps} = useFocusRing({autoFocus: props.autoFocus});

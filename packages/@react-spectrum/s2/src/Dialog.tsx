@@ -16,11 +16,14 @@ import {CloseButton} from './CloseButton';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {createContext, forwardRef, RefObject, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
@@ -159,6 +162,7 @@ export const dialogInner = style({
 });
 
 function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement | null>}) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
   // pure CSS with display: none, but then the ref would go to two places.
@@ -255,7 +259,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                 </Provider>
               </div>
               {props.isDismissable &&
-              <CloseButton onPress={close} styles={style({marginBottom: 12})} />
+              <CloseButton aria-label={stringFormatter.format('dialog.dismiss')} onPress={close} styles={style({marginBottom: 12})} />
             }
             </div>
             {/* Main content */}
