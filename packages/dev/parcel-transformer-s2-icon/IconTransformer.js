@@ -74,7 +74,7 @@ import {IconProps, ${context}, IconContextValue} from '${asset.filePath.includes
 import {SVGProps, useRef} from 'react';
 import {useContextProps} from 'react-aria-components';
 
-${svg.replace('import type { SVGProps } from "react";', '')}
+${svg.replace('import { SVGProps } from "react";', '')}
 
 export default function ${iconRename}(props: IconProps) {
   let ref = useRef<SVGElement>(null);
