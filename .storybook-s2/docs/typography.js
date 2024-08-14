@@ -4,8 +4,7 @@ import {useFocusRing, useHover} from 'react-aria';
 
 function AnchorLink({id, isHovered}) {
   let { isFocusVisible, focusProps } = useFocusRing({within: true});
-  const url = `${location.origin}/?path=/docs/${location.search.replace('?viewMode=docs&id=', '')}#${id}`;
-
+  const url = `${location.origin}${location.pathname.replace('iframe', 'index')}${location.search.replace('viewMode=docs&id=', 'path=/docs/')}#${id}`;
   return (
     <span {...focusProps} style={{opacity: isHovered || isFocusVisible ? 1 : 0}}>
       <Link href={url}>#</Link>
