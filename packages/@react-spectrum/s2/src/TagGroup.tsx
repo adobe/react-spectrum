@@ -28,7 +28,7 @@ import {
 import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {CollectionBuilder} from '@react-aria/collections';
+import {Collection, CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
 import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -102,11 +102,9 @@ function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDiv
   let {onRemove} = props;
   return (
     <InternalTagGroupContext.Provider value={{onRemove}}>
-      <CustomTagGroup {...props} forwardedRef={ref}>
-        <TagList style={{display: 'flex', gap: 4}}>
-          {props.children}
-        </TagList>
-      </CustomTagGroup>
+      <CollectionBuilder content={<Collection {...props} />}>
+        {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
+      </CollectionBuilder>
     </InternalTagGroupContext.Provider>
   );
 }
@@ -114,19 +112,6 @@ function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDiv
 /** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
 let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
-
-interface CustomTagGroupProps<T> extends TagGroupProps<T> {
-  forwardedRef: DOMRef<HTMLDivElement>
-}
-
-function CustomTagGroup<T>(props: CustomTagGroupProps<T>) {
-  return (
-    // @ts-ignore how do i fix this one?
-    <CollectionBuilder content={props.children}>
-      {collection => <TagGroupInner props={props} forwardedRef={props.forwardedRef} collection={collection} />}
-    </CollectionBuilder>
-  );
-}
 
 function TagGroupInner<T>({
   props: {
@@ -145,7 +130,7 @@ function TagGroupInner<T>({
   },
   forwardedRef: ref,
   collection
-}: {props: CustomTagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
+}: {props: TagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
   let {maxRows, actionLabel, onAction, ...otherProps} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
