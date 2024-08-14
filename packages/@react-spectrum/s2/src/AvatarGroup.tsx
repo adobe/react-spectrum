@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, useId} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import type {StyleString} from '../style/types';
+import {useDOMRef} from '@react-spectrum/utils';
 
 
-interface AvatarGroupProps extends StyleProps, DOMProps {
+interface AvatarGroupProps extends StyleProps, DOMProps, AriaLabelingProps {
   /** Avatar children of the avatar group. */
   children: ReactNode,
 
@@ -117,7 +118,8 @@ const container = style({
   margin: 0
 }, getAllowedOverrides());
 
-function AvatarGroup(props: AvatarGroupProps) {
+function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
   let {children, label, size = 'M', strokeColor = 'base', styles, UNSAFE_style, UNSAFE_className, ...otherProps} = props;
   let groupId = useId();
   let labelId = useId();
@@ -125,6 +127,7 @@ function AvatarGroup(props: AvatarGroupProps) {
   return (
     <AvatarGroupContext.Provider value={{styles: avatar({size}), strokeColor}}>
       <div
+        ref={domRef}
         id={groupId}
         aria-labelledby={`${otherProps['aria-label'] ? groupId : ''} ${labelId}`}
         {...filterDOMProps(otherProps)}
