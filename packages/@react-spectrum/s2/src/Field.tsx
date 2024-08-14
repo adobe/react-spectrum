@@ -97,7 +97,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
             &nbsp;
             {necessityIndicator === 'icon' &&
               <AsteriskIcon
-                size={size}
+                size={size === 'S' ? 'M' : size}
                 className={style({
                   '--iconPrimary': {
                     type: 'fill',
@@ -120,7 +120,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
       </Label>
       {contextualHelp && (
         <CenterBaseline
-          className={style({
+          styles={style({
             display: 'inline-flex',
             height: 0,
             marginStart: 4
@@ -314,7 +314,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}) {
         [IconContext, {
           render: centerBaseline({
             slot: 'icon',
-            className: style({
+            styles: style({
               order: 0,
               flexShrink: 0,
               '--iconPrimary': {

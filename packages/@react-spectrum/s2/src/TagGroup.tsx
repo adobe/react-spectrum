@@ -18,19 +18,21 @@ import {
   TagGroupProps as AriaTagGroupProps,
   TagProps as AriaTagProps,
   composeRenderProps,
+  ContextValue,
   Provider,
   TextContext as RACTextContext,
   TagList,
   TagListContext,
   TagListProps,
-  useLocale
+  useLocale,
+  useSlottedContext
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
 import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {flushSync} from 'react-dom';
@@ -42,6 +44,7 @@ import {ImageContext, Text, TextContext} from './Content';
 import {pressScale} from './pressScale';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'>, StyleProps {
@@ -74,7 +77,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   onAction?: () => void
 }
 
-const TagGroupContext = createContext<TagGroupProps<any>>({});
+export const TagGroupContext = createContext<ContextValue<TagGroupProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
 const helpTextStyles = style({
   gridArea: 'helptext',
@@ -131,6 +134,7 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: TagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
+  [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   let {maxRows, actionLabel, onAction, ...otherProps} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
@@ -245,7 +249,7 @@ function TagGroupInner<T>({
     helpText =  (
       <Text
         slot="description"
-        className={helpTextStyles({size})}>
+        styles={helpTextStyles({size})}>
         {description}
       </Text>
     );
@@ -483,9 +487,9 @@ const tagStyles = style({
 
 export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
-  let ctx = useContext(TagGroupContext);
-  let isInCtx = Boolean(ctx.size);
-  let {size = 'M', isEmphasized} = ctx;
+  let ctx = useSlottedContext(TagGroupContext);
+  let isInCtx = Boolean(ctx?.size);
+  let {size = 'M', isEmphasized} = ctx ?? {};
 
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -504,7 +508,7 @@ export function Tag({children, ...props}: TagProps) {
 }
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
-  let {size = 'M'} = useContext(TagGroupContext);
+  let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
   return (
     <>
       {isInCtx && (
@@ -519,7 +523,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
         })}>
         <Provider
           values={[
-            [TextContext, {className: style({order: 1, truncate: true})}],
+            [TextContext, {styles: style({order: 1, truncate: true})}],
             [IconContext, {
               render: centerBaseline({slot: 'icon', className: style({order: 0})}),
               styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
