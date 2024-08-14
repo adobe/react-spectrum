@@ -81,14 +81,20 @@
       "includeNodeModules": false
     },
     "illustrations-module": {
-      "source": ["spectrum-illustrations/gradient/*.svg", "spectrum-illustrations/linear/*.tsx"],
+      "source": [
+        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/linear/*.tsx"
+      ],
       "distDir": "illustrations",
       "isLibrary": true,
       "outputFormat": "esmodule",
       "includeNodeModules": false
     },
     "illustrations-main": {
-      "source": ["spectrum-illustrations/gradient/*.svg", "spectrum-illustrations/linear/*.tsx"],
+      "source": [
+        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/linear/*.tsx"
+      ],
       "distDir": "illustrations",
       "isLibrary": true,
       "outputFormat": "commonjs",

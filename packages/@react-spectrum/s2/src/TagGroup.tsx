@@ -226,7 +226,7 @@ function TagGroupInner<T>({
     }
   });
 
-  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
+  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount, isDisabled: maxRows == null});
 
   useLayoutEffect(() => {
     if (collection.size > 0 && (maxRows != null && maxRows > 0)) {
@@ -267,6 +267,8 @@ function TagGroupInner<T>({
     );
   }
 
+  let tagListId = useId();
+
   return (
     <AriaTagGroup
       {...otherProps}
@@ -306,38 +308,41 @@ function TagGroupInner<T>({
               [TagGroupContext, {size, isEmphasized}]
             ]}>
             {/* invisible collection for measuring */}
-            <div
-              // @ts-ignore
-              inert="true"
-              ref={hiddenTagsRef}
-              className={style({
-                display: 'inline',
-                flexWrap: 'wrap',
-                fontFamily: 'sans',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                start: -4,
-                end: 4,
-                visibility: 'hidden',
-                overflow: 'hidden',
-                opacity: 0
-              })}>
-              {allItems.map(item => {
-                // pull off individual props as an allow list, don't want refs or other props getting through
-                // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
-                return (
-                  <div
-                    style={item.props.UNSAFE_style}
-                    key={item.key}
-                    className={item.props.className({size, allowsRemoving: Boolean(onRemove)})}>
-                    {item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})}
-                  </div>
-                );
-              })}
-            </div>
+            {maxRows != null && (
+              <div
+                // @ts-ignore
+                inert="true"
+                ref={hiddenTagsRef}
+                className={style({
+                  display: 'inline',
+                  flexWrap: 'wrap',
+                  fontFamily: 'sans',
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  start: -4,
+                  end: 4,
+                  visibility: 'hidden',
+                  overflow: 'hidden',
+                  opacity: 0
+                })}>
+                {allItems.map(item => {
+                  // pull off individual props as an allow list, don't want refs or other props getting through
+                  // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
+                  return (
+                    <div
+                      style={item.props.UNSAFE_style}
+                      key={item.key}
+                      className={item.props.className({size, allowsRemoving: Boolean(onRemove)})}>
+                      {item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             {/* real tag list */}
             <TagList
+              id={tagListId}
               ref={tagsRef}
               items={items}
               renderEmptyState={renderEmptyState}
@@ -350,6 +355,7 @@ function TagGroupInner<T>({
             </TagList>
             {showActions && !isEmpty &&
               <ActionGroup
+                tagListId={tagListId}
                 actionsRef={actionsRef}
                 tagState={tagState}
                 size={size}
@@ -368,6 +374,7 @@ function TagGroupInner<T>({
 
 function ActionGroup(props) {
   let {
+    tagListId,
     actionsRef,
     tagState,
     size,
@@ -378,7 +385,6 @@ function ActionGroup(props) {
   } = props;
   let tagListCtx = useContext(TagListContext);
   // @ts-ignore how do I fix this one?
-  let {id: gridId} = tagListCtx ?? {};
   let actionsId = useId();
   return (
     <div
@@ -386,7 +392,7 @@ function ActionGroup(props) {
       ref={actionsRef}
       id={actionsId}
       aria-label={'Actions'}
-      aria-labelledby={`${gridId} ${actionsId}`}
+      aria-labelledby={`${tagListId} ${actionsId}`}
       className={style({
         display: 'inline'
       })}>
@@ -488,7 +494,7 @@ const tagStyles = style({
 export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
-  let isInCtx = Boolean(ctx?.size);
+  let isInRealDOM = Boolean(ctx?.size);
   let {size = 'M', isEmphasized} = ctx ?? {};
 
   let ref = useRef(null);
@@ -501,17 +507,17 @@ export function Tag({children, ...props}: TagProps) {
       style={{...props.UNSAFE_style, ...pressScale(ref)}}
       className={renderProps => props.UNSAFE_className || '' + tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
-        <TagWrapper isInCtx={isInCtx} {...renderProps}>{children}</TagWrapper>
+        <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{children}</TagWrapper>
       ))}
     </AriaTag>
   );
 }
 
-function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
+function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
   return (
     <>
-      {isInCtx && (
+      {isInRealDOM && (
       <div
         className={style({
           display: 'flex',
@@ -525,7 +531,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
           values={[
             [TextContext, {styles: style({order: 1, truncate: true})}],
             [IconContext, {
-              render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
               styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
             }],
             [AvatarContext, {
@@ -539,8 +545,8 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInCtx}) {
         </Provider>
       </div>
         )}
-      {!isInCtx && children}
-      {allowsRemoving && isInCtx && (
+      {!isInRealDOM && children}
+      {allowsRemoving && isInRealDOM && (
         <ClearButton
           slot="remove"
           size={size}

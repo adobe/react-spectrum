@@ -41,7 +41,6 @@ export let Example = {
     if (args.onRemove) {
       args.onRemove = action('remove');
     }
-    // TODO how to fix hidden/inert dom containing an element with a duplicate id? "foo" will be rendered into real dom twice
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
         <TagGroup {...args}>
@@ -67,6 +66,37 @@ export let Example = {
           <Tag>Raspberry</Tag>
           <Tag>Strawberry</Tag>
           <Tag>Blackberry</Tag>
+        </TagGroup>
+      </div>
+    );
+  },
+  args: {
+    label: 'Ice cream flavor',
+    errorMessage: 'You must love ice cream',
+    description: 'Pick a flavor'
+  }
+};
+
+interface ITagItem {
+  name: string,
+  id: string
+};
+let items: Array<ITagItem> = [
+  {name: 'Chocolate', id: 'chocolate'},
+  {name: 'Mint', id: 'mint'},
+  {name: 'Strawberry', id: 'strawberry'},
+  {name: 'Vanilla', id: 'vanilla'},
+  {name: 'Coffee', id: 'coffee'}
+];
+export let Dynamic = {
+  render: (args: any) => {
+    if (args.onRemove) {
+      args.onRemove = action('remove');
+    }
+    return (
+      <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
+        <TagGroup {...args} items={items}>
+          {(item: ITagItem) => <Tag>{item.name}</Tag>}
         </TagGroup>
       </div>
     );
