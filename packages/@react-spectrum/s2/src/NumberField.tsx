@@ -37,7 +37,6 @@ import {useButton, useFocusRing, useHover} from 'react-aria';
 export interface NumberFieldProps extends
   AriaNumberFieldProps,
   StyleProps,
-  Omit<SpectrumLabelableProps, 'contextualHelp'>,
   HelpTextProps {
   /**
    * Whether the NumberField step buttons should be collapsed into a single column.
@@ -223,6 +222,7 @@ const chevronSize: Record<'S' | 'M' | 'L' | 'XL', Size> = {
 function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>) {
   let {
     label,
+    contextualHelp,
     description: descriptionMessage,
     errorMessage,
     isCollapsed,
@@ -275,7 +275,8 @@ function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>)
                   size={size}
                   labelPosition={labelPosition}
                   labelAlign={labelAlign}
-                  necessityIndicator={necessityIndicator}>
+                  necessityIndicator={necessityIndicator}
+                  contextualHelp={contextualHelp}>
                   {label}
                 </FieldLabel>
                 <FieldGroup

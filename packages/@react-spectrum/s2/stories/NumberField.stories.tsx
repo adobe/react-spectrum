@@ -10,9 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Form} from '../src';
+import {
+  Button,
+  Content,
+  ContextualHelp,
+  Footer,
+  Form,
+  Heading,
+  Link,
+  NumberField,
+  Text
+} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
-import {NumberField} from '../src/NumberField';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {
@@ -60,5 +69,57 @@ CustomWidth.args = {
 CustomWidth.parameters = {
   docs: {
     disable: true
+  }
+};
+
+
+export const ContextualHelpExample = (args: any) => <NumberField {...args} />;
+
+ContextualHelpExample.args = {
+  label: 'Quantity',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>Quantity</Heading>
+      <Content>
+        <Text>
+          Pick a number between negative infinity and positive infinity.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Quantity"
+          target="_blank">Learn more about quantity</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<NumberField
+  label="Quantity"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Quantity</Heading>
+      <Content>
+        <Text>
+          Pick a number between negative infinity and positive infinity.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Quantity"
+          target="_blank">Learn more about quantity</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+/>`;
+      }
+    }
   }
 };
