@@ -36,12 +36,11 @@ export default meta;
 export const Inline = (args: any) => (
   <p
     className={style({
+      font: 'body',
       color: {
         default: 'body',
         staticColor: {white: 'white', black: 'black'}
-      },
-      fontSize: 'body',
-      fontFamily: 'sans'
+      }
     })({staticColor: args.staticColor})}>
     Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.
   </p>

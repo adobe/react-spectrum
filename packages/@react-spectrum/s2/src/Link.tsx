@@ -38,6 +38,9 @@ export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className'
 const link = style<LinkRenderProps & LinkStyleProps>({
   ...focusRing(),
   borderRadius: 'sm',
+  font: {
+    isStandalone: 'ui'
+  },
   color: {
     variant: {
       primary: 'accent',
@@ -50,14 +53,8 @@ const link = style<LinkRenderProps & LinkStyleProps>({
     forcedColors: 'LinkText'
   },
   transition: 'default',
-  fontFamily: {
-    isStandalone: 'sans'
-  },
   fontWeight: {
     isStandalone: 'medium'
-  },
-  fontSize: {
-    isStandalone: 'ui'
   },
   textDecoration: {
     default: 'underline',

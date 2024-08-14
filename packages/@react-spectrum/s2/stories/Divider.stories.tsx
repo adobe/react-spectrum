@@ -41,7 +41,7 @@ export const Example = {
             'vertical': 'row'
           }
         },
-        fontFamily: 'sans',
+        font: 'body',
         color: {
           staticColor: {
             default: 'gray-900',

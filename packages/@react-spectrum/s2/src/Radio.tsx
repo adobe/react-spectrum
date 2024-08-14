@@ -52,8 +52,7 @@ const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   transition: 'colors',
   color: {
     default: 'neutral',

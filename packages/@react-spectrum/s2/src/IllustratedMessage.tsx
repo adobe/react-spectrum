@@ -16,7 +16,7 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {IllustrationContext} from './Illustration';
+import {IllustrationContext} from './Icon';
 import {Provider} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -110,22 +110,24 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
     }
   },
   alignSelf: 'center',
-  color: {
-    // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
-    default: 'gray-800',
-    isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
-    isDropTarget: 'accent'
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
+      default: 'gray-800',
+      isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
+      isDropTarget: 'accent'
+    }
   }
 });
 
 const heading = style<IllustratedMessageStyleProps>({
   gridArea: 'heading',
-  color: 'heading',
-  fontSize: {
+  font: {
     size: {
-      S: 'body',
-      M: 'body-xl',
-      L: 'body-2xl'
+      S: 'title',
+      M: 'title-xl',
+      L: 'title-2xl'
     }
   },
   alignSelf: 'end',
@@ -133,7 +135,13 @@ const heading = style<IllustratedMessageStyleProps>({
 });
 
 const content = style({
-  color: 'gray-800',
+  font: {
+    size: {
+      S: 'body-xs',
+      M: 'body-sm',
+      L: 'body-sm'
+    }
+  },
   gridArea: 'content',
   alignSelf: 'start'
 });
@@ -178,8 +186,8 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       <Provider
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
-          [ContentContext, {className: content}],
-          [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
+          [ContentContext, {className: content({size})}],
+          [IllustrationContext, {size: size === 'L' ? 'L' : 'M', styles: illustration({orientation, size, isInDropZone, isDropTarget})}],
           [ButtonGroupContext, {styles: buttonGroup}]
         ]}>
         {children}

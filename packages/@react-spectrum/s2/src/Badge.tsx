@@ -45,8 +45,7 @@ export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, Bad
 
 const badge = style<BadgeStyleProps>({
   display: 'flex',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: 'control',
