@@ -10,19 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_LinkOutSize100 from './S2_LinkOutSize100.svg';
-import S2_LinkOutSize200 from './S2_LinkOutSize200.svg';
-import S2_LinkOutSize300 from './S2_LinkOutSize300.svg';
+import LinkOut_L from './S2_LinkOutSize200.svg';
+import LinkOut_M from './S2_LinkOutSize100.svg';
+import LinkOut_XL from './S2_LinkOutSize300.svg';
+import LinkOut_XXL from './S2_LinkOutSize400.svg';
 import {SVGProps} from 'react';
 
-export default function LinkOut({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL'} & SVGProps<SVGSVGElement>) {
+export default function LinkOut(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL'}) {
+  let {size = 'M', ...otherProps} = props;
   switch (size) {
-    case 'S':
-      return <S2_LinkOutSize100 {...props} />;
     case 'M':
-      return <S2_LinkOutSize200 {...props} />;
+      return <LinkOut_M {...otherProps} />;
     case 'L':
-    case 'XL': // these are the same according to menu tokens
-      return <S2_LinkOutSize300 {...props} />;
+      return <LinkOut_L {...otherProps} />;
+    case 'XL':
+      return <LinkOut_XL {...otherProps} />;
+    case 'XXL':
+      return <LinkOut_XXL {...otherProps} />;
   }
 }
