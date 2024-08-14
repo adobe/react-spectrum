@@ -185,7 +185,7 @@ function enforcePublishing({Yarn}) {
       if (name.startsWith('@react-spectrum')) {
         workspace.set('license', 'Apache-2.0');
       }
-      if (workspace.pkg.publishConfig) {
+      if (!workspace.manifest.private) {
         workspace.set('publishConfig', {access: 'public'});
       }
       workspace.set('repository', {

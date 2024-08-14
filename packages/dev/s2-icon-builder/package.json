@@ -29,5 +29,8 @@
   },
   "rsp": {
     "type": "cli"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
