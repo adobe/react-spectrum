@@ -12,12 +12,13 @@
 
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {clamp} from '@react-aria/utils';
-import {CSSProperties, forwardRef} from 'react';
-import {DOMRef} from '@react-types/shared';
+import {ContextValue, ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
+import {createContext, CSSProperties, forwardRef} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ProgressCircleStyleProps {
   /**
@@ -32,8 +33,9 @@ export interface ProgressCircleStyleProps {
    * Whether presentation is indeterminate when progress isn't known.
    */
   isIndeterminate?: boolean
-
 }
+
+export const ProgressCircleContext = createContext<ContextValue<ProgressCircleProps, DOMRefValue<HTMLDivElement>>>(null);
 
 const fillMask1Frames = keyframes(`
 0% {
@@ -448,6 +450,7 @@ const fillSubMask2Indeterminate = style({
 export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, StyleProps {}
 
 function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
   let {
     value = 0,
     minValue = 0,
