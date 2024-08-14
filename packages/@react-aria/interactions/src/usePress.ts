@@ -317,9 +317,11 @@ export function usePress(props: PressHookProps): PressResult {
               }
             };
 
-            const ownerDocument = getRootNode(e.currentTarget) || getOwnerDocument(e.currentTarget);
+            const ownerDocument = getRootNode(e.currentTarget);
 
-            addGlobalListener(ownerDocument, 'keyup', chain(pressUp, onKeyUp), true);
+            if (ownerDocument) {
+              addGlobalListener(ownerDocument, 'keyup', chain(pressUp, onKeyUp), true);
+            }
           }
 
           if (shouldStopPropagation) {
