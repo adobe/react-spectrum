@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
+import {ContextValue, SlotProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
-import {forwardRef, ReactNode} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface StatusLightStyleProps {
   /**
@@ -32,7 +34,7 @@ interface StatusLightStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaLabelingProps, StyleProps {
+export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaLabelingProps, StyleProps, SlotProps {
   /**
    * The content to display as the label.
    */
@@ -44,6 +46,8 @@ export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaL
    */
   role?: 'status'
 }
+
+export const StatusLightContext = createContext<ContextValue<StatusLightProps, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<StatusLightStyleProps>({
   display: 'flex',
@@ -95,6 +99,7 @@ const light = style<StatusLightStyleProps>({
 });
 
 function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
   let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);
 
