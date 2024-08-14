@@ -397,38 +397,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
       break;
     case 'size':
       // Try to automatically convert size prop to a macro value for components that supported size.
-      if (element === 'Avatar') {
-        const AVATAR_SIZING_RE = /^avatar-size-\d+$/;
-        if (value.type === 'StringLiteral' && AVATAR_SIZING_RE.test(value.value)) {
-          const avatarDimensions = {
-            'avatar-size-50': 16,
-            'avatar-size-75': 18,
-            'avatar-size-100': 20,
-            'avatar-size-200': 22,
-            'avatar-size-300': 26,
-            'avatar-size-400': 28,
-            'avatar-size-500': 32,
-            'avatar-size-600': 36,
-            'avatar-size-700': 40
-          };
-          let val = avatarDimensions[value.value as keyof typeof avatarDimensions];
-          if (val != null) {
-            return {
-              macroValues: [{key: 'size', value: val}]
-            };
-          }
-          return null;
-        } else if (value.type === 'NumericLiteral' || value.type === 'StringLiteral') {
-          let val = convertDimension(value.value);
-          if (val != null) {
-            return {
-              macroValues: [{key: 'size', value: val}]
-            };
-          }
-          return null;
-        }
-        return null;
-      } else if (element === 'ColorArea' || element === 'ColorWheel') {
+      if (element === 'ColorArea' || element === 'ColorWheel') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
           let val = convertDimension(value.value);
           if (val != null) {

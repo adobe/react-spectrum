@@ -27,7 +27,8 @@ export function generatePageStyles(this: MacroContext | void) {
       type: 'css',
       content: `html {
         color-scheme: light dark;
-        background: ${colorToken(tokens['background-base-color'])};
+        --s2-container-bg: ${colorToken(tokens['background-base-color'])};
+        background: var(--s2-container-bg);
 
         &[data-color-scheme=light] {
           color-scheme: light;
@@ -38,11 +39,11 @@ export function generatePageStyles(this: MacroContext | void) {
         }
 
         &[data-background=layer-1] {
-          background: ${colorToken(tokens['background-layer-1-color'])};
+          --s2-container-bg: ${colorToken(tokens['background-layer-1-color'])};
         }
 
         &[data-background=layer-2] {
-          background: ${weirdColorToken(tokens['background-layer-2-color'])};
+          --s2-container-bg: ${weirdColorToken(tokens['background-layer-2-color'])};
         }
       }`
     });

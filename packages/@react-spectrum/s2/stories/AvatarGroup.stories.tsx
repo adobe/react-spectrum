@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AvatarGroup, AvatarGroupItem} from '../src';
+import {Avatar, AvatarGroup, Provider} from '../src';
 import type {Meta} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof AvatarGroup> = {
   component: AvatarGroup,
@@ -31,18 +32,29 @@ const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
 export const Example = (args: any) => (
   <AvatarGroup {...args}>
-    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
-    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
-    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
-    <AvatarGroupItem alt="design provided" src={SRC_URL_2} />
+    <Avatar alt="default adobe" src={SRC_URL_1} />
+    <Avatar alt="default adobe" src={SRC_URL_1} />
+    <Avatar alt="default adobe" src={SRC_URL_1} />
+    <Avatar alt="design provided" src={SRC_URL_2} />
   </AvatarGroup>
 );
 
 export const WithLabel = (args: any) => (
   <AvatarGroup label="145 members" {...args}>
-    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
-    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
-    <AvatarGroupItem alt="default adobe" src={SRC_URL_1} />
-    <AvatarGroupItem alt="design provided" src={SRC_URL_2} />
+    <Avatar alt="default adobe" src={SRC_URL_1} />
+    <Avatar alt="default adobe" src={SRC_URL_1} />
+    <Avatar alt="default adobe" src={SRC_URL_1} />
+    <Avatar alt="design provided" src={SRC_URL_2} />
   </AvatarGroup>
+);
+
+export const WithProviderBackground = (args: any) => (
+  <Provider background="layer-1" styles={style({padding: 40})}>
+    <AvatarGroup label="145 members" {...args}>
+      <Avatar alt="default adobe" src={SRC_URL_1} />
+      <Avatar alt="default adobe" src={SRC_URL_1} />
+      <Avatar alt="default adobe" src={SRC_URL_1} />
+      <Avatar alt="design provided" src={SRC_URL_2} />
+    </AvatarGroup>
+  </Provider>
 );
