@@ -17,7 +17,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -66,9 +66,7 @@ export interface BreadcrumbRenderProps {
 
 export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {
   /** A unique id for the breadcrumb, which will be passed to `onAction` when the breadcrumb is pressed. */
-  id?: Key,
-  /** The children of the breadcrumb, typically a `<Link>`. */
-  children: ReactNode
+  id?: Key
 }
 
 /**

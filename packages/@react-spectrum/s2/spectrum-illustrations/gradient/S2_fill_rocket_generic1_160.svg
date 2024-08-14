@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="-19.922" x2="186.085" y1="133.557" y2=".602" gradientUnits="userSpaceOnUse">
+      <stop offset=".06" stop-color="#8480FE"/>
+      <stop offset=".6" stop-color="#8480FE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="150.996" x2="65.381" y1="45.947" y2="143.605" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="39.96" x2="197.224" y1="151.344" y2="57.889" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FC7D00" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#FC7D00"/>
+      <stop offset=".609" stop-color="#FC7D00"/>
+      <stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="scale(56.9923 53.7253) rotate(90 0 1)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#FF709F"/>
+      <stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="scale(56.9923 53.7253) rotate(90 0 1)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="a">
+      <rect width="131" height="123.491" x="13" y="23.2" fill="#fff" rx="3.461"/>
+    </clipPath>
+    <clipPath id="c">
+      <path fill="#fff" d="M13 23.2h131v123.491H13z"/>
+    </clipPath>
+  </defs>
+  <mask id="b" width="111" height="112" x="21" y="27" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="M107.02 87.22c-6.16 5.88-13.79 11.98-23.22 18.19h-.01c-.79.52-1.61.96-2.46 1.33-5.95 2.58-13 1.36-17.71-3.35l-3.54-3.54-3.54-3.54c-4.46-4.47-5.78-11.02-3.71-16.76.43-1.18.99-2.33 1.7-3.41 4.49-6.82 8.93-12.69 13.26-17.75C92.96 29 114.76 27.1 124.71 28.23a7.96 7.96 0 0 1 7 7c1.05 9.3-.53 28.94-24.69 51.99Zm1.7-35.99c-3.31-3.3-8.67-3.3-11.97 0-3.3 3.31-3.31 8.67 0 11.97 3.31 3.3 8.67 3.31 11.97 0 3.3-3.31 3.31-8.67 0-11.97ZM44.11 81.94l-10.48.18v.01c-6.81.12-10.67-7.8-6.35-13.06 12.21-14.85 28.66-20.14 39.39-21.35-6.47 6.82-12.76 14.84-18.82 24.04a23.982 23.982 0 0 0-3.74 10.18Zm-15.41 36.6c-.78.78-1.81 1.17-2.83 1.17-1.03 0-2.05-.39-2.83-1.17a4.008 4.008 0 0 1 0-5.66l10.5-10.5a4.008 4.008 0 0 1 5.66 0 4.008 4.008 0 0 1 0 5.66l-10.5 10.5Zm14-7a4.008 4.008 0 0 1 5.66 0 4.008 4.008 0 0 1 0 5.66l-20 20c-.78.78-1.8 1.17-2.83 1.17s-2.05-.39-2.83-1.17a4.008 4.008 0 0 1 0-5.66l20-20Zm9.22 9.21-11 11a4.008 4.008 0 0 0 0 5.66c.78.78 1.8 1.17 2.83 1.17s2.05-.39 2.83-1.17l11-11a4.008 4.008 0 0 0 0-5.66c-1.56-1.57-4.09-1.56-5.66 0Zm26.11-4.89-.18 10.44c-.12 6.85 7.851 10.65 13.131 6.29 14.76-12.18 20.04-28.55 21.27-39.27-6.48 6.12-14.39 12.41-24.05 18.77a24.07 24.07 0 0 1-10.17 3.77Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <rect width="131" height="123.491" x="13" y="23.2" fill="#FFECCF" rx="3.461"/>
+    <g clip-path="url(#c)">
+      <path fill="#FFECCF" d="M13 23.2h131v123.491H13z"/>
+      <ellipse cx="56.992" cy="53.725" fill="url(#d)" rx="56.992" ry="53.725" transform="matrix(1 0 .00016 1 30 -25.66)"/>
+      <path fill="url(#e)" d="M63 1.386c-10.06-5.869-22.807-5.905-32.905-.093l-101 58.132c-9.891 5.694-9.908 19.132-.03 24.847l100.332 58.049c10.083 5.833 22.83 5.826 32.904-.02l100.126-58.104c9.825-5.703 9.843-19.066.029-24.79L63 1.386Z"/>
+      <path fill="url(#f)" d="M31.879 81.83c2.239-46.102 43.7-81.765 92.607-79.654 48.906 2.11 86.737 41.195 84.498 87.298-2.239 46.103-43.7 81.766-92.607 79.655-48.906-2.111-86.737-41.196-84.498-87.298Z"/>
+      <path fill="url(#g)" d="M-40.074 112.229c19.44-7.818 40.407-7.483 58.571-.645 36.348 13.718 57.497 5.237 72.167-28.949 7.306-17.154 21.572-31.682 41.034-39.509 38.912-15.624 83.834 1.33 100.385 37.902 16.551 36.573-1.565 78.853-40.468 94.497-19.505 7.845-40.512 7.477-58.704.577-36.289-13.644-57.398-5.13-72.049 29.096-7.325 17.113-21.587 31.592-41.028 39.41-38.88 15.636-83.802-1.318-100.344-37.87-16.542-36.552 1.556-78.873 40.436-94.509Z"/>
+      <ellipse cx="56.992" cy="53.725" fill="url(#h)" rx="56.992" ry="53.725" transform="matrix(1 0 .00016 1 79.293 -8.14)"/>
+    </g>
+  </g>
+</svg>
