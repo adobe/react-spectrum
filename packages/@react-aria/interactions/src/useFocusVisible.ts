@@ -35,6 +35,10 @@ export interface FocusVisibleResult {
   isFocusVisible: boolean
 }
 
+function createEventListener<T extends Event>(handler: (e: T) => void): EventListener {
+  return (e: Event) => handler(e as T);
+}
+
 let currentModality: null | Modality = null;
 let changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
@@ -135,9 +139,9 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
   };
 
-  documentObject?.addEventListener('keydown', handleKeyboardEvent as EventListener, true);
-  documentObject?.addEventListener('keyup', handleKeyboardEvent as EventListener, true);
-  documentObject?.addEventListener('click', handleClickEvent as EventListener, true);
+  documentObject?.addEventListener('keydown', createEventListener(handleKeyboardEvent), true);
+  documentObject?.addEventListener('keyup', createEventListener(handleKeyboardEvent), true);
+  documentObject?.addEventListener('click', createEventListener(handleClickEvent), true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -145,13 +149,13 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   windowObject.addEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject?.addEventListener('pointerdown', handlePointerEvent as EventListener, true);
-    documentObject?.addEventListener('pointermove', handlePointerEvent as EventListener, true);
-    documentObject?.addEventListener('pointerup', handlePointerEvent as EventListener, true);
+    documentObject?.addEventListener('pointerdown', createEventListener(handlePointerEvent), true);
+    documentObject?.addEventListener('pointermove', createEventListener(handlePointerEvent), true);
+    documentObject?.addEventListener('pointerup', createEventListener(handlePointerEvent), true);
   } else {
-    documentObject?.addEventListener('mousedown', handlePointerEvent as EventListener, true);
-    documentObject?.addEventListener('mousemove', handlePointerEvent as EventListener, true);
-    documentObject?.addEventListener('mouseup', handlePointerEvent as EventListener, true);
+    documentObject?.addEventListener('mousedown', createEventListener(handlePointerEvent), true);
+    documentObject?.addEventListener('mousemove', createEventListener(handlePointerEvent), true);
+    documentObject?.addEventListener('mouseup', createEventListener(handlePointerEvent), true);
   }
 
   // Add unmount handler
@@ -173,21 +177,21 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   }
   windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
 
-  documentObject?.removeEventListener('keydown', handleKeyboardEvent as EventListener, true);
-  documentObject?.removeEventListener('keyup', handleKeyboardEvent as EventListener, true);
-  documentObject?.removeEventListener('click', handleClickEvent as EventListener, true);
+  documentObject?.removeEventListener('keydown', createEventListener(handleKeyboardEvent), true);
+  documentObject?.removeEventListener('keyup', createEventListener(handleKeyboardEvent), true);
+  documentObject?.removeEventListener('click', createEventListener(handleClickEvent), true);
 
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject?.removeEventListener('pointerdown', handlePointerEvent as EventListener, true);
-    documentObject?.removeEventListener('pointermove', handlePointerEvent as EventListener, true);
-    documentObject?.removeEventListener('pointerup', handlePointerEvent as EventListener, true);
+    documentObject?.removeEventListener('pointerdown', createEventListener(handlePointerEvent), true);
+    documentObject?.removeEventListener('pointermove', createEventListener(handlePointerEvent), true);
+    documentObject?.removeEventListener('pointerup', createEventListener(handlePointerEvent), true);
   } else {
-    documentObject?.removeEventListener('mousedown', handlePointerEvent as EventListener, true);
-    documentObject?.removeEventListener('mousemove', handlePointerEvent as EventListener, true);
-    documentObject?.removeEventListener('mouseup', handlePointerEvent as EventListener, true);
+    documentObject?.removeEventListener('mousedown', createEventListener(handlePointerEvent), true);
+    documentObject?.removeEventListener('mousemove', createEventListener(handlePointerEvent), true);
+    documentObject?.removeEventListener('mouseup', createEventListener(handlePointerEvent), true);
   }
 
   hasSetupGlobalListeners.delete(windowObject);
