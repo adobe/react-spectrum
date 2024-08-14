@@ -37,6 +37,7 @@ import {useButton, useFocusRing, useHover} from 'react-aria';
 export interface NumberFieldProps extends
   AriaNumberFieldProps,
   StyleProps,
+  SpectrumLabelableProps,
   HelpTextProps {
   /**
    * Whether the NumberField step buttons should be collapsed into a single column.
