@@ -62,6 +62,12 @@ const preview = {
         brandTitle: 'React Spectrum - Spectrum 2 Preview',
         brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
       }
+    },
+    options: {
+      storySort: {
+        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Release Notes'],
+        method: 'alphabetical'
+      }  
     }
   },
   argTypes: {
@@ -81,9 +87,6 @@ const preview = {
 };
 
 export const parameters = {
-  options: {
-    storySort: (a: any, b: any) => a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
-  },
   a11y: {
     config: {
       rules: [

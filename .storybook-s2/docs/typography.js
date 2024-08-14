@@ -1,5 +1,4 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Link} from '@react-spectrum/s2';
 
 export function H2({children}) {
   let id = anchorId(children);
@@ -7,12 +6,10 @@ export function H2({children}) {
 }
 
 export function H3({children}) {
-  let id = anchorId(children);
   return <h3 className={style({font: 'heading', marginTop: 32, marginBottom: 16})} id={anchorId(children)}>{children}</h3>
 }
 
 export function H4({children}) {
-  let id = anchorId(children);
   return <h4 className={style({font: 'heading-sm', marginTop: 32, marginBottom: 8})} id={anchorId(children)}>{children}</h4>
 }
 
