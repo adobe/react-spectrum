@@ -162,7 +162,7 @@ function enforceCSS({Yarn}) {
 /** @param {Workspace} workspace */
 function isPublishing(workspace) {
   let name = workspace.ident;
-  // should whitelist instead? workspace.manifest.private?
+  // should allowlist instead? workspace.manifest.private?
   return !name.includes('@react-types')
     && !name.includes('@spectrum-icons')
     && !name.includes('@react-aria/example-theme')
@@ -181,7 +181,7 @@ function enforcePublishing({Yarn}) {
   // make sure fields required for publishing have been set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (isPublishing(workspace)) {
+    if (isPublishing(workspace) || (workspace.manifest.rsp?.type === 'cli' && !workspace.manifest.private)) {
       if (name.startsWith('@react-spectrum')) {
         workspace.set('license', 'Apache-2.0');
       }
@@ -230,10 +230,14 @@ function enforceExports({Yarn}) {
       let exportsImport = workspace.manifest?.exports?.import;
       if (workspace.manifest.exports?.['.']) {
         for (let key in workspace.manifest.exports) {
-          let subExportsRequire = workspace.manifest.exports[key].require;
-          let subExportsImport = workspace.manifest.exports[key].import;
-          workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
-          workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+          if (workspace.manifest.exports[key]) {
+            let subExportsRequire = workspace.manifest.exports[key].require;
+            workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
+          }
+          if (workspace.manifest.exports[key]) {
+            let subExportsImport = workspace.manifest.exports[key].import;
+            workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+          }
         }
       } else {
         workspace.set('exports.require', setExtension(exportsRequire, cjsExt));

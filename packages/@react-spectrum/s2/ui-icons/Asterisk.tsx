@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_AsteriskSize100 from './S2_AsteriskSize100.svg';
-import S2_AsteriskSize200 from './S2_AsteriskSize200.svg';
-import S2_AsteriskSize300 from './S2_AsteriskSize300.svg';
+import Asterisk_L from './S2_AsteriskSize200.svg';
+import Asterisk_M from './S2_AsteriskSize100.svg';
+import Asterisk_XL from './S2_AsteriskSize300.svg';
 import {SVGProps} from 'react';
 
-export default function Asterisk({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL'} & SVGProps<SVGSVGElement>) {
+export default function Asterisk(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}) {
+  let {size = 'M', ...otherProps} = props;
   switch (size) {
-    case 'S':
     case 'M':
-      return <S2_AsteriskSize100 {...props} />;
+      return <Asterisk_M {...otherProps} />;
     case 'L':
-      return <S2_AsteriskSize200 {...props} />;
+      return <Asterisk_L {...otherProps} />;
     case 'XL':
-      return <S2_AsteriskSize300 {...props} />;
+      return <Asterisk_XL {...otherProps} />;
   }
 }
