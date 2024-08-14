@@ -5,10 +5,14 @@ let {parseArgs} = require('util');
 
 const args = parseArgs({
   options: {
-    icons: {
+    input: {
       type: 'string',
       short: 'i',
       multiple: true
+    },
+    type: {
+      type: 'string',
+      default: 'icon'
     },
     output: {
       type: 'string',
@@ -18,14 +22,14 @@ const args = parseArgs({
 });
 
 let bundler = new Parcel({
-  entries: args.values.icons,
+  entries: args.values.input,
   config: require.resolve('@react-spectrum/s2-icon-builder/.parcelrc'),
   shouldDisableCache: true,
   defaultTargetOptions: {
     distDir: args.values.output
   },
   targets: {
-    main: {
+    [args.values.type]: {
       distDir: args.values.output,
       isLibrary: true,
       includeNodeModules: false

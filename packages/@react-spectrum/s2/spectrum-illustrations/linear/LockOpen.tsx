@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import LockOpen_L from './S2_lin_lockOpen_160.svg';
-import LockOpen_M from './S2_lin_lockOpen_96.svg';
-import LockOpen_S from './S2_lin_lockOpen_48.svg';
+import LockOpen_L from 'illustration:./S2_lin_lockOpen_160.svg';
+import LockOpen_M from 'illustration:./S2_lin_lockOpen_96.svg';
+import LockOpen_S from 'illustration:./S2_lin_lockOpen_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function LockOpen(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

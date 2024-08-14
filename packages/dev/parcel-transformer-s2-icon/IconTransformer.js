@@ -62,12 +62,12 @@ module.exports = new Transformer({
 function template(asset, iconName, svg) {
   let importName = iconName
     .replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1')
-    .replace(/^S2_(fill|lin)_(.+)_(generic\d_)?(\d+).svg/, (m, name) => name[0].toUpperCase() + name.slice(1));
+    .replace(/^S2_(fill|lin)_(.+)_(.+_)?(\d+)$/, (m, name) => name[0].toUpperCase() + name.slice(1));
   let iconRename = importName;
   if (/^[0-9]/.test(importName)) {
     iconRename = '_' + importName;
   }
-  let context = asset.filePath.includes('spectrum-illustrations') ? 'IllustrationContext' : 'IconContext';
+  let context = asset.pipeline === 'illustration' ? 'IllustrationContext' : 'IconContext';
   return (
 `
 import {IconProps, ${context}, IconContextValue} from '${asset.filePath.includes('@react-spectrum/s2') ? '~/src/Icon' : '@react-spectrum/s2'}';

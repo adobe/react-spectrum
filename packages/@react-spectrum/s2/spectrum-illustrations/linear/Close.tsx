@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Close_L from './S2_lin_close_160.svg';
-import Close_M from './S2_lin_close_96.svg';
-import Close_S from './S2_lin_close_48.svg';
+import Close_L from 'illustration:./S2_lin_close_160.svg';
+import Close_M from 'illustration:./S2_lin_close_96.svg';
+import Close_S from 'illustration:./S2_lin_close_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

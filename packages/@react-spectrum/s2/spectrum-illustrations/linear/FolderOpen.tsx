@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import FolderOpen_L from './S2_lin_folderOpen_160.svg';
-import FolderOpen_M from './S2_lin_folderOpen_96.svg';
-import FolderOpen_S from './S2_lin_folderOpen_48.svg';
+import FolderOpen_L from 'illustration:./S2_lin_folderOpen_160.svg';
+import FolderOpen_M from 'illustration:./S2_lin_folderOpen_96.svg';
+import FolderOpen_S from 'illustration:./S2_lin_folderOpen_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

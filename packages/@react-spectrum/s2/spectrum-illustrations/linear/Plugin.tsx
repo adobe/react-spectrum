@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Plugin_L from './S2_lin_plugin_160.svg';
-import Plugin_M from './S2_lin_plugin_96.svg';
-import Plugin_S from './S2_lin_plugin_48.svg';
+import Plugin_L from 'illustration:./S2_lin_plugin_160.svg';
+import Plugin_M from 'illustration:./S2_lin_plugin_96.svg';
+import Plugin_S from 'illustration:./S2_lin_plugin_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Plugin(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

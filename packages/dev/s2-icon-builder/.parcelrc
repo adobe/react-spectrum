@@ -2,6 +2,7 @@
   "namers": ["@react-spectrum/parcel-namer-s2-icon"],
   "bundler": "@parcel/bundler-library",
   "transformers": {
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "*.tsx": ["@parcel/transformer-raw"]
   },
