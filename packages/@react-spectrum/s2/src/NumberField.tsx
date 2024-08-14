@@ -217,13 +217,12 @@ const stepperContainerStyles = style({
   }
 });
 
-type Size = 'XS' | 'S' | 'M' | 'L' | 'XL';
-const chevronSize: Record<'S' | 'M' | 'L' | 'XL', Size> = {
+const chevronSize = {
   S: 'XS',
   M: 'S',
   L: 'L',
   XL: 'XL'
-};
+} as const;
 
 function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);

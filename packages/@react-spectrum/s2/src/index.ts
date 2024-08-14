@@ -36,7 +36,6 @@ export {Divider, DividerContext} from './Divider';
 export {DropZone, DropZoneContext} from './DropZone';
 export {Form} from './Form';
 export {IllustratedMessage, IllustratedMessageContext} from './IllustratedMessage';
-export {Illustration} from './Illustration';
 export {InlineAlert, InlineAlertContext} from './InlineAlert';
 export {Link, LinkContext} from './Link';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, MenuContext} from './Menu';

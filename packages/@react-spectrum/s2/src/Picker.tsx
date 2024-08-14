@@ -392,6 +392,13 @@ export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'st
   children: ReactNode
 }
 
+const checkmarkIconSize = {
+  S: 'XS',
+  M: 'M',
+  L: 'L',
+  XL: 'XL'
+} as const;
+
 export function PickerItem(props: PickerItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -419,7 +426,7 @@ export function PickerItem(props: PickerItemProps) {
                   description: {styles: description({...renderProps, size})}
                 }
               }}>
-              {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </DefaultProvider>
           </DefaultProvider>
