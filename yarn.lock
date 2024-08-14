@@ -4051,7 +4051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/compressor-raw@npm:2.12.1-dev.3224+1f9adfe6b":
+"@parcel/compressor-raw@npm:2.12.1-dev.3224, @parcel/compressor-raw@npm:2.12.1-dev.3224+1f9adfe6b":
   version: 2.12.1-dev.3224
   resolution: "@parcel/compressor-raw@npm:2.12.1-dev.3224"
   dependencies:
@@ -4392,7 +4392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/packager-raw@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/packager-raw@npm:2.0.0-dev.1601, @parcel/packager-raw@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/packager-raw@npm:2.0.0-dev.1601"
   dependencies:
@@ -4487,7 +4487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/resolver-default@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/resolver-default@npm:2.0.0-dev.1601, @parcel/resolver-default@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/resolver-default@npm:2.0.0-dev.1601"
   dependencies:
@@ -4713,7 +4713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-raw@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/transformer-raw@npm:2.0.0-dev.1601, @parcel/transformer-raw@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/transformer-raw@npm:2.0.0-dev.1601"
   dependencies:
@@ -7505,6 +7505,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder"
   dependencies:
+    "@parcel/bundler-library": "npm:2.11.1-dev.3224"
+    "@parcel/compressor-raw": "npm:2.12.1-dev.3224"
+    "@parcel/core": "npm:2.0.0-dev.1599"
+    "@parcel/packager-raw": "npm:2.0.0-dev.1601"
+    "@parcel/reporter-cli": "npm:2.0.0-dev.1601"
+    "@parcel/resolver-default": "npm:2.0.0-dev.1601"
+    "@parcel/transformer-raw": "npm:2.0.0-dev.1601"
     "@react-spectrum/parcel-namer-s2-icon": "npm:^1.0.0"
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^1.0.0"
   bin:

@@ -10,9 +10,9 @@
     "transform-icons": "index.js"
   },
   "dependencies": {
+    "@parcel/bundler-library": "2.11.1-dev.3224",
     "@parcel/compressor-raw": "2.12.1-dev.3224",
     "@parcel/core": "2.0.0-dev.1599",
-    "@parcel/bundler-library": "2.11.1-dev.3224",
     "@parcel/packager-raw": "2.0.0-dev.1601",
     "@parcel/reporter-cli": "2.0.0-dev.1601",
     "@parcel/resolver-default": "2.0.0-dev.1601",
