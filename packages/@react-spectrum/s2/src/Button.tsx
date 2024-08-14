@@ -11,16 +11,16 @@
  */
 
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ButtonRenderProps, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
+import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {mergeProps} from 'react-aria';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
   /**
@@ -55,12 +55,8 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
   children?: ReactNode
 }
 
-interface ButtonContextValue extends ButtonStyleProps, StyleProps {
-  /** Whether the Button is disabled. */
-  isDisabled?: boolean
-}
-
-export const ButtonContext = createContext<ButtonContextValue>({});
+export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const button = style<ButtonRenderProps & ButtonStyleProps>({
   ...focusRing(),
@@ -275,9 +271,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 }, getAllowedOverrides());
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   let domRef = useFocusableRef(ref);
-  let ctx = useContext(ButtonContext);
-  props = mergeProps(ctx, props);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
   return (
@@ -296,9 +291,9 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       }, props.styles)}>
       <Provider
         values={[
-          [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
-            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>
@@ -317,9 +312,8 @@ let _Button = forwardRef(Button);
 export {_Button as Button};
 
 function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   let domRef = useFocusableRef(ref);
-  let ctx = useContext(ButtonContext);
-  props = mergeProps(ctx, props);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
   return (
@@ -338,9 +332,9 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       }, props.styles)}>
       <Provider
         values={[
-          [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
-            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>
