@@ -35,7 +35,7 @@ clean_dist:
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
 	rm -rf packages/@adobe/react-spectrum/i18n
 	rm -rf packages/@react-aria/i18n/server
-	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons
+	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
 
 clean_parcel:
 	rm -rf .parcel-cache
@@ -107,6 +107,7 @@ build:
 		do node scripts/buildEsm.js $$pkg; \
 	done
 	node scripts/buildI18n.js
+	node scripts/copyIconDts.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

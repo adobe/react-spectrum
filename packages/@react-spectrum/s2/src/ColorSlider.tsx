@@ -13,23 +13,28 @@
 import {
   ColorSlider as AriaColorSlider,
   ColorSliderProps as AriaColorSliderProps,
+  ContextValue,
   SliderOutput,
   SliderTrack,
   useLocale
 } from 'react-aria-components';
 import {ColorHandle} from './ColorHandle';
-import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
+import {createContext, forwardRef, useRef} from 'react';
+import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
-import {forwardRef, useRef} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style'>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
   label?: string
 }
 
+export const ColorSliderContext = createContext<ContextValue<ColorSliderProps, DOMRefValue<HTMLDivElement>>>(null);
+
 function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ColorSliderContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
   let trackRef = useRef(null);
