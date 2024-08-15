@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import CloudUpload_L from './S2_lin_cloudUpload_160.svg';
-import CloudUpload_M from './S2_lin_cloudUpload_96.svg';
-import CloudUpload_S from './S2_lin_cloudUpload_48.svg';
+import CloudUpload_L from 'illustration:./S2_lin_cloudUpload_160.svg';
+import CloudUpload_M from 'illustration:./S2_lin_cloudUpload_96.svg';
+import CloudUpload_S from 'illustration:./S2_lin_cloudUpload_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

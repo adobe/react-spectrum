@@ -47,7 +47,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       && workspace.ident !== '@internationalized/string-compiler'
       && workspace.ident !== 'tailwindcss-react-aria-components'
       && workspace.ident !== '@react-spectrum/s2'
-      && workspace.ident !== '@react-spectrum/codemods'
+      && workspace.manifest.rsp?.type !== 'cli'
     ) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
@@ -160,7 +160,7 @@ function enforceCSS({Yarn}) {
 /** @param {Workspace} workspace */
 function isPublishing(workspace) {
   let name = workspace.ident;
-  // should whitelist instead? workspace.manifest.private?
+  // should allowlist instead? workspace.manifest.private?
   return !name.includes('@react-types')
     && !name.includes('@spectrum-icons')
     && !name.includes('@react-aria/example-theme')
@@ -179,11 +179,11 @@ function enforcePublishing({Yarn}) {
   // make sure fields required for publishing have been set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (isPublishing(workspace)) {
+    if (isPublishing(workspace) || (workspace.manifest.rsp?.type === 'cli' && !workspace.manifest.private)) {
       if (name.startsWith('@react-spectrum')) {
         workspace.set('license', 'Apache-2.0');
       }
-      if (workspace.pkg.publishConfig) {
+      if (!workspace.manifest.private) {
         workspace.set('publishConfig', {access: 'public'});
       }
       workspace.set('repository', {
@@ -208,7 +208,7 @@ function enforceExports({Yarn}) {
   // make sure build fields are correctly set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (isPublishing(workspace)) {
+    if (isPublishing(workspace) && workspace.manifest.rsp?.type !== 'cli') {
       let moduleExt = name === '@react-spectrum/s2' ? '.mjs' : '.js';
       let cjsExt = name === '@react-spectrum/s2' ? '.cjs' : '.js';
       if (workspace.manifest.main) {
@@ -219,8 +219,7 @@ function enforceExports({Yarn}) {
 
       if (
         name !== '@internationalized/string-compiler' &&
-        name !== 'tailwindcss-react-aria-components' &&
-        name !== '@react-spectrum/codemods'
+        name !== 'tailwindcss-react-aria-components'
       ) {
         workspace.set('module', setExtension('dist/module.js', moduleExt));
       }
@@ -241,7 +240,7 @@ function enforceExports({Yarn}) {
         workspace.set('exports.import', setExtension(exportsImport, '.mjs'));
       }
 
-      if ((!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts')) && name !== '@react-spectrum/codemods') {
+      if ((!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts'))) {
         workspace.set('types', 'dist/types.d.ts');
       }
 
@@ -249,7 +248,7 @@ function enforceExports({Yarn}) {
         workspace.set('source', 'src/index.ts');
       }
 
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components' && name !== '@react-spectrum/codemods') {
+      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
         if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
           workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
         } else if (!workspace.manifest.files.includes('dist')) {
@@ -260,7 +259,7 @@ function enforceExports({Yarn}) {
       }
 
       // better to do in enforceCSS? it doesn't match the set of packages handled
-      if (name !== 'react-aria-components' && name !== '@react-spectrum/codemods') {
+      if (name !== 'react-aria-components') {
         if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
           workspace.set('sideEffects', ['*.css']);
         } else {

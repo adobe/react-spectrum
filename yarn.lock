@@ -4051,7 +4051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/compressor-raw@npm:2.12.1-dev.3224+1f9adfe6b":
+"@parcel/compressor-raw@npm:2.12.1-dev.3224, @parcel/compressor-raw@npm:2.12.1-dev.3224+1f9adfe6b":
   version: 2.12.1-dev.3224
   resolution: "@parcel/compressor-raw@npm:2.12.1-dev.3224"
   dependencies:
@@ -4209,7 +4209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/namer-default@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/namer-default@npm:2.0.0-dev.1601, @parcel/namer-default@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/namer-default@npm:2.0.0-dev.1601"
   dependencies:
@@ -4392,7 +4392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/packager-raw@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/packager-raw@npm:2.0.0-dev.1601, @parcel/packager-raw@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/packager-raw@npm:2.0.0-dev.1601"
   dependencies:
@@ -4487,7 +4487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/resolver-default@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/resolver-default@npm:2.0.0-dev.1601, @parcel/resolver-default@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/resolver-default@npm:2.0.0-dev.1601"
   dependencies:
@@ -4713,7 +4713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-raw@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/transformer-raw@npm:2.0.0-dev.1601, @parcel/transformer-raw@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/transformer-raw@npm:2.0.0-dev.1601"
   dependencies:
@@ -6808,6 +6808,7 @@ __metadata:
     execa: "npm:^5.1.1"
     jscodeshift: "npm:^0.15.2"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.0"
     uuid: "npm:^9.0.1"
@@ -7422,6 +7423,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/parcel-transformer-s2-icon@npm:^1.0.0, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
+  dependencies:
+    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.34"
+    "@parcel/plugin": "npm:2.0.0-dev.1601"
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/picker@npm:^3.1.0, @react-spectrum/picker@npm:^3.15.1, @react-spectrum/picker@workspace:packages/@react-spectrum/picker":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/picker@workspace:packages/@react-spectrum/picker"
@@ -7506,6 +7516,24 @@ __metadata:
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
+"@react-spectrum/s2-icon-builder@npm:^1.0.0, @react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/s2-icon-builder@workspace:packages/dev/s2-icon-builder"
+  dependencies:
+    "@parcel/bundler-library": "npm:2.11.1-dev.3224"
+    "@parcel/compressor-raw": "npm:2.12.1-dev.3224"
+    "@parcel/core": "npm:2.0.0-dev.1599"
+    "@parcel/namer-default": "npm:2.0.0-dev.1601"
+    "@parcel/packager-raw": "npm:2.0.0-dev.1601"
+    "@parcel/reporter-cli": "npm:2.0.0-dev.1601"
+    "@parcel/resolver-default": "npm:2.0.0-dev.1601"
+    "@parcel/transformer-raw": "npm:2.0.0-dev.1601"
+    "@react-spectrum/parcel-transformer-s2-icon": "npm:^1.0.0"
+  bin:
+    transform-icons: index.js
   languageName: unknown
   linkType: soft
 
@@ -26863,17 +26891,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel-namer-icon@workspace:packages/dev/parcel-namer-icon":
+"parcel-namer-intl@workspace:packages/dev/parcel-namer-intl":
   version: 0.0.0-use.local
-  resolution: "parcel-namer-icon@workspace:packages/dev/parcel-namer-icon"
+  resolution: "parcel-namer-intl@workspace:packages/dev/parcel-namer-intl"
   dependencies:
     "@parcel/plugin": "npm:2.0.0-dev.1601"
   languageName: unknown
   linkType: soft
 
-"parcel-namer-intl@workspace:packages/dev/parcel-namer-intl":
+"parcel-namer-s2@workspace:packages/dev/parcel-namer-s2":
   version: 0.0.0-use.local
-  resolution: "parcel-namer-intl@workspace:packages/dev/parcel-namer-intl"
+  resolution: "parcel-namer-s2@workspace:packages/dev/parcel-namer-s2"
   dependencies:
     "@parcel/plugin": "npm:2.0.0-dev.1601"
   languageName: unknown
@@ -26947,14 +26975,6 @@ __metadata:
     "@parcel/fs": "npm:2.0.0-dev.1601"
     "@parcel/plugin": "npm:2.0.0-dev.1601"
     doctrine: "npm:^3.0.0"
-  languageName: unknown
-  linkType: soft
-
-"parcel-transformer-icon@workspace:packages/dev/parcel-transformer-icon":
-  version: 0.0.0-use.local
-  resolution: "parcel-transformer-icon@workspace:packages/dev/parcel-transformer-icon"
-  dependencies:
-    "@parcel/plugin": "npm:2.0.0-dev.1601"
   languageName: unknown
   linkType: soft
 
@@ -28992,6 +29012,7 @@ __metadata:
     "@parcel/transformer-inline-string": "npm:2.0.0-dev.1601"
     "@parcel/transformer-svg-react": "npm:2.12.1-dev.3224"
     "@parcel/transformer-typescript-types": "npm:2.0.0-dev.1601"
+    "@react-spectrum/s2-icon-builder": "npm:^1.0.0"
     "@spectrum-css/component-builder": "npm:1.0.1"
     "@spectrum-css/vars": "npm:^2.3.0"
     "@storybook/addon-a11y": "npm:^7.6.19"

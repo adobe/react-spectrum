@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import BrowserNotCompatible_L from './S2_lin_browserNotCompatible_160.svg';
-import BrowserNotCompatible_M from './S2_lin_browserNotCompatible_96.svg';
-import BrowserNotCompatible_S from './S2_lin_browserNotCompatible_48.svg';
+import BrowserNotCompatible_L from 'illustration:./S2_lin_browserNotCompatible_160.svg';
+import BrowserNotCompatible_M from 'illustration:./S2_lin_browserNotCompatible_96.svg';
+import BrowserNotCompatible_S from 'illustration:./S2_lin_browserNotCompatible_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

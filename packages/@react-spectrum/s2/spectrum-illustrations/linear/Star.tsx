@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Star_L from './S2_lin_star_160.svg';
-import Star_M from './S2_lin_star_96.svg';
-import Star_S from './S2_lin_star_48.svg';
+import Star_L from 'illustration:./S2_lin_star_160.svg';
+import Star_M from 'illustration:./S2_lin_star_96.svg';
+import Star_S from 'illustration:./S2_lin_star_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Star(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import CodeBrackets_L from './S2_lin_codeBrackets_160.svg';
-import CodeBrackets_M from './S2_lin_codeBrackets_96.svg';
-import CodeBrackets_S from './S2_lin_codeBrackets_48.svg';
+import CodeBrackets_L from 'illustration:./S2_lin_codeBrackets_160.svg';
+import CodeBrackets_M from 'illustration:./S2_lin_codeBrackets_96.svg';
+import CodeBrackets_S from 'illustration:./S2_lin_codeBrackets_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

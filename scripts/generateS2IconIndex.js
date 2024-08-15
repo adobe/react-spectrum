@@ -58,6 +58,7 @@ function generate(dir) {
   let typeImport = dir.includes('ui-icons') ? "import {SVGProps} from 'react';" : `import {IconProps, IllustrationContext} from '${relative}';`;
   let ctx = dir.includes('spectrum-illustrations') ? '[props] = useContextProps(props, null, IllustrationContext);\n  ' : '';
   let type = dir.includes('ui-icons') ? 'SVGProps<SVGSVGElement>' : 'IconProps';
+  let isIllustration =  dir.includes('spectrum-illustrations');
 
   for (let [name, sizes] of icons) {
     let importName = name;
@@ -80,7 +81,7 @@ function generate(dir) {
 
     let imports = [typeImport];
     for (let size in sizes) {
-      imports.push(`import ${importName}_${size} from './${sizes[size]}';`);
+      imports.push(`import ${importName}_${size} from '${isIllustration ? 'illustration:' : ''}./${sizes[size]}';`);
     }
     if (ctx) {
       imports.push("import {useContextProps} from 'react-aria-components';");
