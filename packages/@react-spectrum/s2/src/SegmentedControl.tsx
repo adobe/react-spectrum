@@ -11,15 +11,14 @@
  */
 
 import {AriaLabelingProps,  DOMRef, FocusEvents, FocusableRef, InputDOMProps, ValueBase} from '@react-types/shared';
-import {Radio, RadioGroup, RadioProps, Provider} from "react-aria-components"
+import {Radio, RadioGroup, RadioProps, Provider, RadioGroupStateContext} from "react-aria-components"
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect} from 'react';
 import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-
 
 interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
   children?: ReactNode,
@@ -45,13 +44,14 @@ const segmentedControl = style({
        // this is an arbitrary value. there is no minWidth in the tokens but the size of the each segment is dependent on the width of the segmented control so without it, it looks strange
       track: 240
     }
-  }
+  },
 }, getAllowedOverrides())
 
 const controlItem = style({
   ...focusRing(),
   display: 'flex',
   gap: 'text-to-visual',
+  forcedColorAdjust: 'none',
   color: {
     default: {
       trackStyle: {
@@ -165,33 +165,68 @@ const controlWrapper = style({
   width: 'full'
 })
 
-const SegmentedControlInternalContext = createContext<SegmentedControlProps>({});
+interface SegmentedControlInternalContextProps extends SegmentedControlProps {
+  register?: (value) => void;
+}
+
+const SegmentedControlInternalContext = createContext<SegmentedControlInternalContextProps>({});
 
 function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement> ) {
+  let {
+    trackStyle = 'none',
+    defaultValue,
+    value
+  } = props
   let domRef = useDOMRef(ref);
 
   return (
     <RadioGroup 
       {...props}
       ref={domRef}
-      className={segmentedControl({trackStyle: props.trackStyle}, props.styles)}
+      className={segmentedControl({trackStyle}, props.styles)}
       aria-label={props['aria-label'] || 'Segmented Control'}>
-      <Provider
-        values={[
-          [SegmentedControlInternalContext, {trackStyle: props.trackStyle || 'none'}]
-        ]}>
-        <div className={controlWrapper({trackStyle: props.trackStyle})}>
+      <Track trackStyle={props.trackStyle} defaultValue={defaultValue} value={value}>
+        <div className={controlWrapper({trackStyle})}>
           {props.children}
         </div>
-      </Provider>
+      </Track>
     </RadioGroup>
+  )
+}
+
+function Track(props) {
+  let state = useContext(RadioGroupStateContext);
+  let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
+
+  let register = useCallback((value) => {
+    if (!isRegistered.current) {
+      isRegistered.current = true;
+
+      state.setSelectedValue(value);
+    }
+  }, [])
+
+  return (
+    <Provider
+      values={[
+        [SegmentedControlInternalContext, {trackStyle: props.trackStyle || 'none', register: register}]
+    ]}>
+      {props.children}
+    </Provider>
   )
 }
 
 function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
-  let {trackStyle} = useContext(SegmentedControlInternalContext);
+  let {trackStyle, register} = useContext(SegmentedControlInternalContext);
+  let {isDisabled: isRadioGroupDisabled} = useContext(RadioGroupStateContext);
+
+  useEffect(() => {
+    if (!props.isDisabled && !isRadioGroupDisabled) {
+      register(props.value)
+    }
+  }, [])
 
   return (
     <Radio 
@@ -199,8 +234,7 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
       ref={domRef} 
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      // adding forced-color-adjust prevents the background from being partially filled aka leaving the text with a black background while the rest is colored differently
-      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, trackStyle}, props.styles) + ' ' + raw('forced-color-adjust: preserve-parent-color')} >
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, trackStyle}, props.styles)} >
       <Provider values={[
           [IconContext, {
             render: centerBaseline({slot: 'icon', className: style({order: 0, flexShrink: 0})}),
