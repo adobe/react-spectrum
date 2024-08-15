@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem} from 'react-aria-components';
+import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, ContextValue, SlotProps} from 'react-aria-components';
 import {Color} from '@react-types/color';
-import {ColorSwatchProps, SpectrumColorSwatchContext} from './ColorSwatch';
-import {DOMRef, ValueBase} from '@react-types/shared';
+import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
+import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
+import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {forwardRef, ReactElement, ReactNode} from 'react';
 import {size as sizeValue, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, StyleProps {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, StyleProps, SlotProps {
   /** The ColorSwatches within the ColorSwatchPicker. */
   children: ReactNode,
   /**
@@ -39,7 +40,10 @@ export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>
   rounding?: 'none' | 'default' | 'full'
 }
 
+export const ColorSwatchPickerContext = createContext<ContextValue<Partial<ColorSwatchPickerProps>, DOMRefValue<HTMLDivElement>>>(null);
+
 function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchPickerContext);
   let {
     density = 'regular',
     size = 'M',
@@ -63,9 +67,9 @@ function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: DOMRef<HTMLDivEle
           }
         }
       }, getAllowedOverrides())({density}, props.styles)}>
-      <SpectrumColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
+      <InternalColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
         {props.children}
-      </SpectrumColorSwatchContext.Provider>
+      </InternalColorSwatchContext.Provider>
     </AriaColorSwatchPicker>
   );
 }

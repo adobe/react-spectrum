@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage, Illustration} from '../src';
+import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
 import {categorizeArgTypes} from './utils';
-import Cloud from '../spectrum-illustrations/Cloud.svg';
-import DropToUpload from '../spectrum-illustrations/DropToUpload.svg';
+import Cloud from '../spectrum-illustrations/linear/Cloud';
+import CloudUpload from '../spectrum-illustrations/gradient/S2_fill_cloudUpload_generic1_160.svg';
+import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import type {Meta} from '@storybook/react';
 import React, {useState} from 'react';
@@ -44,9 +45,7 @@ export const Example = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <DropToUpload />
-          </Illustration>
+          <DropToUpload />
           <Heading>
             Drag and drop your file
           </Heading>
@@ -71,9 +70,7 @@ export const ExampleWithFileTrigger = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <Cloud />
-          </Illustration>
+          <Cloud />
           <Heading>
             Drag and drop your file
           </Heading>
@@ -105,9 +102,7 @@ export const LongBanner = (args: any) => {
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
-          <Illustration>
-            <DropToUpload />
-          </Illustration>
+          <DropToUpload />
           <Heading>
             Drag and drop your file
           </Heading>
@@ -120,6 +115,30 @@ export const LongBanner = (args: any) => {
   );
 };
 
+export const Gradient = (args: any) => {
+  let [isFilled, setIsFilled] = useState(false);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        {...args}
+        className={style({width: '[320px]', height: '[280px]'})}
+        isFilled={isFilled}
+        onDrop={() => setIsFilled(true)}>
+        <IllustratedMessage>
+          <CloudUpload />
+          <Heading>
+            Drag and drop your file
+          </Heading>
+          <Content>
+            Or, select a file from your computer
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    </>
+  );
+};
 
 function Draggable() {
   let {dragProps} = useDrag({
