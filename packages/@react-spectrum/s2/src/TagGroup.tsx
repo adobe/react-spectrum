@@ -71,9 +71,9 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
   maxRows?: number,
   /** The label to display on the action button.  */
-  actionLabel?: string,
+  groupActionLabel?: string,
   /** Handler that is called when the action button is pressed. */
-  onAction?: () => void
+  onGroupAction?: () => void
 }
 
 export const TagGroupContext = createContext<ContextValue<TagGroupProps<any>, DOMRefValue<HTMLDivElement>>>(null);
@@ -134,7 +134,7 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: TagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
-  let {maxRows, actionLabel, onAction, ...otherProps} = props;
+  let {maxRows, groupActionLabel, onGroupAction, ...otherProps} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
@@ -358,8 +358,8 @@ function TagGroupInner<T>({
                 size={size}
                 isCollapsed={isCollapsed}
                 handlePressCollapse={handlePressCollapse}
-                onAction={onAction}
-                actionLabel={actionLabel} />
+                onGroupAction={onGroupAction}
+                groupActionLabel={groupActionLabel} />
             }
           </Provider>
         </FormContext.Provider>
@@ -376,8 +376,8 @@ function ActionGroup(props) {
     size,
     isCollapsed,
     handlePressCollapse,
-    onAction,
-    actionLabel,
+    onGroupAction,
+    groupActionLabel,
     // directly use aria-labelling from the TagGroup because we can't use the id from the TagList
     // and we can't supply an id to the TagList because it'll cause an issue where all the tag ids flip back
     // and forth with their prefix in an infinite loop
@@ -406,14 +406,14 @@ function ActionGroup(props) {
           {isCollapsed ? 'Show all' : 'Collapse'}
         </ActionButton>
       }
-      {actionLabel && onAction &&
+      {groupActionLabel && onGroupAction &&
         <ActionButton
           isQuiet
           size={size}
           styles={style({margin: 4})}
           UNSAFE_style={{display: 'inline-flex'}}
-          onPress={() => onAction?.()}>
-          {actionLabel}
+          onPress={() => onGroupAction?.()}>
+          {groupActionLabel}
         </ActionButton>
       }
     </div>
