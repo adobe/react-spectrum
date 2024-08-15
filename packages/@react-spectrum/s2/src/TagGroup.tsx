@@ -46,7 +46,7 @@ import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
   /** The children of the tag. */
   children?: ReactNode
 }
@@ -495,7 +495,7 @@ export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
-  let {size = 'M', isEmphasized} = ctx ?? {};
+  let {size, isEmphasized} = ctx ?? {};
 
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -504,8 +504,8 @@ export function Tag({children, ...props}: TagProps) {
       textValue={textValue}
       {...props}
       ref={ref}
-      style={{...props.UNSAFE_style, ...pressScale(ref)}}
-      className={renderProps => props.UNSAFE_className || '' + tagStyles({size, isEmphasized, isLink, ...renderProps})} >
+      style={{...pressScale(ref)}}
+      className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
         <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{children}</TagWrapper>
       ))}
@@ -514,7 +514,7 @@ export function Tag({children, ...props}: TagProps) {
 }
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
-  let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
+  let {size} = useSlottedContext(TagGroupContext) ?? {};
   return (
     <>
       {isInRealDOM && (
