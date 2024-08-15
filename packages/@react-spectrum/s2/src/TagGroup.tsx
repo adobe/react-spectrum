@@ -144,7 +144,7 @@ function TagGroupInner<T>({
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let {onRemove} = useContext(InternalTagGroupContext);
   let isEmpty = collection.size === 0;
-  let showActions = tagState.showCollapseButton || tagState.visibleTagCount < collection.size;
+  let showCollapseToggleButton = tagState.showCollapseButton || tagState.visibleTagCount < collection.size;
   let formContext = useContext(FormContext);
   let domRef = useDOMRef(ref);
 
@@ -349,7 +349,7 @@ function TagGroupInner<T>({
               })}>
               {item => <Tag {...item.props} />}
             </TagList>
-            {showActions && !isEmpty &&
+            {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
               <ActionGroup
                 aria-label={props['aria-label']}
                 aria-labelledby={props['aria-labelledby']}
