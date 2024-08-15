@@ -8,7 +8,26 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 
 let mapToNewKeys = {
   'inlinealert.info': 'inlinealert.informative',
-}
+};
+
+let stringsToAllow = new Set([
+  'menu.moreActions',
+  'dialog.alert',
+  'contextualhelp.info',
+  'contextualhelp.help',
+  'dialog.dismiss',
+  'dropzone.replaceMessage',
+  'label.(required)',
+  'label.(optional)',
+  'inlinealert.informative',
+  'inlinealert.negative',
+  'inlinealert.notice',
+  'inlinealert.positive',
+  'picker.placeholder',
+  'slider.minimum',
+  'slider.maximum',
+  'tag.noTags'
+]);
 
 function prefixKeys(obj, prefix) {
   let newObj = {};
@@ -18,6 +37,17 @@ function prefixKeys(obj, prefix) {
       newKey = mapToNewKeys[newKey];
     }
     newObj[newKey] = value;
+  }
+  return newObj;
+}
+
+// remove properties from an object if they are not in the set of strings to allow
+function filterKeys(obj) {
+  let newObj = {};
+  for (let [key, value] of Object.entries(obj)) {
+    if (stringsToAllow.has(key)) {
+      newObj[key] = value;
+    }
   }
   return newObj;
 }
@@ -41,7 +71,7 @@ for (let intlPkg of rspIntlPackages) {
     let localeName = path.basename(locale).split('.')[0];
     let messages = fs.readJsonSync(locale);
     if (!packs.has(localeName)) {
-      packs.set(localeName, prefixKeys(messages, pkgName));
+      packs.set(localeName, filterKeys(prefixKeys(messages, pkgName)));
     } else {
       let existing = packs.get(localeName);
       let duplicates = new Map();
@@ -55,7 +85,7 @@ for (let intlPkg of rspIntlPackages) {
           }
         }
       }
-      let concat = {...existing, ...prefixKeys(messages, pkgName)};
+      let concat = {...existing, ...filterKeys(prefixKeys(messages, pkgName))};
 
       packs.set(localeName, concat);
     }

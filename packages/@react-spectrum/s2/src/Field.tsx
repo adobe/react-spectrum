@@ -116,7 +116,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
               * so no need to duplicate it here. If optional, we do want it to be announced here.
               */
               <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
-                {isRequired ? stringFormatter.format('label.(required)') : stringFormatter.format('label.(optiona)')}
+                {isRequired ? stringFormatter.format('label.(required)') : stringFormatter.format('label.(optional)')}
               </span>
             }
           </span>
