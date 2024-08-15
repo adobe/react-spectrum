@@ -11,9 +11,10 @@
  */
 
 import {ActionButton, ActionButtonProps} from './ActionButton';
-import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {ContextValue} from 'react-aria-components';
+import {createContext, forwardRef} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
-import {forwardRef} from 'react';
 import {forwardRefType} from './types';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -21,6 +22,7 @@ import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
@@ -29,8 +31,11 @@ export interface ActionMenuProps<T> extends
   StyleProps, DOMProps, AriaLabelingProps {
   }
 
+export const ActionMenuContext = createContext<ContextValue<ActionMenuProps<any>, FocusableRefValue<HTMLButtonElement>>>(null);
+
 function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = stringFormatter.format('menu.moreActions');

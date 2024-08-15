@@ -1,14 +1,16 @@
 {
-  "name": "@react-spectrum/upgrade-cli",
+  "name": "@react-spectrum/codemods",
   "version": "0.0.1",
   "private": true,
-  "source": "src/index.ts",
   "main": "dist/index.js",
-  "bin": {
-    "upgrade-react-spectrum": "./dist/index.js"
+  "source": "src/index.ts",
+  "bin": "dist/index.js",
+  "targets": {
+    "main": false
   },
   "scripts": {
-    "start": "node --loader=ts-node/esm src/index.ts"
+    "build": "tsc",
+    "prepublishOnly": "yarn build"
   },
   "files": [
     "dist"
@@ -23,12 +25,12 @@
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
+    "@react-spectrum/s2": "^0.2.0",
     "@react-types/shared": "^3.24.0",
     "@types/node": "^20",
     "boxen": "^5.1.2",
     "build": "^0.1.4",
     "chalk": "^4.0.0",
-    "commander": "^12.0.0",
     "execa": "^5.1.1",
     "jscodeshift": "^0.15.2",
     "ts-node": "^10.9.2",

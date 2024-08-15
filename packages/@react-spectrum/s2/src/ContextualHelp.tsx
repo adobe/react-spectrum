@@ -1,7 +1,7 @@
 import {ActionButton} from './ActionButton';
-import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {ContentContext, FooterContext, HeadingContext} from './Content';
-import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext, useContextProps} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
@@ -14,8 +14,8 @@ import {mergeStyles} from '../style/runtime';
 import {Popover, PopoverProps} from './Popover';
 import {style, size as styleSize} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ContextualHelpStyleProps {
   /**
@@ -46,12 +46,11 @@ const popover = style({
   padding: 24
 });
 
-export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, HTMLButtonElement>>({});
+export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let domRef = useFocusableRef(ref);
-  [props, domRef] = useContextProps(props, domRef, ContextualHelpContext);
+  [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
     children,
     defaultOpen,
@@ -65,6 +64,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
     shouldFlip,
     UNSAFE_className,
     UNSAFE_style,
+    styles,
     variant = 'help'
   } = props;
 
@@ -89,6 +89,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         {...mergeProps(buttonProps, labelProps)}
         UNSAFE_style={UNSAFE_style}
         UNSAFE_className={UNSAFE_className}
+        styles={styles}
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
@@ -108,15 +109,15 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
                   [DEFAULT_SLOT]: {}
                 }
               }],
-              [HeadingContext, {className: style({
+              [HeadingContext, {styles: style({
                 font: 'heading-xs',
                 margin: 0,
                 marginBottom: styleSize(8) // This only makes it 10px on mobile and should be 12px
               })}],
-              [ContentContext, {className: style({
+              [ContentContext, {styles: style({
                 font: 'body-sm'
               })}],
-              [FooterContext, {className: style({
+              [FooterContext, {styles: style({
                 font: 'body-sm',
                 marginTop: 16
               })}]

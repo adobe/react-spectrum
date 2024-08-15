@@ -6791,6 +6791,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/codemods@workspace:packages/dev/codemods":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/codemods@workspace:packages/dev/codemods"
+  dependencies:
+    "@babel/parser": "npm:^7.24.5"
+    "@babel/traverse": "npm:^7.24.5"
+    "@babel/types": "npm:^7.24.5"
+    "@react-spectrum/s2": "npm:^0.2.0"
+    "@react-types/shared": "npm:^3.24.0"
+    "@types/jscodeshift": "npm:^0.11.11"
+    "@types/node": "npm:^20"
+    boxen: "npm:^5.1.2"
+    build: "npm:^0.1.4"
+    chalk: "npm:^4.0.0"
+    execa: "npm:^5.1.1"
+    jscodeshift: "npm:^0.15.2"
+    react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.5.0"
+    uuid: "npm:^9.0.1"
+  bin:
+    codemods: dist/index.js
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/color@workspace:packages/@react-spectrum/color":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/color@workspace:packages/@react-spectrum/color"
@@ -7484,7 +7509,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:^0.2.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
@@ -7942,31 +7967,6 @@ __metadata:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@react-spectrum/upgrade-cli@workspace:packages/@react-spectrum/upgrade-cli":
-  version: 0.0.0-use.local
-  resolution: "@react-spectrum/upgrade-cli@workspace:packages/@react-spectrum/upgrade-cli"
-  dependencies:
-    "@babel/parser": "npm:^7.24.5"
-    "@babel/traverse": "npm:^7.24.5"
-    "@babel/types": "npm:^7.24.5"
-    "@react-types/shared": "npm:^3.24.0"
-    "@types/jscodeshift": "npm:^0.11.11"
-    "@types/node": "npm:^20"
-    boxen: "npm:^5.1.2"
-    build: "npm:^0.1.4"
-    chalk: "npm:^4.0.0"
-    commander: "npm:^12.0.0"
-    execa: "npm:^5.1.1"
-    jscodeshift: "npm:^0.15.2"
-    react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.5.0"
-    uuid: "npm:^9.0.1"
-  bin:
-    upgrade-react-spectrum: ./dist/index.js
   languageName: unknown
   linkType: soft
 
@@ -14519,13 +14519,6 @@ __metadata:
   version: 2.20.0
   resolution: "commander@npm:2.20.0"
   checksum: 10c0/c037420cdf8c8bbadf37749fe129298eda5b5c004e81805057d87ff508f9dbfb680d30aebe1bbcdfc54b579eaf6182dd90077e506add74d6b26ef52c7e22d41d
-  languageName: node
-  linkType: hard
-
-"commander@npm:^12.0.0":
-  version: 12.1.0
-  resolution: "commander@npm:12.1.0"
-  checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
   languageName: node
   linkType: hard
 

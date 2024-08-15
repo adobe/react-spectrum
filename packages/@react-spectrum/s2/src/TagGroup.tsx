@@ -17,16 +17,18 @@ import {
   TagGroupProps as AriaTagGroupProps,
   TagProps as AriaTagProps,
   composeRenderProps,
+  ContextValue,
   Provider,
   TextContext as RACTextContext,
   TagList,
-  TagListProps
+  TagListProps,
+  useSlottedContext
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {DOMRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
@@ -34,11 +36,12 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
-// @ts-ignore
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
@@ -65,7 +68,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   errorMessage?: ReactNode
 }
 
-const TagGroupContext = createContext<TagGroupProps<any>>({});
+export const TagGroupContext = createContext<ContextValue<TagGroupProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
 const helpTextStyles = style({
   gridArea: 'helptext',
@@ -91,6 +94,7 @@ function TagGroup<T extends object>(
   ref: DOMRef<HTMLDivElement>
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   let {
     label,
     description,
@@ -117,7 +121,7 @@ function TagGroup<T extends object>(
     helpText =  (
       <Text
         slot="description"
-        className={helpTextStyles({size})}>
+        styles={helpTextStyles({size})}>
         {description}
       </Text>
     );
@@ -268,7 +272,7 @@ const tagStyles = style({
 
 export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
-  let {size = 'M', isEmphasized} = useContext(TagGroupContext);
+  let {size = 'M', isEmphasized} = useSlottedContext(TagGroupContext)!;
 
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -292,9 +296,9 @@ export function Tag({children, ...props}: TagProps) {
             })}>
             <Provider
               values={[
-                [TextContext, {className: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+                [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
                 [IconContext, {
-                  render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+                  render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
                 }],
                 [AvatarContext, {

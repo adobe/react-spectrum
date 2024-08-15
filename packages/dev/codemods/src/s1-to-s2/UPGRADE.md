@@ -85,7 +85,6 @@ Note that `[PENDING]` indicates that future changes will occur before the final 
 - Remove `isReadOnly` (it is no longer supported)
 - Remove `validationState` (it is no longer supported)
 - Remove `validationBehavior` (it is no longer supported)
-- TODO: Clarify/verify the above
 
 ## Grid
 - Update `Grid` to be a `div` and apply grid styles using the style macro
@@ -357,8 +356,8 @@ Dimension values should be converted to pixel values. Use the following mappings
 | `'static-size-0'` | `0` |
 | `'static-size-10'` | `1` |
 | `'static-size-25'` | `2` |
-| `'static-size-50'` | `4` |
 | `'static-size-40'` | `3` |
+| `'static-size-50'` | `4` |
 | `'static-size-65'` | `5` |
 | `'static-size-100'` | `8` |
 | `'static-size-115'` | `9` |

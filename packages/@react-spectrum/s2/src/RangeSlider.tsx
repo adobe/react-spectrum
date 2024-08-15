@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
-import {FocusableRef, RangeValue} from '@react-types/shared';
-import {FormContext, useFormProps} from './Form';
-import {forwardRef, useContext, useRef} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {pressScale} from './pressScale';
 import {
+  ContextValue,
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
+import {createContext, forwardRef, useContext, useRef} from 'react';
+import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
+import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
+import {FormContext, useFormProps} from './Form';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {
   /**
@@ -35,8 +37,11 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
   endName?: string
 }
 
+export const RangeSliderContext = createContext<ContextValue<RangeSliderProps, FocusableRefValue<HTMLDivElement>>>(null);
+
 function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
