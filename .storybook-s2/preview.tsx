@@ -65,7 +65,7 @@ const preview = {
     },
     options: {
       storySort: {
-        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Release Notes'],
+        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Illustrations', 'Release Notes'],
         method: 'alphabetical'
       }  
     }
