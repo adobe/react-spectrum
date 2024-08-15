@@ -124,6 +124,7 @@
     "@parcel/macros": "2.12.1-canary.3165"
   },
   "dependencies": {
+    "@react-aria/collections": "3.0.0-alpha.3",
     "@react-aria/i18n": "^3.11.0",
     "@react-aria/interactions": "^3.22.0",
     "@react-aria/utils": "^3.23.0",
