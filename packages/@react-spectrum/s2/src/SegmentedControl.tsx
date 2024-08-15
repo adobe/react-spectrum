@@ -10,27 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps,  DOMRef, FocusEvents, FocusableRef, InputDOMProps, ValueBase} from '@react-types/shared';
-import {Radio, RadioGroup, RadioProps, Provider, RadioGroupStateContext} from "react-aria-components"
-import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {AriaLabelingProps, DOMRef, DOMRefValue, FocusEvents, FocusableRef, InputDOMProps, ValueBase} from '@react-types/shared';
+import {centerBaseline} from './CenterBaseline';
+import {ContextValue, Radio, RadioGroup, RadioProps, Provider, RadioGroupStateContext, useSlottedContext} from "react-aria-components"
 import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect} from 'react';
 import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {centerBaseline} from './CenterBaseline';
 import {IconContext} from './Icon';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
+export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
   children?: ReactNode,
   isDisabled?: boolean
 }
-interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
+export interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
   children?: ReactNode
 }
 
+export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
+
 const segmentedControl = style({
-  fontFamily: 'sans',
-  fontSize: 'body',
-  fontWeight: 'normal',
+  font: 'control',
   display: 'flex',
   backgroundColor: 'gray-100',
   borderRadius: 'lg',
@@ -63,20 +64,12 @@ const controlItem = style({
     },
   },
   // the padding should be a little less for segmented controls that only contain icons but not sure of a good way to do that
-  paddingX: {
-    trackStyle: {
-      none: 12
-    }
-  },
-  paddingY: 8,
+  paddingX: 'edge-to-text',
+  height: 32,
   alignItems: 'center',
   boxSizing: 'border-box',
   borderStyle: 'solid',
-  borderWidth: {
-    trackStyle: {
-      track: 2
-    },
-  },
+  borderWidth: 2,
   borderColor: {
     default: 'transparent',
     isSelected: {
@@ -91,9 +84,10 @@ const controlItem = style({
       }
     }
   },
-  borderRadius: 'lg',
+  borderRadius: 'control',
   flexBasis: 0,
   flexGrow: 1,
+  flexShrink: 0,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
   '--iconPrimary': {
@@ -109,6 +103,7 @@ interface SegmentedControlInternalContextProps extends SegmentedControlProps {
 const SegmentedControlInternalContext = createContext<SegmentedControlInternalContextProps>({});
 
 function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement> ) {
+  [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {
     defaultValue,
     value
@@ -119,16 +114,18 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
     <RadioGroup 
       {...props}
       ref={domRef}
-      className={segmentedControl(null, props.styles)}
+      style={props.UNSAFE_style}
+      // @ts-ignore
+      className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
       aria-label={props['aria-label'] || 'Segmented Control'}>
-      <Track defaultValue={defaultValue} value={value}>
+      <DefaultSelectionTracker defaultValue={defaultValue} value={value}>
         {props.children}
-      </Track>
+      </DefaultSelectionTracker>
     </RadioGroup>
   )
 }
 
-function Track(props) {
+function DefaultSelectionTracker(props) {
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
 
