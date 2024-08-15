@@ -33,6 +33,9 @@ export function Migrating() {
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
         </ul>
 
+        <H3>AlertDialog</H3>
+        <P>No updates needed.</P>
+
         <H3>Avatar</H3>
         <ul className="sb-unstyled">
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isDisabled</Code> (it has not been implemented yet)</li>
@@ -146,7 +149,9 @@ export function Migrating() {
         </ul>
 
         <H3>IllustratedMessage</H3>
-        <P>No updates needed.</P>
+        <ul className="sb-unstyled">
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update illustrations to be from <Code>@react-spectrum/s2/illustrations</Code>. See <Link href="?path=/docs/illustrations--docs">Illustrations</Link></li>
+        </ul>
 
         <H3>InlineAlert</H3>
         <ul className="sb-unstyled">
@@ -185,6 +190,12 @@ export function Migrating() {
         <H3>MenuTrigger</H3>
         <ul className="sb-unstyled">
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
+        </ul>
+
+        <H3>NumberField</H3>
+        <ul className="sb-unstyled">
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>hideStepper</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>Picker</H3>
@@ -271,12 +282,9 @@ export function Migrating() {
 
         <H3>TagGroup</H3>
         <ul className="sb-unstyled">
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>actionLabel</Code> (it has not been implemented yet)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>onAction</Code> (it has not been implemented yet)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>maxRows</Code> (it has not been implemented yet)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>errorMessage</Code> (it has not been implemented yet)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isInvalid</Code> (it has not been implemented yet)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>validationState</Code> (<Code>isInvalid</Code> should be used when it becomes available)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Rename <Code>actionLabel</Code> to <Code>groupActionLabel</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Rename <Code>onAction</Code> to <Code>onGroupAction</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>Tag</Code></li>
         </ul>
 
