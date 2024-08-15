@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Довідка",
+  "contextualhelp.info": "Інформація",
+  "dialog.alert": "Сигнал тривоги",
+  "dialog.dismiss": "Скасувати",
+  "dropzone.replaceMessage": "Перетягніть файл для заміни",
+  "inlinealert.informative": "Інформація",
+  "inlinealert.negative": "Помилка",
+  "inlinealert.notice": "Попередження",
+  "inlinealert.positive": "Успішно",
+  "label.(optional)": "(необов’язково)",
+  "label.(required)": "(обов’язково)",
+  "menu.moreActions": "Більше дій",
+  "picker.placeholder": "Виберіть опцію...",
+  "slider.maximum": "Максимум",
+  "slider.minimum": "Мінімум",
+  "tag.noTags": "Немає"
+}

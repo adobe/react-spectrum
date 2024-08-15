@@ -36,8 +36,11 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
@@ -87,27 +90,30 @@ const helpTextStyles = style({
 });
 
 function TagGroup<T extends object>(
-  {
+  props: TagGroupProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
+  let {
     label,
     description,
     items,
     labelPosition = 'top',
     labelAlign = 'start',
     children,
-    renderEmptyState,
+    renderEmptyState = () => stringFormatter.format('tag.noTags'),
     isEmphasized,
     isInvalid,
     errorMessage,
     UNSAFE_className = '',
     UNSAFE_style,
-    ...props
-  }: TagGroupProps<T>,
-  ref: DOMRef<HTMLDivElement>
-) {
-  [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
+    size = 'M',
+    ...otherProps
+  } = props;
+
   let formContext = useContext(FormContext);
   props = useFormProps(props);
-  let {size = 'M'} = props;
   let domRef = useDOMRef(ref);
 
   let helpText: ReactNode = null;
@@ -122,7 +128,7 @@ function TagGroup<T extends object>(
   } else if (isInvalid) {
     helpText = (
       <div
-        className={helpTextStyles({size: props.size || 'M', isInvalid})}>
+        className={helpTextStyles({size, isInvalid})}>
         <CenterBaseline>
           <AlertIcon />
         </CenterBaseline>
@@ -137,7 +143,7 @@ function TagGroup<T extends object>(
   // but this isn't possible yet
   return (
     <AriaTagGroup
-      {...props}
+      {...otherProps}
       ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({

@@ -229,10 +229,12 @@ function enforceExports({Yarn}) {
       let exportsImport = workspace.manifest?.exports?.import;
       if (workspace.manifest.exports?.['.']) {
         for (let key in workspace.manifest.exports) {
-          let subExportsRequire = workspace.manifest.exports[key].require;
-          let subExportsImport = workspace.manifest.exports[key].import;
-          workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
-          workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+          if (workspace.manifest.exports[key]) {
+            let subExportsRequire = workspace.manifest.exports[key].require;
+            workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
+            let subExportsImport = workspace.manifest.exports[key].import;
+            workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+          }
         }
       } else {
         workspace.set('exports.require', setExtension(exportsRequire, cjsExt));

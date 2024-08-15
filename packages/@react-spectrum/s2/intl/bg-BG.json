@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Помощ",
+  "contextualhelp.info": "Информация",
+  "dialog.alert": "Сигнал",
+  "dialog.dismiss": "Отхвърляне",
+  "dropzone.replaceMessage": "Пуснете файл за замяна",
+  "inlinealert.informative": "Информация",
+  "inlinealert.negative": "Грешка",
+  "inlinealert.notice": "Предупреждение",
+  "inlinealert.positive": "Успешно",
+  "label.(optional)": "(незадължително)",
+  "label.(required)": "(задължително)",
+  "menu.moreActions": "Повече действия",
+  "picker.placeholder": "Изберете опция",
+  "slider.maximum": "Максимум",
+  "slider.minimum": "Минимум",
+  "tag.noTags": "Нито един"
+}
