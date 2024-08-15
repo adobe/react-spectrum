@@ -147,7 +147,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
 const quietFocusLine = style({
   width: 'full',
   // Use pixels since we are emulating a border.
-  height: `[2px]`,
+  height: '[2px]',
   position: 'absolute',
   bottom: 0,
   borderRadius: 'full',
@@ -155,7 +155,7 @@ const quietFocusLine = style({
     default: 'blue-800',
     forcedColors: 'Highlight'
   }
-})
+});
 
 export let menu = style({
   outlineStyle: 'none',

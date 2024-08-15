@@ -34,10 +34,10 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
-import {pressScale} from './pressScale';
-import {useDOMRef} from '@react-spectrum/utils';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {pressScale} from './pressScale';
+// @ts-ignore
+import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // Get types from RSP and extend those?

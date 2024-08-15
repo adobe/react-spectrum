@@ -67,14 +67,16 @@ function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>)
         {({state, isDisabled}) => (
           <>
             <div className={upperTrack({isDisabled, trackStyle})} />
-            <div style={{
+            <div
+              style={{
                 width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`,
                 [cssDirection]: `${state.getThumbPercent(0) * 100}%`
               }}
               className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
             <SliderThumb
               className={thumbContainer}
-              index={0} name={props.startName}
+              index={0}
+              name={props.startName}
               aria-label={stringFormatter.format('slider.minimum')}
               ref={lowerThumbRef}
               style={(renderProps) => pressScale(lowerThumbRef, {
@@ -94,7 +96,8 @@ function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>)
             </SliderThumb>
             <SliderThumb
               className={thumbContainer}
-              index={1} name={props.endName}
+              index={1}
+              name={props.endName}
               aria-label={stringFormatter.format('slider.maximum')}
               ref={upperThumbRef}
               style={(renderProps) => pressScale(upperThumbRef, {
