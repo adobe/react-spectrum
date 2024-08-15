@@ -40,7 +40,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface NumberFieldProps extends
   AriaNumberFieldProps,
   StyleProps,
-  Omit<SpectrumLabelableProps, 'contextualHelp'>,
+  SpectrumLabelableProps,
   HelpTextProps {
   /**
    * Whether the NumberField step buttons should be collapsed into a single column.
@@ -228,6 +228,7 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   let {
     label,
+    contextualHelp,
     description: descriptionMessage,
     errorMessage,
     isCollapsed,
@@ -280,7 +281,8 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
                   size={size}
                   labelPosition={labelPosition}
                   labelAlign={labelAlign}
-                  necessityIndicator={necessityIndicator}>
+                  necessityIndicator={necessityIndicator}
+                  contextualHelp={contextualHelp}>
                   {label}
                 </FieldLabel>
                 <FieldGroup

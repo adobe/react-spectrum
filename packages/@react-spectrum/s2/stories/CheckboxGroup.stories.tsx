@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxGroup} from '../src';
+import {
+  Checkbox,
+  CheckboxGroup,
+  Content,
+  ContextualHelp,
+  Footer,
+  Heading,
+  Link,
+  Text
+} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof CheckboxGroup> = {
@@ -40,5 +49,66 @@ export const Example: Story = {
   },
   args: {
     label: 'Favorite sports'
+  }
+};
+
+export const ContextualHelpExample = (args: any) => (
+  <CheckboxGroup {...args}>
+    <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+    <Checkbox value="baseball">Baseball</Checkbox>
+    <Checkbox value="basketball">Basketball</Checkbox>
+  </CheckboxGroup>
+);
+
+ContextualHelpExample.args = {
+  label: 'Favorite sports',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>Sports</Heading>
+      <Content>
+        <Text>
+          Social games we paly to have fun and stay healthy.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Sport"
+          target="_blank">Learn more about sports</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<CheckboxGroup
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Sports</Heading>
+      <Content>
+        <Text>
+          Social games we paly to have fun and stay healthy.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Sport"
+          target="_blank">Learn more about sports</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+  label="Segment"
+/>
+  <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>`;
+      }
+    }
   }
 };
