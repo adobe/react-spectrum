@@ -51,7 +51,7 @@ export function Migrating() {
         <H3>Avatar</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isDisabled</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>size</Code> to be a pixel value if it currently matches <Code>'avatar-size-*'</li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>size</Code> to be a pixel value if it currently matches <Code>'avatar-size-*'</Code></li>
         </ul>
 
         <H3>Breadcrumbs</H3>
