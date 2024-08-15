@@ -22,7 +22,6 @@ import {
   Provider,
   TextContext as RACTextContext,
   TagList,
-  TagListContext,
   TagListProps,
   useLocale,
   useSlottedContext

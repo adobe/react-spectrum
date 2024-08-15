@@ -80,7 +80,7 @@ export let Example = {
 interface ITagItem {
   name: string,
   id: string
-};
+}
 let items: Array<ITagItem> = [
   {name: 'Chocolate', id: 'chocolate'},
   {name: 'Mint', id: 'mint'},

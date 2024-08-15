@@ -15,7 +15,6 @@ import {ButtonContext} from './Button';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {DOMProps as AriaDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
