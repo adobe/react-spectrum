@@ -105,55 +105,62 @@ export const MixedForm = (args: any) => (
     </RadioGroup>
     <SearchField label="Search" name="search" />
   </Form>
-)
+);
+
+MixedForm.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
 
 export const CustomLabelsExample = (args: any) => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'sans'})}>
+      <div role="group" aria-labelledby="sortOrder" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <span id="sortOrder">Sort order</span>
-        <ActionButton onPress={() => setIsSortAscending(!isSortAscending)}>
+        <ActionButton aria-label="Sort direction" onPress={() => setIsSortAscending(!isSortAscending)}>
           {
             isSortAscending ? <SortUp /> : <SortDown />
           }
         </ActionButton>
-        <Picker aria-labelledby="sortOrder" styles={style({width: 208})}>
+        <Picker aria-label="Sort by" styles={style({width: 208})}>
           <PickerItem id="name">Name</PickerItem>
           <PickerItem id="created">Created</PickerItem>
         </Picker>
       </div>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'sans'})}>
-        <span>Filter terms</span>
-        <TagGroup styles={style({minWidth: 208})}>
+      <div role="group" aria-labelledby="filterTerms" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+        <span id="filterTerms">Filter terms</span>
+        <TagGroup aria-label="Keywords" styles={style({minWidth: 208})}>
           <Tag>keyword 1</Tag>
           <Tag>keyword 2</Tag>
         </TagGroup>
       </div>
       <Divider size="S" />
-      <div className={style({display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'sans'})}>
+      <div role="group" aria-labelledby="colorLabel" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
         <span id="colorLabel">Color settings</span>
         <ToggleButton>
           Enable color
         </ToggleButton>
-        <ColorField aria-labelledby="coloRlabel" styles={style({width: 144})} />
+        <ColorField aria-label="Fill color" styles={style({width: 144})} />
         <ColorSlider channel="alpha" defaultValue="#000" />
       </div>
       <Divider size="S" />
-      <div className={style({display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'sans'})}>
-        <span>Search</span>
+      <div role="group" aria-labelledby="searchLabel" className={style({display: 'flex', alignItems: 'center', gap: 8, font: 'ui'})}>
+        <span id="searchLabel">Search</span>
         <ToggleButton>
           Enable search
         </ToggleButton>
         <TextField aria-label="Query" styles={style({width: 144})} />
-        <ComboBox styles={style({width: 144})}>
+        <ComboBox aria-label="Search terms" styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
           <ComboBoxItem>search term 2</ComboBoxItem>
         </ComboBox>
         <NumberField aria-label="Number of results" defaultValue={50} styles={style({width: 96})} />
       </div>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 16, fontFamily: 'sans'})}>
-        <span>Search parameters</span>
+      <div role="group" aria-labelledby="searchParameters" className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
+        <span id="searchParameters">Search parameters</span>
         <RadioGroup aria-label="Search range" orientation="horizontal" styles={style({width: 208})}>
           <Radio value="text">Text</Radio>
           <Radio value="images">Images</Radio>
@@ -166,14 +173,15 @@ export const CustomLabelsExample = (args: any) => {
         </CheckboxGroup>
       </div>
       <Divider size="S" />
-      <div className={style({display: 'flex', alignItems: 'center', gap: 16, fontFamily: 'sans'})}>
-        <span>Misc</span>
-        <ProgressBar aria-label="Percent complete" styles={style({width: 144})} />
-        <Meter aria-label="Search confidence" variant="positive" styles={style({width: 144})} />
+      <div role="group" aria-label="Progress" className={style({display: 'flex', alignItems: 'center', gap: 16, font: 'ui'})}>
+        <span>28% complete</span>
+        <ProgressBar aria-label="Percent complete" value={28} styles={style({width: 144})} />
+        <span>44% confidence</span>
+        <Meter aria-label="Search confidence" variant="positive" value={44} styles={style({width: 144})} />
       </div>
       <Divider size="S" />
-      <div className={style({fontFamily: 'sans'})}>
-        <div>Sliders (with and without label)</div>
+      <div role="group" aria-labelledby="sliders" className={style({font: 'ui'})}>
+        <div id="sliders">Sliders (with and without label)</div>
         <Slider
           aria-label="Days to search"
           label="With label"
@@ -197,4 +205,10 @@ export const CustomLabelsExample = (args: any) => {
       <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
     </Form>
   );
+};
+
+CustomLabelsExample.parameters = {
+  docs: {
+    disable: true
+  }
 };
