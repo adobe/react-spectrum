@@ -62,6 +62,6 @@ export const CustomWidth = (args: any) => (
     <ControlItem value="overview">Overview</ControlItem>
     <ControlItem value="specs">Specs</ControlItem>
     <ControlItem value="guidelines">Guidelines</ControlItem>
-    <ControlItem value="accessibility">Accessbility</ControlItem>
+    <ControlItem value="accessibility">Accessibility</ControlItem>
   </SegmentedControl>
 )
