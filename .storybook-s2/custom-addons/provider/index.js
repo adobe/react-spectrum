@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {addons} from '@storybook/preview-api';
 import {makeDecorator} from '@storybook/preview-api';
 import {getQueryParams} from '@storybook/preview-api';
-import {I18nProvider} from '@react-aria/i18n';
+import {Provider} from '@react-spectrum/s2';
 
 document.body.style.margin = '0';
 
@@ -30,9 +30,9 @@ function ProviderUpdater(props) {
   }, []);
 
   return (
-    <I18nProvider locale={localeValue}>
+    <Provider locale={localeValue}>
       {props.children}
-    </I18nProvider>
+    </Provider>
   );
 }
 
