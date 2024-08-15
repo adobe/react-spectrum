@@ -19,8 +19,11 @@ import {
   ColorSlider,
   ComboBox,
   ComboBoxItem,
+  Content,
+  ContextualHelp,
   Divider,
   Form,
+  Heading,
   Meter,
   NumberField,
   Picker,
@@ -93,7 +96,7 @@ export const CustomLabelsExample = (args: any) => {
         <span id="sortOrder">Sort order</span>
         <ActionButton onPress={() => setIsSortAscending(!isSortAscending)}>
           {
-            isSortAscending ? <SortUp/> : <SortDown/>
+            isSortAscending ? <SortUp /> : <SortDown />
           }
         </ActionButton>
         <Picker aria-labelledby="sortOrder" styles={style({width: 208})}>
@@ -108,27 +111,27 @@ export const CustomLabelsExample = (args: any) => {
           <Tag>keyword 2</Tag>
         </TagGroup>
       </div>
-      <Divider size="S"/>
+      <Divider size="S" />
       <div className={style({display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'sans'})}>
         <span id="colorLabel">Color settings</span>
         <ToggleButton>
           Enable color
         </ToggleButton>
-        <ColorField aria-labelledby="coloRlabel" styles={style({width: 144})}/>
-        <ColorSlider channel="alpha" defaultValue="#000"/>
+        <ColorField aria-labelledby="coloRlabel" styles={style({width: 144})} />
+        <ColorSlider channel="alpha" defaultValue="#000" />
       </div>
-      <Divider size="S"/>
+      <Divider size="S" />
       <div className={style({display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'sans'})}>
         <span>Search</span>
         <ToggleButton>
           Enable search
         </ToggleButton>
-        <TextField aria-label="Query" styles={style({width: 144})}/>
+        <TextField aria-label="Query" styles={style({width: 144})} />
         <ComboBox styles={style({width: 144})}>
           <ComboBoxItem>search term 1</ComboBoxItem>
           <ComboBoxItem>search term 2</ComboBoxItem>
         </ComboBox>
-        <NumberField aria-label="Number of results" defaultValue={50} styles={style({width: 96})}/>
+        <NumberField aria-label="Number of results" defaultValue={50} styles={style({width: 96})} />
       </div>
       <div className={style({display: 'flex', alignItems: 'center', gap: 16, fontFamily: 'sans'})}>
         <span>Search parameters</span>
@@ -143,12 +146,34 @@ export const CustomLabelsExample = (args: any) => {
           <Checkbox value="author">Author</Checkbox>
         </CheckboxGroup>
       </div>
-      <Divider size="S"/>
+      <Divider size="S" />
       <div className={style({display: 'flex', alignItems: 'center', gap: 16, fontFamily: 'sans'})}>
         <span>Misc</span>
-        <Slider aria-label="Days to search" styles={style({width: 208})}/>
-        <ProgressBar aria-label="Percent complete" styles={style({width: 144})}/>
-        <Meter aria-label="Search confidence" variant="positive" styles={style({width: 144})}/>
+        <ProgressBar aria-label="Percent complete" styles={style({width: 144})} />
+        <Meter aria-label="Search confidence" variant="positive" styles={style({width: 144})} />
+      </div>
+      <Divider size="S" />
+      <div className={style({fontFamily: 'sans'})}>
+        <div>Sliders (with and without label)</div>
+        <Slider
+          aria-label="Days to search"
+          label="With label"
+          labelPosition="side"
+          contextualHelp={
+            <ContextualHelp>
+              <Heading>Help</Heading>
+              <Content>Help content</Content>
+            </ContextualHelp>
+          } />
+        <Slider
+          aria-label="Days to search"
+          labelPosition="side"
+          contextualHelp={
+            <ContextualHelp>
+              <Heading>Help</Heading>
+              <Content>Help content</Content>
+            </ContextualHelp>
+          } />
       </div>
       <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
     </Form>
