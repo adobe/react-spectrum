@@ -360,7 +360,7 @@ function TagGroupInner<T>({
                 minWidth: 'full',
                 font: 'ui'
               })}>
-              {item => <Tag {...item.props} />}
+              {item => <_Tag {...item.props} id={item.key} textValue={item.textValue} />}
             </TagList>
             {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
               <ActionGroup
@@ -504,21 +504,22 @@ const tagStyles = style({
   }
 });
 
-function Tag({children, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
-  let textValue = typeof children === 'string' ? children : undefined;
+function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
+  textValue ||= typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
   let {size, isEmphasized} = ctx ?? {};
+  let domRef = useDOMRef(ref);
 
   let backupRef = useRef(null);
-  ref = ref || backupRef;
+  domRef = domRef || backupRef;
   let isLink = props.href != null;
   return (
     <AriaTag
       textValue={textValue}
       {...props}
-      ref={ref}
-      style={{...pressScale(ref)}}
+      ref={domRef}
+      style={pressScale(domRef)}
       className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
         <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
