@@ -52,7 +52,7 @@ export {SearchField, SearchFieldContext} from './SearchField';
 export {Slider, SliderContext} from './Slider';
 export {StatusLight, StatusLightContext} from './StatusLight';
 export {Switch, SwitchContext} from './Switch';
-export {Tabs, TabList, Tab, TabPanel} from './Tabs';
+export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';

@@ -10,9 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {TabListProps as AriaTabListProps, TabPanel as AriaTabPanel, TabPanelProps as AriaTabPanelProps, TabProps as AriaTabProps, TabsProps as AriaTabsProps, Provider, Tab as RACTab, TabList as RACTabList, Tabs as RACTabs, TabListStateContext} from 'react-aria-components';
+import {
+    TabListProps as AriaTabListProps,
+    TabPanel as AriaTabPanel,
+    TabPanelProps as AriaTabPanelProps,
+    TabProps as AriaTabProps,
+    TabsProps as AriaTabsProps, 
+    Provider,
+    Tab as RACTab,
+    TabList as RACTabList,
+    Tabs as RACTabs,
+    TabListStateContext,
+    ContextValue,
+    useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {Collection, DOMRef, Key, Node, Orientation} from '@react-types/shared';
+import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -22,6 +34,7 @@ import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -48,6 +61,8 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
   /** The content to display in the tab panels. */
   children?: ReactNode
 }
+
+export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
 
 const tabPanel = style({
   marginTop: 4,
@@ -104,7 +119,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density} = useContext(TabsInternalContext);
+  let {density} = useSlottedContext(TabsContext);
 
   return (
     <RACTab
@@ -113,9 +128,9 @@ export function Tab(props: TabProps) {
       className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
       <Provider
         values={[
-          [TextContext, {className: style({order: 1})}],
+          [TextContext, {styles: style({order: 1})}],
           [IconContext, {
-            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: icon
           }]
         ]}>
@@ -157,7 +172,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useContext(TabsInternalContext);
+  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext);
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
@@ -318,6 +333,7 @@ const tabs = style({
 const TabsInternalContext = createContext<TabsProps>({});
 
 function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
   let {
     density = 'regular',
     isDisabled,
@@ -334,7 +350,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
       <Provider
         values={[
-          [TabsInternalContext, {density, isDisabled, disabledKeys, orientation}]
+          [TabsContext, {density, isDisabled, disabledKeys, orientation}]
         ]}>
         {props.children}
       </Provider>
