@@ -14,5 +14,8 @@
   "picker.placeholder": "בחר אפשרות...",
   "slider.maximum": "מקסימום",
   "slider.minimum": "מינימום",
-  "tag.noTags": "ללא"
+  "tag.actions": "פעולות",
+  "tag.hideButtonLabel": "הצג פחות",
+  "tag.noTags": "ללא",
+  "tag.showAllButtonLabel": "הצג הכל ({tagCount, number})"
 }

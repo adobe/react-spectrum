@@ -14,5 +14,8 @@
   "picker.placeholder": "Выбрать параметр...",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
-  "tag.noTags": "Нет"
+  "tag.actions": "Действия",
+  "tag.hideButtonLabel": "Показать меньше",
+  "tag.noTags": "Нет",
+  "tag.showAllButtonLabel": "Показать все ({tagCount, number})"
 }

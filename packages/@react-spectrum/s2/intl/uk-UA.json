@@ -14,5 +14,8 @@
   "picker.placeholder": "Виберіть опцію...",
   "slider.maximum": "Максимум",
   "slider.minimum": "Мінімум",
-  "tag.noTags": "Немає"
+  "tag.actions": "Дії",
+  "tag.hideButtonLabel": "Показувати менше",
+  "tag.noTags": "Немає",
+  "tag.showAllButtonLabel": "Показати всі ({tagCount, number})"
 }

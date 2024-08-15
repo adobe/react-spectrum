@@ -14,5 +14,8 @@
   "picker.placeholder": "Odaberite opciju",
   "slider.maximum": "Najviše",
   "slider.minimum": "Najmanje",
-  "tag.noTags": "Nema"
+  "tag.actions": "Radnje",
+  "tag.hideButtonLabel": "Prikaži manje",
+  "tag.noTags": "Nema",
+  "tag.showAllButtonLabel": "Prikaži sve ({tagCount, number})"
 }

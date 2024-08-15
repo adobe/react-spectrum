@@ -14,5 +14,8 @@
   "picker.placeholder": "선택 사항 선택",
   "slider.maximum": "최대",
   "slider.minimum": "최소",
-  "tag.noTags": "없음"
+  "tag.actions": "액션",
+  "tag.hideButtonLabel": "간단히 표시",
+  "tag.noTags": "없음",
+  "tag.showAllButtonLabel": "모두 표시 ({tagCount, number})"
 }

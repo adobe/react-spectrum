@@ -14,5 +14,8 @@
   "picker.placeholder": "Valige valikuline...",
   "slider.maximum": "Maksimaalne",
   "slider.minimum": "Minimaalne",
-  "tag.noTags": "Puudub"
+  "tag.actions": "Toimingud",
+  "tag.hideButtonLabel": "Kuva vähem",
+  "tag.noTags": "Puudub",
+  "tag.showAllButtonLabel": "Kuva kõik ({tagCount, number})"
 }

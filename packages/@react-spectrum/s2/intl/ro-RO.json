@@ -14,5 +14,8 @@
   "picker.placeholder": "Selectați o opțiune",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Niciuna"
+  "tag.actions": "Acțiuni",
+  "tag.hideButtonLabel": "Se afișează mai puțin",
+  "tag.noTags": "Niciuna",
+  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})"
 }

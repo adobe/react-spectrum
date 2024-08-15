@@ -14,5 +14,8 @@
   "picker.placeholder": "Velg et alternativ...",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Ingen"
+  "tag.actions": "Handlinger",
+  "tag.hideButtonLabel": "Vis mindre",
+  "tag.noTags": "Ingen",
+  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})"
 }

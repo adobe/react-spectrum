@@ -14,5 +14,8 @@
   "picker.placeholder": "Bir seçim yapın…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Hiçbiri"
+  "tag.actions": "Eylemler",
+  "tag.hideButtonLabel": "Daha az göster",
+  "tag.noTags": "Hiçbiri",
+  "tag.showAllButtonLabel": "Tümünü göster ({tagCount, number})"
 }

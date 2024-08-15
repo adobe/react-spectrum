@@ -26,6 +26,9 @@ let stringsToAllow = new Set([
   'picker.placeholder',
   'slider.minimum',
   'slider.maximum',
+  'tag.actions',
+  'tag.showAllButtonLabel',
+  'tag.hideButtonLabel',
   'tag.noTags'
 ]);
 

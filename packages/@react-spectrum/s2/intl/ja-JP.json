@@ -14,5 +14,8 @@
   "picker.placeholder": "オプションを選択...",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
-  "tag.noTags": "なし"
+  "tag.actions": "アクション",
+  "tag.hideButtonLabel": "表示を減らす",
+  "tag.noTags": "なし",
+  "tag.showAllButtonLabel": "すべての ({tagCount, number}) を表示"
 }

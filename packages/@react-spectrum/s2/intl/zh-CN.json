@@ -14,5 +14,8 @@
   "picker.placeholder": "选择一个选项...",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
-  "tag.noTags": "无"
+  "tag.actions": "操作",
+  "tag.hideButtonLabel": "显示更少",
+  "tag.noTags": "无",
+  "tag.showAllButtonLabel": "全部显示 ({tagCount, number})"
 }

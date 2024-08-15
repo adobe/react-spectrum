@@ -14,5 +14,8 @@
   "picker.placeholder": "حدد خيارًا...",
   "slider.maximum": "أقصى",
   "slider.minimum": "أدنى",
-  "tag.noTags": "بدون"
+  "tag.actions": "الإجراءات",
+  "tag.hideButtonLabel": "إظهار أقل",
+  "tag.noTags": "بدون",
+  "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})"
 }

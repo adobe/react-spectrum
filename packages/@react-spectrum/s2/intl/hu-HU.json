@@ -14,5 +14,8 @@
   "picker.placeholder": "Válasszon egy opciót…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Egyik sem"
+  "tag.actions": "Műveletek",
+  "tag.hideButtonLabel": "Mutass kevesebbet",
+  "tag.noTags": "Egyik sem",
+  "tag.showAllButtonLabel": "Az összes megjelenítése ({tagCount, number})"
 }

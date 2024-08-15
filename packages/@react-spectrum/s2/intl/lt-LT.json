@@ -14,5 +14,8 @@
   "picker.placeholder": "Pasirinkite parinktį...",
   "slider.maximum": "Daugiausia",
   "slider.minimum": "Mažiausia",
-  "tag.noTags": "Nėra"
+  "tag.actions": "Veiksmai",
+  "tag.hideButtonLabel": "Rodyti mažiau",
+  "tag.noTags": "Nėra",
+  "tag.showAllButtonLabel": "Rodyti viską ({tagCount, number})"
 }
