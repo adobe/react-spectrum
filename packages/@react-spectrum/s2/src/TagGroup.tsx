@@ -364,6 +364,7 @@ function TagGroupInner<T>({
             </TagList>
             {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
               <ActionGroup
+                collection={collection}
                 aria-label={props['aria-label']}
                 aria-labelledby={props['aria-labelledby']}
                 actionsRef={actionsRef}
@@ -392,6 +393,7 @@ function ActionGroup(props) {
     handlePressCollapse,
     onGroupAction,
     groupActionLabel,
+    collection,
     // directly use aria-labelling from the TagGroup because we can't use the id from the TagList
     // and we can't supply an id to the TagList because it'll cause an issue where all the tag ids flip back
     // and forth with their prefix in an infinite loop
@@ -419,7 +421,9 @@ function ActionGroup(props) {
           styles={style({margin: 4})}
           UNSAFE_style={{display: 'inline-flex'}}
           onPress={handlePressCollapse}>
-          {isCollapsed ? stringFormatter.format('tag.showAllButtonLabel') : stringFormatter.format('tag.hideButtonLabel')}
+          {isCollapsed ?
+            stringFormatter.format('tag.showAllButtonLabel', {tagCount: collection.size}) :
+            stringFormatter.format('tag.hideButtonLabel')}
         </ActionButton>
       }
       {groupActionLabel && onGroupAction &&
