@@ -18,16 +18,9 @@ import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {t
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {IconContext} from './Icon';
-import {raw} from '../style/style-macro' with {type: 'macro'};
 
 interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
   children?: ReactNode,
-  /**
-   * The style of the track.
-   * 
-   * @default 'none'
-   */
-  trackStyle?: 'none' | 'track',
   isDisabled?: boolean
 }
 interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
@@ -36,15 +29,12 @@ interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
 
 const segmentedControl = style({
   fontFamily: 'sans',
-  fontSize: 'control',
+  fontSize: 'body',
   fontWeight: 'normal',
   display: 'flex',
-  minWidth: {
-    trackStyle: {
-       // this is an arbitrary value. there is no minWidth in the tokens but the size of the each segment is dependent on the width of the segmented control so without it, it looks strange
-      track: 240
-    }
-  },
+  backgroundColor: 'gray-100',
+  borderRadius: 'lg',
+  width: 'full'
 }, getAllowedOverrides())
 
 const controlItem = style({
@@ -53,12 +43,7 @@ const controlItem = style({
   gap: 'text-to-visual',
   forcedColorAdjust: 'none',
   color: {
-    default: {
-      trackStyle: {
-        none: 'gray-600',
-        track: 'gray-700'
-      }
-    },
+    default: 'gray-700',
     isHovered: 'neutral-subdued',
     isSelected: 'neutral',
     isDisabled: 'disabled',
@@ -69,31 +54,12 @@ const controlItem = style({
     },
   },
   backgroundColor: {
-    trackStyle: {
-      none: {
-        isSelected: {
-          default: 'gray-100',
-          isHovered: 'gray-200',
-          isDisabled: 'disabled'
-        },
-        forcedColors: {
-          isSelected: 'Highlight',
-          isDisabled: {
-            isSelected: 'GrayText'
-          }
-        }
-      }, 
-      track: {
-        isSelected: {
-          default: 'gray-25'
-        },
-        forcedColors: {
-          isSelected: 'Highlight',
-          isDisabled: {
-            isSelected: 'GrayText'
-          },
-        }
-      }
+    isSelected: 'gray-25',
+    forcedColors: {
+      isSelected: 'Highlight',
+      isDisabled: {
+        isSelected: 'GrayText'
+      },
     },
   },
   // the padding should be a little less for segmented controls that only contain icons but not sure of a good way to do that
@@ -105,45 +71,29 @@ const controlItem = style({
   paddingY: 8,
   alignItems: 'center',
   boxSizing: 'border-box',
-  borderStyle: {
-    trackStyle: {
-      track: 'solid'
-    }
-  },
+  borderStyle: 'solid',
   borderWidth: {
     trackStyle: {
       track: 2
     },
   },
   borderColor: {
-    trackStyle: {
-      track: {
-        default: 'transparent',
-        isSelected: {
-          default: 'gray-900',
-          isDisabled: 'disabled'
-        },
-        forcedColors: {
-          isDisabled: 'GrayText',
-          isSelected: {
-            default: 'Highlight',
-            isDisabled: 'GrayText'
-          }
-        }
+    default: 'transparent',
+    isSelected: {
+      default: 'gray-900',
+      isDisabled: 'disabled'
+    },
+    forcedColors: {
+      isDisabled: 'GrayText',
+      isSelected: {
+        default: 'Highlight',
+        isDisabled: 'GrayText'
       }
     }
   },
   borderRadius: 'lg',
-  flexBasis: {
-    trackStyle: {
-      track: 0
-    }
-  },
-  flexGrow: {
-    trackStyle: {
-      track: 1
-    }
-  },
+  flexBasis: 0,
+  flexGrow: 1,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
   '--iconPrimary': {
@@ -151,19 +101,6 @@ const controlItem = style({
     value: 'currentColor'
   }
 }, getAllowedOverrides())
-
-const controlWrapper = style({
-  display: 'flex',
-  backgroundColor: {
-    trackStyle: {
-      track: {
-        default: 'gray-100'
-      }
-    }
-  },
-  borderRadius: 'lg',
-  width: 'full'
-})
 
 interface SegmentedControlInternalContextProps extends SegmentedControlProps {
   register?: (value) => void;
@@ -173,7 +110,6 @@ const SegmentedControlInternalContext = createContext<SegmentedControlInternalCo
 
 function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement> ) {
   let {
-    trackStyle = 'none',
     defaultValue,
     value
   } = props
@@ -183,12 +119,10 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
     <RadioGroup 
       {...props}
       ref={domRef}
-      className={segmentedControl({trackStyle}, props.styles)}
+      className={segmentedControl(null, props.styles)}
       aria-label={props['aria-label'] || 'Segmented Control'}>
-      <Track trackStyle={props.trackStyle} defaultValue={defaultValue} value={value}>
-        <div className={controlWrapper({trackStyle})}>
-          {props.children}
-        </div>
+      <Track defaultValue={defaultValue} value={value}>
+        {props.children}
       </Track>
     </RadioGroup>
   )
@@ -209,7 +143,7 @@ function Track(props) {
   return (
     <Provider
       values={[
-        [SegmentedControlInternalContext, {trackStyle: props.trackStyle || 'none', register: register}]
+        [SegmentedControlInternalContext, {register: register}]
     ]}>
       {props.children}
     </Provider>
@@ -219,7 +153,7 @@ function Track(props) {
 function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
-  let {trackStyle, register} = useContext(SegmentedControlInternalContext);
+  let {register} = useContext(SegmentedControlInternalContext);
   let {isDisabled: isRadioGroupDisabled} = useContext(RadioGroupStateContext);
 
   useEffect(() => {
@@ -234,10 +168,10 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
       ref={domRef} 
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, trackStyle}, props.styles)} >
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps}, props.styles)} >
       <Provider values={[
           [IconContext, {
-            render: centerBaseline({slot: 'icon', className: style({order: 0, flexShrink: 0})}),
+            render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})}),
         }], 
       ]}>
         {props.children}
