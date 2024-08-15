@@ -70,13 +70,17 @@ export function Provider(props: ProviderProps) {
 
 let providerStyles = style({
   ...colorScheme(),
-  backgroundColor: {
-    background: {
-      base: 'base',
-      'layer-1': 'layer-1',
-      'layer-2': 'layer-2'
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: {
+      background: {
+        base: 'base',
+        'layer-1': 'layer-1',
+        'layer-2': 'layer-2'
+      }
     }
-  }
+  },
+  backgroundColor: '--s2-container-bg'
 });
 
 function ProviderInner(props: ProviderProps) {

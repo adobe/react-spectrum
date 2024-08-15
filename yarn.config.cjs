@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import('@yarnpkg/types')} */
-const {defineConfig} = require(`@yarnpkg/types`);
+const {defineConfig} = require('@yarnpkg/types');
 /**
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Workspace} Workspace
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Dependency} Dependency
@@ -16,7 +16,7 @@ const {defineConfig} = require(`@yarnpkg/types`);
 function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
   // enforce react/react-dom version
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === `peerDependencies`) {
+    if (dependency.type === 'peerDependencies') {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
@@ -47,7 +47,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       && workspace.ident !== '@internationalized/string-compiler'
       && workspace.ident !== 'tailwindcss-react-aria-components'
       && workspace.ident !== '@react-spectrum/s2'
-      && workspace.ident !== '@react-spectrum/upgrade-cli'
+      && workspace.manifest.rsp?.type !== 'cli'
     ) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
@@ -91,7 +91,7 @@ function enforceNoCircularDependencies({Yarn}) {
       // ok for pkg to depend on itself
       if (arr.slice(index).length > 1) {
         // better to error the constraints early for this for a more meaningful error message
-        throw new Error(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`)
+        throw new Error(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`);
       } else {
         return;
       }
@@ -108,7 +108,7 @@ function enforceNoCircularDependencies({Yarn}) {
 
 
   for (const workspace of Yarn.workspaces()) {
-    addDep(workspace)
+    addDep(workspace);
   }
 }
 
@@ -130,12 +130,10 @@ function isOurPackage(dependency) {
 /** @param {Context} context */
 function enforceWorkspaceDependencies({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === `peerDependencies`)
-      continue;
+    if (dependency.type === 'peerDependencies') {continue;}
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === `peerDependencies`)
-        continue;
+      if (otherDependency.type === 'peerDependencies') {continue;}
 
       if (isOurPackage(dependency)) {
         // change back to workspaces:^ when we're ready for yarn to handle versioning
@@ -162,7 +160,7 @@ function enforceCSS({Yarn}) {
 /** @param {Workspace} workspace */
 function isPublishing(workspace) {
   let name = workspace.ident;
-  // should whitelist instead? workspace.manifest.private?
+  // should allowlist instead? workspace.manifest.private?
   return !name.includes('@react-types')
     && !name.includes('@spectrum-icons')
     && !name.includes('@react-aria/example-theme')
@@ -181,11 +179,11 @@ function enforcePublishing({Yarn}) {
   // make sure fields required for publishing have been set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (isPublishing(workspace)) {
+    if (isPublishing(workspace) || (workspace.manifest.rsp?.type === 'cli' && !workspace.manifest.private)) {
       if (name.startsWith('@react-spectrum')) {
         workspace.set('license', 'Apache-2.0');
       }
-      if (workspace.pkg.publishConfig) {
+      if (!workspace.manifest.private) {
         workspace.set('publishConfig', {access: 'public'});
       }
       workspace.set('repository', {
@@ -193,7 +191,7 @@ function enforcePublishing({Yarn}) {
         url: name.startsWith('@internationalized/date') ?
           'https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date'
           : 'https://github.com/adobe/react-spectrum'
-      })
+      });
     }
   }
 }
@@ -210,7 +208,7 @@ function enforceExports({Yarn}) {
   // make sure build fields are correctly set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (isPublishing(workspace)) {
+    if (isPublishing(workspace) && workspace.manifest.rsp?.type !== 'cli') {
       let moduleExt = name === '@react-spectrum/s2' ? '.mjs' : '.js';
       let cjsExt = name === '@react-spectrum/s2' ? '.cjs' : '.js';
       if (workspace.manifest.main) {
@@ -221,8 +219,7 @@ function enforceExports({Yarn}) {
 
       if (
         name !== '@internationalized/string-compiler' &&
-        name !== 'tailwindcss-react-aria-components' &&
-        name !== '@react-spectrum/upgrade-cli'
+        name !== 'tailwindcss-react-aria-components'
       ) {
         workspace.set('module', setExtension('dist/module.js', moduleExt));
       }
@@ -231,17 +228,19 @@ function enforceExports({Yarn}) {
       let exportsImport = workspace.manifest?.exports?.import;
       if (workspace.manifest.exports?.['.']) {
         for (let key in workspace.manifest.exports) {
-          let subExportsRequire = workspace.manifest.exports[key].require;
-          let subExportsImport = workspace.manifest.exports[key].import;
-          workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
-          workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+          if (workspace.manifest.exports[key]) {
+            let subExportsRequire = workspace.manifest.exports[key].require;
+            workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
+            let subExportsImport = workspace.manifest.exports[key].import;
+            workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+          }
         }
       } else {
         workspace.set('exports.require', setExtension(exportsRequire, cjsExt));
         workspace.set('exports.import', setExtension(exportsImport, '.mjs'));
       }
 
-      if ((!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts')) && name !== '@react-spectrum/upgrade-cli') {
+      if ((!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts'))) {
         workspace.set('types', 'dist/types.d.ts');
       }
 
@@ -249,7 +248,7 @@ function enforceExports({Yarn}) {
         workspace.set('source', 'src/index.ts');
       }
 
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components' && name !== '@react-spectrum/upgrade-cli') {
+      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
         if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
           workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
         } else if (!workspace.manifest.files.includes('dist')) {
@@ -260,7 +259,7 @@ function enforceExports({Yarn}) {
       }
 
       // better to do in enforceCSS? it doesn't match the set of packages handled
-      if (name !== 'react-aria-components' && name !== '@react-spectrum/upgrade-cli') {
+      if (name !== 'react-aria-components') {
         if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
           workspace.set('sideEffects', ['*.css']);
         } else {
@@ -280,5 +279,5 @@ module.exports = defineConfig({
     enforceExports(ctx);
     enforceNonPrivateDependencies(ctx);
     enforceNoCircularDependencies(ctx);
-  },
+  }
 });

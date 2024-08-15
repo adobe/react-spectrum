@@ -12,16 +12,18 @@
 
 import {
   CheckboxGroup as AriaCheckboxGroup,
-  CheckboxGroupProps as AriaCheckboxGroupProps
+  CheckboxGroupProps as AriaCheckboxGroupProps,
+  ContextValue
 } from 'react-aria-components';
 import {CheckboxContext} from './Checkbox';
-import {DOMRef, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {forwardRef, ReactNode, useContext} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
@@ -47,7 +49,10 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   isEmphasized?: boolean
 }
 
+export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, DOMRefValue<HTMLDivElement>>>(null);
+
 function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
