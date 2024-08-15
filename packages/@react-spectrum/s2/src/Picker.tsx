@@ -54,12 +54,15 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Placement} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -217,6 +220,7 @@ let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size:
 let InsideSelectValueContext = createContext(false);
 
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   let formContext = useContext(FormContext);
@@ -237,7 +241,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     necessityIndicator,
     UNSAFE_className = '',
     UNSAFE_style,
-    placeholder = 'Select...',
+    placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
     ...pickerProps
   } = props;
@@ -326,7 +330,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                     size={size}
                     className={iconStyles} />
                   {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-                  {isInvalid && !isDisabled && !isQuiet && 
+                  {isInvalid && !isDisabled && !isQuiet &&
                     // @ts-ignore known limitation detecting functions from the theme
                     <div className={invalidBorder({...renderProps, size})} />
                   }
@@ -417,7 +421,7 @@ export function PickerItem(props: PickerItemProps) {
         let {children} = props;
         return (
           <DefaultProvider
-            context={IconContext} 
+            context={IconContext}
             value={{slots: {
               icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
             }}}>

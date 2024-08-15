@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import LightbulbRays_L from './S2_lin_lightbulbRays_160.svg';
-import LightbulbRays_M from './S2_lin_lightbulbRays_96.svg';
-import LightbulbRays_S from './S2_lin_lightbulbRays_48.svg';
+import LightbulbRays_L from 'illustration:./S2_lin_lightbulbRays_160.svg';
+import LightbulbRays_M from 'illustration:./S2_lin_lightbulbRays_96.svg';
+import LightbulbRays_S from 'illustration:./S2_lin_lightbulbRays_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function LightbulbRays(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

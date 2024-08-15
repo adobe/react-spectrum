@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Paperairplane_L from './S2_lin_paperairplane_160.svg';
-import Paperairplane_M from './S2_lin_paperairplane_96.svg';
-import Paperairplane_S from './S2_lin_paperairplane_48.svg';
+import Paperairplane_L from 'illustration:./S2_lin_paperairplane_160.svg';
+import Paperairplane_M from 'illustration:./S2_lin_paperairplane_96.svg';
+import Paperairplane_S from 'illustration:./S2_lin_paperairplane_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Paperairplane(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

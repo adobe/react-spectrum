@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import FolderClose_L from './S2_lin_folderClose_160.svg';
-import FolderClose_M from './S2_lin_folderClose_96.svg';
-import FolderClose_S from './S2_lin_folderClose_48.svg';
+import FolderClose_L from 'illustration:./S2_lin_folderClose_160.svg';
+import FolderClose_M from 'illustration:./S2_lin_folderClose_96.svg';
+import FolderClose_S from 'illustration:./S2_lin_folderClose_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import BrowserError_L from './S2_lin_browserError_160.svg';
-import BrowserError_M from './S2_lin_browserError_96.svg';
-import BrowserError_S from './S2_lin_browserError_48.svg';
+import BrowserError_L from 'illustration:./S2_lin_browserError_160.svg';
+import BrowserError_M from 'illustration:./S2_lin_browserError_96.svg';
+import BrowserError_S from 'illustration:./S2_lin_browserError_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

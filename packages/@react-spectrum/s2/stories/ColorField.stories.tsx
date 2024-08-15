@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField} from '../src/ColorField';
+import {
+  ColorField,
+  Content,
+  ContextualHelp,
+  Footer,
+  Heading,
+  Link,
+  Text
+} from '../src/';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ColorField> = {
@@ -30,4 +38,57 @@ export const Example = (args: any) => <ColorField {...args} />;
 
 Example.args = {
   label: 'Color'
+};
+
+export const ContextualHelpExample = (args: any) => (
+  <ColorField {...args} />
+);
+
+ContextualHelpExample.args = {
+  label: 'Color',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>Color</Heading>
+      <Content>
+        <Text>
+          Pick your favorite color.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Color"
+          target="_blank">Learn more about color</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<ColorField
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Color</Heading>
+      <Content>
+        <Text>
+          Pick your favorite color.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Color"
+          target="_blank">Learn more about color</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+  label="Color"
+/>`;
+      }
+    }
+  }
 };

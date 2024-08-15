@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Brand_L from './S2_lin_brand_160.svg';
-import Brand_M from './S2_lin_brand_96.svg';
-import Brand_S from './S2_lin_brand_48.svg';
+import Brand_L from 'illustration:./S2_lin_brand_160.svg';
+import Brand_M from 'illustration:./S2_lin_brand_96.svg';
+import Brand_S from 'illustration:./S2_lin_brand_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
