@@ -504,13 +504,14 @@ const tagStyles = style({
   }
 });
 
-export function Tag({children, ...props}: TagProps) {
+function Tag({children, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   let textValue = typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
   let {size, isEmphasized} = ctx ?? {};
 
-  let ref = useRef(null);
+  let backupRef = useRef(null);
+  ref = ref || backupRef;
   let isLink = props.href != null;
   return (
     <AriaTag
@@ -520,11 +521,16 @@ export function Tag({children, ...props}: TagProps) {
       style={{...pressScale(ref)}}
       className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
       {composeRenderProps(children, (children, renderProps) => (
-        <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{children}</TagWrapper>
+        <TagWrapper isInRealDOM={isInRealDOM} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
       ))}
     </AriaTag>
   );
 }
+
+
+/** An individual Tag for TagGroups. */
+let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
+export {_Tag as Tag};
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
   let {size} = useSlottedContext(TagGroupContext) ?? {};
@@ -538,8 +544,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
           alignItems: 'center',
           gap: 'text-to-visual',
           forcedColorAdjust: 'none',
-          backgroundColor: 'transparent',
-          whiteSpace: 'nowrap'
+          backgroundColor: 'transparent'
         })}>
         <Provider
           values={[
@@ -555,7 +560,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
               className: style({size: fontRelative(20), flexShrink: 0, order: 0, aspectRatio: 'square', objectFit: 'contain'})
             }]
           ]}>
-          {typeof children === 'string' ? <Text>{children}</Text> : children}
+          {children}
         </Provider>
       </div>
         )}
