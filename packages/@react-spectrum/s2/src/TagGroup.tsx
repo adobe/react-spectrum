@@ -100,6 +100,7 @@ const helpTextStyles = style({
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
 function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
   return (
@@ -133,7 +134,6 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: TagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
-  [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   let {maxRows, actionLabel, onAction, ...otherProps} = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
