@@ -28,7 +28,6 @@ import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-ty
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {mergeStyles} from '../style/runtime';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -314,7 +313,7 @@ function TabLine(props: TabLineProps) {
   }, [onResize, state?.selectedItem?.key, direction, orientation, density]);
 
   return (
-    <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}))} />
+    <div style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
   );
 }
 
