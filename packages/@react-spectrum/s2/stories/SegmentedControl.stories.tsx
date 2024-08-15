@@ -33,10 +33,10 @@ export default meta;
 
 export const Example = (args: any) => (
   <SegmentedControl {...args}>
-    <ControlItem value="day">Overview</ControlItem>
-    <ControlItem value="week">Specs</ControlItem>
-    <ControlItem value="month">Guidelines</ControlItem>
-    <ControlItem value="year">Accessbility</ControlItem>
+    <ControlItem value="day">Day</ControlItem>
+    <ControlItem value="week">Week</ControlItem>
+    <ControlItem value="month">Month</ControlItem>
+    <ControlItem value="year">Year</ControlItem>
   </SegmentedControl>
 )
 
