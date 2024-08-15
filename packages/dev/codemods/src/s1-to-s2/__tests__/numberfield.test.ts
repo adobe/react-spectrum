@@ -36,7 +36,7 @@ test('Comments out hideStepper', `
 import {NumberField} from '@adobe/react-spectrum';
 
 <div>
-  <NumberField hideStepper>Test</Button>
-  <NumberField hideStepper={true}>Test</Button>
+  <NumberField hideStepper />
+  <NumberField hideStepper={true} />
 </div>
 `);
