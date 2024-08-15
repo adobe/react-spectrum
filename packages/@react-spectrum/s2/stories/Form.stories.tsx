@@ -88,6 +88,25 @@ export const Example = (args: any) => (
   </Form>
 );
 
+export const MixedForm = (args: any) => (
+  <Form {...args}>
+    <TextField label="First Name" name="firstName" />
+    <TextField label="Last Name" name="firstName" />
+    <TextField label="Email" name="email" type="email" description="Enter an email" />
+    <CheckboxGroup aria-label="Favorite sports">
+      <Checkbox value="soccer">Soccer</Checkbox>
+      <Checkbox value="baseball">Baseball</Checkbox>
+      <Checkbox value="basketball">Basketball</Checkbox>
+    </CheckboxGroup>
+    <RadioGroup aria-label="Favorite pet">
+      <Radio value="cat">Cat</Radio>
+      <Radio value="dog">Dog</Radio>
+      <Radio value="plant" isDisabled>Plant</Radio>
+    </RadioGroup>
+    <SearchField label="Search" name="search" />
+  </Form>
+)
+
 export const CustomLabelsExample = (args: any) => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
