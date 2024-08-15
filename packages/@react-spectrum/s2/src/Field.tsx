@@ -20,10 +20,13 @@ import {ContextualHelpContext} from './ContextualHelp';
 import {fieldInput, fieldLabel, focusRing, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useId} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
   isDisabled?: boolean,
@@ -40,6 +43,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
 }
 
 function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isDisabled,
     isRequired,
@@ -108,7 +112,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
                     value: 'currentColor'
                   }
                 })}
-                aria-label={includeNecessityIndicatorInAccessibilityName ? '(required)' : undefined} />
+                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined} />
             }
             {necessityIndicator === 'label' &&
               /* The necessity label is hidden to screen readers if the field is required because
@@ -116,7 +120,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
               * so no need to duplicate it here. If optional, we do want it to be announced here.
               */
               <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
-                {isRequired ? '(required)' : '(optional)' /* TODO translate */}
+                {isRequired ? stringFormatter.format('label.(required)') : stringFormatter.format('label.(optional)')}
               </span>
             }
           </span>

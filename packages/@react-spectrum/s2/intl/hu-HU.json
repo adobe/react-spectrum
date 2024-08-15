@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Súgó",
+  "contextualhelp.info": "Információ",
+  "dialog.alert": "Figyelmeztetés",
+  "dialog.dismiss": "Elutasítás",
+  "dropzone.replaceMessage": "Ejtse le a fájlt a cseréhez",
+  "inlinealert.informative": "Információ",
+  "inlinealert.negative": "Hiba",
+  "inlinealert.notice": "Figyelmeztetés",
+  "inlinealert.positive": "Siker",
+  "label.(optional)": "(opcionális)",
+  "label.(required)": "(kötelező)",
+  "menu.moreActions": "További lehetőségek",
+  "picker.placeholder": "Válasszon egy opciót…",
+  "slider.maximum": "Maximum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Egyik sem"
+}

@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Pomoc",
+  "contextualhelp.info": "Informácie",
+  "dialog.alert": "Upozornenie",
+  "dialog.dismiss": "Zrušiť",
+  "dropzone.replaceMessage": "Presuňte súbor, ktorý chcete nahradiť",
+  "inlinealert.informative": "Informácie",
+  "inlinealert.negative": "Chyba",
+  "inlinealert.notice": "Upozornenie",
+  "inlinealert.positive": "Úspech",
+  "label.(optional)": "(nepovinné)",
+  "label.(required)": "(povinné)",
+  "menu.moreActions": "Ďalšie akcie",
+  "picker.placeholder": "Vyberte možnosť...",
+  "slider.maximum": "Maximum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Žiadne"
+}

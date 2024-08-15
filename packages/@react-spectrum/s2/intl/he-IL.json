@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "עזרה",
+  "contextualhelp.info": "מידע",
+  "dialog.alert": "התראה",
+  "dialog.dismiss": "התעלם",
+  "dropzone.replaceMessage": "שחרר את הקובץ להחלפה",
+  "inlinealert.informative": "מידע",
+  "inlinealert.negative": "שגיאה",
+  "inlinealert.notice": "אזהרה",
+  "inlinealert.positive": "הצלחה",
+  "label.(optional)": "(אופציונלי)",
+  "label.(required)": "(נדרש)",
+  "menu.moreActions": "פעולות נוספות",
+  "picker.placeholder": "בחר אפשרות...",
+  "slider.maximum": "מקסימום",
+  "slider.minimum": "מינימום",
+  "tag.noTags": "ללא"
+}
