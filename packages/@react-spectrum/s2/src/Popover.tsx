@@ -86,11 +86,11 @@ const slideLeftKeyframes = keyframes(`
 
 let popover = style({
   ...colorScheme(),
-  '--popoverBackground': {
+  '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'
   },
-  backgroundColor: '--popoverBackground',
+  backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',
   filter: {
     isArrowShown: 'elevated'
@@ -174,7 +174,7 @@ let popover = style({
 
 let arrow = style({
   display: 'block',
-  fill: '--popoverBackground',
+  fill: '--s2-container-bg',
   rotate: {
     default: 180,
     placement: {

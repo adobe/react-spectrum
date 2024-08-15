@@ -270,6 +270,12 @@ const tagStyles = style({
   }
 });
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 24
+} as const;
+
 export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   let {size = 'M', isEmphasized} = useSlottedContext(TagGroupContext)!;
@@ -302,10 +308,18 @@ export function Tag({children, ...props}: TagProps) {
                   styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
                 }],
                 [AvatarContext, {
-                  styles: style({size: fontRelative(20), flexShrink: 0, order: 0})
+                  size: avatarSize[size],
+                  styles: style({order: 0})
                 }],
                 [ImageContext, {
-                  className: style({size: fontRelative(20), flexShrink: 0, order: 0, aspectRatio: 'square', objectFit: 'contain'})
+                  className: style({
+                    size: fontRelative(20),
+                    flexShrink: 0,
+                    order: 0,
+                    aspectRatio: 'square',
+                    objectFit: 'contain',
+                    borderRadius: 'sm'
+                  })
                 }]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
