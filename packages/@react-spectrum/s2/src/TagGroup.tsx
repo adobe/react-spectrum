@@ -158,6 +158,10 @@ function TagGroupInner<T>({
   );
 
   let updateVisibleTagCount = useEffectEvent(() => {
+    if (maxRows == null) {
+      setTagState({visibleTagCount: collection.size, showCollapseButton: false});
+    }
+
     if (maxRows != null && maxRows > 0) {
       let computeVisibleTagCount = () => {
         let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
