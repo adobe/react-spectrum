@@ -32,7 +32,7 @@ export interface SegmentedControlProps extends ValueBase<string|null, string>, I
 }
 export interface ControlItemProps extends Omit<RadioProps, 'children' | 'className' | 'style' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
   /**
-   * The content to display in the control item. 
+   * The content to display in the control item.
    */
   children?: ReactNode
 }
