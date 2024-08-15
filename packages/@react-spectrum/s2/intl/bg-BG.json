@@ -14,5 +14,8 @@
   "picker.placeholder": "Изберете опция",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
-  "tag.noTags": "Нито един"
+  "tag.actions": "Действия",
+  "tag.hideButtonLabel": "Показване на по-малко",
+  "tag.noTags": "Нито един",
+  "tag.showAllButtonLabel": "Показване на всички ({tagCount, number})"
 }

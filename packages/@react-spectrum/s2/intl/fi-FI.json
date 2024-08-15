@@ -14,5 +14,8 @@
   "picker.placeholder": "Valitse vaihtoehto...",
   "slider.maximum": "Maksimi",
   "slider.minimum": "Minimi",
-  "tag.noTags": "Ei mitään"
+  "tag.actions": "Toiminnot",
+  "tag.hideButtonLabel": "Näytä vähemmän",
+  "tag.noTags": "Ei mitään",
+  "tag.showAllButtonLabel": "Näytä kaikki ({tagCount, number})"
 }

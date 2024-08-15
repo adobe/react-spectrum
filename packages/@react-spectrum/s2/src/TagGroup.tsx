@@ -383,6 +383,7 @@ function TagGroupInner<T>({
 }
 
 function ActionGroup(props) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     actionsRef,
     tagState,
@@ -399,12 +400,14 @@ function ActionGroup(props) {
   } = props;
 
   let actionsId = useId();
+  // might need to localize the aria-label which concatenates with this label
+  let actionGroupLabel = stringFormatter.format('tag.actions');
   return (
     <div
       role="group"
       ref={actionsRef}
       id={actionsId}
-      aria-label={ariaLabel ? `${ariaLabel} Actions` : 'Actions'}
+      aria-label={ariaLabel ? `${ariaLabel} ${actionGroupLabel}` : actionGroupLabel}
       aria-labelledby={ariaLabelledBy ? ariaLabelledBy : undefined}
       className={style({
         display: 'inline'
@@ -416,7 +419,7 @@ function ActionGroup(props) {
           styles={style({margin: 4})}
           UNSAFE_style={{display: 'inline-flex'}}
           onPress={handlePressCollapse}>
-          {isCollapsed ? 'Show all' : 'Collapse'}
+          {isCollapsed ? stringFormatter.format('tag.showAllButtonLabel') : stringFormatter.format('tag.hideButtonLabel')}
         </ActionButton>
       }
       {groupActionLabel && onGroupAction &&

@@ -14,5 +14,8 @@
   "picker.placeholder": "Vyberte vhodnou možnost...",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Žádný"
+  "tag.actions": "Akce",
+  "tag.hideButtonLabel": "Zobrazit méně",
+  "tag.noTags": "Žádný",
+  "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})"
 }

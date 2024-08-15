@@ -14,5 +14,8 @@
   "picker.placeholder": "Atlasiet opciju...",
   "slider.maximum": "Maksimālā vērtība",
   "slider.minimum": "Minimālā vērtība",
-  "tag.noTags": "Nav"
+  "tag.actions": "Darbības",
+  "tag.hideButtonLabel": "Rādīt mazāk",
+  "tag.noTags": "Nav",
+  "tag.showAllButtonLabel": "Rādīt visu ({tagCount, number})"
 }

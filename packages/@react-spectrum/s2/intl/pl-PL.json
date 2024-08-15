@@ -14,5 +14,8 @@
   "picker.placeholder": "Wybierz opcję...",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Brak"
+  "tag.actions": "Działania",
+  "tag.hideButtonLabel": "Wyświetl mniej",
+  "tag.noTags": "Brak",
+  "tag.showAllButtonLabel": "Pokaż wszystko ({tagCount, number})"
 }

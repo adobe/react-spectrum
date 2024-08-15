@@ -14,5 +14,8 @@
   "picker.placeholder": "Επιλέξτε…",
   "slider.maximum": "Μέγιστο",
   "slider.minimum": "Ελάχιστο",
-  "tag.noTags": "Κανένα"
+  "tag.actions": "Ενέργειες",
+  "tag.hideButtonLabel": "Εμφάνιση λιγότερων",
+  "tag.noTags": "Κανένα",
+  "tag.showAllButtonLabel": "Εμφάνιση όλων ({tagCount, number})"
 }

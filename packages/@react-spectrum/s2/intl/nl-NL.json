@@ -14,5 +14,8 @@
   "picker.placeholder": "Optie selecteren...",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Geen"
+  "tag.actions": "Acties",
+  "tag.hideButtonLabel": "Minder weergeven",
+  "tag.noTags": "Geen",
+  "tag.showAllButtonLabel": "Alles tonen ({tagCount, number})"
 }

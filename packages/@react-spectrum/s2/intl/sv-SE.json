@@ -14,5 +14,8 @@
   "picker.placeholder": "Välj ett alternativ...",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
-  "tag.noTags": "Ingen"
+  "tag.actions": "Åtgärder",
+  "tag.hideButtonLabel": "Visa mindre",
+  "tag.noTags": "Ingen",
+  "tag.showAllButtonLabel": "Visa alla ({tagCount, number})"
 }
