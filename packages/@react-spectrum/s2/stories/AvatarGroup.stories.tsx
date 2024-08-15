@@ -31,7 +31,7 @@ const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
 
 export const Example = (args: any) => (
-  <AvatarGroup {...args}>
+  <AvatarGroup aria-label="Online users" {...args}>
     <Avatar alt="default adobe" src={SRC_URL_1} />
     <Avatar alt="default adobe" src={SRC_URL_1} />
     <Avatar alt="default adobe" src={SRC_URL_1} />

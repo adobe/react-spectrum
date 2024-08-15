@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {ContextValue} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps, useId} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLabel} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface AvatarGroupProps extends UnsafeStyles, DOMProps {
+export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingProps {
   /** Avatar children of the avatar group. */
   children: ReactNode,
   /** The label for the avatar group. */
@@ -68,16 +69,17 @@ function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarGroupContext);
   let domRef = useDOMRef(ref);
   let {children, label, size = 24, styles, UNSAFE_style, UNSAFE_className, ...otherProps} = props;
-  let groupId = useId();
-  let labelId = useId();
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    labelElementType: 'span'
+  });
 
   return (
     <AvatarContext.Provider value={{styles: avatar, size, isOverBackground: true}}>
       <div
         ref={domRef}
-        id={groupId}
-        aria-labelledby={`${otherProps['aria-label'] ? groupId : ''} ${labelId}`}
         {...filterDOMProps(otherProps)}
+        {...fieldProps}
         role="group"
         className={(UNSAFE_className ?? '') + container(null, styles)}
         style={{
@@ -85,7 +87,7 @@ function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
           '--size': size / 16 + 'rem'
         } as CSSProperties}>
         {children}
-        {label && <span id={labelId} className={text({size: String(size)})}>{label}</span>}
+        {label && <span {...labelProps} className={text({size: String(size)})}>{label}</span>}
       </div>
     </AvatarContext.Provider>
   );
