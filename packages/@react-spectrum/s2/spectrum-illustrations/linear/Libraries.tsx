@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Libraries_L from './S2_lin_libraries_160.svg';
-import Libraries_M from './S2_lin_libraries_96.svg';
-import Libraries_S from './S2_lin_libraries_48.svg';
+import Libraries_L from 'illustration:./S2_lin_libraries_160.svg';
+import Libraries_M from 'illustration:./S2_lin_libraries_96.svg';
+import Libraries_S from 'illustration:./S2_lin_libraries_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Libraries(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Chatbubble_L from './S2_lin_chatbubble_160.svg';
-import Chatbubble_M from './S2_lin_chatbubble_96.svg';
-import Chatbubble_S from './S2_lin_chatbubble_48.svg';
+import Chatbubble_L from 'illustration:./S2_lin_chatbubble_160.svg';
+import Chatbubble_M from 'illustration:./S2_lin_chatbubble_96.svg';
+import Chatbubble_S from 'illustration:./S2_lin_chatbubble_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

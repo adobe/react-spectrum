@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Conversationbubbles_L from './S2_lin_conversationbubbles_160.svg';
-import Conversationbubbles_M from './S2_lin_conversationbubbles_96.svg';
-import Conversationbubbles_S from './S2_lin_conversationbubbles_48.svg';
+import Conversationbubbles_L from 'illustration:./S2_lin_conversationbubbles_160.svg';
+import Conversationbubbles_M from 'illustration:./S2_lin_conversationbubbles_96.svg';
+import Conversationbubbles_S from 'illustration:./S2_lin_conversationbubbles_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

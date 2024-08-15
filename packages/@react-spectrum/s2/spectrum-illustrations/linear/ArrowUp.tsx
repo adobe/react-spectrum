@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import ArrowUp_L from './S2_lin_arrowUp_160.svg';
-import ArrowUp_M from './S2_lin_arrowUp_96.svg';
-import ArrowUp_S from './S2_lin_arrowUp_48.svg';
+import ArrowUp_L from 'illustration:./S2_lin_arrowUp_160.svg';
+import ArrowUp_M from 'illustration:./S2_lin_arrowUp_96.svg';
+import ArrowUp_S from 'illustration:./S2_lin_arrowUp_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

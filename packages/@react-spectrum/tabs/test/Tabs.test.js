@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createEvent, fireEvent, mockImplementation, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockImplementation, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Links as LinksExample} from '../stories/Tabs.stories';
 import {Provider} from '@react-spectrum/provider';
@@ -113,25 +113,18 @@ describe('Tabs', function () {
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     act(() => {selectedItem.focus();});
-    let arrowRight = createEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
-    fireEvent(selectedItem, arrowRight);
+    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     let nextSelectedItem = tabs[1];
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
-    expect(arrowRight.defaultPrevented).toBe(true);
-    let arrowLeft = createEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
-    fireEvent(nextSelectedItem, arrowLeft);
+    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    expect(arrowLeft.defaultPrevented).toBe(true);
 
-    /** prevent changing tabs for horizontal orientations in aria-selected */
-    let arrowUp = createEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
-    fireEvent(selectedItem, arrowUp);
+    /** Changes selection regardless if it's horizontal tabs. */
+    fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    nextSelectedItem = tabs[2];
+    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
+    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    expect(arrowUp.defaultPrevented).toBe(false);
-    let arrowDown = createEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
-    fireEvent(selectedItem, arrowDown);
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    expect(arrowDown.defaultPrevented).toBe(false);
   });
 
   it('allows user to change tab item select via arrow keys with vertical tabs', function () {

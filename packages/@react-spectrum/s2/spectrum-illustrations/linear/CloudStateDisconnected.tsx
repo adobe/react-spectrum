@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import CloudStateDisconnected_L from './S2_lin_cloudStateDisconnected_160.svg';
-import CloudStateDisconnected_M from './S2_lin_cloudStateDisconnected_96.svg';
-import CloudStateDisconnected_S from './S2_lin_cloudStateDisconnected_48.svg';
+import CloudStateDisconnected_L from 'illustration:./S2_lin_cloudStateDisconnected_160.svg';
+import CloudStateDisconnected_M from 'illustration:./S2_lin_cloudStateDisconnected_96.svg';
+import CloudStateDisconnected_S from 'illustration:./S2_lin_cloudStateDisconnected_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

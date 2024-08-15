@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Play_L from './S2_lin_play_160.svg';
-import Play_M from './S2_lin_play_96.svg';
-import Play_S from './S2_lin_play_48.svg';
+import Play_L from 'illustration:./S2_lin_play_160.svg';
+import Play_M from 'illustration:./S2_lin_play_96.svg';
+import Play_S from 'illustration:./S2_lin_play_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Play(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
