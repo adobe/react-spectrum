@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="-32.942" x2="206.052" y1="135.366" y2="-10.036" gradientUnits="userSpaceOnUse">
+      <stop offset=".06" stop-color="#8480FE"/>
+      <stop offset=".6" stop-color="#8480FE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="158.851" x2="56.323" y1="31.077" y2="141.323" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="34.253" x2="216.007" y1="156.539" y2="54.723" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FC7D00" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#FC7D00"/>
+      <stop offset=".609" stop-color="#FC7D00"/>
+      <stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="rotate(90 38.709 48.41) scale(63.953)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#FF709F"/>
+      <stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="rotate(90 55.937 86.495) scale(63.953)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="a">
+      <rect width="147" height="147" x="4.001" y="4" fill="#fff" rx="4.438"/>
+    </clipPath>
+    <clipPath id="c">
+      <path fill="#fff" d="M4 4h147v147H4z"/>
+    </clipPath>
+  </defs>
+  <mask id="b" width="129" height="116" x="15" y="21" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="M51.738 21.933h27.404c2.81 0 5.506 1.116 7.494 3.104l29.118 29.118a10.597 10.597 0 0 1 3.105 7.494v41.535c0 5.853-4.745 10.598-10.598 10.598H51.738c-5.853 0-10.598-4.745-10.598-10.598V32.531c0-5.854 4.745-10.598 10.598-10.598Zm31 30.625a3.533 3.533 0 1 0-7.065-.016l-.079 34.983-11.943-9.5a3.533 3.533 0 1 0-4.398 5.53l17.793 14.152a3.533 3.533 0 0 0 4.418-.016l17.534-14.152a3.533 3.533 0 0 0-4.438-5.498l-11.9 9.605.078-35.088ZM22.399 75.523a3.2 3.2 0 0 1 3.2-3.2h5.881a3.2 3.2 0 0 0 0-6.4H25.6a9.6 9.6 0 0 0-9.6 9.6v5.535a3.2 3.2 0 0 0 6.4 0v-5.535Zm106.119-9.6a3.2 3.2 0 0 0 0 6.4h5.881a3.2 3.2 0 0 1 3.2 3.2v5.535a3.2 3.2 0 0 0 6.4 0v-5.535a9.6 9.6 0 0 0-9.6-9.6h-5.881Zm15.481 29.665a3.2 3.2 0 1 0-6.4 0v11.07a3.2 3.2 0 1 0 6.4 0v-11.07Zm-121.6 0a3.2 3.2 0 0 0-6.4 0v11.07a3.2 3.2 0 1 0 6.4 0v-11.07Zm0 25.6a3.2 3.2 0 0 0-6.4 0v5.535a9.6 9.6 0 0 0 9.6 9.6h5.881a3.2 3.2 0 0 0 0-6.4H25.6a3.2 3.2 0 0 1-3.2-3.2v-5.535Zm121.6 0a3.2 3.2 0 1 0-6.4 0v5.535a3.2 3.2 0 0 1-3.2 3.2h-5.881a3.2 3.2 0 0 0 0 6.4h5.881a9.6 9.6 0 0 0 9.6-9.6v-5.535Zm-97.08 8.735a3.2 3.2 0 0 0 0 6.4H58.68a3.2 3.2 0 0 0 0-6.4H46.918Zm27.2 0a3.2 3.2 0 0 0 0 6.4H85.88a3.2 3.2 0 0 0 0-6.4H74.118Zm27.199 0a3.2 3.2 0 0 0 0 6.4h11.762a3.2 3.2 0 1 0 0-6.4h-11.762Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <rect width="147" height="147" x="4.001" y="4" fill="#FFECCF" rx="4.438"/>
+    <g clip-path="url(#c)">
+      <path fill="#FFECCF" d="M4 4h147v147H4z"/>
+      <circle cx="87.119" cy="9.702" r="63.953" fill="url(#d)" transform="rotate(-.08 87.119 9.702)"/>
+      <path fill="url(#e)" d="M60.108-21.967a35.293 35.293 0 0 0-36.925-.11L-90.15 47.12c-11.1 6.778-11.119 22.774-.034 29.577L22.401 145.8c11.314 6.943 25.618 6.935 36.923-.025L171.678 76.61c11.026-6.788 11.046-22.696.033-29.51L60.108-21.967Z"/>
+      <path fill="url(#f)" d="M25.186 73.792c2.512-54.88 49.037-97.33 103.917-94.818 54.879 2.512 97.331 49.037 94.818 103.917-2.512 54.879-49.037 97.331-103.917 94.819-54.88-2.513-97.331-49.038-94.819-103.918Z"/>
+      <path fill="url(#g)" d="M-55.556 109.977c21.815-9.306 45.342-8.907 65.725-.767 40.787 16.329 64.52 6.233 80.98-34.46 8.2-20.42 24.207-37.714 46.046-47.03 43.664-18.6 94.073 1.582 112.645 45.117 18.573 43.535-1.756 93.864-45.409 112.487-21.888 9.337-45.461 8.9-65.875.687-40.72-16.242-64.408-6.108-80.848 34.634-8.22 20.372-24.224 37.606-46.039 46.912-43.63 18.613-94.038-1.568-112.6-45.079-18.562-43.51 1.746-93.888 45.375-112.501Z"/>
+      <circle cx="142.432" cy="30.557" r="63.953" fill="url(#h)" transform="rotate(-.08 142.432 30.557)"/>
+    </g>
+  </g>
+</svg>

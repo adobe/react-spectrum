@@ -30,7 +30,7 @@
     "globals-docs": "^2.4.1",
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
-    "quicklink": "^2.0.0",
+    "quicklink": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-lowlight": "^2.0.0"

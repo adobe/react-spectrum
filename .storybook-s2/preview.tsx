@@ -62,6 +62,12 @@ const preview = {
         brandTitle: 'React Spectrum - Spectrum 2 Preview',
         brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
       }
+    },
+    options: {
+      storySort: {
+        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Illustrations', 'Release Notes'],
+        method: 'alphabetical'
+      }  
     }
   },
   argTypes: {
