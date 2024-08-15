@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import ImageStack_L from './S2_lin_imageStack_160.svg';
-import ImageStack_M from './S2_lin_imageStack_96.svg';
-import ImageStack_S from './S2_lin_imageStack_48.svg';
+import ImageStack_L from 'illustration:./S2_lin_imageStack_160.svg';
+import ImageStack_M from 'illustration:./S2_lin_imageStack_96.svg';
+import ImageStack_S from 'illustration:./S2_lin_imageStack_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function ImageStack(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

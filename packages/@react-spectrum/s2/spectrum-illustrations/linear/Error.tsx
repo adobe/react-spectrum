@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Error_L from './S2_lin_error_160.svg';
-import Error_M from './S2_lin_error_96.svg';
-import Error_S from './S2_lin_error_48.svg';
+import Error_L from 'illustration:./S2_lin_error_160.svg';
+import Error_M from 'illustration:./S2_lin_error_96.svg';
+import Error_S from 'illustration:./S2_lin_error_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

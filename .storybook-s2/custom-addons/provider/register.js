@@ -55,7 +55,6 @@ addons.register('ProviderSwitcher', (api) => {
     title: 'viewport',
     type: types.TOOL,
     match: ({ viewMode }) => {
-      console.log('viewMode', viewMode);
       return viewMode === 'story' || viewMode === 'docs'
     },
     render: () => <ProviderFieldSetter api={api} />,

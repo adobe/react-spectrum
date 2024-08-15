@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Bell_L from './S2_lin_bell_160.svg';
-import Bell_M from './S2_lin_bell_96.svg';
-import Bell_S from './S2_lin_bell_48.svg';
+import Bell_L from 'illustration:./S2_lin_bell_160.svg';
+import Bell_M from 'illustration:./S2_lin_bell_96.svg';
+import Bell_S from 'illustration:./S2_lin_bell_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

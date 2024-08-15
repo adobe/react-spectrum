@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Calendar_L from './S2_lin_calendar_160.svg';
-import Calendar_M from './S2_lin_calendar_96.svg';
-import Calendar_S from './S2_lin_calendar_48.svg';
+import Calendar_L from 'illustration:./S2_lin_calendar_160.svg';
+import Calendar_M from 'illustration:./S2_lin_calendar_96.svg';
+import Calendar_S from 'illustration:./S2_lin_calendar_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import EmptyStateExport_L from './S2_lin_emptyStateExport_160.svg';
-import EmptyStateExport_M from './S2_lin_emptyStateExport_96.svg';
-import EmptyStateExport_S from './S2_lin_emptyStateExport_48.svg';
+import EmptyStateExport_L from 'illustration:./S2_lin_emptyStateExport_160.svg';
+import EmptyStateExport_M from 'illustration:./S2_lin_emptyStateExport_96.svg';
+import EmptyStateExport_S from 'illustration:./S2_lin_emptyStateExport_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

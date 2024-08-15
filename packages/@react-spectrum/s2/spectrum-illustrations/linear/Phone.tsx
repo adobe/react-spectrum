@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Phone_L from './S2_lin_phone_160.svg';
-import Phone_M from './S2_lin_phone_96.svg';
-import Phone_S from './S2_lin_phone_48.svg';
+import Phone_L from 'illustration:./S2_lin_phone_160.svg';
+import Phone_M from 'illustration:./S2_lin_phone_96.svg';
+import Phone_S from 'illustration:./S2_lin_phone_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Phone(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

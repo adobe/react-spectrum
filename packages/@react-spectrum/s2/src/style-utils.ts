@@ -147,9 +147,6 @@ const allowedOverrides = [
   'marginBottom',
   'marginX',
   'marginY',
-  'width',
-  'minWidth',
-  'maxWidth',
   'flex',
   'flexGrow',
   'flexShrink',
@@ -175,6 +172,12 @@ const allowedOverrides = [
   'insetEnd'
 ] as const;
 
+const widthProperties = [
+  'width',
+  'minWidth',
+  'maxWidth'
+] as const;
+
 const heightProperties = [
   'size',
   'height',
@@ -182,8 +185,9 @@ const heightProperties = [
   'maxHeight'
 ] as const;
 
-export type StylesProp = StyleString<(typeof allowedOverrides)[number]>;
+export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
 export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof heightProperties)[number]>;
+export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
 export interface UnsafeStyles {
   /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
   UNSAFE_className?: string,
@@ -196,6 +200,6 @@ export interface StyleProps extends UnsafeStyles {
   styles?: StylesProp
 }
 
-export function getAllowedOverrides({height = false} = {}) {
-  return (allowedOverrides as unknown as string[]).concat(height ? heightProperties : []);
+export function getAllowedOverrides({width = true, height = false} = {}) {
+  return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);
 }

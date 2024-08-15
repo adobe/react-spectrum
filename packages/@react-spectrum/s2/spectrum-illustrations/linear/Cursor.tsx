@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Cursor_L from './S2_lin_cursor_160.svg';
-import Cursor_M from './S2_lin_cursor_96.svg';
-import Cursor_S from './S2_lin_cursor_48.svg';
+import Cursor_L from 'illustration:./S2_lin_cursor_160.svg';
+import Cursor_M from 'illustration:./S2_lin_cursor_96.svg';
+import Cursor_S from 'illustration:./S2_lin_cursor_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

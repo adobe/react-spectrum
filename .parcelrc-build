@@ -6,7 +6,8 @@
     "style-types:*.ts": ["@parcel/transformer-typescript-types"],
     "packages/**/intl/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
-    "packages/@react-spectrum/s2/{s2wf-icons,spectrum-illustrations}/**/*.svg": ["parcel-transformer-icon"],
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     // Disable PostCSS from running over style macro output
     "packages/@react-spectrum/s2/**/*.css": ["@parcel/transformer-css"],
     "*.svg": ["@parcel/transformer-svg-react"],
@@ -15,5 +16,5 @@
       "@parcel/transformer-react-refresh-wrap"
     ]
   },
-  "namers": ["parcel-namer-icon", "parcel-namer-intl", "..."]
+  "namers": ["parcel-namer-s2", "parcel-namer-intl", "..."]
 }

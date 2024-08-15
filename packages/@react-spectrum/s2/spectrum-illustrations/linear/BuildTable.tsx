@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import BuildTable_L from './S2_lin_buildTable_160.svg';
-import BuildTable_M from './S2_lin_buildTable_96.svg';
-import BuildTable_S from './S2_lin_buildTable_48.svg';
+import BuildTable_L from 'illustration:./S2_lin_buildTable_160.svg';
+import BuildTable_M from 'illustration:./S2_lin_buildTable_96.svg';
+import BuildTable_S from 'illustration:./S2_lin_buildTable_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

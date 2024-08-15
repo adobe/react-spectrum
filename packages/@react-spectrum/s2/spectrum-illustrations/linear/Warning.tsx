@@ -12,9 +12,9 @@
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
-import Warning_L from './S2_lin_warning_160.svg';
-import Warning_M from './S2_lin_warning_96.svg';
-import Warning_S from './S2_lin_warning_48.svg';
+import Warning_L from 'illustration:./S2_lin_warning_160.svg';
+import Warning_M from 'illustration:./S2_lin_warning_96.svg';
+import Warning_S from 'illustration:./S2_lin_warning_48.svg';
 
 export default function Warning(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
   [props] = useContextProps(props, null, IllustrationContext);

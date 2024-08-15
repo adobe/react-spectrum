@@ -14,10 +14,11 @@ import {Breadcrumb as AriaBreadcrumb, BreadcrumbsProps as AriaBreadcrumbsProps, 
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, ReactNode, useRef} from 'react';
-import {DOMRefValue, LinkDOMProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, LinkDOMProps} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {size, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface BreadcrumbsStyleProps {
   /**
@@ -69,7 +70,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
   }
 }, getAllowedOverrides());
 
-function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>) {
+function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   let {
     UNSAFE_className = '',
     UNSAFE_style,
@@ -78,11 +79,11 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>) {
     children,
     ...otherProps
   } = props;
-  let ref = useRef(null);
+  let domRef = useDOMRef(ref);
   return (
     <RACBreadcrumbs
       {...otherProps}
-      ref={ref}
+      ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + wrapper({
         size
