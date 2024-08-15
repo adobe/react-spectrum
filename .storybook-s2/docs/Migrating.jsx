@@ -39,7 +39,7 @@ export function Migrating() {
         <H3>Avatar</H3>
         <ul className="sb-unstyled">
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isDisabled</Code> (it has not been implemented yet)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>size</Code> and instead provide a size via the style macro (i.e. <Code>{`styles={style({size: 20})}`}</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>size</Code> to be a pixel value if it currently matches <Code>'avatar-size-*'</Code></li>
         </ul>
 
         <H3>Breadcrumbs</H3>
@@ -195,6 +195,8 @@ export function Migrating() {
         <H3>NumberField</H3>
         <ul className="sb-unstyled">
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>hideStepper</Code> (it has not been implemented yet)</li>
         </ul>
 
