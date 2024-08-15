@@ -525,7 +525,8 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
           alignItems: 'center',
           gap: 'text-to-visual',
           forcedColorAdjust: 'none',
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
+          whiteSpace: 'nowrap'
         })}>
         <Provider
           values={[
