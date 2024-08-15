@@ -10,27 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import S2_CrossSize100 from './S2_CrossSize100.svg';
-import S2_CrossSize200 from './S2_CrossSize200.svg';
-import S2_CrossSize300 from './S2_CrossSize300.svg';
-import S2_CrossSize400 from './S2_CrossSize400.svg';
-import S2_CrossSize500 from './S2_CrossSize500.svg';
-import S2_CrossSize75 from './S2_CrossSize75.svg';
+import Cross_L from './S2_CrossSize200.svg';
+import Cross_M from './S2_CrossSize100.svg';
+import Cross_S from './S2_CrossSize75.svg';
+import Cross_XL from './S2_CrossSize300.svg';
+import Cross_XXL from './S2_CrossSize400.svg';
+import Cross_XXXL from './S2_CrossSize500.svg';
+import Cross_XXXXL from './S2_CrossSize600.svg';
 import {SVGProps} from 'react';
 
-export default function Cross({size, ...props}: {size: 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL'} & SVGProps<SVGSVGElement>) {
+export default function Cross(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'XXXXL' | 'S'}) {
+  let {size = 'M', ...otherProps} = props;
   switch (size) {
-    case 'S':
-      return <S2_CrossSize75 {...props} />;
     case 'M':
-      return <S2_CrossSize100 {...props} />;
+      return <Cross_M {...otherProps} />;
     case 'L':
-      return <S2_CrossSize200 {...props} />;
+      return <Cross_L {...otherProps} />;
     case 'XL':
-      return <S2_CrossSize300 {...props} />;
+      return <Cross_XL {...otherProps} />;
     case 'XXL':
-      return <S2_CrossSize400 {...props} />;
+      return <Cross_XXL {...otherProps} />;
     case 'XXXL':
-      return <S2_CrossSize500 {...props} />;
+      return <Cross_XXXL {...otherProps} />;
+    case 'XXXXL':
+      return <Cross_XXXXL {...otherProps} />;
+    case 'S':
+      return <Cross_S {...otherProps} />;
   }
 }
