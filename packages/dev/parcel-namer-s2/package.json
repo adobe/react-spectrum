@@ -1,7 +1,8 @@
 {
-  "name": "@react-spectrum/parcel-namer-s2-icon",
+  "name": "parcel-namer-s2",
   "version": "1.0.0",
-  "main": "IconNamer.js",
+  "main": "S2Namer.js",
+  "private": true,
   "engines": {
     "parcel": "2.0.0-dev.1599"
   },

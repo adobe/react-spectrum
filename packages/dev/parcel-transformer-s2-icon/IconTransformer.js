@@ -54,7 +54,10 @@ module.exports = new Transformer({
     let newFile = template(asset, iconName, optimized);
     return [{
       type: 'tsx',
-      content: newFile
+      content: newFile,
+      meta: {
+        isRSPIcon: true
+      }
     }];
   }
 });

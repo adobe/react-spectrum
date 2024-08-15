@@ -16,5 +16,5 @@
       "@parcel/transformer-react-refresh-wrap"
     ]
   },
-  "namers": ["@react-spectrum/parcel-namer-s2-icon", "parcel-namer-intl", "..."]
+  "namers": ["parcel-namer-s2", "parcel-namer-intl", "..."]
 }

@@ -4209,7 +4209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/namer-default@npm:2.0.0-dev.1601+1f9adfe6b":
+"@parcel/namer-default@npm:2.0.0-dev.1601, @parcel/namer-default@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/namer-default@npm:2.0.0-dev.1601"
   dependencies:
@@ -7397,14 +7397,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/parcel-namer-s2-icon@npm:^1.0.0, @react-spectrum/parcel-namer-s2-icon@workspace:packages/dev/parcel-namer-s2-icon":
-  version: 0.0.0-use.local
-  resolution: "@react-spectrum/parcel-namer-s2-icon@workspace:packages/dev/parcel-namer-s2-icon"
-  dependencies:
-    "@parcel/plugin": "npm:2.0.0-dev.1601"
-  languageName: unknown
-  linkType: soft
-
 "@react-spectrum/parcel-transformer-s2-icon@npm:^1.0.0, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
@@ -7508,11 +7500,11 @@ __metadata:
     "@parcel/bundler-library": "npm:2.11.1-dev.3224"
     "@parcel/compressor-raw": "npm:2.12.1-dev.3224"
     "@parcel/core": "npm:2.0.0-dev.1599"
+    "@parcel/namer-default": "npm:2.0.0-dev.1601"
     "@parcel/packager-raw": "npm:2.0.0-dev.1601"
     "@parcel/reporter-cli": "npm:2.0.0-dev.1601"
     "@parcel/resolver-default": "npm:2.0.0-dev.1601"
     "@parcel/transformer-raw": "npm:2.0.0-dev.1601"
-    "@react-spectrum/parcel-namer-s2-icon": "npm:^1.0.0"
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^1.0.0"
   bin:
     transform-icons: index.js
@@ -26907,6 +26899,14 @@ __metadata:
 "parcel-namer-intl@workspace:packages/dev/parcel-namer-intl":
   version: 0.0.0-use.local
   resolution: "parcel-namer-intl@workspace:packages/dev/parcel-namer-intl"
+  dependencies:
+    "@parcel/plugin": "npm:2.0.0-dev.1601"
+  languageName: unknown
+  linkType: soft
+
+"parcel-namer-s2@workspace:packages/dev/parcel-namer-s2":
+  version: 0.0.0-use.local
+  resolution: "parcel-namer-s2@workspace:packages/dev/parcel-namer-s2"
   dependencies:
     "@parcel/plugin": "npm:2.0.0-dev.1601"
   languageName: unknown
