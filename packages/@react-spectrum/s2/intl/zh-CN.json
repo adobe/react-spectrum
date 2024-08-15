@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "帮助",
+  "contextualhelp.info": "信息",
+  "dialog.alert": "警报",
+  "dialog.dismiss": "取消",
+  "dropzone.replaceMessage": "删除要替换的文件",
+  "inlinealert.informative": "信息",
+  "inlinealert.negative": "错误",
+  "inlinealert.notice": "警告",
+  "inlinealert.positive": "成功",
+  "label.(optional)": "（可选）",
+  "label.(required)": "（必填）",
+  "menu.moreActions": "更多操作",
+  "picker.placeholder": "选择一个选项...",
+  "slider.maximum": "最大",
+  "slider.minimum": "最小",
+  "tag.noTags": "无"
+}

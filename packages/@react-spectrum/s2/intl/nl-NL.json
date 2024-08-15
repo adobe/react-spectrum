@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Help",
+  "contextualhelp.info": "Informatie",
+  "dialog.alert": "Melding",
+  "dialog.dismiss": "Negeren",
+  "dropzone.replaceMessage": "Bestand neerzetten om te vervangen",
+  "inlinealert.informative": "Informatie",
+  "inlinealert.negative": "Fout",
+  "inlinealert.notice": "Waarschuwing",
+  "inlinealert.positive": "Geslaagd",
+  "label.(optional)": "(optioneel)",
+  "label.(required)": "(vereist)",
+  "menu.moreActions": "Meer handelingen",
+  "picker.placeholder": "Optie selecteren...",
+  "slider.maximum": "Maximum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Geen"
+}

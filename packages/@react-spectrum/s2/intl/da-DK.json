@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Hjælp",
+  "contextualhelp.info": "Oplysninger",
+  "dialog.alert": "Advarsel",
+  "dialog.dismiss": "Luk",
+  "dropzone.replaceMessage": "Drop fil for at erstatte",
+  "inlinealert.informative": "Oplysninger",
+  "inlinealert.negative": "Fejl",
+  "inlinealert.notice": "Advarsel",
+  "inlinealert.positive": "Fuldført",
+  "label.(optional)": "(valgfrit)",
+  "label.(required)": "(obligatorisk)",
+  "menu.moreActions": "Flere handlinger",
+  "picker.placeholder": "Vælg en mulighed ...",
+  "slider.maximum": "Maksimum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Ingen"
+}

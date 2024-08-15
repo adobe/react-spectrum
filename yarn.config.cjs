@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import('@yarnpkg/types')} */
-const {defineConfig} = require(`@yarnpkg/types`);
+const {defineConfig} = require('@yarnpkg/types');
 /**
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Workspace} Workspace
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Dependency} Dependency
@@ -16,7 +16,7 @@ const {defineConfig} = require(`@yarnpkg/types`);
 function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
   // enforce react/react-dom version
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === `peerDependencies`) {
+    if (dependency.type === 'peerDependencies') {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
@@ -91,7 +91,7 @@ function enforceNoCircularDependencies({Yarn}) {
       // ok for pkg to depend on itself
       if (arr.slice(index).length > 1) {
         // better to error the constraints early for this for a more meaningful error message
-        throw new Error(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`)
+        throw new Error(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`);
       } else {
         return;
       }
@@ -108,7 +108,7 @@ function enforceNoCircularDependencies({Yarn}) {
 
 
   for (const workspace of Yarn.workspaces()) {
-    addDep(workspace)
+    addDep(workspace);
   }
 }
 
@@ -130,12 +130,10 @@ function isOurPackage(dependency) {
 /** @param {Context} context */
 function enforceWorkspaceDependencies({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === `peerDependencies`)
-      continue;
+    if (dependency.type === 'peerDependencies') {continue;}
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === `peerDependencies`)
-        continue;
+      if (otherDependency.type === 'peerDependencies') {continue;}
 
       if (isOurPackage(dependency)) {
         // change back to workspaces:^ when we're ready for yarn to handle versioning
@@ -193,7 +191,7 @@ function enforcePublishing({Yarn}) {
         url: name.startsWith('@internationalized/date') ?
           'https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date'
           : 'https://github.com/adobe/react-spectrum'
-      })
+      });
     }
   }
 }
@@ -281,5 +279,5 @@ module.exports = defineConfig({
     enforceExports(ctx);
     enforceNonPrivateDependencies(ctx);
     enforceNoCircularDependencies(ctx);
-  },
+  }
 });

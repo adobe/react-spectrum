@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Palīdzība",
+  "contextualhelp.info": "Informācija",
+  "dialog.alert": "Brīdinājums",
+  "dialog.dismiss": "Nerādīt",
+  "dropzone.replaceMessage": "Lai aizstātu, nometiet failu",
+  "inlinealert.informative": "Informācija",
+  "inlinealert.negative": "Kļūda",
+  "inlinealert.notice": "Brīdinājums",
+  "inlinealert.positive": "Izdevās",
+  "label.(optional)": "(neobligāti)",
+  "label.(required)": "(obligāti)",
+  "menu.moreActions": "Citas darbības",
+  "picker.placeholder": "Atlasiet opciju...",
+  "slider.maximum": "Maksimālā vērtība",
+  "slider.minimum": "Minimālā vērtība",
+  "tag.noTags": "Nav"
+}

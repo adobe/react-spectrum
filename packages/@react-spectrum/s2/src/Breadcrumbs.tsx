@@ -11,7 +11,7 @@
  */
 
 import {Breadcrumb as AriaBreadcrumb, BreadcrumbsProps as AriaBreadcrumbsProps, ContextValue, HeadingContext, Link, Provider, Breadcrumbs as RACBreadcrumbs, useSlottedContext} from 'react-aria-components';
-import {AriaBreadcrumbItemProps} from 'react-aria';
+import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, ReactNode, useRef} from 'react';
 import {DOMRefValue, LinkDOMProps} from '@react-types/shared';
@@ -117,6 +117,11 @@ const breadcrumbStyles = style({
 });
 
 const chevronStyles = style({
+  scale: {
+    direction: {
+      rtl: -1
+    }
+  },
   marginStart: 'text-to-visual',
   '--iconPrimary': {
     type: 'fill',
@@ -185,6 +190,7 @@ export function Breadcrumb({children, ...props}: BreadcrumbProps) {
   let {href, target, rel, download, ping, referrerPolicy, ...other} = props;
   let {size = 'M', isDisabled} = useSlottedContext(BreadcrumbsContext)!;
   let ref = useRef(null);
+  let {direction} = useLocale();
   return (
     <AriaBreadcrumb
       {...other}
@@ -217,7 +223,7 @@ export function Breadcrumb({children, ...props}: BreadcrumbProps) {
               </Link>
               <ChevronIcon
                 size="M"
-                className={chevronStyles} />
+                className={chevronStyles({direction})} />
             </>
           )
         )}

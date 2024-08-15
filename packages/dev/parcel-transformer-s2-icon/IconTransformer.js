@@ -14,11 +14,15 @@ const {Transformer} = require('@parcel/plugin');
 const {transform} = require('@svgr/core');
 const path = require('path');
 const tokens = require('@adobe/spectrum-tokens/dist/json/variables.json');
+const crypto = require('crypto');
 
 module.exports = new Transformer({
   async transform({asset}) {
     let contents = await asset.getCode();
     let iconName = path.basename(asset.filePath, '.svg');
+    let hash = crypto.createHash('md5');
+    hash.update(iconName);
+    let prefix = hash.digest('hex').slice(-6);
     let optimized = (await transform(
       contents,
       {
@@ -33,6 +37,12 @@ module.exports = new Transformer({
                   inlineStyles: {
                     onlyMatchedOnce: false,
                     removeMatchedSelectors: true
+                  },
+                  cleanupIDs: {
+                    prefix
+                  },
+                  convertPathData: {
+                    makeArcs: false
                   }
                 }
               },

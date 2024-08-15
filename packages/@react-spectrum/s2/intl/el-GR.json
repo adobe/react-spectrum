@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Βοήθεια",
+  "contextualhelp.info": "Πληροφορίες",
+  "dialog.alert": "Ειδοποίηση",
+  "dialog.dismiss": "Απόρριψη",
+  "dropzone.replaceMessage": "Απόθεση αρχείου για αντικατάσταση",
+  "inlinealert.informative": "Πληροφορίες",
+  "inlinealert.negative": "Σφάλμα",
+  "inlinealert.notice": "Προειδοποίηση",
+  "inlinealert.positive": "Επιτυχία",
+  "label.(optional)": "(προαιρετικό)",
+  "label.(required)": "(απαιτείται)",
+  "menu.moreActions": "Περισσότερες ενέργειες",
+  "picker.placeholder": "Επιλέξτε…",
+  "slider.maximum": "Μέγιστο",
+  "slider.minimum": "Ελάχιστο",
+  "tag.noTags": "Κανένα"
+}
