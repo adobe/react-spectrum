@@ -30,7 +30,7 @@ export interface SegmentedControlProps extends ValueBase<string|null, string>, I
    */
   isDisabled?: boolean
 }
-export interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
+export interface ControlItemProps extends Omit<RadioProps, 'children' | 'className' | 'style' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
   /**
    * The content to display in the control item. 
    */
@@ -39,7 +39,7 @@ export interface ControlItemProps extends Omit<RadioProps, 'children'>, StylePro
 
 export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const segmentedControl = style({
+const segmentedControl = style<{size: string}>({
   font: 'control',
   display: 'flex',
   backgroundColor: 'gray-100',
@@ -130,7 +130,6 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       {...props}
       ref={domRef}
       style={props.UNSAFE_style}
-      // @ts-ignore
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
       aria-label={props['aria-label'] || 'Segmented Control'}>
       <DefaultSelectionTracker defaultValue={defaultValue} value={value}>
