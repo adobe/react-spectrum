@@ -76,20 +76,23 @@ import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
 <div>
-  // TODO(S2-upgrade): validationState has not been implemented yet.
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    isInvalid>
+    <Tag>News</Tag>
+  </TagGroup>
   <TagGroup aria-label="Static TagGroup items example">
     <Tag>News</Tag>
   </TagGroup>
-  // TODO(S2-upgrade): validationState has not been implemented yet.
-  <TagGroup aria-label="Static TagGroup items example">
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    isInvalid>
     <Tag>News</Tag>
   </TagGroup>
-  // TODO(S2-upgrade): validationState has not been implemented yet.
-  <TagGroup aria-label="Static TagGroup items example">
-    <Tag>News</Tag>
-  </TagGroup>
-  // TODO(S2-upgrade): validationState has not been implemented yet.
-  <TagGroup aria-label="Static TagGroup items example">
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+    validationState={validationState}>
     <Tag>News</Tag>
   </TagGroup>
   <TagGroup

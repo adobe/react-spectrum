@@ -639,6 +639,44 @@ export const changes: ChangesJSON = {
       }
     ]
   },
+  NumberField: {
+    changes: [
+      {
+        description: 'Remove isQuiet',
+        reason: 'It is no longer supported',
+        function: {name: 'removeProp', args: {propToRemove: 'isQuiet'}}
+      },
+      {
+        description: "Change validationState='invalid' to isInvalid",
+        reason: 'Updated API',
+        function: {
+          name: 'updatePropNameAndValue',
+          args: {
+            oldProp: 'validationState',
+            oldValue: 'invalid',
+            newProp: 'isInvalid',
+            newValue: true
+          }
+        }
+      },
+      {
+        description: "Remove validationState='valid'",
+        reason: 'It is no longer supported',
+        function: {
+          name: 'removeProp',
+          args: {propToRemove: 'validationState', propValue: 'valid'}
+        }
+      },
+      {
+        description: 'Comment out hideStepper',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'hideStepper'}
+        }
+      }
+    ]
+  },
   Picker: {
     changes: [
       {
@@ -953,51 +991,40 @@ export const changes: ChangesJSON = {
   TagGroup: {
     changes: [
       {
-        description: 'Comment out actionLabel',
-        reason: 'It has not been implemented yet',
+        description: 'Change actionLabel to groupActionLabel',
+        reason: 'To match new onGroupAction prop',
         function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'actionLabel'}
+          name: 'updatePropName',
+          args: {oldProp: 'actionLabel', newProp: 'groupActionLabel'}
         }
       },
       {
-        description: 'Comment out onAction',
-        reason: 'It has not been implemented yet',
+        description: 'Change onAction to onGroupAction',
+        reason: 'To avoid confusion with existing onAction prop on other collection components',
         function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'onAction'}
+          name: 'updatePropName',
+          args: {oldProp: 'onAction', newProp: 'onGroupAction'}
         }
       },
       {
-        description: 'Comment out maxRows',
-        reason: 'It has not been implemented yet',
+        description: "Change validationState='invalid' to isInvalid",
+        reason: 'Updated API',
         function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'maxRows'}
+          name: 'updatePropNameAndValue',
+          args: {
+            oldProp: 'validationState',
+            oldValue: 'invalid',
+            newProp: 'isInvalid',
+            newValue: true
+          }
         }
       },
       {
-        description: 'Comment out errorMessage',
-        reason: 'It has not been implemented yet',
+        description: "Remove validationState='valid'",
+        reason: 'It is no longer supported',
         function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'errorMessage'}
-        }
-      },
-      {
-        description: 'Comment out isInvalid',
-        reason: 'It has not been implemented yet',
-        function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'isInvalid'}
-        }
-      },
-      {
-        description: 'Comment out validationState',
-        reason: 'isInvalid should be used when it becomes available',
-        function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'validationState'}
+          name: 'removeProp',
+          args: {propToRemove: 'validationState', propValue: 'valid'}
         }
       }
     ]
