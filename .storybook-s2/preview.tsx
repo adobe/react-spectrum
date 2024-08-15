@@ -5,8 +5,8 @@ import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
+import {withProviderSwitcher} from './custom-addons/provider';
 import './global.css';
-import {I18nProvider} from '@react-aria/i18n';
 
 const channel = addons.getChannel();
 document.documentElement.dataset.colorScheme = store().current === 'dark' ? 'dark' : 'light';
@@ -98,78 +98,10 @@ export const parameters = {
   layout: 'fullscreen',
 };
 
-export const globalTypes = {
-  locale: {
-    name: 'Locale',
-    description: 'Internationalization locale',
-    toolbar: {
-      icon: 'globe',
-      items: [
-        {title: 'Auto', value: ''},
-        // Tier 1
-        {title: 'French (France)', value: 'fr-FR'},
-        {title: 'French (Canada)', value: 'fr-CA'},
-        {title: 'German (Germany)', value: 'de-DE'},
-        {title: 'English (Great Britain)', value: 'en-GB'},
-        {title: 'English (United States)', value: 'en-US'},
-        {title: 'Japanese (Japan)', value: 'ja-JP'},
-        // // Tier 2
-        {title: 'Danish (Denmark)', value: 'da-DK'},
-        {title: 'Dutch (Netherlands)', value: 'nl-NL'},
-        {title: 'Finnish (Finland)', value: 'fi-FI'},
-        {title: 'Italian (Italy)', value: 'it-IT'},
-        {title: 'Norwegian (Norway)', value: 'nb-NO'},
-        {title: 'Spanish (Spain)', value: 'es-ES'},
-        {title: 'Swedish (Sweden)', value: 'sv-SE'},
-        {title: 'Portuguese (Brazil)', value: 'pt-BR'},
-        // // Tier 3
-        {title: 'Chinese (Simplified)', value: 'zh-CN'},
-        {title: 'Chinese (Traditional)', value: 'zh-TW'},
-        {title: 'Korean (Korea)', value: 'ko-KR'},
-        // // Tier 4
-        {title: 'Bulgarian (Bulgaria)', value: 'bg-BG'},
-        {title: 'Croatian (Croatia)', value: 'hr-HR'},
-        {title: 'Czech (Czech Republic)', value: 'cs-CZ'},
-        {title: 'Estonian (Estonia)', value: 'et-EE'},
-        {title: 'Hungarian (Hungary)', value: 'hu-HU'},
-        {title: 'Latvian (Latvia)', value: 'lv-LV'},
-        {title: 'Lithuanian (Lithuania)', value: 'lt-LT'},
-        {title: 'Polish (Poland)', value: 'pl-PL'},
-        {title: 'Romanian (Romania)', value: 'ro-RO'},
-        {title: 'Russian (Russia)', value: 'ru-RU'},
-        {title: 'Serbian (Serbia)', value: 'sr-SP'},
-        {title: 'Slovakian (Slovakia)', value: 'sk-SK'},
-        {title: 'Slovenian (Slovenia)', value: 'sl-SI'},
-        {title: 'Turkish (Turkey)', value: 'tr-TR'},
-        {title: 'Ukrainian (Ukraine)', value: 'uk-UA'},
-        // // Tier 5
-        {title: 'Arabic (United Arab Emirates)', value: 'ar-AE'}, // ar-SA??
-        {title: 'Greek (Greece)', value: 'el-GR'},
-        {title: 'Hebrew (Israel)', value: 'he-IL'}
-      ],
-      showName: true,
-    },
-  },
- };
-
- const withLocaleSwitcher = (StoryFn, context) => {
-  // Get the active locale value from the story parameter
-  const { locale } = context.globals;
-  let [state, setState] = useState(locale);
-  useEffect(() => {
-    setState(locale);
-  });
-
-  return (
-    <I18nProvider locale={state}>
-      <StoryFn />
-    </I18nProvider>
-  )
-}
 
 
 export const decorators = [
-  withLocaleSwitcher
+  withProviderSwitcher
 ];
 
 export default preview;
