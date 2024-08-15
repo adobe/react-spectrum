@@ -23,7 +23,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
+export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
@@ -32,17 +32,17 @@ interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'childre
   density?: 'compact' | 'regular'
 }
 
-interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
   /** The content to display in the tab. */
   children?: ReactNode
 }
 
-interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>, StyleProps {
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>, StyleProps {
   /** The content to display in the tablist. */
   children?: ReactNode
 }
 
-interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {  
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {  
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
@@ -91,7 +91,8 @@ const tab = style({
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
-  flexShrink: 0
+  flexShrink: 0,
+  transition: 'default'
 }, getAllowedOverrides());
 
 const icon = style({
@@ -241,10 +242,7 @@ const selectedIndicator = style({
     }
   },
   borderStyle: 'none',
-  borderRadius: 'full'
-});
-
-const selectionAnimation = style({
+  borderRadius: 'full',
   transitionDuration: 130,
   transitionTimingFunction: 'in-out',
 });
@@ -301,7 +299,7 @@ function TabLine(props: TabLineProps) {
   }, [onResize, state?.selectedItem?.key, direction, orientation, density]);
 
   return (
-    <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}), selectionAnimation)} />
+    <div style={{...style}} className={mergeStyles(selectedIndicator({isDisabled, orientation}))} />
   );
 }
 

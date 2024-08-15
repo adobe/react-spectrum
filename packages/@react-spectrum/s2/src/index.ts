@@ -53,6 +53,7 @@ export {SearchField} from './SearchField';
 export {Slider} from './Slider';
 export {StatusLight} from './StatusLight';
 export {Switch} from './Switch';
+export {Tabs, TabList, Tab, TabPanel} from './Tabs';
 export {TagGroup, Tag} from './TagGroup';
 export {TextArea, TextField} from './TextField';
 export {ToggleButton} from './ToggleButton';
@@ -99,6 +100,7 @@ export type {SliderProps} from './Slider';
 export type {RangeSliderProps} from './RangeSlider';
 export type {StatusLightProps} from './StatusLight';
 export type {SwitchProps} from './Switch';
+export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs'
 export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
 export type {ToggleButtonProps} from './ToggleButton';
