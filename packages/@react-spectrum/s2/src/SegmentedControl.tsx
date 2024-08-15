@@ -21,10 +21,19 @@ import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
+  /**
+   * The content to display in the segmented control.
+   */
   children?: ReactNode,
+  /**
+   * Whether the segmented control is disabled.
+   */
   isDisabled?: boolean
 }
 export interface ControlItemProps extends Omit<RadioProps, 'children'>, StyleProps {
+  /**
+   * The content to display in the control item. 
+   */
   children?: ReactNode
 }
 
@@ -97,7 +106,13 @@ const controlItem = style({
 }, getAllowedOverrides())
 
 interface SegmentedControlInternalContextProps extends SegmentedControlProps {
-  register?: (value) => void;
+  register?: (value: string) => void;
+}
+
+interface DefaultSelectionTrackProps {
+  defaultValue?: string,
+  value?: string,
+  children?: ReactNode
 }
 
 const SegmentedControlInternalContext = createContext<SegmentedControlInternalContextProps>({});
@@ -125,11 +140,11 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
   )
 }
 
-function DefaultSelectionTracker(props) {
+function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
 
-  let register = useCallback((value) => {
+  let register = useCallback((value: string) => {
     if (!isRegistered.current) {
       isRegistered.current = true;
 
