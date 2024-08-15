@@ -35,7 +35,7 @@ export function Illustrations() {
               return 'gradient/' + style + '/' + name;
             });
             return (
-              <div className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center', padding: 16, borderRadius: 'lg', boxShadow: 'elevated'})}>
+              <div className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center', padding: 16, borderRadius: 'lg', boxShadow: 'elevated', backgroundColor: 'layer-2'})}>
                 <Illustration UNSAFE_style={{width: 96, height: 96}} />
                 <span className={style({font: 'ui', display: 'flex', gap: 8, alignItems: 'center', maxWidth: 'full'})}>
                   <span className={style({truncate: true})}>{name}</span>
@@ -54,7 +54,7 @@ export function Illustrations() {
         <H2>Linear illustrations</H2>
         <P>Linear illustrations can be imported as shown below:</P>
         <Pre>{highlight("import Cloud from '@react-spectrum/s2/illustrations/linear/Cloud';")}</Pre>
-        <div className={style({display: 'grid', gridTemplateColumns: 'repeat(auto-fit, 164px)', gap: 20, justifyContent: 'space-between', marginTop: 48})}>
+        <div className={style({display: 'grid', gridTemplateColumns: 'repeat(auto-fit, 164px)', gap: 20, justifyContent: 'space-between', marginTop: 48, backgroundColor: 'layer-2'})}>
           {Object.keys(linearIllustrations).map(icon => {
             let Illustration = linearIllustrations[icon].default;
             return (
