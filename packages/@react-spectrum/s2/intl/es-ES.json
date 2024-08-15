@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Ayuda",
+  "contextualhelp.info": "Información",
+  "dialog.alert": "Alerta",
+  "dialog.dismiss": "Descartar",
+  "dropzone.replaceMessage": "Suelte el archivo para reemplazar",
+  "inlinealert.informative": "Información",
+  "inlinealert.negative": "Error",
+  "inlinealert.notice": "Advertencia",
+  "inlinealert.positive": "Éxito",
+  "label.(optional)": "(opcional)",
+  "label.(required)": "(obligatorio)",
+  "menu.moreActions": "Más acciones",
+  "picker.placeholder": "Seleccione una opción…",
+  "slider.maximum": "Máximo",
+  "slider.minimum": "Mínimo",
+  "tag.noTags": "Ninguno"
+}

@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "도움말",
+  "contextualhelp.info": "정보",
+  "dialog.alert": "경고",
+  "dialog.dismiss": "무시",
+  "dropzone.replaceMessage": "파일을 드롭하여 바꾸기",
+  "inlinealert.informative": "정보",
+  "inlinealert.negative": "오류",
+  "inlinealert.notice": "경고",
+  "inlinealert.positive": "성공",
+  "label.(optional)": "(선택 사항)",
+  "label.(required)": "(필수 사항)",
+  "menu.moreActions": "기타 액션",
+  "picker.placeholder": "선택 사항 선택",
+  "slider.maximum": "최대",
+  "slider.minimum": "최소",
+  "tag.noTags": "없음"
+}

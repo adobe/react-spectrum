@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "مساعدة",
+  "contextualhelp.info": "معلومات",
+  "dialog.alert": "تنبيه",
+  "dialog.dismiss": "تجاهل",
+  "dropzone.replaceMessage": "للاستبدال، قم بإفلات الملف",
+  "inlinealert.informative": "معلومات",
+  "inlinealert.negative": "خطأ",
+  "inlinealert.notice": "تحذير",
+  "inlinealert.positive": "تم بنجاح",
+  "label.(optional)": "(اختياري)",
+  "label.(required)": "(مطلوب)",
+  "menu.moreActions": "المزيد من الإجراءات",
+  "picker.placeholder": "حدد خيارًا...",
+  "slider.maximum": "أقصى",
+  "slider.minimum": "أدنى",
+  "tag.noTags": "بدون"
+}

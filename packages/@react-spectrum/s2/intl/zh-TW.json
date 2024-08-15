@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "說明",
+  "contextualhelp.info": "資訊",
+  "dialog.alert": "警示",
+  "dialog.dismiss": "關閉",
+  "dropzone.replaceMessage": "放置要取代的檔案",
+  "inlinealert.informative": "資訊",
+  "inlinealert.negative": "錯誤",
+  "inlinealert.notice": "警告",
+  "inlinealert.positive": "成功",
+  "label.(optional)": "(選填)",
+  "label.(required)": "(必填)",
+  "menu.moreActions": "更多動作",
+  "picker.placeholder": "選取一個選項",
+  "slider.maximum": "最大值",
+  "slider.minimum": "最小值",
+  "tag.noTags": "無"
+}

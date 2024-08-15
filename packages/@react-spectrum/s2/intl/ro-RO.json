@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Ajutor",
+  "contextualhelp.info": "Informaţii",
+  "dialog.alert": "Alertă",
+  "dialog.dismiss": "Revocare",
+  "dropzone.replaceMessage": "Plasați fișierul pentru a înlocui",
+  "inlinealert.informative": "Informații",
+  "inlinealert.negative": "Eroare",
+  "inlinealert.notice": "Avertisment",
+  "inlinealert.positive": "Succes",
+  "label.(optional)": "(opţional)",
+  "label.(required)": "(obligatoriu)",
+  "menu.moreActions": "Mai multe acțiuni",
+  "picker.placeholder": "Selectați o opțiune",
+  "slider.maximum": "Maximum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Niciuna"
+}

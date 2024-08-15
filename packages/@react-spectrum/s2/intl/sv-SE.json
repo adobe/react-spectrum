@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Hjälp",
+  "contextualhelp.info": "Information",
+  "dialog.alert": "Varning",
+  "dialog.dismiss": "Avvisa",
+  "dropzone.replaceMessage": "Släpp filen för att ersätta",
+  "inlinealert.informative": "Information",
+  "inlinealert.negative": "Fel",
+  "inlinealert.notice": "Varning",
+  "inlinealert.positive": "Lyckades",
+  "label.(optional)": "(valfritt)",
+  "label.(required)": "(krävs)",
+  "menu.moreActions": "Fler åtgärder",
+  "picker.placeholder": "Välj ett alternativ...",
+  "slider.maximum": "Maximum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Ingen"
+}
