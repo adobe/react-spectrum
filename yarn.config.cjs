@@ -233,8 +233,6 @@ function enforceExports({Yarn}) {
           if (workspace.manifest.exports[key]) {
             let subExportsRequire = workspace.manifest.exports[key].require;
             workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire, cjsExt));
-          }
-          if (workspace.manifest.exports[key]) {
             let subExportsImport = workspace.manifest.exports[key].import;
             workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
           }
