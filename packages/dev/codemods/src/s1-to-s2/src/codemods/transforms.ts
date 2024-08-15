@@ -834,7 +834,7 @@ function updateAvatarSize(
     let sizeAttrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'size') as NodePath<t.JSXAttribute>;
     if (sizeAttrPath) {
       let value = sizeAttrPath.node.value;
-      if (value.type === 'StringLiteral') {
+      if (value?.type === 'StringLiteral') {
         const avatarDimensions = {
           'avatar-size-50': 16,
           'avatar-size-75': 18,
