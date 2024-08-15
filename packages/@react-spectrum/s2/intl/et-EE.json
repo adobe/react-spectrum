@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Spikker",
+  "contextualhelp.info": "Teave",
+  "dialog.alert": "Teade",
+  "dialog.dismiss": "Lõpeta",
+  "dropzone.replaceMessage": "Kukuta fail asendamiseks",
+  "inlinealert.informative": "Teave",
+  "inlinealert.negative": "Tõrge",
+  "inlinealert.notice": "Hoiatus",
+  "inlinealert.positive": "Valmis",
+  "label.(optional)": "(valikuline)",
+  "label.(required)": "(nõutav)",
+  "menu.moreActions": "Veel toiminguid",
+  "picker.placeholder": "Valige valikuline...",
+  "slider.maximum": "Maksimaalne",
+  "slider.minimum": "Minimaalne",
+  "tag.noTags": "Puudub"
+}

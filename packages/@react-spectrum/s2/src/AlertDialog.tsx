@@ -20,10 +20,13 @@ import {Dialog} from './Dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
   /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
@@ -72,6 +75,7 @@ const icon = style({
 });
 
 function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     autoFocusButton,
     cancelLabel,
@@ -109,9 +113,8 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
             ]}>
             <Heading slot="title">
               <CenterBaseline>
-                {/* TODO: Add translations */}
-                {variant === 'error' && <AlertTriangle aria-label="Alert" />}
-                {variant === 'warning' && <NoticeSquare aria-label="Alert" />}
+                {variant === 'error' && <AlertTriangle aria-label={stringFormatter.format('dialog.alert')} />}
+                {variant === 'warning' && <NoticeSquare aria-label={stringFormatter.format('dialog.alert')} />}
                 {title}
               </CenterBaseline>
             </Heading>

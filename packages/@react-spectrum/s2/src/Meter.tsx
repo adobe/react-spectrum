@@ -125,8 +125,8 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       }, styles)}>
       {({percentage, valueText}) => (
         <>
-          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>
-          <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>
+          {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
+          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
           <div className={trackStyles({staticColor, size})}>
             <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
           </div>

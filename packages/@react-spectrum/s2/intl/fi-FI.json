@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Ohje",
+  "contextualhelp.info": "Tiedot",
+  "dialog.alert": "Hälytys",
+  "dialog.dismiss": "Hylkää",
+  "dropzone.replaceMessage": "Pudota korvaava tiedosto",
+  "inlinealert.informative": "Tiedot",
+  "inlinealert.negative": "Virhe",
+  "inlinealert.notice": "Varoitus",
+  "inlinealert.positive": "Onnistui",
+  "label.(optional)": "(valinnainen)",
+  "label.(required)": "(pakollinen)",
+  "menu.moreActions": "Lisää toimintoja",
+  "picker.placeholder": "Valitse vaihtoehto...",
+  "slider.maximum": "Maksimi",
+  "slider.minimum": "Minimi",
+  "tag.noTags": "Ei mitään"
+}

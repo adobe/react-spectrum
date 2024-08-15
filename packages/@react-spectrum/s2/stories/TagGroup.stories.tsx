@@ -144,7 +144,6 @@ export let Disabled = {
   }
 };
 
-// TODO: Style for light/dark?
 function renderEmptyState() {
   return (
     <span>
@@ -160,6 +159,20 @@ export let Empty = {
 
     return (
       <TagGroup {...args} renderEmptyState={renderEmptyState} />
+    );
+  },
+  args: {
+    label: 'Ice cream flavor'
+  }
+};
+export let DefaultEmpty = {
+  render: (args: any) => {
+    if (args.onRemove) {
+      args.onRemove = action('remove');
+    }
+
+    return (
+      <TagGroup {...args} />
     );
   },
   args: {

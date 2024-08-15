@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Pomoć",
+  "contextualhelp.info": "Informacije",
+  "dialog.alert": "Upozorenje",
+  "dialog.dismiss": "Odbaci",
+  "dropzone.replaceMessage": "Ispustite datoteku za zamjenu",
+  "inlinealert.informative": "Informacije",
+  "inlinealert.negative": "Pogreška",
+  "inlinealert.notice": "Upozorenje",
+  "inlinealert.positive": "Uspješno",
+  "label.(optional)": "(opcionalno)",
+  "label.(required)": "(obvezno)",
+  "menu.moreActions": "Dodatne radnje",
+  "picker.placeholder": "Odaberite opciju",
+  "slider.maximum": "Najviše",
+  "slider.minimum": "Najmanje",
+  "tag.noTags": "Nema"
+}

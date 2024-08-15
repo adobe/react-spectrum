@@ -40,9 +40,12 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext, Text, TextContext} from './Content';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
@@ -122,7 +125,6 @@ function TagGroupInner<T>({
     description,
     labelPosition = 'top',
     labelAlign = 'start',
-    renderEmptyState,
     isEmphasized,
     isInvalid,
     errorMessage,
@@ -134,7 +136,14 @@ function TagGroupInner<T>({
   forwardedRef: ref,
   collection
 }: {props: TagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
-  let {maxRows, groupActionLabel, onGroupAction, ...otherProps} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let {
+    maxRows,
+    groupActionLabel,
+    onGroupAction,
+    renderEmptyState = () => stringFormatter.format('tag.noTags'),
+    ...otherProps
+  } = props;
   let {direction} = useLocale();
   let containerRef = useRef(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
@@ -158,6 +167,10 @@ function TagGroupInner<T>({
   );
 
   let updateVisibleTagCount = useEffectEvent(() => {
+    if (maxRows == null) {
+      setTagState({visibleTagCount: collection.size, showCollapseButton: false});
+    }
+
     if (maxRows != null && maxRows > 0) {
       let computeVisibleTagCount = () => {
         let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
