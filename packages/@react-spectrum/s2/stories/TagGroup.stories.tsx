@@ -11,7 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Avatar, Image, Link, Tag, TagGroup, Text} from '../src';
+import {
+  Avatar,
+  Content,
+  ContextualHelp,
+  Footer,
+  Heading,
+  Image,
+  Link,
+  Tag,
+  TagGroup,
+  Text
+} from '../src';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -142,5 +153,77 @@ export let Links = {
   args: {
     label: 'Tags as links',
     selectionMode: 'none'
+  }
+};
+
+export const ContextualHelpExample = {
+  render: (args: any) => {
+    if (args.onRemove) {
+      args.onRemove = action('remove');
+    }
+    return (
+      <TagGroup {...args}>
+        <Tag>Chocolate</Tag>
+        <Tag>Mint</Tag>
+        <Tag>Strawberry</Tag>
+        <Tag>Vanilla</Tag>
+      </TagGroup>
+    );
+  },
+  args: {
+    label: 'Ice cream flavor',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+<TagGroup
+  label="Ice cream flavor"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is a ice cream?</Heading>
+      <Content>
+        <Text>
+          A combination of sugar, eggs, milk, and cream is cooked to make
+          a custard base. Then, flavorings are added, and this flavored
+          mixture is carefully churned and frozen to make ice cream.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Ice_cream"
+          target="_blank">Learn more about ice cream</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+>
+  <Tag>Chocolate</Tag>
+  <Tag>Mint</Tag>
+  <Tag>Strawberry</Tag>
+  <Tag>Vanilla</Tag>
+</TagGroup>`;
+        }
+      }
+    }
   }
 };

@@ -20,26 +20,18 @@ const meta: Meta<typeof Avatar> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  decorators: (children, {args}) => (
+    args.isOverBackground ? (
+      <div className={style({backgroundColor: 'indigo-800', padding: 40})}>
+        {children(args)}
+      </div>
+    ) : children(args)
+  )
 };
 
 export default meta;
 
-const SRC_URL_1 =
-  'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
-const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
-
-
 export const Example = (args: any) => (
-  <>
-    <Avatar alt="default adobe" src={SRC_URL_1} {...args} />
-    <Avatar alt="design provided" src={SRC_URL_2} {...args} />
-  </>
-);
-
-export const UserAppliedSize = (args: any) => (
-  <>
-    <Avatar alt="default adobe" src={SRC_URL_1} styles={style({size: 40})} {...args} />
-    <Avatar alt="design provided" src={SRC_URL_2} styles={style({size: 40})} {...args} />
-  </>
+  <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" {...args} />
 );

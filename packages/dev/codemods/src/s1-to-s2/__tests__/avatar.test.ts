@@ -6,7 +6,7 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Replaces size prop with macro size value', `
+test('Updates size prop to pixel value', `
 import {Avatar} from '@adobe/react-spectrum';
 let size = 75;
 let props = {size: 100};
