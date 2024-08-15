@@ -68,6 +68,10 @@ type FunctionInfo =
   | {
     name: 'commentIfParentCollectionNotDetected',
     args: {}
+  }
+  | {
+    name: 'updateAvatarSize',
+    args: {}
   };
 
 type Change = {
@@ -93,6 +97,14 @@ export const changes: ChangesJSON = {
         function: {
           name: 'commentOutProp',
           args: {propToComment: 'isDisabled'}
+        }
+      },
+      {
+        description: 'Update size prop',
+        reason: 'Updated naming convention',
+        function: {
+          name: 'updateAvatarSize',
+          args: {}
         }
       }
     ]

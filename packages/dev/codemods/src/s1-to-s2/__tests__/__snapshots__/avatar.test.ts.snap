@@ -1,8 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Replaces size prop with macro size value 1`] = `
+exports[`Updates size prop to pixel value 1`] = `
 "import { Avatar } from "@react-spectrum/s2";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 let size = 75;
 let props = {size: 100};
 
@@ -10,25 +9,18 @@ let props = {size: 100};
   <Avatar
     src="https://i.imgur.com/kJOwAdv.png"
     alt="avatar with custom size"
-    styles={style({
-      size: 16
-    })} />
+    size={16} />
   <Avatar
     src="https://i.imgur.com/kJOwAdv.png"
     alt="avatar with custom size"
-    styles={style({
-      size: 40
-    })} />
+    size={40} />
   <Avatar
     src="https://i.imgur.com/kJOwAdv.png"
     alt="avatar with custom size"
-    styles={style({
-      size: "[50px]"
-    })} />
+    size={50} />
   <Avatar
     src="https://i.imgur.com/kJOwAdv.png"
     alt="avatar with custom size"
-    // TODO(S2-upgrade): update this style prop
     size={size} />
   <Avatar
     src="https://i.imgur.com/kJOwAdv.png"
