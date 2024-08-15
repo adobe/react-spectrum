@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "ヘルプ",
+  "contextualhelp.info": "情報",
+  "dialog.alert": "アラート",
+  "dialog.dismiss": "閉じる",
+  "dropzone.replaceMessage": "ファイルをドロップして置換",
+  "inlinealert.informative": "情報",
+  "inlinealert.negative": "エラー",
+  "inlinealert.notice": "警告",
+  "inlinealert.positive": "成功",
+  "label.(optional)": "（オプション）",
+  "label.(required)": "（必須）",
+  "menu.moreActions": "その他のアクション",
+  "picker.placeholder": "オプションを選択...",
+  "slider.maximum": "最大",
+  "slider.minimum": "最小",
+  "tag.noTags": "なし"
+}
