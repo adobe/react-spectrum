@@ -48,7 +48,7 @@ export interface TagListRenderProps {
   state: ListState<unknown>
 }
 
-export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps>, AriaDOMProps {
+export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps> {
   /** Provides content to display when there are no items in the tag list. */
   renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }

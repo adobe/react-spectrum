@@ -267,8 +267,6 @@ function TagGroupInner<T>({
     );
   }
 
-  let tagListId = useId();
-
   return (
     <AriaTagGroup
       {...otherProps}
@@ -342,7 +340,6 @@ function TagGroupInner<T>({
             )}
             {/* real tag list */}
             <TagList
-              id={tagListId}
               ref={tagsRef}
               items={items}
               renderEmptyState={renderEmptyState}
@@ -355,7 +352,8 @@ function TagGroupInner<T>({
             </TagList>
             {showActions && !isEmpty &&
               <ActionGroup
-                tagListId={tagListId}
+                aria-label={props['aria-label']}
+                aria-labelledby={props['aria-labelledby']}
                 actionsRef={actionsRef}
                 tagState={tagState}
                 size={size}
@@ -374,25 +372,28 @@ function TagGroupInner<T>({
 
 function ActionGroup(props) {
   let {
-    tagListId,
     actionsRef,
     tagState,
     size,
     isCollapsed,
     handlePressCollapse,
     onAction,
-    actionLabel
+    actionLabel,
+    // directly use aria-labelling from the TagGroup because we can't use the id from the TagList
+    // and we can't supply an id to the TagList because it'll cause an issue where all the tag ids flip back
+    // and forth with their prefix in an infinite loop
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy
   } = props;
-  let tagListCtx = useContext(TagListContext);
-  // @ts-ignore how do I fix this one?
+
   let actionsId = useId();
   return (
     <div
       role="group"
       ref={actionsRef}
       id={actionsId}
-      aria-label={'Actions'}
-      aria-labelledby={`${tagListId} ${actionsId}`}
+      aria-label={ariaLabel ? `${ariaLabel} Actions` : 'Actions'}
+      aria-labelledby={ariaLabelledBy ? ariaLabelledBy : undefined}
       className={style({
         display: 'inline'
       })}>

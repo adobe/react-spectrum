@@ -102,7 +102,7 @@ export let Dynamic = {
     );
   },
   args: {
-    label: 'Ice cream flavor',
+    'aria-label': 'Ice cream flavor',
     errorMessage: 'You must love ice cream',
     description: 'Pick a flavor'
   }
