@@ -5,6 +5,7 @@ import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
+import {withProviderSwitcher} from './custom-addons/provider';
 import './global.css';
 
 const channel = addons.getChannel();
@@ -102,5 +103,11 @@ export const parameters = {
   },
   layout: 'fullscreen',
 };
+
+
+
+export const decorators = [
+  withProviderSwitcher
+];
 
 export default preview;

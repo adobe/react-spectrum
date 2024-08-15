@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Yardım",
+  "contextualhelp.info": "Bilgiler",
+  "dialog.alert": "Uyarı",
+  "dialog.dismiss": "Kapat",
+  "dropzone.replaceMessage": "Değiştirmek için dosyayı bırakın",
+  "inlinealert.informative": "Bilgiler",
+  "inlinealert.negative": "Hata",
+  "inlinealert.notice": "Uyarı",
+  "inlinealert.positive": "Başarılı",
+  "label.(optional)": "(isteğe bağlı)",
+  "label.(required)": "(gerekli)",
+  "menu.moreActions": "Daha fazla eylem",
+  "picker.placeholder": "Bir seçim yapın…",
+  "slider.maximum": "Maksimum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Hiçbiri"
+}

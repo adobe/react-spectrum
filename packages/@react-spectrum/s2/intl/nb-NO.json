@@ -1,0 +1,18 @@
+{
+  "contextualhelp.help": "Hjelp",
+  "contextualhelp.info": "Informasjon",
+  "dialog.alert": "Varsel",
+  "dialog.dismiss": "Lukk",
+  "dropzone.replaceMessage": "Slipp filen for å erstatte",
+  "inlinealert.informative": "Informasjon",
+  "inlinealert.negative": "Feil",
+  "inlinealert.notice": "Advarsel",
+  "inlinealert.positive": "Vellykket",
+  "label.(optional)": "(valgfritt)",
+  "label.(required)": "(obligatorisk)",
+  "menu.moreActions": "Flere handlinger",
+  "picker.placeholder": "Velg et alternativ...",
+  "slider.maximum": "Maksimum",
+  "slider.minimum": "Minimum",
+  "tag.noTags": "Ingen"
+}
