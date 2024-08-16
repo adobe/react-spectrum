@@ -572,66 +572,6 @@ function updateTabs(
     }
   }
 
-  function transformItem(
-    itemPath: NodePath<t.JSXElement>,
-    newComponent: string,
-    availableComponents: Set<string>
-  ): t.JSXElement {
-    let attributes = itemPath.node.openingElement.attributes;
-    let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
-    if (keyProp && t.isJSXAttribute(keyProp)) {
-      // Update key prop to be id
-      keyProp.name = t.jsxIdentifier('id');
-    }
-
-    if (
-      t.isArrowFunctionExpression(itemPath.parentPath.node) &&
-      itemPath.parentPath.parentPath &&
-      t.isCallExpression(itemPath.parentPath.parentPath.node) &&
-      itemPath.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
-      itemPath.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
-      itemPath.parentPath.parentPath.node.callee.property.name === 'map'
-    ) {
-      // If Array.map is used, keep the key prop
-      if (keyProp && t.isJSXAttribute(keyProp)) {
-        let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
-        attributes.push(newKeyProp);
-      }
-    }
-
-    let localName = newComponent;
-    if (availableComponents.has(newComponent)) {
-      let program = itemPath.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
-      localName = addComponentImport(program, newComponent);
-    }
-
-    let newNode = t.jsxElement(
-      t.jsxOpeningElement(t.jsxIdentifier(localName), itemPath.node.openingElement.attributes),
-      t.jsxClosingElement(t.jsxIdentifier(localName)),
-      itemPath.node.children
-    );
-    itemPath.replaceWith(newNode);
-
-    // Add id attribute based on the key
-    const keyAttr = newNode.openingElement.attributes.find(
-      attr => attr.type === 'JSXAttribute' && attr.name.name === 'key'
-    ) as t.JSXAttribute;
-    if (keyAttr) {
-      const idAttr = t.jsxAttribute(
-        t.jsxIdentifier('id'),
-        keyAttr.value
-      );
-      newNode.openingElement.attributes.push(idAttr);
-    }
-
-    // Remove key attribute
-    newNode.openingElement.attributes = newNode.openingElement.attributes.filter(
-      attr => attr.type === 'JSXAttribute' && attr.name.name !== 'key'
-    );
-
-    return newNode;
-  }
-
   function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
     tabListPath.get('children').forEach(itemPath => {
       if (
@@ -639,7 +579,7 @@ function updateTabs(
         t.isJSXIdentifier(itemPath.node.openingElement.name) &&
         getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
       ) {
-        transformItem(itemPath as NodePath<t.JSXElement>, 'Tab', availableComponents);
+        updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabList', newComponent: 'Tab'});
       }
     });
     return tabListPath.node;
@@ -652,7 +592,8 @@ function updateTabs(
         t.isJSXIdentifier(itemPath.node.openingElement.name) &&
         getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
       ) {
-        return transformItem(itemPath as NodePath<t.JSXElement>, 'TabPanel', availableComponents);
+        updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabPanels', newComponent: 'TabPanel'});
+        return itemPath.node;
       }
       // TODO: How to handle dynamic tab panels?
       if (t.isArrowFunctionExpression(itemPath.node)) {
