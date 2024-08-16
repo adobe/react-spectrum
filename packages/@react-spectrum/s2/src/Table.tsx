@@ -960,8 +960,9 @@ export interface CellProps extends RACCellProps {
 }
 
 export function Cell(props: CellProps) {
-  let {children, isSticky, showDivider, align, ...otherProps} = props;
+  let {children, isSticky, showDivider, align, textValue, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
+  textValue ||= typeof children === 'string' ? children : undefined;
 
   return (
     <RACCell
@@ -974,6 +975,7 @@ export function Cell(props: CellProps) {
         ...renderProps,
         ...tableVisualOptions
       })}
+      textValue={textValue}
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
