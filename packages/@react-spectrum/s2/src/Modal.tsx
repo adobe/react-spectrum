@@ -133,7 +133,11 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
               L: '[90vh]'
             }
           },
-          backgroundColor: 'layer-2',
+          '--s2-container-bg': {
+            type: 'backgroundColor',
+            value: 'layer-2'
+          },
+          backgroundColor: '--s2-container-bg',
           animation: {
             isEntering: fadeAndSlide,
             isExiting: fade

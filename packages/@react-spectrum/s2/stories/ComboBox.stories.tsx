@@ -12,9 +12,11 @@
 
 import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
 import {categorizeArgTypes} from './utils';
+import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -30,19 +32,18 @@ const meta: Meta<typeof ComboBox<any>> = {
 export default meta;
 type Story = StoryObj<typeof ComboBox<any>>;
 
-export const Example: Story = {
-  render: (args) => (
-    <ComboBox {...args}>
-      <ComboBoxItem>Chocolate</ComboBoxItem>
-      <ComboBoxItem>Mint</ComboBoxItem>
-      <ComboBoxItem>Strawberry</ComboBoxItem>
-      <ComboBoxItem>Vanilla</ComboBoxItem>
-      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-    </ComboBox>
-  ),
-  args: {
-    label: 'Ice cream flavor'
-  }
+export const Example = (args: ComboBoxProps<any>) => (
+  <ComboBox {...args}>
+    <ComboBoxItem>Chocolate</ComboBoxItem>
+    <ComboBoxItem>Mint</ComboBoxItem>
+    <ComboBoxItem>Strawberry</ComboBoxItem>
+    <ComboBoxItem>Vanilla</ComboBoxItem>
+    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+  </ComboBox>
+);
+
+Example.args = {
+  label: 'Ice cream flavor'
 };
 
 export const Sections: Story = {
@@ -208,5 +209,13 @@ ContextualHelpExample.parameters = {
 </ComboBox>`;
       }
     }
+  }
+};
+
+export const CustomWidth = (args: any) => <Example {...args} styles={style({width: 384})} />;
+CustomWidth.args = Example.args;
+CustomWidth.parameters = {
+  docs: {
+    disable: true
   }
 };

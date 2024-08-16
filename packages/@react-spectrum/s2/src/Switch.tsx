@@ -13,16 +13,18 @@
 import {
   Switch as AriaSwitch,
   SwitchProps as AriaSwitchProps,
+  ContextValue,
   SwitchRenderProps
 } from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import {FocusableRef} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
-import {forwardRef, ReactNode, useContext, useRef} from 'react';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface SwitchStyleProps {
   /**
@@ -43,13 +45,14 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style'
   children?: ReactNode
 }
 
+export const SwitchContext = createContext<ContextValue<SwitchProps, FocusableRefValue<HTMLLabelElement>>>(null);
+
 const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   transition: 'colors',
   color: {
     default: 'neutral',
@@ -147,8 +150,10 @@ const transformStyle = ({isSelected}: SwitchRenderProps) => ({
 });
 
 function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
-  let domRef = useFocusableRef(ref);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let domRef = useFocusableRef(ref, inputRef);
   let handleRef = useRef(null);
   let isInForm = !!useContext(FormContext);
   props = useFormProps(props);
@@ -156,6 +161,7 @@ function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
     <AriaSwitch
       {...props}
       ref={domRef}
+      inputRef={inputRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
       {renderProps => (

@@ -63,6 +63,7 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   maxWidth: 160,
   minHeight: 24,
   boxSizing: 'border-box',
+  font: 'ui-sm',
   color: {
     default: 'gray-25',
     forcedColors: 'ButtonText'
@@ -78,9 +79,6 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   },
   backgroundColor: 'neutral',
   borderRadius: 'control',
-  fontFamily: 'sans',
-  fontWeight: 'normal',
-  fontSize: 'ui-sm',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,
@@ -191,7 +189,12 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-function TooltipTrigger(props: TooltipTriggerProps) {
+/**
+ * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
+ * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
+ * relative to the trigger.
+ */
+export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
     containerPadding,
     crossOffset,
@@ -216,14 +219,6 @@ function TooltipTrigger(props: TooltipTriggerProps) {
     </AriaTooltipTrigger>
   );
 }
-
-/**
- * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
- * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
- * relative to the trigger.
- */
-let _TooltipTrigger = forwardRef(TooltipTrigger);
-export {_TooltipTrigger as TooltipTrigger};
 
 
 /**

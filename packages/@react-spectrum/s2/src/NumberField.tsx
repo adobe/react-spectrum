@@ -16,28 +16,31 @@ import {
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
   ButtonContext,
+  ContextValue,
   InputContext,
   Text,
   useContextProps
 } from 'react-aria-components';
 import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import ChevronIcon from '../ui-icons/Chevron';
-import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
-import {CSSProperties, ForwardedRef, forwardRef, ReactNode, useContext, useImperativeHandle, useMemo, useRef} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
+import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
-import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
-import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext} from './Form';
+import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
+import {TextFieldRef} from '@react-types/textfield';
 import {useButton, useFocusRing, useHover} from 'react-aria';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface NumberFieldProps extends
   AriaNumberFieldProps,
   StyleProps,
-  Omit<SpectrumLabelableProps, 'contextualHelp'>,
+  SpectrumLabelableProps,
   HelpTextProps {
   /**
    * Whether the NumberField step buttons should be collapsed into a single column.
@@ -53,6 +56,8 @@ export interface NumberFieldProps extends
     size?: 'S' | 'M' | 'L' | 'XL',
     label?: ReactNode
 }
+
+export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, TextFieldRef>>(null);
 
 const inputButton = style({
   display: 'flex',
@@ -212,17 +217,18 @@ const stepperContainerStyles = style({
   }
 });
 
-type Size = 'XS' | 'S' | 'M' | 'L' | 'XL';
-const chevronSize: Record<'S' | 'M' | 'L' | 'XL', Size> = {
+const chevronSize = {
   S: 'XS',
   M: 'S',
   L: 'L',
   XL: 'XL'
-};
+} as const;
 
-function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>) {
+function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
+  [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   let {
     label,
+    contextualHelp,
     description: descriptionMessage,
     errorMessage,
     isCollapsed,
@@ -236,7 +242,7 @@ function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>)
     ...numberFieldProps
   } = props;
   let formContext = useContext(FormContext);
-  let domRef = useFocusableRef(ref);
+  let domRef = useRef<HTMLDivElement | null>(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let decrementButtonRef = useRef<HTMLDivElement | null>(null);
   let incrementButtonRef = useRef<HTMLDivElement | null>(null);
@@ -275,7 +281,8 @@ function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>)
                   size={size}
                   labelPosition={labelPosition}
                   labelAlign={labelAlign}
-                  necessityIndicator={necessityIndicator}>
+                  necessityIndicator={necessityIndicator}
+                  contextualHelp={contextualHelp}>
                   {label}
                 </FieldLabel>
                 <FieldGroup
@@ -284,19 +291,11 @@ function NumberField(props: NumberFieldProps, ref: FocusableRef<HTMLDivElement>)
                   isInvalid={isInvalid}
                   size={size}
                   styles={style({
+                    ...fieldInput(),
                     paddingStart: 'edge-to-text',
                     paddingEnd: 0,
-                    width: {
-                      default: 'full',
-                      size: {
-                        S: 192,
-                        M: 208,
-                        L: 224,
-                        XL: 240
-                      }
-                    },
                     cursor: 'default'
-                  })({size, isCollapsed})}>
+                  })({size})}>
                   <InputContext.Consumer>
                     {ctx => (
                       <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
