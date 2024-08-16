@@ -437,7 +437,7 @@ function updateComponentWithinCollection(
 
   // Collections currently implemented
   // TODO: Add 'ActionGroup', 'ListBox', 'ListView' once implemented
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'Collection']);
 
   if (
     t.isJSXElement(path.node) &&
@@ -509,7 +509,7 @@ function updateComponentWithinCollection(
 function commentIfParentCollectionNotDetected(
   path: NodePath<t.JSXElement>
 ) {
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView', 'Collection']);
   if (
     t.isJSXElement(path.node)
   ) {
@@ -586,6 +586,16 @@ function updateTabs(
   }
 
   function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>): t.JSXElement[] {
+    // Dynamic case
+    let dynamicRender = tabPanelsPath.get('children').find(path => t.isJSXExpressionContainer(path.node));
+    if (dynamicRender) {
+      updateToNewComponent(tabPanelsPath, {newComponent: 'Collection'});
+      let itemPath = (dynamicRender.get('expression') as NodePath).get('body');
+      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'Collection', newComponent: 'TabPanel'});
+      return [tabPanelsPath.node];
+    }
+
+    // Static case
     return tabPanelsPath.get('children').map(itemPath => {
       if (
         t.isJSXElement(itemPath.node) &&
@@ -593,11 +603,6 @@ function updateTabs(
         getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
       ) {
         updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabPanels', newComponent: 'TabPanel'});
-        return itemPath.node;
-      }
-      // TODO: How to handle dynamic tab panels?
-      if (t.isArrowFunctionExpression(itemPath.node)) {
-        addComment(itemPath.node, ' TODO(S2-upgrade): Update dynamic function with Item to a list of TabPanels');
         return itemPath.node;
       }
       return null;

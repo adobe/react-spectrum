@@ -1,9 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Move items from Tabs to TabList 1`] = `
-"import { TabPanels, Item } from '@adobe/react-spectrum';
-
-import { Tabs, TabList } from "@react-spectrum/s2";
+"import { Collection, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
+import { TabPanels, Item } from '@adobe/react-spectrum';
 
 let items = [
   {name: 'Tab 1', children: 'Tab Body 1'},
@@ -20,7 +19,13 @@ let items = [
         {item.name}
       </Item>
     )}
-  </TabList></Tabs>"
+  </TabList><Collection>
+    {(item) => (
+      <TabPanel id={item.name}>
+        {item.children}
+      </TabPanel>
+    )}
+  </Collection></Tabs>"
 `;
 
 exports[`Remove isEmphasized 1`] = `
