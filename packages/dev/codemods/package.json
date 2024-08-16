@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "bin": "dist/index.js",
@@ -43,5 +43,8 @@
   },
   "rsp": {
     "type": "cli"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
