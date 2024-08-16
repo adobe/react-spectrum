@@ -49,3 +49,27 @@ export function generatePageStyles(this: MacroContext | void) {
     });
   }
 }
+
+// This generates a low specificity rule to define default values for 
+// --lightningcss-light and --lightningcss-dark. This is used when rendering
+// a <Provider> without setting a colorScheme prop, and when page.css is not present.
+// It is equivalent to setting `color-scheme: light dark`, but without overriding
+// the browser default for content outside the provider.
+export function generateDefaultColorSchemeStyles(this: MacroContext | void) {
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: `@layer _.a {
+        :where(html) {
+          --lightningcss-light: initial;
+          --lightningcss-dark: ;
+
+          @media (prefers-color-scheme: dark) {
+            --lightningcss-light: ;
+            --lightningcss-dark: initial;
+          }
+        }
+      }`
+    });
+  }
+}
