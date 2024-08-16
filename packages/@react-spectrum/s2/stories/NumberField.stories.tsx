@@ -44,12 +44,6 @@ export const Example: Story = {
   }
 };
 
-export const Collapsed: Story = {
-  render: (args) => (
-    <NumberField {...args} isCollapsed />
-  )
-};
-
 export const Validation = (args: any) => (
   <Form>
     <NumberField {...args} />
