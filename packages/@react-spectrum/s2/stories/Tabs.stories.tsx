@@ -21,7 +21,8 @@ const meta: Meta<typeof Tabs> = {
   component: Tabs,
   parameters: {
     layout: 'centered'
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;
@@ -74,9 +75,9 @@ export const Disabled = (args: any) => (
 export const Icons = (args: any) => (
   <Tabs {...args} styles={style({width: 208, height: 144})}>
     <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR"><Edit /></Tab>
-      <Tab id="MaR"><Bell /></Tab>
-      <Tab id="Emp"><Heart /></Tab>
+      <Tab id="FoR" aria-label="Edit"><Edit /></Tab>
+      <Tab id="MaR" aria-label="Notifications"><Bell /></Tab>
+      <Tab id="Emp" aria-label="Likes"><Heart /></Tab>
     </TabList>
     <TabPanel id="FoR">
       Arma virumque cano, Troiae qui primus ab oris.
