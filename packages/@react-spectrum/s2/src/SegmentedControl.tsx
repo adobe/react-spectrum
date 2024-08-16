@@ -102,23 +102,24 @@ const controlItem = style({
   flexShrink: 0,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
+  transition: 'default',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
   }
 }, getAllowedOverrides())
 
-interface SegmentedControlInternalContextProps extends SegmentedControlProps {
+interface InternalSegmentedControlContextProps extends SegmentedControlProps {
   register?: (value: string) => void;
 }
 
 interface DefaultSelectionTrackProps {
-  defaultValue?: string,
-  value?: string,
+  defaultValue?: string | null,
+  value?: string | null,
   children?: ReactNode
 }
 
-const SegmentedControlInternalContext = createContext<SegmentedControlInternalContextProps>({});
+const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
 
 function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement> ) {
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
@@ -158,7 +159,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   return (
     <Provider
       values={[
-        [SegmentedControlInternalContext, {register: register}]
+        [InternalSegmentedControlContext, {register: register}]
     ]}>
       {props.children}
     </Provider>
@@ -168,7 +169,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
-  let {register} = useContext(SegmentedControlInternalContext);
+  let {register} = useContext(InternalSegmentedControlContext);
   let {isDisabled: isRadioGroupDisabled} = useContext(RadioGroupStateContext);
 
   useEffect(() => {
