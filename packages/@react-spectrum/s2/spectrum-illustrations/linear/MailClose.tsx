@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import MailClose_L from './S2_lin_mailClose_160.svg';
-import MailClose_M from './S2_lin_mailClose_96.svg';
-import MailClose_S from './S2_lin_mailClose_48.svg';
+import MailClose_L from 'illustration:./S2_lin_mailClose_160.svg';
+import MailClose_M from 'illustration:./S2_lin_mailClose_96.svg';
+import MailClose_S from 'illustration:./S2_lin_mailClose_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function MailClose(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

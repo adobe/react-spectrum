@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Sparkles_L from './S2_lin_sparkles_160.svg';
-import Sparkles_M from './S2_lin_sparkles_96.svg';
-import Sparkles_S from './S2_lin_sparkles_48.svg';
+import Sparkles_L from 'illustration:./S2_lin_sparkles_160.svg';
+import Sparkles_M from 'illustration:./S2_lin_sparkles_96.svg';
+import Sparkles_S from 'illustration:./S2_lin_sparkles_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Sparkles(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

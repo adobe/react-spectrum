@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Rocket_L from './S2_lin_rocket_160.svg';
-import Rocket_M from './S2_lin_rocket_96.svg';
-import Rocket_S from './S2_lin_rocket_48.svg';
+import Rocket_L from 'illustration:./S2_lin_rocket_160.svg';
+import Rocket_M from 'illustration:./S2_lin_rocket_96.svg';
+import Rocket_S from 'illustration:./S2_lin_rocket_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Rocket(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

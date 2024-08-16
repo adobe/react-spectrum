@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Clipboard_L from './S2_lin_clipboard_160.svg';
-import Clipboard_M from './S2_lin_clipboard_96.svg';
-import Clipboard_S from './S2_lin_clipboard_48.svg';
+import Clipboard_L from 'illustration:./S2_lin_clipboard_160.svg';
+import Clipboard_M from 'illustration:./S2_lin_clipboard_96.svg';
+import Clipboard_S from 'illustration:./S2_lin_clipboard_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
