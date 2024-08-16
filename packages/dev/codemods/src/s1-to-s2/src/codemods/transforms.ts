@@ -538,14 +538,26 @@ function updateTabs(
   function transformTabs(path: NodePath<t.JSXElement>) {
     let tabListNode: t.JSXElement | null = null;
     let tabPanelsNodes: t.JSXElement[] = [];
+    let itemsProp: t.JSXAttribute | null = null;
+
+    path.node.openingElement.attributes = path.node.openingElement.attributes.filter(attr => {
+      if (t.isJSXAttribute(attr) && attr.name.name === 'items') {
+        itemsProp = attr;
+        return false;
+      }
+      return true;
+    });
+
     path.get('children').forEach(childPath => {
       if (t.isJSXElement(childPath.node)) {
         if (
           t.isJSXIdentifier(childPath.node.openingElement.name) &&
-          t.isJSXIdentifier(childPath.node.openingElement.name) &&
           getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) === 'TabList'
         ) {
           tabListNode = transformTabList(childPath as NodePath<t.JSXElement>);
+          if (itemsProp) {
+            tabListNode.openingElement.attributes.push(itemsProp);
+          }
         } else if (
           t.isJSXIdentifier(childPath.node.openingElement.name) &&
           getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) === 'TabPanels'
@@ -641,6 +653,11 @@ function updateTabs(
         getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
       ) {
         return transformItem(itemPath as NodePath<t.JSXElement>, 'TabPanel', availableComponents);
+      }
+      // TODO: How to handle dynamic tab panels?
+      if (t.isArrowFunctionExpression(itemPath.node)) {
+        addComment(itemPath.node, ' TODO(S2-upgrade): Update dynamic function with Item to a list of TabPanels');
+        return itemPath.node;
       }
       return null;
     }).filter(Boolean) as t.JSXElement[];

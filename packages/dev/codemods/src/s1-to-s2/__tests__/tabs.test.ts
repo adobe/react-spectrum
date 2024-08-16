@@ -224,3 +224,33 @@ let props = {isQuiet: true};
   </Tabs>
 </div>
 `);
+
+test('Move items from Tabs to TabList', `
+import {Tabs, TabList, TabPanels, Item} from '@adobe/react-spectrum';
+
+let items = [
+  {name: 'Tab 1', children: 'Tab Body 1'},
+  {name: 'Tab 2', children: 'Tab Body 2'},
+  {name: 'Tab 3', children: 'Tab Body 3'},
+  {name: 'Tab 4', children: 'Tab Body 4'},
+  {name: 'Tab 5', children: 'Tab Body 5'},
+  {name: 'Tab 6', children: 'Tab Body 6'}
+];
+
+<Tabs aria-label="Dynamic tabs" items={tabs}>
+  <TabList>
+    {(item) => (
+      <Item key={item.name}>
+        {item.name}
+      </Item>
+    )}
+  </TabList>
+  <TabPanels>
+    {(item) => (
+      <Item key={item.name}>
+        {item.children}
+      </Item>
+    )}
+  </TabPanels>
+</Tabs>
+`);
