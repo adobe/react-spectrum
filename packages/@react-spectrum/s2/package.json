@@ -81,14 +81,20 @@
       "includeNodeModules": false
     },
     "illustrations-module": {
-      "source": ["spectrum-illustrations/gradient/*.svg", "spectrum-illustrations/linear/*.tsx"],
+      "source": [
+        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/linear/*.tsx"
+      ],
       "distDir": "illustrations",
       "isLibrary": true,
       "outputFormat": "esmodule",
       "includeNodeModules": false
     },
     "illustrations-main": {
-      "source": ["spectrum-illustrations/gradient/*.svg", "spectrum-illustrations/linear/*.tsx"],
+      "source": [
+        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/linear/*.tsx"
+      ],
       "distDir": "illustrations",
       "isLibrary": true,
       "outputFormat": "commonjs",
@@ -118,6 +124,7 @@
     "@parcel/macros": "2.12.1-canary.3165"
   },
   "dependencies": {
+    "@react-aria/collections": "3.0.0-alpha.3",
     "@react-aria/i18n": "^3.11.0",
     "@react-aria/interactions": "^3.22.0",
     "@react-aria/utils": "^3.23.0",

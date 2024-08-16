@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import FileAlert_L from './S2_lin_fileAlert_160.svg';
-import FileAlert_M from './S2_lin_fileAlert_96.svg';
-import FileAlert_S from './S2_lin_fileAlert_48.svg';
+import FileAlert_L from 'illustration:./S2_lin_fileAlert_160.svg';
+import FileAlert_M from 'illustration:./S2_lin_fileAlert_96.svg';
+import FileAlert_S from 'illustration:./S2_lin_fileAlert_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

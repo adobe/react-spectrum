@@ -23,6 +23,7 @@ const config: StorybookConfig = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
+    './custom-addons/provider/register',
     // "@storybook/addon-styling-webpack",
     "storybook-dark-mode"
   ],

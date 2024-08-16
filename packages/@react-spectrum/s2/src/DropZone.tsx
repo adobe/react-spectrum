@@ -15,8 +15,11 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, UnsafeStyles, DOMProps {
@@ -74,6 +77,7 @@ const banner = style<DropZoneRenderProps>({
 });
 
 function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let domRef = useDOMRef(ref);
 
@@ -91,7 +95,7 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
           {(renderProps.isDropTarget && props.isFilled) &&
             <div className={banner(renderProps)}>
               <span>
-                {props.replaceMessage ? props.replaceMessage : 'Drop file to replace'}
+                {props.replaceMessage ? props.replaceMessage : stringFormatter.format('dropzone.replaceMessage')}
               </span>
             </div>
           }

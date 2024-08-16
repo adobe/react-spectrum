@@ -6,11 +6,23 @@ export function Migrating() {
   return (
     <div className={style({maxWidth: 'lg', marginX: 'auto', fontFamily: 'sans'})}>
       <div className={style({marginX: 48})}>
-        <h1 className={style({font: 'heading-2xl', marginBottom: 48})}>
+        <h1 className={style({fontSize: 'heading-2xl', color: 'heading', marginBottom: 48})}>
           Migrating to Spectrum 2
         </h1>
         <P>An automated upgrade assistant is available by running the following command in the project you want to upgrade:</P>
         <Pre>npx @react-spectrum/codemods s1-to-s2</Pre>
+
+        <P>To only upgrade specific components, provide a <Code>--components</Code> argument with a comma-separated list of components to upgrade:</P>
+
+        <Pre>npx @react-spectrum/codemods s1-to-s2 --components=Button,TextField</Pre>
+
+        <P>The following arguments are also available:</P>
+
+        <ul className="sb-unstyled">
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}><Code>--path</Code> - Path to apply the upgrade changes to. Defaults to the current directory (<Code>.</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}><Code>--dry</Code> - Runs the upgrade assistant without making changes to components</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}><Code>--ignore-pattern</Code> - Ignore files that match the provided glob expression. Defaults to <Code>'**/node_modules/**'</Code></li>
+        </ul>
 
         <P>For cases that the upgrade assistant doesn't handle automatically or where you'd rather upgrade some components manually, use the guide below.</P>
 
@@ -19,8 +31,8 @@ export function Migrating() {
         <H2>Components</H2>
         <H3>All components</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update imports to use the <Code>@react-spectrum/s2</Code> package instead of <Code>@adobe/react-spectrum</Code> or individual packages like <Code>@react-spectrum/button</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props">style props</Link> to use the <Link href="/?path=/docs/style-macro--docs">style macro</Link> instead. See the 'Style props' section below</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update imports to use the <Code>@react-spectrum/s2</Code> package instead of <Code>@adobe/react-spectrum</Code> or individual packages like <Code>@react-spectrum/button</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props">style props</Link> to use the <Link href="/?path=/docs/style-macro--docs">style macro</Link> instead. See the 'Style props' section below</li>
         </ul>
 
         <H3>ActionButton</H3>
@@ -28,35 +40,38 @@ export function Migrating() {
 
         <H3>ActionMenu</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>trigger</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>trigger</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
         </ul>
+
+        <H3>AlertDialog</H3>
+        <P>No updates needed.</P>
 
         <H3>Avatar</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isDisabled</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>size</Code> to use pixel values instead of names.</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isDisabled</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>size</Code> to be a pixel value if it currently matches <Code>'avatar-size-*'</Code></li>
         </ul>
 
         <H3>Breadcrumbs</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>showRoot</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isMultiline</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>autoFocusCurrent</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>size="S"</Code> (Small is no longer a supported size in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>Breadcrumb</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>showRoot</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isMultiline</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>autoFocusCurrent</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>size="S"</Code> (Small is no longer a supported size in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>Breadcrumb</Code></li>
         </ul>
 
         <H3>Button</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“cta”</Code> to <Code>variant="accent"</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“overBackground”</Code> to <Code>variant=“primary” staticColor=“white”</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>style</Code> to <Code>fillStyle</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isPending</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>If <Code>href</Code> is present, the <Code>Button</Code> should be converted to a <Code>LinkButton</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>elementType</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="cta"</Code> to <Code>variant="accent"</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>variant="primary" staticColor="white"</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>style</Code> to <Code>fillStyle</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isPending</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If <Code>href</Code> is present, the <Code>Button</Code> should be converted to a <Code>LinkButton</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>elementType</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>ButtonGroup</H3>
@@ -67,25 +82,25 @@ export function Migrating() {
 
         <H3>CheckboxGroup</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>showErrorIcon</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>showErrorIcon</Code> (it has been removed due to accessibility issues)</li>
         </ul>
 
         <H3>ColorArea</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>size</Code> and instead provide a size via the style macro (i.e. <Code>{`styles={style({size: 20})}`}</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>size</Code> and instead provide a size via the style macro (i.e. <Code>{`styles={style({size: 20})}`}</Code>)</li>
         </ul>
 
         <H3>ColorField</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it has been removed due to accessibility issues)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>ColorSlider</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
         </ul>
 
         <H3>ColorSwatch</H3>
@@ -93,121 +108,131 @@ export function Migrating() {
 
         <H3>ColorWheel</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>size</Code> and instead provide a size via the style macro (i.e. <Code>{`styles={style({size: 20})}`}</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>size</Code> and instead provide a size via the style macro (i.e. <Code>{`styles={style({size: 20})}`}</Code>)</li>
         </ul>
 
         <H3>ComboBox</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>loadingState</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>loadingState</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
         </ul>
 
         <H3>Dialog</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update children to move render props from being the second child of <Code>DialogTrigger</Code> to being a child of <Code>Dialog</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>onDismiss</Code> and use <Code>onOpenChange</Code> on the <Code>DialogTrigger</Code>, or <Code>onDismiss</Code> on the <Code>DialogContainer</Code> instead</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update children to move render props from being the second child of <Code>DialogTrigger</Code> to being a child of <Code>Dialog</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>onDismiss</Code> and use <Code>onOpenChange</Code> on the <Code>DialogTrigger</Code>, or <Code>onDismiss</Code> on the <Code>DialogContainer</Code> instead</li>
         </ul>
 
         <H3>DialogTrigger</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>type=“tray”</Code> (<Code>Tray</Code> has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>mobileType=“tray”</Code> (<Code>Tray</Code> has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>targetRef</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>children</Code> to remove render props usage, and note that the <Code>close</Code> function was moved from <Code>DialogTrigger</Code> to <Code>Dialog</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>type="tray"</Code> (<Code>Tray</Code> has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>mobileType="tray"</Code> (<Code>Tray</Code> has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>targetRef</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>children</Code> to remove render props usage, and note that the <Code>close</Code> function was moved from <Code>DialogTrigger</Code> to <Code>Dialog</Code></li>
         </ul>
 
         <H3>Divider</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove Divider component if within a Dialog (Updated design for Dialog in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove Divider component if within a Dialog (Updated design for Dialog in Spectrum 2)</li>
         </ul>
 
         <H3>Flex</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Flex</Code> to be a <Code>div</Code> and apply flex styles using the style macro (i.e. <Code>{`<div className={style({display: 'flex'})} />`}</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Flex</Code> to be a <Code>div</Code> and apply flex styles using the style macro (i.e. <Code>{`<div className={style({display: 'flex'})} />`}</Code>)</li>
         </ul>
 
         <H3>Form</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isReadOnly</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationBehavior</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isReadOnly</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationBehavior</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>Grid</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Grid</Code> to be a <Code>div</Code> and apply grid styles using the style macro (i.e. <Code>{`<div className={style({display: 'grid'})} />`}</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Grid</Code> to be a <Code>div</Code> and apply grid styles using the style macro (i.e. <Code>{`<div className={style({display: 'grid'})} />`}</Code>)</li>
         </ul>
 
         <H3>IllustratedMessage</H3>
-        <P>No updates needed.</P>
+        <ul className="sb-unstyled">
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update illustrations to be from <Code>@react-spectrum/s2/illustrations</Code>. See <Link href="/?path=/docs/illustrations--docs">Illustrations</Link></li>
+        </ul>
 
         <H3>InlineAlert</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“info”</Code> to <Code>variant=“informative”</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="info"</Code> to <Code>variant="informative"</Code></li>
         </ul>
 
         <H3>Item</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>Menu</Code>: Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>ActionMenu</Code>: Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>TagGroup</Code>: Update <Code>Item</Code> to be a <Code>Tag</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>Breadcrumbs</Code>: Update <Code>Item</Code> to be a <Code>Breadcrumb</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>Picker</Code>: Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>ComboBox</Code>: Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>ListBox</Code>: Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>TabList</Code>: Update <Code>Item</Code> to be a <Code>Tab</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove surrounding <Code>TabPanels</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Menu</Code>: Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>ActionMenu</Code>: Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>TagGroup</Code>: Update <Code>Item</Code> to be a <Code>Tag</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Breadcrumbs</Code>: Update <Code>Item</Code> to be a <Code>Breadcrumb</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Picker</Code>: Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>ComboBox</Code>: Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>ListBox</Code>: Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>TabList</Code>: Update <Code>Item</Code> to be a <Code>Tab</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove surrounding <Code>TabPanels</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
         </ul>
 
         <H3>Link</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“overBackground”</Code> to <Code>staticColor=“white”</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>staticColor="white"</Code></li>
         </ul>
 
         <H3>ListBox</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ListBoxItem</Code></li>
         </ul>
 
         <H3>Menu</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
         </ul>
 
         <H3>MenuTrigger</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
+        </ul>
+
+        <H3>NumberField</H3>
+        <ul className="sb-unstyled">
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>hideStepper</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>Picker</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isLoading</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>isLoading</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
         </ul>
 
         <H3>ProgressBar</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“overBackground”</Code> to <Code>staticColor=“white”</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>labelPosition</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>showValueLabel</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>staticColor="white"</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>labelPosition</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>showValueLabel</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>ProgressCircle</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“overBackground”</Code> to <Code>staticColor=“white”</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>staticColor="white"</Code></li>
         </ul>
 
         <H3>Radio</H3>
@@ -215,46 +240,46 @@ export function Migrating() {
 
         <H3>RadioGroup</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>showErrorIcon</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>showErrorIcon</Code> (it has been removed due to accessibility issues)</li>
         </ul>
 
         <H3>RangeSlider</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>getValueLabel</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>orientation</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>getValueLabel</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>orientation</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>SearchField</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it has been removed due to accessibility issues)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out icon (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out icon (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>Section</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>Menu</Code>: Update <Code>Section</Code> to be a <Code>MenuSection</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>If within <Code>Picker</Code>: Update <Code>Section</Code> to be a <Code>PickerSection</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Menu</Code>: Update <Code>Section</Code> to be a <Code>MenuSection</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>If within <Code>Picker</Code>: Update <Code>Section</Code> to be a <Code>PickerSection</Code></li>
         </ul>
 
         <H3>Slider</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isFilled</Code> (Slider is always filled in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>trackGradient</Code> (Not supported in S2 design)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>getValueLabel</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>orientation</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isFilled</Code> (Slider is always filled in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>trackGradient</Code> (Not supported in S2 design)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>getValueLabel</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>orientation</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>StatusLight</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDisabled</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant=“info”</Code> to <Code>variant="informative"</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isDisabled</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>variant="info"</Code> to <Code>variant="informative"</Code></li>
         </ul>
 
         <H3>SubmenuTrigger</H3>
@@ -265,37 +290,34 @@ export function Migrating() {
 
         <H3>Tabs</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Inside <Code>TabList</Code>: Update <Code>Item</Code> to be <Code>Tab</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Inside <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove the surrounding <Code>TabPanels</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Inside <Code>TabList</Code>: Update <Code>Item</Code> to be <Code>Tab</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Inside <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove the surrounding <Code>TabPanels</Code></li>
         </ul>
 
         <H3>TagGroup</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>actionLabel</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onAction</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>maxRows</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>errorMessage</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isInvalid</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>validationState</Code> (<Code>isInvalid</Code> should be used when it becomes available)</li>
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>Tag</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Rename <Code>actionLabel</Code> to <Code>groupActionLabel</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Rename <Code>onAction</Code> to <Code>onGroupAction</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>Tag</Code></li>
         </ul>
 
         <H3>TextArea</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>icon</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code>  (it has been removed due to accessibility issues)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>icon</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>placeholder</Code>  (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>TextField</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>icon</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code>  (it has been removed due to accessibility issues)</li>
-          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState=“invalid”</Code> to <Code>isInvalid</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState=“valid”</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>icon</Code> (it has not been implemented yet)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>placeholder</Code>  (it has been removed due to accessibility issues)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>ToggleButton</H3>
@@ -303,20 +325,20 @@ export function Migrating() {
 
         <H3>Tooltip</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>variant</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placement</Code> and add to the parent <Code>TooltipTrigger</Code> instead</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>showIcon</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isOpen</Code> and add to the parent <Code>TooltipTrigger</Code> instead</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>variant</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>placement</Code> and add to the parent <Code>TooltipTrigger</Code> instead</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>showIcon</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isOpen</Code> and add to the parent <Code>TooltipTrigger</Code> instead</li>
         </ul>
 
         <H3>TooltipTrigger</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update placement prop to be have one value (i.e. Update <Code>placement="bottom left"</Code> to be <Code>placement=“bottom”</Code>)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update placement prop to be have one value (i.e. Update <Code>placement="bottom left"</Code> to be <Code>placement="bottom"</Code>)</li>
         </ul>
 
         <H3>View</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update <Code>View</Code> to be a <Code>div</Code> and apply styles using the style macro</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>View</Code> to be a <Code>div</Code> and apply styles using the style macro</li>
         </ul>
 
         <H2>Style props</H2>

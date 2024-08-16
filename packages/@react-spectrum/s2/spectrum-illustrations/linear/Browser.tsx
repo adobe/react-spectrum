@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Browser_L from './S2_lin_browser_160.svg';
-import Browser_M from './S2_lin_browser_96.svg';
-import Browser_S from './S2_lin_browser_48.svg';
+import Browser_L from 'illustration:./S2_lin_browser_160.svg';
+import Browser_M from 'illustration:./S2_lin_browser_96.svg';
+import Browser_S from 'illustration:./S2_lin_browser_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
