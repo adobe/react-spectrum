@@ -12,7 +12,7 @@ export function Release030Intro() {
       <P>and in your package.json:</P>
       <Pre>{highlight(`"@react-spectrum/s2": "^0.3.0"`)}</Pre>
 
-      <P>We've added new documentation that shows the included <Link href="?path=/docs/workflow-icons--docs">workflow icons</Link> and <Link href="?path=/docs/illustrations--docs">illustrations</Link>.
+      <P>We've added new documentation that shows the included <Link href="?path=/docs/workflow-icons--docs">workflow icons</Link> and <Link href="?path=/docs/illustrations--docs">illustrations</Link>.</P>
 
       <P>To help teams kickstart their migrations from v3 to Spectrum 2, we've also added a migration wizard. Please read the <Link href="?path=/docs/migrating--docs">migration documentation</Link> for more information.</P>
     </>
