@@ -36,7 +36,7 @@ export interface BadgeStyleProps {
    */
   variant: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
   /**
-   * The type of fill of the badge.
+   * The fill of the badge.
    * @default 'bold'
    */
   fillStyle: 'bold' | 'subtle' | 'outline'
