@@ -7,7 +7,7 @@ export function Release030Intro() {
   return (
     <>
       <P>
-        With this end of summer release we've been busy adding a number of new components such as AlertDialog, AvatarGroup, NumberField, Tabs, and TagGroup.
+        With this end of summer release we've been busy adding a number of new components such as AlertDialog, AvatarGroup, NumberField, and Tabs.
         If you're using a previous version of Spectrum 2, please update your dependencies to <Code>@react-spectrum/s2@^0.3.0</Code>.
         In your code you'll need to update your imports to the new package name:
       </P>
