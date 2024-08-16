@@ -165,12 +165,14 @@ function App() {
         <H3>Overriding the locale</H3>
         <P>By default, React Spectrum uses the browser/operating system language setting for localized strings, date and number formatting, and to determine the layout direction (left-to-right or right-to-left). This can be overridden by rendering a <Code>{'<Provider>'}</Code> component at the root of your app, and setting the <Code>locale</Code> prop.</P>
         <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
+
 <Provider locale="en-US">
   {/* your app */}
 </Provider>`)}</Pre>
         <H3>Embedded sections</H3>
         <P>If you’re building an embedded section of a larger page using Spectrum 2, use the <Code>{'<Provider>'}</Code> component to set the background instead of importing <Code>page.css</Code>. The <Code>background</Code> prop should be set to the Spectrum background layer appropriate for your app, and the <Code>colorScheme</Code> can be overridden as well.</P>
         <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
+
 <Provider background="base">
   {/* your app */}
 </Provider>`)}</Pre>

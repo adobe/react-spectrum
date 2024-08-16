@@ -44,7 +44,7 @@ export function Icons() {
         <P>Now you can import icon SVGs using the <Code>icon:</Code> <Link href="https://parceljs.org/features/plugins/#named-pipelines">pipeline</Link>:</P>
         <Pre>{highlight(`import Icon from 'icon:./path/to/Icon.svg';`)}</Pre>
         <H3>Other bundlers</H3>
-        <P>The <Code>@react-spectrum/s2-icon-builder</Code> CLI tool can be used to pre-process a folder of SVG icons into TSX files. These should be committed to your repo and imported like normal source files.</P>
+        <P>The <Code>@react-spectrum/s2-icon-builder</Code> CLI tool can be used to pre-process a folder of SVG icons into TSX files.</P>
         <Pre>npx @react-spectrum/s2-icon-builder -i 'path/to/icons/*.svg' -o 'path/to/destination'</Pre>
         <P>This outputs a folder of TSX files with names corresponding to the input SVG files. You may rename them as you wish. To use them in your application, import them like normal components.</P>
         <Pre>{highlight(`import Icon from './path/to/destination/Icon';`)}</Pre>

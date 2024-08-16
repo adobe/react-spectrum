@@ -54,11 +54,11 @@ export function Illustrations() {
         <H2>Linear illustrations</H2>
         <P>Linear illustrations can be imported as shown below:</P>
         <Pre>{highlight("import Cloud from '@react-spectrum/s2/illustrations/linear/Cloud';")}</Pre>
-        <div className={style({display: 'grid', gridTemplateColumns: 'repeat(auto-fit, 164px)', gap: 20, justifyContent: 'space-between', marginTop: 48, backgroundColor: 'layer-2'})}>
+        <div className={style({display: 'grid', gridTemplateColumns: 'repeat(auto-fit, 164px)', gap: 20, justifyContent: 'space-between', marginTop: 48})}>
           {Object.keys(linearIllustrations).map(icon => {
             let Illustration = linearIllustrations[icon].default;
             return (
-              <div key={icon} className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center', padding: 16, borderRadius: 'lg', boxShadow: 'elevated'})}>
+              <div key={icon} className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center', padding: 16, borderRadius: 'lg', boxShadow: 'elevated', backgroundColor: 'layer-2'})}>
                 <Illustration />
                 <span className={style({font: 'ui', display: 'flex', gap: 8, alignItems: 'center', maxWidth: 'full'})}>
                   <span className={style({truncate: true})}>{icon}</span>
@@ -89,7 +89,7 @@ export function Illustrations() {
         <P>Now you can import illustration SVGs using the <Code>illustration:</Code> <Link href="https://parceljs.org/features/plugins/#named-pipelines">pipeline</Link>:</P>
         <Pre>{highlight(`import Illustration from 'illustration:./path/to/Illustration.svg';`)}</Pre>
         <H3>Other bundlers</H3>
-        <P>The <Code>@react-spectrum/s2-icon-builder</Code> CLI tool can be used to pre-process a folder of SVG illustrations into TSX files. These should be committed to your repo and imported like normal source files.</P>
+        <P>The <Code>@react-spectrum/s2-icon-builder</Code> CLI tool can be used to pre-process a folder of SVG illustrations into TSX files.</P>
         <Pre>npx @react-spectrum/s2-icon-builder -i 'path/to/illustrations/*.svg' --type illustration -o 'path/to/destination'</Pre>
         <P>This outputs a folder of TSX files with names corresponding to the input SVG files. You may rename them as you wish. To use them in your application, import them like normal components.</P>
         <Pre>{highlight(`import Illustration from './path/to/destination/Illustration';`)}</Pre>
