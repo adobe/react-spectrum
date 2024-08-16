@@ -19,7 +19,7 @@ let items = [
         {item.name}
       </Item>
     )}
-  </TabList><Collection>
+  </TabList><Collection items={tabs}>
     {(item) => (
       <TabPanel id={item.name}>
         {item.children}
