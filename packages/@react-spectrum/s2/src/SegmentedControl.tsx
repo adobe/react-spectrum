@@ -102,7 +102,6 @@ const controlItem = style({
   flexShrink: 0,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
-  transition: 'default',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -134,6 +133,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
     <RadioGroup 
       {...props}
       ref={domRef}
+      orientation="horizontal"
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
       aria-label={props['aria-label'] || stringFormatter.format('segmentedcontrol.aria-label')}>
