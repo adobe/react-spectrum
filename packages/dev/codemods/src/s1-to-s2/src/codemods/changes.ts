@@ -666,14 +666,6 @@ export const changes: ChangesJSON = {
           name: 'removeProp',
           args: {propToRemove: 'validationState', propValue: 'valid'}
         }
-      },
-      {
-        description: 'Comment out hideStepper',
-        reason: 'It has not been implemented yet',
-        function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'hideStepper'}
-        }
       }
     ]
   },
