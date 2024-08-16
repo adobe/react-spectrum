@@ -585,14 +585,16 @@ function updateTabs(
     return tabListPath.node;
   }
 
-  function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>, itemsProp?: t.JSXAttribute): t.JSXElement[] {
+  function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>, itemsProp: t.JSXAttribute | null): t.JSXElement[] {
     // Dynamic case
     let dynamicRender = tabPanelsPath.get('children').find(path => t.isJSXExpressionContainer(path.node));
     if (dynamicRender) {
       updateToNewComponent(tabPanelsPath, {newComponent: 'Collection'});
       let itemPath = (dynamicRender.get('expression') as NodePath).get('body');
       updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'Collection', newComponent: 'TabPanel'});
-      tabPanelsPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('items'), itemsProp?.value));
+      if (itemsProp) {
+        tabPanelsPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('items'), itemsProp.value));
+      }
       return [tabPanelsPath.node];
     }
 
