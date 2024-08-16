@@ -209,7 +209,6 @@ export function Migrating() {
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>[PENDING] Comment out <Code>hideStepper</Code> (it has not been implemented yet)</li>
         </ul>
 
         <H3>Picker</H3>
