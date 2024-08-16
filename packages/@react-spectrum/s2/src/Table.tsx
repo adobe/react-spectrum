@@ -65,16 +65,15 @@ import {useIsMobileDevice} from './utils';
 import {useLoadMore} from '@react-aria/utils';
 
 // TODO: things that still need to be handled
-// adding the types to the various style macros
-// Add a complex table example with buttons and various icons,links,
+// - Add a complex table example with buttons and various icons,links,
+// - drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
 
-// drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
-// overflow wrap
-// - added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
+// - overflow wrap
+// added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
 // it then can change the row's height drastically
-// summary row (to discuss, is this a separate row? What accessibility goes into this)
-// nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
-// Expandable rows support, will need to add this to RAC table
+// - summary row (to discuss, is this a separate row? What accessibility goes into this)
+// - nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
+// - Expandable rows support, will need to add this to RAC table
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
   isQuiet?: boolean,
@@ -83,7 +82,6 @@ interface S2TableProps {
    * @default 'regular'
    */
   density?: 'compact' | 'spacious' | 'regular',
-  // TODO: update with virtualizer where wrap changes the layout to estimated
   /**
    * Sets the overflow behavior for the cell contents.
    * @default 'truncate'
@@ -91,11 +89,9 @@ interface S2TableProps {
   overflowMode?: 'wrap' | 'truncate',
   /** How selection should be displayed. */
   selectionStyle?: 'checkbox' | 'highlight',
-  // TODO: the below are copied from Spectrum Table props.
   // TODO: will we contine with onAction or rename to onRowAction like it is in RAC?
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
-  // TODO: the below will depend on how we handle resizing in S2. In RAC these went on the ResizableTableContainer wrapper instead
   /**
    * Handler that is called when a user starts a column resize.
    */
@@ -117,8 +113,7 @@ interface S2TableProps {
   onLoadMore?: () => any
 }
 
-// TODO: audit the props and get omit stuff we don't want from the RAC props
-// TODO: loadMore and loadingState are now on the Table instead of on the TableBody, do we
+// TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction'>, StyleProps, S2TableProps {
 }
 
@@ -135,6 +130,7 @@ const table = style<TableRenderProps & S2TableProps>({
   minHeight: 0,
   minWidth: 0,
   fontFamily: 'sans',
+  fontWeight: 'normal',
   overflow: 'auto',
   backgroundColor: {
     default: 'gray-25',
@@ -156,62 +152,6 @@ const table = style<TableRenderProps & S2TableProps>({
   }
 }, getAllowedOverrides({height: true}));
 
-
-// TODO: will need to get the row height and other table styling props for the drag preview, but this hook is external to the table...
-// Perhaps we move it to Table and set to our default one dragAndDropHooks.DragPreview
-// The below is just temporary, will need to update to match v3 more closely if need be (at least adding the stacking effect)
-// Will wait for designs first
-let dragRowPreview = style({
-  height: {
-    default: 40,
-    density: {
-      spacious: 48,
-      compact: 32
-    }
-  },
-  width: 144,
-  boxShadow: '[inset 0 0 0 2px blue]',
-  borderRadius: 'default',
-  paddingStart: 16, // table-edge-to-content
-  paddingEnd: 8,
-  display: 'flex',
-  justifyContent: 'space-between',
-  backgroundColor: 'gray-25'
-});
-
-// TODO: same style as from cell, combine later
-let dragCellPreview = style({
-  paddingTop: {
-    default: size(11), // table-row-top-to-text-medium-regular
-    density: {
-      spacious: size(15), // table-row-top-to-text-medium-spacious
-      compact: size(6) // table-row-top-to-text-medium-compact
-    }
-  },
-  paddingBottom: {
-    default: size(12), // table-row-bottom-to-text-medium-spacious
-    density: {
-      spacious: size(15), // table-row-bottom-to-text-medium-spacious
-      compact: size(8) // table-row-bottom-to-text-medium-compact
-    }
-  },
-  // TODO: fontSize control doesn't work here for some reason
-  fontSize: '[14px]',
-  fontFamily: 'sans'
-});
-
-let dragBadge = style({
-  display: 'flex',
-  backgroundColor: 'focus-ring',
-  color: 'gray-25',
-  paddingY: 0,
-  paddingX: 8,
-  borderRadius: 'sm',
-  marginY: 'auto',
-  fontSize: '[14px]',
-  fontFamily: 'sans'
-});
-
 // component-height-100
 const DEFAULT_HEADER_HEIGHT = {
   medium: 32,
@@ -228,7 +168,7 @@ const ROW_HEIGHTS = {
     large: 50
   },
   spacious: {
-    medium: 48,  // table-row-height-medium-spacious
+    medium: 48, // table-row-height-medium-spacious
     large: 60
   }
 };
@@ -319,6 +259,7 @@ export function Table(props: TableProps) {
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
     dragAndDropHooks,
+    onAction,
     ...otherProps
   } = props;
 
@@ -326,12 +267,7 @@ export function Table(props: TableProps) {
   if (dragAndDropHooks && isTableDraggable && !dragAndDropHooks?.renderDragPreview) {
     dragAndDropHooks.renderDragPreview = (items) => {
       return (
-        <div className={dragRowPreview({density})}>
-          <div className={dragCellPreview({density})}>
-            {items[0]['text/plain']}
-          </div>
-          <span className={dragBadge}>{items.length}</span>
-        </div>
+        <DragRowPreview density={density} badgeNumber={items.length} dragPreviewText={items[0]['text/plain']} />
       );
     };
   }
@@ -395,6 +331,7 @@ export function Table(props: TableProps) {
           }, styles)}
           selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
           dragAndDropHooks={dragAndDropHooks}
+          onRowAction={onAction}
           {...otherProps} />
       </InternalTableContext.Provider>
     </UNSTABLE_Virtualizer>
@@ -420,6 +357,7 @@ export function Table(props: TableProps) {
               })}
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               dragAndDropHooks={dragAndDropHooks}
+              onRowAction={onAction}
               {...otherProps} />
           </InternalTableContext.Provider>
         </UNSTABLE_Virtualizer>
@@ -610,7 +548,6 @@ const columnContentWrapper = style({
   width: 'full'
 });
 
-// TODO combine the ColumnContents and the ResizableColumnContents further so they share the same sort stuff
 interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
 
 function ColumnContents(props: ColumnContentProps) {
@@ -624,6 +561,7 @@ function ColumnContents(props: ColumnContentProps) {
             [IconContext, {
               styles: style({
                 size: fontRelative(16),
+                flexShrink: 0,
                 marginEnd: 8,
                 verticalAlign: 'bottom'
               })
@@ -669,7 +607,7 @@ const resizerHandleContainer = style({
   height: 'full',
   position: 'absolute',
   top: 0,
-  right: size(-6),
+  insetEnd: size(-6),
   cursor: {
     default: 'none',
     resizableDirection: {
@@ -679,7 +617,13 @@ const resizerHandleContainer = style({
     }
   },
   // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
-  zIndex: 1000
+  zIndex: 1000,
+  '--nubbin-color': {
+    type: 'backgroundColor',
+    value: {
+      default: 'focus-ring'
+    }
+  }
 });
 
 const resizerHandle = style({
@@ -697,14 +641,13 @@ const resizerHandle = style({
   },
   width: size(1),
   position: 'absolute',
-  left: size(6)
+  insetStart: size(6)
 });
 
 const sortIcon = style({
-  height: 16,
-  width: 16,
+  size: fontRelative(16),
   marginEnd: 'text-to-visual',
-  minWidth: 16
+  flexShrink: 0
 });
 
 const columnHeaderText = style({
@@ -719,15 +662,15 @@ const columnHeaderText = style({
 const chevronIcon = style({
   rotate: 90,
   marginStart: 'text-to-visual',
-  minWidth: 16
+  minWidth: fontRelative(16),
+  flexShrink: 0
 });
 
 const nubbin = style({
   position: 'absolute',
   top: 0,
-  left: size(-2),
-  width: 16,
-  height: 16
+  insetStart: size(-2),
+  size: fontRelative(16)
 });
 
 interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'> {
@@ -738,7 +681,7 @@ interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSor
 function Nubbin() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-      <g fill="var(--spectrum-global-color-blue-600)" stroke="var(--spectrum-global-color-blue-600)" strokeWidth="2">
+      <g fill="var(--nubbin-color)" stroke="var(--nubbin-color)" strokeWidth="2">
         <circle cx="8" cy="8" r="8" stroke="none" />
         <circle cx="8" cy="8" r="7" fill="none" />
       </g>
@@ -811,10 +754,11 @@ function ResizerIndicator({isFocusVisible, isHovered, isResizing}) {
   );
 }
 
-// TODO: making the background of the column header causes the resizer to blend in, wait for design
+// TODO: making the background of the column header gray-100 causes the hovered columnn resizer to blend in, wait for design
 const tableHeader = style({
   height: 'full',
-  width: 'full'
+  width: 'full',
+  backgroundColor: 'base'
 });
 
 const selectAllCheckbox = style({
@@ -841,7 +785,8 @@ const selectAllCheckboxColumn = style({
   borderXWidth: 0,
   borderTopWidth: 0,
   borderBottomWidth: 1,
-  borderStyle: 'solid'
+  borderStyle: 'solid',
+  backgroundColor: 'base'
 });
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
@@ -940,14 +885,6 @@ const cell = style<CellRenderProps & S2TableProps>({
       forcedColors: 'ButtonBorder'
     }
   }
-  // outlineStyle: {
-  //   default: 'none',
-  //   isFocusVisible: 'solid'
-  // },
-  // outlineOffset: -2,
-  // outlineWidth: 2,
-  // outlineColor: 'focus-ring',
-  // borderRadius: size(6)
 });
 
 const checkboxCellStyle = style({
@@ -961,7 +898,6 @@ const checkboxCellStyle = style({
     }
   },
   alignContent: 'center',
-  // TODO: Figure out better way to make the background not cover the border of the row itself
   height: '[calc(100% - 1px)]',
   borderBottomWidth: 0
   // TODO: problem with having the checkbox cell itself use the row background color directly instead
@@ -978,7 +914,6 @@ const dragButtonCellStyle = style({
   ...stickyCell,
   paddingX: 4,
   alignContent: 'center',
-  // TODO: Figure out better way to make the background not cover the border of the row itself
   height: '[calc(100% - 1px)]',
   borderBottomWidth: 0
 });
@@ -1064,6 +999,7 @@ const rowBackgroundColor = {
   isHovered: 'gray-900/7', // table-row-hover-color
   isPressed: 'gray-900/10', // table-row-hover-color
   isSelected: {
+    // TODO: I've tried adding +50 to the dark color opacity and it doesn't look too bad
     default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
     isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
     isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
@@ -1193,7 +1129,6 @@ export function Row<T extends object>(
   );
 }
 
-
 let rowDropIndicator = style({
   outlineWidth: 1,
   outlineColor: 'focus-ring',
@@ -1224,4 +1159,77 @@ export function useDragAndDrop(options: DragandDropOptions) {
   };
 
   return useAriaDragAndDrop({...options, renderDropIndicator});
+}
+
+// TODO: will need to get the row height and other table styling props for the drag preview, but this hook is external to the table...
+// Perhaps we move it to Table and set to our default one dragAndDropHooks.DragPreview, perhaps can pass those options via css variable on parent
+// The below is just temporary, will need to update to match v3 more closely if need be (at least adding the stacking effect)
+// Will wait for designs first
+let dragRowPreview = style({
+  height: {
+    default: 40,
+    density: {
+      spacious: 48,
+      compact: 32
+    }
+  },
+  width: 144,
+  boxShadow: '[inset 0 0 0 2px blue]',
+  borderRadius: 'default',
+  paddingStart: 16, // table-edge-to-content
+  paddingEnd: 8,
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: 'gray-25'
+});
+
+// TODO: same style as from cell, combine later
+let dragCellPreview = style({
+  paddingTop: {
+    default: size(11), // table-row-top-to-text-medium-regular
+    density: {
+      spacious: size(15), // table-row-top-to-text-medium-spacious
+      compact: size(6) // table-row-top-to-text-medium-compact
+    }
+  },
+  paddingBottom: {
+    default: size(12), // table-row-bottom-to-text-medium-spacious
+    density: {
+      spacious: size(15), // table-row-bottom-to-text-medium-spacious
+      compact: size(8) // table-row-bottom-to-text-medium-compact
+    }
+  },
+  // TODO: fontSize control doesn't work here for some reason
+  fontSize: '[14px]',
+  fontFamily: 'sans'
+});
+
+let dragBadge = style({
+  display: 'flex',
+  backgroundColor: 'focus-ring',
+  color: 'gray-25',
+  paddingY: 0,
+  paddingX: 8,
+  borderRadius: 'sm',
+  marginY: 'auto',
+  fontSize: '[14px]',
+  fontFamily: 'sans'
+});
+
+interface DragRowPreviewProps {
+  density: TableProps['density'],
+  badgeNumber: number,
+  dragPreviewText: string
+}
+
+function DragRowPreview(props: DragRowPreviewProps) {
+  let {density, dragPreviewText, badgeNumber} = props;
+  return (
+    <div className={dragRowPreview({density})}>
+      <div className={dragCellPreview({density})}>
+        {dragPreviewText}
+      </div>
+      <span className={dragBadge}>{badgeNumber}</span>
+    </div>
+  );
 }

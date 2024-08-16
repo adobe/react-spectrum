@@ -11,13 +11,16 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {categorizeArgTypes} from './utils';
 import {Cell, Column, Row, Table, TableBody, TableHeader, useDragAndDrop} from '../src/Table';
-import {Content, Heading, IllustratedMessage, Illustration, Link} from '../src';
+import {Content, Heading, IllustratedMessage, Link} from '../src';
+import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useState} from 'react';
+
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -26,21 +29,11 @@ const meta: Meta<typeof Table> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onResize: {
-      table: {
-        disable: true
-      }
+    onAction: {
+      control: 'select',
+      options: [undefined]
     },
-    onResizeStart: {
-      table: {
-        disable: true
-      }
-    },
-    onResizeEnd: {
-      table: {
-        disable: true
-      }
-    }
+    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', 'onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange'])
   }
 };
 
@@ -124,11 +117,7 @@ const DynamicTable = (args: any) => (
 function renderEmptyState() {
   return (
     <IllustratedMessage>
-      <Illustration>
-        <svg width="150" height="103" viewBox="0 0 150 103">
-          <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
-        </svg>
-      </Illustration>
+      <FolderOpen />
       <Heading>
         No results
       </Heading>
@@ -140,7 +129,7 @@ function renderEmptyState() {
 }
 
 const EmptyStateTable = (args: any) => (
-  <Table aria-label="Empty state" {...args} styles={style({height: '[400px]', width: '[400px]'})}>
+  <Table aria-label="Empty state" {...args} styles={style({height: 320, width: 320})}>
     <TableHeader columns={columns}>
       {(column) => (
         <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>{column.name}</Column>
@@ -202,7 +191,7 @@ const SortableTable = (args: any) => {
   };
 
   return (
-    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange}>
+    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({height: 320})}>
       <TableHeader columns={sortcolumns}>
         {(column) => (
           <Column isRowHeader={column.isRowHeader} allowsSorting>{column.name}</Column>
@@ -311,13 +300,12 @@ const SortableResizableTable = (args: any) => {
 export const Example = {
   render: StaticTable,
   args: {
-    onRowAction: null,
-    onCellAction: null,
     selectionMode: 'multiple',
     onResize: null,
     onResizeStart: null,
     onResizeEnd: null,
-    dragAndDropHooks: null
+    dragAndDropHooks: null,
+    onLoadMore: null
   }
 };
 
@@ -515,20 +503,11 @@ export const ReorderDnD = {
 export const ResizingTable = {
   render: SortableResizableTable,
   args: {
-    onResize: action('resize')
-    // TODO: add rest of resize stuff
+    onResize: action('onResize'),
+    onResizeStart: action('onResizeStart'),
+    onResizeEnd: action('onResizeEnd')
   }
 };
 
 // TODO make controlled resizing story without sorting
-
-// TODO: stories to add
-// show divider
-// overflow: wrap
-
-// TODO: The below I will work on perhaps after virtualization is done
-// Height/Width can kinda be done via "display: block" on the tbody and theader elements + overflow
-// but the alignment becomes a bit scuffed. Alternatively, we could wrap the table in a div with overflow
-// (much like is done for RAC resizing) but this maybe moot when virtualiztion happens
 // many items
-// resizing
