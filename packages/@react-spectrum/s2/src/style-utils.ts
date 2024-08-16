@@ -132,7 +132,7 @@ export const fieldInput = () => ({
 export const colorScheme = () => ({
   colorScheme: {
     // Default to page color scheme if none is defined.
-    default: 'var(--lightningcss-light, light) var(--lightningcss-dark, dark)',
+    default: '[var(--lightningcss-light, light) var(--lightningcss-dark, dark)]',
     colorScheme: {
       'light dark': 'light dark',
       light: 'light',
