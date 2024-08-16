@@ -31,3 +31,19 @@ export const BreadcrumbsExample = (args: any) => (
     </Breadcrumb>
   </Breadcrumbs>
 );
+
+let items = [
+  {id: 'Home', url: '/'},
+  {id: 'React Aria', url: '/react-aria'},
+  {id: 'Breadcrumbs', url: '/react-aria/breadcrumbs'}
+];
+
+export const DynamicBreadcrumbsExample = (args: any) => (
+  <Breadcrumbs {...args} items={items}>
+    {item => (
+      <Breadcrumb>
+        <Link href={item.url}>{item.id}</Link>
+      </Breadcrumb>
+    )}
+  </Breadcrumbs>
+);

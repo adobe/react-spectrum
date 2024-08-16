@@ -338,7 +338,6 @@ function TagGroupInner<T>({
                 })}>
                 {allItems.map(item => {
                   // pull off individual props as an allow list, don't want refs or other props getting through
-                  // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
                   return (
                     <div
                       style={item.props.UNSAFE_style}
@@ -519,7 +518,7 @@ const avatarSize = {
 
 function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   textValue ||= typeof children === 'string' ? children : undefined;
-  let ctx = useSlottedContext(TagGroupContext);
+  let ctx = useSlottedContext(InternalTagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
   let {size, isEmphasized} = ctx ?? {};
   let domRef = useDOMRef(ref);
@@ -547,7 +546,7 @@ let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
 export {_Tag as Tag};
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
-  let {size} = useSlottedContext(TagGroupContext) ?? {};
+  let {size} = useSlottedContext(InternalTagGroupContext) ?? {};
   return (
     <>
       {isInRealDOM && (
