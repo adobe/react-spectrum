@@ -51,6 +51,8 @@ import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' wit
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
 import {LoadingState, Node} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
@@ -63,6 +65,7 @@ import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useIsMobileDevice} from './utils';
 import {useLoadMore} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // TODO: things that still need to be handled
 // - Add a complex table example with buttons and various icons,links,
@@ -139,6 +142,7 @@ const table = style<TableRenderProps & S2TableProps>({
   },
   outlineColor: {
     default: 'gray-300',
+    isFocusVisible: 'focus-ring',
     forcedColors: 'ButtonBorder'
   },
   outlineWidth: {
@@ -384,13 +388,13 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let {loadingState} = tableVisualOptions;
   let emptyRender;
   let renderer = children;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let loadMoreSpinner = (
     <UNSTABLE_TableLoadingIndicator className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
-          // TODO: needs intl translation
-          aria-label="loading more" />
+          aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
     </UNSTABLE_TableLoadingIndicator>
   );
@@ -429,8 +433,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
-          // TODO: needs intl translation
-          aria-label="loading" />
+          aria-label={stringFormatter.format('table.loading')} />
       </div>
     );
   }
@@ -694,6 +697,7 @@ function Nubbin() {
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered} = props;
   let {setIsInResizeMode, isInResizeMode} = useContext(InternalTableContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     <>
@@ -727,10 +731,9 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
               startResize();
             }
           }}>
-          {/* TODO: internationalize */}
-          <MenuItem id="sortAscending">Sort Ascending</MenuItem>
-          <MenuItem id="sortDescending">Sort Descending</MenuItem>
-          <MenuItem id="resize">Resize</MenuItem>
+          <MenuItem id="sortAscending">{stringFormatter.format('table.sortAscending')}</MenuItem>
+          <MenuItem id="sortDescending">{stringFormatter.format('table.sortDescending')}</MenuItem>
+          <MenuItem id="resize">{stringFormatter.format('table.resizeColumn')}</MenuItem>
         </Menu>
       </MenuTrigger>
       <div data-react-aria-prevent-focus="true">
