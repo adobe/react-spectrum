@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "bin": "dist/index.js",
@@ -16,6 +16,7 @@
   ],
   "type": "commonjs",
   "license": "Apache-2.0",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
@@ -43,5 +44,8 @@
   },
   "rsp": {
     "type": "cli"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
