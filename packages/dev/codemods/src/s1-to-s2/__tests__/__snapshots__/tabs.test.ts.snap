@@ -1,8 +1,82 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Renames variants 1`] = `
-"// import {Button} from '@adobe/react-spectrum';
-
+exports[`Remove isEmphasized 1`] = `
+"import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
+import { TabPanels, Item } from '@adobe/react-spectrum';
+let isEmphasized = true;
+let props = {isEmphasized: true};
 <div>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome" // TODO(S2-upgrade): check this spread for style props
+  {...props}><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
 </div>"
+`;
+
+exports[`Remove isQuiet 1`] = `
+"import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
+import { TabPanels, Item } from '@adobe/react-spectrum';
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome"><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+  <Tabs aria-label="History of Ancient Rome" // TODO(S2-upgrade): check this spread for style props
+  {...props}><TabList>
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>
+</div>"
+`;
+
+exports[`Update to use new API 1`] = `
+"import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
+import { TabPanels, Item } from '@adobe/react-spectrum';
+
+<Tabs aria-label="History of Ancient Rome"><TabList>
+    <Tab id="FoR">Founding of Rome</Tab>
+    <Tab id="MaR">Monarchy and Republic</Tab>
+    <Tab id="Emp">Empire</Tab>
+  </TabList><TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel><TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel><TabPanel id="Emp">Alea jacta est.</TabPanel></Tabs>"
 `;

@@ -526,33 +526,127 @@ function commentIfParentCollectionNotDetected(
   }
 }
 
-export interface RemoveParentAndKeepChildrenOptions {
-  parentComponent: string
-}
-
 /**
- * Remove a parent component and keep its children.
+ * Updates Tabs to the new API.
  *
  * Example:
  * - Tabs: Remove TabPanels components and keep individual TabPanel components inside.
  */
-function removeParentAndKeepChildren(
-  path: NodePath<t.JSXElement>,
-  options: RemoveParentAndKeepChildrenOptions
+function updateTabs(
+  path: NodePath<t.JSXElement>
 ) {
-  const {parentComponent} = options;
+  function transformTabs(path: NodePath<t.JSXElement>) {
+    let tabListNode: t.JSXElement | null = null;
+    let tabPanelsNodes: t.JSXElement[] = [];
+    path.get('children').forEach(childPath => {
+      if (t.isJSXElement(childPath.node)) {
+        if (
+          t.isJSXIdentifier(childPath.node.openingElement.name) &&
+          t.isJSXIdentifier(childPath.node.openingElement.name) &&
+          getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) === 'TabList'
+        ) {
+          tabListNode = transformTabList(childPath as NodePath<t.JSXElement>);
+        } else if (
+          t.isJSXIdentifier(childPath.node.openingElement.name) &&
+          getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) === 'TabPanels'
+        ) {
+          tabPanelsNodes = transformTabPanels(childPath as NodePath<t.JSXElement>);
+        }
+      }
+    });
 
-  path.traverse({
-    JSXElement(path) {
-      if (
-        t.isJSXElement(path.node) &&
-        t.isJSXIdentifier(path.node.openingElement.name) &&
-        getName(path, path.node.openingElement.name) === parentComponent
-      ) {
-        path.replaceWithMultiple(path.node.children);
+    if (tabListNode) {
+      path.node.children = [tabListNode, ...tabPanelsNodes];
+    }
+  }
+
+  function transformItem(
+    itemPath: NodePath<t.JSXElement>,
+    newComponent: string,
+    availableComponents: Set<string>
+  ): t.JSXElement {
+    let attributes = itemPath.node.openingElement.attributes;
+    let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
+    if (keyProp && t.isJSXAttribute(keyProp)) {
+      // Update key prop to be id
+      keyProp.name = t.jsxIdentifier('id');
+    }
+
+    if (
+      t.isArrowFunctionExpression(itemPath.parentPath.node) &&
+      itemPath.parentPath.parentPath &&
+      t.isCallExpression(itemPath.parentPath.parentPath.node) &&
+      itemPath.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
+      itemPath.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
+      itemPath.parentPath.parentPath.node.callee.property.name === 'map'
+    ) {
+      // If Array.map is used, keep the key prop
+      if (keyProp && t.isJSXAttribute(keyProp)) {
+        let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
+        attributes.push(newKeyProp);
       }
     }
-  });
+
+    let localName = newComponent;
+    if (availableComponents.has(newComponent)) {
+      let program = itemPath.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+      localName = addComponentImport(program, newComponent);
+    }
+
+    let newNode = t.jsxElement(
+      t.jsxOpeningElement(t.jsxIdentifier(localName), itemPath.node.openingElement.attributes),
+      t.jsxClosingElement(t.jsxIdentifier(localName)),
+      itemPath.node.children
+    );
+    itemPath.replaceWith(newNode);
+
+    // Add id attribute based on the key
+    const keyAttr = newNode.openingElement.attributes.find(
+      attr => attr.type === 'JSXAttribute' && attr.name.name === 'key'
+    ) as t.JSXAttribute;
+    if (keyAttr) {
+      const idAttr = t.jsxAttribute(
+        t.jsxIdentifier('id'),
+        keyAttr.value
+      );
+      newNode.openingElement.attributes.push(idAttr);
+    }
+
+    // Remove key attribute
+    newNode.openingElement.attributes = newNode.openingElement.attributes.filter(
+      attr => attr.type === 'JSXAttribute' && attr.name.name !== 'key'
+    );
+
+    return newNode;
+  }
+
+  function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
+    tabListPath.get('children').forEach(itemPath => {
+      if (
+        t.isJSXElement(itemPath.node) &&
+        t.isJSXIdentifier(itemPath.node.openingElement.name) &&
+        getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
+      ) {
+        transformItem(itemPath as NodePath<t.JSXElement>, 'Tab', availableComponents);
+      }
+    });
+    return tabListPath.node;
+  }
+
+  function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>): t.JSXElement[] {
+    return tabPanelsPath.get('children').map(itemPath => {
+      if (
+        t.isJSXElement(itemPath.node) &&
+        t.isJSXIdentifier(itemPath.node.openingElement.name) &&
+        getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
+      ) {
+        return transformItem(itemPath as NodePath<t.JSXElement>, 'TabPanel', availableComponents);
+      }
+      return null;
+    }).filter(Boolean) as t.JSXElement[];
+  }
+
+  transformTabs(path);
 }
 
 export interface MovePropToNewChildComponentOptions {
@@ -866,7 +960,7 @@ export const functionMap = {
   moveRenderPropsToChild,
   updateComponentWithinCollection,
   commentIfParentCollectionNotDetected,
-  removeParentAndKeepChildren,
+  updateTabs,
   movePropToNewChildComponent,
   movePropToParentComponent,
   updateToNewComponent,
