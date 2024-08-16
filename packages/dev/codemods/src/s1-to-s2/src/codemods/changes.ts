@@ -6,7 +6,6 @@ import {
   MovePropToParentComponentOptions,
   MoveRenderPropsOptions,
   RemoveComponentIfWithinParentOptions,
-  RemoveParentAndKeepChildrenOptions,
   RemovePropOptions,
   UpdateComponentIfPropPresentOptions,
   UpdateComponentWithinCollectionOptions,
@@ -38,8 +37,8 @@ type FunctionInfo =
       args: UpdateComponentWithinCollectionOptions
     }
   | {
-      name: 'removeParentAndKeepChildren',
-      args: RemoveParentAndKeepChildrenOptions
+      name: 'updateTabs',
+      args: {}
     }
   | {
       name: 'movePropToNewChildComponent',
@@ -576,29 +575,6 @@ export const changes: ChangesJSON = {
       //     }
       //   }
       // },
-      // TODO: Not yet implemented in S2
-      // {
-      //   description: 'If within TabList, update Item to be a Tab',
-      //   reason: 'Updated collections API',
-      //   function: {
-      //     name: 'updateComponentWithinCollection',
-      //     args: {
-      //       parentComponent: 'TabList',
-      //       newComponent: 'Tab'
-      //     }
-      //   }
-      // },
-      // {
-      //   description: 'If within TabPanels, update Item to be a TabPanel',
-      //   reason: 'Updated collections API',
-      //   function: {
-      //     name: 'updateComponentWithinCollection',
-      //     args: {
-      //       parentComponent: 'TabPanels',
-      //       newComponent: 'TabPanel'
-      //     }
-      //   }
-      // },
     ]
   },
   Link: {
@@ -965,21 +941,28 @@ export const changes: ChangesJSON = {
       }
     ]
   },
-  // TODO: Not yet implemented in S2
-  // Tabs: {
-  //   changes: [
-  //     {
-  //       description: 'Remove TabPanels components and keep individual TabPanel components inside.',
-  //       reason: 'Updated collections API',
-  //       function: {
-  //         name: 'removeParentAndKeepChildren',
-  //         args: {
-  //           parentComponent: 'TabPanels'
-  //         }
-  //       }
-  //     }
-  //   ]
-  // },
+  Tabs: {
+    changes: [
+      {
+        description: 'Remove TabPanels components and keep individual TabPanel components inside.',
+        reason: 'Updated collections API',
+        function: {
+          name: 'updateTabs',
+          args: {}
+        }
+      },
+      {
+        description: 'Remove isEmphasized',
+        reason: 'It is no longer supported',
+        function: {name: 'removeProp', args: {propToRemove: 'isEmphasized'}}
+      },
+      {
+        description: 'Remove isQuiet',
+        reason: 'It is no longer supported',
+        function: {name: 'removeProp', args: {propToRemove: 'isQuiet'}}
+      }
+    ]
+  },
   TagGroup: {
     changes: [
       {

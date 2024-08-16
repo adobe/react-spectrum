@@ -290,7 +290,10 @@ export function Migrating() {
         <H3>Tabs</H3>
         <ul className="sb-unstyled">
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Inside <Code>TabList</Code>: Update <Code>Item</Code> to be <Code>Tab</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Update <Code>items</Code> on <Code>Tabs</Code> to be on <Code>TabList</Code></li>
           <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Inside <Code>TabPanels</Code>: Update <Code>Item</Code> to be a <Code>TabPanel</Code> and remove the surrounding <Code>TabPanels</Code></li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isEmphasized</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({lineHeight: 'body', color: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>TagGroup</H3>

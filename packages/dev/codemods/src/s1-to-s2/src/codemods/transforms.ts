@@ -1,4 +1,4 @@
-import {addComment, addComponentImport, getName} from './utils';
+import {addComment, addComponentImport, getName, removeComponentImport} from './utils';
 import {convertDimension} from './dimensions';
 import {getComponents} from '../getComponents';
 import {NodePath} from '@babel/traverse';
@@ -437,7 +437,7 @@ function updateComponentWithinCollection(
 
   // Collections currently implemented
   // TODO: Add 'ActionGroup', 'ListBox', 'ListView' once implemented
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'Collection']);
 
   if (
     t.isJSXElement(path.node) &&
@@ -509,7 +509,7 @@ function updateComponentWithinCollection(
 function commentIfParentCollectionNotDetected(
   path: NodePath<t.JSXElement>
 ) {
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView', 'Collection']);
   if (
     t.isJSXElement(path.node)
   ) {
@@ -526,33 +526,95 @@ function commentIfParentCollectionNotDetected(
   }
 }
 
-export interface RemoveParentAndKeepChildrenOptions {
-  parentComponent: string
-}
-
 /**
- * Remove a parent component and keep its children.
+ * Updates Tabs to the new API.
  *
  * Example:
  * - Tabs: Remove TabPanels components and keep individual TabPanel components inside.
  */
-function removeParentAndKeepChildren(
-  path: NodePath<t.JSXElement>,
-  options: RemoveParentAndKeepChildrenOptions
+function updateTabs(
+  path: NodePath<t.JSXElement>
 ) {
-  const {parentComponent} = options;
+  function transformTabs(path: NodePath<t.JSXElement>) {
+    let tabListNode: t.JSXElement | null = null;
+    let tabPanelsNodes: t.JSXElement[] = [];
+    let itemsProp: t.JSXAttribute | null = null;
 
-  path.traverse({
-    JSXElement(path) {
-      if (
-        t.isJSXElement(path.node) &&
-        t.isJSXIdentifier(path.node.openingElement.name) &&
-        getName(path, path.node.openingElement.name) === parentComponent
-      ) {
-        path.replaceWithMultiple(path.node.children);
+    path.node.openingElement.attributes = path.node.openingElement.attributes.filter(attr => {
+      if (t.isJSXAttribute(attr) && attr.name.name === 'items') {
+        itemsProp = attr;
+        return false;
       }
+      return true;
+    });
+
+    path.get('children').forEach(childPath => {
+      if (t.isJSXElement(childPath.node)) {
+        if (
+          t.isJSXIdentifier(childPath.node.openingElement.name) &&
+          getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) === 'TabList'
+        ) {
+          tabListNode = transformTabList(childPath as NodePath<t.JSXElement>);
+          if (itemsProp) {
+            tabListNode.openingElement.attributes.push(itemsProp);
+          }
+        } else if (
+          t.isJSXIdentifier(childPath.node.openingElement.name) &&
+          getName(childPath as NodePath<t.JSXElement>, childPath.node.openingElement.name) === 'TabPanels'
+        ) {
+          tabPanelsNodes = transformTabPanels(childPath as NodePath<t.JSXElement>, itemsProp);
+        }
+      }
+    });
+
+    if (tabListNode) {
+      path.node.children = [tabListNode, ...tabPanelsNodes];
     }
-  });
+  }
+
+  function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
+    tabListPath.get('children').forEach(itemPath => {
+      if (
+        t.isJSXElement(itemPath.node) &&
+        t.isJSXIdentifier(itemPath.node.openingElement.name) &&
+        getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
+      ) {
+        updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabList', newComponent: 'Tab'});
+      }
+    });
+    return tabListPath.node;
+  }
+
+  function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>, itemsProp: t.JSXAttribute | null): t.JSXElement[] {
+    // Dynamic case
+    let dynamicRender = tabPanelsPath.get('children').find(path => t.isJSXExpressionContainer(path.node));
+    if (dynamicRender) {
+      updateToNewComponent(tabPanelsPath, {newComponent: 'Collection'});
+      let itemPath = (dynamicRender.get('expression') as NodePath).get('body');
+      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'Collection', newComponent: 'TabPanel'});
+      if (itemsProp) {
+        tabPanelsPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('items'), itemsProp.value));
+      }
+      return [tabPanelsPath.node];
+    }
+
+    // Static case
+    return tabPanelsPath.get('children').map(itemPath => {
+      if (
+        t.isJSXElement(itemPath.node) &&
+        t.isJSXIdentifier(itemPath.node.openingElement.name) &&
+        getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
+      ) {
+        updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabPanels', newComponent: 'TabPanel'});
+        return itemPath.node;
+      }
+      return null;
+    }).filter(Boolean) as t.JSXElement[];
+  }
+
+  let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+  removeComponentImport(program, 'TabPanels');
+  transformTabs(path);
 }
 
 export interface MovePropToNewChildComponentOptions {
@@ -866,7 +928,7 @@ export const functionMap = {
   moveRenderPropsToChild,
   updateComponentWithinCollection,
   commentIfParentCollectionNotDetected,
-  removeParentAndKeepChildren,
+  updateTabs,
   movePropToNewChildComponent,
   movePropToParentComponent,
   updateToNewComponent,
