@@ -12,6 +12,7 @@
   "label.(required)": "(obligatorisk)",
   "menu.moreActions": "Flere handlinger",
   "picker.placeholder": "Velg et alternativ...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
   "tag.actions": "Handlinger",

@@ -12,6 +12,7 @@
   "label.(required)": "(נדרש)",
   "menu.moreActions": "פעולות נוספות",
   "picker.placeholder": "בחר אפשרות...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "מקסימום",
   "slider.minimum": "מינימום",
   "tag.actions": "פעולות",

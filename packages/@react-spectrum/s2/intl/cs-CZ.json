@@ -12,6 +12,7 @@
   "label.(required)": "(požadováno)",
   "menu.moreActions": "Další akce",
   "picker.placeholder": "Vyberte vhodnou možnost...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "tag.actions": "Akce",

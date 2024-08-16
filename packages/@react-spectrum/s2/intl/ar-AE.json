@@ -12,6 +12,7 @@
   "label.(required)": "(مطلوب)",
   "menu.moreActions": "المزيد من الإجراءات",
   "picker.placeholder": "حدد خيارًا...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "أقصى",
   "slider.minimum": "أدنى",
   "tag.actions": "الإجراءات",

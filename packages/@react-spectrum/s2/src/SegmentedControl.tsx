@@ -16,8 +16,11 @@ import {ContextValue, Radio, RadioGroup, RadioProps, Provider, RadioGroupStateCo
 import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect} from 'react';
 import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
@@ -124,6 +127,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
     value
   } = props
   let domRef = useDOMRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     <RadioGroup 
@@ -131,7 +135,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       ref={domRef}
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
-      aria-label={props['aria-label'] || 'Segmented Control'}>
+      aria-label={props['aria-label'] || stringFormatter.format('segmentedcontrol.aria-label')}>
       <DefaultSelectionTracker defaultValue={defaultValue} value={value}>
         {props.children}
       </DefaultSelectionTracker>

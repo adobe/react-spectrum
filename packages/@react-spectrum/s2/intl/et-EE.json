@@ -12,6 +12,7 @@
   "label.(required)": "(nõutav)",
   "menu.moreActions": "Veel toiminguid",
   "picker.placeholder": "Valige valikuline...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Maksimaalne",
   "slider.minimum": "Minimaalne",
   "tag.actions": "Toimingud",

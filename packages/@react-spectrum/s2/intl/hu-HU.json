@@ -12,6 +12,7 @@
   "label.(required)": "(kötelező)",
   "menu.moreActions": "További lehetőségek",
   "picker.placeholder": "Válasszon egy opciót…",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "tag.actions": "Műveletek",

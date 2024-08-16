@@ -12,6 +12,7 @@
   "label.(required)": "(απαιτείται)",
   "menu.moreActions": "Περισσότερες ενέργειες",
   "picker.placeholder": "Επιλέξτε…",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Μέγιστο",
   "slider.minimum": "Ελάχιστο",
   "tag.actions": "Ενέργειες",

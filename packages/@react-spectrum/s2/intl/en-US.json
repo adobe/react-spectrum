@@ -12,6 +12,7 @@
   "label.(optional)": "(optional)",
   "menu.moreActions": "More actions",
   "picker.placeholder": "Select…",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.minimum": "Minimum",
   "slider.maximum": "Maximum",
   "tag.showAllButtonLabel": "Show all ({tagCount, number})",

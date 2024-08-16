@@ -12,6 +12,7 @@
   "label.(required)": "(krävs)",
   "menu.moreActions": "Fler åtgärder",
   "picker.placeholder": "Välj ett alternativ...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "tag.actions": "Åtgärder",

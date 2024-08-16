@@ -12,6 +12,7 @@
   "label.(required)": "(gerekli)",
   "menu.moreActions": "Daha fazla eylem",
   "picker.placeholder": "Bir seçim yapın…",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
   "tag.actions": "Eylemler",

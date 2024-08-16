@@ -12,6 +12,7 @@
   "label.(required)": "（必須）",
   "menu.moreActions": "その他のアクション",
   "picker.placeholder": "オプションを選択...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
   "tag.actions": "アクション",

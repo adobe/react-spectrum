@@ -12,6 +12,7 @@
   "label.(required)": "(obrigatório)",
   "menu.moreActions": "Mais ações",
   "picker.placeholder": "Selecionar uma opção...",
+  "segmentedcontrol.aria-label": "Segmented control",
   "slider.maximum": "Máximo",
   "slider.minimum": "Mínimo",
   "tag.actions": "Ações",
