@@ -1,4 +1,4 @@
-import {addComment, addComponentImport, getName} from './utils';
+import {addComment, addComponentImport, getName, removeComponentImport} from './utils';
 import {convertDimension} from './dimensions';
 import {getComponents} from '../getComponents';
 import {NodePath} from '@babel/traverse';
@@ -612,6 +612,8 @@ function updateTabs(
     }).filter(Boolean) as t.JSXElement[];
   }
 
+  let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+  removeComponentImport(program, 'TabPanels');
   transformTabs(path);
 }
 

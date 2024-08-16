@@ -2,7 +2,7 @@
 
 exports[`Move items from Tabs to TabList 1`] = `
 "import { Collection, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
-import { TabPanels, Item } from '@adobe/react-spectrum';
+import { Item } from '@adobe/react-spectrum';
 
 let items = [
   {name: 'Tab 1', children: 'Tab Body 1'},
@@ -30,7 +30,7 @@ let items = [
 
 exports[`Remove isEmphasized 1`] = `
 "import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
-import { TabPanels, Item } from '@adobe/react-spectrum';
+import { Item } from '@adobe/react-spectrum';
 let isEmphasized = true;
 let props = {isEmphasized: true};
 <div>
@@ -65,7 +65,7 @@ let props = {isEmphasized: true};
 
 exports[`Remove isQuiet 1`] = `
 "import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
-import { TabPanels, Item } from '@adobe/react-spectrum';
+import { Item } from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
 <div>
@@ -100,7 +100,7 @@ let props = {isQuiet: true};
 
 exports[`Update to use new API 1`] = `
 "import { Tab, TabPanel, Tabs, TabList } from "@react-spectrum/s2";
-import { TabPanels, Item } from '@adobe/react-spectrum';
+import { Item } from '@adobe/react-spectrum';
 
 <Tabs aria-label="History of Ancient Rome"><TabList>
     <Tab id="FoR">Founding of Rome</Tab>
