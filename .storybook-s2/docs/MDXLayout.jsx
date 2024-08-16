@@ -1,7 +1,6 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Link} from '@react-spectrum/s2';
 import {highlight} from './highlight' with {type: 'macro'};
-import {H2, H3, H3, P, Pre, Code, Strong, H4} from './typography';
+import {H2, H3, H3, P, Pre, Code, Strong, H4, Link} from './typography';
 import {MDXProvider} from '@mdx-js/react';
 
 const mdxComponents = {
@@ -15,7 +14,7 @@ const mdxComponents = {
   strong: Strong,
   ul: ({children}) => <ul className="sb-unstyled">{children}</ul>,
   li: ({children}) => <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 4})}>{children}</li>,
-  a: (props) => <Link target={props.href.startsWith('/') ? '_top' : props.href.startsWith('#') ? '_self' : '_blank'} {...props} />
+  a: Link
 }
 
 export function MDXLayout({children}) {
