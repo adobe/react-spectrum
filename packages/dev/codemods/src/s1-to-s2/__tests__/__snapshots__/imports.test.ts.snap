@@ -114,7 +114,6 @@ exports[`should replace named imports from individual packages 1`] = `
 
 exports[`should use unique alias if newly imported component name is already in scope 1`] = `
 "import { Tag as Tag1, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 const Tag = 'something else';
 

@@ -203,9 +203,10 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
         t.isIdentifier(b.path.node.imported) &&
         (b.path.node.imported.name === 'Item' || b.path.node.imported.name === 'Section')
       ) {
-        // Keep Item and Section imports
-        // TODO: remove if they are unused
-        return;
+        // Keep Item and Section imports if they are still used
+        if (root.find(j.JSXIdentifier, {name: b.path.node.imported.name}).length > 0) {
+          return;
+        }
       }
       b.path.remove();
 
