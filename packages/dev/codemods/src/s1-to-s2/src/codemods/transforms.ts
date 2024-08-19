@@ -645,7 +645,7 @@ function movePropToNewChildComponent(
     getName(path, path.node.openingElement.name) === childComponent &&
     getName(path, path.parentPath.node.openingElement.name) === parentComponent
   ) {
-    let propValue;
+    let propValue: t.JSXAttribute['value'] | void;
     path.node.openingElement.attributes =
       path.node.openingElement.attributes.filter((attr) => {
         if (t.isJSXAttribute(attr) && attr.name.name === propToMove) {
@@ -660,9 +660,10 @@ function movePropToNewChildComponent(
         t.jsxElement(
           t.jsxOpeningElement(t.jsxIdentifier(newChildComponent), []),
           t.jsxClosingElement(t.jsxIdentifier(newChildComponent)),
-          [t.jsxText(propValue)]
+          [t.isStringLiteral(propValue) ? t.jsxText(propValue.value) : propValue]
         )
       );
+      // TODO: handle dynamic collections. Need to wrap function child in <Collection> and move `items` prop down.
     }
   }
 }

@@ -138,3 +138,13 @@ let props = {validationState: 'invalid'};
   </Picker>
 </div>
 `);
+
+test('handles sections', `
+import {Picker, Section, Item} from '@adobe/react-spectrum';
+<Picker>
+  <Section title="Section title">
+    <Item>Item one</Item>
+    <Item>Item two</Item>
+  </Section>
+</Picker>
+`);
