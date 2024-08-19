@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/pagination",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "private": true,
@@ -23,8 +23,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/utils": "^3.1.0",
-    "@react-types/pagination": "3.0.0-alpha.1",
+    "@react-stately/utils": "^3.11.0",
+    "@react-types/pagination": "^3.0.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

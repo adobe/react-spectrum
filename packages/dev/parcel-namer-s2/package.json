@@ -1,6 +1,6 @@
 {
   "name": "parcel-namer-s2",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "S2Namer.js",
   "private": true,
   "engines": {
