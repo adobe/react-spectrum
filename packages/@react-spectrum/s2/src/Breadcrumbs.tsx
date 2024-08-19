@@ -132,6 +132,7 @@ let BreadcrumbMenu = (props: BreadcrumbProps) => {
               // pull off individual props as an allow list, don't want refs or other props getting through
               return (
                 <MenuItem
+                  href={item.props.href}
                   key={item.key}>
                   <Text slot="label">
                     {item.props.children({size, isInCtx: true, isCurrent: false, isMenu: true})}
@@ -293,6 +294,12 @@ function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIEle
     <AriaBreadcrumb
       {...other}
       ref={domRef}
+      href={href}
+      target={target}
+      rel={rel}
+      download={download}
+      ping={ping}
+      referrerPolicy={referrerPolicy}
       className={({isCurrent}) => breadcrumbStyles({size, isCurrent})}>
       {({isCurrent, isDisabled, isMenu}) => {
         if (isMenu) {
