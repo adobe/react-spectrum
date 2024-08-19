@@ -38,7 +38,7 @@
   "dependencies": {
     "@react-aria/button": "^3.9.7",
     "@react-aria/i18n": "^3.12.1",
-    "@react-aria/tree": "3.0.0-alpha.3",
+    "@react-aria/tree": "3.0.0-alpha.4",
     "@react-aria/utils": "^3.25.1",
     "@react-spectrum/checkbox": "^3.9.8",
     "@react-spectrum/text": "^3.5.7",
