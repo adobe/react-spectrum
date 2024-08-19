@@ -127,3 +127,21 @@ import {Button} from "@react-spectrum/s2";
   <StatusLight variant="positive">Test</StatusLight>
 </>
 `);
+
+test('should remove unused Item/Section import even if name taken in different scope', `
+import {Menu, Section, Item, ListBox} from '@adobe/react-spectrum';
+
+function foo() {
+  let Item = 'something else';
+  let Section = 'something else';
+} 
+
+<div>
+  <Menu aria-label="Text">
+    <Section title="Styles">
+      <Item key="bold">Bold</Item>
+      <Item key="underline">Underline</Item>
+    </Section>
+  </Menu>
+</div>
+`);
