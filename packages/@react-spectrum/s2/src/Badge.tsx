@@ -156,20 +156,17 @@ const badge = style<BadgeStyleProps>({
       outline: 'gray-25'
     }
   },
-  borderStyle: {
-    fillStyle: {
-      outline: 'solid'
-    }
-  },
+  borderStyle: 'solid',
   boxSizing: 'border-box',
-  borderWidth: '[2px]',
+  borderWidth: 2,
   borderColor: {
+    default: 'transparent',
     fillStyle: {
       outline: {
         variant: {
           accent: 'accent-800',
           informative: 'informative-800',
-          neutral: 'gray-500',
+          neutral: 'gray-700',
           positive: 'positive-700',
           notice: 'notice-700',
           negative: 'negative-800',
