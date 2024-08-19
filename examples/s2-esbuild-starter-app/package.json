@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Test app using macros",
   "main": "index.js",
+  "packageManager": "yarn@4.2.2",
   "scripts": {
     "build": "node build.mjs -build",
     "start": "node build.mjs -watch",
@@ -12,17 +13,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@react-spectrum/s2": "0.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@react-spectrum/s2": "0.0.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "esbuild": "^0.20.2",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.22",
+    "esbuild": "^0.20.2",
+    "esbuild-plugin-tsc": "^0.4.0",
     "patch-package": "^8.0.0",
     "typescript": "^5.4.3",
-    "unplugin-parcel-macros": "^0.0.3",
-    "esbuild-plugin-tsc": "^0.4.0"
+    "unplugin-parcel-macros": "^0.0.3"
   }
 }
