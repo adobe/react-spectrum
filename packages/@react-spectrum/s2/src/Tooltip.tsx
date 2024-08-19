@@ -22,7 +22,7 @@ import {
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
-import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext} from 'react';
+import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -154,6 +154,7 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   } = useContext(InternalTooltipTriggerContext);
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();
+  let [borderRadius, setBorderRadius] = useState(0);
 
   // TODO: should we pass through lang and dir props in RAC?
   let tooltipRef = useCallback((el: HTMLDivElement) => {
@@ -161,12 +162,17 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
     if (el) {
       el.lang = locale;
       el.dir = direction;
+      let spectrumBorderRadius = window.getComputedStyle(el).borderRadius;
+      if (spectrumBorderRadius !== '') {
+        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+      }
     }
   }, [locale, direction, domRef]);
 
   return (
     <AriaTooltip
       {...props}
+      arrowBoundaryOffset={borderRadius}
       containerPadding={containerPadding}
       crossOffset={crossOffset}
       offset={offset}

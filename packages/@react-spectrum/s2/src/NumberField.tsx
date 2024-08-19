@@ -21,8 +21,7 @@ import {
   Text,
   useContextProps
 } from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
-import ChevronIcon from '../ui-icons/Chevron';
+import {baseColor, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
@@ -38,23 +37,21 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface NumberFieldProps extends
-  AriaNumberFieldProps,
+  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
   /**
-   * Whether the NumberField step buttons should be collapsed into a single column.
-   *
-   * @default "false"
+   * Whether to hide the increment and decrement buttons.
+   * @default false
    */
-    isCollapsed?: boolean,
+  hideStepper?: boolean,
   /**
    * The size of the NumberField.
    *
    * @default "M"
    */
-    size?: 'S' | 'M' | 'L' | 'XL',
-    label?: ReactNode
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, TextFieldRef>>(null);
@@ -94,52 +91,22 @@ const inputButton = style({
   justifyContent: 'center',
   width: {
     size: {
-      S: {
-        default: 16,
-        isCollapsed: 24
-      },
-      M: {
-        default: 20,
-        isCollapsed: 24
-      },
-      L: {
-        default: 24,
-        isCollapsed: 32
-      },
-      XL: {
-        default: 32,
-        isCollapsed: 40
-      }
+      S: 16,
+      M: 20,
+      L: 24,
+      XL: 32
     }
   },
-  height: {
-    default: 'auto',
-    isCollapsed: {
-      size: {
-        S: 8,
-        M: 12,
-        L: 16,
-        XL: 20
-      }
-    }
-  },
+  height: 'auto',
   marginStart: {
     default: 'text-to-control',
     type: {
       increment: 0
     }
   },
-  aspectRatio: {
-    default: 'square',
-    isCollapsed: 'auto'
-  },
-  flexShrink: {
-    default: 0,
-    isCollapsed: 1
-  },
-  minHeight: {
-    isCollapsed: 0
-  },
+  aspectRatio: 'square',
+  flexShrink: 0,
+  minHeight: 0,
   transition: {
     default: 'default',
     forcedColors: 'none'
@@ -179,50 +146,24 @@ const iconStyles = style({
 
 const stepperContainerStyles = style({
   display: 'flex',
-  flexDirection: {
-    default: 'row',
-    isCollapsed: 'column-reverse'
-  },
+  flexDirection: 'row',
   gap: {
-    default: {
-      size: {
-        S: 8,
-        M: 4,
-        L: 8,
-        XL: 8
-      }
-    },
-    isCollapsed: '[2px]'
-  },
-  maxHeight: {
-    isCollapsed: {
-      size: {
-        S: 16,
-        M: 24,
-        L: 32,
-        XL: 40 // 40
-      }
+    size: {
+      S: 8,
+      M: 4,
+      L: 8,
+      XL: 8
     }
   },
   paddingEnd: {
-    default: {
-      size: {
-        S: '[2px]',
-        M: '[4px]',
-        L: '[6px]',
-        XL: '[6px]'
-      }
-    },
-    isCollapsed: '[2px]'
+    size: {
+      S: size(2),
+      M: 4,
+      L: size(6),
+      XL: size(6)
+    }
   }
 });
-
-const chevronSize = {
-  S: 'XS',
-  M: 'S',
-  L: 'L',
-  XL: 'XL'
-} as const;
 
 function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
@@ -231,7 +172,7 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
     contextualHelp,
     description: descriptionMessage,
     errorMessage,
-    isCollapsed,
+    hideStepper,
     isRequired,
     size = 'M',
     labelPosition = 'top',
@@ -293,9 +234,11 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
                   styles={style({
                     ...fieldInput(),
                     paddingStart: 'edge-to-text',
-                    paddingEnd: 0,
-                    cursor: 'default'
-                  })({size})}>
+                    paddingEnd: {
+                      default: 0,
+                      isStepperHidden: 'edge-to-text'
+                    }
+                  })({size, isStepperHidden: hideStepper})}>
                   <InputContext.Consumer>
                     {ctx => (
                       <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
@@ -304,22 +247,17 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
                     )}
                   </InputContext.Consumer>
                   {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-                  <div className={stepperContainerStyles({isCollapsed, size})}>
+                  {!hideStepper && <div className={stepperContainerStyles({size})}>
                     <StepButton
                       ref={decrementButtonRef}
                       slot="decrement"
                       style={renderProps => pressScale(decrementButtonRef)(renderProps)}
                       className={renderProps => inputButton({
                         ...renderProps,
-                        type: isCollapsed ? 'decrementStep' : 'decrement',
-                        isCollapsed,
+                        type: 'decrement',
                         size
                       })}>
-                      {
-                        isCollapsed
-                          ? <ChevronIcon size={chevronSize[size]} className={iconStyles({type: 'decrementStep'})} />
-                          : <Dash size={size} className={iconStyles({})} />
-                      }
+                      <Dash size={size} className={iconStyles({})} />
                     </StepButton>
                     <StepButton
                       ref={incrementButtonRef}
@@ -327,17 +265,12 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
                       style={renderProps => pressScale(incrementButtonRef)(renderProps)}
                       className={renderProps => inputButton({
                         ...renderProps,
-                        type: isCollapsed ? 'incrementStep' : 'increment',
-                        isCollapsed,
+                        type: 'increment',
                         size
                       })}>
-                      {
-                        isCollapsed
-                          ? <ChevronIcon size={chevronSize[size]} className={iconStyles({type: 'incrementStep'})} />
-                          : <Add size={size} className={iconStyles({})} />
-                      }
+                      <Add size={size} className={iconStyles({})} />
                     </StepButton>
-                  </div>
+                  </div>}
                 </FieldGroup>
                 {descriptionMessage && <Text slot="description">{descriptionMessage}</Text>}
                 <HelpText
