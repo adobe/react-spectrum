@@ -115,7 +115,7 @@
     "src"
   ],
   "scripts": {
-    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/page*.css page.css || true",
+    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/page*.css page.css && mv dist/page.css.map page.css.map || true",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
     "postpack": "git checkout -- package.json"
   },
