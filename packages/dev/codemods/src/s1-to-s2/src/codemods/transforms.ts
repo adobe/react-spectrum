@@ -918,6 +918,24 @@ function updateAvatarSize(
   }
 }
 
+/**
+ * Handles the legacy `Link` API where an `a` tag could be used within a `Link` component.
+ * Removes the `a` tag and moves its attributes to the `Link` component.
+ */
+function updateLegacyLink(
+  path: NodePath<t.JSXElement>
+) {
+  let anchorElement = path.node.children.find((child) => t.isJSXElement(child) && t.isJSXIdentifier(child.openingElement.name) && getName(path, child.openingElement.name) === 'a') as t.JSXElement;
+  if (anchorElement) {
+    let anchorAttributes = anchorElement.openingElement.attributes;
+    let linkAttributes = path.node.openingElement.attributes;
+    anchorAttributes.forEach((attr) => {
+      linkAttributes.push(attr);
+    });
+    path.node.children = anchorElement.children;
+  }
+}
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -936,5 +954,6 @@ export const functionMap = {
   convertDimensionValueToPx,
   updatePlacementToSingleValue,
   removeComponentIfWithinParent,
-  updateAvatarSize
+  updateAvatarSize,
+  updateLegacyLink
 };

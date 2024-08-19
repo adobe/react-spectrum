@@ -71,6 +71,10 @@ type FunctionInfo =
   | {
     name: 'updateAvatarSize',
     args: {}
+  }
+  | {
+    name: 'updateLegacyLink',
+    args: {}
   };
 
 type Change = {
@@ -590,6 +594,14 @@ export const changes: ChangesJSON = {
             newProp: 'staticColor',
             newValue: 'white'
           }
+        }
+      },
+      {
+        description: 'Remove inner anchor element if used (legacy API)',
+        reason: 'Updated API',
+        function: {
+          name: 'updateLegacyLink',
+          args: {}
         }
       }
     ]

@@ -25,3 +25,15 @@ let props = {variant: 'overBackground'};
   </Link>
 </div>
 `);
+
+test('Remove inner anchor element (deprecated API)', `
+import {Link} from '@adobe/react-spectrum';
+
+<div>
+  <Link>
+    <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
+      The missing link.
+    </a>
+  </Link>
+</div>
+`);
