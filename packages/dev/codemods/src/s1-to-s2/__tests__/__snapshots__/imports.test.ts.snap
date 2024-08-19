@@ -63,7 +63,7 @@ import { Section, Item, ListBox } from '@adobe/react-spectrum';
 
 <div>
   <Menu aria-label="Text">
-    <MenuSection title="Styles">
+    <MenuSection><Header>Styles</Header>
       <MenuItem id="bold">Bold</MenuItem>
       <MenuItem id="underline">Underline</MenuItem>
     </MenuSection>
