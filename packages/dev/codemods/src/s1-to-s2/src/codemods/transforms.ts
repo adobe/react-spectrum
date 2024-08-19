@@ -509,7 +509,7 @@ function updateComponentWithinCollection(
 function commentIfParentCollectionNotDetected(
   path: NodePath<t.JSXElement>
 ) {
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView', 'Collection']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView', 'Collection', 'SearchAutocomplete', 'Accordion', 'ActionBar', 'StepList']);
   if (
     t.isJSXElement(path.node)
   ) {
