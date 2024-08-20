@@ -18,7 +18,7 @@ import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
-import {TextContext, Text} from './Content';
+import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
