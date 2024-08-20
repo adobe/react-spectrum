@@ -70,7 +70,7 @@ describe('Picker', function () {
     expect(picker).toHaveAttribute('data-testid', 'test');
 
     let label = getAllByText('Test')[0];
-    let value = getByText('Select…');
+    let value = getByText('Select an option…');
     expect(label).toBeVisible();
     expect(value).toBeVisible();
   });
@@ -362,7 +362,7 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(onOpenChange).not.toBeCalled();
 
-      let picker = getByLabelText('Select…');
+      let picker = getByLabelText('Select an option…');
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
@@ -393,7 +393,7 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(onOpenChange).not.toBeCalled();
 
-      let picker = getByLabelText('Select…');
+      let picker = getByLabelText('Select an option…');
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
@@ -721,7 +721,7 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(onOpenChange).not.toBeCalled();
 
-      let picker = getByLabelText('Select…');
+      let picker = getByLabelText('Select an option…');
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
@@ -751,7 +751,7 @@ describe('Picker', function () {
       expect(getByRole('listbox')).toBeVisible();
       expect(onOpenChange).not.toBeCalled();
 
-      let picker = getByLabelText('Select…');
+      let picker = getByLabelText('Select an option…');
       expect(picker).toHaveAttribute('aria-expanded', 'true');
 
       let listbox = getByRole('listbox');
@@ -804,7 +804,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
 
       let label = getAllByText('Test')[0];
-      let value = getByText('Select…');
+      let value = getByText('Select an option…');
       expect(label).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
       expect(picker).toHaveAttribute('aria-labelledby', `${value.id} ${label.id}`);
@@ -829,7 +829,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      let value = getByText('Select…');
+      let value = getByText('Select an option…');
       expect(picker).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
       expect(picker).toHaveAttribute('aria-label', 'Test');
@@ -855,7 +855,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      let value = getByText('Select…');
+      let value = getByText('Select an option…');
       expect(picker).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
       expect(picker).toHaveAttribute('aria-labelledby', `${value.id} foo`);
@@ -880,7 +880,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      let value = getByText('Select…');
+      let value = getByText('Select an option…');
       expect(picker).toHaveAttribute('id');
       expect(value).toHaveAttribute('id');
       expect(picker).toHaveAttribute('aria-label', 'Test');
@@ -914,7 +914,7 @@ describe('Picker', function () {
         expect(span).not.toHaveAttribute('aria-hidden');
 
         let label = span.parentElement;
-        let value = getByText('Select…');
+        let value = getByText('Select an option…');
         expect(label).toHaveAttribute('id');
         expect(value).toHaveAttribute('id');
         expect(picker).toHaveAttribute('aria-labelledby', `${value.id} ${label.id}`);
@@ -978,7 +978,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1015,7 +1015,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1086,7 +1086,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1132,7 +1132,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       act(() => {picker.focus();});
 
       fireEvent.keyDown(picker, {key: 'ArrowUp'});
@@ -1177,7 +1177,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1223,7 +1223,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(0);
       await user.click(picker);
       act(() => jest.runAllTimers());
@@ -1370,7 +1370,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1443,7 +1443,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.click(picker);
       act(() => jest.runAllTimers());
 
@@ -1545,7 +1545,7 @@ describe('Picker', function () {
 
       let picker = getByRole('button');
       act(() => {picker.focus();});
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
 
@@ -1641,7 +1641,7 @@ describe('Picker', function () {
 
       let picker = getByRole('button');
       await user.tab();
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
       await user.keyboard('{ArrowLeft}');
       act(() => jest.runAllTimers());
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -1687,7 +1687,7 @@ describe('Picker', function () {
 
       let picker = getByRole('button');
       act(() => {picker.focus();});
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
 
       fireEvent.keyDown(picker, {key: 't'});
       fireEvent.keyUp(picker, {key: 't'});
@@ -1715,7 +1715,7 @@ describe('Picker', function () {
 
       let picker = getByRole('button');
       act(() => {picker.focus();});
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
 
       fireEvent.keyDown(picker, {key: 't'});
       fireEvent.keyUp(picker, {key: 't'});
@@ -1744,7 +1744,7 @@ describe('Picker', function () {
 
       let picker = getByRole('button');
       act(() => {picker.focus();});
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
 
       fireEvent.keyDown(picker, {key: 't'});
       fireEvent.keyUp(picker, {key: 't'});
@@ -1772,7 +1772,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      expect(picker).toHaveTextContent('Select…');
+      expect(picker).toHaveTextContent('Select an option…');
 
       let hiddenLabel = getByText('Test', {hidden: true, selector: 'label'});
       expect(hiddenLabel.tagName).toBe('LABEL');
@@ -2500,7 +2500,7 @@ describe('Picker', function () {
         jest.runAllTimers();
       });
 
-      expect(button).toHaveTextContent('Select…');
+      expect(button).toHaveTextContent('Select an option…');
       expect(listbox).not.toBeInTheDocument();
       expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
       expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');

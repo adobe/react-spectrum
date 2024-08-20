@@ -94,7 +94,7 @@
     "@parcel/transformer-inline-string": "2.0.0-dev.1601",
     "@parcel/transformer-svg-react": "2.12.1-dev.3224",
     "@parcel/transformer-typescript-types": "2.0.0-dev.1601",
-    "@react-spectrum/s2-icon-builder": "^1.0.0",
+    "@react-spectrum/s2-icon-builder": "^0.1.0",
     "@spectrum-css/component-builder": "1.0.1",
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^7.6.19",

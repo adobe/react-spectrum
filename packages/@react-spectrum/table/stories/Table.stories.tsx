@@ -117,10 +117,6 @@ export default {
     },
     disallowEmptySelection: {
       control: 'boolean'
-    },
-    disabledBehavior: {
-      control: 'select',
-      options: ['all', 'selection']
     }
   }
 } as ComponentMeta<typeof TableView>;

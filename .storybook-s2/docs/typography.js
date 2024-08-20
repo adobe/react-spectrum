@@ -1,5 +1,5 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Link} from '@react-spectrum/s2';
+import {Link as S2Link} from '@react-spectrum/s2';
 import {useFocusRing, useHover} from 'react-aria';
 
 function AnchorLink({id, isHovered}) {
@@ -7,7 +7,7 @@ function AnchorLink({id, isHovered}) {
   const url = `${location.origin}${location.pathname.replace('iframe', 'index')}${location.search.replace('viewMode=docs&id=', 'path=/docs/')}#${id}`;
   return (
     <span {...focusProps} style={{opacity: isHovered || isFocusVisible ? 1 : 0}}>
-      <Link href={url}>#</Link>
+      <S2Link href={url}>#</S2Link>
     </span>
   );
 }
@@ -59,7 +59,7 @@ export function Strong({children}) {
 
 export function Pre({children}) {
   return (
-    <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', font: 'code-sm'})}>
+    <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
       <code dangerouslySetInnerHTML={{__html: children}} />
     </pre>
   );
@@ -67,4 +67,13 @@ export function Pre({children}) {
 
 function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
+}
+
+export function Link(props) {
+  return (
+    <S2Link
+      {...props}
+      target={props.href.startsWith('?') ? '_top' : props.href.startsWith('#') ? '_self' : '_blank'}
+      href={props.href.startsWith('?') ? new URL(props.href, window.top.location.href).toString() : props.href} />
+  );
 }

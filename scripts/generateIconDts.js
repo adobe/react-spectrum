@@ -10,8 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import type {IconProps} from './dist/types';
+const glob = require('glob').sync;
+const fs = require('fs');
+const path = require('path');
+
+// Generate types for each icon/illustration so TypeScript's import autocomplete works.
+for (let file of glob('packages/@react-spectrum/s2/{icons,illustrations/**}/*.mjs')) {
+  let relative = path.relative(path.dirname(file), 'packages/@react-spectrum/s2/dist/types').replaceAll('\\', '/');
+  fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '${relative}';
 import type {ReactNode} from 'react';
 
 declare function Icon(props: IconProps): ReactNode;
 export default Icon;
+`);
+}
