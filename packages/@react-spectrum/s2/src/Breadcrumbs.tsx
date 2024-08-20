@@ -362,9 +362,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
   CollectionRoot({collection}) {
     return useCollectionRender(collection);
   },
-  CollectionBranch({collection}) {
-    return useCollectionRender(collection);
-  }
+  CollectionBranch: null
 };
 
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
