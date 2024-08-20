@@ -861,6 +861,28 @@ export const changes: ChangesJSON = {
         }
       },
       {
+        description: 'If within Picker, update Section to be a PickerSection',
+        reason: 'Updated component structure',
+        function: {
+          name: 'updateComponentWithinCollection',
+          args: {
+            parentComponent: 'Picker',
+            newComponent: 'PickerSection'
+          }
+        }
+      },
+      {
+        description: 'If within ComboBox, update Section to be a ComboBoxSection',
+        reason: 'Updated component structure',
+        function: {
+          name: 'updateComponentWithinCollection',
+          args: {
+            parentComponent: 'ComboBox',
+            newComponent: 'ComboBoxSection'
+          }
+        }
+      },
+      {
         description:
           'Move title prop string to be a child of new Heading within a Header',
         reason: 'Updated API',
@@ -868,7 +890,35 @@ export const changes: ChangesJSON = {
           name: 'movePropToNewChildComponent',
           args: {
             parentComponent: 'Menu',
-            childComponent: 'Section',
+            childComponent: 'MenuSection',
+            propToMove: 'title',
+            newChildComponent: 'Header'
+          }
+        }
+      },
+      {
+        description:
+          'Move title prop string to be a child of new Heading within a Header',
+        reason: 'Updated API',
+        function: {
+          name: 'movePropToNewChildComponent',
+          args: {
+            parentComponent: 'Picker',
+            childComponent: 'PickerSection',
+            propToMove: 'title',
+            newChildComponent: 'Header'
+          }
+        }
+      },
+      {
+        description:
+          'Move title prop string to be a child of new Heading within a Header',
+        reason: 'Updated API',
+        function: {
+          name: 'movePropToNewChildComponent',
+          args: {
+            parentComponent: 'ComboBox',
+            childComponent: 'ComboBoxSection',
             propToMove: 'title',
             newChildComponent: 'Header'
           }

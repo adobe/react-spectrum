@@ -213,3 +213,13 @@ let props = {validationState: 'invalid'};
   </ComboBox>
 </div>
 `);
+
+test('handles sections', `
+import {ComboBox, Section, Item} from '@adobe/react-spectrum';
+<ComboBox>
+  <Section title="Section title">
+    <Item>Item one</Item>
+    <Item>Item two</Item>
+  </Section>
+</ComboBox>
+`);

@@ -126,7 +126,8 @@ const inputButton = style({
     forcedColors: {
       default: 'ButtonFace'
     }
-  }
+  },
+  cursor: 'default'
 });
 
 const iconStyles = style({
