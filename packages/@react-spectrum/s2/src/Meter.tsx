@@ -12,15 +12,17 @@
 
 import {
   Meter as AriaMeter,
-  MeterProps as AriaMeterProps
+  MeterProps as AriaMeterProps,
+  ContextValue
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode} from 'react';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
@@ -39,6 +41,8 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
   /** The content to display as the label. */
   label?: ReactNode
 }
+
+export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<MeterStyleProps>({
   ...bar(),
@@ -95,6 +99,7 @@ const fillStyles = style<MeterStyleProps>({
 });
 
 function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, MeterContext);
   let domRef = useDOMRef(ref);
 
   let {
@@ -120,8 +125,8 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       }, styles)}>
       {({percentage, valueText}) => (
         <>
-          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>
-          <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>
+          {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
+          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
           <div className={trackStyles({staticColor, size})}>
             <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
           </div>

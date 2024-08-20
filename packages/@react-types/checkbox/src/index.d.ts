@@ -30,7 +30,11 @@ import {
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface ToggleStateOptions extends InputBase {
+export interface ToggleProps extends InputBase, Validation<boolean>, FocusableProps {
+  /**
+   * The label for the element.
+   */
+  children?: ReactNode,
   /**
    * Whether the element should be selected (uncontrolled).
    */
@@ -42,14 +46,7 @@ export interface ToggleStateOptions extends InputBase {
   /**
    * Handler that is called when the element's selection state changes.
    */
-  onChange?: (isSelected: boolean) => void
-}
-
-export interface ToggleProps extends ToggleStateOptions, Validation, FocusableProps {
-  /**
-   * The label for the element.
-   */
-  children?: ReactNode,
+  onChange?: (isSelected: boolean) => void,
   /**
    * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */

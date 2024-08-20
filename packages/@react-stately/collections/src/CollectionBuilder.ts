@@ -27,15 +27,10 @@ export class CollectionBuilder<T extends object> {
     return iterable(() => this.iterateCollection(props));
   }
 
-  private *iterateCollection(props: CollectionBase<T>): Generator<Node<T>> {
+  private *iterateCollection(props: CollectionBase<T>) {
     let {children, items} = props;
 
-    if (React.isValidElement<{children: CollectionElement<T>}>(children) && children.type === React.Fragment) {
-      yield* this.iterateCollection({
-        children: children.props.children,
-        items
-      });
-    } else if (typeof children === 'function') {
+    if (typeof children === 'function') {
       if (!items) {
         throw new Error('props.children was a function but props.items is missing');
       }
@@ -95,25 +90,6 @@ export class CollectionBuilder<T extends object> {
   }
 
   private *getFullNode(partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key, parentNode?: Node<T>): Generator<Node<T>> {
-    if (React.isValidElement<{children: CollectionElement<T>}>(partialNode.element) && partialNode.element.type === React.Fragment) {
-      let children: CollectionElement<T>[] = [];
-
-      React.Children.forEach(partialNode.element.props.children, child => {
-        children.push(child);
-      });
-
-      let index = partialNode.index;
-
-      for (const child of children) {
-        yield* this.getFullNode({
-          element: child,
-          index: index++
-        }, state, parentKey, parentNode);
-      }
-
-      return;
-    }
-
     // If there's a value instead of an element on the node, and a parent renderer function is available,
     // use it to render an element for the value.
     let element = partialNode.element;

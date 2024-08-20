@@ -16,11 +16,14 @@ import {CloseButton} from './CloseButton';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {createContext, forwardRef, RefObject, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
@@ -159,6 +162,7 @@ export const dialogInner = style({
 });
 
 function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement | null>}) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
   // pure CSS with display: none, but then the ref would go to two places.
@@ -190,12 +194,12 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
             {/* Hero image */}
             <Provider
               values={[
-              [ImageContext, {className: image}],
-              [HeadingContext, {hidden: true}],
-              [HeaderContext, {hidden: true}],
-              [ContentContext, {hidden: true}],
-              [FooterContext, {hidden: true}],
-              [ButtonGroupContext, {hidden: true}]
+                [ImageContext, {className: image}],
+                [HeadingContext, {isHidden: true}],
+                [HeaderContext, {isHidden: true}],
+                [ContentContext, {isHidden: true}],
+                [FooterContext, {isHidden: true}],
+                [ButtonGroupContext, {isHidden: true}]
               ]}>
               {children}
             </Provider>
@@ -244,29 +248,29 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                 })}>
                 <Provider
                   values={[
-                  [ImageContext, {hidden: true}],
-                  [HeadingContext, {className: heading}],
-                  [HeaderContext, {className: header}],
-                  [ContentContext, {hidden: true}],
-                  [FooterContext, {hidden: true}],
-                  [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'top'}]
+                    [ImageContext, {hidden: true}],
+                    [HeadingContext, {styles: heading}],
+                    [HeaderContext, {styles: header}],
+                    [ContentContext, {isHidden: true}],
+                    [FooterContext, {isHidden: true}],
+                    [ButtonGroupContext, {isHidden: buttonGroupPlacement !== 'top'}]
                   ]}>
                   {children}
                 </Provider>
               </div>
               {props.isDismissable &&
-              <CloseButton onPress={close} styles={style({marginBottom: 12})} />
+              <CloseButton aria-label={stringFormatter.format('dialog.dismiss')} onPress={close} styles={style({marginBottom: 12})} />
             }
             </div>
             {/* Main content */}
             <Provider
               values={[
-              [ImageContext, {hidden: true}],
-              [HeadingContext, {hidden: true}],
-              [HeaderContext, {hidden: true}],
-              [ContentContext, {className: content({type: props.type})}],
-              [FooterContext, {hidden: true}],
-              [ButtonGroupContext, {hidden: true}]
+                [ImageContext, {hidden: true}],
+                [HeadingContext, {isHidden: true}],
+                [HeaderContext, {isHidden: true}],
+                [ContentContext, {styles: content({type: props.type})}],
+                [FooterContext, {isHidden: true}],
+                [ButtonGroupContext, {isHidden: true}]
               ]}>
               {children}
             </Provider>
@@ -290,12 +294,12 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               })}>
               <Provider
                 values={[
-                [ImageContext, {hidden: true}],
-                [HeadingContext, {hidden: true}],
-                [HeaderContext, {hidden: true}],
-                [ContentContext, {hidden: true}],
-                [FooterContext, {className: footer}],
-                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', styles: buttonGroup, align: 'end'}]
+                  [ImageContext, {hidden: true}],
+                  [HeadingContext, {isHidden: true}],
+                  [HeaderContext, {isHidden: true}],
+                  [ContentContext, {isHidden: true}],
+                  [FooterContext, {styles: footer}],
+                  [ButtonGroupContext, {isHidden: buttonGroupPlacement !== 'bottom', styles: buttonGroup, align: 'end'}]
                 ]}>
                 {children}
               </Provider>
