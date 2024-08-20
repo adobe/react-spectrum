@@ -118,6 +118,25 @@ export function addComponentImport(path: NodePath<t.Program>, newComponent: stri
   return localName;
 }
 
+export function removeComponentImport(path: NodePath<t.Program>, component: string) {
+  let existingImport = path.node.body.find((node) => t.isImportDeclaration(node) && node.source.value === '@adobe/react-spectrum' || t.isImportDeclaration(node) &&  node.source.value.startsWith('@react-spectrum/'));
+  if (existingImport && t.isImportDeclaration(existingImport)) {
+    let specifier = existingImport.specifiers.find((specifier) => {
+      return (
+        t.isImportSpecifier(specifier) &&
+        specifier.imported.type === 'Identifier' &&
+        specifier.imported.name === component
+      );
+    });
+    if (specifier) {
+      existingImport.specifiers = existingImport.specifiers.filter((s) => s !== specifier);
+      if (existingImport.specifiers.length === 0) {
+        path.node.body = path.node.body.filter((node) => node !== existingImport);
+      }
+    }
+  }
+}
+
 /**
  * Look up the name in path.scope and find the original binding.
  * Returns the original name even if an alias is used.

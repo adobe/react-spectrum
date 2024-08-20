@@ -39,3 +39,43 @@ import {Breadcrumbs, Item, Menu, MenuTrigger, SubmenuTrigger, Button, Section, H
 </div>
 `);
 
+test('Does not affect unimplemented collections', `
+import {Accordion, Item, ActionBarContainer, ActionBar, ListView, ListBox} from '@adobe/react-spectrum';
+import {SearchAutocomplete} from '@react-spectrum/autocomplete';
+import {StepList} from '@react-spectrum/steplist';
+
+<div>
+  <SearchAutocomplete>
+    <Item key="one">One</Item>
+    <Item key="two">Two</Item>
+    <Item key="three">Three</Item>
+  </SearchAutocomplete>
+  <Accordion>
+    <Item title="One" key="one">One</Item>
+    <Item title="Two" key="two">Two</Item>
+    <Item title="Three" key="three">Three</Item>
+  </Accordion>
+  <ActionBarContainer height={300} maxWidth="size-6000">
+    <ListView>
+      <Item key="photoshop">Adobe Photoshop</Item>
+      <Item key="illustrator">Adobe Illustrator</Item>
+      <Item key="xd">Adobe XD</Item>
+    </ListView>
+    <ActionBar>
+      <Item key="one">One</Item>
+      <Item key="two">Two</Item>
+      <Item key="three">Three</Item>
+    </ActionBar>
+  </ActionBarContainer>
+  <StepList>
+    <Item key="one">One</Item>
+    <Item key="two">Two</Item>
+    <Item key="three">Three</Item>
+  </StepList>
+  <ListBox>
+    <Item key="one">One</Item>
+    <Item key="two">Two</Item>
+    <Item key="three">Three</Item>
+  </ListBox>
+</div>
+`);

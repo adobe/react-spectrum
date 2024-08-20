@@ -22,10 +22,7 @@ import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section, Header, Headin
           <Item>Email</Item>
         </Menu>
       </SubmenuTrigger>
-      <Section>
-        <Header>
-          <Heading>Section heading</Heading>
-        </Header>
+      <Section title="Section heading">
         <Item>Save</Item>
       </Section>
     </Menu>
@@ -49,10 +46,7 @@ import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section, Header, Headin
           <Item key="email">Email</Item>
         </Menu>
       </SubmenuTrigger>
-      <Section>
-        <Header>
-          <Heading>Section heading</Heading>
-        </Header>
+      <Section title="Section heading">
         <Item key="save">Save</Item>
       </Section>
     </Menu>
