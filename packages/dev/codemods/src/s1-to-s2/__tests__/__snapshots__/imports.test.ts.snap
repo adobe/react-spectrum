@@ -102,7 +102,6 @@ import { StatusLight } from "@react-spectrum/s2";
 
 exports[`should remove unused Item/Section import even if name taken in different scope 1`] = `
 "import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
-import { ListBox } from '@adobe/react-spectrum';
 
 function foo() {
   let Item = 'something else';
