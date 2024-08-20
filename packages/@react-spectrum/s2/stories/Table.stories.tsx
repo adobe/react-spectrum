@@ -74,6 +74,26 @@ const StaticTable = (args: any) => (
   </Table>
 );
 
+export const Example = {
+  render: StaticTable,
+  args: {
+    selectionMode: 'multiple',
+    onResize: null,
+    onResizeStart: null,
+    onResizeEnd: null,
+    dragAndDropHooks: null,
+    onLoadMore: null
+  }
+};
+
+export const DisabledRows = {
+  ...Example,
+  args: {
+    ...Example.args,
+    disabledKeys: ['2']
+  }
+};
+
 let columns = [
   {name: 'Foo', id: 'foo', isRowHeader: true},
   {name: 'Bar', id: 'bar'},
@@ -114,6 +134,14 @@ const DynamicTable = (args: any) => (
   </Table>
 );
 
+export const Dynamic = {
+  render: DynamicTable,
+  args: {
+    ...Example.args,
+    disabledKeys: ['Foo 5']
+  }
+};
+
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -140,190 +168,6 @@ const EmptyStateTable = (args: any) => (
     </TableBody>
   </Table>
 );
-
-
-let sortcolumns = [
-  {name: 'Name', id: 'name', isRowHeader: true},
-  {name: 'Height', id: 'height'},
-  {name: 'Weight', id: 'weight'}
-];
-
-let sortitems = [
-  {id: 1, name: 'A', height: '1', weight: '3'},
-  {id: 2, name: 'B', height: '2', weight: '1'},
-  {id: 3, name: 'C', height: '3', weight: '4'},
-  {id: 4, name: 'D', height: '4', weight: '2'},
-  {id: 5, name: 'E', height: '5', weight: '3'},
-  {id: 6, name: 'F', height: '6', weight: '1'},
-  {id: 7, name: 'G', height: '7', weight: '4'},
-  {id: 8, name: 'H', height: '8', weight: '2'},
-  {id: 9, name: 'I', height: '9', weight: '3'},
-  {id: 10, name: 'J', height: '10', weight: '1'},
-  {id: 11, name: 'K', height: '11', weight: '4'},
-  {id: 12, name: 'L', height: '12', weight: '2'},
-  {id: 13, name: 'M', height: '13', weight: '3'},
-  {id: 14, name: 'N', height: '14', weight: '1'},
-  {id: 15, name: 'O', height: '15', weight: '4'},
-  {id: 16, name: 'P', height: '16', weight: '2'},
-  {id: 17, name: 'Q', height: '17', weight: '3'},
-  {id: 18, name: 'R', height: '18', weight: '1'},
-  {id: 19, name: 'S', height: '19', weight: '4'},
-  {id: 20, name: 'T', height: '20', weight: '2'}
-];
-
-const SortableTable = (args: any) => {
-  let [items, setItems] = useState(sortitems);
-  let [sortDescriptor, setSortDescriptor] = useState({});
-  let onSortChange = (sortDescriptor: SortDescriptor) => {
-    let {direction = 'ascending', column = 'name'} = sortDescriptor;
-
-    let sorted = items.slice().sort((a, b) => {
-      // @ts-ignore todo double check later
-      let cmp = a[column] < b[column] ? -1 : 1;
-      if (direction === 'descending') {
-        cmp *= -1;
-      }
-      return cmp;
-    });
-
-    setItems(sorted);
-    setSortDescriptor(sortDescriptor);
-  };
-
-  return (
-    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({height: 320})}>
-      <TableHeader columns={sortcolumns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting>{column.name}</Column>
-        )}
-      </TableHeader>
-      <TableBody items={items}>
-        {item => (
-          <Row id={item.id} columns={sortcolumns}>
-            {(column) => {
-              // @ts-ignore figure out later
-              return <Cell>{item[column.id]}</Cell>;
-            }}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-};
-
-const ReorderableTable = (args: any) => {
-  let list = useListData({
-    initialItems: items
-  });
-
-
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).foo
-    })),
-    onReorder(e) {
-      if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        list.moveAfter(e.target.key, e.keys);
-      }
-    }
-  });
-
-  return (
-    <Table aria-label="reorderable table" {...args} dragAndDropHooks={dragAndDropHooks}>
-      <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row id={item.id} columns={columns}>
-            {(column) => {
-              // @ts-ignore figure out later
-              return <Cell>{item[column.id]}</Cell>;
-            }}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-};
-
-let sortResizeColumns = [
-  {name: 'Name', id: 'name', isRowHeader: true, isResizable: true, showDivider: true},
-  {name: 'Height', id: 'height'},
-  {name: 'Weight', id: 'weight', isResizable: true}
-];
-
-const SortableResizableTable = (args: any) => {
-  let [items, setItems] = useState(sortitems);
-  let [sortDescriptor, setSortDescriptor] = useState({});
-  let onSortChange = (sortDescriptor: SortDescriptor) => {
-    let {direction = 'ascending', column = 'name'} = sortDescriptor;
-
-    let sorted = items.slice().sort((a, b) => {
-      // @ts-ignore todo double check later
-      let cmp = a[column] < b[column] ? -1 : 1;
-      if (direction === 'descending') {
-        cmp *= -1;
-      }
-      return cmp;
-    });
-
-    setItems(sorted);
-    setSortDescriptor(sortDescriptor);
-  };
-
-  return (
-    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 320})}>
-      <TableHeader columns={sortResizeColumns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting isResizable={column.isResizable}>{column.name}</Column>
-        )}
-      </TableHeader>
-      <TableBody items={items}>
-        {item => (
-          <Row id={item.id} columns={sortResizeColumns}>
-            {(column) => {
-              // @ts-ignore figure out later
-              return <Cell showDivider={column.showDivider}>{item[column.id]}</Cell>;
-            }}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-};
-
-export const Example = {
-  render: StaticTable,
-  args: {
-    selectionMode: 'multiple',
-    onResize: null,
-    onResizeStart: null,
-    onResizeEnd: null,
-    dragAndDropHooks: null,
-    onLoadMore: null
-  }
-};
-
-export const DisabledRows = {
-  ...Example,
-  args: {
-    ...Example.args,
-    disabledKeys: ['2']
-  }
-};
-
-export const Dynamic = {
-  render: DynamicTable,
-  args: {
-    ...Example.args,
-    disabledKeys: ['Foo 5']
-  }
-};
 
 export const EmptyState = {
   render: EmptyStateTable,
@@ -355,7 +199,6 @@ export const LoadingStateWithItemsStatic = {
   },
   name: 'loading state, static items'
 };
-
 
 let dividerColumns = [
   {name: 'Foo', id: 'foo', isRowHeader: true, showDivider: true},
@@ -457,7 +300,6 @@ const OnLoadMoreTable = (args: any) => {
   });
 
   return (
-    // TODO: figure why it is complaining about passing in a height via styles. Will only appear if args is removed
     <Table {...args} aria-label="Load more table" loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: 320, height: 320})}>
       <TableHeader>
         <Column id="name" isRowHeader>Name</Column>
@@ -488,10 +330,119 @@ export const OnLoadMoreTableStory  = {
   name: 'async loading table'
 };
 
+let sortcolumns = [
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Height', id: 'height'},
+  {name: 'Weight', id: 'weight'}
+];
+
+let sortitems = [
+  {id: 1, name: 'A', height: '1', weight: '3'},
+  {id: 2, name: 'B', height: '2', weight: '1'},
+  {id: 3, name: 'C', height: '3', weight: '4'},
+  {id: 4, name: 'D', height: '4', weight: '2'},
+  {id: 5, name: 'E', height: '5', weight: '3'},
+  {id: 6, name: 'F', height: '6', weight: '1'},
+  {id: 7, name: 'G', height: '7', weight: '4'},
+  {id: 8, name: 'H', height: '8', weight: '2'},
+  {id: 9, name: 'I', height: '9', weight: '3'},
+  {id: 10, name: 'J', height: '10', weight: '1'},
+  {id: 11, name: 'K', height: '11', weight: '4'},
+  {id: 12, name: 'L', height: '12', weight: '2'},
+  {id: 13, name: 'M', height: '13', weight: '3'},
+  {id: 14, name: 'N', height: '14', weight: '1'},
+  {id: 15, name: 'O', height: '15', weight: '4'},
+  {id: 16, name: 'P', height: '16', weight: '2'},
+  {id: 17, name: 'Q', height: '17', weight: '3'},
+  {id: 18, name: 'R', height: '18', weight: '1'},
+  {id: 19, name: 'S', height: '19', weight: '4'},
+  {id: 20, name: 'T', height: '20', weight: '2'}
+];
+
+const SortableTable = (args: any) => {
+  let [items, setItems] = useState(sortitems);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
+  return (
+    <Table aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({height: 320})}>
+      <TableHeader columns={sortcolumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader} allowsSorting>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={sortcolumns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
 export const Sorting = {
   ...Example,
   render: SortableTable,
   name: 'sortable'
+};
+
+
+const ReorderableTable = (args: any) => {
+  let list = useListData({
+    initialItems: items
+  });
+
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': list.getItem(key).foo
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <Table aria-label="reorderable table" {...args} dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              // @ts-ignore figure out later
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
 };
 
 export const ReorderDnD = {
@@ -500,14 +451,77 @@ export const ReorderDnD = {
   name: 'reorderable table'
 };
 
+let resizeColumn = [
+  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, align: 'end'},
+  {name: 'Height', id: 'height', align: 'center'},
+  {name: 'Weight', id: 'weight', allowsResizing: true, align: 'center'}
+];
+
+let sortResizeColumns = [
+  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, isSortable: true},
+  {name: 'Height', id: 'height', isSortable: true},
+  {name: 'Weight', id: 'weight', allowsResizing: true, isSortable: true}
+];
+
+const SortableResizableTable = (args: any) => {
+  let {isSortable} = args;
+  let [items, setItems] = useState(sortitems);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
+  return (
+    <Table aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : null} onSortChange={isSortable ? onSortChange : null} styles={style({width: 384, height: 320})}>
+      <TableHeader columns={args.columns}>
+        {(column: any) => (
+          <Column isRowHeader={column.isRowHeader} allowsSorting={column.isSortable} allowsResizing={column.allowsResizing} align={column.align}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row id={item.id} columns={args.columns}>
+            {(column: any) => {
+              return <Cell showDivider={column.showDivider} align={column.align}>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
 export const ResizingTable = {
   render: SortableResizableTable,
   args: {
     onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
-    onResizeEnd: action('onResizeEnd')
-  }
+    onResizeEnd: action('onResizeEnd'),
+    columns: resizeColumn,
+    isSortable: false
+  },
+  name: 'resizing only table'
 };
 
-// TODO make controlled resizing story without sorting
-// many items
+export const ResizingSortableTable = {
+  render: SortableResizableTable,
+  args: {
+    onResize: action('onResize'),
+    onResizeStart: action('onResizeStart'),
+    onResizeEnd: action('onResizeEnd'),
+    columns: sortResizeColumns,
+    isSortable: true
+  },
+  name: 'resizing and sortable table'
+};
