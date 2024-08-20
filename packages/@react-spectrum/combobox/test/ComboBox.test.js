@@ -5149,7 +5149,9 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(screen.getAllByRole('log')).toHaveLength(2);
+        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
+        expect(announce).toHaveBeenNthCalledWith(2, 'One');
         platformMock.mockRestore();
       });
 

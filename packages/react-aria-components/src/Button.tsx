@@ -139,7 +139,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     ariaLive = 'off';
   }
 
-  let {textCallbackRef, progressCallbackRef} = useEnforcePendingComponents(props);
+  let {textCallbackRef, progressCallbackRef} = useEnforcePendingComponents({...props, ref});
 
   // Forcibly announce the pending state on Apple devices because otherwise it won't be announced
   let wasPending = useRef(isPending);
