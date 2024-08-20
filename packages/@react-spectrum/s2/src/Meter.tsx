@@ -44,7 +44,7 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
 
 export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const wrapper = style<MeterStyleProps>({
+const wrapper = style({
   ...bar(),
   width: {
     default: 208,
@@ -121,7 +121,8 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       className={UNSAFE_className + wrapper({
         size,
         variant,
-        staticColor
+        staticColor,
+        labelPosition: 'top'
       }, styles)}>
       {({percentage, valueText}) => (
         <>
