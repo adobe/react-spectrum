@@ -37,3 +37,16 @@ import {Link} from '@adobe/react-spectrum';
   </Link>
 </div>
 `);
+
+test('Leaves comment if inner link element is a custom router link (deprecated API)', `
+import {Link} from '@adobe/react-spectrum';
+import { Link as RouterLink } from "react-router-dom";
+
+<div>
+  <Link>
+    <RouterLink to="https://www.imdb.com/title/tt6348138/">
+      The missing link.
+    </RouterLink>
+  </Link>
+</div>
+`);
