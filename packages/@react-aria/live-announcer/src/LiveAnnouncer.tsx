@@ -15,21 +15,20 @@ type Assertiveness = 'assertive' | 'polite';
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
-let liveAnnouncer: LiveAnnouncer | null = null;
-
 /**
  * Announces the message using screen reader technology.
  */
 export function announce(
   message: string,
   assertiveness: Assertiveness = 'assertive',
-  timeout = LIVEREGION_TIMEOUT_DELAY
+  timeout = LIVEREGION_TIMEOUT_DELAY,
+  isIds = false // better name? better description?
 ) {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
   }
 
-  liveAnnouncer.announce(message, assertiveness, timeout);
+  liveAnnouncer.announce(message, assertiveness, timeout, isIds);
 }
 
 /**
@@ -63,29 +62,31 @@ class LiveAnnouncer {
   politeLog: HTMLElement;
 
   constructor() {
-    this.node = document.createElement('div');
-    this.node.dataset.liveAnnouncer = 'true';
-    // copied from VisuallyHidden
-    Object.assign(this.node.style, {
-      border: 0,
-      clip: 'rect(0 0 0 0)',
-      clipPath: 'inset(50%)',
-      height: '1px',
-      margin: '-1px',
-      overflow: 'hidden',
-      padding: 0,
-      position: 'absolute',
-      width: '1px',
-      whiteSpace: 'nowrap'
-    });
+    if (typeof document !== 'undefined') {
+      this.node = document.createElement('div');
+      this.node.dataset.liveAnnouncer = 'true';
+      // copied from VisuallyHidden
+      Object.assign(this.node.style, {
+        border: 0,
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: '1px',
+        margin: '-1px',
+        overflow: 'hidden',
+        padding: 0,
+        position: 'absolute',
+        width: '1px',
+        whiteSpace: 'nowrap'
+      });
 
-    this.assertiveLog = this.createLog('assertive');
-    this.node.appendChild(this.assertiveLog);
+      this.assertiveLog = this.createLog('assertive');
+      this.node.appendChild(this.assertiveLog);
 
-    this.politeLog = this.createLog('polite');
-    this.node.appendChild(this.politeLog);
+      this.politeLog = this.createLog('polite');
+      this.node.appendChild(this.politeLog);
 
-    document.body.prepend(this.node);
+      document.body.prepend(this.node);
+    }
   }
 
   createLog(ariaLive: string) {
@@ -105,13 +106,19 @@ class LiveAnnouncer {
     this.node = null;
   }
 
-  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
+  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY, isIds = false) {
     if (!this.node) {
       return;
     }
 
     let node = document.createElement('div');
-    node.textContent = message;
+    if (!isIds) {
+      node.textContent = message;
+    } else {
+      // To read an aria-labelledby, the element must have an appropriate role, such as img.
+      node.setAttribute('role', 'img');
+      node.setAttribute('aria-labelledby', message);
+    }
 
     if (assertiveness === 'assertive') {
       this.assertiveLog.appendChild(node);
@@ -140,3 +147,7 @@ class LiveAnnouncer {
     }
   }
 }
+
+// singleton, setup immediately so that the DOM is primed for the first announcement as soon as possible
+// Safari has a race condition where the first announcement is not read if we wait until the first announce call
+let liveAnnouncer: LiveAnnouncer | null = new LiveAnnouncer();

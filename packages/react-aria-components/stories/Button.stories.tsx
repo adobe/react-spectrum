@@ -30,27 +30,7 @@ export const ButtonExample = () => {
 export const PendingButton = {
   render: (args) => <PendingButtonExample {...args} />,
   args: {
-    children: 'Press me',
-    className: ({defaultClassName}) => `${defaultClassName} pending-button`
-  }
-};
-
-export const PendingButtonComplexChildren = {
-  render: (args) => <PendingButtonExample {...args} />,
-  args: {
-    children: (
-      <div style={{display: 'flex', gap: '5px'}}>
-        <span>
-          <svg aria-label="circle" height="10" width="10" xmlns="http://www.w3.org/2000/svg">
-            <circle r="5" cx="5" cy="5" fill="red" />
-          </svg>
-        </span>
-        <span>
-          circle dot dot
-        </span>
-      </div>
-    ),
-    className: ({defaultClassName}) => `${defaultClassName} pending-button`
+    children: 'Press me'
   }
 };
 
@@ -62,9 +42,9 @@ function PendingButtonExample(props) {
     action('pressed')(e);
     setPending(true);
     timeout.current = setTimeout(() => {
-      // setPending(false);
-      // timeout.current = undefined;
-    }, 10000);
+      setPending(false);
+      timeout.current = undefined;
+    }, 5000);
   };
 
   useEffect(() => {
@@ -90,7 +70,7 @@ function PendingButtonExample(props) {
                 aria-label="loading"
                 isIndeterminate
                 className={[styles2['spinner'], (isPending ? styles2['spinner-pending'] : '')].join(' ')}>
-                loading
+                <span className={styles2['loader']} />
               </ProgressBar>
             </>
           )}
