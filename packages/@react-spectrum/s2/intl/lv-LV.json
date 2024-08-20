@@ -12,7 +12,7 @@
   "label.(required)": "(obligāti)",
   "menu.moreActions": "Citas darbības",
   "picker.placeholder": "Atlasiet opciju...",
-  "segmentedcontrol.aria-label": "Segmented control",
+  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "Maksimālā vērtība",
   "slider.minimum": "Minimālā vērtība",
   "tag.actions": "Darbības",

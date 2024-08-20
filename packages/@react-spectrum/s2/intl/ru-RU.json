@@ -12,7 +12,7 @@
   "label.(required)": "(обязательно)",
   "menu.moreActions": "Дополнительные действия",
   "picker.placeholder": "Выбрать параметр...",
-  "segmentedcontrol.aria-label": "Segmented control",
+  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
   "tag.actions": "Действия",

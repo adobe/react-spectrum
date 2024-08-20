@@ -12,7 +12,7 @@
   "label.(required)": "(必填)",
   "menu.moreActions": "更多動作",
   "picker.placeholder": "選取一個選項",
-  "segmentedcontrol.aria-label": "Segmented control",
+  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "最大值",
   "slider.minimum": "最小值",
   "tag.actions": "動作",

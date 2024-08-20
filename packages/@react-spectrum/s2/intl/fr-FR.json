@@ -12,7 +12,7 @@
   "label.(required)": "(requis)",
   "menu.moreActions": "Autres actions",
   "picker.placeholder": "Sélectionnez une option...",
-  "segmentedcontrol.aria-label": "Segmented control",
+  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "tag.actions": "Actions",

@@ -12,7 +12,7 @@
   "label.(required)": "(privaloma)",
   "menu.moreActions": "Daugiau veiksmų",
   "picker.placeholder": "Pasirinkite parinktį...",
-  "segmentedcontrol.aria-label": "Segmented control",
+  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "Daugiausia",
   "slider.minimum": "Mažiausia",
   "tag.actions": "Veiksmai",

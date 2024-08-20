@@ -12,7 +12,7 @@
   "label.(required)": "(obvezno)",
   "menu.moreActions": "Dodatne radnje",
   "picker.placeholder": "Odaberite opciju",
-  "segmentedcontrol.aria-label": "Segmented control",
+  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "Najviše",
   "slider.minimum": "Najmanje",
   "tag.actions": "Radnje",
