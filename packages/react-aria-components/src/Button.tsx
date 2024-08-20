@@ -19,7 +19,6 @@ import {
   useFocusRing,
   useHover,
   useId,
-  useLocalizedStringFormatter,
   VisuallyHidden
 } from 'react-aria';
 import {
@@ -32,8 +31,6 @@ import {
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useCallback, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
@@ -150,7 +147,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       announce(buttonId, 'assertive', undefined, true);
     }
     wasPending.current = isPending;
-  }, [isPending, isFocused]);
+  }, [isPending, isFocused, isPendingAriaLiveLabelledby, buttonId]);
 
   return (
     <button
