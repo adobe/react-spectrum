@@ -943,11 +943,15 @@ export function FocusExample(args = {}) {
 
   let [dialog, setDialog] = useState(null);
   let ref = useRef(null);
+  let message = 'Are you sure you want to delete all items?';
+  if (tree.selectedKeys !== 'all') {
+    message = `Are you sure you want to delete ${tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?`;
+  }
   return (
     <FocusScope>
       <Flex direction={'column'}>
         <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-          {tree.selectedKeys.size > 0 &&
+          {(tree.selectedKeys === 'all' || tree.selectedKeys.size > 0) &&
             <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
           }
         </ActionGroup>
@@ -980,7 +984,7 @@ export function FocusExample(args = {}) {
               variant="destructive"
               primaryActionLabel="Delete"
               onPrimaryAction={() => tree.removeSelectedItems()}>
-              Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
+              {message}
             </AlertDialog>
           }
         </DialogContainer>

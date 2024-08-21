@@ -317,19 +317,22 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       let selection: Selection = 'all';
       if (selectedKeys !== 'all') {
         selection = new Set(selectedKeys);
-        for (let key of keys) {
-          selection.delete(key);
+        for (let key of selectedKeys) {
+          if (!newTree.nodeMap.has(key)) {
+            selection.delete(key);
+          }
         }
       }
 
       setSelectedKeys(selection);
     },
     removeSelectedItems() {
+      let keys = selectedKeys;
       if (selectedKeys === 'all') {
-        setSelectedKeys(new Set());
-        return;
+        keys = new Set(items.map(node => node.key));
       }
-      this.remove(...selectedKeys);
+      console.log(keys)
+      this.remove(...keys);
     },
     move(key: Key, toParentKey: Key | null, index: number) {
       setItems(({items, nodeMap: originalMap}) => {
