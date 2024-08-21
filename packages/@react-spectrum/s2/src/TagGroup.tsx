@@ -23,8 +23,7 @@ import {
   TextContext as RACTextContext,
   TagList,
   TagListProps,
-  useLocale,
-  useSlottedContext
+  useLocale
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
@@ -518,7 +517,7 @@ const avatarSize = {
 
 function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   textValue ||= typeof children === 'string' ? children : undefined;
-  let ctx = useSlottedContext(InternalTagGroupContext);
+  let ctx = useContext(InternalTagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
   let {size, isEmphasized} = ctx ?? {};
   let domRef = useDOMRef(ref);
@@ -546,7 +545,7 @@ let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
 export {_Tag as Tag};
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
-  let {size} = useSlottedContext(InternalTagGroupContext) ?? {};
+  let {size} = useContext(InternalTagGroupContext) ?? {};
   return (
     <>
       {isInRealDOM && (
