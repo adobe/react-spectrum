@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/gridlist",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@react-aria/focus": "^3.18.2",
-    "@react-aria/grid": "^3.10.2",
+    "@react-aria/grid": "^3.10.3",
     "@react-aria/i18n": "^3.12.2",
     "@react-aria/interactions": "^3.22.2",
-    "@react-aria/selection": "^3.19.2",
+    "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/collections": "^3.10.9",
     "@react-stately/list": "^3.10.8",

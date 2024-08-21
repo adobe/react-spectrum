@@ -138,7 +138,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: Pick<Breadcrumb
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
           <S2ActionButton isDisabled={isDisabled} isQuiet aria-label="See more"><FolderIcon /></S2ActionButton>
-          {/** @ts-ignore - how are these onAction's not compatible? */}
+          {/* @ts-ignore - how are these onAction's not compatible? */}
           <Menu items={items} onAction={onAction}>
             {(item: Node<any>) => (
               <MenuItem
@@ -456,6 +456,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       {visibleItems < collection.size ? (
         <>
           {children[0].render?.(children[0])}
+          {/* @ts-ignore - how are these onAction's not compatible? */}
           <BreadcrumbMenu items={children.slice(1, sliceIndex)} onAction={onAction} />
           {children.slice(sliceIndex).map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment >)}
         </>
