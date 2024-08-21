@@ -125,7 +125,6 @@ const DynamicTable = (args: any) => (
       {item => (
         <Row id={item.id} columns={columns}>
           {(column) => {
-            // @ts-ignore figure out later
             return <Cell>{item[column.id]}</Cell>;
           }}
         </Row>
@@ -179,7 +178,8 @@ export const EmptyState = {
 export const LoadingStateNoItems = {
   render: EmptyStateTable,
   args: {
-    ...Example.args
+    ...Example.args,
+    loadingState: 'loading'
   },
   name: 'loading state, no items'
 };
@@ -187,7 +187,8 @@ export const LoadingStateNoItems = {
 export const LoadingStateWithItems = {
   render: DynamicTable,
   args: {
-    ...Example.args
+    ...Example.args,
+    loadingState: 'loadingMore'
   },
   name: 'loading state, has items'
 };
@@ -195,7 +196,8 @@ export const LoadingStateWithItems = {
 export const LoadingStateWithItemsStatic = {
   render: StaticTable,
   args: {
-    ...Example.args
+    ...Example.args,
+    loadingState: 'loadingMore'
   },
   name: 'loading state, static items'
 };
@@ -219,7 +221,6 @@ const ShowDividers = (args: any) => {
         {item => (
           <Row id={item.id} columns={dividerColumns}>
             {(column) => {
-              // @ts-ignore figure out later
               return <Cell showDivider={column.showDivider}>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -256,7 +257,6 @@ const TextAlign = (args: any) => {
         {item => (
           <Row id={item.id} columns={alignColumns}>
             {(column) => {
-              // @ts-ignore figure out later
               return <Cell showDivider align={column?.align as 'start' | 'center' | 'end'}>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -388,7 +388,6 @@ const SortableTable = (args: any) => {
         {item => (
           <Row id={item.id} columns={sortcolumns}>
             {(column) => {
-              // @ts-ignore figure out later
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -435,7 +434,6 @@ const ReorderableTable = (args: any) => {
         {item => (
           <Row id={item.id} columns={columns}>
             {(column) => {
-              // @ts-ignore figure out later
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>

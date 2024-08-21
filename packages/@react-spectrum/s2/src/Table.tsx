@@ -26,6 +26,7 @@ import {
   Column as RACColumn,
   ColumnProps as RACColumnProps,
   Row as RACRow,
+  RowProps as RACRowProps,
   Table as RACTable,
   TableBody as RACTableBody,
   TableBodyProps as RACTableBodyProps,
@@ -33,7 +34,6 @@ import {
   TableProps as RACTableProps,
   ResizableTableContainer,
   ResizableTableContainerContext,
-  RowProps,
   RowRenderProps,
   TableBodyRenderProps,
   TableHeaderProps,
@@ -68,12 +68,11 @@ import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // TODO: things that still need to be handled
-// - Add a complex table example with buttons and various icons,links,
+// - Add a complex table example with buttons and various icons, links,
 // - drop indicators in DnD + drag button styling (needs designs, but I can put in interim styling)
-
 // - overflow wrap
-// added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
-// it then can change the row's height drastically
+//   added, but I noticed some odd behavior if a cell with very long contents isn't rendered at first: When it gets scrolled into view
+//   it then can change the row's height drastically
 // - summary row (to discuss, is this a separate row? What accessibility goes into this)
 // - nested column support (RAC limitation? I remember talking about this when we explored moving TableView to new collections api)
 // - Expandable rows support, will need to add this to RAC table
@@ -126,7 +125,6 @@ const tableWrapper = style({
   width: 'full'
 });
 
-// TODO: will need focus styles and stuff which will use the TableRenderProps here
 const table = style<TableRenderProps & S2TableProps>({
   height: 'full',
   userSelect: 'none',
@@ -424,7 +422,6 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   if (renderEmptyState != null && loadingState !== 'loading') {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
-        {/* @ts-ignore TODO figure out why it is complaining tahat this is possibly undefined */}
         {renderEmptyState(props)}
       </div>
     );
@@ -508,9 +505,16 @@ const columnStyles = style({
 });
 
 export interface ColumnProps extends RACColumnProps {
+  /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
+  /** Whether the column allows resizing. */
   allowsResizing?: boolean,
+  /**
+   * The alignment of the column's contents relative to its allotted width.
+   * @default 'start'
+   */
   align?: 'start' | 'center' | 'end',
+  /** The content to render as the column header. */
   children?: ReactNode
 }
 
@@ -526,6 +530,7 @@ export function Column(props: ColumnProps) {
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
           (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
+          {/* Separate absolutely positioned element because appyling the ring on the column directly via outline means the ring's required borderRadius will cause the bottom gray border to curve as well */}
           <CellFocusRing isFocusVisible={isFocusVisible} />
           {isColumnResizable ?
             (
@@ -551,6 +556,19 @@ const columnContentWrapper = style({
   width: 'full'
 });
 
+const sortIcon = style({
+  size: fontRelative(16),
+  flexShrink: 0,
+  marginEnd: {
+    default: 8,
+    isButton: 'text-to-visual'
+  },
+  verticalAlign: {
+    default: 'bottom',
+    isButton: 0
+  }
+});
+
 interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
 
 function ColumnContents(props: ColumnContentProps) {
@@ -562,12 +580,7 @@ function ColumnContents(props: ColumnContentProps) {
         <Provider
           values={[
             [IconContext, {
-              styles: style({
-                size: fontRelative(16),
-                flexShrink: 0,
-                marginEnd: 8,
-                verticalAlign: 'bottom'
-              })
+              styles: sortIcon({})
             }]
           ]}>
           {sortDirection != null && (
@@ -594,14 +607,15 @@ const resizableMenuButtonWrapper = style({
       end: 'end'
     }
   },
-  // TODO: same styles from columnStyles, consolidate later
+  // TODO: when align: end, the dropdown arrow is misaligned with the text, not sure how best to make the svg be flush with the end of the button other than modifying the
+  // paddingEnd
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
   fontSize: 'control',
   fontFamily: 'sans',
   fontWeight: 'bold',
-  // TODO: Same styles from cellFocus, consolidate later
+  // TODO: Same styles from cellFocus, consolidate later. Right now the design differ slightly on the border radius (4 on focus ring but 6 on the table's corner radius)
   outlineStyle: {
     default: 'none',
     isFocusVisible: 'solid'
@@ -609,7 +623,7 @@ const resizableMenuButtonWrapper = style({
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: 'sm'
+  borderRadius: size(6)
 });
 
 const resizerHandleContainer = style({
@@ -654,12 +668,6 @@ const resizerHandle = style({
   insetStart: size(6)
 });
 
-const sortIcon = style({
-  size: fontRelative(16),
-  marginEnd: 'text-to-visual',
-  flexShrink: 0
-});
-
 const columnHeaderText = style({
   truncate: true,
   // Make it so the text doesn't completely disappear when column is resized to smallest width + both sort and chevron icon is rendered
@@ -683,12 +691,9 @@ const nubbin = style({
   size: fontRelative(16)
 });
 
-interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'> {
-  children: ReactNode,
-  align?: 'start' | 'center' | 'end',
-}
+interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'>, Pick<ColumnProps, 'align' | 'children'> {}
 
-// TODO: placeholder, just copied over from v3. Will need to be adjusted to having the same kind of fill that the s2 icons use
+// TODO: placeholder, just copied over from v3. Request filed in airtable for the actual nubbin
 function Nubbin() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -702,6 +707,8 @@ function Nubbin() {
   );
 }
 
+// TODO: known issue where focus makes it onto the resizer but then moves off if you trigger resizing via pointer and then move your mouse quickly right after your click
+// still digging. May also be related to why tab focus can move onto the last resizer sometimes...
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered, align} = props;
   let {setIsInResizeMode, isInResizeMode} = useContext(InternalTableContext);
@@ -717,7 +724,6 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
       case 'resize':
         setIsInResizeMode?.(true);
         startResize();
-        // state.setKeyboardNavigationDisabled(true);
         break;
     }
   };
@@ -749,6 +755,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
 
   let buttonAlignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';
+  // TODO: align center is quite strange, copied this from S1 but really there isn't a good place to put the menu when the column text is centered
   if (align === 'center') {
     buttonAlignment = 'center';
   } else if (align === 'end') {
@@ -764,7 +771,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
             <Provider
               values={[
                 [IconContext, {
-                  styles: sortIcon
+                  styles: sortIcon({isButton: true})
                 }]
               ]}>
               {sortDirection != null && (
@@ -802,7 +809,7 @@ function ResizerIndicator({isFocusVisible, isHovered, isResizing}) {
   );
 }
 
-// TODO: making the background of the column header gray-100 causes the hovered columnn resizer to blend in, wait for design
+// TODO: making the background of the column header gray-100 causes the hovered columnn resizer to blend in, wait for full design update.
 const tableHeader = style({
   height: 'full',
   width: 'full',
@@ -818,10 +825,6 @@ const selectAllCheckbox = style({
     }
   }
 });
-
-const stickyCell = {
-  backgroundColor: 'gray-25'
-} as const;
 
 const selectAllCheckboxColumn = style({
   padding: 0,
@@ -839,9 +842,7 @@ const selectAllCheckboxColumn = style({
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
 
-export function TableHeader<T extends object>(
-  {columns, children}: TableHeaderProps<T>
-) {
+export function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {scale} = useContext(InternalTableContext);
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
   let [isHeaderRowHovered, setHeaderRowHovered] = useState(false);
@@ -935,6 +936,10 @@ const cell = style<CellRenderProps & S2TableProps>({
   }
 });
 
+const stickyCell = {
+  backgroundColor: 'gray-25'
+} as const;
+
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
@@ -952,7 +957,7 @@ const checkboxCellStyle = style({
   // of having a separate white rectangle div base below a div with the row background color set above it as a mask
   // is that it doesn't come out as the same color as the other cells because the base below the sticky cell will be the blue of the
   // other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
-  // then this would be possible
+  // then this would be possible. Currently waiting request for Spectrum to provide tokens for these equivalent values
   // backgroundColor: '--rowBackgroundColor'
 });
 
@@ -996,12 +1001,11 @@ const cellBackground = style({
   }
 });
 
-export interface CellProps extends RACCellProps {
+export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
-  showDivider?: boolean,
-  align?: 'start' | 'middle' | 'end',
-  children: ReactNode
+  /** The content to render as the cell children. */
+  children?: ReactNode
 }
 
 export function Cell(props: CellProps) {
@@ -1147,9 +1151,9 @@ const dragButton = style({
   borderRadius: 'sm'
 });
 
-export function Row<T extends object>(
-  {id, columns, children, ...otherProps}: RowProps<T>
-) {
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
+
+export function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
 
