@@ -180,10 +180,7 @@ import { Item, Section } from '@adobe/react-spectrum';
           <MenuItem>Email</MenuItem>
         </Menu>
       </SubmenuTrigger>
-      <MenuSection>
-        <Header>
-          <Heading>Section heading</Heading>
-        </Header>
+      <MenuSection><Header>Section heading</Header>
         <MenuItem>Save</MenuItem>
       </MenuSection>
     </Menu>
@@ -218,10 +215,7 @@ import { Item, Section } from '@adobe/react-spectrum';
           <MenuItem id="email">Email</MenuItem>
         </Menu>
       </SubmenuTrigger>
-      <MenuSection>
-        <Header>
-          <Heading>Section heading</Heading>
-        </Header>
+      <MenuSection><Header>Section heading</Header>
         <MenuItem id="save">Save</MenuItem>
       </MenuSection>
     </Menu>

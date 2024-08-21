@@ -107,7 +107,7 @@ build:
 		do node scripts/buildEsm.js $$pkg; \
 	done
 	node scripts/buildI18n.js
-	node scripts/copyIconDts.js
+	node scripts/generateIconDts.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

@@ -547,7 +547,7 @@ let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
 export {_Tag as Tag};
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
-  let {size} = useSlottedContext(TagGroupContext) ?? {};
+  let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
   return (
     <>
       {isInRealDOM && (
