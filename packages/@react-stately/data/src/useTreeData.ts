@@ -331,7 +331,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       if (selectedKeys === 'all') {
         keys = new Set(items.map(node => node.key));
       }
-      console.log(keys)
       this.remove(...keys);
     },
     move(key: Key, toParentKey: Key | null, index: number) {
