@@ -15,14 +15,13 @@ import {
     TabPanel as AriaTabPanel,
     TabPanelProps as AriaTabPanelProps,
     TabProps as AriaTabProps,
-    TabsProps as AriaTabsProps, 
+    TabsProps as AriaTabsProps,
     ContextValue,
     Provider,
     Tab as RACTab,
     TabList as RACTabList,
     Tabs as RACTabs,
-    TabListStateContext,
-    useSlottedContext} from 'react-aria-components';
+    TabListStateContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
@@ -57,7 +56,7 @@ export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 
   children?: ReactNode
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {  
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
@@ -65,6 +64,7 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
+const InternalTabContext = createContext<TabsProps | null>(null);
 
 const tabPanel = style({
   marginTop: 4,
@@ -121,7 +121,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density} = useSlottedContext(TabsContext);
+  let {density} = useContext(InternalTabContext) ?? {};
 
   return (
     <RACTab
@@ -174,7 +174,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext);
+  let {density, isDisabled, disabledKeys, orientation} = useContext(InternalTabContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
@@ -350,7 +350,8 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
       <Provider
         values={[
-          [TabsContext, {density, isDisabled, disabledKeys, orientation}]
+          [TabsContext, {density, isDisabled, disabledKeys, orientation}],
+          [InternalTabContext, {density}]
         ]}>
         {props.children}
       </Provider>
