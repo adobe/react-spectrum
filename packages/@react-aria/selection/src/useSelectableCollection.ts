@@ -424,7 +424,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     // If the focused key becomes null (e.g. the last item is deleted), focus the whole collection.
-    if (manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
+    if (!shouldUseVirtualFocus && manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
       focusSafely(ref.current);
     }
 

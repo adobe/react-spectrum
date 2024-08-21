@@ -40,7 +40,10 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
   children?: ReactNode,
-  /** The amount of space between the tabs. */
+  /**
+   * The amount of space between the tabs.
+   * @default "regular"
+   */
   density?: 'compact' | 'regular'
 }
 

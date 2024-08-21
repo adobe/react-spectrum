@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/menu",
-  "version": "3.15.2",
+  "version": "3.15.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,7 +26,7 @@
     "@react-aria/i18n": "^3.12.2",
     "@react-aria/interactions": "^3.22.2",
     "@react-aria/overlays": "^3.23.2",
-    "@react-aria/selection": "^3.19.2",
+    "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/collections": "^3.10.9",
     "@react-stately/menu": "^3.8.2",
