@@ -39,7 +39,7 @@
     "@react-aria/focus": "^3.18.1",
     "@react-aria/i18n": "^3.12.1",
     "@react-aria/interactions": "^3.22.1",
-    "@react-aria/steplist": "3.0.0-alpha.8",
+    "@react-aria/steplist": "3.0.0-alpha.9",
     "@react-aria/utils": "^3.25.1",
     "@react-aria/visually-hidden": "^3.8.14",
     "@react-spectrum/utils": "^3.11.9",

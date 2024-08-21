@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/accordion",
-  "version": "3.0.0-alpha.32",
+  "version": "3.0.0-alpha.33",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@react-aria/button": "^3.9.8",
-    "@react-aria/selection": "^3.19.2",
+    "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/tree": "^3.8.4",
     "@react-types/accordion": "3.0.0-alpha.23",
