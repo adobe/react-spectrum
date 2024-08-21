@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const {parseArgs} = require('node:util');
 import {s1_to_s2} from './s1-to-s2/src';
 import {use_monopackages} from './use-monopackages/src';

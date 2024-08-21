@@ -4,10 +4,8 @@ exports[`Comments out hideStepper 1`] = `
 "import { NumberField } from "@react-spectrum/s2";
 
 <div>
-  // TODO(S2-upgrade): hideStepper has not been implemented yet.
-  <NumberField />
-  // TODO(S2-upgrade): hideStepper has not been implemented yet.
-  <NumberField />
+  <NumberField hideStepper />
+  <NumberField hideStepper={true} />
 </div>"
 `;
 

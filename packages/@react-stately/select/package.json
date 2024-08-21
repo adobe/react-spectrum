@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/select",
-  "version": "3.6.6",
+  "version": "3.6.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@react-stately/form": "^3.0.5",
-    "@react-stately/list": "^3.10.7",
-    "@react-stately/overlays": "^3.6.9",
+    "@react-stately/list": "^3.10.8",
+    "@react-stately/overlays": "^3.6.10",
     "@react-types/select": "^3.9.6",
     "@react-types/shared": "^3.24.1",
     "@swc/helpers": "^0.5.0"

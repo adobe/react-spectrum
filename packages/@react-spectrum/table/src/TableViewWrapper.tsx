@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DisabledBehavior, DOMProps, DOMRef, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import type {AriaLabelingProps, DOMProps, DOMRef, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import type {ColumnSize, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import React, {JSX, ReactElement} from 'react';
@@ -33,11 +33,6 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   isQuiet?: boolean,
   /** Sets what the TableView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
-  /**
-   * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default "selection"
-   */
-  disabledBehavior?: DisabledBehavior,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   /**

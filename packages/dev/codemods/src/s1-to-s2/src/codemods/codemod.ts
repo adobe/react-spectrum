@@ -204,6 +204,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
         (b.path.node.imported.name === 'Item' || b.path.node.imported.name === 'Section')
       ) {
         // Keep Item and Section imports
+        // TODO: remove if they are unused
         return;
       }
       b.path.remove();

@@ -62,7 +62,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
     src,
     UNSAFE_style,
     UNSAFE_className = '',
-    size,
+    size = 24,
     isOverBackground,
     ...otherProps
   } = props;
