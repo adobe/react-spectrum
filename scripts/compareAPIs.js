@@ -122,7 +122,18 @@ async function compare() {
         changes.push(`
 #### ${simplifiedName}
 ${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${affected.length > 0 ? `
+ - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${
+// eslint-disable-next-line no-nested-ternary
+affected.length > 0 ?
+argv.isCI ? `
+<details>
+  <summary>it changed</summary>
+   <ul>
+     <li>${affected.join('</li>\n<li>')}</li>
+   </ul>
+</details>
+`
+  : `
 it changed:
  - ${affected.join('\n - ')}
 ` : ''}
