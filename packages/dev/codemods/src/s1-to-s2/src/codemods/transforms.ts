@@ -918,6 +918,34 @@ function updateAvatarSize(
   }
 }
 
+/**
+ * Handles the legacy `Link` API where an `a` tag or custom router component could be used within a `Link` component.
+ * Removes the inner component and moves its attributes to the `Link` component.
+ */
+function updateLegacyLink(
+  path: NodePath<t.JSXElement>
+) {
+  let missingOuterHref = t.isJSXElement(path.node) && !path.node.openingElement.attributes.some((attr) => t.isJSXAttribute(attr) && attr.name.name === 'href');
+  if (missingOuterHref) {
+    let innerLink = path.node.children.find((child) => t.isJSXElement(child) && t.isJSXIdentifier(child.openingElement.name));
+    if (innerLink && t.isJSXElement(innerLink)) {
+      let innerAttributes = innerLink.openingElement.attributes;
+      let outerAttributes = path.node.openingElement.attributes;
+      innerAttributes.forEach((attr) => {
+        outerAttributes.push(attr);
+      });
+
+      if (
+        t.isJSXIdentifier(innerLink.openingElement.name) &&
+        innerLink.openingElement.name.name !== 'a'
+      ) {
+        addComment(path.node, ' TODO(S2-upgrade): You may have been using a custom link component here. You\'ll need to update this manually.');
+      }
+      path.node.children = innerLink.children;
+    }
+  }
+}
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -936,5 +964,6 @@ export const functionMap = {
   convertDimensionValueToPx,
   updatePlacementToSingleValue,
   removeComponentIfWithinParent,
-  updateAvatarSize
+  updateAvatarSize,
+  updateLegacyLink
 };

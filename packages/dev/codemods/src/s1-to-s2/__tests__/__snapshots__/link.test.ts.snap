@@ -21,3 +21,21 @@ let props = {variant: 'overBackground'};
   </Link>
 </div>"
 `;
+
+exports[`Leaves comment if inner link element is a custom router link (deprecated API) 1`] = `
+"import { Link } from "@react-spectrum/s2";
+import { Link as RouterLink } from "react-router-dom";
+
+<div>
+  // TODO(S2-upgrade): You may have been using a custom link component here. You'll need to update this manually.
+  <Link to="https://www.imdb.com/title/tt6348138/">The missing link.</Link>
+</div>"
+`;
+
+exports[`Remove inner anchor element (deprecated API) 1`] = `
+"import { Link } from "@react-spectrum/s2";
+
+<div>
+  <Link href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</Link>
+</div>"
+`;
