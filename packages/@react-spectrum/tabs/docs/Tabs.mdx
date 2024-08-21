@@ -121,9 +121,9 @@ Icons can also be used in `Tabs` in addition to a text label. Tabs use [Slots](.
 ```tsx example
 <Tabs aria-label="History of Ancient Rome">
   <TabList>
-    <Item key="FoR"><Bookmark /><Text>Founding of Rome</Text></Item>
-    <Item key="MaR"><Calendar /><Text>Monarchy and Republic</Text></Item>
-    <Item key="Emp"><Dashboard /><Text>Empire</Text></Item>
+    <Item key="FoR" textValue="FoR"><Bookmark /><Text>Founding of Rome</Text></Item>
+    <Item key="MaR" textValue="MaR"><Calendar /><Text>Monarchy and Republic</Text></Item>
+    <Item key="Emp" textValue="Emp"><Dashboard /><Text>Empire</Text></Item>
   </TabList>
   <TabPanels>
     <Item key="FoR">
