@@ -40,6 +40,10 @@ export const bar = () => ({
     type: 'height',
     value: 'control'
   },
+  '--track-to-label': {
+    type: 'height',
+    value: 4
+  },
   // Spectrum defines the field label/help text with a (minimum) height, with text centered inside.
   // Calculate what the gap should be based on the height and line height.
   // Use a variable here rather than rowGap since it is applied to the children as padding.
@@ -47,15 +51,15 @@ export const bar = () => ({
   // Eventually this may be possible to do in pure CSS: https://github.com/w3c/csswg-drafts/issues/5813
   '--field-gap': {
     type: 'rowGap',
-    value: centerPadding('var(--field-height)')
+    value: centerPadding('calc(var(--field-height) + var(--track-to-label))')
   },
+
   columnGap: 12 // spacing-200
 } as const);
 
 export const track = () => ({
   gridArea: 'bar',
   overflow: 'hidden',
-  marginTop: 4,
   borderRadius: 'full',
   backgroundColor: {
     default: 'gray-300',
