@@ -61,7 +61,12 @@ export interface BreadcrumbRenderProps {
    * Whether the breadcrumb is for the current page.
    * @selector [data-current]
    */
-  isCurrent: boolean
+  isCurrent: boolean,
+  /**
+   * Whether the breadcrumb is disabled.
+   * @selector [data-current]
+   */
+  isDisabled: boolean
 }
 
 export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {

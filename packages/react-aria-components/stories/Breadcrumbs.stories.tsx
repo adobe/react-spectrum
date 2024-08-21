@@ -32,7 +32,11 @@ export const BreadcrumbsExample = (args: any) => (
   </Breadcrumbs>
 );
 
-let items = [
+interface Iitem {
+  id: string,
+  url: string
+}
+let items: Array<Iitem> = [
   {id: 'Home', url: '/'},
   {id: 'React Aria', url: '/react-aria'},
   {id: 'Breadcrumbs', url: '/react-aria/breadcrumbs'}
@@ -40,7 +44,7 @@ let items = [
 
 export const DynamicBreadcrumbsExample = (args: any) => (
   <Breadcrumbs {...args} items={items}>
-    {item => (
+    {(item: Iitem) => (
       <Breadcrumb>
         <Link href={item.url}>{item.id}</Link>
       </Breadcrumb>
