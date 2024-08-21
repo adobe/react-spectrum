@@ -26,7 +26,7 @@ import {
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
-import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
@@ -112,7 +112,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<H
       values={[
         [InternalBreadcrumbsContext, {size, isDisabled}]
       ]}>
-      <CollapsingCollection containerRef={domRef}>
+      <CollapsingCollection containerRef={domRef} onAction={props.onAction}>
         <RACBreadcrumbs
           {...otherProps}
           isDisabled={isDisabled}
@@ -128,8 +128,8 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<H
   );
 }
 
-let BreadcrumbMenu = (props: {items: Array<Node<any>>}) => {
-  let {items} = props;
+let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: Pick<BreadcrumbsProps<unknown>, 'onAction'>}) => {
+  let {items, onAction} = props;
   let {direction} = useLocale();
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
   // TODO localize See more
@@ -138,7 +138,8 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>}) => {
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
           <S2ActionButton isDisabled={isDisabled} isQuiet aria-label="See more"><FolderIcon /></S2ActionButton>
-          <Menu items={items}>
+          {/** @ts-ignore - how are these onAction's not compatible? */}
+          <Menu items={items} onAction={onAction}>
             {(item: Node<any>) => (
               <MenuItem
                 {...item.props.originalProps}
@@ -352,11 +353,14 @@ let _Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumb);
 export {_Breadcrumb as Breadcrumb};
 
 // Context for passing the count for the custom renderer
-let CollapseContext = createContext<{containerRef: RefObject<HTMLOListElement | null>} | null>(null);
+let CollapseContext = createContext<{
+  containerRef: RefObject<HTMLOListElement | null>,
+  onAction: Pick<BreadcrumbsProps<unknown>, 'onAction'>
+} | null>(null);
 
-function CollapsingCollection({children, containerRef}) {
+function CollapsingCollection({children, containerRef, onAction}) {
   return (
-    <CollapseContext.Provider value={{containerRef}}>
+    <CollapseContext.Provider value={{containerRef, onAction}}>
       <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </UNSTABLE_CollectionRendererContext.Provider>
@@ -374,7 +378,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 };
 
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
-  let {containerRef} = useContext(CollapseContext) ?? {};
+  let {containerRef, onAction} = useContext(CollapseContext) ?? {};
   let [visibleItems, setVisibleItems] = useState(collection.size);
 
   let children = useMemo(() => {
@@ -452,8 +456,8 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       {visibleItems < collection.size ? (
         <>
           {children[0].render?.(children[0])}
-          <BreadcrumbMenu items={children.slice(1, sliceIndex)} />
-          {children.slice(sliceIndex).map(node => node.render?.(node))}
+          <BreadcrumbMenu items={children.slice(1, sliceIndex)} onAction={onAction} />
+          {children.slice(sliceIndex).map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment >)}
         </>
       ) : (
         <>

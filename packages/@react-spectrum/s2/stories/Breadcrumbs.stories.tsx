@@ -51,9 +51,9 @@ export const Example = (args: any) => (
 );
 
 let items = [
-  {id: 'home', name: 'Home', href: '/'},
-  {id: 'react-aria', name: 'React Aria', href: '/react-aria'},
-  {id: 'breadcrumbs', name: 'Breadcrumbs', href: '/breadcrumbs'}
+  {id: 'home', name: 'Home'},
+  {id: 'react-aria', name: 'React Aria'},
+  {id: 'breadcrumbs', name: 'Breadcrumbs'}
 ];
 export const WithActions = (args: any) => (
   <Breadcrumbs onAction={action('onAction')} items={items} {...args}>
