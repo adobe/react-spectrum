@@ -10,17 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {PopoverProps as AriaPopoverProps, composeRenderProps, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {PopoverProps as AriaPopoverProps, composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {createContext, forwardRef, RefObject, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
@@ -159,6 +162,7 @@ export const dialogInner = style({
 });
 
 function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement | null>}) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
   // pure CSS with display: none, but then the ref would go to two places.
@@ -183,125 +187,126 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
       ref={props.dialogRef}
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + dialogInner}>
-      {composeRenderProps(props.children, (children, {close}) =>
-          // Render the children multiple times inside the wrappers we need to implement the layout.
-          // Each instance hides certain children so that they are all rendered in the correct locations.
-          (<>
-            {/* Hero image */}
-            <Provider
-              values={[
+      {composeRenderProps(props.children, (children, {close}) => (
+        // Render the children multiple times inside the wrappers we need to implement the layout.
+        // Each instance hides certain children so that they are all rendered in the correct locations.
+        // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
+        <OverlayTriggerStateContext.Provider value={null}>
+          {/* Hero image */}
+          <Provider
+            values={[
               [ImageContext, {className: image}],
-              [HeadingContext, {hidden: true}],
-              [HeaderContext, {hidden: true}],
-              [ContentContext, {hidden: true}],
-              [FooterContext, {hidden: true}],
-              [ButtonGroupContext, {hidden: true}]
-              ]}>
-              {children}
-            </Provider>
-            {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
+              [HeadingContext, {isHidden: true}],
+              [HeaderContext, {isHidden: true}],
+              [ContentContext, {isHidden: true}],
+              [FooterContext, {isHidden: true}],
+              [ButtonGroupContext, {isHidden: true}]
+            ]}>
+            {children}
+          </Provider>
+          {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
+          <div
+            className={style({
+              // Wrapper that creates the margin for the dismiss button.
+              display: 'flex',
+              alignItems: 'start',
+              columnGap: 12,
+              marginStart: {
+                default: 32
+              },
+              marginEnd: {
+                default: 32,
+                isDismissable: 12
+              },
+              marginTop: {
+                default: 12 // margin to dismiss button
+              }
+            })({isDismissable: props.isDismissable, type: props.type})}>
             <div
               className={style({
-                // Wrapper that creates the margin for the dismiss button.
+                // Wrapper for heading, header, and button group.
+                // This swaps orientation from horizontal to vertical at small screen sizes.
                 display: 'flex',
-                alignItems: 'start',
-                columnGap: 12,
-                marginStart: {
-                  default: 32
-                },
-                marginEnd: {
-                  default: 32,
-                  isDismissable: 12
-                },
+                flexGrow: 1,
                 marginTop: {
-                  default: 12 // margin to dismiss button
-                }
-              })({isDismissable: props.isDismissable, type: props.type})}>
-              <div
-                className={style({
-                  // Wrapper for heading, header, and button group.
-                  // This swaps orientation from horizontal to vertical at small screen sizes.
-                  display: 'flex',
-                  flexGrow: 1,
-                  marginTop: {
-                    default: 20, // 32 - 12 (handled above)
-                    ':empty': 0
-                  },
-                  marginBottom: {
-                    default: 16,
-                    ':empty': 0
-                  },
-                  columnGap: 24,
-                  rowGap: 8,
-                  flexDirection: {
-                    default: 'column',
-                    sm: 'row'
-                  },
-                  alignItems: {
-                    default: 'start',
-                    sm: 'center'
-                  }
-                })}>
-                <Provider
-                  values={[
-                  [ImageContext, {hidden: true}],
-                  [HeadingContext, {className: heading}],
-                  [HeaderContext, {className: header}],
-                  [ContentContext, {hidden: true}],
-                  [FooterContext, {hidden: true}],
-                  [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'top'}]
-                  ]}>
-                  {children}
-                </Provider>
-              </div>
-              {props.isDismissable &&
-              <CloseButton onPress={close} styles={style({marginBottom: 12})} />
-            }
-            </div>
-            {/* Main content */}
-            <Provider
-              values={[
-              [ImageContext, {hidden: true}],
-              [HeadingContext, {hidden: true}],
-              [HeaderContext, {hidden: true}],
-              [ContentContext, {className: content({type: props.type})}],
-              [FooterContext, {hidden: true}],
-              [ButtonGroupContext, {hidden: true}]
-              ]}>
-              {children}
-            </Provider>
-            {/* Footer and button group */}
-            <div
-              className={style({
-                display: 'flex',
-                paddingX: {
-                  default: 32
-                },
-                paddingBottom: {
-                  default: 32
-                },
-                paddingTop: {
-                  default: 32,
+                  default: 20, // 32 - 12 (handled above)
                   ':empty': 0
                 },
-                gap: 24,
-                alignItems: 'center',
-                flexWrap: 'wrap'
+                marginBottom: {
+                  default: 16,
+                  ':empty': 0
+                },
+                columnGap: 24,
+                rowGap: 8,
+                flexDirection: {
+                  default: 'column',
+                  sm: 'row'
+                },
+                alignItems: {
+                  default: 'start',
+                  sm: 'center'
+                }
               })}>
               <Provider
                 values={[
-                [ImageContext, {hidden: true}],
-                [HeadingContext, {hidden: true}],
-                [HeaderContext, {hidden: true}],
-                [ContentContext, {hidden: true}],
-                [FooterContext, {className: footer}],
-                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', styles: buttonGroup, align: 'end'}]
+                  [ImageContext, {hidden: true}],
+                  [HeadingContext, {styles: heading}],
+                  [HeaderContext, {styles: header}],
+                  [ContentContext, {isHidden: true}],
+                  [FooterContext, {isHidden: true}],
+                  [ButtonGroupContext, {isHidden: buttonGroupPlacement !== 'top'}]
                 ]}>
                 {children}
               </Provider>
             </div>
-          </>)
-        )}
+            {props.isDismissable &&
+            <CloseButton aria-label={stringFormatter.format('dialog.dismiss')} onPress={close} styles={style({marginBottom: 12})} />
+          }
+          </div>
+          {/* Main content */}
+          <Provider
+            values={[
+              [ImageContext, {hidden: true}],
+              [HeadingContext, {isHidden: true}],
+              [HeaderContext, {isHidden: true}],
+              [ContentContext, {styles: content({type: props.type})}],
+              [FooterContext, {isHidden: true}],
+              [ButtonGroupContext, {isHidden: true}]
+            ]}>
+            {children}
+          </Provider>
+          {/* Footer and button group */}
+          <div
+            className={style({
+              display: 'flex',
+              paddingX: {
+                default: 32
+              },
+              paddingBottom: {
+                default: 32
+              },
+              paddingTop: {
+                default: 32,
+                ':empty': 0
+              },
+              gap: 24,
+              alignItems: 'center',
+              flexWrap: 'wrap'
+            })}>
+            <Provider
+              values={[
+                [ImageContext, {hidden: true}],
+                [HeadingContext, {isHidden: true}],
+                [HeaderContext, {isHidden: true}],
+                [ContentContext, {isHidden: true}],
+                [FooterContext, {styles: footer}],
+                [ButtonGroupContext, {isHidden: buttonGroupPlacement !== 'bottom', styles: buttonGroup, align: 'end'}]
+              ]}>
+              {children}
+            </Provider>
+          </div>
+        </OverlayTriggerStateContext.Provider>
+      ))}
     </RACDialog>
   );
 }

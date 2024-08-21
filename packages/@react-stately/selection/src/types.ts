@@ -23,7 +23,7 @@ export interface FocusState {
   /** Whether the first or last child of the focused key should receive focus. */
   readonly childFocusStrategy: FocusStrategy,
   /** Sets the focused key, and optionally, whether the first or last child of that key should receive focus. */
-  setFocusedKey(key: Key, child?: FocusStrategy): void
+  setFocusedKey(key: Key | null, child?: FocusStrategy): void
 }
 
 export interface SingleSelectionState extends FocusState {
