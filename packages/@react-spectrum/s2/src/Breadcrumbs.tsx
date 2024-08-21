@@ -20,8 +20,7 @@ import {
   Provider,
   Breadcrumbs as RACBreadcrumbs,
   UNSTABLE_CollectionRendererContext,
-  UNSTABLE_DefaultCollectionRenderer,
-  useSlottedContext
+  UNSTABLE_DefaultCollectionRenderer
 } from 'react-aria-components';
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -133,6 +132,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: Pick<Breadcrumb
   let {direction} = useLocale();
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
   // TODO localize See more
+  // somehow remove the "link out" icon in Menus?
   return (
     <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>

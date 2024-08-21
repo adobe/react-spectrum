@@ -86,3 +86,25 @@ export const Many = (args: any) => (
     </Breadcrumbs>
   </div>
 );
+
+let manyItemsWithLinks = [
+  {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
+  {id: 'Folder 2', name: 'My Documents', href: '/folder2'},
+  {id: 'Folder 3', name: 'Kangaroos jump high', href: '/folder3'},
+  {id: 'Folder 4', name: 'Koalas are very cute', href: '/folder4'},
+  {id: 'Folder 5', name: "Wombat's noses", href: '/folder5'},
+  {id: 'Folder 6', name: 'Wattle trees', href: '/folder6'},
+  {id: 'Folder 7', name: 'April 7', href: '/folder7'}
+];
+
+export const ManyWithLinks = (args: any) => (
+  <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
+    <Breadcrumbs items={manyItemsWithLinks} {...args}>
+      {item => (
+        <Breadcrumb href={item.href}>
+          {item.name}
+        </Breadcrumb>
+      )}
+    </Breadcrumbs>
+  </div>
+);
