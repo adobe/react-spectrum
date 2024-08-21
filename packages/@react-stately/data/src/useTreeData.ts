@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
+import {Key, Selection} from '@react-types/shared';
 import {useState} from 'react';
 
 export interface TreeOptions<T extends object> {
@@ -40,10 +40,10 @@ export interface TreeData<T extends object> {
   items: TreeNode<T>[],
 
   /** The keys of the currently selected items in the tree. */
-  selectedKeys: Set<Key>,
+  selectedKeys: Selection,
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Set<Key>): void,
+  setSelectedKeys(keys: Selection): void,
 
   /**
    * Gets a node from the tree by key.
@@ -131,7 +131,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let [tree, setItems] = useState<{items: TreeNode<T>[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems, new Map()));
   let {items, nodeMap} = tree;
 
-  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<Key>(initialSelectedKeys || []));
 
   function buildTree(initialItems: T[] = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
     return {
@@ -314,9 +314,10 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
       setItems(newTree);
 
-      let selection = new Set(selectedKeys);
-      for (let key of selectedKeys) {
-        if (!newTree.nodeMap.has(key)) {
+      let selection: Selection = 'all';
+      if (selectedKeys !== 'all') {
+        selection = new Set(selectedKeys);
+        for (let key of keys) {
           selection.delete(key);
         }
       }
@@ -324,6 +325,10 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       setSelectedKeys(selection);
     },
     removeSelectedItems() {
+      if (selectedKeys === 'all') {
+        setSelectedKeys(new Set());
+        return;
+      }
       this.remove(...selectedKeys);
     },
     move(key: Key, toParentKey: Key | null, index: number) {
