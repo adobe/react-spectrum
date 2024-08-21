@@ -107,8 +107,9 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
+| size | 🟢 `16 \| 20 \| 24 \| 28 \| 32 \| 36 \| 40 \| 44 \| 48 \| 56 \| 64 \| 80 \| 96 \| 112 \| number` | 🔴 `'avatar-size-100' \| 'avatar-size-200' \| 'avatar-size-300' \| 'avatar-size-400' \| 'avatar-size-50' \| 'avatar-size-500' \| 'avatar-size-600' \| 'avatar-size-700' \| 'avatar-size-75' \| string \| number` | Named sizes have been replaced with pixel values. |
+| isOverBackground | 🟢 `boolean` | – | |
 | isDisabled | – | 🔴 `boolean` | Focusable/interactive Avatars aren't supported in S2 yet. |
-| size | – | 🔴 `'avatar-size-100' \| 'avatar-size-200' \| 'avatar-size-300' \| 'avatar-size-400' \| 'avatar-size-50' \| 'avatar-size-500' \| 'avatar-size-600' \| 'avatar-size-700' \| 'avatar-size-75' \| (string & {<br>  <br>}) \| number` | This prop has been removed in favor of providing a size via the `styles` prop. |
 ## Breadcrumbs
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
@@ -129,8 +130,7 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
-| inputRef | 🟢 `MutableRefObject<HTMLInputElement>` | – | |
-| slot | 🟢 `null \| string` | – | |
+| inputRef | 🟢 `RefObject<HTMLInputElement \| null>` | – | |
 | size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
 ## CheckboxGroup
 
@@ -274,6 +274,15 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
 | closeOnSelect | – | 🔴 `boolean` | Not yet implemented in S2. |
 | trigger | – | 🔴 `MenuTriggerType` | Not yet implemented in S2. |
+## NumberField
+
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
+| isInvalid | 🟢 `boolean` | – | |
+| slot | 🟢 `null \| string` | – | |
+| isQuiet | – | 🔴 `boolean` | Not supported in S2 design. |
+| validationState | – | 🔴 `ValidationState` | Use `isInvalid` instead. |
 ## Picker
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
@@ -304,7 +313,7 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
-| inputRef | 🟢 `MutableRefObject<HTMLInputElement>` | – | |
+| inputRef | 🟢 `RefObject<HTMLInputElement \| null>` | – | |
 | slot | 🟢 `null \| string` | – | |
 ## RadioGroup
 
@@ -364,15 +373,43 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
-| inputRef | 🟢 `MutableRefObject<HTMLInputElement>` | – | |
+| inputRef | 🟢 `RefObject<HTMLInputElement \| null>` | – | |
 | slot | 🟢 `null \| string` | – | |
 | size | 🟢 `'L' \| 'M' \| 'S' \| 'XL'` | – | |
+## TabList
+
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| aria-label | 🟢 `string` | – | |
+| aria-labelledby | 🟢 `string` | – | |
+| aria-describedby | 🟢 `string` | – | |
+| aria-details | 🟢 `string` | – | |
+| dependencies | 🟢 `Array<any>` | – | |
+| items | 🟢 `Iterable<T>` | – | |
+| id | – | 🔴 `string` | |
+## Tabs
+
+| Prop | Spectrum 2 | RSP v3 | Comments |
+|------|------------|--------|----------|
+| slot | 🟢 `null \| string` | – | |
+| items | – | 🔴 `Iterable<{}>` | Pass items to `TabList` instead. |
+| isQuiet | – | 🔴 `boolean` | Not supported in S2 design. |
+| isEmphasized | – | 🔴 `boolean` | Not supported in S2 design. |
+| disallowEmptySelection | – | 🔴 `boolean` | Tabs always disallow empty selection. |
+## TabPanels
+
+This component has been removed in S2. Provide `<TabPanel>` elements as direct children of `<Tabs>` instead.
+
 ## TagGroup
 
 | Prop | Spectrum 2 | RSP v3 | Comments |
 |------|------------|--------|----------|
 | size | 🟢 `'L' \| 'M' \| 'S'` | – | |
 | isEmphasized | 🟢 `boolean` | – | |
+| actionLabel | – | 🔴 `string` | Use `groupActionLabel` instead. |
+| onAction | – | 🔴 `() => void` | Use `onGroupAction` instead. |
+| groupActionLabel | 🟢 `string` | – | |
+| onGroupAction | 🟢 `() => void` | – | |
 | selectionBehavior | 🟢 `SelectionBehavior` | – | |
 | disabledKeys | 🟢 `Iterable<Key>` | – | |
 | selectionMode | 🟢 `SelectionMode` | – | |
@@ -381,9 +418,6 @@ React Spectrum v3 [style props](https://react-spectrum.adobe.com/react-spectrum/
 | defaultSelectedKeys | 🟢 `'all' \| Iterable<Key>` | – | |
 | onSelectionChange | 🟢 `(Selection) => void` | – | |
 | slot | 🟢 `null \| string` | – | |
-| actionLabel | – | 🔴 `string` | Not yet implemented in S2.|
-| onAction | – | 🔴 `() => void` | Not yet implemented in S2. |
-| maxRows | – | 🔴 `number` | Not yet implemented in S2. |
 | validationState | – | 🔴 `ValidationState` | Use `isInvalid` instead. |
 ## TextArea
 
