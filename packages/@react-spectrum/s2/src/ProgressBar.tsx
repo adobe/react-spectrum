@@ -48,24 +48,18 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
 
 export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, DOMRefValue<HTMLDivElement>>>(null);
 
-// TODO:
-// var(--spectrum-global-dimension-size-1700) -> 136px
-// var(--spectrum-global-dimension-size-2400) -> 192px
 const indeterminate = keyframes(`
-  from {
-    transform: translate(calc(136px * -1));
+  0% {
+    transform:  translateX(-70%) scaleX(0.7);
   }
-
-  to {
-    transform: translate(192px);
+  100% {
+    transform:  translateX(100%) scaleX(0.7);
   }
 `);
 
 const wrapper = style<ProgressBarStyleProps>({
   ...bar(),
-  width: {
-    default: 192
-  }
+  width: 192
 }, getAllowedOverrides());
 
 const valueStyles = style({
@@ -75,6 +69,7 @@ const valueStyles = style({
 
 const trackStyles = style({
   ...track(),
+  width: 'full',
   height: {
     default: size(6),
     size: {
@@ -102,8 +97,12 @@ const fill = style<ProgressBarStyleProps>({
     },
     forcedColors: 'ButtonText'
   },
-  transition: '[width]',
-  transitionDuration: 1000
+  width: {
+    isIndeterminate: 'full'
+  },
+  transformOrigin: {
+    isIndeterminate: 'left'
+  }
 });
 
 const indeterminateAnimation = style({
@@ -132,7 +131,7 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
           <div className={trackStyles({...props})}>
             <div
               className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}
-              style={{width: isIndeterminate ? `${100 * (136 / 192)}%` : percentage + '%'}} />
+              style={{width: isIndeterminate ? undefined : percentage + '%'}} />
           </div>
         </>
       )}
