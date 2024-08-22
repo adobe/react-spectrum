@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusEvents, FocusableRef, InputDOMProps, ValueBase} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Radio, RadioGroup, RadioProps, Provider, RadioGroupStateContext, useSlottedContext} from "react-aria-components"
-import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect} from 'react';
+import {ContextValue, Radio, RadioGroup, RadioProps, Provider, RadioGroupStateContext} from "react-aria-components"
+import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -22,6 +22,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import Conversationbubbles from '../spectrum-illustrations/linear/Conversationbubbles';
 
 export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
   /**
@@ -47,7 +48,9 @@ const segmentedControl = style<{size: string}>({
   display: 'flex',
   backgroundColor: 'gray-100',
   borderRadius: 'lg',
-  width: 'full'
+  width: 'full',
+  zIndex: 1,
+  position: 'relative'
 }, getAllowedOverrides())
 
 const controlItem = style({
@@ -66,36 +69,37 @@ const controlItem = style({
       isSelected: 'HighlightText'
     },
   },
-  backgroundColor: {
-    isSelected: 'gray-25',
-    forcedColors: {
-      isSelected: 'Highlight',
-      isDisabled: {
-        isSelected: 'GrayText'
-      },
-    },
-  },
+  // backgroundColor: {
+  //   isSelected: 'gray-25',
+  //   forcedColors: {
+  //     isSelected: 'Highlight',
+  //     isDisabled: {
+  //       isSelected: 'GrayText'
+  //     },
+  //   },
+  // },
   // the padding should be a little less for segmented controls that only contain icons but not sure of a good way to do that
   paddingX: 'edge-to-text',
   height: 32,
   alignItems: 'center',
   boxSizing: 'border-box',
   borderStyle: 'solid',
-  borderWidth: 2,
-  borderColor: {
-    default: 'transparent',
-    isSelected: {
-      default: 'gray-900',
-      isDisabled: 'disabled'
-    },
-    forcedColors: {
-      isDisabled: 'GrayText',
-      isSelected: {
-        default: 'Highlight',
-        isDisabled: 'GrayText'
-      }
-    }
-  },
+  borderColor: 'transparent',
+  // borderWidth: 2,
+  // borderColor: {
+  //   default: 'transparent',
+  //   isSelected: {
+  //     default: 'gray-900',
+  //     isDisabled: 'disabled'
+  //   },
+  //   forcedColors: {
+  //     isDisabled: 'GrayText',
+  //     isSelected: {
+  //       default: 'Highlight',
+  //       isDisabled: 'GrayText'
+  //     }
+  //   }
+  // },
   borderRadius: 'control',
   flexBasis: 0,
   flexGrow: 1,
@@ -105,7 +109,8 @@ const controlItem = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
-  }
+  },
+  zIndex: 2
 }, getAllowedOverrides())
 
 interface InternalSegmentedControlContextProps extends SegmentedControlProps {
@@ -115,7 +120,8 @@ interface InternalSegmentedControlContextProps extends SegmentedControlProps {
 interface DefaultSelectionTrackProps {
   defaultValue?: string | null,
   value?: string | null,
-  children?: ReactNode
+  children?: ReactNode,
+  domRef?
 }
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
@@ -128,6 +134,22 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
   } = props
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let state = useContext(RadioGroupStateContext);
+
+  // let onChange = () => {
+  //   let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
+  //     transform: undefined,
+  //     width: undefined,
+  //     height: undefined
+  //   };
+
+  //   let item : HTMLElement = domRef.current.querySelector("label[data-selected=true]")
+
+  //   let position = item?.offsetLeft;
+  //   styleObj.transform = `translateX(${position}px)`;
+  //   setStyle(styleObj);
+  //   console.log(item);
+  // }
 
   return (
     <RadioGroup 
@@ -137,7 +159,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
       aria-label={props['aria-label'] || stringFormatter.format('segmentedcontrol.defaultlabel')}>
-      <DefaultSelectionTracker defaultValue={defaultValue} value={value}>
+      <DefaultSelectionTracker defaultValue={defaultValue} value={value} domRef={domRef} >
         {props.children}
       </DefaultSelectionTracker>
     </RadioGroup>
@@ -145,9 +167,20 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
 }
 
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
+  let {
+    domRef,
+  } = props
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
+  let itemRef = useRef(null);
 
+  let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
+    transform: undefined,
+    width: undefined,
+    height: undefined
+  });
+
+  // default select the first available item
   let register = useCallback((value: string) => {
     if (!isRegistered.current) {
       isRegistered.current = true;
@@ -156,15 +189,96 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
     }
   }, [])
 
+  // First: get the current bounds of the element
+  useEffect(() => {
+    if (domRef.current) {
+      let item = domRef.current.querySelector("label[data-selected=true]");
+      itemRef.current = item;
+
+      // i don't really want to have this here, and honestly, it should probably go in useLayoutEffect
+      // however, then i basically have to pull all the code currently in useEffect to useLayoutEffect which feels repetitive so I'm just keeping it here for now
+      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
+        transform: undefined,
+        width: undefined,
+        height: undefined
+      };
+
+      let finalW = item?.offsetWidth;
+      let finalH = item?.offsetHeight;
+
+      styleObj.width = finalW;
+      styleObj.height = finalH;
+      setStyle(styleObj);
+
+    }
+  }, [state?.selectedValue])
+
+  // Last: get the final bounds of the element
+  useLayoutEffect(() => {
+    if (domRef.current) {
+      let slide = document.querySelector('#animate');
+      let item = domRef.current.querySelector("label[data-selected=true]")
+      let cachedItem = itemRef?.current?.getBoundingClientRect();
+
+
+      if (itemRef.current) {
+        let finalItem = item.getBoundingClientRect();
+
+        // Invert: determine the delta between the first and last bounds of the element
+        // let deltaX = cachedItem.left - finalItem.left;
+        // let deltaW = cachedItem.width / finalItem.width;
+        // let deltaW = finalItem.width / cachedItem.width;
+        // let deltaH = cachedItem.height / finalItem.height;
+        let cachedX = itemRef?.current.offsetLeft;
+        let finalX = item.offsetLeft;
+        // let finalW = item.offsetWidth;
+        // let finalH = item.offsetHeight;
+
+        // styleObj.width = finalW;
+        // styleObj.height = finalH;
+        // setStyle(styleObj);
+        
+        // Play: animate the final element from its first bounds to its last bound
+        slide.animate(
+          [
+            {transform: `translateX(${finalX}px)` },
+          ],
+          {
+            duration: 150,
+            easing: 'ease-in',
+            fill: "forwards"
+          }
+        );
+      }
+    }
+  }, [state?.selectedValue]);
+
+
+  // style={{transform: move ? `translateX(100px)` : 'translateX(0px)'}}
+  // style={{transform: 'translateX(120px)'}}
   return (
     <Provider
       values={[
         [InternalSegmentedControlContext, {register: register}]
     ]}>
       {props.children}
+      <span style={style} id="animate" className={test}/> 
     </Provider>
   )
 }
+
+const test = style({
+  backgroundColor: 'gray-25',
+  width: 56,
+  height: 32,
+  position: 'absolute',
+  boxSizing: 'border-box',
+  borderStyle: 'solid',
+  borderWidth: 2,
+  borderColor: 'gray-900',
+  borderRadius: 'lg',
+  zIndex: 1
+})
 
 function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
