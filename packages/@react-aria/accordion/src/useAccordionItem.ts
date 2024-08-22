@@ -13,6 +13,7 @@
 import {AccordionItemState} from '../../../@react-stately/accordion/src';
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
+import {useEffect, useRef} from 'react';
 import {useId} from '@react-aria/utils';
 
 export interface AccordionItemAriaProps {
@@ -45,7 +46,26 @@ export function useAccordionItem(props: AccordionItemAriaProps, state: Accordion
   } = props;
   let buttonId = useId();
   let regionId = useId();
-  let hiddenValue = 'onbeforematch' in document.body ? 'until-found' : true;
+  let regionRef = useRef<HTMLDivElement>(null);
+  let isControlled = props.isOpen !== undefined;
+  let supportsBeforeMatch = 'onbeforematch' in document.body;
+
+  useEffect(() => {
+    if (supportsBeforeMatch && regionRef.current && !isControlled) {
+      if (state.isOpen) {
+        // @ts-ignore
+        regionRef.current.hidden = undefined;
+      } else {
+        // @ts-ignore
+        regionRef.current.hidden = 'until-found';
+        // @ts-ignore
+        regionRef.current.onbeforematch = () => {
+          state.open();
+        };
+      }
+    }
+  }, [isControlled, props.isOpen, regionRef, state, supportsBeforeMatch]);
+
   return {
     buttonProps: {
       'aria-expanded': state.isOpen,
@@ -54,10 +74,11 @@ export function useAccordionItem(props: AccordionItemAriaProps, state: Accordion
       isDisabled: isDisabled
     },
     regionProps: {
+      ref: regionRef,
       id: regionId,
       role,
       'aria-labelledby': buttonId,
-      hidden: state.isOpen ? false : hiddenValue
+      hidden: (!supportsBeforeMatch || isControlled) ? !state.isOpen : undefined
     }
   };
 }

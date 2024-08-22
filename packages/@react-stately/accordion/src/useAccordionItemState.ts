@@ -13,7 +13,7 @@
 import {useCallback} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
-// TODO: move this to @react-types/accordion?
+// TODO: move this to @react-types/accordion
 export interface AccordionItemProps {
   /** Whether the accordion item's panel is open (controlled). */
   isOpen?: boolean,

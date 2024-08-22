@@ -36,3 +36,23 @@ export const AccordionExample = (args: any) => (
     )}
   </AccordionItem>
 );
+
+export const AccordionControlledExample = (args: any) => {
+  let [isOpen, setOpen] = React.useState(false);
+  return (
+    <AccordionItem {...args} isOpen={isOpen} onOpenChange={setOpen}>
+      {({isOpen}) => (
+        <>
+          <Header>
+            <Heading level={3}>
+              <Button slot="trigger">This is an accordion header {isOpen ? '⬇️' : '➡️'}</Button>
+            </Heading>
+          </Header>
+          <AccordionPanel>
+            <p>This is the content of the accordion panel.</p>
+          </AccordionPanel>
+        </>
+      )}
+    </AccordionItem>
+  );
+};
