@@ -186,6 +186,7 @@ export function Migrating() {
         <H3>Link</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>staticColor="white"</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>If <Code>a</Code> was used inside <Code>Link</Code> (legacy API), remove the <Code>a</Code> and apply props (i.e <Code>href</Code>) directly to <Code>Link</Code></li>
         </ul>
 
         <H3>ListBox</H3>

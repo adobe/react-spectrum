@@ -172,7 +172,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           {...listBoxProps}
           ref={listBoxRef}
           disallowEmptySelection
-          autoFocus={state.focusStrategy}
+          autoFocus={state.focusStrategy ?? undefined}
           shouldSelectOnPressUp
           focusOnPointerEnter
           layout={layout}
