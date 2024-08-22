@@ -25,8 +25,10 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
-  variant: 'informative' | 'positive' | 'notice' | 'negative',
+  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+   * @default 'informative'
+   */
+  variant?: 'informative' | 'positive' | 'notice' | 'negative',
   /**
    * The size of the Meter.
    *
@@ -109,7 +111,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
     styles,
     UNSAFE_className = '',
     UNSAFE_style,
-    variant,
+    variant = 'informative',
     ...groupProps
   } = props;
 

@@ -57,31 +57,31 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   );
 
   // Reset focused key if that item is deleted from the collection.
-  const cachedCollection = useRef(null);
+  const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
+    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey) && cachedCollection.current) {
       const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
       const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
         key => {
-          const itemNode = cachedCollection.current.getItem(key);
-          return itemNode.type === 'item' ? itemNode : null;
+          const itemNode = cachedCollection.current!.getItem(key);
+          return itemNode?.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
       const itemNodes = [...collection.getKeys()].map(
         key => {
           const itemNode = collection.getItem(key);
-          return itemNode.type === 'item' ? itemNode : null;
+          return itemNode?.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
-      const diff = cachedItemNodes.length - itemNodes.length;
+      const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
       let index = Math.min(
         (
           diff > 1 ?
-          Math.max(startItem.index - diff + 1, 0) :
-          startItem.index
+          Math.max((startItem?.index ?? 0) - diff + 1, 0) :
+          startItem?.index ?? 0
         ),
-        itemNodes.length - 1);
-      let newNode:Node<T>;
+        (itemNodes?.length ?? 0) - 1);
+      let newNode: Node<T> | null = null;
       let isReverseSearching = false;
       while (index >= 0) {
         if (!selectionManager.isDisabled(itemNodes[index].key)) {
@@ -94,8 +94,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
         // Otherwise, find previous, not disabled item.
         } else {
           isReverseSearching = true;
-          if (index > startItem.index) {
-            index = startItem.index;
+          if (index > (startItem?.index ?? 0)) {
+            index = (startItem?.index ?? 0);
           }
           index--;
         }

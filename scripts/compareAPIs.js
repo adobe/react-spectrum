@@ -122,7 +122,18 @@ async function compare() {
         changes.push(`
 #### ${simplifiedName}
 ${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${affected.length > 0 ? `
+ - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${
+// eslint-disable-next-line no-nested-ternary
+affected.length > 0 ?
+argv.isCI ? `
+<details>
+  <summary>it changed</summary>
+   <ul>
+     <li>${affected.join('</li>\n<li>')}</li>
+   </ul>
+</details>
+`
+  : `
 it changed:
  - ${affected.join('\n - ')}
 ` : ''}
@@ -281,7 +292,7 @@ function getDiff(pair) {
 ${joinedResult}
 \`\`\``;
     }
-    diffs.push({iname, result: joinedResult, simplifiedName});
+    diffs.push({iname, result: joinedResult, simplifiedName: `${name.replace('/dist/api.json', '')}:${simplifiedName}`});
   });
 
   return {diffs, name};
@@ -524,9 +535,20 @@ function rebuildInterfaces(json) {
         let name = property.name;
         let optional = property.optional;
         let defaultVal = property.default;
-        let value = processType(property.value);
-        // TODO: what to do with defaultVal and optional
-        funcInterface[name] = {optional, defaultVal, value};
+        // this needs to handle types like spreads, but need to build that into the build API's first
+        if (!property.value) {
+          name = 'UNKNOWN';
+          let i = 0;
+          while (funcInterface[name]) {
+            i++;
+            name = 'UNKNOWN' + String(i);
+          }
+          funcInterface[name] = {optional, defaultVal, value: property.type};
+        } else {
+          let value = processType(property.value);
+          // TODO: what to do with defaultVal and optional
+          funcInterface[name] = {optional, defaultVal, value};
+        }
       });
       let name = item.name ?? key;
       if (item.typeParameters?.length > 0) {
