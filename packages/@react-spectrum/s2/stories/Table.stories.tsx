@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {categorizeArgTypes} from './utils';
-import {Cell, Column, Row, Table, TableBody, TableHeader, useDragAndDrop} from '../src/Table';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import {Content, Heading, IllustratedMessage, Link} from '../src';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
@@ -81,7 +81,6 @@ export const Example = {
     onResize: null,
     onResizeStart: null,
     onResizeEnd: null,
-    dragAndDropHooks: null,
     onLoadMore: null
   }
 };
@@ -401,52 +400,6 @@ export const Sorting = {
   ...Example,
   render: SortableTable,
   name: 'sortable'
-};
-
-
-const ReorderableTable = (args: any) => {
-  let list = useListData({
-    initialItems: items
-  });
-
-
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).foo
-    })),
-    onReorder(e) {
-      if (e.target.dropPosition === 'before') {
-        list.moveBefore(e.target.key, e.keys);
-      } else if (e.target.dropPosition === 'after') {
-        list.moveAfter(e.target.key, e.keys);
-      }
-    }
-  });
-
-  return (
-    <Table aria-label="reorderable table" {...args} dragAndDropHooks={dragAndDropHooks}>
-      <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row id={item.id} columns={columns}>
-            {(column) => {
-              return <Cell>{item[column.id]}</Cell>;
-            }}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-};
-
-export const ReorderDnD = {
-  ...Example,
-  render: ReorderableTable,
-  name: 'reorderable table'
 };
 
 let resizeColumn = [
