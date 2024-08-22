@@ -132,7 +132,8 @@ const table = style<TableRenderProps & S2TableProps>({
   },
   outlineWidth: {
     default: 1,
-    isQuiet: 0
+    isQuiet: 0,
+    isFocusVisible: 2
   },
   outlineStyle: 'solid',
   borderRadius: {
@@ -358,7 +359,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
         <Collection items={items}>
           {children}
         </Collection>
-        {loadingState === 'loadingMore' && loadMoreSpinner}
+        {loadingState === 'loadingMore' && [...items].length > 0 && loadMoreSpinner}
       </>
     );
   } else {
@@ -578,6 +579,11 @@ const resizableMenuButtonWrapper = style({
 });
 
 const resizerHandleContainer = style({
+  display: {
+    default: 'none',
+    isResizing: 'block',
+    isHovered: 'block'
+  },
   width: 12,
   height: 'full',
   position: 'absolute',
@@ -658,8 +664,7 @@ function Nubbin() {
   );
 }
 
-// TODO: known issue where focus makes it onto the resizer but then moves off if you trigger resizing via pointer and then move your mouse quickly right after your click
-// still digging. May also be related to why tab focus can move onto the last resizer sometimes...
+
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered, align} = props;
   let {setIsInResizeMode, isInResizeMode} = useContext(InternalTableContext);
@@ -674,7 +679,10 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
         break;
       case 'resize':
         setIsInResizeMode?.(true);
-        startResize();
+        // TODO: Need to wait for the menu to fully transition out, otherwise mouse movements may hover the menu items and steal focus from the resizer,
+        // causing resizing to end prematurely due to blur. Open to ideas for how to handle this since it affects RAC. Ideally we'd freeze
+        // focus from being able to move if we are in resizing mode except if the user clicks away or moves focus with something other than hover
+        setTimeout(() => startResize(), 200);
         break;
     }
   };
@@ -740,10 +748,10 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
         </Menu>
       </MenuTrigger>
       <div data-react-aria-prevent-focus="true">
-        <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection}) => resizerHandleContainer({resizableDirection})}>
+        <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection, isResizing}) => resizerHandleContainer({resizableDirection, isResizing, isHovered: isInResizeMode || isHovered})}>
           {({isFocusVisible, isResizing}) => (
             <>
-              <ResizerIndicator isFocusVisible={isFocusVisible} isHovered={isHovered} isResizing={isResizing} />
+              <ResizerIndicator isInResizeMode={isInResizeMode} isFocusVisible={isFocusVisible} isHovered={isHovered} isResizing={isResizing} />
               {(isFocusVisible || isInResizeMode) && isResizing && <div className={nubbin}><Nubbin /></div>}
             </>
         )}
@@ -753,10 +761,11 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
   );
 }
 
-function ResizerIndicator({isFocusVisible, isHovered, isResizing}) {
+function ResizerIndicator({isFocusVisible, isHovered, isResizing, isInResizeMode}) {
   let state = useContext(ResizableTableContainerContext);
+  console.log('gaw', isInResizeMode)
   return (
-    <div style={{height: isResizing ? state?.tableHeight : '100%'}} className={resizerHandle({isFocusVisible, isHovered, isResizing})} />
+    <div style={{height: isResizing ? state?.tableHeight : '100%'}} className={resizerHandle({isFocusVisible, isHovered: isHovered || isInResizeMode, isResizing})} />
   );
 }
 
