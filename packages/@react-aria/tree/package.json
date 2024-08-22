@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/tree",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,9 +22,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/gridlist": "^3.9.2",
+    "@react-aria/gridlist": "^3.9.3",
     "@react-aria/i18n": "^3.12.2",
-    "@react-aria/selection": "^3.19.2",
+    "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/tree": "^3.8.4",
     "@react-types/button": "^3.9.6",

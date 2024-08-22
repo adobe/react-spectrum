@@ -19,6 +19,7 @@ import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {t
 import {forwardRefType} from './types';
 import {size, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface BreadcrumbsStyleProps {
   /**
@@ -42,7 +43,7 @@ export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'chil
   children?: ReactNode
 }
 
-export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, DOMRefValue<HTMLOListElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   display: 'flex',
@@ -71,6 +72,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
 }, getAllowedOverrides());
 
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let {
     UNSAFE_className = '',
     UNSAFE_style,
