@@ -299,7 +299,6 @@ export function Table(props: TableProps) {
 
   return (
     <ResizableTableContainer
-      ref={scrollRef}
       onResize={propsOnResize}
       onResizeEnd={onResizeEnd}
       onResizeStart={onResizeStart}
@@ -308,6 +307,7 @@ export function Table(props: TableProps) {
       <UNSTABLE_Virtualizer layout={layout}>
         <InternalTableContext.Provider value={context}>
           <RACTable
+            ref={scrollRef}
             className={renderProps => table({
               ...renderProps,
               isQuiet

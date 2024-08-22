@@ -519,7 +519,7 @@ function AsyncLoadingExample(props) {
       };
     }
   });
-  // TODO: for some reason this story rerenders a lot, digging
+
   return (
     <div>
       <ActionButton styles={style({marginBottom: 8})} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
