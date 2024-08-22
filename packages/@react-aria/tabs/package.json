@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/tabs",
-  "version": "3.9.4",
+  "version": "3.9.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@react-aria/focus": "^3.18.2",
     "@react-aria/i18n": "^3.12.2",
-    "@react-aria/selection": "^3.19.2",
+    "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/tabs": "^3.6.9",
     "@react-types/shared": "^3.24.1",
