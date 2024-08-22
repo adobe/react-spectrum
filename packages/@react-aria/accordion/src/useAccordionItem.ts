@@ -13,7 +13,7 @@
 import {AccordionItemState} from '../../../@react-stately/accordion/src';
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
-import {useEffect, useRef} from 'react';
+import {RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
 export interface AccordionItemAriaProps {
@@ -29,7 +29,9 @@ export interface AccordionItemAriaProps {
   /** Whether the accordion item's panel is open (controlled). */
   isOpen?: boolean,
   /** Whether the accordion item's panel is open by default (uncontrolled). */
-  defaultOpen?: boolean
+  defaultOpen?: boolean,
+  /** The ref for the accordion item's panel element. */
+  panelRef: RefObject<HTMLElement>
 }
 
 export interface AccordionItemAria {
@@ -42,29 +44,29 @@ export interface AccordionItemAria {
 export function useAccordionItem(props: AccordionItemAriaProps, state: AccordionItemState): AccordionItemAria {
   let {
     isDisabled,
-    role = 'region'
+    role = 'region',
+    panelRef
   } = props;
   let buttonId = useId();
   let regionId = useId();
-  let regionRef = useRef<HTMLDivElement>(null);
   let isControlled = props.isOpen !== undefined;
   let supportsBeforeMatch = 'onbeforematch' in document.body;
 
   useEffect(() => {
-    if (supportsBeforeMatch && regionRef.current && !isControlled) {
+    if (supportsBeforeMatch && panelRef.current && !isControlled) {
       if (state.isOpen) {
         // @ts-ignore
-        regionRef.current.hidden = undefined;
+        panelRef.current.hidden = undefined;
       } else {
         // @ts-ignore
-        regionRef.current.hidden = 'until-found';
+        panelRef.current.hidden = 'until-found';
         // @ts-ignore
-        regionRef.current.onbeforematch = () => {
+        panelRef.current.onbeforematch = () => {
           state.open();
         };
       }
     }
-  }, [isControlled, props.isOpen, regionRef, state, supportsBeforeMatch]);
+  }, [isControlled, panelRef, props.isOpen, state, supportsBeforeMatch]);
 
   return {
     buttonProps: {
@@ -74,7 +76,6 @@ export function useAccordionItem(props: AccordionItemAriaProps, state: Accordion
       isDisabled: isDisabled
     },
     regionProps: {
-      ref: regionRef,
       id: regionId,
       role,
       'aria-labelledby': buttonId,

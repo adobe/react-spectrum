@@ -16,7 +16,8 @@ import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
 import {HoverEvents} from 'react-aria';
-import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import {mergeRefs, useObjectRef} from '@react-aria/utils';
+import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
 export interface AccordionItemProps extends Omit<AccordionItemAriaProps, 'children'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
 
@@ -51,7 +52,8 @@ export const AccordionItemContext = createContext<ContextValue<AccordionItemProp
 export const AccordionItemStateContext = createContext<AccordionItemState | null>(null);
 
 interface InternalAccordionContextValue {
-  regionProps: DOMAttributes<HTMLElement>
+  regionProps: DOMAttributes<HTMLElement>,
+  panelRef: React.RefObject<HTMLElement>
 }
 
 const InternalAccordionContext = createContext<InternalAccordionContextValue | null>(null);
@@ -59,7 +61,8 @@ const InternalAccordionContext = createContext<InternalAccordionContextValue | n
 function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, AccordionItemContext);
   let state = useAccordionItemState(props);
-  let {buttonProps, regionProps} = useAccordionItem(props, state);
+  let panelRef = useRef(null);
+  let {buttonProps, regionProps} = useAccordionItem({...props, panelRef}, state);
 
   let renderProps = useRenderProps({
     ...props,
@@ -79,7 +82,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
             trigger: buttonProps
           }
         }],
-        [InternalAccordionContext, {regionProps}],
+        [InternalAccordionContext, {regionProps, panelRef}],
         [AccordionItemStateContext, state]
       ]}>
       <div
@@ -97,8 +100,8 @@ interface AccordionPanelProps {
   children: ReactNode
 }
 
-function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {regionProps} = useContext(InternalAccordionContext)!;
+function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElement>) {
+  let {regionProps, panelRef} = useContext(InternalAccordionContext)!;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-AccordionPanel',
@@ -106,8 +109,9 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLDivEle
       // TODO: add more values?
     }
   });
+  let mergedRef = useObjectRef(mergeRefs(panelRef, ref));
   return (
-    <div ref={ref} {...renderProps} {...regionProps}>
+    <div ref={mergedRef} {...renderProps} {...regionProps}>
       {props.children}
     </div>
   );
