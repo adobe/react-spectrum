@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/table",
-  "version": "3.12.1",
+  "version": "3.12.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,9 +24,9 @@
   "dependencies": {
     "@react-stately/collections": "^3.10.9",
     "@react-stately/flags": "^3.0.3",
-    "@react-stately/grid": "^3.9.1",
-    "@react-stately/selection": "^3.16.1",
-    "@react-stately/utils": "^3.10.2",
+    "@react-stately/grid": "^3.9.2",
+    "@react-stately/selection": "^3.16.2",
+    "@react-stately/utils": "^3.10.3",
     "@react-types/grid": "^3.2.8",
     "@react-types/shared": "^3.24.1",
     "@react-types/table": "^3.10.1",

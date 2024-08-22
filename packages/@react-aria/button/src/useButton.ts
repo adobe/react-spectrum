@@ -55,7 +55,6 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     onPressEnd,
     onPressUp,
     onPressChange,
-    // @ts-ignore - undocumented
     preventFocusOnPress,
     // @ts-ignore - undocumented
     allowFocusWhenDisabled,

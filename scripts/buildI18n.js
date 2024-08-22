@@ -10,6 +10,10 @@ function build(scope, dist = scope.slice(1)) {
     let parts = file.split('/');
     let lang = parts.at(-1).slice(0, -5);
     let pkg = parts[1].startsWith('@') ? parts.slice(1, 3).join('/') : parts[1];
+    if (pkg === '@react-spectrum/s2') {
+      continue;
+    }
+  
     let compiled = compileStrings(JSON.parse(fs.readFileSync(file, 'utf8'))).replace('module.exports = ', '');
     let pkgJson = JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf8'));
 

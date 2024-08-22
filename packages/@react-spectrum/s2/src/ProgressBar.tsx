@@ -12,17 +12,19 @@
 
 import {
   ProgressBar as AriaProgressBar,
-  ProgressBarProps as AriaProgressBarProps
+  ProgressBarProps as AriaProgressBarProps,
+  ContextValue
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode} from 'react';
+import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {forwardRef, ReactNode} from 'react';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ProgressBarStyleProps {
   /**
@@ -35,14 +37,24 @@ interface ProgressBarStyleProps {
    * Whether presentation is indeterminate when progress isn't known.
    */
   isIndeterminate?: boolean,
-  /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  /** 
+   * The static color style to apply. Useful when the button appears over a color background.
+   */
+  staticColor?: 'white' | 'black',
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
+  labelPosition?: LabelPosition
+
 }
 
 export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
   /** The content to display as the label. */
   label?: ReactNode
 }
+
+export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, DOMRefValue<HTMLDivElement>>>(null);
 
 // TODO:
 // var(--spectrum-global-dimension-size-1700) -> 136px
@@ -85,6 +97,7 @@ const trackStyles = style({
 const fill = style<ProgressBarStyleProps>({
   height: 'full',
   borderStyle: 'none',
+  borderRadius: 'full',
   backgroundColor: {
     default: 'accent',
     staticColor: {
@@ -112,18 +125,26 @@ const indeterminateAnimation = style({
 });
 
 function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
-  let {label, size = 'M', staticColor, isIndeterminate, UNSAFE_style, UNSAFE_className = ''} = props;
+  [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
+  let {
+    label, size = 'M',
+    staticColor,
+    isIndeterminate,
+    labelPosition = 'top',
+    UNSAFE_style,
+    UNSAFE_className = ''
+  } = props;
   let domRef = useDOMRef(ref);
   return (
     <AriaProgressBar
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({...props, size}, props.styles)}>
+      className={UNSAFE_className + wrapper({...props, size, labelPosition}, props.styles)}>
       {({percentage, valueText}) => (
         <>
-          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>
-          <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>
+          {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
+          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
           <div className={trackStyles({...props})}>
             <div
               className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}

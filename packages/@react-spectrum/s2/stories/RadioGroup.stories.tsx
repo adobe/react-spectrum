@@ -10,8 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  Content,
+  ContextualHelp,
+  Footer,
+  Heading,
+  Link,
+  Radio,
+  RadioGroup,
+  Text
+} from '../src';
 import type {Meta} from '@storybook/react';
-import {Radio, RadioGroup} from '../src';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {
@@ -28,7 +37,7 @@ const meta: Meta<typeof RadioGroup> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <RadioGroup description="A long description to test help text wrapping." errorMessage="A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!" {...args}>
+  <RadioGroup {...args}>
     <Radio value="soccer">Soccer</Radio>
     <Radio value="baseball">Baseball</Radio>
     <Radio value="football" isDisabled>Football</Radio>
@@ -45,3 +54,93 @@ export const LongLabel = (args: any) => (
     <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
   </RadioGroup>
 );
+
+LongLabel.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const ErrorAndDescription = (args: any) => (
+  <RadioGroup {...args}>
+    <Radio value="soccer">Soccer</Radio>
+    <Radio value="baseball">Baseball</Radio>
+    <Radio value="football" isDisabled>Football</Radio>
+    <Radio value="basketball">Basketball</Radio>
+  </RadioGroup>
+);
+
+ErrorAndDescription.args = {
+  label: 'Favorite sport',
+  description: 'A long description to test help text wrapping.',
+  errorMessage: 'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
+};
+
+ErrorAndDescription.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const ContextualHelpExample = (args: any) => (
+  <RadioGroup {...args}>
+    <Radio isDisabled value="soccer">Soccer</Radio>
+    <Radio value="baseball">Baseball</Radio>
+    <Radio value="football">Football</Radio>
+    <Radio value="basketball">Basketball</Radio>
+  </RadioGroup>
+);
+
+ContextualHelpExample.args = {
+  label: 'Favorite sports',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>Sports</Heading>
+      <Content>
+        <Text>
+          Social games we paly to have fun and stay healthy.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Sport"
+          target="_blank">Learn more about sports</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<RadioGroup
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Sports</Heading>
+      <Content>
+        <Text>
+          Social games we paly to have fun and stay healthy.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Sport"
+          target="_blank">Learn more about sports</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+  label="Segment"
+/>
+  <Radio isDisabled value="soccer">Soccer</Radio>
+  <Radio value="baseball">Baseball</Radio>
+  <Radio value="football">Football</Radio>
+  <Radio value="basketball">Basketball</Radio>
+</RadioGroup>`;
+      }
+    }
+  }
+};

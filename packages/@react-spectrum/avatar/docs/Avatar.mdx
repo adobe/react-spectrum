@@ -72,7 +72,7 @@ Sizes can either be one of the predefined avatar size variables, or a custom siz
 ```tsx example
 <Flex gap="size-100" wrap>
   {[50, 75, 100, 200, 300, 400, 500, 600, 700].map(size => (
-    <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size={`avatar-size-${size}`} />
+    <Avatar key={size} src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size={`avatar-size-${size}`} />
   ))}
   <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="avatar with custom size" size={50} />
 </Flex>

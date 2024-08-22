@@ -5,6 +5,7 @@ import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
+import {withProviderSwitcher} from './custom-addons/provider';
 import './global.css';
 
 const channel = addons.getChannel();
@@ -62,6 +63,12 @@ const preview = {
         brandTitle: 'React Spectrum - Spectrum 2 Preview',
         brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
       }
+    },
+    options: {
+      storySort: {
+        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Illustrations', 'Migrating', 'Release Notes'],
+        method: 'alphabetical'
+      }  
     }
   },
   argTypes: {
@@ -81,9 +88,6 @@ const preview = {
 };
 
 export const parameters = {
-  options: {
-    storySort: (a: any, b: any) => a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
-  },
   a11y: {
     config: {
       rules: [
@@ -96,5 +100,11 @@ export const parameters = {
   },
   layout: 'fullscreen',
 };
+
+
+
+export const decorators = [
+  withProviderSwitcher
+];
 
 export default preview;
