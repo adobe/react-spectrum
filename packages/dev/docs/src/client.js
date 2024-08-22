@@ -29,7 +29,7 @@ let title = document.querySelector('h1');
 
 // Size the title to fit the available space.
 function updateTitleFontSize() {
-  let fontSize = 0;
+  let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
 
   // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
   let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
@@ -46,7 +46,7 @@ function updateTitleFontSize() {
   }
 
   // Reduce the font size until it doesn't overflow.
-  while (fontSize > 10 && title.scrollWidth > title.clientWidth) {
+  while (fontSize > 10 && title.scrollWidth > title.clientWidth + 1) {
     fontSize--;
     title.style.fontSize = fontSize + 'px';
   }
