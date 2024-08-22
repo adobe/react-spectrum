@@ -66,7 +66,6 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabContext = createContext<TabsProps | null>(null);
 
 const tabPanel = style({
   marginTop: 4,
