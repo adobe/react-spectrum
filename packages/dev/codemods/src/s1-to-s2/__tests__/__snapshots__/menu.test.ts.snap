@@ -2,7 +2,6 @@
 
 exports[`Dynamic - Renames Item to MenuItem with Submenu, Section to MenuSection 1`] = `
 "import { MenuItem, MenuSection, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react-spectrum/s2";
-import { Item, Section } from '@adobe/react-spectrum';
 const items = [
   { id: 'copy', name: 'Copy' },
   { id: 'cut', name: 'Cut' },
@@ -68,7 +67,6 @@ const items = [
 
 exports[`Dynamic - Renames key to id 1`] = `
 "import { MenuItem, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 const items = [
   { key: 'copy', name: 'Copy' },
   { key: 'cut', name: 'Cut' },
@@ -164,8 +162,6 @@ exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
   Header,
   Heading,
 } from "@react-spectrum/s2";
-
-import { Item, Section } from '@adobe/react-spectrum';
 <div>
   <MenuTrigger>
     <Button>Edit</Button>
@@ -199,8 +195,6 @@ exports[`Static - Renames key to id 1`] = `
   Header,
   Heading,
 } from "@react-spectrum/s2";
-
-import { Item, Section } from '@adobe/react-spectrum';
 <div>
   <MenuTrigger>
     <Button>Edit</Button>
