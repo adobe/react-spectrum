@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Briefcase_L from './S2_lin_briefcase_160.svg';
-import Briefcase_M from './S2_lin_briefcase_96.svg';
-import Briefcase_S from './S2_lin_briefcase_48.svg';
+import Briefcase_L from 'illustration:./S2_lin_briefcase_160.svg';
+import Briefcase_M from 'illustration:./S2_lin_briefcase_96.svg';
+import Briefcase_S from 'illustration:./S2_lin_briefcase_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

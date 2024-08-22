@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Pin_L from './S2_lin_pin_160.svg';
-import Pin_M from './S2_lin_pin_96.svg';
-import Pin_S from './S2_lin_pin_48.svg';
+import Pin_L from 'illustration:./S2_lin_pin_160.svg';
+import Pin_M from 'illustration:./S2_lin_pin_96.svg';
+import Pin_S from 'illustration:./S2_lin_pin_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Pin(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

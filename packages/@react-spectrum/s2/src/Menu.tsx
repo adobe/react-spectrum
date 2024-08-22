@@ -40,7 +40,7 @@ import {HeaderContext, HeadingContext, ImageContext, KeyboardContext, Text, Text
 import {IconContext} from './Icon'; // chevron right removed??
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria';
+import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
@@ -440,6 +440,7 @@ export function MenuItem(props: MenuItemProps) {
   let isLink = props.href != null;
   let {size} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {direction} = useLocale();
   return (
     <AriaMenuItem
       {...props}
@@ -478,7 +479,19 @@ export function MenuItem(props: MenuItemProps) {
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
               {isLink && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
-              {renderProps.hasSubmenu && <div slot="descriptor" className={descriptor}><ChevronRightIcon size={size} /></div>}
+              {renderProps.hasSubmenu && (
+                <div slot="descriptor" className={descriptor}>
+                  <ChevronRightIcon
+                    size={size}
+                    className={style({
+                      scale: {
+                        direction: {
+                          rtl: -1
+                        }
+                      }
+                    })({direction})} />
+                </div>
+              )}
             </Provider>
           </>
         );

@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Server_L from './S2_lin_server_160.svg';
-import Server_M from './S2_lin_server_96.svg';
-import Server_S from './S2_lin_server_48.svg';
+import Server_L from 'illustration:./S2_lin_server_160.svg';
+import Server_M from 'illustration:./S2_lin_server_96.svg';
+import Server_S from 'illustration:./S2_lin_server_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Server(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

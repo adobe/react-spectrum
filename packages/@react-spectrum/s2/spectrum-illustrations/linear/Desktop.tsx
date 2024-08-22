@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Desktop_L from './S2_lin_desktop_160.svg';
-import Desktop_M from './S2_lin_desktop_96.svg';
-import Desktop_S from './S2_lin_desktop_48.svg';
+import Desktop_L from 'illustration:./S2_lin_desktop_160.svg';
+import Desktop_M from 'illustration:./S2_lin_desktop_96.svg';
+import Desktop_S from 'illustration:./S2_lin_desktop_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

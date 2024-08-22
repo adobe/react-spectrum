@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Filmstrip_L from './S2_lin_filmstrip_160.svg';
-import Filmstrip_M from './S2_lin_filmstrip_96.svg';
-import Filmstrip_S from './S2_lin_filmstrip_48.svg';
+import Filmstrip_L from 'illustration:./S2_lin_filmstrip_160.svg';
+import Filmstrip_M from 'illustration:./S2_lin_filmstrip_96.svg';
+import Filmstrip_S from 'illustration:./S2_lin_filmstrip_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

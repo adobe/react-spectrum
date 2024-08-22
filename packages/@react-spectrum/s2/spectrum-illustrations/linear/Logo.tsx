@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Logo_L from './S2_lin_logo_160.svg';
-import Logo_M from './S2_lin_logo_96.svg';
-import Logo_S from './S2_lin_logo_48.svg';
+import Logo_L from 'illustration:./S2_lin_logo_160.svg';
+import Logo_M from 'illustration:./S2_lin_logo_96.svg';
+import Logo_S from 'illustration:./S2_lin_logo_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Logo(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

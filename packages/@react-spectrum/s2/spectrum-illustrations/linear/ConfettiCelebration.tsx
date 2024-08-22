@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import ConfettiCelebration_L from './S2_lin_confettiCelebration_160.svg';
-import ConfettiCelebration_M from './S2_lin_confettiCelebration_96.svg';
-import ConfettiCelebration_S from './S2_lin_confettiCelebration_48.svg';
+import ConfettiCelebration_L from 'illustration:./S2_lin_confettiCelebration_160.svg';
+import ConfettiCelebration_M from 'illustration:./S2_lin_confettiCelebration_96.svg';
+import ConfettiCelebration_S from 'illustration:./S2_lin_confettiCelebration_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

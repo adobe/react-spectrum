@@ -19,9 +19,11 @@ import {createContext, forwardRef, useContext, useRef} from 'react';
 import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {
@@ -38,16 +40,17 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
 export const RangeSliderContext = createContext<ContextValue<RangeSliderProps, FocusableRefValue<HTMLDivElement>>>(null);
 
 function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
-    labelPosition = 'top', 
+    labelPosition = 'top',
     size = 'M',
     isEmphasized,
     trackStyle = 'thin',
     thumbStyle = 'default'
-  } = props; 
+  } = props;
   let lowerThumbRef = useRef(null);
   let upperThumbRef = useRef(null);
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
@@ -69,9 +72,22 @@ function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>)
         {({state, isDisabled}) => (
           <>
             <div className={upperTrack({isDisabled, trackStyle})} />
-            <div style={{width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`, [cssDirection]: `${state.getThumbPercent(0) * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
-            {/* TODO: translations */}
-            <SliderThumb className={thumbContainer} index={0} name={props.startName} aria-label="minimum" ref={lowerThumbRef} style={(renderProps) => pressScale(lowerThumbRef, {transform: 'translate(-50%, -50%)', zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined})({...renderProps, isPressed: renderProps.isDragging})}>
+            <div
+              style={{
+                width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`,
+                [cssDirection]: `${state.getThumbPercent(0) * 100}%`
+              }}
+              className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+            <SliderThumb
+              className={thumbContainer}
+              index={0}
+              name={props.startName}
+              aria-label={stringFormatter.format('slider.minimum')}
+              ref={lowerThumbRef}
+              style={(renderProps) => pressScale(lowerThumbRef, {
+                transform: 'translate(-50%, -50%)',
+                zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined
+              })({...renderProps, isPressed: renderProps.isDragging})}>
               {(renderProps) => (
                 <div className={thumbHitArea({size})}>
                   <div
@@ -83,7 +99,15 @@ function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>)
                 </div>
               )}
             </SliderThumb>
-            <SliderThumb  className={thumbContainer} index={1} name={props.endName} aria-label="maximum" ref={upperThumbRef} style={(renderProps) => pressScale(upperThumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
+            <SliderThumb
+              className={thumbContainer}
+              index={1}
+              name={props.endName}
+              aria-label={stringFormatter.format('slider.maximum')}
+              ref={upperThumbRef}
+              style={(renderProps) => pressScale(upperThumbRef, {
+                transform: 'translate(-50%, -50%)'
+              })({...renderProps, isPressed: renderProps.isDragging})}>
               {(renderProps) => (
                 <div className={thumbHitArea({size})}>
                   <div

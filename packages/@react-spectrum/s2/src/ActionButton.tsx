@@ -11,14 +11,14 @@
  */
 
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, Text} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
-import {TextContext} from './Content';
+import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

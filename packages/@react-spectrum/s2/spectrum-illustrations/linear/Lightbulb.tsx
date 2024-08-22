@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Lightbulb_L from './S2_lin_lightbulb_160.svg';
-import Lightbulb_M from './S2_lin_lightbulb_96.svg';
-import Lightbulb_S from './S2_lin_lightbulb_48.svg';
+import Lightbulb_L from 'illustration:./S2_lin_lightbulb_160.svg';
+import Lightbulb_M from 'illustration:./S2_lin_lightbulb_96.svg';
+import Lightbulb_S from 'illustration:./S2_lin_lightbulb_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Lightbulb(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import GraphBarChart_L from './S2_lin_graphBarChart_160.svg';
-import GraphBarChart_M from './S2_lin_graphBarChart_96.svg';
-import GraphBarChart_S from './S2_lin_graphBarChart_48.svg';
+import GraphBarChart_L from 'illustration:./S2_lin_graphBarChart_160.svg';
+import GraphBarChart_M from 'illustration:./S2_lin_graphBarChart_96.svg';
+import GraphBarChart_S from 'illustration:./S2_lin_graphBarChart_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

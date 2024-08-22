@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Handshake_L from './S2_lin_handshake_160.svg';
-import Handshake_M from './S2_lin_handshake_96.svg';
-import Handshake_S from './S2_lin_handshake_48.svg';
+import Handshake_L from 'illustration:./S2_lin_handshake_160.svg';
+import Handshake_M from 'illustration:./S2_lin_handshake_96.svg';
+import Handshake_S from 'illustration:./S2_lin_handshake_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
