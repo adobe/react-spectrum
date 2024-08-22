@@ -1128,9 +1128,10 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
     shouldSelectOnPressUp: isTableDraggable
   }, state, ref);
 
-  let isDisabled = !allowsSelection && !hasAction;
+  let isDisabled = state.selectionManager.isDisabled(item.key);
+  let isInteractive = !isDisabled && (hasAction || allowsSelection || isTableDraggable);
   let isDroppable = isTableDroppable && !isDisabled;
-  let {pressProps, isPressed} = usePress({isDisabled});
+  let {pressProps, isPressed} = usePress({isDisabled: !isInteractive});
 
   // The row should show the focus background style when any cell inside it is focused.
   // If the row itself is focused, then it should have a blue focus indicator on the left.
@@ -1139,7 +1140,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  let {hoverProps, isHovered} = useHover({isDisabled: !isInteractive});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
@@ -1266,7 +1267,7 @@ function TableHeaderRow({item, children, layoutInfo, parent, ...props}) {
 function TableDragCell({cell}) {
   let ref = useRef(undefined);
   let {state, isTableDraggable} = useTableContext();
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
@@ -1301,7 +1302,10 @@ function TableDragCell({cell}) {
 function TableCheckboxCell({cell}) {
   let ref = useRef(undefined);
   let {state} = useTableContext();
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  // The TableCheckbox should always render its disabled status if the row is disabled, regardless of disabledBehavior,
+  // but the cell itself should not render its disabled styles if disabledBehavior="selection" because the row might have actions on it.
+  let isSelectionDisabled = state.disabledKeys.has(cell.parentKey);
+  let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
@@ -1332,7 +1336,7 @@ function TableCheckboxCell({cell}) {
           <Checkbox
             {...checkboxProps}
             isEmphasized
-            isDisabled={isDisabled}
+            isDisabled={isSelectionDisabled}
             UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
         }
       </div>
@@ -1346,7 +1350,7 @@ function TableCell({cell}) {
   let isExpandableTable = 'expandedKeys' in state;
   let ref = useRef(undefined);
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true

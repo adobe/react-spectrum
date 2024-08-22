@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
@@ -37,8 +37,16 @@ interface ProgressBarStyleProps {
    * Whether presentation is indeterminate when progress isn't known.
    */
   isIndeterminate?: boolean,
-  /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  /** 
+   * The static color style to apply. Useful when the button appears over a color background.
+   */
+  staticColor?: 'white' | 'black',
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
+  labelPosition?: LabelPosition
+
 }
 
 export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
@@ -89,6 +97,7 @@ const trackStyles = style({
 const fill = style<ProgressBarStyleProps>({
   height: 'full',
   borderStyle: 'none',
+  borderRadius: 'full',
   backgroundColor: {
     default: 'accent',
     staticColor: {
@@ -117,17 +126,24 @@ const indeterminateAnimation = style({
 
 function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
-  let {label, size = 'M', staticColor, isIndeterminate, UNSAFE_style, UNSAFE_className = ''} = props;
+  let {
+    label, size = 'M',
+    staticColor,
+    isIndeterminate,
+    labelPosition = 'top',
+    UNSAFE_style,
+    UNSAFE_className = ''
+  } = props;
   let domRef = useDOMRef(ref);
   return (
     <AriaProgressBar
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({...props, size}, props.styles)}>
+      className={UNSAFE_className + wrapper({...props, size, labelPosition}, props.styles)}>
       {({percentage, valueText}) => (
         <>
-          {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
+          {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
           {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
           <div className={trackStyles({...props})}>
             <div
