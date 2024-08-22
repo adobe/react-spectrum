@@ -11,14 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton, Content, Heading, IllustratedMessage, Link} from '../src';
 import {categorizeArgTypes} from './utils';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
-import {ActionButton, Content, Heading, IllustratedMessage, Link} from '../src';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList, useListData} from '@react-stately/data';
+import {useAsyncList} from '@react-stately/data';
 import {useState} from 'react';
 
 
@@ -28,6 +28,9 @@ const meta: Meta<typeof Table> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
+  args: {
+    onLoadMore: null
+  },
   argTypes: {
     onAction: {
       control: 'select',
@@ -516,11 +519,11 @@ function AsyncLoadingExample(props) {
       };
     }
   });
-
+  // TODO: for some reason this story rerenders a lot, digging
   return (
     <div>
       <ActionButton styles={style({marginBottom: 8})} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <Table {...props} sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: '[1000px]', height: '[400px]'})}>
+      <Table {...props} aria-label="Reddit table" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: '[1000px]', height: '[400px]'})}>
         <TableHeader columns={columns}>
           {(column) => (
             <Column id={column.id} {...column}>
@@ -528,7 +531,7 @@ function AsyncLoadingExample(props) {
             </Column>
           )}
         </TableHeader>
-        <TableBody items={list.items} >
+        <TableBody items={list.items}>
           {item =>
             (<Row id={item.data.id} columns={columns}>
               {(column) => {
