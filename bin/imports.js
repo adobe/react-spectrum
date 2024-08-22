@@ -18,7 +18,9 @@ const substrings = ['-', '+'];
 
 const devDependencies = new Set([
   '@adobe/spectrum-css-temp',
-  '@react-spectrum/style-macro-s1'
+  '@react-spectrum/style-macro-s1',
+  '@parcel/macros',
+  '@adobe/spectrum-tokens'
 ]);
 
 module.exports = {

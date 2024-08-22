@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
-// @ts-ignore
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
-// @ts-ignore
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';

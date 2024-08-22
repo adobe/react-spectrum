@@ -346,6 +346,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       ...menuTriggerProps,
       ...triggerLabelProps,
       excludeFromTabOrder: true,
+      preventFocusOnPress: true,
       onPress,
       onPressStart,
       isDisabled: isDisabled || isReadOnly

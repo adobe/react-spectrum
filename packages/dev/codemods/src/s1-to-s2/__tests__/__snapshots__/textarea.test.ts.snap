@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes isQuiet 1`] = `
+"import { TextArea } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <TextArea />
+  <TextArea />
+  <TextArea />
+  <TextArea />
+  <TextArea />
+  <TextArea // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
+
+exports[`Removes placeholder 1`] = `
+"import { TextArea } from "@react-spectrum/s2";
+let placeholder = 'is this actually removed?';
+let props = {placeholder: 'is this actually removed?'};
+<div>
+  <TextArea />
+  <TextArea />
+  <TextArea />
+  <TextArea // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { TextArea } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <TextArea isInvalid />
+  <TextArea />
+  <TextArea // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState} />
+  <TextArea // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
