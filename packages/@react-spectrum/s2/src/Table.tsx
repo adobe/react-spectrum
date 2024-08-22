@@ -763,7 +763,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
 
 function ResizerIndicator({isFocusVisible, isHovered, isResizing, isInResizeMode}) {
   let state = useContext(ResizableTableContainerContext);
-  console.log('gaw', isInResizeMode)
+
   return (
     <div style={{height: isResizing ? state?.tableHeight : '100%'}} className={resizerHandle({isFocusVisible, isHovered: isHovered || isInResizeMode, isResizing})} />
   );
