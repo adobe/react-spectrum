@@ -53,6 +53,7 @@ export function useAccordionItem(props: AccordionItemAriaProps, state: Accordion
   let supportsBeforeMatch = 'onbeforematch' in document.body;
 
   useEffect(() => {
+    // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && panelRef.current && !isControlled) {
       if (state.isOpen) {
         // @ts-ignore
