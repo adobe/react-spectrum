@@ -25,13 +25,13 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface BadgeStyleProps {
   /**
    * The size of the badge.
-   * 
+   *
    * @default 'S'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The variant changes the background color of the badge. When badge has a semantic meaning, they should use the variant for semantic colors.
-   * 
+   *
    * @default 'neutral'
    */
   variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
@@ -169,7 +169,7 @@ const badge = style<BadgeStyleProps>({
           neutral: 'gray-700',
           positive: 'positive-700',
           notice: 'notice-700',
-          negative: 'negative-800',
+          negative: 'negative-800'
         }
       }
     }
