@@ -106,7 +106,7 @@ interface S2TableProps {
 export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, StyleProps, S2TableProps {
 }
 
-let InternalTableContext = createContext<TableProps & {columnsResizable?: boolean, scale?: Scale, layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableProps & {scale?: Scale, layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
 
 const tableWrapper = style({
   width: 'full'
@@ -266,7 +266,6 @@ export function Table(props: TableProps) {
     });
   }, [overflowMode, density, scale]);
 
-  let columnsResizable = !!(propsOnResize || propsOnResizeEnd || propsOnResizeStart);
   // Starts when the user selects resize from the menu, ends when resizing ends
   // used to control the visibility of the resizer Nubbin
   let [isInResizeMode, setIsInResizeMode] = useState(false);
@@ -284,12 +283,11 @@ export function Table(props: TableProps) {
     overflowMode,
     selectionStyle,
     loadingState,
-    columnsResizable,
     isInResizeMode,
     setIsInResizeMode,
     scale,
     layout
-  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, columnsResizable, scale, layout, isInResizeMode, setIsInResizeMode]);
+  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, scale, layout, isInResizeMode, setIsInResizeMode]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef(null);
@@ -299,51 +297,28 @@ export function Table(props: TableProps) {
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
-  let baseTable = (
-    <UNSTABLE_Virtualizer layout={layout}>
-      <InternalTableContext.Provider value={context}>
-        <RACTable
-          ref={scrollRef}
-          style={UNSAFE_style}
-          className={renderProps => (UNSAFE_className || '') + table({
-            ...renderProps,
-            isQuiet
-          }, styles)}
-          selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-          onRowAction={onAction}
-          {...otherProps} />
-      </InternalTableContext.Provider>
-    </UNSTABLE_Virtualizer>
+  return (
+    <ResizableTableContainer
+      ref={scrollRef}
+      onResize={propsOnResize}
+      onResizeEnd={onResizeEnd}
+      onResizeStart={onResizeStart}
+      className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
+      style={UNSAFE_style}>
+      <UNSTABLE_Virtualizer layout={layout}>
+        <InternalTableContext.Provider value={context}>
+          <RACTable
+            className={renderProps => table({
+              ...renderProps,
+              isQuiet
+            })}
+            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+            onRowAction={onAction}
+            {...otherProps} />
+        </InternalTableContext.Provider>
+      </UNSTABLE_Virtualizer>
+    </ResizableTableContainer>
   );
-
-  // TODO: for the resizer line indicator, can't do it at this level with the ResizableTableContainerContext because
-  // that just gives the actual useTableColumnResizeState hook but I need the actual caluclated layout state
-  if (columnsResizable) {
-    baseTable = (
-      <ResizableTableContainer
-        ref={scrollRef}
-        onResize={propsOnResize}
-        onResizeEnd={onResizeEnd}
-        onResizeStart={onResizeStart}
-        className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
-        style={UNSAFE_style}>
-        <UNSTABLE_Virtualizer layout={layout}>
-          <InternalTableContext.Provider value={context}>
-            <RACTable
-              className={renderProps => table({
-                ...renderProps,
-                isQuiet
-              })}
-              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-              onRowAction={onAction}
-              {...otherProps} />
-          </InternalTableContext.Provider>
-        </UNSTABLE_Virtualizer>
-      </ResizableTableContainer>
-    );
-  }
-
-  return baseTable;
 }
 
 const centeredWrapper = style({
@@ -495,10 +470,10 @@ export interface ColumnProps extends RACColumnProps {
 }
 
 export function Column(props: ColumnProps) {
-  let {isQuiet, columnsResizable} = useContext(InternalTableContext);
+  let {isQuiet} = useContext(InternalTableContext);
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
   let {allowsResizing, children, align = 'start'} = props;
-  let isColumnResizable = columnsResizable && allowsResizing;
+  let isColumnResizable = allowsResizing;
 
   return (
     <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isQuiet, isColumnResizable, align})}>

@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {categorizeArgTypes} from './utils';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
-import {Content, Heading, IllustratedMessage, Link} from '../src';
+import {ActionButton, Content, Heading, IllustratedMessage, Link} from '../src';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import {SortDescriptor} from 'react-aria-components';
@@ -475,4 +475,82 @@ export const ResizingSortableTable = {
     isSortable: true
   },
   name: 'resizing and sortable table'
+};
+
+function AsyncLoadingExample(props) {
+  interface Item {
+    data: {
+      id: string,
+      url: string,
+      title: string
+    }
+  }
+
+  let columns = [
+    {name: 'Score', id: 'score', defaultWidth: 100, allowsResizing: true, allowsSorting: true},
+    {name: 'Title', id: 'title', allowsResizing: true, allowsSorting: true, isRowHeader: true},
+    {name: 'Author', id: 'author', defaultWidth: 200, allowsResizing: true, allowsSorting: true},
+    {name: 'Comments', id: 'num_comments', defaultWidth: 100, allowsResizing: true, allowsSorting: true}
+  ];
+
+  let list = useAsyncList<Item>({
+    getKey: (item) => item.data.id,
+    async load({signal, cursor}) {
+      let url = new URL('https://www.reddit.com/r/upliftingnews.json');
+      if (cursor) {
+        url.searchParams.append('after', cursor);
+      }
+      let res = await fetch(url.toString(), {signal});
+      let json = await res.json();
+      return {items: json.data.children, cursor: json.data.after};
+    },
+    sort({items, sortDescriptor}) {
+      return {
+        items: items.slice().sort((a, b) => {
+          let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <div>
+      <ActionButton styles={style({marginBottom: 8})} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
+      <Table {...props} sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: '[1000px]', height: '[400px]'})}>
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column id={column.id} {...column}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={list.items} >
+          {item =>
+            (<Row id={item.data.id} columns={columns}>
+              {(column) => {
+                return column.id === 'title'
+                  ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                  : <Cell>{item.data[column.id]}</Cell>;
+              }}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+export const ResizingUncontrolledSortableColumns = {
+  render: (args) => <AsyncLoadingExample {...args} />,
+  args: {
+    ...Example.args,
+    onResize: action('onResize'),
+    onResizeStart: action('onResizeStart'),
+    onResizeEnd: action('onResizeEnd')
+  },
+  name: 'resizable, sortable, reddit example'
 };
