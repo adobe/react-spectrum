@@ -25,7 +25,7 @@ export const bar = () => ({
     labelPosition: {
       top: [
         'label value',
-        'bar bar',
+        'bar bar'
       ],
       side: [
         'label bar value'
