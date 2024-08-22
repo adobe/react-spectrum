@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ValidationResult} from "@react-types/shared";
-import {filterDOMProps} from "@react-aria/utils";
+import {DOMProps, ValidationResult} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 import {Text} from './Text';
