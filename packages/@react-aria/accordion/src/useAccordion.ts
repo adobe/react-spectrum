@@ -23,48 +23,6 @@ export interface AccordionAria {
   accordionProps: DOMAttributes
 }
 
-export interface AccordionItemAriaProps<T> {
-  item: Node<T>
-}
-
-export interface AccordionItemAria {
-  /** Props for the accordion item button. */
-  buttonProps: ButtonHTMLAttributes<HTMLElement>,
-  /** Props for the accordion item content element. */
-  regionProps: DOMAttributes
-}
-
-export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): AccordionItemAria {
-  let {item} = props;
-  let buttonId = useId();
-  let regionId = useId();
-  let isDisabled = state.disabledKeys.has(item.key);
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    key: item.key,
-    ref
-  });
-  let {buttonProps} = useButton(mergeProps(itemProps as any, {
-    id: buttonId,
-    elementType: 'button',
-    isDisabled,
-    onPress: () => state.toggleKey(item.key)
-  }), ref);
-  let isExpanded = state.expandedKeys.has(item.key);
-  return {
-    buttonProps: {
-      ...buttonProps,
-      'aria-expanded': isExpanded,
-      'aria-controls': isExpanded ? regionId : undefined
-    },
-    regionProps: {
-      id: regionId,
-      role: 'region',
-      'aria-labelledby': buttonId
-    }
-  };
-}
-
 export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement | null>): AccordionAria {
   let {listProps} = useSelectableList({
     ...props,
