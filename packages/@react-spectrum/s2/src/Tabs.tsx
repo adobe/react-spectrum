@@ -21,7 +21,9 @@ import {
     Tab as RACTab,
     TabList as RACTabList,
     Tabs as RACTabs,
-    TabListStateContext} from 'react-aria-components';
+    TabListStateContext,
+    useSlottedContext
+  } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
@@ -121,7 +123,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density} = useContext(InternalTabContext) ?? {};
+  let {density} = useSlottedContext(TabsContext) ?? {};
 
   return (
     <RACTab
@@ -174,7 +176,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useContext(InternalTabContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
@@ -350,8 +352,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
       <Provider
         values={[
-          [TabsContext, {density, isDisabled, disabledKeys, orientation}],
-          [InternalTabContext, {density}]
+          [TabsContext, {density, isDisabled, disabledKeys, orientation}]
         ]}>
         {props.children}
       </Provider>
