@@ -3621,31 +3621,67 @@ export let tableTests = () => {
       </TableView>
     );
 
-    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
+    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', async function () {
       let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeTruthy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
 
       rerender(tree, <TableWithBreadcrumbs selectionMode="single" />);
       row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeTruthy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
     });
 
-    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none" and disabledBehavior="all"', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledBehavior="all" selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeFalsy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeFalsy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered and selection mode is "none", disabledBehavior="selection" and has a action', async function () {
+      let tree = render(<TableWithBreadcrumbs onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered, disabledBehavior="selection", row is disabled and has a action', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered, has a action, but is disabled and disabledBehavior="all"', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="all" selectionMode="multiple" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeFalsy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
     });
   });
 
