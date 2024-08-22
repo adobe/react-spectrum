@@ -292,7 +292,7 @@ function getDiff(pair) {
 ${joinedResult}
 \`\`\``;
     }
-    diffs.push({iname, result: joinedResult, simplifiedName});
+    diffs.push({iname, result: joinedResult, simplifiedName: `${name.replace('/dist/api.json', '')}:${simplifiedName}`});
   });
 
   return {diffs, name};
@@ -535,9 +535,20 @@ function rebuildInterfaces(json) {
         let name = property.name;
         let optional = property.optional;
         let defaultVal = property.default;
-        let value = processType(property.value);
-        // TODO: what to do with defaultVal and optional
-        funcInterface[name] = {optional, defaultVal, value};
+        // this needs to handle types like spreads, but need to build that into the build API's first
+        if (!property.value) {
+          name = 'UNKNOWN';
+          let i = 0;
+          while (funcInterface[name]) {
+            i++;
+            name = 'UNKNOWN' + String(i);
+          }
+          funcInterface[name] = {optional, defaultVal, value: property.type};
+        } else {
+          let value = processType(property.value);
+          // TODO: what to do with defaultVal and optional
+          funcInterface[name] = {optional, defaultVal, value};
+        }
       });
       let name = item.name ?? key;
       if (item.typeParameters?.length > 0) {

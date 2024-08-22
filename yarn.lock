@@ -21077,6 +21077,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-mingw@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "is-mingw@npm:2.0.0"
+  checksum: 10c0/c1a5a140b611d8286901155ad53729426ecf384b397918edb0d54547b5f84e3ac7c831725f87f1538919b50c7e3065cdf386b28d234ee81c9ca0066b1d46ad77
+  languageName: node
+  linkType: hard
+
 "is-nan@npm:^1.3.2":
   version: 1.3.2
   resolution: "is-nan@npm:1.3.2"
@@ -29090,6 +29097,7 @@ __metadata:
     glob-promise: "npm:^6.0.5"
     identity-obj-proxy: "npm:^3.0.0"
     ignore-styles: "npm:^5.0.1"
+    is-mingw: "npm:^2.0.0"
     jest: "npm:^29.5.0"
     jest-environment-jsdom: "npm:^29.5.0"
     jest-junit: "npm:^15.0.0"
@@ -29123,7 +29131,7 @@ __metadata:
     sharp: "npm:^0.31.2"
     sinon: "npm:^7.3.1"
     storybook: "npm:^7.6.19"
-    storybook-builder-parcel: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master"
+    storybook-builder-parcel: "patch:storybook-builder-parcel@https%3A//gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#~/.yarn/patches/storybook-builder-parcel-https-7ea26540e8.patch"
     storybook-dark-mode: "npm:^3.0.3"
     storybook-react-parcel: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-react-parcel?master"
     tailwind-variants: "npm:^0.1.18"
@@ -31334,6 +31342,19 @@ __metadata:
     "@parcel/core": ^2.0.0
     react: "*"
   checksum: 10c0/3802d0f850c7c8319f4c8802bedecae7e23fcef8b055a2a7c9b1e3cccfa3584124039016115b459abdbfa9356a838f2ae84bd88add5c18846200fd2388335e0e
+  languageName: node
+  linkType: hard
+
+"storybook-builder-parcel@patch:storybook-builder-parcel@https%3A//gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#~/.yarn/patches/storybook-builder-parcel-https-7ea26540e8.patch":
+  version: 0.0.0
+  resolution: "storybook-builder-parcel@patch:storybook-builder-parcel@https%3A//gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#~/.yarn/patches/storybook-builder-parcel-https-7ea26540e8.patch::version=0.0.0&hash=08ad7e"
+  dependencies:
+    "@storybook/core-common": "npm:7.6.4"
+    http-proxy-middleware: "npm:^2.0.6"
+  peerDependencies:
+    "@parcel/core": ^2.0.0
+    react: "*"
+  checksum: 10c0/565481429f72b5d9ab24bc5929c3fe048e44137125ae69fc5002f8c96bc5cefa736bff09450ed3aa37e165991742b44042ae150556cf66c6796066401f0696cb
   languageName: node
   linkType: hard
 
