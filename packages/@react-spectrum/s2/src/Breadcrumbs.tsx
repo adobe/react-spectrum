@@ -127,7 +127,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<H
   );
 }
 
-let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: Pick<BreadcrumbsProps<unknown>, 'onAction'>}) => {
+let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProps<unknown>['onAction']}) => {
   let {items, onAction} = props;
   let {direction} = useLocale();
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
@@ -355,7 +355,7 @@ export {_Breadcrumb as Breadcrumb};
 // Context for passing the count for the custom renderer
 let CollapseContext = createContext<{
   containerRef: RefObject<HTMLOListElement | null>,
-  onAction: Pick<BreadcrumbsProps<unknown>, 'onAction'>
+  onAction: BreadcrumbsProps<unknown>['onAction']
 } | null>(null);
 
 function CollapsingCollection({children, containerRef, onAction}) {
