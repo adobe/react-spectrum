@@ -343,6 +343,26 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Code>View</Code> to be a <Code>div</Code> and apply styles using the style macro</li>
         </ul>
 
+        <H3>Well</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>
+            Update <Code>Well</Code> to be a <Code>div</Code> and apply styles using the style macro:
+            <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+              <div>{`<div className={style({`}</div>
+              <div>{`  display: 'block',`}</div>
+              <div>{`  textAlign: 'start',`}</div>
+              <div>{`  padding: 16,`}</div>
+              <div>{`  minWidth: 160,`}</div>
+              <div>{`  marginTop: 4,`}</div>
+              <div>{`  borderWidth: 1,`}</div>
+              <div>{`  borderRadius: 'sm',`}</div>
+              <div>{`  borderStyle: 'solid',`}</div>
+              <div>{`  borderColor: 'transparent-black-75'`}</div>
+              <div>{`})} />`}</div>
+            </pre>
+          </li>
+        </ul>
+
         <H2>Style props</H2>
         <P>React Spectrum v3 supported a limited set of <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props">style props</Link> for layout and positioning using Spectrum-defined values. Usage of these should be updated to instead use the <Link href="?path=/docs/style-macro--docs">style macro</Link>.</P>
         <P>Example:</P>
