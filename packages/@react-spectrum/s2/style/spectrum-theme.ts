@@ -466,13 +466,13 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
+      // TODO: deprecated in favor of negative-subtle. What is our process around deprecating colors here?
       'negative-subdued': {
         default: colorToken('negative-subdued-background-color-default'),
         isHovered: colorToken('negative-subdued-background-color-hover'),
         isFocusVisible: colorToken('negative-subdued-background-color-key-focus'),
         isPressed: colorToken('negative-subdued-background-color-down')
       },
-      // Sort of weird to have both subdued and subtle that map to the same color...
       'negative-subtle': colorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
