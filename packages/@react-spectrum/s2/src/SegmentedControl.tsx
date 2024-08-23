@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, FocusEvents, InputDOMProps, ValueBase} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, Radio, RadioGroup, RadioGroupStateContext, RadioProps} from 'react-aria-components';
+import {ContextValue, Provider, Radio, RadioGroup, RadioGroupStateContext, RadioProps, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -21,7 +21,7 @@ import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, Omit<AriaLabelingProps, 'aria-label'> {
+export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, Omit<AriaLabelingProps, 'aria-label'>, SlotProps {
   /**
    * The content to display in the segmented control.
    */
@@ -114,7 +114,7 @@ const controlItem = style({
   zIndex: 2
 }, getAllowedOverrides());
 
-interface InternalSegmentedControlContextProps extends SegmentedControlProps {
+interface InternalSegmentedControlContextProps extends Omit<SegmentedControlProps, 'aria-label'> {
   register?: (value: string) => void
 }
 
@@ -166,7 +166,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 
   // default select the first available item
   let register = useCallback((value: string) => {
-    if (!isRegistered.current) {
+    if (state && !isRegistered.current) {
       isRegistered.current = true;
 
       state.setSelectedValue(value);
@@ -205,7 +205,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
       // let cachedItem = itemRef?.current?.getBoundingClientRect();
 
 
-      if (itemRef.current) {
+      if (slide && itemRef.current) {
         // let finalItem = item.getBoundingClientRect();
 
         // Invert: determine the delta between the first and last bounds of the element
@@ -243,7 +243,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   return (
     <Provider
       values={[
-        [InternalSegmentedControlContext, {register: register, 'aria-label': props['aria-label']}]
+        [InternalSegmentedControlContext, {register: register}]
       ]}>
       {props.children}
       <span style={style} id="animate" className={test} /> 
@@ -268,11 +268,12 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let {register} = useContext(InternalSegmentedControlContext);
+  // @ts-ignore Property 'isDisabled' does not exist on type 'RadioGroupState | null', not sure why it's complaining...
   let {isDisabled: isRadioGroupDisabled} = useContext(RadioGroupStateContext);
 
   useEffect(() => {
     if (!props.isDisabled && !isRadioGroupDisabled) {
-      register(props.value);
+      register?.(props.value);
     }
   }, []);
 
