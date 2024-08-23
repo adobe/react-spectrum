@@ -84,9 +84,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     ':has([slot=icon]:only-child)': 0
   },
   paddingY: 0,
-  aspectRatio: {
-    ':has([slot=icon]:only-child)': 'square'
-  },
   transition: 'default',
   borderStyle: 'solid',
   borderWidth: {
