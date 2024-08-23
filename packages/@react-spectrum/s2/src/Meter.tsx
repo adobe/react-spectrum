@@ -25,8 +25,10 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
-  variant: 'informative' | 'positive' | 'notice' | 'negative',
+  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+   * @default 'informative'
+   */
+  variant?: 'informative' | 'positive' | 'notice' | 'negative',
   /**
    * The size of the Meter.
    *
@@ -44,7 +46,7 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
 
 export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const wrapper = style<MeterStyleProps>({
+const wrapper = style({
   ...bar(),
   width: {
     default: 208,
@@ -109,7 +111,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
     styles,
     UNSAFE_className = '',
     UNSAFE_style,
-    variant,
+    variant = 'informative',
     ...groupProps
   } = props;
 
@@ -121,7 +123,8 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       className={UNSAFE_className + wrapper({
         size,
         variant,
-        staticColor
+        staticColor,
+        labelPosition: 'top'
       }, styles)}>
       {({percentage, valueText}) => (
         <>

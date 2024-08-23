@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {ContextValue} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -21,7 +21,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLabel} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingProps {
+export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingProps, SlotProps {
   /** Avatar children of the avatar group. */
   children: ReactNode,
   /** The label for the avatar group. */

@@ -15,18 +15,19 @@ import {
     TabPanel as AriaTabPanel,
     TabPanelProps as AriaTabPanelProps,
     TabProps as AriaTabProps,
-    TabsProps as AriaTabsProps, 
+    TabsProps as AriaTabsProps,
+    ContextValue,
     Provider,
     Tab as RACTab,
     TabList as RACTabList,
     Tabs as RACTabs,
     TabListStateContext,
-    ContextValue,
-    useSlottedContext} from 'react-aria-components';
+    useSlottedContext
+  } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {focusRing, getAllowedOverrides, UnsafeStyles, StylesPropWithHeight, StyleProps} from './style-utils' with {type: 'macro'};
+import {focusRing, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
@@ -40,7 +41,10 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
   children?: ReactNode,
-  /** The amount of space between the tabs. */
+  /**
+   * The amount of space between the tabs.
+   * @default "regular"
+   */
   density?: 'compact' | 'regular'
 }
 
@@ -54,7 +58,7 @@ export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 
   children?: ReactNode
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {  
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
@@ -77,7 +81,7 @@ export function TabPanel(props: TabPanelProps) {
     <AriaTabPanel
       {...props}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + tabPanel(null , props.styles)} />
+      className={(props.UNSAFE_className || '') + tabPanel(null, props.styles)} />
   );
 }
 
@@ -118,7 +122,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density} = useSlottedContext(TabsContext);
+  let {density} = useSlottedContext(TabsContext) ?? {};
 
   return (
     <RACTab
@@ -171,7 +175,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext);
+  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
@@ -191,13 +195,13 @@ export function TabList<T extends object>(props: TabListProps<T>) {
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
       {orientation === 'vertical' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density}/>}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
       <RACTabList
         {...props}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, density})} />
       {orientation === 'horizontal' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density}/>}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
     </div>
   );
 }
@@ -214,7 +218,7 @@ function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKe
         return false;
       }
 
-      testKey = collection.getKeyAfter(testKey)
+      testKey = collection.getKeyAfter(testKey);
       index++;
     }
     return true;
@@ -258,7 +262,7 @@ const selectedIndicator = style({
   borderStyle: 'none',
   borderRadius: 'full',
   transitionDuration: 130,
-  transitionTimingFunction: 'in-out',
+  transitionTimingFunction: 'in-out'
 });
 
 function TabLine(props: TabLineProps) {
@@ -329,8 +333,6 @@ const tabs = style({
   }
 }, getAllowedOverrides({height: true}));
 
-const TabsInternalContext = createContext<TabsProps>({});
-
 function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
   let {
@@ -338,7 +340,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
     isDisabled,
     disabledKeys,
     orientation = 'horizontal'
-  } = props
+  } = props;
   let domRef = useDOMRef(ref);
 
   return (

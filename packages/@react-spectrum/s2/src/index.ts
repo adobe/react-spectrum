@@ -61,6 +61,7 @@ export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextFiel
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Tooltip, TooltipTrigger} from './Tooltip';
 
+export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
 export type {ActionButtonProps} from './ActionButton';
@@ -104,7 +105,7 @@ export type {SliderProps} from './Slider';
 export type {RangeSliderProps} from './RangeSlider';
 export type {StatusLightProps} from './StatusLight';
 export type {SwitchProps} from './Switch';
-export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs'
+export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
 export type {ToggleButtonProps} from './ToggleButton';

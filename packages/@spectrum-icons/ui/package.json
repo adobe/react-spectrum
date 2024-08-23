@@ -19,7 +19,7 @@
     "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.module.mjs' --config-file '../../../babel-esm.config.json'",
     "generate-types": "tsc --project ./tsconfig.types.json",
     "build-icons": "yarn build-cjs && yarn build-esm",
-    "make-icons": "babel-node --extensions '.cjs,.js' --presets @babel/env ./scripts/generateIcons.cjs -i '[]' && yarn generate-types"
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.cjs -i '[]' && yarn generate-types"
   },
   "dependencies": {
     "@adobe/react-spectrum-ui": "1.2.1",

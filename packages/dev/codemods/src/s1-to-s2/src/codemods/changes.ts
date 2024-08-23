@@ -6,7 +6,6 @@ import {
   MovePropToParentComponentOptions,
   MoveRenderPropsOptions,
   RemoveComponentIfWithinParentOptions,
-  RemoveParentAndKeepChildrenOptions,
   RemovePropOptions,
   UpdateComponentIfPropPresentOptions,
   UpdateComponentWithinCollectionOptions,
@@ -38,8 +37,8 @@ type FunctionInfo =
       args: UpdateComponentWithinCollectionOptions
     }
   | {
-      name: 'removeParentAndKeepChildren',
-      args: RemoveParentAndKeepChildrenOptions
+      name: 'updateTabs',
+      args: {}
     }
   | {
       name: 'movePropToNewChildComponent',
@@ -71,6 +70,10 @@ type FunctionInfo =
   }
   | {
     name: 'updateAvatarSize',
+    args: {}
+  }
+  | {
+    name: 'updateLegacyLink',
     args: {}
   };
 
@@ -576,29 +579,6 @@ export const changes: ChangesJSON = {
       //     }
       //   }
       // },
-      // TODO: Not yet implemented in S2
-      // {
-      //   description: 'If within TabList, update Item to be a Tab',
-      //   reason: 'Updated collections API',
-      //   function: {
-      //     name: 'updateComponentWithinCollection',
-      //     args: {
-      //       parentComponent: 'TabList',
-      //       newComponent: 'Tab'
-      //     }
-      //   }
-      // },
-      // {
-      //   description: 'If within TabPanels, update Item to be a TabPanel',
-      //   reason: 'Updated collections API',
-      //   function: {
-      //     name: 'updateComponentWithinCollection',
-      //     args: {
-      //       parentComponent: 'TabPanels',
-      //       newComponent: 'TabPanel'
-      //     }
-      //   }
-      // },
     ]
   },
   Link: {
@@ -614,6 +594,14 @@ export const changes: ChangesJSON = {
             newProp: 'staticColor',
             newValue: 'white'
           }
+        }
+      },
+      {
+        description: 'Remove inner anchor element if used (legacy API)',
+        reason: 'Updated API',
+        function: {
+          name: 'updateLegacyLink',
+          args: {}
         }
       }
     ]
@@ -665,14 +653,6 @@ export const changes: ChangesJSON = {
         function: {
           name: 'removeProp',
           args: {propToRemove: 'validationState', propValue: 'valid'}
-        }
-      },
-      {
-        description: 'Comment out hideStepper',
-        reason: 'It has not been implemented yet',
-        function: {
-          name: 'commentOutProp',
-          args: {propToComment: 'hideStepper'}
         }
       }
     ]
@@ -893,6 +873,28 @@ export const changes: ChangesJSON = {
         }
       },
       {
+        description: 'If within Picker, update Section to be a PickerSection',
+        reason: 'Updated component structure',
+        function: {
+          name: 'updateComponentWithinCollection',
+          args: {
+            parentComponent: 'Picker',
+            newComponent: 'PickerSection'
+          }
+        }
+      },
+      {
+        description: 'If within ComboBox, update Section to be a ComboBoxSection',
+        reason: 'Updated component structure',
+        function: {
+          name: 'updateComponentWithinCollection',
+          args: {
+            parentComponent: 'ComboBox',
+            newComponent: 'ComboBoxSection'
+          }
+        }
+      },
+      {
         description:
           'Move title prop string to be a child of new Heading within a Header',
         reason: 'Updated API',
@@ -900,7 +902,35 @@ export const changes: ChangesJSON = {
           name: 'movePropToNewChildComponent',
           args: {
             parentComponent: 'Menu',
-            childComponent: 'Section',
+            childComponent: 'MenuSection',
+            propToMove: 'title',
+            newChildComponent: 'Header'
+          }
+        }
+      },
+      {
+        description:
+          'Move title prop string to be a child of new Heading within a Header',
+        reason: 'Updated API',
+        function: {
+          name: 'movePropToNewChildComponent',
+          args: {
+            parentComponent: 'Picker',
+            childComponent: 'PickerSection',
+            propToMove: 'title',
+            newChildComponent: 'Header'
+          }
+        }
+      },
+      {
+        description:
+          'Move title prop string to be a child of new Heading within a Header',
+        reason: 'Updated API',
+        function: {
+          name: 'movePropToNewChildComponent',
+          args: {
+            parentComponent: 'ComboBox',
+            childComponent: 'ComboBoxSection',
             propToMove: 'title',
             newChildComponent: 'Header'
           }
@@ -973,21 +1003,28 @@ export const changes: ChangesJSON = {
       }
     ]
   },
-  // TODO: Not yet implemented in S2
-  // Tabs: {
-  //   changes: [
-  //     {
-  //       description: 'Remove TabPanels components and keep individual TabPanel components inside.',
-  //       reason: 'Updated collections API',
-  //       function: {
-  //         name: 'removeParentAndKeepChildren',
-  //         args: {
-  //           parentComponent: 'TabPanels'
-  //         }
-  //       }
-  //     }
-  //   ]
-  // },
+  Tabs: {
+    changes: [
+      {
+        description: 'Remove TabPanels components and keep individual TabPanel components inside.',
+        reason: 'Updated collections API',
+        function: {
+          name: 'updateTabs',
+          args: {}
+        }
+      },
+      {
+        description: 'Remove isEmphasized',
+        reason: 'It is no longer supported',
+        function: {name: 'removeProp', args: {propToRemove: 'isEmphasized'}}
+      },
+      {
+        description: 'Remove isQuiet',
+        reason: 'It is no longer supported',
+        function: {name: 'removeProp', args: {propToRemove: 'isQuiet'}}
+      }
+    ]
+  },
   TagGroup: {
     changes: [
       {
