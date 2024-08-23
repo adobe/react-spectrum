@@ -426,19 +426,6 @@ export const changes: ChangesJSON = {
       }
     ]
   },
-  Flex: {
-    changes: [
-      {
-        description:
-          'Update Flex to be a div and apply flex styles using the style macro',
-        reason: 'Updated API',
-        function: {
-          name: 'updateToNewComponent',
-          args: {newComponent: 'div'}
-        }
-      }
-    ]
-  },
   Form: {
     changes: [
       {
@@ -457,19 +444,6 @@ export const changes: ChangesJSON = {
         function: {
           name: 'removeProp',
           args: {propToRemove: 'validationState'}
-        }
-      }
-    ]
-  },
-  Grid: {
-    changes: [
-      {
-        description:
-          'Update Grid to be a div and apply grid styles using the style macro',
-        reason: 'Updated API',
-        function: {
-          name: 'updateToNewComponent',
-          args: {newComponent: 'div'}
         }
       }
     ]
@@ -1197,19 +1171,6 @@ export const changes: ChangesJSON = {
             propToUpdate: 'placement',
             childComponent: 'Tooltip'
           }
-        }
-      }
-    ]
-  },
-  View: {
-    changes: [
-      {
-        description:
-          'Update View to be a div and apply styles using the style macro',
-        reason: 'Updated API',
-        function: {
-          name: 'updateToNewComponent',
-          args: {newComponent: 'div'}
         }
       }
     ]
