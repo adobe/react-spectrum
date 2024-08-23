@@ -132,6 +132,23 @@ export const changes: ChangesJSON = {
       }
     ]
   },
+  Badge: {
+    changes: [
+      {
+        description: "Change variant='info' to variant='informative'",
+        reason: 'Updated naming convention',
+        function: {
+          name: 'updatePropNameAndValue',
+          args: {
+            oldProp: 'variant',
+            oldValue: 'info',
+            newProp: 'variant',
+            newValue: 'informative'
+          }
+        }
+      }
+    ]
+  },
   Breadcrumbs: {
     changes: [
       {

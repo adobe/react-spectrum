@@ -53,6 +53,11 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Code>size</Code> to be a pixel value if it currently matches <Code>'avatar-size-*'</Code></li>
         </ul>
 
+        <H3>Badge</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="info"</Code> to <Code>variant="informative"</Code></li>
+        </ul>
+
         <H3>Breadcrumbs</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>showRoot</Code> (it has not been implemented yet)</li>
