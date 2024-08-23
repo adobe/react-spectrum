@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {clamp} from '@react-aria/utils';
 import {ContextValue, ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -340,15 +340,14 @@ const trackStyles = {
 const track = style<ProgressCircleStyleProps>({
   ...trackStyles,
   borderColor: {
-    default: baseColor('gray-300'),
+    default: 'gray-300', // track-color
     staticColor: {
       white: {
-        default: baseColor('transparent-white-300'),
+        default: 'transparent-white-300', // static-white-track-color
         forcedColors: 'Background'
       },
-      // TODO: no designs for this one
       black: {
-        default: baseColor('transparent-black-300'),
+        default: 'transparent-black-300', // static-black-track-color
         forcedColors: 'Background'
       }
     },
@@ -359,15 +358,14 @@ const track = style<ProgressCircleStyleProps>({
 const fill = style<ProgressCircleStyleProps>({
   ...trackStyles,
   borderColor: {
-    default: baseColor('blue-900'),
+    default: 'accent-900', // accent-default-color
     staticColor: {
       white: {
-        default: baseColor('transparent-white-900'),
+        default: 'transparent-white-900', // static-white-track-indicator-color
         forcedColors: 'Highlight'
       },
-      // TODO: no designs for this one
       black: {
-        default: baseColor('transparent-black-900'),
+        default: 'transparent-black-900', // static-black-track-indicator-color
         forcedColors: 'Highlight'
       }
     },
@@ -503,6 +501,8 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
             <div
               className={isIndeterminate ? fillSubMask1Indeterminate : fillSubMask}
               style={subMask1Style}>
+              {/* TODO if we want rounded fill here then we need a div acting as a psudo element in the below div? Probably easier to just
+                  make a svg with stroke-linecap but I couldn't find the animation definition for indeterminate */}
               <div className={fill({size, staticColor})} />
             </div>
           </div>
