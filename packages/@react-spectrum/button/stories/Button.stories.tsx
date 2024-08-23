@@ -188,9 +188,20 @@ function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonP
 
 function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
   let buttons = (
-    <Button {...props} height={300} aria-label="Notifications (disabled)" isDisabled>
-      <Bell />
-    </Button>
+    <Flex gap="size-200">
+      <TooltipTrigger offset={2}>
+        <Button {...props} aria-label="Notifications">
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger offset={2}>
+        <Button {...props} aria-label="Notifications (disabled)" isDisabled>
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+    </Flex>
   );
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
