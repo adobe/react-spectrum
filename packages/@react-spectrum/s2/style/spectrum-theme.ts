@@ -466,6 +466,7 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
+      // these are now deprecated (remove? doesn't seem like it's being used)
       'negative-subdued': {
         default: colorToken('negative-subdued-background-color-default'),
         isHovered: colorToken('negative-subdued-background-color-hover'),
@@ -739,11 +740,13 @@ export const style = createTheme({
     boxShadow: {
       emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
       elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
+      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
       emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
       elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
+      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     borderTopStartRadius: createRenamedProperty('borderStartStartRadius', radius),
