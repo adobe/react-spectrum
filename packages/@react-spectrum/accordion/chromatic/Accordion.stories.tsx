@@ -10,43 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Item} from '../';
+import {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 
 const meta: Meta<SpectrumAccordionProps<object>> = {
   title: 'Accordion',
-  component: Accordion,
+  component: AccordionItem,
   excludeStories: ['Template']
 };
 
 export default meta;
 
 export const Template = (args) => (
-  <Accordion {...args}>
-    <Item key="files" title="Your files">
-      files
-    </Item>
-    <Item key="shared" title="Shared with you">
-      shared
-    </Item>
-    <Item key="last" title="Last item">
-      last
-    </Item>
-  </Accordion>
+  <AccordionGroup {...args}>
+    <AccordionItem key="files">
+      <AccordionHeader>
+        Your files
+      </AccordionHeader>
+      <AccordionPanel>
+        files
+      </AccordionPanel>
+    </AccordionItem>
+    <AccordionItem key="shared">
+      <AccordionHeader>
+        Shared with you
+      </AccordionHeader>
+      <AccordionPanel>
+        shared
+      </AccordionPanel>
+    </AccordionItem>
+    <AccordionItem key="last">
+      <AccordionHeader>
+        Last item
+      </AccordionHeader>
+      <AccordionPanel>
+        last
+      </AccordionPanel>
+    </AccordionItem>
+  </AccordionGroup>
 );
 
 export const Default = {
   render: Template
 };
 
-export const ExpandedKeys = {
-  render: Template,
-  args: {defaultExpandedKeys: ['shared']}
-};
-
-export const DisabledKeys = {
-  render: Template,
-  args: {disabledKeys: ['shared']}
-};
+// TODO: more stories

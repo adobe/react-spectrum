@@ -80,6 +80,7 @@ export function useAccordionItem(props: AccordionItemAriaProps, state: Accordion
       id: regionId,
       role,
       'aria-labelledby': buttonId,
+      // @ts-ignore
       hidden: (!supportsBeforeMatch || isControlled) ? !state.isOpen : undefined
     }
   };

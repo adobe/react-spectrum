@@ -26,7 +26,7 @@ export const AccordionExample = (args: any) => (
       <>
         <Header>
           <Heading level={3}>
-            <Button slot="trigger">This is an accordion header {isOpen ? '⬇️' : '➡️'}</Button>
+            <Button slot="trigger">{isOpen ? '⬇️' : '➡️'} This is an accordion header</Button>
           </Heading>
         </Header>
         <AccordionPanel>
@@ -45,7 +45,7 @@ export const AccordionControlledExample = (args: any) => {
         <>
           <Header>
             <Heading level={3}>
-              <Button slot="trigger">This is an accordion header {isOpen ? '⬇️' : '➡️'}</Button>
+              <Button slot="trigger">{isOpen ? '⬇️' : '➡️'} This is an accordion header</Button>
             </Heading>
           </Header>
           <AccordionPanel>

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionItemAriaProps, useAccordionItem} from '../../@react-aria/accordion/src/useAccordionItem';
-import {AccordionItemState, useAccordionItemState} from '../../@react-stately/accordion/src';
+import {AccordionItemAriaProps, useAccordionItem} from '@react-aria/accordion';
+import {AccordionItemState, useAccordionItemState} from '@react-stately/accordion';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
@@ -19,7 +19,7 @@ import {HoverEvents} from 'react-aria';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
-export interface AccordionItemProps extends Omit<AccordionItemAriaProps, 'children'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
+export interface AccordionItemProps extends Omit<AccordionItemAriaProps, 'children' | 'panelRef'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
 
 export interface AccordionItemRenderProps {
   /**
@@ -61,7 +61,7 @@ const InternalAccordionContext = createContext<InternalAccordionContextValue | n
 function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, AccordionItemContext);
   let state = useAccordionItemState(props);
-  let panelRef = useRef(null);
+  let panelRef = useRef<HTMLElement>(null);
   let {buttonProps, regionProps} = useAccordionItem({...props, panelRef}, state);
 
   let renderProps = useRenderProps({
@@ -96,7 +96,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
   );
 }
 
-interface AccordionPanelProps {
+export interface AccordionPanelProps extends RenderProps<{}> {
   children: ReactNode
 }
 
@@ -111,6 +111,7 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElemen
   });
   let mergedRef = useObjectRef(mergeRefs(panelRef, ref));
   return (
+    // @ts-ignore
     <div ref={mergedRef} {...renderProps} {...regionProps}>
       {props.children}
     </div>

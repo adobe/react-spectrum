@@ -21,6 +21,5 @@ const meta: Meta<SpectrumAccordionProps<object>> = {
 export default meta;
 
 export const Default = {
-  render: Template,
-  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
+  render: Template
 };

@@ -10,91 +10,106 @@
  * governing permissions and limitations under the License.
  */
 
+import {AccordionItemProps, AccordionPanelProps} from 'react-aria-components/src/Accordion';
+import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {Button, Header, Heading, AccordionItem as RACAccordionItem, AccordionPanel as RACAccordionPanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, useRef} from 'react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree';
-import {useAccordion, useAccordionItem} from '@react-aria/accordion';
-import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+// TODO: handle types
+export interface SpectrumAccordionGroupProps extends StyleProps, DOMProps, AriaLabelingProps {
+  children: React.ReactNode
+}
 
-function Accordion<T extends object>(props: SpectrumAccordionProps<T>, ref: DOMRef<HTMLDivElement>) {
+function AccordionGroup(props: SpectrumAccordionGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let state = useTreeState<T>(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
-  let {accordionProps} = useAccordion(props, state, domRef);
-
   return (
     <div
       {...filterDOMProps(props)}
-      {...accordionProps}
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Accordion', styleProps.className)}>
-      {[...state.collection].map(item => (
-        <AccordionItem<T> key={item.key} item={item} state={state} />
-      ))}
+      {props.children}
     </div>
   );
 }
 
-interface AccordionItemProps<T> {
-  item: Node<T>,
-  state: TreeState<T>
-}
+interface SpectrumAccordionItemProps extends AccordionItemProps, DOMProps, AriaLabelingProps  {}
 
-function AccordionItem<T>(props: AccordionItemProps<T>) {
+function AccordionItem(props: SpectrumAccordionItemProps) {
   props = useProviderProps(props);
-  let ref = useRef<HTMLButtonElement>(null);
-  let {state, item} = props;
-  let {buttonProps, regionProps} = useAccordionItem<T>(props, state, ref);
-  let isOpen = state.expandedKeys.has(item.key);
-  let isDisabled = state.disabledKeys.has(item.key);
-  let {isHovered, hoverProps} = useHover({isDisabled});
-  let {direction} = useLocale();
-
   return (
-    <div
-      className={classNames(styles, 'spectrum-Accordion-item', {
+    <RACAccordionItem
+      {...props}
+      className={({isOpen, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
         'is-open': isOpen,
         'is-disabled': isDisabled
       })}>
-      <h3 className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
-        <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
-          <button
-            {...mergeProps(buttonProps, hoverProps)}
-            ref={ref}
-            className={classNames(styles, 'spectrum-Accordion-itemHeader', {
-              'is-hovered': isHovered
-            })}>
-            {direction === 'ltr' ? (
-              <ChevronRightMedium
-                aria-hidden="true"
-                UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+      {props.children}
+    </RACAccordionItem>
+  );
+}
+
+// TODO extend ARIA accordion panel props
+export interface SpectrumAccordionPanelProps extends AccordionPanelProps, DOMProps, AriaLabelingProps {
+  children: React.ReactNode
+}
+
+function AccordionPanel(props) {
+  return (
+    <RACAccordionPanel className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
+      {props.children}
+    </RACAccordionPanel>
+  );
+}
+
+export interface SpectrumAccordionHeaderProps extends DOMProps, AriaLabelingProps {
+  children: React.ReactNode
+}
+
+function AccordionHeader(props) {
+  let {direction} = useLocale();
+  return (
+    <Header {...props}>
+      <Heading className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
+        <Button
+          slot="trigger"
+          className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
+            'is-hovered': isHovered,
+            'focus-ring': isFocusVisible
+          })}>
+          {direction === 'ltr' ? (
+            <ChevronRightMedium
+              aria-hidden="true"
+              UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
               ) : (
                 <ChevronLeftMedium
                   aria-hidden="true"
                   UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
               )}
-            {item.props.title}
-          </button>
-        </FocusRing>
-      </h3>
-      <div {...regionProps} className={classNames(styles, 'spectrum-Accordion-itemContent')}>
-        {item.props.children}
-      </div>
-    </div>
+          {props.children}
+        </Button>
+      </Heading>
+    </Header>
   );
 }
 
-const _Accordion = forwardRef(Accordion) as <T>(props: SpectrumAccordionProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
-export {_Accordion as Accordion};
+const _AccordionGroup = forwardRef(AccordionGroup) as (props: SpectrumAccordionGroupProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionGroup>;
+export {_AccordionGroup as AccordionGroup};
+
+const _AccordionItem = forwardRef(AccordionItem) as (props: SpectrumAccordionItemProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionItem>;
+export {_AccordionItem as AccordionItem};
+
+const _AccordionPanel = forwardRef(AccordionPanel) as (props: SpectrumAccordionPanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionPanel>;
+export {_AccordionPanel as AccordionPanel};
+
+const _AccordionHeader = forwardRef(AccordionHeader) as (props: SpectrumAccordionHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionHeader>;
+export {_AccordionHeader as AccordionHeader};
