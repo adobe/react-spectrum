@@ -13,7 +13,7 @@
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, focusRing, getAllowedOverrides, StyleProps, StylesProp, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -45,14 +45,18 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, UnsafeStyles, ButtonStyleProps {
   /** The content to display in the Button. */
-  children?: ReactNode
+  children?: ReactNode,
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight | StylesProp
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, UnsafeStyles, ButtonStyleProps {
   /** The content to display in the Button. */
-  children?: ReactNode
+  children?: ReactNode,
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight | StylesProp
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
