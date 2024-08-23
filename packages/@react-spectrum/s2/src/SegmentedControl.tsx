@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, DOMRefValue, FocusEvents, FocusableRef, InputDOMProps, ValueBase} from '@react-types/shared';
+import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, FocusEvents, InputDOMProps, ValueBase} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Radio, RadioGroup, RadioProps, Provider, RadioGroupStateContext} from "react-aria-components"
-import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect, useLayoutEffect, useState} from 'react';
-import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {ContextValue, Provider, Radio, RadioGroup, RadioGroupStateContext, RadioProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, Omit<AriaLabelingProps, 'aria-label'> {
@@ -29,7 +30,7 @@ export interface SegmentedControlProps extends ValueBase<string|null, string>, I
    * Whether the segmented control is disabled.
    */
   isDisabled?: boolean,
-    /**
+  /**
    * Defines a string value that labels the current element.
    */
   'aria-label': string
@@ -51,7 +52,7 @@ const segmentedControl = style<{size: string}>({
   width: 'full',
   zIndex: 1,
   position: 'relative'
-}, getAllowedOverrides())
+}, getAllowedOverrides());
 
 const controlItem = style({
   ...focusRing(),
@@ -67,7 +68,7 @@ const controlItem = style({
       default: 'ButtonText',
       isDisabled: 'GrayText',
       isSelected: 'HighlightText'
-    },
+    }
   },
   // backgroundColor: {
   //   isSelected: 'gray-25',
@@ -111,10 +112,10 @@ const controlItem = style({
     value: 'currentColor'
   },
   zIndex: 2
-}, getAllowedOverrides())
+}, getAllowedOverrides());
 
 interface InternalSegmentedControlContextProps extends SegmentedControlProps {
-  register?: (value: string) => void;
+  register?: (value: string) => void
 }
 
 interface DefaultSelectionTrackProps {
@@ -126,12 +127,12 @@ interface DefaultSelectionTrackProps {
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
 
-function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement> ) {
+function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {
     defaultValue,
     value
-  } = props
+  } = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -146,13 +147,13 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
         {props.children}
       </DefaultSelectionTracker>
     </RadioGroup>
-  )
+  );
 }
 
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let {
-    domRef,
-  } = props
+    domRef
+  } = props;
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
   let itemRef = useRef(null);
@@ -170,12 +171,12 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 
       state.setSelectedValue(value);
     }
-  }, [])
+  }, []);
 
   // First: get the current bounds of the element
   useEffect(() => {
     if (domRef.current) {
-      let item = domRef.current.querySelector("label[data-selected=true]");
+      let item = domRef.current.querySelector('label[data-selected=true]');
       itemRef.current = item;
 
       // i don't really want to have this here, and honestly, it should probably go in useLayoutEffect
@@ -194,25 +195,25 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
       setStyle(styleObj);
 
     }
-  }, [state?.selectedValue])
+  }, [state?.selectedValue]);
 
   // Last: get the final bounds of the element
   useLayoutEffect(() => {
     if (domRef.current) {
       let slide = document.querySelector('#animate');
-      let item = domRef.current.querySelector("label[data-selected=true]")
-      let cachedItem = itemRef?.current?.getBoundingClientRect();
+      let item = domRef.current.querySelector('label[data-selected=true]');
+      // let cachedItem = itemRef?.current?.getBoundingClientRect();
 
 
       if (itemRef.current) {
-        let finalItem = item.getBoundingClientRect();
+        // let finalItem = item.getBoundingClientRect();
 
         // Invert: determine the delta between the first and last bounds of the element
         // let deltaX = cachedItem.left - finalItem.left;
         // let deltaW = cachedItem.width / finalItem.width;
         // let deltaW = finalItem.width / cachedItem.width;
         // let deltaH = cachedItem.height / finalItem.height;
-        let cachedX = itemRef?.current.offsetLeft;
+        // let cachedX = itemRef?.current.offsetLeft;
         let finalX = item.offsetLeft;
         // let finalW = item.offsetWidth;
         // let finalH = item.offsetHeight;
@@ -224,12 +225,12 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
         // Play: animate the final element from its first bounds to its last bound
         slide.animate(
           [
-            {transform: `translateX(${finalX}px)` },
+            {transform: `translateX(${finalX}px)`}
           ],
           {
             duration: 150,
             easing: 'ease-in',
-            fill: "forwards"
+            fill: 'forwards'
           }
         );
       }
@@ -242,12 +243,12 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   return (
     <Provider
       values={[
-        [InternalSegmentedControlContext, {register: register}]
-    ]}>
+        [InternalSegmentedControlContext, {register: register, 'aria-label': props['aria-label']}]
+      ]}>
       {props.children}
-      <span style={style} id="animate" className={test}/> 
+      <span style={style} id="animate" className={test} /> 
     </Provider>
-  )
+  );
 }
 
 const test = style({
@@ -261,7 +262,7 @@ const test = style({
   borderColor: 'gray-900',
   borderRadius: 'lg',
   zIndex: 1
-})
+});
 
 function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
@@ -271,9 +272,9 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
 
   useEffect(() => {
     if (!props.isDisabled && !isRadioGroupDisabled) {
-      register(props.value)
+      register(props.value);
     }
-  }, [])
+  }, []);
 
   return (
     <Radio 
@@ -282,25 +283,26 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
       inputRef={inputRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps}, props.styles)} >
-      <Provider values={[
+      <Provider 
+        values={[
           [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})}),
-        }], 
-      ]}>
+            render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
+          }]
+        ]}>
         {props.children}
       </Provider>
     </Radio>
-  )
+  );
 }
 
 /**
  * A control items represents an individual control within a segmented control.
  */
-const _ControlItem = /*#__PURE__*/ forwardRef(ControlItem)
+const _ControlItem = /*#__PURE__*/ forwardRef(ControlItem);
 export {_ControlItem as ControlItem};
 
 /**
  * A segmented control is a mutually exclusive group of buttons, with or without a track.
  */
-const _SegmentedControl = /*#__PURE__*/ forwardRef(SegmentedControl)
+const _SegmentedControl = /*#__PURE__*/ forwardRef(SegmentedControl);
 export {_SegmentedControl as SegmentedControl};

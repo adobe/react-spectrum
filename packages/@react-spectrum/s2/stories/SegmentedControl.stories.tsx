@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
-import {SegmentedControl, ControlItem} from '../src';
-import EditIcon from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import AlignBottom from '../s2wf-icons/S2_Icon_AlignBottom_20_N.svg';
 import AlignCenter from '../s2wf-icons/S2_Icon_AlignCenter_20_N.svg';
 import AlignLeft from '../s2wf-icons/S2_Icon_AlignLeft_20_N.svg';
-import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg'
-import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg'
-import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg'
+import {ControlItem, SegmentedControl} from '../src';
+import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg';
+import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
+import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
+import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof SegmentedControl> = {
@@ -38,7 +37,7 @@ export const Example = (args: any) => (
     <ControlItem value="month">Month</ControlItem>
     <ControlItem value="year">Year</ControlItem>
   </SegmentedControl>
-)
+);
 
 
 export const WithIcons = (args: any) => (
@@ -47,7 +46,7 @@ export const WithIcons = (args: any) => (
     <ControlItem value="ordered"><ListNumbered />Ordered</ControlItem>
     <ControlItem value="task list"><ListMultiSelect />Task List</ControlItem>
   </SegmentedControl>
-)
+);
 
 export const OnlyIcons = (args: any) => (
   <SegmentedControl {...args}>
@@ -55,7 +54,7 @@ export const OnlyIcons = (args: any) => (
     <ControlItem value="align center"><AlignCenter /></ControlItem>
     <ControlItem value="align left"><AlignLeft /></ControlItem>
   </SegmentedControl>
-)
+);
 
 export const CustomWidth = (args: any) => (
   <SegmentedControl {...args} styles={style({width: '[400px]'})}>
@@ -64,4 +63,4 @@ export const CustomWidth = (args: any) => (
     <ControlItem value="guidelines">Guidelines</ControlItem>
     <ControlItem value="accessibility">Accessibility</ControlItem>
   </SegmentedControl>
-)
+);
