@@ -13,7 +13,7 @@
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps, StylesProp, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, focusRing, getAllowedOverrides, StylesProp, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -269,7 +269,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   forcedColorAdjust: 'none',
   disableTapHighlight: true
-}, getAllowedOverrides());
+}, getAllowedOverrides({height: true}));
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
