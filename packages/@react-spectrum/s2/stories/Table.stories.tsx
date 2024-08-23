@@ -518,6 +518,8 @@ function AsyncLoadingExample(props) {
               cmp *= -1;
             }
             return cmp;
+          } else {
+            return 1;
           }
         }) : []
       };
