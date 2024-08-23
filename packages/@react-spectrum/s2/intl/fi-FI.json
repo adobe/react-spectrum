@@ -12,7 +12,6 @@
   "label.(required)": "(pakollinen)",
   "menu.moreActions": "Lisää toimintoja",
   "picker.placeholder": "Valitse vaihtoehto...",
-  "segmentedcontrol.defaultlabel": "Segmented control",
   "slider.maximum": "Maksimi",
   "slider.minimum": "Minimi",
   "tag.actions": "Toiminnot",

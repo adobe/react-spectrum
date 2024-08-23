@@ -16,15 +16,11 @@ import {ContextValue, Radio, RadioGroup, RadioProps, Provider, RadioGroupStateCo
 import {createContext, forwardRef, ReactNode, useContext, useRef, useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {focusRing, StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import Conversationbubbles from '../spectrum-illustrations/linear/Conversationbubbles';
 
-export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, AriaLabelingProps {
+export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, Omit<AriaLabelingProps, 'aria-label'> {
   /**
    * The content to display in the segmented control.
    */
@@ -32,7 +28,11 @@ export interface SegmentedControlProps extends ValueBase<string|null, string>, I
   /**
    * Whether the segmented control is disabled.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+    /**
+   * Defines a string value that labels the current element.
+   */
+  'aria-label': string
 }
 export interface ControlItemProps extends Omit<RadioProps, 'children' | 'className' | 'style' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
   /**
@@ -133,23 +133,6 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
     value
   } = props
   let domRef = useDOMRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let state = useContext(RadioGroupStateContext);
-
-  // let onChange = () => {
-  //   let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
-  //     transform: undefined,
-  //     width: undefined,
-  //     height: undefined
-  //   };
-
-  //   let item : HTMLElement = domRef.current.querySelector("label[data-selected=true]")
-
-  //   let position = item?.offsetLeft;
-  //   styleObj.transform = `translateX(${position}px)`;
-  //   setStyle(styleObj);
-  //   console.log(item);
-  // }
 
   return (
     <RadioGroup 
@@ -158,7 +141,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       orientation="horizontal"
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
-      aria-label={props['aria-label'] || stringFormatter.format('segmentedcontrol.defaultlabel')}>
+      aria-label={props['aria-label']}>
       <DefaultSelectionTracker defaultValue={defaultValue} value={value} domRef={domRef} >
         {props.children}
       </DefaultSelectionTracker>
