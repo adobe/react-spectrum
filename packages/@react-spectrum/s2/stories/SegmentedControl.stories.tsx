@@ -40,7 +40,6 @@ export const Example = (args: any) => (
   </SegmentedControl>
 );
 
-
 export const WithIcons = (args: any) => (
   <SegmentedControl {...args}>
     <ControlItem value="unordered"><ListBulleted />Unordered</ControlItem>
