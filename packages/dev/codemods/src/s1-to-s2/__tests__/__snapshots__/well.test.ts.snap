@@ -16,7 +16,8 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
       borderRadius: "sm",
       backgroundColor: "layer-1",
       borderStyle: "solid",
-      borderColor: "transparent-black-75"
+      borderColor: "transparent-black-75",
+      font: "body-sm"
     })}>
     Well content
   </div>
@@ -33,7 +34,8 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
       borderRadius: "sm",
       backgroundColor: "layer-1",
       borderStyle: "solid",
-      borderColor: "transparent-black-75"
+      borderColor: "transparent-black-75",
+      font: "body-sm"
     })}>
     <h3 id="wellLabel">Shipping Address</h3>
     <p>601 Townsend Street<br /> San Francisco, CA 94103</p>

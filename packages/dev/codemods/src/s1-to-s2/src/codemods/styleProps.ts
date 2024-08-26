@@ -527,6 +527,7 @@ export function transformStyleProps(path: NodePath<t.JSXElement>, element: strin
     macroValues.set('backgroundColor', 'layer-1');
     macroValues.set('borderStyle', 'solid');
     macroValues.set('borderColor', 'transparent-black-75');
+    macroValues.set('font', 'body-sm');
   }
 
   let attrs = path.get('openingElement').get('attributes');
