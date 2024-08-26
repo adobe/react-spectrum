@@ -13,7 +13,7 @@
 import {ActionMenu, Avatar, Content, Heading, IllustratedMessage, Image, MenuItem, Text} from '../src';
 import {Card, CardPreview} from '../src/Card';
 import {CardView, CardViewProps} from '../src/CardView';
-import EmptyIcon from '../spectrum-illustrations/gradient/S2_fill_image_generic1_160.svg';
+import EmptyIcon from 'illustration:../spectrum-illustrations/gradient/S2_fill_image_generic1_160.svg';
 import ErrorIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {Skeleton} from '../src/Skeleton';

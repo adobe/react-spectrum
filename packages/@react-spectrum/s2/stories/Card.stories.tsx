@@ -28,6 +28,19 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
   args: {
     isLoading: false
   },
+  argTypes: {
+    href: {table: {disable: true}},
+    download: {table: {disable: true}},
+    hrefLang: {table: {disable: true}},
+    referrerPolicy: {table: {disable: true}},
+    rel: {table: {disable: true}},
+    routerOptions: {table: {disable: true}},
+    ping: {table: {disable: true}},
+    target: {table: {disable: true}},
+    value: {table: {disable: true}},
+    textValue: {table: {disable: true}},
+    onAction: {table: {disable: true}}
+  },
   decorators: (children, {args}) => (
     <Skeleton isLoading={args.isLoading}>
       {children(args)}
@@ -225,11 +238,12 @@ export const PreviewOverlay = (args: any) => (
       </Badge>
       <Avatar
         src="https://i.imgur.com/xIe7Wlb.png"
+        size={24}
+        isOverBackground
         styles={style({
           position: 'absolute',
           bottom: 16,
-          insetStart: 16,
-          size: 24
+          insetStart: 16
         })} />
     </CardPreview>
   </Card>

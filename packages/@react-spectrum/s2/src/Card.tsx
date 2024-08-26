@@ -17,18 +17,18 @@ import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
 import {ContentContext, FooterContext, TextContext} from './Content';
-import {createContext, ElementType, ReactNode, useContext} from 'react';
+import {createContext, CSSProperties, ElementType, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {focusRing, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
+import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {SkeletonContext, SkeletonWrapper} from './Skeleton';
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'isDisabled'>, StyleProps {
   children: ReactNode,
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   density?: 'compact' | 'regular' | 'spacious',
@@ -54,7 +54,7 @@ let card = style({
   },
   position: 'relative',
   borderRadius,
-  '--card-bg': {
+  '--s2-container-bg': {
     type: 'backgroundColor',
     value: {
       variant: {
@@ -66,7 +66,7 @@ let card = style({
       forcedColors: 'ButtonFace'
     }
   },
-  backgroundColor: '--card-bg',
+  backgroundColor: '--s2-container-bg',
   boxShadow: {
     default: 'emphasized',
     isHovered: 'elevated',
@@ -319,17 +319,6 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-const checkboxWrapper = style({
-  position: 'absolute',
-  top: 8,
-  zIndex: 2,
-  insetStart: 8,
-  padding: size(6),
-  backgroundColor: 'white/50',
-  borderRadius: 'default',
-  boxShadow: 'emphasized'
-});
-
 export function Card(props: CardProps) {
   [props] = useContextProps(props, null, CardContext);
   let {density = 'regular', size = 'M', variant = 'primary', orientation = 'vertical'} = props;
@@ -349,7 +338,7 @@ export function Card(props: CardProps) {
         [ContentContext, {styles: content({size})}],
         [DividerContext, {size: 'S'}],
         [FooterContext, {styles: footer}],
-        [ActionMenuContext, {isQuiet: true, size: actionButtonSize[size]}]
+        [ActionMenuContext, {isQuiet: true, size: actionButtonSize[size], isDisabled: isSkeleton}]
       ]}>
       <ImageCoordinator>
         {props.children}
@@ -369,17 +358,24 @@ export function Card(props: CardProps) {
   }
 
   return (
-    <ElementType 
-      {...props}
-      className={renderProps => card({...renderProps, isCardView: true, size, density, variant, orientation})}
-      isDisabled={isSkeleton || props.isDisabled}>
+    <ElementType {...props} className={renderProps => card({...renderProps, isCardView: true, size, density, variant, orientation})}>
       {({selectionMode, selectionBehavior, allowsDragging, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider value={{size, isQuiet, isHovered, isFocusVisible, isSelected}}>
           {!isQuiet && <SelectionIndicator />}
           {allowsDragging && <Button slot="drag">≡</Button>}
           {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
             <PressResponder isPressed={isPressed}>
-              <div className={checkboxWrapper}>
+              <div 
+                className={style({
+                  position: 'absolute',
+                  top: 8,
+                  zIndex: 2,
+                  insetStart: 8,
+                  padding: '[6px]',
+                  backgroundColor: lightDark('transparent-white-600', 'transparent-black-600'),
+                  borderRadius: 'default',
+                  boxShadow: 'emphasized'
+                })}>
                 <Checkbox
                   slot="selection"
                   excludeFromTabOrder />
@@ -499,6 +495,14 @@ export function AssetCard(props: CardProps) {
   );
 }
 
+const avatarSize = {
+  XS: 24,
+  S: 48,
+  M: 64,
+  L: 64,
+  XL: 80
+} as const;
+
 export function UserCard(props: CardProps) {
   let {size = 'M'} = props;
   return (
@@ -516,33 +520,29 @@ export function UserCard(props: CardProps) {
             })
           }],
           [AvatarContext, {
+            size: avatarSize[size],
+            UNSAFE_style: {
+              '--size': avatarSize[size] + 'px'
+            } as CSSProperties,
             styles: style({
               position: 'relative',
-              size: {
-                size: {
-                  XS: 24,
-                  S: 48,
-                  M: 64,
-                  L: 64,
-                  XL: 80
-                }
-              },
               marginTop: {
-                default: '[calc(self(height) / -2)]',
+                default: '[calc(var(--size) / -2)]',
                 ':first-child': 0
               }
-            })({size}),
-            UNSAFE_className: style({
-              outlineStyle: 'solid',
-              outlineWidth: {
-                default: 2,
-                size: {
-                  XS: 1
-                },
-                ':first-child': 0
-              },
-              outlineColor: '--card-bg'
-            })({size})
+            }),
+            isOverBackground: true
+            // UNSAFE_className: style({
+            //   outlineStyle: 'solid',
+            //   outlineWidth: {
+            //     default: 2,
+            //     size: {
+            //       XS: 1
+            //     },
+            //     ':first-child': 0
+            //   },
+            //   outlineColor: '--card-bg'
+            // })({size})
           }]
         ]}>
         {props.children}
@@ -561,6 +561,7 @@ const buttonSize = {
 
 export function ProductCard(props: CardProps) {
   let {size = 'M'} = props;
+  let isSkeleton = useContext(SkeletonContext);
   return (
     <Card {...props} density="spacious">
       <Provider
@@ -611,7 +612,7 @@ export function ProductCard(props: CardProps) {
                       XS: 1
                     }
                   },
-                  outlineColor: '--card-bg'
+                  outlineColor: '--s2-container-bg'
                 })({size})
               }
             }
@@ -621,8 +622,8 @@ export function ProductCard(props: CardProps) {
               justifyContent: 'end'
             }))
           }],
-          [ButtonContext, {size: buttonSize[size]}],
-          [LinkButtonContext, {size: buttonSize[size]}]
+          [ButtonContext, {size: buttonSize[size], isDisabled: isSkeleton}],
+          [LinkButtonContext, {size: buttonSize[size], isDisabled: isSkeleton}]
         ]}>
         {props.children}
       </Provider>
