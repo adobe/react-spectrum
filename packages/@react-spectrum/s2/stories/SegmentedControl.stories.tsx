@@ -20,6 +20,7 @@ import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
+
 const meta: Meta<typeof SegmentedControl> = {
   component: SegmentedControl,
   parameters: {

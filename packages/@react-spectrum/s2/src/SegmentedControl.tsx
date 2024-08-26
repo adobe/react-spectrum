@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, FocusEvents, InputDOMProps, ValueBase} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, Radio, RadioGroup, RadioGroupStateContext, RadioProps, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, Radio, RadioGroup, RadioGroupProps,RadioGroupStateContext, RadioProps, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -21,11 +21,11 @@ import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SegmentedControlProps extends ValueBase<string|null, string>, InputDOMProps, FocusEvents, StyleProps, Omit<AriaLabelingProps, 'aria-label'>, SlotProps {
+export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly' | 'name' | 'isRequired' | 'isInvalid' | 'validate' | 'validationBehavior' | 'children' | 'className' | 'style' | 'aria-label'>{
   /**
    * The content to display in the segmented control.
    */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * Whether the segmented control is disabled.
    */
@@ -39,7 +39,7 @@ export interface ControlItemProps extends Omit<RadioProps, 'children' | 'classNa
   /**
    * The content to display in the control item.
    */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
