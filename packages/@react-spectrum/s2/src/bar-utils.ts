@@ -15,26 +15,51 @@ import {centerPadding} from './style-utils' with {type: 'macro'};
 export const bar = () => ({
   position: 'relative',
   display: 'grid',
-  gridTemplateAreas: ['label value'],
-  gridTemplateColumns: '1fr auto',
-  rowGap: 4,
+  gridTemplateColumns: {
+    labelPosition: {
+      top: ['1fr', 'auto'],
+      side: ['auto', '1fr']
+    }
+  },
+  gridTemplateAreas: {
+    labelPosition: {
+      top: [
+        'label value',
+        'bar bar'
+      ],
+      side: [
+        'label bar value'
+      ]
+    }
+  },
+  alignItems: 'baseline',
   isolation: 'isolate',
   minWidth: 48, // progress-bar-minimum-width
   maxWidth: '[768px]', // progress-bar-maximum-width
-  '--min-height': {
-    type: 'minHeight',
+  '--field-height': {
+    type: 'height',
     value: 'control'
   },
+  '--track-to-label': {
+    type: 'height',
+    value: 4
+  },
+  // Spectrum defines the field label/help text with a (minimum) height, with text centered inside.
+  // Calculate what the gap should be based on the height and line height.
+  // Use a variable here rather than rowGap since it is applied to the children as padding.
+  // This allows the gap to collapse when the label/help text is not present.
+  // Eventually this may be possible to do in pure CSS: https://github.com/w3c/csswg-drafts/issues/5813
   '--field-gap': {
     type: 'rowGap',
-    value: centerPadding('var(--min-height)')
+    value: centerPadding('calc(var(--field-height) + var(--track-to-label))')
   },
+
   columnGap: 12 // spacing-200
 } as const);
 
 export const track = () => ({
+  gridArea: 'bar',
   overflow: 'hidden',
-  gridColumnEnd: 'span 2',
   borderRadius: 'full',
   backgroundColor: {
     default: 'gray-300',

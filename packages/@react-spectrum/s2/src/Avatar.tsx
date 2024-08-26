@@ -14,8 +14,7 @@ import {ContextValue} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {Image} from './Image';
+import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -26,30 +25,36 @@ export interface AvatarProps extends UnsafeStyles, DOMProps {
   /** The image URL for the avatar. */
   src?: string,
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
-}
-
-export interface AvatarContextProps extends UnsafeStyles, DOMProps {
-  /** Text description of the avatar. */
-  alt?: string,
-  /** The image URL for the avatar. */
-  src?: string,
-  /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithoutWidth,
+  /**
+   * The size of the avatar.
+   * @default 24
+   */
+  size?: 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96 | 112 | (number & {}),
+  /** Whether the avatar is over a color background. */
+  isOverBackground?: boolean
 }
 
 const imageStyles = style({
   borderRadius: 'full',
   size: 20,
+  flexShrink: 0,
+  flexGrow: 0,
   disableTapHighlight: true,
-  pointerEvents: 'none',
-  userSelect: 'none',
-  flexShrink: 0
-}, getAllowedOverrides({height: true}));
+  outlineStyle: {
+    default: 'none',
+    isOverBackground: 'solid'
+  },
+  outlineColor: '--s2-container-bg',
+  outlineWidth: {
+    default: 1,
+    isLarge: 2
+  }
+}, getAllowedOverrides({width: false}));
 
-export const AvatarContext = createContext<ContextValue<AvatarContextProps, DOMRefValue<HTMLDivElement>>>(null);
+export const AvatarContext = createContext<ContextValue<AvatarProps, DOMRefValue<HTMLImageElement>>>(null);
 
-function Avatar(props: AvatarProps, ref: DOMRef<HTMLDivElement>) {
+function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
   let domRef = useDOMRef(ref);
   let {
@@ -57,18 +62,25 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLDivElement>) {
     src,
     UNSAFE_style,
     UNSAFE_className = '',
+    size = 24,
+    isOverBackground,
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
 
+  let remSize = size / 16 + 'rem';
+  let isLarge = size >= 64;
   return (
-    <Image
+    <img
       {...domProps}
       ref={domRef}
       alt={alt}
-      UNSAFE_style={UNSAFE_style}
-      UNSAFE_className={UNSAFE_className}
-      styles={imageStyles(null, props.styles)}
+      style={{
+        ...UNSAFE_style,
+        width: remSize,
+        height: remSize
+      }}
+      className={(UNSAFE_className ?? '') + imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );
 }

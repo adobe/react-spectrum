@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Fireworks_L from './S2_lin_fireworks_160.svg';
-import Fireworks_M from './S2_lin_fireworks_96.svg';
-import Fireworks_S from './S2_lin_fireworks_48.svg';
+import Fireworks_L from 'illustration:./S2_lin_fireworks_160.svg';
+import Fireworks_M from 'illustration:./S2_lin_fireworks_96.svg';
+import Fireworks_S from 'illustration:./S2_lin_fireworks_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

@@ -12,9 +12,9 @@
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
-import Video_L from './S2_lin_video_160.svg';
-import Video_M from './S2_lin_video_96.svg';
-import Video_S from './S2_lin_video_48.svg';
+import Video_L from 'illustration:./S2_lin_video_160.svg';
+import Video_M from 'illustration:./S2_lin_video_96.svg';
+import Video_S from 'illustration:./S2_lin_video_48.svg';
 
 export default function Video(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
   [props] = useContextProps(props, null, IllustrationContext);

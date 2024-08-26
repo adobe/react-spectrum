@@ -21,14 +21,14 @@ import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {SkeletonWrapper} from './Skeleton';
-import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
-  variant: 'informative' | 'positive' | 'notice' | 'negative',
+  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+   * @default 'informative'
+   */
+  variant?: 'informative' | 'positive' | 'notice' | 'negative',
   /**
    * The size of the Meter.
    *
@@ -46,7 +46,7 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
 
 export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const wrapper = style<MeterStyleProps>({
+const wrapper = style({
   ...bar(),
   width: {
     default: 208,
@@ -111,7 +111,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
     styles,
     UNSAFE_className = '',
     UNSAFE_style,
-    variant,
+    variant = 'informative',
     ...groupProps
   } = props;
 
@@ -123,17 +123,16 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       className={UNSAFE_className + wrapper({
         size,
         variant,
-        staticColor
+        staticColor,
+        labelPosition: 'top'
       }, styles)}>
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
-          <SkeletonWrapper>
-            <div className={trackStyles({staticColor, size})}>
-              <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
-            </div>
-          </SkeletonWrapper>
+          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
+          <div className={trackStyles({staticColor, size})}>
+            <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
+          </div>
         </>
       )}
     </AriaMeter>

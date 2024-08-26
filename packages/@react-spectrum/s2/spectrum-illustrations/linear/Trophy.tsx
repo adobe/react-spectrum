@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Trophy_L from './S2_lin_trophy_160.svg';
-import Trophy_M from './S2_lin_trophy_96.svg';
-import Trophy_S from './S2_lin_trophy_48.svg';
+import Trophy_L from 'illustration:./S2_lin_trophy_160.svg';
+import Trophy_M from 'illustration:./S2_lin_trophy_96.svg';
+import Trophy_S from 'illustration:./S2_lin_trophy_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Trophy(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

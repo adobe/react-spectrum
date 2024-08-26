@@ -11,17 +11,15 @@
  */
 
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, Text} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
-import {SkeletonContext} from './Skeleton';
-import {TextContext} from './Content';
+import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonStyleProps {
@@ -177,7 +175,6 @@ export const ActionButtonContext = createContext<ContextValue<ActionButtonProps,
 
 function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
-  props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -196,7 +193,6 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
       }, props.styles)}>
       <Provider
         values={[
-          [SkeletonContext, null],
           [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),

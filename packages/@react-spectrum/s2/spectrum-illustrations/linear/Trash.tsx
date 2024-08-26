@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Trash_L from './S2_lin_trash_160.svg';
-import Trash_M from './S2_lin_trash_96.svg';
-import Trash_S from './S2_lin_trash_48.svg';
+import Trash_L from 'illustration:./S2_lin_trash_160.svg';
+import Trash_M from 'illustration:./S2_lin_trash_96.svg';
+import Trash_S from 'illustration:./S2_lin_trash_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Trash(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

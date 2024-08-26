@@ -36,12 +36,11 @@ import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'rea
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {forwardRefType} from './types';
-import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
+import {HeaderContext, HeadingContext, ImageContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
-import {ImageContext} from './Image';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria';
+import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
@@ -229,7 +228,6 @@ let image = style({
   marginEnd: 'text-to-visual',
   marginTop: fontRelative(6), // made up, need feedback
   alignSelf: 'center',
-  borderRadius: 'sm',
   size: {
     default: 40,
     size: {
@@ -442,6 +440,7 @@ export function MenuItem(props: MenuItemProps) {
   let isLink = props.href != null;
   let {size} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {direction} = useLocale();
   return (
     <AriaMenuItem
       {...props}
@@ -470,7 +469,7 @@ export function MenuItem(props: MenuItemProps) {
                   }
                 }],
                 [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
-                [ImageContext, {styles: image({size})}]
+                [ImageContext, {className: image({size})}]
               ]}>
               {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
@@ -480,7 +479,19 @@ export function MenuItem(props: MenuItemProps) {
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
               {isLink && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
-              {renderProps.hasSubmenu && <div slot="descriptor" className={descriptor}><ChevronRightIcon size={size} /></div>}
+              {renderProps.hasSubmenu && (
+                <div slot="descriptor" className={descriptor}>
+                  <ChevronRightIcon
+                    size={size}
+                    className={style({
+                      scale: {
+                        direction: {
+                          rtl: -1
+                        }
+                      }
+                    })({direction})} />
+                </div>
+              )}
             </Provider>
           </>
         );

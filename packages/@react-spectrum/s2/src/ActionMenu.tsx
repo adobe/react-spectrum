@@ -16,24 +16,30 @@ import {ContextValue} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType} from './types';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import {StyleProps} from './style-utils' with { type: 'macro' };
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
-  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
+  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'size'>,
+  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus'>,
   StyleProps, DOMProps, AriaLabelingProps {
-  menuSize?: 'S' | 'M' | 'L' | 'XL'
-}
+  }
 
 export const ActionMenuContext = createContext<ContextValue<ActionMenuProps<any>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});
+  if (buttonProps['aria-label'] === undefined) {
+    buttonProps['aria-label'] = stringFormatter.format('menu.moreActions');
+  }
 
   // size independently controlled?
   return (
@@ -51,7 +57,6 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
         isDisabled={props.isDisabled}
         autoFocus={props.autoFocus}
         isQuiet={props.isQuiet}
-        styles={props.styles}
         {...buttonProps}>
         <MoreIcon />
       </ActionButton>
@@ -59,7 +64,7 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.menuSize}>
+        size={props.size}>
         {/* @ts-ignore TODO: fix type, right now this component is the same as Menu */}
         {props.children}
       </Menu>

@@ -49,7 +49,7 @@
     "@react-stately/grid": "^3.9.1",
     "@react-stately/list": "^3.10.7",
     "@react-stately/virtualizer": "^4.0.1",
-    "@react-types/card": "3.0.0-alpha.28",
+    "@react-types/card": "3.0.0-alpha.29",
     "@react-types/provider": "^3.8.3",
     "@react-types/shared": "^3.24.1",
     "@swc/helpers": "^0.5.0"

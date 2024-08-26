@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
-import {createContext, forwardRef, ImgHTMLAttributes, ReactNode, useContext} from 'react';
+import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, SlotProps, Text as TextAria, useContextProps} from 'react-aria-components';
+import {createContext, forwardRef, ImgHTMLAttributes, ReactNode} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -103,26 +102,17 @@ export const TextContext = createContext<ContextValue<ContentProps, DOMRefValue>
 function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, children, ...otherProps} = props;
-  let racContext = useContext(RACTextContext);
-  let isSkeleton = useContext(SkeletonContext);
-  [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
+  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
   if (isHidden) {
     return null;
   }
-
-  slot = slot && racContext && 'slots' in racContext && !racContext.slots?.[slot] ? undefined : slot;
   return (
     <TextAria
       {...otherProps}
       ref={domRef}
-      // @ts-ignore - compatibility with React < 19
-      inert={isSkeleton ? 'true' : undefined}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined}>
-      {children}
-    </TextAria>
+      slot={slot || undefined} />
   );
 }
 
@@ -174,3 +164,24 @@ const _Footer = forwardRef(Footer);
 export {_Footer as Footer};
 
 export const ImageContext = createContext<ContextValue<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>>({});
+
+function Image(props: ImgHTMLAttributes<HTMLImageElement>, ref: DOMRef<HTMLImageElement>) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, ImageContext);
+  if (props.hidden) {
+    return null;
+  }
+
+  if (props.alt == null) {
+    console.warn(
+      'The `alt` prop was not provided to an image. ' +
+      'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
+      'is decorative or redundant with displayed text and should not be announced by screen readers.'
+    );
+  }
+
+  return <img alt={props.alt} {...props} ref={domRef} />;
+}
+
+const _Image = forwardRef(Image);
+export {_Image as Image};

@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Laptop_L from './S2_lin_laptop_160.svg';
-import Laptop_M from './S2_lin_laptop_96.svg';
-import Laptop_S from './S2_lin_laptop_48.svg';
+import Laptop_L from 'illustration:./S2_lin_laptop_160.svg';
+import Laptop_M from 'illustration:./S2_lin_laptop_96.svg';
+import Laptop_S from 'illustration:./S2_lin_laptop_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Laptop(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

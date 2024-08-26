@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import DropToUpload_L from './S2_lin_dropToUpload_160.svg';
-import DropToUpload_M from './S2_lin_dropToUpload_96.svg';
-import DropToUpload_S from './S2_lin_dropToUpload_48.svg';
+import DropToUpload_L from 'illustration:./S2_lin_dropToUpload_160.svg';
+import DropToUpload_M from 'illustration:./S2_lin_dropToUpload_96.svg';
+import DropToUpload_S from 'illustration:./S2_lin_dropToUpload_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

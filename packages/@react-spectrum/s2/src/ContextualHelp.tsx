@@ -8,10 +8,13 @@ import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {Popover, PopoverProps} from './Popover';
 import {style, size as styleSize} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ContextualHelpStyleProps {
@@ -46,6 +49,7 @@ const popover = style({
 export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
     children,
@@ -68,8 +72,8 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
   // manually set the aria-label after useLabels() to keep the order of label
   // then ContextualHelp variant
   let labelProps = useLabels(props);
-  // Translate variant
-  labelProps['aria-label'] = labelProps['aria-label'] ? labelProps['aria-label'] + ' ' + variant : variant;
+  let label = stringFormatter.format(`contextualhelp.${variant}`);
+  labelProps['aria-label'] = labelProps['aria-label'] ? labelProps['aria-label'] + ' ' + label : label;
 
   let buttonProps = filterDOMProps(props, {labelable: true});
 

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Check_L from './S2_lin_check_160.svg';
-import Check_M from './S2_lin_check_96.svg';
-import Check_S from './S2_lin_check_48.svg';
+import Check_L from 'illustration:./S2_lin_check_160.svg';
+import Check_M from 'illustration:./S2_lin_check_96.svg';
+import Check_S from 'illustration:./S2_lin_check_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

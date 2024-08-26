@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Link_L from './S2_lin_link_160.svg';
-import Link_M from './S2_lin_link_96.svg';
-import Link_S from './S2_lin_link_48.svg';
+import Link_L from 'illustration:./S2_lin_link_160.svg';
+import Link_M from 'illustration:./S2_lin_link_96.svg';
+import Link_S from 'illustration:./S2_lin_link_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Link(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
