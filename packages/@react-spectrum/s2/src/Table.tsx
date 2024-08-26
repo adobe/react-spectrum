@@ -925,7 +925,16 @@ const cellContent = style({
       end: 'end'
     }
   },
-  width: 'full'
+  width: 'full',
+  zIndex: 100,
+  padding: {
+    default: 4,
+    isSticky: 0
+  },
+  margin: {
+    default: -4,
+    isSticky: 0
+  }
 });
 
 const cellBackground = style({
@@ -978,7 +987,7 @@ export function Cell(props: CellProps) {
           */}
           <div role="presentation" className={cellBackground({isSticky})} />
           <CellFocusRing isFocusVisible={isFocusVisible} />
-          <span className={cellContent({...tableVisualOptions, align: align || 'start'})}>{children}</span>
+          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
         </>
       )}
     </RACCell>

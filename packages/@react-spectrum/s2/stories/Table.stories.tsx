@@ -34,11 +34,12 @@ const meta: Meta<typeof Table> = {
     onLoadMore: null
   },
   argTypes: {
+    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', 'onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange']),
     onAction: {
       control: 'select',
-      options: [undefined]
-    },
-    ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', 'onResizeStart', 'onResize', 'onResizeEnd', 'onSelectionChange', 'onSortChange'])
+      options: [undefined],
+      table: {category: 'Events'}
+    }
   }
 };
 
@@ -542,7 +543,7 @@ function AsyncLoadingExample(props) {
             (<Row id={item.data.id} columns={columns}>
               {(column) => {
                 return column.id === 'title'
-                  ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                  ? <Cell textValue={item.data.title}><Link href={item.data.url} target="_blank" isQuiet>{item.data.title}</Link></Cell>
                   : <Cell>{item.data[column.id]}</Cell>;
               }}
             </Row>)
@@ -562,4 +563,43 @@ export const ResizingUncontrolledSortableColumns = {
     onResizeEnd: action('onResizeEnd')
   },
   name: 'resizable, sortable, reddit example'
+};
+
+let manyColunns = [];
+for (let i = 0; i < 100; i++) {
+  manyColunns.push({name: 'Column ' + i, id: 'C' + i});
+}
+
+let manyRows = [];
+for (let i = 0; i < 1000; i++) {
+  let row = {id: 'R' + i};
+  for (let j = 0; j < 100; j++) {
+    row['C' + j] = `${i}, ${j}`;
+  }
+
+  manyRows.push(row);
+}
+
+export const ManyItems = {
+  render: (args) => (
+    <Table aria-label="Many items table" {...args} styles={style({width: '[800px]', height: '[400px]'})}>
+      <TableHeader columns={manyColunns}>
+        {(column) => (
+          <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={manyRows}>
+        {item => (
+          <Row id={item.id} columns={manyColunns}>
+            {(column) => {
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  ),
+  args: {
+    ...Example.args
+  }
 };
