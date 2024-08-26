@@ -362,7 +362,8 @@ export function Migrating() {
               <div>{`  borderWidth: 1,`}</div>
               <div>{`  borderRadius: 'sm',`}</div>
               <div>{`  borderStyle: 'solid',`}</div>
-              <div>{`  borderColor: 'transparent-black-75'`}</div>
+              <div>{`  borderColor: 'transparent-black-75',`}</div>
+              <div>{`  font: 'body-sm'`}</div>
               <div>{`})} />`}</div>
             </pre>
           </li>
