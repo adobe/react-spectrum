@@ -746,7 +746,7 @@ export const style = createTheme({
     filter: {
       emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
       elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     borderTopStartRadius: createRenamedProperty('borderStartStartRadius', radius),
