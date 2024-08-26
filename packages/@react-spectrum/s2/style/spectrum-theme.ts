@@ -87,13 +87,11 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: Color<keyof typeof color>, dark:Color<keyof typeof color>): `[${string}]` {
-  let [lightColor, lightOpacity] = light.split('/');
-  let [darkColor, darkOpacity] = dark.split('/');
-  // @ts-ignore
-  lightColor = color[lightColor];
-  // @ts-ignore
-  darkColor = color[darkColor];
+export function lightDark(light: Color<keyof typeof color>, dark: Color<keyof typeof color>): `[${string}]` {
+  let [lightColorValue, lightOpacity] = light.split('/');
+  let [darkColorValue, darkOpacity] = dark.split('/');
+  let lightColor = color[lightColorValue];
+  let darkColor = color[darkColorValue];
 
   if (lightOpacity) {
     lightColor = `rgb(from ${lightColor} r g b / ${lightOpacity}%)`;
@@ -528,11 +526,7 @@ export const style = createTheme({
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color'),
-      'focus-ring': {
-        default: colorToken('focus-indicator-color'),
-        forcedColors: 'Highlight'
-      }
+      pasteboard: weirdColorToken('background-pasteboard-color')
     }),
     borderColor: createColorProperty({
       ...color,

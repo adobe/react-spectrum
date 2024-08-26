@@ -167,11 +167,7 @@ type Scale = 'large' | 'medium';
 
 export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   protected isStickyColumn(node: GridNode<T>): boolean {
-    if (node.props.isSticky) {
-      return true;
-    }
-
-    return false;
+    return node.props.isSticky;
   }
 
   protected buildCollection(): LayoutNode[] {
@@ -445,7 +441,10 @@ const columnStyles = style({
   fontFamily: 'sans',
   fontWeight: 'bold',
   display: 'flex',
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
   borderTopWidth: 0,
   borderBottomWidth: 1,
   borderStartWidth: 0,
@@ -453,7 +452,8 @@ const columnStyles = style({
     default: 0,
     isColumnResizable: 1
   },
-  borderStyle: 'solid'
+  borderStyle: 'solid',
+  forcedColorAdjust: 'none'
 });
 
 export interface ColumnProps extends RACColumnProps {
@@ -599,11 +599,9 @@ const resizerHandleContainer = style({
   },
   // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
   zIndex: 1000,
-  '--nubbin-color': {
-    type: 'backgroundColor',
-    value: {
-      default: 'focus-ring'
-    }
+  '--focus-ring-color': {
+    type: 'outlineColor',
+    value: 'focus-ring'
   }
 });
 
@@ -611,8 +609,8 @@ const resizerHandle = style({
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-300',
-    isFocusVisible: 'focus-ring',
-    isResizing: 'focus-ring',
+    isFocusVisible: '--focus-ring-color',
+    isResizing: '--focus-ring-color',
     forcedColors: {
       default: 'Background',
       isHovered: 'Highlight',
@@ -654,7 +652,7 @@ interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSor
 function Nubbin() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-      <g fill="var(--nubbin-color)" stroke="var(--nubbin-color)" strokeWidth="2">
+      <g fill="var(--focus-ring-color)" stroke="var(--focus-ring-color)" strokeWidth="2">
         <circle cx="8" cy="8" r="8" stroke="none" />
         <circle cx="8" cy="8" r="7" fill="none" />
       </g>
@@ -769,11 +767,10 @@ function ResizerIndicator({isFocusVisible, isHovered, isResizing, isInResizeMode
   );
 }
 
-// TODO: making the background of the column header gray-100 causes the hovered columnn resizer to blend in, wait for full design update.
 const tableHeader = style({
   height: 'full',
   width: 'full',
-  backgroundColor: 'base'
+  backgroundColor: 'gray-75'
 });
 
 const selectAllCheckbox = style({
@@ -797,7 +794,7 @@ const selectAllCheckboxColumn = style({
   borderTopWidth: 0,
   borderBottomWidth: 1,
   borderStyle: 'solid',
-  backgroundColor: 'base'
+  backgroundColor: 'gray-75'
 });
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
@@ -1029,7 +1026,7 @@ const row = style<RowRenderProps & S2TableProps>({
     value: rowBackgroundColor
   },
   '--rowFocusIndicatorColor': {
-    type: 'backgroundColor',
+    type: 'outlineColor',
     value: {
       default: 'focus-ring',
       forcedColors: 'Highlight'
