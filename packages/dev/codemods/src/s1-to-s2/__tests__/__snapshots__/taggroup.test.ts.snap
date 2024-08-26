@@ -2,7 +2,6 @@
 
 exports[`Dynamic - Renames Item to Tag 1`] = `
 "import { Tag, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
   {id: 2, name: 'Travel'},
@@ -19,7 +18,6 @@ const items = [
 
 exports[`Dynamic - Renames key to id 1`] = `
 "import { Tag, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
   {id: 2, name: 'Travel'},
@@ -42,7 +40,6 @@ const items = [
 
 exports[`Static - Renames Item to Tag 1`] = `
 "import { Tag, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 <div>
   <TagGroup aria-label="Static TagGroup items example">
@@ -56,7 +53,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Static - Renames key to id 1`] = `
 "import { Tag, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 let externalKey = 'travel';
 <div>
@@ -71,7 +67,6 @@ let externalKey = 'travel';
 
 exports[`changes validationState to isInvalid or nothing 1`] = `
 "import { Tag, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
