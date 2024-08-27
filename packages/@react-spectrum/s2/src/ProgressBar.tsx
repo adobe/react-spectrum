@@ -37,7 +37,7 @@ interface ProgressBarStyleProps {
    * Whether presentation is indeterminate when progress isn't known.
    */
   isIndeterminate?: boolean,
-  /** 
+  /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
   staticColor?: 'white' | 'black',
@@ -65,9 +65,46 @@ const indeterminate = keyframes(`
   }
 `);
 
-const wrapper = style<ProgressBarStyleProps>({
+const wrapper = style({
   ...bar(),
-  width: 192
+  gridTemplateColumns: {
+    default: {
+      labelPosition: {
+        top: ['1fr', 'auto'],
+        side: ['auto', '1fr']
+      }
+    },
+    isIndeterminate: {
+      labelPosition: {
+        top: ['1fr'],
+        side: ['auto', '1fr']
+      }
+    }
+  },
+  gridTemplateAreas: {
+    default: {
+      labelPosition: {
+        top: [
+          'label value',
+          'bar bar'
+        ],
+        side: [
+          'label bar value'
+        ]
+      }
+    },
+    isIndeterminate: {
+      labelPosition: {
+        top: [
+          'label',
+          'bar'
+        ],
+        side: [
+          'label bar'
+        ]
+      }
+    }
+  }
 }, getAllowedOverrides());
 
 const valueStyles = style({
@@ -77,7 +114,6 @@ const valueStyles = style({
 
 const trackStyles = style({
   ...track(),
-  width: 'full',
   height: {
     default: size(6),
     size: {
@@ -143,7 +179,7 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
+          {label && !isIndeterminate && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
           <div className={trackStyles({...props})}>
             <div
               className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}
