@@ -2,7 +2,6 @@
 
 exports[`Dynamic - Renames Item to ComboBoxItem 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Aerospace'},
   {id: 2, name: 'Mechanical'}
@@ -18,7 +17,6 @@ let options = [
 
 exports[`Dynamic - Renames key to id 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
   {id: 2, name: 'Travel'},
@@ -46,7 +44,6 @@ const items = [
 
 exports[`Removes isQuiet 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
 <div>
@@ -80,7 +77,6 @@ let props = {isQuiet: true};
 
 exports[`Removes placeholder 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let placeholder = 'is this actually removed?';
 let props = {placeholder: 'is this actually removed?'};
 <div>
@@ -106,7 +102,6 @@ let props = {placeholder: 'is this actually removed?'};
 
 exports[`Static - Converts menuWidth to px value 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let menuWidth = 'size-10';
 let props = {menuWidth: 'size-10'};
 <div>
@@ -142,7 +137,6 @@ let props = {menuWidth: 'size-10'};
 
 exports[`Static - Renames Item to ComboBoxItem 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 <div>
   <ComboBox label="Favorite Animal">
     <ComboBoxItem>Red Panda</ComboBoxItem>
@@ -153,7 +147,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Static - Renames key to id 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let externalKey = 'travel';
 <div>
   <ComboBox label="Favorite Animal">
@@ -165,7 +158,6 @@ let externalKey = 'travel';
 
 exports[`changes validationState to isInvalid or nothing 1`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
 <div>
@@ -199,7 +191,6 @@ let props = {validationState: 'invalid'};
 
 exports[`changes validationState to isInvalid or nothing 2`] = `
 "import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
 <div>
@@ -226,7 +217,6 @@ let props = {validationState: 'invalid'};
 
 exports[`handles sections 1`] = `
 "import { ComboBoxSection, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
-import { Section, Item } from '@adobe/react-spectrum';
 <ComboBox>
   <ComboBoxSection><Header>Section title</Header>
     <ComboBoxItem>Item one</ComboBoxItem>

@@ -2,7 +2,6 @@
 
 exports[`Comments out autoFocusCurrent 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
 // TODO(S2-upgrade): autoFocusCurrent has not been implemented yet.
@@ -15,7 +14,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Comments out isMultiline 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
 // TODO(S2-upgrade): isMultiline has not been implemented yet.
@@ -28,7 +26,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Comments out showRoot 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
 // TODO(S2-upgrade): showRoot has not been implemented yet.
@@ -43,7 +40,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Dynamic - Renames Item to Breadcrumb 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let folders = [
   {id: 1, label: 'Home'},
   {id: 2, label: 'Trendy'},
@@ -59,7 +55,6 @@ let folders = [
 
 exports[`Dynamic - Renames key to id 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
   {id: 2, name: 'Travel'},
@@ -84,7 +79,6 @@ const items = [
 
 exports[`Leaves a comment if size prop contains "S" 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
 <Breadcrumbs // TODO(S2-upgrade): size="S" is no longer supported. You'll need to update this manually.
@@ -96,7 +90,6 @@ size={true ? 'M' : 'S'}>
 
 exports[`Removes size="S" 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
 <Breadcrumbs>
@@ -107,7 +100,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Static - Renames Item to Breadcrumb and adds import 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 <div>
   // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
@@ -121,7 +113,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Static - Renames key to id 1`] = `
 "import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let externalKey = 'travel';
 <div>
   // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.

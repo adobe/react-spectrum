@@ -55,8 +55,6 @@ exports[`Static - Renames Item to Breadcrumb and adds import 1`] = `
   Heading,
 } from "@react-spectrum/s2";
 
-import { Item, Section } from '@adobe/react-spectrum';
-
 <div>
   // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
   <Breadcrumbs>
