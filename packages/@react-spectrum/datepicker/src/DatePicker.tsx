@@ -63,13 +63,11 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,
-    isTextInput: true,
     autoFocus
   });
 
   let {isFocused: isFocusedButton, focusProps: focusPropsButton} = useFocusRing({
     within: false,
-    isTextInput: false,
     autoFocus
   });
 

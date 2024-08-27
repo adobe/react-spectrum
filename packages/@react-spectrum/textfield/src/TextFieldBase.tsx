@@ -101,7 +101,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef<HTMLInpu
   });
 
   let {focusProps, isFocusVisible} = useFocusRing({
-    isTextInput: true,
     autoFocus
   });
 

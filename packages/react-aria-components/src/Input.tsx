@@ -58,7 +58,6 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
 
   let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
-    isTextInput: true,
     autoFocus: props.autoFocus
   });
 

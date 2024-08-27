@@ -18,7 +18,6 @@ function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) 
 
   let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
-    isTextInput: true,
     autoFocus: props.autoFocus
   });
 
