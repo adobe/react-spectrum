@@ -100,6 +100,41 @@ import { StatusLight } from "@react-spectrum/s2";
 </>"
 `;
 
+exports[`should remove unused Item/Section import even if name taken in different scope 1`] = `
+"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+
+function foo() {
+  let Item = 'something else';
+  let Section = 'something else';
+}
+
+<div>
+  <Menu aria-label="Text">
+    <MenuSection><Header>Styles</Header>
+      <MenuItem id="bold">Bold</MenuItem>
+      <MenuItem id="underline">Underline</MenuItem>
+    </MenuSection>
+  </Menu>
+</div>"
+`;
+
+exports[`should remove unused Item/Section import if aliased 1`] = `
+"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+import {Section, Item} from 'elsewhere';
+
+<div>
+  <Section>
+    <Item>Test</Item>
+  </Section>
+  <Menu aria-label="Text">
+    <MenuSection><Header>Styles</Header>
+      <MenuItem id="bold"></MenuItem>
+      <MenuItem id="underline">Underline</MenuItem>
+    </MenuSection>
+  </Menu>
+</div>"
+`;
+
 exports[`should replace named imports 1`] = `
 "import { Button } from "@react-spectrum/s2";
 
@@ -114,7 +149,6 @@ exports[`should replace named imports from individual packages 1`] = `
 
 exports[`should use unique alias if newly imported component name is already in scope 1`] = `
 "import { Tag as Tag1, TagGroup } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 const Tag = 'something else';
 

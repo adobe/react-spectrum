@@ -2,7 +2,6 @@
 
 exports[`Dynamic - Renames Item to PickerItem 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let options = [
   {id: 1, name: 'Chocolate'},
   {id: 2, name: 'Vanilla'}
@@ -28,7 +27,6 @@ let options = [
 
 exports[`Static - Converts menuWidth to px value 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let menuWidth = 'size-10';
 let props = {menuWidth: 'size-10'};
 <div>
@@ -64,7 +62,6 @@ let props = {menuWidth: 'size-10'};
 
 exports[`Static - Removes isQuiet 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
 <div>
@@ -94,7 +91,6 @@ let props = {isQuiet: true};
 
 exports[`Static - Renames Item to PickerItem 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 <div>
   <Picker label="Ice Cream">
     <PickerItem>Chocolate</PickerItem>
@@ -105,7 +101,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`Static - Renames key to id 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 <div>
   <Picker label="Ice Cream">
     <PickerItem id="chocolate">Chocolate</PickerItem>
@@ -116,7 +111,6 @@ import { Item } from '@adobe/react-spectrum';
 
 exports[`changes validationState to isInvalid or nothing 1`] = `
 "import { PickerItem, Picker } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
 <div>
@@ -147,7 +141,6 @@ let props = {validationState: 'invalid'};
 
 exports[`handles sections 1`] = `
 "import { PickerSection, PickerItem, Picker } from "@react-spectrum/s2";
-import { Section, Item } from '@adobe/react-spectrum';
 <Picker>
   <PickerSection><Header>Section title</Header>
     <PickerItem>Item one</PickerItem>
