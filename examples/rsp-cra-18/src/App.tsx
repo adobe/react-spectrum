@@ -1,10 +1,20 @@
 import './App.css';
-import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content, Heading} from '@adobe/react-spectrum';
+import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
-import {InlineAlert} from '@react-spectrum/inlinealert'
+import ButtonExamples from './sections/ButtonExamples';
+import CollectionExamples from './sections/CollectionExamples';
+import DateTimeExamples from './sections/DateTimeExamples';
+import FormExamples from './sections/FormExamples';
+import NavigationExamples from './sections/NavigationExamples';
+import OverlayExamples from './sections/OverlayExamples';
+import ColorExamples from './sections/ColorExamples';
+import StatusExamples from './sections/StatusExamples';
+import ContentExamples from './sections/ContentExamples';
+import PickerExamples from './sections/PickerExamples';
+import DragAndDropExamples from './sections/DragAndDropExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -27,8 +37,7 @@ function App() {
 
   return (
     <Provider theme={defaultTheme}
-              colorScheme={selected ? "light" : "dark"}
-              height="100%">
+              colorScheme={selected ? "light" : "dark"}>
       <div className="content-padding">
         <Lighting selected={selected} switch={setSelection}/>
         <TagGroup aria-label="Static TagGroup items example">
@@ -46,16 +55,23 @@ function App() {
             {(item: any) =>
               (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
                 {(key) => {
-                  return <Cell>{item[key.toString()]}</Cell>;
+                  return <Cell>{item[key]}</Cell>;
                 }}
               </Row>)
             }
           </TableBody>
         </TableView>
-        <InlineAlert>
-          <Heading>Payment Information</Heading>
-          <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
-        </InlineAlert>
+        <ButtonExamples />
+        <CollectionExamples />
+        <ColorExamples />
+        <DateTimeExamples />
+        <FormExamples />
+        <NavigationExamples />
+        <OverlayExamples />
+        <StatusExamples />
+        <ContentExamples />
+        <PickerExamples />
+        <DragAndDropExamples />
       </div>
     </Provider>
   );

@@ -56,6 +56,10 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
+      'packages/react-stately',
+      'packages/react-aria',
+      'packages/react-aria-components',
+      'packages/tailwindcss-react-aria-components',
       'packages/*/*'
     ],
     devDependencies: Object.fromEntries(
@@ -67,7 +71,9 @@ async function build() {
           name.startsWith('@spectrum-css') ||
           name.startsWith('@testing-library') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe')
+          name.startsWith('@adobe') ||
+          name === 'react' ||
+          name === 'react-dom'
         )
     ),
     dependencies: {},
@@ -95,7 +101,6 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
@@ -104,6 +109,11 @@ async function build() {
   // does it in a different format
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  // Delete test-utils from copied packages since we don't expose anything from there
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
+
+  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
+  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
@@ -114,7 +124,7 @@ async function build() {
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
-    if (!p.includes('spectrum-css') && !p.includes('dev/')) {
+    if (!p.includes('spectrum-css') && !p.includes('example-theme') && !p.includes('dev/')) {
       let json = JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p)), 'utf8');
 
       if (json.name in excludeList) {
@@ -136,13 +146,13 @@ async function build() {
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
   }
-
   // Install dependencies from npm
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
+  await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/react-aria-components', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});

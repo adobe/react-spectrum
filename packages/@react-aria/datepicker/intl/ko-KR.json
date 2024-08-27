@@ -2,7 +2,7 @@
   "calendar": "달력",
   "day": "일",
   "dayPeriod": "오전/오후",
-  "endDate": "종료 날짜",
+  "endDate": "종료일",
   "era": "연호",
   "hour": "시",
   "minute": "분",
@@ -11,7 +11,7 @@
   "selectedDateDescription": "선택 일자: {date}",
   "selectedRangeDescription": "선택 범위: {startDate} ~ {endDate}",
   "selectedTimeDescription": "선택 시간: {time}",
-  "startDate": "시작 날짜",
+  "startDate": "시작일",
   "timeZoneName": "시간대",
   "weekday": "요일",
   "year": "년"

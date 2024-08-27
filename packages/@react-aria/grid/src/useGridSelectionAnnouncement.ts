@@ -11,12 +11,12 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {Collection, Node, Selection} from '@react-types/shared';
+import {Collection, Key, Node, Selection} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Key, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useRef} from 'react';
 import {useUpdateEffect} from '@react-aria/utils';
 
 export interface GridSelectionAnnouncementProps {
@@ -40,7 +40,7 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
   let {
     getRowText = (key) => state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
 
   // Many screen readers do not announce when items in a grid are selected/deselected.
   // We do this using an ARIA live region.

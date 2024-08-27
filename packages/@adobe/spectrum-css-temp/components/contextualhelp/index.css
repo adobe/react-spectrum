@@ -34,6 +34,9 @@
   --spectrum-dialog-padding-x: var(--spectrum-contextualhelp-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);
 
+  &.react-spectrum-ContextualHelp-dialog--isMobile {
+    width: 100%;
+  }
   .react-spectrum-ContextualHelp-content {
     margin-top: var(--spectrum-global-dimension-static-size-100);
   }

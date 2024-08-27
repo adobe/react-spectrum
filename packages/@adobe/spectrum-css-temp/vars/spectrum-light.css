@@ -251,7 +251,6 @@
   --spectrum-well-border-color: rgba(0,0,0,0.05);
   --spectrum-tray-background-color: var(--spectrum-global-color-gray-50);
   /* react spectrum additions */
-  --react-spectrum-datepicker-placeholder-color: rgb(118, 118, 118); /* 4.54:1 contrast ratio */
 
   --spectrum-accent-background-color-default: var(--spectrum-accent-color-900);
   --spectrum-accent-background-color-hover: var(--spectrum-accent-color-1000);

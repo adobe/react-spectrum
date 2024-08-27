@@ -26,7 +26,14 @@ function setupGlobalEvents() {
     return;
   }
 
-  let onTransitionStart = (e: TransitionEvent) => {
+  function isTransitionEvent(event: Event): event is TransitionEvent {
+    return 'propertyName' in event;
+  }
+
+  let onTransitionStart = (e: Event) => {
+    if (!isTransitionEvent(e) || !e.target) {
+      return;
+    }
     // Add the transitioning property to the list for this element.
     let transitions = transitionsByElement.get(e.target);
     if (!transitions) {
@@ -36,13 +43,18 @@ function setupGlobalEvents() {
       // The transitioncancel event must be registered on the element itself, rather than as a global
       // event. This enables us to handle when the node is deleted from the document while it is transitioning.
       // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
-      e.target.addEventListener('transitioncancel', onTransitionEnd);
+      e.target.addEventListener('transitioncancel', onTransitionEnd, {
+        once: true
+      });
     }
 
     transitions.add(e.propertyName);
   };
 
-  let onTransitionEnd = (e: TransitionEvent) => {
+  let onTransitionEnd = (e: Event) => {
+    if (!isTransitionEvent(e) || !e.target) {
+      return;
+    }
     // Remove property from list of transitioning properties.
     let properties = transitionsByElement.get(e.target);
     if (!properties) {

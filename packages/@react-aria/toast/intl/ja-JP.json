@@ -1,4 +1,4 @@
 {
   "close": "閉じる",
-  "notifications": "通知"
+  "notifications": "{count, plural, one {# 個の通知} other {# 個の通知}}。"
 }

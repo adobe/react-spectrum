@@ -21,7 +21,7 @@ import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
-let manyItems = [];
+let manyItems: {key: number}[] = [];
 for (let i = 0; i < 50; i++) {
   let item = {key: i};
   manyItems.push(item);
@@ -242,7 +242,7 @@ export const EmptyState: TagGroupStory = {
       {[]}
     </TagGroup>
   ),
-  storyName: 'Empty state'
+  name: 'Empty state'
 };
 
 export const CustomEmptyState: TagGroupStory = {
@@ -250,7 +250,7 @@ export const CustomEmptyState: TagGroupStory = {
   args: {
     renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
   },
-  storyName: 'Custom empty state'
+  name: 'Custom empty state'
 };
 
 function OnRemoveExample(props) {

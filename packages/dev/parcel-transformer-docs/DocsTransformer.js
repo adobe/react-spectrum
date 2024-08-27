@@ -31,7 +31,7 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods', 'importAttributes']
     });
 
     let exports = {};
@@ -113,13 +113,15 @@ module.exports = new Transformer({
       }
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
-          return;
+          node.id = `${asset.filePath}:${path.node.id.name}`;
+          node.name = path.node.id.name;
+          return Object.assign(node, {type: 'any'});
         }
 
         let docs = getJSDocs(path.parentPath);
         processExport(path.get('init'), node);
         addDocs(node, docs);
-        if (node.type === 'interface') {
+        if (node.type === 'interface' || node.type === 'component') {
           node.id = `${asset.filePath}:${path.node.id.name}`;
           node.name = path.node.id.name;
         }
@@ -128,6 +130,10 @@ module.exports = new Transformer({
 
       if (isReactForwardRef(path)) {
         return processExport(path.get('arguments.0'), node);
+      }
+
+      if (isCollectionComponent(path)) {
+        return processExport(path.get('arguments.1'), node);
       }
 
       if (path.isClassDeclaration()) {
@@ -296,6 +302,12 @@ module.exports = new Transformer({
             }
           }
 
+          if (left.name === undefined) {
+            return Object.assign(node, {
+              type: 'identifier',
+              name: path.node.left.name + '.' + path.node.right.name
+            });
+          }
           return Object.assign(node, {
             type: 'identifier',
             name: left.name + '.' + path.node.right.name
@@ -329,6 +341,18 @@ module.exports = new Transformer({
           typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : [],
           description: docs.description || null,
           access: docs.access
+        });
+      }
+
+      if (path.isTSMappedType()) {
+        return Object.assign(node, {
+          type: 'mapped',
+          readonly: path.node.readonly,
+          typeParameter: {
+            ...processExport(path.get('typeParameter')),
+            isMappedType: true
+          },
+          typeAnnotation: processExport(path.get('typeAnnotation'))
         });
       }
 
@@ -485,7 +509,11 @@ module.exports = new Transformer({
       }
 
       if (path.isTSAnyKeyword()) {
-        return Object.assign(node, {type: 'any'});
+        return Object.assign(node, {
+          id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
+          name: path.node.id ? path.node.id.name : null,
+          type: 'any'
+        });
       }
 
       if (path.isTSNullKeyword()) {
@@ -607,7 +635,7 @@ module.exports = new Transformer({
 
       if (path.isTSModuleDeclaration()) {
         // TODO: decide how we want to display something from a Global namespace
-        return node;
+        return Object.assign(node, {type: 'any'});
       }
 
       if (path.isTSIndexedAccessType()) {
@@ -619,6 +647,7 @@ module.exports = new Transformer({
       }
 
       console.log('UNKNOWN TYPE', path.node.type);
+      return Object.assign(node, {type: 'any'});
     }
 
     function processParameter(p) {
@@ -646,6 +675,13 @@ module.exports = new Transformer({
 
     function isReactForwardRef(path) {
       return isReactCall(path, 'forwardRef') || (path.isCallExpression() && path.get('callee').isIdentifier({name: 'createHideableComponent'}));
+    }
+
+    function isCollectionComponent(path) {
+      return path.isCallExpression() && t.isIdentifier(path.node.callee) && (
+        path.node.callee.name === 'createLeafComponent' ||
+        path.node.callee.name === 'createBranchComponent'
+      );
     }
 
     function isReactCall(path, name, module = 'react') {

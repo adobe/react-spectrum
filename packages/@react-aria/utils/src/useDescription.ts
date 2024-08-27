@@ -17,8 +17,8 @@ import {useState} from 'react';
 let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number, element: Element}>();
 
-export function useDescription(description: string): AriaLabelingProps {
-  let [id, setId] = useState(undefined);
+export function useDescription(description?: string): AriaLabelingProps {
+  let [id, setId] = useState<string | undefined>();
 
   useLayoutEffect(() => {
     if (!description) {
@@ -43,7 +43,7 @@ export function useDescription(description: string): AriaLabelingProps {
 
     desc.refCount++;
     return () => {
-      if (--desc.refCount === 0) {
+      if (desc && --desc.refCount === 0) {
         desc.element.remove();
         descriptionNodes.delete(description);
       }

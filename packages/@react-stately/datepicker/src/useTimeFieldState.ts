@@ -13,8 +13,8 @@
 import {DateFieldState, useDateFieldState} from '.';
 import {DateValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
 import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
+import {useCallback, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo} from 'react';
 
 export interface TimeFieldStateOptions<T extends TimeValue = TimeValue> extends TimePickerProps<T> {
   /** The locale to display and edit the value according to. */
@@ -36,7 +36,8 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     placeholderValue = new Time(),
     minValue,
     maxValue,
-    granularity
+    granularity,
+    validate
   } = props;
 
   let [value, setValue] = useControlledState<TimeValue>(
@@ -73,7 +74,8 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     maxGranularity: 'hour',
     placeholderValue: placeholderDate,
     // Calendar should not matter for time fields.
-    createCalendar: () => new GregorianCalendar()
+    createCalendar: () => new GregorianCalendar(),
+    validate: useCallback(() => validate?.(value as any), [validate, value])
   });
 
   return {

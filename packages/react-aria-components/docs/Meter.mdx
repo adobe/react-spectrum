@@ -19,6 +19,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Status
@@ -57,10 +58,10 @@ import {Meter, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Meter {
-  --bar-color: var(--spectrum-global-color-gray-500);
   --fill-color: forestgreen;
-  --text-color: var(--spectrum-alias-text-color);
 
   display: grid;
   grid-template-areas: "label value"
@@ -76,7 +77,8 @@ import {Meter, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--border-color);
+    forced-color-adjust: none;
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -90,14 +92,7 @@ import {Meter, Label} from 'react-aria-components';
 
 @media (forced-colors: active) {
   .react-aria-Meter {
-    --bar-color: ButtonFace;
-    --text-color: ButtonText;
     --fill-color: Highlight;
-
-    .bar {
-      border: 1px solid ButtonBorder;
-      box-sizing: border-box;
-    }
   }
 }
 ```
@@ -152,6 +147,12 @@ A `Meter` uses the following components, which may also be used standalone or re
 </ExampleCard>
 
 </section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="meter" />
 
 ## Reusable wrappers
 

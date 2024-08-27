@@ -12,9 +12,9 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget} from '@react-types/shared';
+import {DropTarget, Key, RefObject} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';
@@ -41,11 +41,11 @@ export interface DropIndicatorAria {
 /**
  * Handles drop interactions for a target within a droppable collection.
  */
-export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
+export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DropIndicatorAria {
   let {target} = props;
   let {collection} = state;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();

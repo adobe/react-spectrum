@@ -1,0 +1,449 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Concepts
+keywords: [forms, validation, frameworks, next.js, remix, react server actions]
+order: 5.5
+---
+
+# Forms
+
+Forms allow users to enter and submit data, and provide them with feedback along the way. React Spectrum includes many components that integrate with HTML forms, with support for custom validation, labels, and help text.
+
+## Labels and help text
+
+Accessible forms start with clear, descriptive labels for each field. All React Spectrum form components support labeling using the `label` prop. In addition, help text associates additional context with a field such as a description or error message. The label and help text are announced by assistive technology such as screen readers when the user focuses the field.
+
+```tsx example
+import {TextField} from '@adobe/react-spectrum';
+
+<TextField type="password" label="Password" description="Password must be at least 8 characters." />
+```
+
+Most fields should have a visible label. In rare exceptions, the `aria-label` or `aria-labelledby` attribute must be provided instead to identify the element to screen readers.
+
+## Submitting data
+
+How you submit form data depends on your framework, application, and server. By default, HTML forms are submitted by the browser using a full page refresh. You can take control of form submission by calling `preventDefault` during the `onSubmit` event, and make an API call to submit the data however you like. Frameworks like [Next.js](https://nextjs.org/docs/app/building-your-application/data-fetching/forms-and-mutations) and [Remix](https://remix.run/docs/en/main/components/form) also include builtin APIs to manage this for you.
+
+### Uncontrolled forms
+
+The simplest way to get data from a form is using the browser's [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) API during the `onSubmit` event. This can be passed directly to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/fetch), or converted into a regular JavaScript object using [Object.fromEntries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries). Each field should have a `name` prop to identify it, and values will be serialized to strings by the browser.
+
+```tsx example
+import {Form, TextField, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+function Example() {
+  let [submitted, setSubmitted] = React.useState(null);
+
+  /*- begin highlight -*/
+  let onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // Prevent default browser page refresh.
+    e.preventDefault();
+
+    // Get form data as an object.
+    let data = Object.fromEntries(new FormData(e.currentTarget));
+
+    // Submit to your backend API...
+    setSubmitted(data);
+  };
+  /*- end highlight -*/
+
+  return (
+    <Form onSubmit={onSubmit} maxWidth="size-3000">
+      <TextField name="name" label="Name" />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+      {submitted && <div>You submitted: <code>{JSON.stringify(submitted)}</code></div>}
+    </Form>
+  );
+}
+```
+
+### Controlled forms
+
+By default, all React Spectrum components are uncontrolled, which means that the state is stored internally on your behalf. If you need access to the value in realtime, as the user is editing, you can make it controlled. You'll need to manage the state using React's [useState](https://react.dev/reference/react/useState) hook, and pass the current value and a change handler into each form component.
+
+```tsx example
+import {Form, TextField, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+function Example() {
+  /*- begin highlight -*/
+  let [name, setName] = React.useState('');
+  /*- end highlight -*/
+
+  let onSubmit = (e) => {
+    e.preventDefault();
+
+    // Submit data to your backend API...
+    alert(name);
+  };
+
+  return (
+    <Form onSubmit={onSubmit} maxWidth="size-3000">
+      {/*- begin highlight -*/}
+      <TextField label="Name" value={name} onChange={setName} />
+      {/*- end highlight -*/}
+      <div>You entered: {name}</div>
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+```
+
+## Validation
+
+Form validation is important to ensure user input is in an expected format and meets business requirements. Well-designed form validation assists the user with specific, helpful error messages without confusing and frustrating them with unnecessary errors on partial input. React Spectrum supports native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and integration with server-side validation errors.
+
+### Built-in validation
+
+All React Spectrum form components integrate with native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation). This allows you to define constraints on each field such as required, minimum and maximum values, text formats such as email addresses, and even custom regular expression patterns. These constraints are checked by the browser when the user commits changes to the value (e.g. on blur) or submits the form.
+
+To enable native validation, set the `validationBehavior="native"` prop on the [Form](Form.html) component. This example shows a required email field, which is validated by the browser and displayed with Spectrum help text.
+
+```tsx example
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <TextField label="Email" name="email" type="email" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+Supported constraints include:
+
+* `isRequired` indicates that a field must have a value before the form can be submitted.
+* `minValue` and `maxValue` specify the minimum and maximum value in a date picker or number field.
+* `minLength` and `maxLength` specify the minimum and length of text input.
+* `pattern` provides a custom [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) that a text input must conform to.
+* `type="email"` and `type="url"` provide builtin validation for email addresses and URLs.
+
+See each component's documentation for more details on the supported validation props.
+
+### Customizing error messages
+
+By default, React Spectrum displays the error message provided by the browser, which is localized in the user's preferred language. You can customize these messages by providing a function to the `errorMessage` prop. This receives a list of error strings along with a [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) object describing why the field is invalid, and should return an error message to display.
+
+```tsx example
+<Form validationBehavior="native" maxWidth="size-3000">
+  <TextField
+    label="Name"
+    name="name"
+    isRequired
+    /*- begin highlight -*/
+    errorMessage={({validationDetails}) => (
+      validationDetails.valueMissing ? 'Please enter a name.' : ''
+    )}
+    /*- end highlight -*/
+  />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+**Note**: The default error messages are localized by the browser using the browser/operating system language setting. React Spectrum's [Provider](Provider.html) has no effect on validation errors.
+
+### Custom validation
+
+In addition to the built-in constraints, custom validation is supported by providing a function to the `validate` prop. This function receives the current field value, and can return a string or array of strings representing one or more error messages. These are displayed to the user after the value is committed (e.g. on blur) to avoid distracting them on each keystroke.
+
+```tsx example
+<Form validationBehavior="native" maxWidth="size-3000">
+  <TextField
+    label="Username"
+    /*- begin highlight -*/
+    validate={value => value === 'admin' ? 'Nice try!' : null}
+    /*- end highlight -*/
+  />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+### Realtime validation
+
+Usually, validation errors should be displayed to the user after the value is committed (e.g. on blur), or when the form is submitted. This avoids confusing the user with irrelevant errors while they are still entering a value.
+
+In some cases, validating in realtime can be desireable, such as when meeting password requirements. This can be accomplished by making the field value [controlled](#controlled-forms), and setting the `validationState` and `errorMessage` props accordingly.
+
+```tsx example
+function Example() {
+  let [password, setPassword] = React.useState('');
+  let error;
+  if (password.length < 8) {
+    error = 'Password must be 8 characters or more.';
+  } else if ((password.match(/[A-Z]/g) ?? []).length < 2) {
+    error = 'Password must include at least 2 upper case letters';
+  } else if ((password.match(/[^a-z]/ig) ?? []).length < 2) {
+    error = 'Password must include at least 2 symbols.';
+  }
+
+  return (
+    <TextField
+      label="Password"
+      /*- begin highlight -*/
+      validationState={!!error ? 'invalid' : undefined}
+      errorMessage={error}
+      /*- end highlight -*/
+      value={password}
+      onChange={setPassword} />
+  );
+}
+```
+
+By default, the `validationState="invalid"` prop does not block forms from being submitted. To block form submission, use the `validationBehavior="native"` prop on the [Form](Form.html) component.
+
+### Server validation
+
+Client side validation is useful to give the user immediate feedback, but only one half of the validation story. Data should also be validated on the backend for security and reliability, and your business logic may include rules which cannot be validated on the frontend.
+
+React Spectrum supports displaying server validation errors by passing the `validationErrors` prop to the [Form](Form.html) component. This should be set to an object that maps each field's `name` prop to a string or array of strings representing one or more errors. These are displayed to the user as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
+
+```tsx example
+function Example() {
+  /*- begin highlight -*/
+  let [errors, setErrors] = React.useState({});
+  /*- end highlight -*/
+  let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let data = Object.fromEntries(new FormData(e.currentTarget));
+    let result = await callServer(data)
+    /*- begin highlight -*/
+    setErrors(result.errors);
+    /*- end highlight -*/
+  };
+
+  return (
+    <Form
+      validationBehavior="native"
+      maxWidth="size-3000"
+      onSubmit={onSubmit}
+      /*- begin highlight -*/
+      validationErrors={errors}
+      /*- end highlight -*/
+    >
+      <TextField label="Username" name="username" isRequired />
+      <TextField label="Password" name="password" type="password" isRequired />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+
+// Fake server used in this example.
+function callServer(data) {
+  return {
+    errors: {
+      username: 'Sorry, this username is taken.'
+    }
+  };
+}
+```
+
+#### Schema validation
+
+React Spectrum is compatible with errors returned from schema validation libraries like [Zod](https://zod.dev/), which are often used for server-side form validation. Use the [flatten](https://zod.dev/ERROR_HANDLING?id=flattening-errors) method to get a list of errors for each field and return this as part of your HTTP response.
+
+```tsx
+// In your server...
+import {z} from 'zod';
+
+const schema = z.object({
+  name: z.string().min(1),
+  age: z.coerce.number().positive()
+});
+
+function handleRequest(formData: FormData) {
+  let result = schema.safeParse(Object.fromEntries(formData));
+  if (!result.success) {
+    return {
+      /*- begin highlight -*/
+      errors: result.error.flatten().fieldErrors
+      /*- end highlight -*/
+    };
+  }
+
+  // Do stuff...
+
+  return {
+    errors: {}
+  };
+}
+```
+
+Note that error message localization is also best done on the server rather than on the client to avoid large bundles. You can submit the user's locale as part of the form data if needed, and use something like [zod-i18n](https://github.com/aiji42/zod-i18n) to translate the errors into the correct language.
+
+#### React Server Actions
+
+[Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/forms-and-mutations) are a new React feature currently supported by Next.js. They enable the client to seamlessly call the server without setting up any API routes, and integrate with forms via the `action` prop. The [useFormState](https://react.dev/reference/react-dom/hooks/useFormState) hook can be used to get the value returned by a server action after submitting a form, which may include validation errors.
+
+```tsx
+// app/add-form.tsx
+'use client';
+
+import {useFormState} from 'react-dom';
+import {Form, TextField, ActionButton} from '@adobe/react-spectrum';
+import {createTodo} from '@/app/actions';
+
+export function AddForm() {
+  /*- begin highlight -*/
+  let [{errors}, formAction] = useFormState(createTodo, {errors: {}});
+  /*- end highlight -*/
+
+  return (
+    /*- begin highlight -*/
+    <Form action={formAction} validationErrors={errors}>
+    {/*- end highlight -*/}
+      <TextField label="Task" name="todo" />
+      <ActionButton type="submit">Add</ActionButton>
+    </Form>
+  );
+}
+```
+
+```tsx
+// app/actions.ts
+'use server';
+
+export async function createTodo(prevState: any, formData: FormData) {
+  try {
+    // Create the todo...
+  } catch (err) {
+    return {
+      errors: {
+        /*- begin highlight -*/
+        todo: 'Invalid todo.'
+        /*- end highlight -*/
+      }
+    };
+  }
+}
+```
+
+#### Remix
+
+[Remix actions](https://remix.run/docs/en/main/route/action) handle form submissions on the server. The [useSubmit](https://remix.run/docs/en/main/hooks/use-submit) hook can be used to submit data to the server, and the [useActionData](https://remix.run/docs/en/main/hooks/use-action-data) hook can be used to get the value returned by the server, which may include validation errors.
+
+```tsx
+// app/routes/signup.tsx
+import type {ActionFunctionArgs} from '@remix-run/node';
+import {useActionData, useSubmit} from '@remix-run/react';
+import {Form, TextField, Button} from '@adobe/react-spectrum';
+
+export default function SignupForm() {
+  let submit = useSubmit();
+  let onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit(e.currentTarget);
+  };
+
+  /*- begin highlight -*/
+  let actionData = useActionData<typeof action>();
+  /*- end highlight -*/
+
+  return (
+    <Form
+      method="post"
+      /*- begin highlight -*/
+      validationErrors={actionData?.errors}
+      /*- end highlight -*/
+      onSubmit={onSubmit}>
+      <TextField label="Username" name="username" isRequired />
+      <TextField label="Password" name="password" type="password" isRequired />
+      <Button type="submit" variant="cta">Submit</Button>
+    </Form>
+  );
+}
+
+export async function action({request}: ActionFunctionArgs) {
+  try {
+    // Validate data and perform action...
+  } catch (err) {
+    return {
+      errors: {
+        /*- begin highlight -*/
+        username: 'Sorry, this username is taken.'
+        /*- end highlight -*/
+      }
+    };
+  }
+}
+```
+
+## Form libraries
+
+In most cases, uncontrolled forms with the builtin validation features are enough. However, if you are building a truly complex form, or integrating React Spectrum components into an existing form, a separate form library such as [React Hook Form](https://react-hook-form.com/) or [Formik](https://formik.org/) may be helpful.
+
+### React Hook Form
+
+[React Hook Form](https://react-hook-form.com/) is a popular form library for React. It is primarily designed to work directly with plain HTML input elements, but supports custom form components like the ones in React Spectrum as well.
+
+Since React Spectrum manages the state for components internally, you can use the [Controller](https://react-hook-form.com/docs/usecontroller/controller) component from React Hook Form to integrate React Spectrum components. Pass the props for the `field` render prop through to the React Spectrum component you're using, and use the `fieldState` to get validation errors to display.
+
+```tsx
+import {useForm, Controller} from 'react-hook-form'
+import {Form, TextField, Button} from '@adobe/react-spectrum';
+
+function App() {
+  let {handleSubmit, control} = useForm({
+    defaultValues: {
+      name: '',
+    },
+  });
+  let onSubmit = (data) => {
+    // Call your API here...
+  };
+
+  return (
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        control={control}
+        name="name"
+        rules={{ required: 'Name is required.' }}
+        render={({
+          field: { name, value, onChange, onBlur, ref },
+          fieldState: { invalid, error },
+        }) => (
+          <TextField
+            label="Name"
+            name={name}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
+            ref={ref}
+            isRequired
+            validationState={invalid ? 'invalid' : undefined}
+            errorMessage={error?.message}
+          />
+        )}
+      />
+      <Button type="submit" variant="cta">Submit</Button>
+    </Form>
+  );
+}
+```

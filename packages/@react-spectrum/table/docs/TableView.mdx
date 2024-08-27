@@ -82,7 +82,7 @@ Basic usage of TableView, seen in the example above, shows the use of a static c
 
 Columns and rows can be statically defined as children, or generated dynamically using a function based on the data passed to the `columns` or `items` prop respectively. Cells can also be statically defined as children, or generated dynamically based on the columns defined in the TableHeader.
 
-Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
 
 ```tsx example
 let columns = [
@@ -1939,3 +1939,21 @@ let rows = [
   </TableBody>
 </TableView>
 ```
+
+## Testing
+
+The TableView features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
+It also features long press interactions on its rows depending on the row actions provided and if user is interacting with the list on
+a touch device. Please see the following sections in the testing docs for more information on how to handle these
+behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+[Long press](./testing.html#simulating-user-long-press)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/table/test/Table.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

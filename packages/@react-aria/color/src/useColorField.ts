@@ -12,23 +12,29 @@
 
 import {AriaColorFieldProps} from '@react-types/color';
 import {ColorFieldState} from '@react-stately/color';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {
-  HTMLAttributes,
+  InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
   useCallback,
   useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
+import {privateValidationStateProp} from '@react-stately/form';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-export interface ColorFieldAria {
+export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: HTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the text field's description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the text field's error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -38,22 +44,24 @@ export interface ColorFieldAria {
 export function useColorField(
   props: AriaColorFieldProps,
   state: ColorFieldState,
-  ref: RefObject<HTMLInputElement>
+  ref: RefObject<HTMLInputElement | null>
 ): ColorFieldAria {
   let {
     isDisabled,
     isReadOnly,
-    isRequired
+    isRequired,
+    isWheelDisabled,
+    validationBehavior = 'aria'
   } = props;
 
   let {
     colorValue,
     inputValue,
-    commit,
     increment,
     decrement,
     incrementToMax,
-    decrementToMin
+    decrementToMin,
+    commit
   } = state;
 
   let inputId = useId();
@@ -87,7 +95,7 @@ export function useColorField(
     }
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
-  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
+  let scrollingDisabled = isWheelDisabled || isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
   let onChange = value => {
@@ -96,27 +104,35 @@ export function useColorField(
     }
   };
 
-  let {labelProps, inputProps} = useFormattedTextField(
-    mergeProps(props, {
-      id: inputId,
-      value: inputValue,
-      defaultValue: undefined,
-      type: 'text',
-      autoComplete: 'off',
-      onChange
-    }), state, ref);
+  let {inputProps, ...otherProps} = useFormattedTextField({
+    ...props,
+    id: inputId,
+    value: inputValue,
+    defaultValue: undefined,
+    validate: undefined,
+    [privateValidationStateProp]: state,
+    type: 'text',
+    autoComplete: 'off',
+    onChange
+  }, state, ref);
+
+  inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
+    role: 'textbox',
+    'aria-valuemax': null,
+    'aria-valuemin': null,
+    'aria-valuenow': null,
+    'aria-valuetext': null,
+    autoCorrect: 'off',
+    spellCheck: 'false',
+    onBlur: commit
+  });
+
+  if (validationBehavior === 'native') {
+    inputProps['aria-required'] = undefined;
+  }
 
   return {
-    labelProps,
-    inputProps: mergeProps(inputProps, spinButtonProps, focusWithinProps, {
-      role: 'textbox',
-      'aria-valuemax': null,
-      'aria-valuemin': null,
-      'aria-valuenow': null,
-      'aria-valuetext': null,
-      autoCorrect: 'off',
-      spellCheck: 'false',
-      onBlur: commit
-    })
+    inputProps,
+    ...otherProps
   };
 }

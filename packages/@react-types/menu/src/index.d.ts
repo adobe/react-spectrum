@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, Key, MultipleSelection, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps} from '@react-types/overlays';
+import {ReactElement} from 'react';
 
 export type MenuTriggerType = 'press' | 'longPress';
 

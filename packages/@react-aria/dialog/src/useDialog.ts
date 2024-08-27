@@ -11,10 +11,10 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {RefObject, useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {useOverlayFocusContain} from '@react-aria/overlays';
 
 export interface DialogAria {
@@ -29,9 +29,9 @@ export interface DialogAria {
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement>): DialogAria {
+export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement | null>): DialogAria {
   let {role = 'dialog'} = props;
-  let titleId = useSlotId();
+  let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
   let isRefocusing = useRef(false);
@@ -47,8 +47,10 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       let timeout = setTimeout(() => {
         if (document.activeElement === ref.current) {
           isRefocusing.current = true;
-          ref.current.blur();
-          focusSafely(ref.current);
+          if (ref.current) {
+            ref.current.blur();
+            focusSafely(ref.current);
+          }
           isRefocusing.current = false;
         }
       }, 500);

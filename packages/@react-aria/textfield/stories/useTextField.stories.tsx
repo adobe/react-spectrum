@@ -9,7 +9,7 @@ interface TextFieldProps {
 
 const TextInputField = (props: TextFieldProps) => {
   const {label} = props;
-  const ref = useRef<HTMLInputElement>();
+  const ref = useRef<HTMLInputElement>(undefined);
   const {labelProps, inputProps} = useTextField(props, ref);
 
   return (
@@ -22,7 +22,7 @@ const TextInputField = (props: TextFieldProps) => {
 
 const TextAreaField = (props: TextFieldProps) => {
   const {label} = props;
-  const ref = useRef<HTMLTextAreaElement>();
+  const ref = useRef<HTMLTextAreaElement>(undefined);
   const {labelProps, inputProps} = useTextField({...props, inputElementType: 'textarea'}, ref);
 
   return (
@@ -57,3 +57,17 @@ export const WithHTMLTextAreaElement = {
     value: 'Test value'
   }
 };
+
+export const WithAutoCapitalization = {
+  render: TextInputFieldTemplate,
+  args: {
+    label: 'Test label',
+    autoCapitalize: undefined
+  },
+  argTypes: {
+    autoCapitalize: {
+      options: [undefined, 'off', 'none', 'on', 'sentences', 'words', 'characters']
+    }
+  }
+};
+

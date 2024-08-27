@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import {mergeProps, useTooltip, useTooltipTrigger} from 'react-aria';
 import React from 'react';
 import {useTooltipTriggerState} from '../src';
@@ -37,12 +37,29 @@ function TooltipTrigger(props) {
 
   return (
     <span>
-      <button aria-label="trigger" ref={ref} {...triggerProps}>
+      <button aria-label={props.label ?? 'trigger'} ref={ref} {...triggerProps}>
         {props.children}
       </button>
       {state.isOpen &&
         <Tooltip state={state} {...tooltipProps}>{props.tooltip}</Tooltip>}
     </span>
+  );
+}
+
+function ManualTooltipTrigger(props) {
+  let [isOpen, setOpen] = React.useState(false);
+
+  const onOpenChange = (isOpen) => {
+    props.onOpenChange(isOpen);
+    setOpen(isOpen);
+  };
+  
+  return (
+    <TooltipTrigger
+      label={props.label}
+      onOpenChange={onOpenChange}
+      isOpen={isOpen}
+      tooltip={props.tooltip} />
   );
 }
 
@@ -196,5 +213,45 @@ describe('useTooltipTriggerState', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
   });
-});
 
+  describe('multiple controlled tooltips', () => {
+    it('closes previus tooltip when opening a new one', () => {
+      let secondOnOpenChange = jest.fn();
+
+      let {queryByRole, getByLabelText} = render(
+        <>
+          <ManualTooltipTrigger onOpenChange={onOpenChange} tooltip="First tooltip" label="trigger1">
+            Trigger 1
+          </ManualTooltipTrigger>
+
+          <ManualTooltipTrigger onOpenChange={secondOnOpenChange} tooltip="Second tooltip" label="trigger2">
+            Trigger 2
+          </ManualTooltipTrigger>
+        </>
+      );
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button1 = getByLabelText('trigger1');
+      fireEvent.mouseEnter(button1);
+      fireEvent.mouseMove(button1);
+
+      // run through open timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(TOOLTIP_DELAY));
+
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(queryByRole('tooltip')).toBeVisible();
+
+      let button2 = getByLabelText('trigger2');
+      fireEvent.mouseEnter(button2);
+      fireEvent.mouseMove(button2);
+
+      // run through open timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(TOOLTIP_DELAY));
+
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+});

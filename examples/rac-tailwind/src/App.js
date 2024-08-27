@@ -1,7 +1,7 @@
 import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { ChatBubbleOvalLeftEllipsisIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useMemo, useState } from 'react';
-import { Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text } from 'react-aria-components';
+import { Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text } from 'react-aria-components';
 import { useAsyncList } from 'react-stately';
 import { people } from './people.js';
 import stocks from './stocks.json';
@@ -41,13 +41,13 @@ function MenuExample() {
         <OverlayButton aria-label="Menu">☰</OverlayButton>
         <Popover className="p-1 w-56 overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 data-[entering]:animate-in data-[entering]:fade-in data-[entering]:zoom-in-95 data-[exiting]:animate-out data-[exiting]:fade-out data-[exiting]:zoom-out-95 fill-mode-forwards origin-top-left">
           <Menu className="outline-none">
-            <MenuItem id="new">New…</MenuItem>
-            <MenuItem id="open">Open…</MenuItem>
+            <MyMenuItem id="new">New…</MyMenuItem>
+            <MyMenuItem id="open">Open…</MyMenuItem>
             <Separator className="border-b border-b-gray-300 mx-3 my-1" />
-            <MenuItem id="save">Save</MenuItem>
-            <MenuItem id="save-as">Save as…</MenuItem>
+            <MyMenuItem id="save">Save</MyMenuItem>
+            <MyMenuItem id="save-as">Save as…</MyMenuItem>
             <Separator className="border-b border-b-gray-300 mx-3 my-1" />
-            <MenuItem id="print">Print…</MenuItem>
+            <MyMenuItem id="print">Print…</MyMenuItem>
           </Menu>
         </Popover>
       </MenuTrigger>
@@ -55,8 +55,8 @@ function MenuExample() {
   );
 }
 
-function MenuItem(props) {
-  return <Item {...props} className={({ isFocused }) => `
+function MyMenuItem(props) {
+  return <MenuItem {...props} className={({ isFocused }) => `
     group flex w-full items-center rounded-md px-3 py-2 sm:text-sm outline-none cursor-default
     ${isFocused ? 'bg-violet-500 text-white' : 'text-gray-900'}
   `} />;
@@ -79,11 +79,11 @@ function SelectExample() {
         </Button>
         <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards">
           <ListBox className="outline-none p-1 [--focus-bg:theme(colors.rose.600)]">
-            <ListBoxItem>Aardvark</ListBoxItem>
-            <ListBoxItem>Cat</ListBoxItem>
-            <ListBoxItem>Dog</ListBoxItem>
-            <ListBoxItem>Kangaroo</ListBoxItem>
-            <ListBoxItem>Panda</ListBoxItem>
+            <MyListBoxItem>Aardvark</MyListBoxItem>
+            <MyListBoxItem>Cat</MyListBoxItem>
+            <MyListBoxItem>Dog</MyListBoxItem>
+            <MyListBoxItem>Kangaroo</MyListBoxItem>
+            <MyListBoxItem>Panda</MyListBoxItem>
           </ListBox>
         </Popover>
       </Select>
@@ -91,9 +91,9 @@ function SelectExample() {
   );
 }
 
-function ListBoxItem(props) {
+function MyListBoxItem(props) {
   return (
-    <Item
+    <ListBoxItem
       {...props}
       textValue={props.children}
       className={({isFocused}) => `
@@ -110,7 +110,7 @@ function ListBoxItem(props) {
           }
         </>
       )}
-    </Item>
+    </ListBoxItem>
   );
 }
 
@@ -129,11 +129,11 @@ function ComboBoxExample() {
         </div>
         <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards duration-100 ease-in">
           <ListBox className="outline-none p-1 [--focus-bg:theme(colors.sky.600)]">
-            <ListBoxItem>Aardvark</ListBoxItem>
-            <ListBoxItem>Cat</ListBoxItem>
-            <ListBoxItem>Dog</ListBoxItem>
-            <ListBoxItem>Kangaroo</ListBoxItem>
-            <ListBoxItem>Panda</ListBoxItem>
+            <MyListBoxItem>Aardvark</MyListBoxItem>
+            <MyListBoxItem>Cat</MyListBoxItem>
+            <MyListBoxItem>Dog</MyListBoxItem>
+            <MyListBoxItem>Kangaroo</MyListBoxItem>
+            <MyListBoxItem>Panda</MyListBoxItem>
           </ListBox>
         </Popover>
       </ComboBox>
@@ -419,7 +419,7 @@ function DatePickerExample() {
 function ContactListExample() {
   return (
     <div className="bg-gradient-to-r from-blue-500 to-sky-500 p-8 rounded-lg flex justify-center">
-      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pt-6">
+      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pb-2 scroll-pt-7">
         <ContactSection title="Favorites">
           <Contact id="wade" name="Tony Baldwin" handle="@tony" avatar="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
           <Contact id="arelene" name="Julienne Langstrath" handle="@jlangstrath" avatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
@@ -446,12 +446,12 @@ function ContactSection({title, children, items}) {
 
 function Contact({id, avatar, name, handle}) {
   return (
-    <Item id={id} textValue={name} className="group peer relative py-1 px-2 text-sm outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded aria-selected:bg-blue-500 text-slate-700 aria-selected:text-white aria-selected:[&:has(+[aria-selected=true])]:rounded-b-none aria-selected:peer-aria-selected:rounded-t-none data-[focus-visible]:ring-2 ring-offset-2 ring-blue-500 [&[aria-selected=false]:has(+[aria-selected=false])_.divider]:block [&[aria-selected=true]:has(+[aria-selected=true])_.divider]:block">
+    <ListBoxItem id={id} textValue={name} className="group peer relative py-1 px-2 text-sm outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded aria-selected:bg-blue-500 text-slate-700 aria-selected:text-white aria-selected:[&:has(+[aria-selected=true])]:rounded-b-none aria-selected:peer-aria-selected:rounded-t-none data-[focus-visible]:ring-2 ring-offset-2 ring-blue-500 [&[aria-selected=false]:has(+[aria-selected=false])_.divider]:block [&[aria-selected=true]:has(+[aria-selected=true])_.divider]:block">
       <img src={avatar} alt="" className="row-span-2 place-self-center h-8 w-8 rounded-full" />
       <Text slot="label" className="font-medium truncate">{name}</Text>
       <Text slot="description" className="truncate text-xs text-slate-600 group-aria-selected:text-white">{handle}</Text>
       <div className="divider hidden absolute left-12 right-2 bottom-0 h-px bg-gray-200 group-aria-selected:bg-blue-400" />
-    </Item>
+    </ListBoxItem>
   );
 }
 
@@ -473,10 +473,10 @@ function ImageGridExample() {
     <div className="bg-gradient-to-r from-sky-500 to-teal-500 p-8 rounded-lg flex justify-center">
       <ListBox aria-label="Images" items={list.items} selectionMode="single" selectionBehavior="replace" className="max-h-[280px] overflow-auto outline-none bg-white rounded-lg shadow p-2 grid grid-cols-3 gap-2">
         {item => (
-          <Item textValue={item.user.name} className="rounded outline-none group cursor-default">
+          <ListBoxItem textValue={item.user.name} className="rounded outline-none group cursor-default">
             <img src={item.urls.regular} alt={item.alt_description} className="w-full h-[80px] object-cover rounded group-aria-selected:ring group-aria-selected:ring-2 group-aria-selected:ring-offset-2 group-aria-selected:ring-sky-600" />
             <Text slot="label" className="text-[11px] text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap max-w-full block mt-1">{item.user.name}</Text>
-          </Item>
+          </ListBoxItem>
         )}
       </ListBox>
     </div>
@@ -499,7 +499,7 @@ function TableExample() {
 
   return (
     <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center md:col-span-2">
-      <div className="max-h-[280px] overflow-auto relative bg-white rounded-lg shadow text-gray-600">
+      <div className="max-h-[280px] overflow-auto scroll-pt-[2.321rem] relative bg-white rounded-lg shadow text-gray-600">
         <Table aria-label="Stocks" selectionMode="single" selectionBehavior="replace" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="border-separate border-spacing-0">
           <TableHeader>
             <StockColumn id="symbol" allowsSorting>Symbol</StockColumn>

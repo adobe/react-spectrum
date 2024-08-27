@@ -17,7 +17,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
-const lightningcss = require('lightningcss');
+const processCSS = require('./processCSS');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -37,8 +37,11 @@ module.exports = new Transformer({
   },
   async transform({asset, options, config}) {
     let exampleCode = [];
+    let cssCode = [];
     let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
+
+    let visit = (await import('unist-util-visit')).visit;
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
@@ -56,8 +59,10 @@ module.exports = new Transformer({
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, _, s) => {
-              if (s.slice(1, -1) !== 'your-component-library') {
+            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, x, s) => {
+              if (meta === 'example' && s[1] === '.') {
+                exampleCode.push(`import ${x} from "extract:${s.slice(1, -1)}.mdx";`);
+              } else if (s.slice(1, -1) !== 'your-component-library') {
                 exampleCode.push(m);
               }
               return '';
@@ -73,9 +78,9 @@ module.exports = new Transformer({
               let props = options.includes('hidden') ? 'isHidden' : '';
               if (/function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/function (.*?)\s*\(/)[1];
-                code = `${code}\nRENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}><${name} /></${provider}>, document.getElementById("${id}")));`;
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}><${name} /></${provider}>));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}>$1</${provider}>, document.getElementById("${id}")));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}>$1</${provider}>));`);
               }
             }
 
@@ -112,20 +117,34 @@ module.exports = new Transformer({
             }
 
             node.meta = options.includes('hidden') ? null : 'example';
+            let highlightedCode = transformExample(node, preRelease, keepIndividualImports);
+            let output = {
+              type: 'mdxJsxFlowElement',
+              name: 'div',
+              attributes: [
+                {
+                  type: 'mdxJsxAttribute',
+                  name: 'id',
+                  value: id
+                }
+              ]
+            };
+
+            if (options.includes('flip') || options.includes('standalone')) {
+              output.attributes.push({
+                type: 'mdxJsxAttribute',
+                name: 'className',
+                value: options.includes('standalone') ? 'standalone' : 'flip'
+              });
+              return [
+                output,
+                ...highlightedCode
+              ];
+            }
 
             return [
-              ...transformExample(node, preRelease, keepIndividualImports),
-              {
-                type: 'mdxJsxFlowElement',
-                name: 'div',
-                attributes: [
-                  {
-                    type: 'mdxJsxAttribute',
-                    name: 'id',
-                    value: id
-                  }
-                ]
-              }
+              ...highlightedCode,
+              output
             ];
           }
 
@@ -133,62 +152,10 @@ module.exports = new Transformer({
             if (node.meta && node.meta.includes('render=false')) {
               return responsiveCode(node);
             }
+            cssCode.push(node.value);
 
-            let transformed = lightningcss.transform({
-              filename: asset.filePath,
-              code: Buffer.from(node.value),
-              minify: true,
-              drafts: {
-                nesting: true
-              },
-              targets: {
-                chrome: 95 << 16,
-                safari: 15 << 16
-              }
-            });
-            let css = transformed.code.toString();
             let code = node.meta && node.meta.includes('hidden') ? [] : responsiveCode(node);
-            return [
-              ...code,
-              {
-                type: 'mdxJsxFlowElement',
-                name: 'style',
-                attributes: [
-                  {
-                    type: 'mdxJsxAttribute',
-                    name: 'dangerouslySetInnerHTML',
-                    value: {
-                      type: 'mdxJsxAttributeValueExpression',
-                      value: JSON.stringify({__html: css}),
-                      data: {
-                        estree: {
-                          type: 'Program',
-                          body: [{
-                            type: 'ExpressionStatement',
-                            expression: {
-                              type: 'ObjectExpression',
-                              properties: [{
-                                type: 'Property',
-                                kind: 'init',
-                                key: {
-                                  type: 'Identifier',
-                                  name: '__html'
-                                },
-                                value: {
-                                  type: 'Literal',
-                                  value: css
-                                }
-                              }]
-                            }
-                          }]
-                        }
-                      }
-                    }
-                  }
-                ],
-                children: []
-              }
-            ];
+            return code;
           }
 
           return transformExample(node, preRelease, keepIndividualImports);
@@ -197,6 +164,52 @@ module.exports = new Transformer({
         return [node];
       })
     );
+
+    let appendCSS = () => async (tree) => {
+      let css = await processCSS(cssCode, asset, options, minimal);
+
+      tree.children.push(
+        {
+          type: 'mdxJsxFlowElement',
+          name: 'style',
+          attributes: [
+            {
+              type: 'mdxJsxAttribute',
+              name: 'dangerouslySetInnerHTML',
+              value: {
+                type: 'mdxJsxAttributeValueExpression',
+                value: JSON.stringify({__html: css}),
+                data: {
+                  estree: {
+                    type: 'Program',
+                    body: [{
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'ObjectExpression',
+                        properties: [{
+                          type: 'Property',
+                          kind: 'init',
+                          key: {
+                            type: 'Identifier',
+                            name: '__html'
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: css
+                          }
+                        }]
+                      }
+                    }]
+                  }
+                }
+              }
+            }
+          ],
+          children: []
+        }
+      );
+      return tree;
+    };
 
     let toc = [];
     let title = '';
@@ -209,6 +222,7 @@ module.exports = new Transformer({
     let author = '';
     let image = '';
     let hidden = false;
+    let minimal = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
@@ -283,11 +297,15 @@ module.exports = new Transformer({
           order = yamlData.order;
           hidden = yamlData.hidden;
           type = yamlData.type || '';
+          minimal = yamlData.minimal || false;
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
               specifierType: 'url'
             });
+          }
+          if (yamlData.preRelease) {
+            preRelease = yamlData.preRelease;
           }
         }
 
@@ -314,7 +332,6 @@ module.exports = new Transformer({
       );
     }
 
-    let visit = (await import('unist-util-visit')).visit;
     function highlight(options) {
       return (tree) => {
         visit(tree, 'code', node => {
@@ -422,7 +439,8 @@ module.exports = new Transformer({
         fragmentWrap,
         [frontmatter, {type: 'yaml', anywhere: true, marker: '-'}],
         highlight,
-        fragmentUnWrap
+        fragmentUnWrap,
+        appendCSS
       ],
       rehypePlugins: [
         wrapExamples
@@ -447,18 +465,25 @@ module.exports = new Transformer({
     asset.meta.type = type;
     asset.isBundleSplittable = false;
 
-    // Generate the client bundle. We always need the client script,
-    // and the docs script when there's a TOC or an example on the page.
-    let clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
-    if (toc.length || exampleCode.length > 0) {
-      clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+    let clientBundle = '';
+    if (!minimal) {
+      // Generate the client bundle. We always need the client script,
+      // and the docs script when there's a TOC or an example on the page.
+      clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
+      if (toc.length || exampleCode.length > 0) {
+        clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+      }
     }
 
     // Add example code collected from the MDX.
     if (exampleCode.length > 0) {
+      if (minimal) {
+        clientBundle += 'const ExampleProvider = React.Fragment;\n';
+      } else {
+        clientBundle += "import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';\n";
+      }
       clientBundle += `import React from 'react';
-import ReactDOM from 'react-dom';
-import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+import ReactDOM from 'react-dom/client';
 let RENDER_FNS = [];
 ${exampleCode.join('\n')}
 for (let render of RENDER_FNS) {
@@ -562,7 +587,7 @@ function transformExample(node, preRelease, keepIndividualImports) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !/test-utils/.test(path.node.source.value) && !keepIndividualImports) {
           let lib = path.node.source.value.split('/')[0];
           let s = path.node.importKind === 'type' ? typeSpecifiers : specifiers;
           if (!s[lib]) {
@@ -624,6 +649,11 @@ function responsiveCode(node, force) {
     return [node];
   }
 
+  if (node.meta?.includes('format=false')) {
+    node.value = node.value.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
+    return [node];
+  }
+
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
@@ -654,7 +684,7 @@ function formatCode(node, code, printWidth = 80, force = false) {
     return code.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
   }
 
-  if (node.lang === 'css') {
+  if (node.lang === 'css' || node.lang === 'json') {
     return node.value;
   }
 

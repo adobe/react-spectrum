@@ -1,4 +1,4 @@
-import {fireEvent, installMouseEvent, installPointerEvent, render, renderHook, screen} from '@react-spectrum/test-utils';
+import {fireEvent, installMouseEvent, installPointerEvent, render, renderHook, screen} from '@react-spectrum/test-utils-internal';
 import * as React from 'react';
 import {useRef} from 'react';
 import {useSlider, useSliderThumb} from '../src';

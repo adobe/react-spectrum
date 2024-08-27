@@ -16,6 +16,7 @@ import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useUNSTABLE_PortalContext} from './PortalProvider';
 
 export interface OverlayProps {
   /**
@@ -49,6 +50,11 @@ export function Overlay(props: OverlayProps) {
   let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
+
+  let {getContainer} = useUNSTABLE_PortalContext();
+  if  (!props.portalContainer && getContainer) {
+    portalContainer = getContainer();
+  }
 
   if (!portalContainer) {
     return null;

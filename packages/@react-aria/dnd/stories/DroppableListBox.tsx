@@ -76,7 +76,7 @@ export function DroppableListBoxExample(props) {
   };
 
   return (
-    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref}>
+    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref} isDisabled={props.isDisabled}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -104,6 +104,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   }));
 
   let dropState = useDroppableCollectionState({
+    isDisabled: props.isDisabled,
     collection: state.collection,
     selectionManager: state.selectionManager,
     getDropOperation: (target, _, allowedOperations) => {
@@ -134,7 +135,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   }, state, domRef);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let dropRef = React.useRef();
+  let dropRef = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);
@@ -179,7 +180,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
 });
 
 function CollectionItem({item, state, dropState}) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {optionProps} = useOption({
     key: item.key,
     isSelected: state.selectionManager.isSelected(item.key)
@@ -205,7 +206,7 @@ function CollectionItem({item, state, dropState}) {
 }
 
 function InsertionIndicator(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
 
   // If aria-hidden, we are either not in a drag session or the drop target is invalid.

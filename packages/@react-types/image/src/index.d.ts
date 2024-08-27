@@ -11,6 +11,7 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {ReactEventHandler} from 'react';
 
 export interface ImageProps {
   /**
@@ -24,7 +25,15 @@ export interface ImageProps {
   /**
    * Sets the Image [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) style.
    */
-  objectFit?: any // move to styleProps for images and type better
+  objectFit?: any, // move to styleProps for images and type better
+  /**
+   * Called if an error occurs while loading or rendering an image, see [Image loading errors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#image_loading_errors).
+   */
+  onError?: ReactEventHandler<HTMLImageElement>,
+  /**
+   * Called when the image has successfully loaded, see [load event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
+   */
+  onLoad?: ReactEventHandler<HTMLImageElement>
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {

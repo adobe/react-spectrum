@@ -1,0 +1,64 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/utils';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/utils/package.json';
+
+---
+category: Utilities
+keywords: [ref]
+---
+
+# useObjectRef
+
+<PageDescription>{docs.exports.useObjectRef.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useObjectRef']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useObjectRef} links={docs.links} />
+
+## Introduction
+
+`useObjectRef` is a utility function that will give an object ref back regardless of if a
+callback ref or object ref was passed in. This is useful for passing refs to React Aria hooks.
+
+## Example
+
+```tsx example
+import {useObjectRef} from '@react-aria/utils';
+import {useButton} from '@react-aria/button';
+import {AriaButtonProps} from '@react-types/button';
+
+let Button = React.forwardRef((props: AriaButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
+  let objRef = useObjectRef(ref);
+  let {buttonProps} = useButton(props, objRef);
+  let {children} = props;
+
+  return (
+    <button {...buttonProps} ref={objRef}>
+      {children}
+    </button>
+  );
+});
+
+function MyButton(props) {
+  let ref = React.useRef(null);
+  return <Button ref={ref} onPress={() => console.log(ref.current)}>{props.children}</Button>;
+}
+
+<MyButton>Test</MyButton>
+```

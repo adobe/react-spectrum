@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, forwardRefType, RenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, RenderProps, useContextProps, useRenderProps} from './utils';
+import {forwardRefType} from '@react-types/shared';
 import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
@@ -48,14 +49,19 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
       placement
     }
   });
+  // remove undefined values from renderProps.style object so that it can be
+  // spread merged with the other style object
+  if (renderProps.style) {
+    Object.keys(renderProps.style).forEach(key => renderProps.style![key] === undefined && delete renderProps.style![key]);
+  }
 
   return (
     <div
       {...props}
       {...renderProps}
       style={{
-        ...renderProps.style,
-        ...style
+        ...style,
+        ...renderProps.style
       }}
       ref={ref}
       data-placement={placement} />

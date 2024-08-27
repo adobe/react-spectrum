@@ -16,6 +16,10 @@ export type LocalizedStrings<K extends string, T extends LocalizedString> = {
   [lang: string]: Record<K, T>
 };
 
+const localeSymbol = Symbol.for('react-aria.i18n.locale');
+const stringsSymbol = Symbol.for('react-aria.i18n.strings');
+let cachedGlobalStrings: {[packageName: string]: LocalizedStringDictionary<any, any>} | null | undefined = undefined;
+
 /**
  * Stores a mapping of localized strings. Can be used to find the
  * closest available string for a given locale.
@@ -26,24 +30,59 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
 
   constructor(messages: LocalizedStrings<K, T>, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
-    this.strings = {...messages};
+    // Filter out entries with falsy values which may have been caused by applying optimize-locales-plugin.
+    this.strings = Object.fromEntries(
+      Object.entries(messages).filter(([, v]) => v)
+    );
     this.defaultLocale = defaultLocale;
   }
 
   /** Returns a localized string for the given key and locale. */
   getStringForLocale(key: K, locale: string): T {
-    let strings = this.strings[locale];
-    if (!strings) {
-      strings = getStringsForLocale(locale, this.strings, this.defaultLocale);
-      this.strings[locale] = strings;
-    }
-
+    let strings = this.getStringsForLocale(locale);
     let string = strings[key];
     if (!string) {
       throw new Error(`Could not find intl message ${key} in ${locale} locale`);
     }
 
     return string;
+  }
+
+  /** Returns all localized strings for the given locale. */
+  getStringsForLocale(locale: string): Record<K, T> {
+    let strings = this.strings[locale];
+    if (!strings) {
+      strings = getStringsForLocale(locale, this.strings, this.defaultLocale);
+      this.strings[locale] = strings;
+    }
+
+    return strings;
+  }
+
+  static getGlobalDictionaryForPackage<K extends string = string, T extends LocalizedString = string>(packageName: string): LocalizedStringDictionary<K, T> | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    let locale = window[localeSymbol];
+    if (cachedGlobalStrings === undefined) {
+      let globalStrings = window[stringsSymbol];
+      if (!globalStrings) {
+        return null;
+      }
+
+      cachedGlobalStrings = {};
+      for (let pkg in globalStrings) {
+        cachedGlobalStrings[pkg] = new LocalizedStringDictionary({[locale]: globalStrings[pkg]}, locale);
+      }
+    }
+
+    let dictionary = cachedGlobalStrings?.[packageName];
+    if (!dictionary) {
+      throw new Error(`Strings for package "${packageName}" were not included by LocalizedStringProvider. Please add it to the list passed to createLocalizedStringDictionary.`);
+    }
+
+    return dictionary;
   }
 }
 

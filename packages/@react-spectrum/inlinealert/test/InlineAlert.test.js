@@ -13,7 +13,7 @@
 import {Content, Header} from '@react-spectrum/view';
 import {InlineAlert} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 describe('InlineAlert', function () {
   it('has alert role', function () {
@@ -71,4 +71,17 @@ describe('InlineAlert', function () {
       let alert = getByTestId('testid1');
       expect(alert).toHaveClass(`spectrum-InLineAlert--${variant}`);
     });
+
+  it('supports autoFocus', () => {
+    let {getByRole} = render(
+      <InlineAlert autoFocus>
+        <Header>Title</Header>
+        <Content>Content</Content>
+      </InlineAlert>
+    );
+
+    let alert = getByRole('alert');
+    expect(alert).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(alert);
+  });
 });

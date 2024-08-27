@@ -25,9 +25,9 @@ function TodoList(props: {list: ToDo[];
                                 value={props.value}
                                 onChange={props.setValue}
                                 isRequired/>
-                    <Button variant="cta" type="submit">Submit</Button>
+                    <Button variant="cta" type="submit" minWidth="fit-content">Submit</Button>
                 </Flex>
-                <h2>To-Do</h2> 
+                <h2>To-Do</h2>
                 <ToDoItems list={props.list} handleList={props.setList} updateCompleted={props.updateCompleted}/>
             </Flex>
         </Form>

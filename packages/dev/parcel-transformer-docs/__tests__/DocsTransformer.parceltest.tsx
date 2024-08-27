@@ -205,7 +205,7 @@ describe('DocsTransformer - API', () => {
     `);
       await writeSourceFile('index', `
     import {Column, SpectrumColumnProps} from './column';
-    const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
+    const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => React.JSX.Element;
     export {SpectrumColumn as Column};
     `);
       let code = await runBuild();

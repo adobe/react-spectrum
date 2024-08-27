@@ -22,6 +22,13 @@ describe('styleProps', function () {
       });
     });
 
+    describe('falsy', function () {
+      it('""', function () {
+        let value = dimensionValue();
+        expect(value).toBe(undefined);
+      });
+    });
+
     describe('units', function () {
       it('px', function () {
         let value = dimensionValue('100px');
@@ -65,6 +72,51 @@ describe('styleProps', function () {
         let value = dimensionValue('var(--custom-variable, calc(100% - single-line-width))');
         expect(value).toBe('var(--custom-variable, calc(100% - var(--spectrum-global-dimension-single-line-width, var(--spectrum-alias-single-line-width))))');
       });
+    });
+  });
+
+  describe('backgroundColorValue', () => {
+    it('falsy', () => {
+      let style = convertStyleProps({backgroundColor: {S: 'gray-50'}}, viewStyleProps, 'ltr', ['base']);
+      expect(style.backgroundColor).toBe(undefined);
+    });
+    it('gray-50, version 5', () => {
+      let style = convertStyleProps({backgroundColor: {S: 'gray-50'}}, viewStyleProps, 'ltr', ['base', 'S']);
+      expect(style.backgroundColor).toBe('var(--spectrum-alias-background-color-gray-50, var(--spectrum-legacy-color-gray-50, var(--spectrum-global-color-gray-50, var(--spectrum-semantic-gray-50-color-background))))');
+    });
+    it('red-1400, version 6', () => {
+      let style = convertStyleProps({backgroundColor: {S: 'red-1400'}, colorVersion: 6}, viewStyleProps, 'ltr', ['base', 'S']);
+      expect(style.backgroundColor).toBe('var(--spectrum-alias-background-color-red-1400, var(--spectrum-red-1400, var(--spectrum-semantic-red-1400-color-background)))');
+    });
+  });
+
+  describe('borderColorValue', () => {
+    it('falsy', () => {
+      let style = convertStyleProps({borderColor: {S: 'gray-50'}}, viewStyleProps, 'ltr', ['base']);
+      expect(style.borderColor).toBe(undefined);
+    });
+    it('default', () => {
+      let style = convertStyleProps({borderColor: 'default'}, viewStyleProps, 'ltr', ['base']);
+      expect(style.borderColor).toBe('var(--spectrum-alias-border-color)');
+    });
+    it('gray-50, version 5', () => {
+      let style = convertStyleProps({borderColor: {S: 'gray-50'}}, viewStyleProps, 'ltr', ['base', 'S']);
+      expect(style.borderColor).toBe('var(--spectrum-alias-border-color-gray-50, var(--spectrum-legacy-color-gray-50, var(--spectrum-global-color-gray-50, var(--spectrum-semantic-gray-50-color-border))))');
+    });
+    it('red-1400, version 6', () => {
+      let style = convertStyleProps({borderColor: {S: 'red-1400'}, colorVersion: 6}, viewStyleProps, 'ltr', ['base', 'S']);
+      expect(style.borderColor).toBe('var(--spectrum-alias-border-color-red-1400, var(--spectrum-red-1400, var(--spectrum-semantic-red-1400-color-border)))');
+    });
+  });
+
+  describe('borderRadiusValue', () => {
+    it('falsy', () => {
+      let style = convertStyleProps({borderRadius: {S: 'small'}}, viewStyleProps, 'ltr', ['base']);
+      expect(style.borderRadius).toBe(undefined);
+    });
+    it('small', () => {
+      let style = convertStyleProps({borderRadius: {S: 'small'}}, viewStyleProps, 'ltr', ['base', 'S']);
+      expect(style.borderRadius).toBe('var(--spectrum-alias-border-radius-small)');
     });
   });
 

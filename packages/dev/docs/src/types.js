@@ -429,7 +429,7 @@ function SpectrumLink({href, children, title}) {
 
 export function renderHTMLfromMarkdown(description, opts) {
   if (description) {
-    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}, ...opts};
+    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}, disableParsingRawHTML: true, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
   }
   return '';

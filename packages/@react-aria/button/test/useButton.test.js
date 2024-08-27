@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
+import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useButton} from '../';
 
 describe('useButton tests', function () {

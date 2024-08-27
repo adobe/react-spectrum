@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Средство за избиране на цвят",
+  "colorSwatch": "цветна мостра",
+  "transparent": "прозрачен",
   "twoDimensionalSlider": "2D плъзгач"
 }

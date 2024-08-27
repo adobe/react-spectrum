@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "test esm with webpack 4",
   "main": "src/index.jsx",
+  "packageManager": "yarn@4.2.2",
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open",
     "test": "test",
     "install-17": "yarn add -W react@^17 react-dom@^17",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "prepareForProd": "node ./scripts/prepareForProd.mjs"
   },
   "private": true,
   "workspaces": [
@@ -16,17 +18,17 @@
   ],
   "dependencies": {
     "@adobe/react-spectrum": "^3.24.1",
-    "@react-spectrum/inlinealert": "^3.0.0-rc.0",
+    "@react-spectrum/provider": "^3.9.7",
     "@react-spectrum/tag": "^3.0.0-rc.0",
-    "@spectrum-icons/workflow": "^4.0.6",
+    "@spectrum-icons/workflow": "^4.2.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.0",
-    "@babel/cli": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/core": "^7.24.3",
+    "@babel/cli": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
+    "@babel/preset-react": "^7.24.1",
     "webpack": "4.46.0",
     "webpack-cli": "3.1.1",
     "webpack-dev-server": "3.1.8",

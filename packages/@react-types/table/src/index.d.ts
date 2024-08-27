@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, DOMProps, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, ReactElement, ReactNode} from 'react';
+import {JSX, ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
 export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
@@ -167,6 +167,8 @@ export interface TableCollection<T> extends GridCollection<T> {
   columns: GridNode<T>[],
   /** A set of column keys that serve as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
   rowHeaderColumnKeys: Set<Key>,
+  /** The node that makes up the header of the table. */
+  head?: GridNode<T>,
   /** The node that makes up the body of the table. */
   body: GridNode<T>
 }

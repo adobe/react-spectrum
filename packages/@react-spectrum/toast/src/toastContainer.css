@@ -13,6 +13,11 @@
 @import "../../../@adobe/spectrum-css-temp/components/commons/focus-ring.css";
 
 .react-spectrum-ToastContainer {
+  composes: spectrum-FocusRing;
+  --spectrum-focus-ring-border-radius: var(--spectrum-toast-border-radius);
+  --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
+
   position: fixed;
   inset-inline-start: 0;
   inset-inline-end: 0;
@@ -20,10 +25,12 @@
   display: flex;
   pointer-events: none;
   outline: none;
+  /* keep focus ring inside the viewport */
+  margin-block-end: 8px;
+  margin-inline: 8px;
 
   .spectrum-Toast {
-    position: absolute;
-    margin: 16px;
+    margin: 8px;
     pointer-events: all;
   }
 
@@ -72,6 +79,9 @@
   --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
   --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
 
+  position: relative;
+  outline: none;
+
   &[data-animation=entering] {
     animation: slide-in 300ms;
   }
@@ -79,6 +89,26 @@
   &[data-animation=exiting] {
     animation: fade-out 300ms forwards;
   }
+
+  .spectrum-Toast-contentWrapper {
+    display: inline-flex;
+  }
+}
+
+.spectrum-ToastContainer-list {
+  display: inherit;
+  flex-direction: inherit;
+  align-items: inherit;
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+.spectrum-ToastContainer-listitem {
+  display: inline-block;
 }
 
 @keyframes slide-in {

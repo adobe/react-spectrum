@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
-import {getInteractionModality, HoverProps, isFocusVisible, PressProps, useHover, usePress} from '@react-aria/interactions';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {getInteractionModality, isFocusVisible, useHover} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
-import {RefObject, useEffect, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useEffect, useRef} from 'react';
 import {useFocusable} from '@react-aria/focus';
 
 export interface TooltipTriggerAria {
   /**
    * Props for the trigger element.
    */
-  triggerProps: DOMAttributes & PressProps & HoverProps & FocusEvents,
+  triggerProps: DOMAttributes,
 
   /**
    * Props for the overlay container element.
@@ -34,7 +34,7 @@ export interface TooltipTriggerAria {
  * Provides the behavior and accessibility implementation for a tooltip trigger, e.g. a button
  * that shows a description when focused or hovered.
  */
-export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement>) : TooltipTriggerAria {
+export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement | null>) : TooltipTriggerAria {
   let {
     isDisabled,
     trigger
@@ -129,8 +129,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     onHoverEnd
   });
 
-  let {pressProps} = usePress({onPressStart});
-
   let {focusableProps} = useFocusable({
     isDisabled,
     onFocus,
@@ -140,7 +138,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   return {
     triggerProps: {
       'aria-describedby': state.isOpen ? tooltipId : undefined,
-      ...mergeProps(focusableProps, hoverProps, pressProps)
+      ...mergeProps(focusableProps, hoverProps, {
+        onPointerDown: onPressStart,
+        onKeyDown: onPressStart
+      })
     },
     tooltipProps: {
       id: tooltipId

@@ -1,5 +1,5 @@
 import { View, Heading, Divider } from "@adobe/react-spectrum";
-import React from "react";
+import React, {JSX} from "react";
 
 interface SectionProps {
   title: string;

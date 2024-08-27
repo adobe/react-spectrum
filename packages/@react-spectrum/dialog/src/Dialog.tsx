@@ -54,13 +54,13 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     size,
     ...otherProps
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dialog');
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? (size || 'S') : (size || 'L');
 
   let domRef = useDOMRef(ref);
-  let gridRef = useRef();
+  let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
 

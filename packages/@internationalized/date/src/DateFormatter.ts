@@ -133,7 +133,7 @@ function getCachedDateFormatter(locale: string, options: Intl.DateTimeFormatOpti
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {
-    return formatterCache.get(cacheKey);
+    return formatterCache.get(cacheKey)!;
   }
 
   let numberFormatter = new Intl.DateTimeFormat(locale, options);
@@ -141,7 +141,7 @@ function getCachedDateFormatter(locale: string, options: Intl.DateTimeFormatOpti
   return numberFormatter;
 }
 
-let _hasBuggyHour12Behavior: boolean = null;
+let _hasBuggyHour12Behavior: boolean | null = null;
 function hasBuggyHour12Behavior() {
   if (_hasBuggyHour12Behavior == null) {
     _hasBuggyHour12Behavior = new Intl.DateTimeFormat('en-US', {
@@ -153,7 +153,7 @@ function hasBuggyHour12Behavior() {
   return _hasBuggyHour12Behavior;
 }
 
-let _hasBuggyResolvedHourCycle: boolean = null;
+let _hasBuggyResolvedHourCycle: boolean | null = null;
 function hasBuggyResolvedHourCycle() {
   if (_hasBuggyResolvedHourCycle == null) {
     _hasBuggyResolvedHourCycle = (new Intl.DateTimeFormat('fr', {
@@ -179,8 +179,8 @@ function getResolvedHourCycle(locale: string, options: Intl.DateTimeFormatOption
     timeZone: undefined // use local timezone
   });
 
-  let min = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 0)).find(p => p.type === 'hour').value, 10);
-  let max = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 23)).find(p => p.type === 'hour').value, 10);
+  let min = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 0)).find(p => p.type === 'hour')!.value, 10);
+  let max = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 23)).find(p => p.type === 'hour')!.value, 10);
 
   if (min === 0 && max === 23) {
     return 'h23';

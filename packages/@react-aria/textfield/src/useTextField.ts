@@ -13,16 +13,19 @@
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {
   ChangeEvent,
-  DOMFactory,
   HTMLAttributes,
+  type JSX,
   LabelHTMLAttributes,
-  ReactDOM,
-  RefObject
+  RefObject,
+  useEffect
 } from 'react';
-import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import {useControlledState} from '@react-stately/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
+import {useFormValidation} from '@react-aria/form';
+import {useFormValidationState} from '@react-stately/form';
 
 /**
  * A map of HTML element names and their interface types.
@@ -36,9 +39,7 @@ type IntrinsicHTMLElements = {
  * A map of HTML element names and their attribute interface types.
  * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
  */
-type IntrinsicHTMLAttributes = {
-  [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
-};
+type IntrinsicHTMLAttributes = JSX.IntrinsicElements;
 
 type DefaultElementType = 'input';
 
@@ -75,7 +76,12 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
    * @default 'input'
    */
-  inputElementType?: T
+  inputElementType?: T,
+  /**
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
+   */
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
 }
 
 /**
@@ -83,9 +89,9 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
  * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
  * `RefObject<HTMLTextAreaElement>`.
  */
-type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T] | null>;
 
-export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> {
+export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends ValidationResult {
   /** Props for the input element. */
   inputProps: TextFieldInputProps<T>,
   /** Props for the text field's visible label element, if any. */
@@ -110,15 +116,21 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isDisabled = false,
     isRequired = false,
     isReadOnly = false,
-    validationState,
-    isInvalid = false,
     type = 'text',
-    value,
-    defaultValue,
-    onChange = () => {}
+    validationBehavior = 'aria'
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
+  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
   let {focusableProps} = useFocusable(props, ref);
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
+  let validationState = useFormValidationState({
+    ...props,
+    value
+  });
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
+  });
   let domProps = filterDOMProps(props, {labelable: true});
 
   const inputOnlyProps = {
@@ -126,26 +138,46 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     pattern: props.pattern
   };
 
-  useFormReset(ref, value ?? defaultValue ?? '', onChange);
+  useFormReset(ref, value, setValue);
+  useFormValidation(props, validationState, ref);
+
+  useEffect(() => {
+    // This works around a React/Chrome bug that prevents textarea elements from validating when controlled.
+    // We prevent React from updating defaultValue (i.e. children) of textarea when `value` changes,
+    // which causes Chrome to skip validation. Only updating `value` is ok in our case since our
+    // textareas are always controlled. React is planning on removing this synchronization in a
+    // future major version.
+    // https://github.com/facebook/react/issues/19474
+    // https://github.com/facebook/react/issues/11896
+    if (ref.current instanceof getOwnerWindow(ref.current).HTMLTextAreaElement) {
+      let input = ref.current;
+      Object.defineProperty(input, 'defaultValue', {
+        get: () => input.value,
+        set: () => {},
+        configurable: true
+      });
+    }
+  }, [ref]);
 
   return {
     labelProps,
     inputProps: mergeProps(
       domProps,
-      inputElementType === 'input' && inputOnlyProps,
+      inputElementType === 'input' ? inputOnlyProps : undefined,
       {
         disabled: isDisabled,
         readOnly: isReadOnly,
-        'aria-required': isRequired || undefined,
-        'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
+        required: isRequired && validationBehavior === 'native',
+        'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+        'aria-invalid': isInvalid || undefined,
         'aria-errormessage': props['aria-errormessage'],
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
-        value: props.value,
-        defaultValue: props.value ? undefined : props.defaultValue,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+        value,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
+        autoCapitalize: props.autoCapitalize,
         maxLength: props.maxLength,
         minLength: props.minLength,
         name: props.name,
@@ -173,6 +205,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
       }
     ),
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

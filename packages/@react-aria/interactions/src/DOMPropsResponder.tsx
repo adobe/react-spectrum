@@ -12,17 +12,19 @@
 
 import {DOMPropsResponderContext} from './DOMPropsContext';
 import {HoverProps} from './useHover';
-import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
+import React, {ForwardedRef, ReactNode, useEffect, useRef} from 'react';
+import {useObjectRef} from '@react-aria/utils';
 
 interface DOMPropsResponderProps extends HoverProps {
   children: ReactNode
 }
 
-export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMPropsResponderProps, ref: RefObject<Element>) => {
+export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMPropsResponderProps, ref: ForwardedRef<Element>) => {
   let isRegistered = useRef(false);
+  let objRef = useObjectRef(ref);
   let context = {
     ...props,
-    ref,
+    ref: objRef,
     register() {
       isRegistered.current = true;
     }

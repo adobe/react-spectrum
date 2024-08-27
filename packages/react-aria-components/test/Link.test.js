@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Link, LinkContext, RouterProvider} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -68,7 +68,10 @@ describe('Link', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Link>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Link>);
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-hovered');
@@ -77,10 +80,14 @@ describe('Link', () => {
     await user.hover(link);
     expect(link).toHaveAttribute('data-hovered', 'true');
     expect(link).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(link);
     expect(link).not.toHaveAttribute('data-hovered');
     expect(link).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
@@ -129,9 +136,15 @@ describe('Link', () => {
 
   it('should work with RouterProvider', async () => {
     let navigate = jest.fn();
-    let {getByRole} = render(<RouterProvider navigate={navigate}><Link href="/foo">Test</Link></RouterProvider>);
+    let useHref = href => '/base' + href;
+    let {getByRole} = render(
+      <RouterProvider navigate={navigate} useHref={useHref}>
+        <Link href="/foo" routerOptions={{foo: 'bar'}}>Test</Link>
+      </RouterProvider>
+    );
     let link = getByRole('link');
+    expect(link).toHaveAttribute('href', '/base/foo');
     await user.click(link);
-    expect(navigate).toHaveBeenCalledWith('/foo');
+    expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
   });
 });

@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, createHideableComponent, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {mergeProps, useFocusRing, useHover} from 'react-aria';
+import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {createHideableComponent} from '@react-aria/collections';
+import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
 
 export interface InputRenderProps {
@@ -42,14 +43,20 @@ export interface InputRenderProps {
   isInvalid: boolean
 }
 
-export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, StyleRenderProps<InputRenderProps> {}
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {}
 
 export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
+
+let filterHoverProps = (props: InputProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  return otherProps;
+};
 
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
 
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     isTextInput: true,
     autoFocus: props.autoFocus
@@ -70,7 +77,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
 
   return (
     <input
-      {...mergeProps(props, focusProps, hoverProps)}
+      {...mergeProps(filterHoverProps(props), focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}

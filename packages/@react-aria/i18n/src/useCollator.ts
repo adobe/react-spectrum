@@ -24,7 +24,7 @@ export function useCollator(options?: Intl.CollatorOptions): Intl.Collator {
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
+    return cache.get(cacheKey)!;
   }
 
   let formatter = new Intl.Collator(locale, options);

@@ -25,7 +25,7 @@ try {
 } catch (err) {}
 fs.mkdirSync(distDir, {recursive: true});
 
-for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/*.mdx')) {
+for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/**/*.mdx')) {
   console.log(`Extracting ${file}...`);
   let contents = fs.readFileSync(file);
   let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
@@ -77,9 +77,9 @@ for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-ari
     if (!options.includes('render=false')) {
       if (/function (.|\n)*}\s*$/.test(code)) {
         let name = code.match(/function (.*?)\s*(?:<.*?)?\(/)[1];
-        code = `${code}\nReactDOM.render(<${name} />, document.getElementById("root"));`;
+        code = `${code}\nReactDOM.createRoot(document.getElementById("root")).render(<${name} />);`;
       } else if (/^<(.|\n)*>$/m.test(code)) {
-        code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<>$1</>, document.getElementById("root"));`);
+        code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.createRoot(document.getElementById("root")).render(<>$1</>);`);
       }
     }
 
@@ -94,18 +94,22 @@ for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-ari
 
   if (hasExamples) {
     exampleCode.unshift(`import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 `);
     let parts = file.split(path.sep);
     let dir = `${distDir}/${parts[1]}/${parts[2]}`;
+    if (parts[3] === 'examples') {
+      dir += '/examples';
+    }
     fs.mkdirSync(dir, {recursive: true});
     fs.writeFileSync(`${dir}/${path.basename(file).slice(0, -4) + '.tsx'}`, exampleCode.join('\n'));
   }
 }
 
+fs.copyFileSync('lib/svg.d.ts', `${distDir}/svg.d.ts`);
 fs.writeFileSync(`${distDir}/tsconfig.json`, `{
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",

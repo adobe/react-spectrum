@@ -62,7 +62,7 @@ function DynamicExample(args) {
     <>
       <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
       {shown &&
-        <InlineAlert {...args}>
+        <InlineAlert {...args} autoFocus>
           <Heading>{args.title}</Heading>
           <Content>{args.content}</Content>
         </InlineAlert>

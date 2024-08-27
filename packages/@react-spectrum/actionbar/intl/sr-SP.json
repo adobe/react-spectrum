@@ -1,7 +1,7 @@
 {
   "actions": "Radnje",
   "actionsAvailable": "Dostupne su radnje.",
-  "clearSelection": "Sve je izabrano",
+  "clearSelection": "Poništi izbor",
   "selected": "Izabrano: {count}",
   "selectedAll": "Sve je izabrano"
 }

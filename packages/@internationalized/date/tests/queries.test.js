@@ -30,6 +30,7 @@ import {
   JapaneseCalendar,
   maxDate,
   minDate,
+  PersianCalendar,
   startOfMonth,
   startOfWeek,
   startOfYear,
@@ -55,6 +56,13 @@ describe('queries', function () {
       expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 10, 4))).toBe(false);
       expect(isSameDay(new CalendarDate(2021, 4, 17), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4))).toBe(false);
       expect(isSameDay(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 3))).toBe(false);
+    });
+
+    it('works in Persian calendar', function () {
+      const persian = new CalendarDate(new PersianCalendar(), 1401, 12, 8);
+      const gregorian = new CalendarDate(2023, 2, 27);
+      expect(isSameDay(gregorian, persian)).toBe(true);
+      expect(isSameDay(persian, gregorian)).toBe(true);
     });
   });
 

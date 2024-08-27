@@ -9,4 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 export {useTree} from './useTree';
+export {useTreeGridList} from './useTreeGridList';
+export {useTreeGridListItem} from './useTreeGridListItem';
+
+export type {AriaTreeGridListOptions, AriaTreeGridListProps, TreeGridListAria, TreeGridListProps} from './useTreeGridList';
+export type {AriaTreeGridListItemOptions, TreeGridListItemAria} from './useTreeGridListItem';

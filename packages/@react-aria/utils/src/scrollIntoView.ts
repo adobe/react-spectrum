@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParent} from './';
+import {getScrollParents} from './getScrollParents';
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
@@ -99,12 +99,10 @@ export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoView
         targetElement.scrollIntoView?.({block: 'nearest'});
       }
     } else {
-      let scrollParent = getScrollParent(targetElement);
+      let scrollParents = getScrollParents(targetElement);
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
-      while (targetElement && scrollParent && targetElement !== root && scrollParent !== root) {
+      for (let scrollParent of scrollParents) {
         scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
-        targetElement = scrollParent;
-        scrollParent = getScrollParent(targetElement);
       }
     }
   }

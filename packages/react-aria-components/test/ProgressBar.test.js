@@ -12,7 +12,7 @@
 
 import {Label, ProgressBar, ProgressBarContext} from 'react-aria-components';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 let TestProgressBar = (props) => (
   <ProgressBar value={25} data-foo="bar" {...props}>

@@ -13,7 +13,7 @@
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {LocalizedStringDictionary} from '@internationalized/string';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringDictionary} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
 type Field = Intl.DateTimeFormatPartTypes;
@@ -24,6 +24,7 @@ interface DisplayNames {
 /** @private */
 export function useDisplayNames(): DisplayNames {
   let {locale} = useLocale();
+  let dictionary = useLocalizedStringDictionary(intlMessages, '@react-aria/datepicker');
   return useMemo(() => {
     // Try to use Intl.DisplayNames if possible. It may be supported in browsers, but not support the dateTimeField
     // type as that was only added in v2. https://github.com/tc39/intl-displaynames-v2
@@ -31,18 +32,18 @@ export function useDisplayNames(): DisplayNames {
       // @ts-ignore
       return new Intl.DisplayNames(locale, {type: 'dateTimeField'});
     } catch (err) {
-      return new DisplayNamesPolyfill(locale);
+      return new DisplayNamesPolyfill(locale, dictionary);
     }
-  }, [locale]);
+  }, [locale, dictionary]);
 }
 
 class DisplayNamesPolyfill implements DisplayNames {
   private locale: string;
   private dictionary: LocalizedStringDictionary<Field, string>;
 
-  constructor(locale: string) {
+  constructor(locale: string, dictionary: LocalizedStringDictionary<Field, string>) {
     this.locale = locale;
-    this.dictionary = new LocalizedStringDictionary<Field, string>(intlMessages);
+    this.dictionary = dictionary;
   }
 
   of(field: Field): string {

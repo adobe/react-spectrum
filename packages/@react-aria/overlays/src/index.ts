@@ -19,6 +19,7 @@ export {ariaHideOutside} from './ariaHideOutside';
 export {usePopover} from './usePopover';
 export {useModalOverlay} from './useModalOverlay';
 export {Overlay, useOverlayFocusContain} from './Overlay';
+export {UNSTABLE_PortalProvider, useUNSTABLE_PortalContext} from './PortalProvider';
 
 export type {AriaPositionProps, PositionAria} from './useOverlayPosition';
 export type {AriaOverlayProps, OverlayAria} from './useOverlay';

@@ -1,4 +1,4 @@
 {
   "close": "Bezárás",
-  "notifications": "Értesítések"
+  "notifications": "{count, plural, one {# értesítés} other {# értesítés}}."
 }

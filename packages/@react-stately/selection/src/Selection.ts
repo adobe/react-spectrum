@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 
 /**
  * A Selection is a special Set containing Keys, which also has an anchor

@@ -9,9 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {GridNode, GridRow, GridCollection as IGridCollection} from '@react-types/grid';
-import {Key} from 'react';
 
+import {GridNode, GridRow, GridCollection as IGridCollection} from '@react-types/grid';
+import {Key} from '@react-types/shared';
 
 interface GridCollectionOptions<T> {
   columnCount: number,

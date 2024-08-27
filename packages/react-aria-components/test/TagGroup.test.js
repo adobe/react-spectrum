@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
+import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let TestTagGroup = ({tagGroupProps, tagListProps, itemProps}) => (
@@ -114,7 +115,10 @@ describe('TagGroup', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
@@ -123,22 +127,35 @@ describe('TagGroup', () => {
     await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
 
     await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
   });
 
   it('should not show hover state when item is not interactive', async () => {
-    let {getAllByRole} = renderTagGroup({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTagGroup({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
 
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {
@@ -215,6 +232,26 @@ describe('TagGroup', () => {
     expect(row).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <TagGroup data-testid="group">
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog" isDisabled>Dog</RemovableTag>
+          <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+        </TagList>
+      </TagGroup>
+    );
+    let items = getAllByRole('row');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
   it('should support removing items', async () => {
     let onRemove = jest.fn();
     let {getAllByRole} = renderTagGroup({onRemove}, {}, {className: ({allowsRemoving}) => allowsRemoving ? 'removable' : ''});
@@ -227,6 +264,32 @@ describe('TagGroup', () => {
     expect(button).toHaveAttribute('aria-label', 'Remove');
     await user.click(button);
     expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it('should disable the remove button if the tag is disabled', async () => {
+    let onRemove = jest.fn();
+    let {getAllByRole} = render(
+      <TagGroup data-testid="group" onRemove={onRemove} disabledKeys={new Set(['dog'])}>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+        </TagList>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+      </TagGroup>
+    );
+
+    let row = getAllByRole('row')[0];
+
+    expect(row).toHaveAttribute('data-allows-removing', 'true');
+
+    let button = getAllByRole('button', {hidden: true})[1];
+    expect(button).toHaveAttribute('aria-label', 'Remove');
+    expect(button).toHaveAttribute('disabled');
+    await user.click(button);
+    expect(onRemove).toHaveBeenCalledTimes(0);
   });
 
   it('should support empty state', () => {
@@ -275,8 +338,7 @@ describe('TagGroup', () => {
         expect(items[1]).toHaveAttribute('data-href', 'https://adobe.com');
         expect(items[2]).not.toHaveAttribute('data-href');
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick);
+        let onClick = mockClickDefault();
 
         await trigger(items[1]);
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -294,6 +356,67 @@ describe('TagGroup', () => {
           document.removeEventListener('click', onClick);
         }
       });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let useHref = href => '/base' + href;
+        let {getAllByRole} = render(
+          <RouterProvider navigate={navigate} useHref={useHref}>
+            <TagGroup selectionMode="none">
+              <Label>Tags</Label>
+              <TagList>
+                <Tag href="/foo" routerOptions={{foo: 'bar'}}>One</Tag>
+              </TagList>
+            </TagGroup>
+          </RouterProvider>
+        );
+
+        let items = getAllByRole('row');
+        expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
+      });
     });
+  });
+  it('if we cannot restore focus to next, then restore to previous but do not try focusing next again', async () => {
+    function MyTagGroup(props) {
+      const fruitsList = useListData({
+        initialItems: [
+          {id: 2, name: 'Grape'},
+          {id: 3, name: 'Plum'},
+          {id: 4, name: 'Watermelon'}
+        ]
+      });
+      return (
+        <TagGroup
+          data-testid="group"
+          aria-label="Fruits"
+          items={fruitsList.items}
+          selectionMode="multiple"
+          disabledKeys={[2, 3]}
+          onRemove={(keys) => fruitsList.remove(...keys)}>
+          <TagList items={fruitsList.items}>
+            {(item) => <MyTag item={item}>{item.name}</MyTag>}
+          </TagList>
+        </TagGroup>
+      );
+    }
+    function MyTag({children, item, ...props}) {
+      return (
+        <Tag textValue={item.name} {...props}>
+          {({isDisabled}) => (
+            <>
+              {children}
+              <Button slot="remove" isDisabled={isDisabled} aria-label={'remove'} />
+            </>
+          )}
+        </Tag>
+      );
+    }
+    let {getByRole} = render(<MyTagGroup />);
+    let grid = getByRole('grid');
+    await user.tab();
+    await user.keyboard('{Backspace}');
+    expect(grid).toHaveFocus();
   });
 });

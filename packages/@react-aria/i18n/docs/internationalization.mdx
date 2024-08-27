@@ -27,7 +27,7 @@ right-to-left mirroring and interactions.
 
 Internationalization is the process of structuring your code and user interface to support localization. React Aria supports
 many aspects of localization for many components out of the box, including translations for builtin strings, localized
-date and number formatting, right-to-left interactions, and more. By using React Aria for your design system,
+date and number formatting, right-to-left interactions, and more. By using React Aria to build your components,
 these aspects of internationalization are handled for you. You can also use our hooks in your own custom components.
 
 ## Localization
@@ -46,7 +46,7 @@ also use our internationalization hooks in your own components. These are implem
 [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) APIs under the hood, so there's no
 large libraries or locale data for users to download.
 
-See [useMessageFormatter](useMessageFormatter.html), [useDateFormatter](useDateFormatter.html), [useNumberFormatter](useNumberFormatter.html),
+See [useDateFormatter](useDateFormatter.html), [useNumberFormatter](useNumberFormatter.html),
 and [useCollator](useCollator.html) for more information about using our internationalization hooks. The
 [Internationalized](../../internationalized/index.html) collection of libraries provides framework-agnostic utilities for representing
 and manipulating [dates and times](../../internationalized/date/index.html), and parsing and formatting
@@ -63,10 +63,9 @@ opposite side of the interface. For example, a button that would be displayed on
 would appear on the left side of the screen in a right-to-left language. In addition, elements within a component are also expected to
 mirror. For example, in a checkbox component, the label would be placed on the left side of the checkmark rather than the right.
 
-Since React Aria provides no rendering, it is up to you to implement RTL support in your design. The documentation for individual react-aria hooks
-calls out when you need to be aware of this, so you can account for it in your CSS using
-[logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties) or other means. For example, flexbox and CSS grid
-both automatically flip their layouts depending on the direction.
+Since React Aria provides no styling, it is up to you to implement RTL support in your design. CSS flex and grid layouts automatically flip depending
+on the direction, and [logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties) are a great way to handle
+margins, paddings, borders, and more.
 
 Even though it is not responsible for rendering or layout, React Aria is aware of the current directionality, and adjusts interactions
 accordingly. For example, when navigating using the left and right arrow keys, React Aria automatically flips the direction so that
@@ -76,10 +75,10 @@ the left arrow always navigates to the item physically to the left, and the righ
 
 The root most element of your application should define the [lang](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang)
 and [dir](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) attributes so that the browser knows which language
-and direction the user interface should be rendered in. This can be done with the [useLocale](useLocale.html) hook from `@react-aria/i18n`.
+and direction the user interface should be rendered in. This can be done with the [useLocale](useLocale.html) hook.
 
 ```tsx
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from 'react-aria-components';
 
 function YourApp() {
   let {locale, direction} = useLocale();
@@ -94,10 +93,10 @@ function YourApp() {
 
 React Aria automatically detects the user's current language by default, and even updates this if the browser or system language changes.
 However, if you would like to override this with an application specific setting, you can do so using the [I18nProvider](I18nProvider.html)
-exposed by `@react-aria/i18n`.
+component.
 
 ```tsx
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider} from 'react-aria-components';
 
 <I18nProvider locale="fr-FR">
   <YourApp />
@@ -105,11 +104,11 @@ import {I18nProvider} from '@react-aria/i18n';
 ```
 
 **Note:** if you are using server side rendering, you should always specify a locale rather than relying on browser defaults
-to ensure that the server and client match. See the [SSR docs](ssr.html#locale-selection) for more information.
+to ensure that the server and client match. See the [SSR docs](ssr.html#internationalization) for more information.
 
 ## Supported locales
 
-React Aria currently supports over 30 locales. They are listed below.
+React Aria currently includes translations for over 30 locales. They are listed below.
 
 <div style={{columnWidth: 200}}>
 
@@ -150,3 +149,120 @@ React Aria currently supports over 30 locales. They are listed below.
 * Ukrainian (Ukraine)
 
 </div>
+
+## Optimizing bundle size
+
+By default, React Aria includes translations for all of the languages listed above. This is inclusive to the most users out of the box, but comes at the cost of bundle size. If your application does not support all of these locales, you can use our build plugins to include only the languages that you do support in your JavaScript bundle.
+
+**Note**: If you are using server side rendering, you can also optimize this even further by sending only the strings for the current user's language. See the [SSR docs](ssr.html) for more details.
+
+### webpack
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `webpack.config.js` and change the `locales` setting accordingly:
+
+```ts
+// webpack.config.js
+const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+
+module.exports = {
+  // ...
+  plugins: [
+    optimizeLocales.webpack({
+      locales: ['en-US', 'fr-FR']
+    })
+  ]
+};
+```
+
+### Next.js
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js` and change the `locales` setting accordingly:
+
+```ts
+// next.config.js
+const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+
+module.exports = {
+  webpack(config) {
+    config.plugins.push(
+      optimizeLocales.webpack({
+        locales: ['en-US', 'fr-FR']
+      })
+    );
+    return config;
+  }
+};
+```
+
+### Vite
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.js` and change the `locales` setting accordingly:
+
+```ts
+// vite.config.js
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+export default {
+  plugins: [
+    {
+      ...optimizeLocales.vite({
+        locales: ['en-US', 'fr-FR']
+      }),
+      enforce: 'pre'
+    }
+  ]
+};
+```
+
+### Rollup
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `rollup.config.js` and change the `locales` setting accordingly:
+
+```ts
+// rollup.config.js
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+export default {
+  plugins: [
+    optimizeLocales.rollup({
+      locales: ['en-US', 'fr-FR']
+    })
+  ]
+};
+```
+
+### Esbuild
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your esbuild script and change the `locales` setting accordingly:
+
+```ts
+import {build} from 'esbuild';
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+build({
+  plugins: [
+    optimizeLocales.esbuild({
+      locales: ['en-US', 'fr-FR']
+    })
+  ]
+});
+```
+
+### Parcel
+
+First, install `@react-aria/parcel-resolver-optimize-locales` with your package manager. Then, add the following to your `.parcelrc`:
+
+```json
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "..."]
+}
+```
+
+Then, in your project root `package.json`, add a `"locales"` field containing the languages you want to support:
+
+```json
+{
+  "locales": ["en-US", "fr-FR"]
+}
+```

@@ -422,7 +422,7 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
 
       let maxDate = toCalendar(setTime(plainDateTime, {hour: max}), new GregorianCalendar());
       let maxAbsolute = [toAbsolute(maxDate, dateTime.timeZone, 'earlier'), toAbsolute(maxDate, dateTime.timeZone, 'later')]
-        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop();
+        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop()!;
 
       // Since hours may repeat, we need to operate on the absolute time in milliseconds.
       // This is done in hours from the Unix epoch so that cycleValue works correctly,

@@ -48,6 +48,12 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InLineAlert {
+  composes: spectrum-FocusRing;
+  --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-focus-ring-border-size: var(--spectrum-inlinealert-border-width);
+  --spectrum-focus-ring-border-radius: var(--spectrum-inlinealert-border-radius);
+  --spectrum-focus-ring-size: var(--spectrum-button-primary-focus-ring-size-key-focus);
+
   position: relative;
 
   display: inline-block;
@@ -61,6 +67,8 @@ governing permissions and limitations under the License.
   border-inline-width: var(--spectrum-inlinealert-border-width);
   border-style: solid;
   border-radius: var(--spectrum-inlinealert-border-radius);
+
+  outline: none;
 }
 
 .spectrum-InLineAlert .spectrum-InLineAlert-grid {

@@ -5,6 +5,7 @@ import {Dialog, DialogContainer, useDialogContainer} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {Key} from '@react-types/shared';
 import React from 'react';
 
 export function DialogContainerExample(props) {
@@ -62,7 +63,7 @@ function ExampleDialog(props) {
 }
 
 export function NestedDialogContainerExample() {
-  let [dialog, setDialog] = React.useState(null);
+  let [dialog, setDialog] = React.useState<Key | null>(null);
   let dismiss = () => setDialog(null);
 
   return (

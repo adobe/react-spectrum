@@ -11,7 +11,9 @@
  */
 
 import {AriaMeterProps, useMeter} from 'react-aria';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {clamp} from '@react-stately/utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {forwardRefType} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
@@ -38,6 +40,7 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
     minValue = 0,
     maxValue = 100
   } = props;
+  value = clamp(value, minValue, maxValue);
 
   let [labelRef, label] = useSlot();
   let {

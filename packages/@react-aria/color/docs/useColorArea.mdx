@@ -113,7 +113,6 @@ function ColorArea(props) {
 
   let {
     colorAreaProps,
-    gradientProps,
     xInputProps,
     yInputProps,
     thumbProps
@@ -130,18 +129,9 @@ function ColorArea(props) {
         width: SIZE,
         height: SIZE,
         borderRadius: BORDER_RADIUS,
+        background: isDisabled ? 'rgb(142, 142, 142)' : colorAreaProps.style.background,
         opacity: isDisabled ? 0.3 : undefined
       }}>
-      <div
-        {...gradientProps}
-        style={{
-        backgroundColor: isDisabled ? 'rgb(142, 142, 142)' : undefined,
-        ...gradientProps.style,
-        borderRadius: BORDER_RADIUS,
-        height: SIZE,
-        width: SIZE,
-      }}
-         />
       <div
         {...thumbProps}
         style={{
@@ -152,7 +142,6 @@ function ColorArea(props) {
           boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
           boxSizing: 'border-box',
           height: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE,
-          transform: 'translate(-50%, -50%)',
           width: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE
         }}>
         <input ref={inputXRef} {...xInputProps} {...focusProps} />
@@ -259,10 +248,10 @@ function Example() {
               gap: '6px'
             }}>
             <ColorSwatch
-              value={color.withChannelValue('alpha', 1)}
+              color={color.withChannelValue('alpha', 1)}
               aria-label={`current color swatch: ${color.toString('hsl')}`} />
             <ColorSwatch
-              value={color}
+              color={color}
               aria-label={`current color swatch with alpha channel: ${color.toString('hsla')}`} />
           </div>
           <div
@@ -271,10 +260,10 @@ function Example() {
               gap: '6px'
             }}>
             <ColorSwatch
-              value={endColor.withChannelValue('alpha', 1)}
+              color={endColor.withChannelValue('alpha', 1)}
               aria-label={`end color swatch: ${endColor.toString('hsb')}`} />
             <ColorSwatch
-              value={endColor}
+              color={endColor}
               aria-label={`end color swatch with alpha channel: ${endColor.toString('hsba')}`} />
           </div>
         </div>
@@ -435,73 +424,34 @@ It is built using the [useColorSlider](useColorSlider.html) hook, and can be sha
 
 ### ColorSwatch
 
-The `ColorSwatch` component used in the example above implements an image preview of the color.
+The `ColorSwatch` component used in the example above implements an image preview of the color with the [useColorSwatch](useColorSwatch.html) hook.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-  function ColorSwatch (props) {
-    let {
-      value,
-      ...otherProps
-    } = props;
-    return (
-      <div
-        role="img"
-        className="color-preview-swatch"
-        aria-label={value.toString('css')}
-        {...otherProps}
-      >
-        <div className="color-preview-swatch-background" />
-        <div
-          className="color-preview-swatch-color"
-          style={{
-            backgroundColor: value.toString('css')
-          }} />
-      </div>
-    );
-  }
+import {useColorSwatch} from '@react-aria/color';
+
+function ColorSwatch(props) {
+  let {colorSwatchProps, color} = useColorSwatch(props);
+
+  return (
+    <span 
+      {...colorSwatchProps}
+      style={{
+        ...colorSwatchProps.style,
+        display: 'inline-block',
+        width: 32,
+        height: 32,
+        borderRadius: 4,
+        background: `linear-gradient(${color}, ${color}),
+          repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`,
+        ...props.style
+      }} />
+  );
+}
 ```
-  <details>
-    <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-```css
-  .color-preview-swatch {
-    display: inline-block;
-    border-radius: 4px;
-    forced-color-adjust: none;
-    position: relative;
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-  }
-
-  .color-preview-swatch-background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-size: 16px 16px;
-    background-position:
-      -2px -2px,
-      -2px 6px,
-      6px -10px,
-      -10px -2px;
-    background-color: white;
-    background-image:
-      linear-gradient(-45deg, transparent 75.5%, rgb(188, 188, 188) 75.5%),
-      linear-gradient(45deg, transparent 75.5%, rgb(188, 188, 188) 75.5%),
-      linear-gradient(-45deg, rgb(188, 188, 188) 25.5%, transparent 25.5%),
-      linear-gradient(45deg, rgb(188, 188, 188) 25.5%, transparent 25.5%);
-  }
-
-  .color-preview-swatch-color {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-```
-  </details>
 </details>
 
 ### xChannel and yChannel
@@ -567,7 +517,7 @@ function Example() {
               onChange={setColor} />
         </div>
       </div>
-      <p>Current RGB color value: <ColorSwatch value={color} aria-hidden="true" style={{width: '16px', height: '16px', verticalAlign: 'text-bottom'}} /> {color.toString('rgb')}</p>
+      <p>Current RGB color value: <ColorSwatch color={color} style={{width: '16px', height: '16px', verticalAlign: 'text-bottom'}} /> {color.toString('rgb')}</p>
     </>
   );
 }
@@ -629,7 +579,7 @@ function Example() {
               onChange={setColor} />
         </div>
       </div>
-      <p>Current HSL color value: <ColorSwatch value={color} aria-hidden="true" style={{width: '16px', height: '16px', verticalAlign: 'text-bottom'}} /> {color.toString('hsl')}</p>
+      <p>Current HSL color value: <ColorSwatch color={color} aria-hidden="true" style={{width: '16px', height: '16px', verticalAlign: 'text-bottom'}} /> {color.toString('hsl')}</p>
     </>
   );
 }
@@ -691,7 +641,7 @@ function Example() {
               onChange={setColor} />
         </div>
       </div>
-      <p>Current HSB color value: <ColorSwatch value={color} aria-hidden="true" style={{width: '16px', height: '16px', verticalAlign: 'text-bottom'}} /> {color.toString('hsb')}</p>
+      <p>Current HSB color value: <ColorSwatch color={color} style={{width: '16px', height: '16px', verticalAlign: 'text-bottom'}} /> {color.toString('hsb')}</p>
     </>
   );
 }

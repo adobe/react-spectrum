@@ -16,7 +16,7 @@ import docsStyle from './docs.css';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 
@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === 'production') {
   window.addEventListener('load', () => listen());
 }
 
+let raf = null;
 let title = document.querySelector('h1');
 
 // Size the title to fit the available space.
@@ -45,7 +46,7 @@ function updateTitleFontSize() {
   }
 
   // Reduce the font size until it doesn't overflow.
-  while (title.scrollWidth > title.clientWidth) {
+  while (fontSize > 10 && title.scrollWidth > title.clientWidth + 1) {
     fontSize--;
     title.style.fontSize = fontSize + 'px';
   }
@@ -56,8 +57,13 @@ updateTitleFontSize();
 // Use ResizeObserver where available to detect size changes not related to window resizing, e.g. font loading.
 if (typeof ResizeObserver !== 'undefined') {
   let observer = new ResizeObserver(() => {
+    if (!raf) {
     // Avoid updating the layout during the resize event and creating circular notifications.
-    requestAnimationFrame(updateTitleFontSize);
+      raf = requestAnimationFrame(() => {
+        updateTitleFontSize();
+        raf = null;
+      });
+    }
   });
   observer.observe(title);
 } else {
@@ -182,16 +188,24 @@ function Hamburger() {
   );
 }
 
-ReactDOM.render(<>
-  <Hamburger />
-  <DocSearch />
-  <ThemeSwitcher />
-</>, document.querySelector('.' + docsStyle.pageHeader));
+let pageHeader = document.querySelector('.' + docsStyle.pageHeader);
+if (pageHeader) {
+  ReactDOM.createRoot(pageHeader).render(<>
+    <Hamburger />
+    <DocSearch />
+    <ThemeSwitcher />
+  </>);
+} else {
+  let exampleHeader = document.querySelector('.' + docsStyle.exampleHeader);
+  if (exampleHeader) {
+    ReactDOM.createRoot(exampleHeader).render(<ThemeSwitcher />);
+  }
+}
 
 let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
 let editPage = document.querySelector('#edit-page');
 if (pathToPage && editPage) {
-  ReactDOM.render(
+  ReactDOM.createRoot(editPage).render(
     <Link>
       <a
         href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
@@ -200,8 +214,7 @@ if (pathToPage && editPage) {
           <span>Edit this page</span><LinkOut size="S" />
         </Flex>
       </a>
-    </Link>,
-    editPage
+    </Link>
   );
 }
 
@@ -231,15 +244,17 @@ let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
 
 // If we have a recorded scroll position, and the last selected item is in the sidebar
 // (e.g. we're in the same category), then restore the scroll position.
-if (lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
+if (sidebar && lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
   sidebar.scrollTop = parseInt(lastScrollPosition, 10);
 }
 
-// Save scroll position of the sidebar when we're about to navigate
-window.addEventListener('pagehide', () => {
-  sessionStorage.setItem('sidebarSelectedItem', location.pathname);
-  sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
-});
+if (sidebar) {
+  // Save scroll position of the sidebar when we're about to navigate
+  window.addEventListener('pagehide', () => {
+    sessionStorage.setItem('sidebarSelectedItem', location.pathname);
+    sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+  });
+}
 
 // Disable autoplay for videos when the prefers-reduced-motion media query is enabled.
 function reducedMotionCheck(e) {

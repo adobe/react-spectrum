@@ -12,11 +12,11 @@
 
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
-import {DOMAttributes, FocusableElement, Orientation} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {DOMAttributes, FocusableElement, Orientation, RefObject} from '@react-types/shared';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
-import {RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useState} from 'react';
 
 const BUTTON_GROUP_ROLES = {
   'none': 'toolbar',
@@ -28,11 +28,17 @@ export interface ActionGroupAria {
   actionGroupProps: DOMAttributes
 }
 
-export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): ActionGroupAria {
+export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): ActionGroupAria {
   let {
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
+
+  let [isInToolbar, setInToolbar] = useState(false);
+  useLayoutEffect(() => {
+    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
+  }, [ref]);
+
   let allKeys = [...state.collection.getKeys()];
   if (!allKeys.some(key => !state.disabledKeys.has(key))) {
     isDisabled = true;
@@ -70,7 +76,10 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     }
   };
 
-  let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
+  let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
+  if (isInToolbar && role === 'toolbar') {
+    role = 'group';
+  }
   return {
     actionGroupProps: {
       ...filterDOMProps(props, {labelable: true}),

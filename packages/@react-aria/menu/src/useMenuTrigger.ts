@@ -16,7 +16,7 @@ import {AriaMenuOptions} from './useMenu';
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
-import {RefObject} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLongPress} from '@react-aria/interactions';
@@ -43,8 +43,9 @@ export interface MenuTriggerAria<T> {
  * Provides the behavior and accessibility implementation for a menu trigger.
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
+ * @param ref - Ref to the HTML element trigger for the menu.
  */
-export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
+export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element | null>): MenuTriggerAria<T> {
   let {
     type = 'menu' as AriaMenuTriggerProps['type'],
     isDisabled,
@@ -95,7 +96,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   };
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/menu');
   let {longPressProps} = useLongPress({
     isDisabled: isDisabled || trigger !== 'longPress',
     accessibilityDescription: stringFormatter.format('longPressMessage'),
@@ -113,7 +114,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
       if (e.pointerType !== 'touch' && e.pointerType !== 'keyboard' && !isDisabled) {
         // If opened with a screen reader, auto focus the first item.
         // Otherwise, the menu itself will be focused.
-        state.toggle(e.pointerType === 'virtual' ? 'first' : null);
+        state.open(e.pointerType === 'virtual' ? 'first' : null);
       }
     },
     onPress(e) {

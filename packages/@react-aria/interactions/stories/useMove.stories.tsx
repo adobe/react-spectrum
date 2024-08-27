@@ -18,8 +18,22 @@ import {Flex} from '@react-spectrum/layout';
 import React, {useRef, useState} from 'react';
 import {useMove} from '../';
 
-function useClampedMove(props) {
-  let currentPosition = useRef<{x?: number, y?: number}>();
+interface IPosition {
+  x: number,
+  y: number
+}
+
+interface ClampedMoveProps {
+  getCurrentState: () => IPosition,
+  onMoveTo: (e: any) => void,
+  onMoveStart?: (e: any) => void,
+  onMoveEnd?: (e: any) => void,
+  reverseX?: boolean,
+  reverseY?: boolean
+}
+
+function useClampedMove(props: ClampedMoveProps) {
+  let currentPosition = useRef<IPosition | null>(undefined);
 
   let {getCurrentState, onMoveTo, onMoveStart, onMoveEnd, reverseX = false, reverseY = false} = props;
 
@@ -29,7 +43,7 @@ function useClampedMove(props) {
       onMoveStart?.(e);
     },
     onMove({deltaX, deltaY, pointerType}) {
-      if (currentPosition.current == null) {
+      if (!currentPosition.current) {
         currentPosition.current = getCurrentState();
       }
 
@@ -47,7 +61,6 @@ function Ball1D() {
   let [state, setState] = useState({x: 0, color: 'black'});
 
   let props = useClampedMove({
-    linear: 'horizontal',
     reverseY: true,
     onMoveStart() { setState((state) => ({...state, color: 'red'})); },
     onMoveTo({x}) {

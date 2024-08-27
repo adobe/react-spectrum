@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
-import {RefObject, SyntheticEvent, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
@@ -53,14 +53,14 @@ export interface OverlayAria {
   underlayProps: DOMAttributes
 }
 
-const visibleOverlays: RefObject<Element>[] = [];
+const visibleOverlays: RefObject<Element | null>[] = [];
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
  * Hides the overlay when the user interacts outside it, when the Escape key is pressed,
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
-export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): OverlayAria {
+export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | null>): OverlayAria {
   let {
     onClose,
     shouldCloseOnBlur,
@@ -84,14 +84,14 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     };
   }, [isOpen, ref]);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack.
+  // Only hide the overlay when it is the topmost visible overlay in the stack
   let onHide = () => {
     if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
       onClose();
     }
   };
 
-  let onInteractOutsideStart = (e: SyntheticEvent<Element>) => {
+  let onInteractOutsideStart = (e: PointerEvent) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
@@ -100,7 +100,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     }
   };
 
-  let onInteractOutside = (e: SyntheticEvent<Element>) => {
+  let onInteractOutside = (e: PointerEvent) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
@@ -112,7 +112,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
 
   // Handle the escape key
   let onKeyDown = (e) => {
-    if (e.key === 'Escape' && !isKeyboardDismissDisabled) {
+    if (e.key === 'Escape' && !isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
       e.stopPropagation();
       e.preventDefault();
       onHide();
@@ -120,7 +120,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,

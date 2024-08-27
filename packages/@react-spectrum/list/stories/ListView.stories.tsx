@@ -1,14 +1,17 @@
 import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
 import {Flex} from '@react-spectrum/layout';
+import {FocusScope} from '@react-aria/focus';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -111,37 +114,27 @@ export default {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionStyle: {
-      control: {
-        type: 'radio',
-        options: ['checkbox', 'highlight']
-      }
+      control: 'radio',
+      options: ['checkbox', 'highlight']
     },
     isQuiet: {
-      control: {type: 'boolean'}
+      control: 'boolean'
     },
     density: {
-      control: {
-        type: 'select',
-        options: ['compact', 'regular', 'spacious']
-      }
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
     },
     overflowMode: {
-      control: {
-        type: 'radio',
-        options: ['truncate', 'wrap']
-      }
+      control: 'radio',
+      options: ['truncate', 'wrap']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   }
 } as ComponentMeta<typeof ListView>;
@@ -150,10 +143,10 @@ export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
   render: (args) => (
-    <ListView width="250px" aria-label="default ListView" {...args}>
-      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
-      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
-      <Item textValue="Adobe XD">Adobe XD</Item>
+    <ListView disabledKeys={['3']} width="250px" aria-label="default ListView" {...args}>
+      <Item key="1" textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item key="2" textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item key="3" textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ),
   name: 'default'
@@ -466,3 +459,80 @@ function EmptyTest() {
     </div>
   );
 }
+
+export const RemoveListItems = {
+  render: (args) => (
+    <Demo {...args} />
+  )
+};
+
+function Demo(props) {
+  let [items, setItems] = useState<{key: number, label: string}[]>([
+    {key: 1, label: 'utilities'}
+  ]);
+  let onDelete = (key) => {
+    setItems(prevItems => prevItems.filter((item) => item.key !== key));
+  };
+  return (
+    <ListView
+      selectionMode="multiple"
+      maxWidth="size-6000"
+      items={items}
+      height="300px"
+      width="250px"
+      aria-label="ListView example with complex items"
+      {...props}>
+      {(item: {key: number, label: string}) => {
+        return (
+          <Item key={item.key} textValue={item.label}>
+            <Text>{item.label}</Text>
+            <DialogTrigger type="popover">
+              <ActionButton>Delete</ActionButton>
+              <Dialog>
+                <Heading>Warning, cannot undo</Heading>
+                <Divider />
+                <Content>
+                  <Text>Are you sure?</Text>
+                  <FocusScope>
+                    <Button variant="accent" onPressStart={() => onDelete(item.key)}>
+                      Delete
+                    </Button>
+                  </FocusScope>
+                </Content>
+              </Dialog>
+            </DialogTrigger>
+          </Item>
+        );
+      }}
+    </ListView>
+  );
+}
+
+const manyItems = [];
+for (let i = 0; i < 500; i++) {manyItems.push({key: i, name: `item ${i}`});}
+
+function DisplayNoneComponent(args) {
+  const [isDisplay, setIsDisplay] = useState(false);
+
+  return (
+    <>
+      <Button variant="primary" onPress={() => setIsDisplay(prev => !prev)}>Toggle ListView display</Button>
+      <div style={!isDisplay ? {display: 'none'} : null}>
+        <ListView aria-label="Many items" items={manyItems} width="300px" height="200px" {...args}>
+          {(item: any) => (
+            <Item key={item.key} textValue={item.name}>
+              <Text>
+                {item.name}
+              </Text>
+            </Item>
+          )}
+        </ListView>
+      </div>
+    </>
+  );
+}
+
+export const DisplayNone: ListViewStory = {
+  render: (args) => <DisplayNoneComponent {...args} />,
+  name: 'display: none with many items'
+};

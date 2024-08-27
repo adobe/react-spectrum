@@ -11,8 +11,8 @@
  */
 
 import {Item} from '@react-stately/collections';
-import {Node} from '@react-types/shared';
-import React, {Key, useMemo, useRef} from 'react';
+import {Key, Node} from '@react-types/shared';
+import React, {useMemo, useRef} from 'react';
 import {TreeCollection} from '../src/TreeCollection';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
@@ -51,7 +51,7 @@ function TreeExample(props = {}) {
 
 function Tree(props) {
   let state = useTreeState(props);
-  let ref = useRef();
+  let ref = useRef(undefined);
 
   let keyboardDelegate = useMemo(() => new TreeKeyboardDelegate(state.collection, state.disabledKeys), [state.collection, state.disabledKeys]);
 
@@ -81,7 +81,7 @@ function TreeNodes({nodes, state}) {
 }
 
 function TreeItem({node, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
 
   let {itemProps} = useSelectableItem({
     key: node.key,

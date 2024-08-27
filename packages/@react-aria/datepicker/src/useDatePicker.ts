@@ -16,18 +16,19 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useMemo} from 'react';
+import {privateValidationStateProp} from '@react-stately/form';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMemo} from 'react';
 
-export interface DatePickerAria {
+export interface DatePickerAria extends ValidationResult {
   /** Props for the date picker's visible label element, if any. */
   labelProps: DOMAttributes,
   /** Props for the grouping element containing the date field and button. */
@@ -50,15 +51,18 @@ export interface DatePickerAria {
  * Provides the behavior and accessibility implementation for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element>): DatePickerAria {
+export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element | null>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
   let fieldId = useId();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
 
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let groupProps = useDatePickerGroup(state, ref);
@@ -119,8 +123,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       'aria-describedby': ariaDescribedBy,
       value: state.value,
       onChange: state.setValue,
-      minValue: props.minValue,
-      maxValue: props.maxValue,
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,
       hourCycle: props.hourCycle,
@@ -129,7 +131,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isRequired: props.isRequired,
-      isInvalid: state.isInvalid,
+      validationBehavior: props.validationBehavior,
+      // DatePicker owns the validation state for the date field.
+      [privateValidationStateProp]: state,
       autoFocus: props.autoFocus,
       name: props.name
     },
@@ -143,6 +147,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       'aria-labelledby': `${buttonId} ${labelledBy}`,
       'aria-describedby': ariaDescribedBy,
       'aria-expanded': state.isOpen,
+      isDisabled: props.isDisabled || props.isReadOnly,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {
@@ -160,7 +165,10 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDateUnavailable: props.isDateUnavailable,
       defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: props.errorMessage
-    }
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+    },
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

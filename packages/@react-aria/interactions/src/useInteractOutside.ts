@@ -15,13 +15,14 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
-import {useEffectEvent} from '@react-aria/utils';
+import {getOwnerDocument, useEffectEvent} from '@react-aria/utils';
+import {RefObject} from '@react-types/shared';
+import {useEffect, useRef} from 'react';
 
 export interface InteractOutsideProps {
-  ref: RefObject<Element>,
-  onInteractOutside?: (e: SyntheticEvent) => void,
-  onInteractOutsideStart?: (e: SyntheticEvent) => void,
+  ref: RefObject<Element | null>,
+  onInteractOutside?: (e: PointerEvent) => void,
+  onInteractOutsideStart?: (e: PointerEvent) => void,
   /** Whether the interact outside events should be disabled. */
   isDisabled?: boolean
 }
@@ -37,7 +38,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     ignoreEmulatedMouseEvents: false
   });
 
-  let onPointerDown = useEffectEvent((e: SyntheticEvent) => {
+  let onPointerDown = useEffectEvent((e) => {
     if (onInteractOutside && isValidEvent(e, ref)) {
       if (onInteractOutsideStart) {
         onInteractOutsideStart(e);
@@ -46,7 +47,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     }
   });
 
-  let triggerInteractOutside = useEffectEvent((e: SyntheticEvent) => {
+  let triggerInteractOutside = useEffectEvent((e: PointerEvent) => {
     if (onInteractOutside) {
       onInteractOutside(e);
     }
@@ -58,6 +59,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
       return;
     }
 
+    const element = ref.current;
+    const documentObject = getOwnerDocument(element);
+
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
@@ -68,12 +72,12 @@ export function useInteractOutside(props: InteractOutsideProps) {
       };
 
       // changing these to capture phase fixed combobox
-      document.addEventListener('pointerdown', onPointerDown, true);
-      document.addEventListener('pointerup', onPointerUp, true);
+      documentObject.addEventListener('pointerdown', onPointerDown, true);
+      documentObject.addEventListener('pointerup', onPointerUp, true);
 
       return () => {
-        document.removeEventListener('pointerdown', onPointerDown, true);
-        document.removeEventListener('pointerup', onPointerUp, true);
+        documentObject.removeEventListener('pointerdown', onPointerDown, true);
+        documentObject.removeEventListener('pointerup', onPointerUp, true);
       };
     } else {
       let onMouseUp = (e) => {
@@ -93,16 +97,16 @@ export function useInteractOutside(props: InteractOutsideProps) {
         state.isPointerDown = false;
       };
 
-      document.addEventListener('mousedown', onPointerDown, true);
-      document.addEventListener('mouseup', onMouseUp, true);
-      document.addEventListener('touchstart', onPointerDown, true);
-      document.addEventListener('touchend', onTouchEnd, true);
+      documentObject.addEventListener('mousedown', onPointerDown, true);
+      documentObject.addEventListener('mouseup', onMouseUp, true);
+      documentObject.addEventListener('touchstart', onPointerDown, true);
+      documentObject.addEventListener('touchend', onTouchEnd, true);
 
       return () => {
-        document.removeEventListener('mousedown', onPointerDown, true);
-        document.removeEventListener('mouseup', onMouseUp, true);
-        document.removeEventListener('touchstart', onPointerDown, true);
-        document.removeEventListener('touchend', onTouchEnd, true);
+        documentObject.removeEventListener('mousedown', onPointerDown, true);
+        documentObject.removeEventListener('mouseup', onMouseUp, true);
+        documentObject.removeEventListener('touchstart', onPointerDown, true);
+        documentObject.removeEventListener('touchend', onTouchEnd, true);
       };
     }
   }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);

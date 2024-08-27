@@ -1,4 +1,4 @@
-# [React Aria](https://react-spectrum.adobe.com/react-aria/index.html)
+# [React Aria](https://react-spectrum.adobe.com/react-aria/hooks.html)
 
 A library of React Hooks that provides accessible UI primitives for your design system.
 
@@ -11,7 +11,7 @@ A library of React Hooks that provides accessible UI primitives for your design 
 
 ## Getting started
 
-The easiest way to start building a component library with React Aria is by following our [getting started](https://react-spectrum.adobe.com/react-aria/getting-started.html) guide. It walks through all of the steps needed to install the hooks from npm, and create your first component.
+The easiest way to start building a component library with React Aria is by following our [getting started](https://react-spectrum.adobe.com/react-aria/hooks.html) guide. It walks through all of the steps needed to install the hooks from npm, and create your first component.
 
 ### Example
 

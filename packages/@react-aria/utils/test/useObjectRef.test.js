@@ -11,7 +11,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {render, renderHook, screen} from '@react-spectrum/test-utils';
+import {render, renderHook, screen} from '@react-spectrum/test-utils-internal';
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
 import {useLayoutEffect, useObjectRef} from '../';
 
@@ -21,7 +21,7 @@ describe('useObjectRef', () => {
 
     expect(result.current).toBeDefined();
     expect(result.current).not.toBeNull();
-    expect(result.current.current).toBeUndefined();
+    expect(result.current.current).toBeNull();
   });
 
   it('should support React.forwardRef for an object ref', () => {

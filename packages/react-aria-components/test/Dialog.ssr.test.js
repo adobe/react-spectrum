@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {screen, testSSR} from '@react-spectrum/test-utils';
+import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Dialog SSR', function () {
   it('should render without errors', async function () {
@@ -24,7 +24,7 @@ describe('Dialog SSR', function () {
             <Dialog>
               {({ close }) => (
                 <form>
-                  <Heading>Sign up</Heading>
+                  <Heading slot="title">Sign up</Heading>
                   <TextField autoFocus>
                     <Label>First Name:</Label>
                     <Input />

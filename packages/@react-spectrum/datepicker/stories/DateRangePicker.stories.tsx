@@ -18,6 +18,7 @@ import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
+import {Key} from '@react-types/shared';
 import {Provider} from '@adobe/react-spectrum';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -233,7 +234,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<React.Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);

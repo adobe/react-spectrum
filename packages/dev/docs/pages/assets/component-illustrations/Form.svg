@@ -1,37 +1,51 @@
-<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 112px) / 2) 10px" height="112" viewBox="0 0 224 112">
-  <g id="Form" transform="translate(-414 -1517)">
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px; max-height: 152px;" height="132" viewBox="0 0 220 132">
+  <g id="Group_156770" data-name="Group 156770" transform="translate(-414 -1517)">
     <g id="Text_field" data-name="Text field" transform="translate(433 1517)">
-      <rect id="Placement_Area" data-name="Placement Area" width="205" height="32" fill="red" opacity="0"/>
+      <rect id="Placement_Area" data-name="Placement Area" width="201" height="24" fill="red" opacity="0"/>
       <g id="Label">
-        <rect id="Placement_Area-2" data-name="Placement Area" width="27" height="24" transform="translate(0 4)" fill="red" opacity="0"/>
-        <text id="Text" transform="translate(0 20)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Email</tspan></text>
+        <rect id="Placement_Area-2" data-name="Placement Area" width="35" height="24" fill="red" opacity="0"/>
+        <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Email</tspan></text>
       </g>
-      <g id="Field" transform="translate(39)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
-        <rect width="166" height="32" rx="4" stroke="none"/>
-        <rect x="0.5" y="0.5" width="165" height="31" rx="3.5" fill="none"/>
+      <g id="Field" transform="translate(35)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+        <rect width="166" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="165" height="23" rx="3.5" fill="none"/>
       </g>
-      <text id="Text-2" data-name="Text" transform="translate(51 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">someone@example.com</tspan></text>
+      <text id="Text-2" data-name="Text" transform="translate(44 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">someone@example.com</tspan></text>
+      <g id="Alert">
+        <path id="Path_63909" data-name="Path 63909" d="M7.627,1.262.193,14.564a.444.444,0,0,0,.388.662H15.45a.444.444,0,0,0,.388-.661L8.4,1.262a.444.444,0,0,0-.775,0ZM8.9,13.226a.222.222,0,0,1-.222.222H7.348a.222.222,0,0,1-.222-.222V11.893a.222.222,0,0,1,.222-.222H8.682a.222.222,0,0,1,.222.222Zm0-2.667a.222.222,0,0,1-.222.222H7.348a.222.222,0,0,1-.222-.222V5.226A.222.222,0,0,1,7.348,5H8.682a.222.222,0,0,1,.222.222Z" transform="translate(175.985 3.885)" fill="var(--anatomy-gray-700)"/>
+      </g>
     </g>
-    <g id="Text_field-2" data-name="Text field" transform="translate(414 1557)">
-      <rect id="Placement_Area-3" data-name="Placement Area" width="224" height="32" fill="red" opacity="0"/>
+    <g id="Text_field-2" data-name="Text field" transform="translate(414 1569)">
+      <rect id="Placement_Area-3" data-name="Placement Area" width="220" height="24" fill="red" opacity="0"/>
       <g id="Label-2" data-name="Label">
-        <rect id="Placement_Area-4" data-name="Placement Area" width="46" height="24" transform="translate(0 4)" fill="red" opacity="0"/>
-        <text id="Text-3" data-name="Text" transform="translate(0 20)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Password</tspan></text>
+        <rect id="Placement_Area-4" data-name="Placement Area" width="54" height="24" fill="red" opacity="0"/>
+        <text id="Text-3" data-name="Text" transform="translate(0 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Password</tspan></text>
       </g>
-      <g id="Field-2" data-name="Field" transform="translate(58)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
-        <rect width="166" height="32" rx="4" stroke="none"/>
-        <rect x="0.5" y="0.5" width="165" height="31" rx="3.5" fill="none"/>
+      <g id="Field-2" data-name="Field" transform="translate(54)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="166" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="165" height="23" rx="3.5" fill="none"/>
       </g>
-      <text id="Text-4" data-name="Text" transform="translate(70 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean" letter-spacing="1.2"><tspan x="0" y="0">••••••••</tspan></text>
+      <text id="Text-4" data-name="Text" transform="translate(63 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">••••••••</tspan></text>
     </g>
-    <g id="Checkbox" transform="translate(472 1597)">
-      <rect id="Placement_Area-5" data-name="Placement Area" width="109" height="32" fill="red" opacity="0"/>
-      <rect id="Box" width="14" height="14" rx="2" transform="translate(0 9)" fill="var(--anatomy-gray-700)"/>
+    <g id="Checkbox" transform="translate(468 1597)">
+      <rect id="Placement_Area-5" data-name="Placement Area" width="94" height="24" fill="red" opacity="0"/>
+      <rect id="Box" width="12" height="12" rx="2" transform="translate(0 6)" fill="var(--anatomy-gray-800)"/>
       <g id="Checkmark">
-        <rect id="Frame" width="10" height="10" transform="translate(2 11)" fill="var(--anatomy-gray-75)" opacity="0"/>
-        <path id="Shape" d="M3.788,9A1,1,0,0,1,3,8.615l-2.288-3a1,1,0,1,1,1.576-1.23l1.5,1.991L7.712,1.385a1,1,0,1,1,1.576,1.23l-4.712,6A1,1,0,0,1,3.788,9Z" transform="translate(2 11)" fill="var(--anatomy-gray-75)"/>
+        <path id="Path_63910" data-name="Path 63910" d="M8.648,1.613a.922.922,0,0,0-1.294.156L3.794,6.3,2.632,4.906a.922.922,0,0,0-1.416,1.18l1.89,2.269a.7.7,0,0,0,.07.052.862.862,0,0,0,.07.083.883.883,0,0,0,.128.07.892.892,0,0,0,.095.051.917.917,0,0,0,.345.076h0a.915.915,0,0,0,.357-.08.9.9,0,0,0,.1-.057A.88.88,0,0,0,4.4,8.473a.862.862,0,0,0,.069-.086c.02-.021.047-.03.066-.053L8.8,2.907a.921.921,0,0,0-.156-1.294Z" transform="translate(1 7)" fill="var(--anatomy-gray-75)"/>
       </g>
-      <text id="Text-5" data-name="Text" transform="translate(24 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Remember me</tspan></text>
+      <text id="Text-5" data-name="Text" transform="translate(21 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Remember me</tspan></text>
+    </g>
+    <g id="Help_text" data-name="Help text" transform="translate(468 1541)">
+      <rect id="Placement_Area-6" data-name="Placement Area" width="140" height="24" fill="red" opacity="0"/>
+      <text id="Text-6" data-name="Text" transform="translate(0 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">This account does not exist.</tspan></text>
+    </g>
+    <g id="Action_button" data-name="Action button" transform="translate(468 1625)">
+      <rect id="Placement_Area-7" data-name="Placement Area" width="51" height="24" fill="red" opacity="0"/>
+      <g id="Background" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="51" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="50" height="23" rx="3.5" fill="none"/>
+      </g>
+      <text id="Text-7" data-name="Text" transform="translate(9 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Sign In</tspan></text>
     </g>
   </g>
 </svg>

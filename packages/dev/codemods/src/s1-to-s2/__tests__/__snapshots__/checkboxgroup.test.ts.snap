@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes showErrorIcon 1`] = `
+"import { Checkbox, CheckboxGroup } from "@react-spectrum/s2";
+let showErrorIcon = true;
+let props = {showErrorIcon: true};
+<div>
+  <CheckboxGroup label="Favorite sports">
+    <Checkbox value="soccer">Soccer</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports">
+    <Checkbox value="soccer">Soccer</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports">
+    <Checkbox value="soccer">Soccer</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports">
+    <Checkbox value="soccer">Soccer</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <Checkbox value="soccer">Soccer</Checkbox>
+  </CheckboxGroup>
+</div>"
+`;

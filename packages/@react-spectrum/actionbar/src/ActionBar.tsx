@@ -58,11 +58,12 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
     onClearSelection,
     selectedItemCount,
     isOpen,
+    buttonLabelBehavior = 'collapse',
     items
   } = props;
 
   let {styleProps} = useStyleProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actionbar');
 
   // Store the last count greater than zero in a ref so that we can retain it while rendering the fade-out animation.
   let [lastCount, setLastCount] = useState(selectedItemCount);
@@ -110,7 +111,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
             isQuiet
             staticColor={isEmphasized ? 'white' : undefined}
             overflowMode="collapse"
-            buttonLabelBehavior="collapse"
+            buttonLabelBehavior={buttonLabelBehavior}
             onAction={onAction}
             UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
             {children}

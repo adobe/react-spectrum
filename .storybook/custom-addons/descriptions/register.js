@@ -1,5 +1,5 @@
 
-import { addons, types } from '@storybook/addons';
+import {addons, types} from '@storybook/manager-api';
 import { AddonPanel } from '@storybook/components';
 import React from 'react';
 import { useParameter } from '@storybook/api';
@@ -19,8 +19,8 @@ addons.register(ADDON_ID, (api) => {
   addons.add(PANEL_ID, {
     type: types.PANEL,
     title: 'Description',
-    render: ({ active, key }) => (
-      <AddonPanel active={active} key={key}>
+    render: ({ active }) => (
+      <AddonPanel active={active}>
         <MyPanel />
       </AddonPanel>
     ),

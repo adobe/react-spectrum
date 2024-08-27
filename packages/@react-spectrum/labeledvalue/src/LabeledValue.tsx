@@ -55,7 +55,6 @@ interface StringListProps<T extends string[]> {
   /** The value to display. */
   value: T,
   /** Formatting options for the value. */
-  // @ts-ignore
   formatOptions?: Intl.ListFormatOptions
 }
 
@@ -78,7 +77,6 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
 
   let children;
   if (Array.isArray(value)) {
-    // @ts-ignore
     children = <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />;
   }
 

@@ -11,11 +11,12 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
-import messages from '../../../@react-aria/numberfield/intl/*';
+import {Form} from '@react-spectrum/form';
+import messages from '../../../@react-aria/numberfield/intl/*.json';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -23,7 +24,7 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 // for some reason hu-HU isn't supported in jsdom/node
-let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
+let locales = Object.keys(messages).filter(locale => locale !== 'hu-HU');
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
@@ -266,7 +267,7 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onBlurSpy).toHaveBeenCalledTimes(1);
@@ -277,7 +278,7 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
@@ -292,6 +293,21 @@ describe('NumberField', function () {
     await user.keyboard('3');
     await user.tab();
     expect(onChangeSpy.mock.invocationCallOrder[0]).toBeLessThan(onBlurSpy.mock.invocationCallOrder[0]);
+  });
+
+  it.each`
+  Name                            | props                                        | expected
+  ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
+  ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
+  ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
+  ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
+  ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
+  ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
+  ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
+  ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
+  `('clamps value & defaultValue to the allowed range $Name', function ({props, expected}) {
+    let {textField} = renderNumberField(props);
+    expect(textField).toHaveAttribute('value', expected);
   });
 
   it.each`
@@ -370,35 +386,45 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name increment value by one when increment button is pressed', () => {
+  `('$Name increment value by one when increment button is pressed', async () => {
     let {incrementButton} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
 
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
   it.each`
     Name
     ${'NumberField'}
-  `('$Name decrement value by one when increment button is pressed', () => {
+  `('$Name decrement value by one when increment button is pressed', async () => {
     let {decrementButton} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
 
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
   it.each`
     Name
     ${'NumberField'}
-  `('$Name use step for increasing and decreasing value', () => {
+  `('$Name use step for increasing and decreasing value', async () => {
     let {decrementButton, incrementButton} = renderNumberField({defaultValue: 0, step: 10, onChange: onChangeSpy});
 
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(-10);
 
     onChangeSpy.mockReset();
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
+  });
+
+  it('does not lose precision', async () => {
+    let {textField} = renderNumberField({minValue: 0.1, maxValue: 24, step: 0.1, onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    await user.keyboard('24');
+    await user.tab();
+
+    expect(textField).toHaveAttribute('value', '24');
   });
 
   it.each`
@@ -470,7 +496,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name onChange is not called when controlled at minValue and decrement is pressed', () => {
+  `('$Name onChange is not called when controlled at minValue and decrement is pressed', async () => {
     let {
       container,
       decrementButton
@@ -479,14 +505,14 @@ describe('NumberField', function () {
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
     expect(container).not.toHaveAttribute('aria-invalid');
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it.each`
     Name
     ${'v3 NumberField'}
-  `('$Name onChange is not called when controlled at maxValue and increment is pressed', () => {
+  `('$Name onChange is not called when controlled at maxValue and increment is pressed', async () => {
     let {
       container,
       incrementButton
@@ -495,7 +521,7 @@ describe('NumberField', function () {
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
     expect(container).not.toHaveAttribute('aria-invalid');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
@@ -543,7 +569,7 @@ describe('NumberField', function () {
     } = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy});
 
     expect(textField).toHaveAttribute('value', '');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
@@ -557,7 +583,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
     expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
@@ -575,7 +601,7 @@ describe('NumberField', function () {
     } = renderNumberField({onChange: onChangeSpy, minValue: 3});
 
     expect(textField).toHaveAttribute('value', '');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(3);
@@ -587,7 +613,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
 
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(3);
@@ -604,7 +630,7 @@ describe('NumberField', function () {
     } = renderNumberField({onChange: onChangeSpy, maxValue: 3});
 
     expect(textField).toHaveAttribute('value', '');
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(3);
@@ -616,7 +642,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
 
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
@@ -626,7 +652,7 @@ describe('NumberField', function () {
     Name
     ${'NumberField'}
   `('$Name properly will return the same number from onChange as is displayed', async () => {
-    let {textField} = renderNumberField({key: 'foo', onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
+    let {textField} = renderNumberField({id: 'foo', onChange: onChangeSpy, defaultValue: 10, formatOptions: {maximumFractionDigits: 2}});
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');
@@ -776,7 +802,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '25%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.25);
     act(() => {textField.focus();});
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '26%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.26);
@@ -826,14 +852,14 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name properly formats value when value changes', () => {
+  `('$Name properly formats value when value changes', async () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
-    triggerPress(decrementButton);
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
+    await user.click(decrementButton);
     expect(textField).toHaveAttribute('value', '€9.00');
   });
 
@@ -866,7 +892,7 @@ describe('NumberField', function () {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}});
 
     expect(textField).toHaveAttribute('value', '($10.00)');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '($9.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
@@ -946,7 +972,7 @@ describe('NumberField', function () {
     }, {locale: 'el-GR'});
 
     expect(textField).toHaveAttribute('value', '-10,00 $');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '-9,00 $');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
@@ -1001,14 +1027,14 @@ describe('NumberField', function () {
     ${'US Euros negative'}     | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['-€10.00', '-€9.00', '-€11.00']}
     ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
     ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['‏‎-10.00 €', '‏‎-9.00 €', '‏‎-11.00 €']}
-  `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
+  `('$Name pressing increment & decrement keeps formatting', async ({props, locale, expected}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField({minValue: -15, ...props}, {locale});
 
     expect(textField).toHaveAttribute('value', expected[0]);
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', expected[1]);
-    triggerPress(decrementButton);
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
+    await user.click(decrementButton);
     expect(textField).toHaveAttribute('value', expected[2]);
   });
 
@@ -1150,7 +1176,7 @@ describe('NumberField', function () {
   `('goes to valid step min on `home`', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10, minValue: -521});
 
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveAttribute('value', '9');
     act(() => {textField.focus();});
     fireEvent.keyDown(textField, {key: 'Home'});
     fireEvent.keyUp(textField, {key: 'Home'});
@@ -1412,13 +1438,13 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     await user.keyboard('1');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.001);
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.002);
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.003);
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.004);
     act(() => {textField.blur();});
   });
@@ -1431,7 +1457,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     await user.keyboard('2');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     act(() => {textField.blur();});
@@ -1444,7 +1470,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     await user.keyboard('3');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     act(() => {textField.blur();});
@@ -1465,7 +1491,7 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(3);
     expect(textField).toHaveAttribute('value', '3');
@@ -1475,7 +1501,7 @@ describe('NumberField', function () {
     await user.clear(textField);
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '3');
     act(() => {textField.blur();});
@@ -1490,7 +1516,7 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
     expect(textField).toHaveAttribute('value', '1');
@@ -1500,7 +1526,7 @@ describe('NumberField', function () {
     await user.clear(textField);
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '1');
     act(() => {textField.blur();});
@@ -1711,14 +1737,14 @@ describe('NumberField', function () {
   it.each`
     Name                          | props
     ${'NumberField controlled'}   | ${{value: 10, onChange: onChangeSpy}}
-  `('$Name 10 is rendered and will not change the value in the input for steppers', ({props}) => {
+  `('$Name 10 is rendered and will not change the value in the input for steppers', async ({props}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(props);
     expect(textField).toHaveAttribute('value', '10');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '10');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(11);
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(textField).toHaveAttribute('value', '10');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(9);
@@ -1741,7 +1767,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField controlled'}
-  `('$Name 10 is rendered and will change if the controlled version is implemented', () => {
+  `('$Name 10 is rendered and will change if the controlled version is implemented', async () => {
     function NumberFieldControlled(props) {
       let {onChange} = props;
       let [value, setValue] = useState(10);
@@ -1758,11 +1784,11 @@ describe('NumberField', function () {
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
     expect(textField).toHaveAttribute('value', '€10.00');
-    triggerPress(incrementButton);
+    await user.click(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(11);
-    triggerPress(decrementButton);
+    await user.click(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(textField).toHaveAttribute('value', '€10.00');
@@ -2197,7 +2223,7 @@ describe('NumberField', function () {
     });
   });
 
-  it('can be reset to blank using null', () => {
+  it('can be reset to blank using null', async () => {
     function NumberFieldControlled(props) {
       let {onChange} = props;
       let [value, setValue] = useState(10);
@@ -2218,7 +2244,7 @@ describe('NumberField', function () {
     let resetButton = getByText('Reset');
 
     expect(textField).toHaveAttribute('value', '10');
-    triggerPress(resetButton);
+    await user.click(resetButton);
     expect(resetSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '');
   });
@@ -2259,5 +2285,232 @@ describe('NumberField', function () {
     act(() => input.blur());
     await user.click(button);
     expect(input).toHaveValue('10');
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it('supports isRequired', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('4');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it('commits validation changes when pressing increment/decrement buttons', async () => {
+        let {getByTestId, getAllByRole} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.click(getAllByRole('button')[0]);
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports validate function', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" defaultValue={2} step={2} validationBehavior="native" validate={v => v !== 4 ? 'Invalid value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.activeElement).toBe(input);
+
+        await user.clear(input);
+        await user.keyboard('3');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports server validation', async () => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              value: 'Invalid value.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                <NumberField data-testid="input" label="Value" name="value" validationBehavior="native" />
+                <Button type="submit" data-testid="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getByTestId} = render(<Test />);
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        await user.click(getByTestId('submit'));
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab({shift: true});
+        await user.keyboard('4');
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports customizing native error messages', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+      });
+
+      it('only commits on blur if the value changed', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab();
+        await user.tab({shift: true});
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+
+        await user.keyboard('4');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it('supports validate function', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" defaultValue={2} validate={v => v === 2 ? 'Invalid value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        await user.keyboard('4');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+
+      it('supports server validation', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{value: 'Invalid value'}}>
+              <NumberField data-testid="input" label="Value" name="value" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+        await user.tab();
+        await user.keyboard('4');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+    });
   });
 });

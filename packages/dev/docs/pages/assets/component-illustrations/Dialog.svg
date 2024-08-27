@@ -1,4 +1,4 @@
-<svg style="background:var(--anatomy-gray-400); padding: 10px; box-sizing: border-box; max-height: 152px" height="229" viewBox="0 0 480 229">
+<svg style="background:var(--anatomy-gray-400); padding: 10px; box-sizing: border-box; max-height: 153px" height="229" viewBox="0 0 480 229">
   <rect id="Placement_Area" data-name="Placement Area" width="480" height="229" fill="red" opacity="0"/>
   <rect id="Background" width="480" height="229" rx="4" fill="var(--anatomy-gray-100)"/>
   <text id="Header" transform="translate(40 40)" fill="var(--anatomy-gray-900)" font-size="18" font-family="Adobe-Clean" font-weight="700"><tspan x="0" y="18">Delete file</tspan></text>

@@ -24,7 +24,6 @@ import {
   FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
-  IsLoadingNoHeightGrid,
   LoadingMoreGrid,
   StaticCards,
   StaticCardViewStory
@@ -66,6 +65,11 @@ let itemsNoSize = [
 export default {
   title: 'CardView/Waterfall layout',
   component: CardView,
+  parameters: {
+    chromatic: {
+      delay: 300
+    }
+  },
   args: {
     'aria-label': 'Test CardView'
   },
@@ -151,14 +155,6 @@ export const SelectedKeys: ControlledCardViewStory = {
   ...ControlledCards,
   args: {
     ...ControlledCards.args,
-    layout: WaterfallLayout
-  }
-};
-
-export const IsLoadingNoHeightWaterfall: DynamicCardViewStory = {
-  ...IsLoadingNoHeightGrid,
-  args: {
-    ...IsLoadingNoHeightGrid.args,
     layout: WaterfallLayout
   }
 };

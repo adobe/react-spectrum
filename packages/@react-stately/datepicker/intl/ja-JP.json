@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "値は {maxValue} 以下にする必要があります。",
+  "rangeReversed": "開始日は終了日より前にする必要があります。",
+  "rangeUnderflow": "値は {minValue} 以上にする必要があります。",
+  "unavailableDate": "選択した日付は使用できません。"
+}

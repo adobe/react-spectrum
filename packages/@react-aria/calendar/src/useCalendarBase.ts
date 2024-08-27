@@ -36,7 +36,7 @@ export interface CalendarAria {
 }
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);

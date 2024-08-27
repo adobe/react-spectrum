@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dispatch, useRef, useState} from 'react';
+import {Dispatch, MutableRefObject, useRef, useState} from 'react';
 import {useEffectEvent, useLayoutEffect} from './';
 
 type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
@@ -21,11 +21,14 @@ type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 // written linearly.
 export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<SetValueAction<S>>] {
   let [value, setValue] = useState(defaultValue);
-  let effect = useRef(null);
+  let effect: MutableRefObject<Generator<S> | null> = useRef<Generator<S> | null>(null);
 
   // Store the function in a ref so we can always access the current version
   // which has the proper `value` in scope.
   let nextRef = useEffectEvent(() => {
+    if (!effect.current) {
+      return;
+    }
     // Run the generator to the next yield.
     let newValue = effect.current.next();
 

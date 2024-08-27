@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockImplementation, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, createEvent, fireEvent, mockImplementation, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Links as LinksExample} from '../stories/Tabs.stories';
 import {Provider} from '@react-spectrum/provider';
@@ -113,18 +113,25 @@ describe('Tabs', function () {
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     act(() => {selectedItem.focus();});
-    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    let arrowRight = createEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent(selectedItem, arrowRight);
     let nextSelectedItem = tabs[1];
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    expect(arrowRight.defaultPrevented).toBe(true);
+    let arrowLeft = createEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    fireEvent(nextSelectedItem, arrowLeft);
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+    expect(arrowLeft.defaultPrevented).toBe(true);
 
-    /** Changes selection regardless if it's horizontal tabs. */
-    fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
-    nextSelectedItem = tabs[2];
-    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    /** prevent changing tabs for horizontal orientations in aria-selected */
+    let arrowUp = createEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    fireEvent(selectedItem, arrowUp);
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+    expect(arrowUp.defaultPrevented).toBe(false);
+    let arrowDown = createEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    fireEvent(selectedItem, arrowDown);
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+    expect(arrowDown.defaultPrevented).toBe(false);
   });
 
   it('allows user to change tab item select via arrow keys with vertical tabs', function () {
@@ -211,7 +218,7 @@ describe('Tabs', function () {
     expect(onSelectionChange).toBeCalledTimes(1);
   });
 
-  it('supports using click to change tab', function () {
+  it('supports using click to change tab', async function () {
     let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -219,7 +226,7 @@ describe('Tabs', function () {
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
     let secondItem = tabs[1];
-    triggerPress(secondItem);
+    await user.click(secondItem);
     expect(secondItem).toHaveAttribute('aria-selected', 'true');
     expect(secondItem).toHaveAttribute('aria-controls');
     let tabpanel = document.getElementById(secondItem.getAttribute('aria-controls'));
@@ -288,6 +295,10 @@ describe('Tabs', function () {
 
     let tabpanel = tree.getByRole('tabpanel');
     expect(document.activeElement).toBe(tabpanel);
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    await user.click(tabs[0]);
   });
 
   it('disabled tabs cannot be keyboard navigated to', async function () {
@@ -357,7 +368,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabpanel);
   });
 
-  it('collapses when it can\'t render all the tabs horizontally', function () {
+  it('collapses when it can\'t render all the tabs horizontally', async function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
@@ -404,11 +415,11 @@ describe('Tabs', function () {
     expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
     expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} ${picker.id} external label`);
 
-    triggerPress(picker);
+    await user.click(picker);
     act(() => jest.runAllTimers());
     let listbox = getByRole('listbox');
     let option = within(listbox).getByText('Tab 3');
-    triggerPress(option);
+    await user.click(option);
     act(() => jest.runAllTimers());
 
     expect(onSelectionChange).toBeCalledTimes(1);
@@ -651,7 +662,7 @@ describe('Tabs', function () {
 
   });
 
-  it('disabled tabs cannot be selected via collapse picker', function () {
+  it('disabled tabs cannot be selected via collapse picker', async function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
@@ -695,16 +706,16 @@ describe('Tabs', function () {
 
     let picker = getByRole('button');
 
-    triggerPress(picker);
+    await user.click(picker);
     act(() => jest.runAllTimers());
     let listbox = getByRole('listbox');
     let option = within(listbox).getByText('Tab 3');
-    triggerPress(option);
+    await user.click(option);
     act(() => jest.runAllTimers());
     expect(onSelectionChange).not.toHaveBeenCalled();
 
     option = within(listbox).getByText('Tab 2 body');
-    triggerPress(option);
+    await user.click(option);
     act(() => jest.runAllTimers());
     expect(onSelectionChange).toHaveBeenCalledWith('');
     tabpanel = getByRole('tabpanel');
@@ -735,18 +746,18 @@ describe('Tabs', function () {
     await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
 
     let tabs = getAllByRole('tab');
-    triggerPress(tabs[1]);
+    await user.click(tabs[1]);
     tabpanel = getByRole('tabpanel');
 
     await waitFor(() => expect(tabpanel).toHaveAttribute('tabindex', '0'));
 
-    triggerPress(tabs[0]);
+    await user.click(tabs[0]);
     tabpanel = getByRole('tabpanel');
 
     await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
   });
 
-  it('TabPanel children do not share values between panels', () => {
+  it('TabPanel children do not share values between panels', async () => {
     let {getByDisplayValue, getAllByRole, getByTestId} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Tab Example" maxWidth={500}>
@@ -772,10 +783,34 @@ describe('Tabs', function () {
     expect(getByDisplayValue('A String')).toBeTruthy();
 
     let tabs = getAllByRole('tab');
-    triggerPress(tabs[1]);
+    await user.click(tabs[1]);
 
     tabPanelInput = getByTestId('panel2_input');
     expect(tabPanelInput.value).toBe('');
+  });
+
+  it('Tabs can be aria-labelled', () => {
+    let {getAllByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
+          <TabList>
+            <Item aria-label="Foo">Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input data-testid="panel1_input" />
+            </Item>
+            <Item>
+              <input disabled data-testid="panel2_input" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tab = getByLabelText('Foo');
+    expect(tab).toBe(getAllByRole('tab')[0]);
   });
 
   it('supports custom props for parent tabs element', function () {
@@ -799,14 +834,14 @@ describe('Tabs', function () {
     }
   });
 
-  it('fires onSelectionChange when clicking on the current tab', function () {
+  it('fires onSelectionChange when clicking on the current tab', async function () {
     let container = renderComponent({defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
-    triggerPress(firstItem);
+    await user.click(firstItem);
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
   });
@@ -844,7 +879,7 @@ describe('Tabs', function () {
     expect(tabs[2]).toHaveAttribute('tabindex', '-1');
   });
 
-  it('should support tabs as links', function () {
+  it('should support tabs as links', async function () {
     let {getAllByRole} = render(<Provider theme={theme}><LinksExample /></Provider>);
 
     let tabs = getAllByRole('tab');
@@ -856,10 +891,392 @@ describe('Tabs', function () {
     expect(tabs[2]).toHaveAttribute('href', '/three');
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    triggerPress(tabs[1]);
+    await user.click(tabs[1]);
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  describe('when using fragments', function () {
+    it('renders fragment with children properly', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Example" maxWidth={500}>
+            <TabList>
+              <>
+                <Item>Tab 1</Item>
+                <Item>Tab 2</Item>
+              </>
+            </TabList>
+            <TabPanels>
+              <>
+                <Item>
+                  Tab 1 content
+                </Item>
+                <Item>
+                  Tab 2 content
+                </Item>
+              </>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(2);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent('Tab 1 content');
+        }
+      }
+    });
+
+    it('renders beginning fragment sibling properly', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Example" maxWidth={500}>
+            <TabList>
+              <>
+                <Item>Tab 1</Item>
+              </>
+              <Item>Tab 2</Item>
+            </TabList>
+            <TabPanels>
+              <>
+                <Item>
+                  Tab 1 content
+                </Item>
+              </>
+              <Item>
+                Tab 2 content
+              </Item>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(2);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent('Tab 1 content');
+        }
+      }
+    });
+
+    it('renders middle fragment sibling properly', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Example" maxWidth={500}>
+            <TabList>
+              <Item>Tab 1</Item>
+              <>
+                <Item>Tab 2</Item>
+              </>
+              <Item>Tab 3</Item>
+            </TabList>
+            <TabPanels>
+              <Item>
+                Tab 1 content
+              </Item>
+              <>
+                <Item>
+                  Tab 2 content
+                </Item>
+              </>
+              <Item>
+                Tab 3 content
+              </Item>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(3);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent('Tab 1 content');
+        }
+      }
+    });
+
+    it('renders ending fragment sibling properly', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Example" maxWidth={500}>
+            <TabList>
+              <Item>Tab 1</Item>
+              <>
+                <Item>Tab 2</Item>
+              </>
+            </TabList>
+            <TabPanels>
+              <Item>
+                Tab 1 content
+              </Item>
+              <>
+                <Item>
+                  Tab 2 content
+                </Item>
+              </>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(2);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent('Tab 1 content');
+        }
+      }
+    });
+
+    it('renders list and panel fragment siblings in non-matching positions properly, list fragment first', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Example" maxWidth={500}>
+            <TabList>
+              <>
+                <Item>Tab 1</Item>
+              </>
+              <Item>Tab 2</Item>
+            </TabList>
+            <TabPanels>
+              <Item>
+                Tab 1 content
+              </Item>
+              <>
+                <Item>
+                  Tab 2 content
+                </Item>
+              </>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(2);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent('Tab 1 content');
+        }
+      }
+    });
+
+    it('renders list and panel fragment siblings in non-matching positions properly, panel fragment first', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Example" maxWidth={500}>
+            <TabList>
+              <Item>Tab 1</Item>
+              <>
+                <Item>Tab 2</Item>
+              </>
+            </TabList>
+            <TabPanels>
+              <>
+                <Item>
+                  Tab 1 content
+                </Item>
+              </>
+              <Item>
+                Tab 2 content
+              </Item>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(2);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent('Tab 1 content');
+        }
+      }
+    });
+
+    it('renders fragment with renderer properly', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Sample" items={defaultItems}>
+            <TabList>
+              <>
+                {item => (
+                  <Item key={item.name} title={item.name || item.children} />
+                )}
+              </>
+            </TabList>
+            <TabPanels>
+              <>
+                {item => (
+                  <Item key={item.name} title={item.name}>
+                    {item.children}
+                  </Item>
+                )}
+              </>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(3);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent(defaultItems[0].children);
+        }
+      }
+    });
+
+    it('renders fragment with mapper properly', function () {
+      let container = render(
+        <Provider theme={theme}>
+          <Tabs aria-label="Tab Sample">
+            <TabList>
+              <>
+                {defaultItems.map(item => (
+                  <Item key={item.name} title={item.name || item.children} />
+                ))}
+              </>
+            </TabList>
+            <TabPanels>
+              <>
+                {defaultItems.map(item => (
+                  <Item key={item.name}>
+                    {item.children}
+                  </Item>
+                ))}
+              </>
+            </TabPanels>
+          </Tabs>
+        </Provider>
+      );
+
+      let tablist = container.getByRole('tablist');
+      expect(tablist).toBeTruthy();
+
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+
+      let tabs = within(tablist).getAllByRole('tab');
+      expect(tabs.length).toBe(3);
+
+      for (let tab of tabs) {
+        expect(tab).toHaveAttribute('tabindex');
+        expect(tab).toHaveAttribute('aria-selected');
+        let isSelected = tab.getAttribute('aria-selected') === 'true';
+        if (isSelected) {
+          expect(tab).toHaveAttribute('aria-controls');
+          let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+          expect(tabpanel).toBeTruthy();
+          expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
+          expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+          expect(tabpanel).toHaveTextContent(defaultItems[0].children);
+        }
+      }
+    });
   });
 });

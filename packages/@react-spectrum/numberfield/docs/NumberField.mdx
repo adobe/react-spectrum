@@ -267,25 +267,25 @@ function Example() {
 
 ## Validation
 
-NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+NumberField supports the `isRequired` prop to ensure the user enters a value, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-The example below illustrates how one would validate if the user has entered a [FizzBuzz](https://en.wikipedia.org/wiki/Fizz_buzz) number into the NumberField.
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the number field or submits the form.
+
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState(15);
-  let isValid = React.useMemo(() => value % 3 === 0 && value % 5 === 0, [value]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  return (
-    <NumberField
-      validationState={isValid ? 'valid' : 'invalid'}
-      value={value}
-      onChange={setValue}
-      label="FizzBuzz values only"
-    />
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <NumberField label="Width" name="width" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `NumberField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 

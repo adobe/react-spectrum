@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {actHook, renderHook} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
 import {useTextField} from '../';
 
 describe('useTextField hook', () => {
   let renderTextFieldHook = (props) => {
-    let {result} = renderHook(() => useTextField(props));
+    let {result} = renderHook(() => useTextField(props, React.createRef()));
     return result.current.inputProps;
   };
 
@@ -72,6 +72,14 @@ describe('useTextField hook', () => {
       expect(props['aria-invalid']).toBeUndefined();
     });
 
+    it('with appropriate props if autoCapitalize is defined', () => {
+      let props = renderTextFieldHook({autoCapitalize: 'on', 'aria-label': 'mandatory label'});
+      expect(props.autoCapitalize).toBe('on');
+
+      props = renderTextFieldHook({autoCapitalize: 'off', 'aria-label': 'mandatory label'});
+      expect(props.autoCapitalize).toBe('off');
+    });
+
     it('with an onChange that calls user specified onChange with appropriate values', () => {
       let onChange = jest.fn();
       let props = renderTextFieldHook({onChange, 'aria-label': 'mandatory label'});
@@ -81,7 +89,7 @@ describe('useTextField hook', () => {
         }
       };
 
-      props.onChange(mockEvent);
+      actHook(() => props.onChange(mockEvent));
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
       onChange.mockClear();

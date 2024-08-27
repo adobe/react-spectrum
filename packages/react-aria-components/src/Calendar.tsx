@@ -9,15 +9,28 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CalendarProps as BaseCalendarProps, RangeCalendarProps as BaseRangeCalendarProps, DateValue, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
+import {
+  AriaCalendarProps,
+  AriaRangeCalendarProps,
+  DateValue,
+  mergeProps,
+  useCalendar,
+  useCalendarCell,
+  useCalendarGrid,
+  useFocusRing,
+  useHover,
+  useLocale,
+  useRangeCalendar,
+  VisuallyHidden
+} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {HeadingContext} from './Heading';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import {HeadingContext} from './RSPContexts';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -44,7 +57,7 @@ export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'sta
   state: RangeCalendarState
 }
 
-export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, SlotProps {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -52,7 +65,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarPro
   visibleDuration?: DateDuration
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -459,25 +472,26 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
-export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
   /** The date to render in the cell. */
   date: CalendarDate
 }
 
-function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
+function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
-  let objectRef = useObjectRef(ref);
+  let buttonRef = useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},
     state,
-    objectRef
+    buttonRef
   );
 
-  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled});
   let {focusProps, isFocusVisible} = useFocusRing();
+  isFocusVisible &&= states.isFocused;
   let isOutsideMonth = !isSameMonth(currentMonth, date);
   let isSelectionStart = false;
   let isSelectionEnd = false;
@@ -517,8 +531,8 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
   };
 
   return (
-    <td {...cellProps}>
-      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+    <td {...cellProps} ref={ref}>
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
 }

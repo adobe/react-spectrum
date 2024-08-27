@@ -31,6 +31,10 @@ export default {
     },
     isEmphasized: {
       control: 'boolean'
+    },
+    buttonLabelBehavior: {
+      control: 'select',
+      options: ['show', 'hide', 'collapse']
     }
   }
 } as ComponentMeta<typeof ActionBar>;

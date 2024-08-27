@@ -32,7 +32,7 @@ export function getEraFormat(date: CalendarDate): 'short' | undefined {
 }
 
 export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
 
   let start: CalendarDate, end: CalendarDate;
   if ('highlightedRange' in state) {
@@ -70,7 +70,7 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
 }
 
 export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let era: any = getEraFormat(startDate) || getEraFormat(endDate);
   let monthFormatter = useDateFormatter({
     month: 'long',

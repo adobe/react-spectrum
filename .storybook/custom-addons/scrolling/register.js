@@ -1,5 +1,5 @@
-import {addons, types} from '@storybook/addons';
-import {getQueryParams} from '@storybook/client-api';
+import {addons, types} from '@storybook/manager-api';
+import {getQueryParams} from '@storybook/preview-api';
 import React, {useEffect, useState} from 'react';
 
 const ScrollingToolbar = ({api}) => {

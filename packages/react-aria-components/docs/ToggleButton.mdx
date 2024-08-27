@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Buttons
@@ -50,19 +51,13 @@ import {ToggleButton} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-global-color-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-global-color-gray-500);
-  --deselected-background-color: var(--spectrum-global-color-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-global-color-gray-100);
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: white;
+@import "@react-aria/example-theme";
 
+.react-aria-ToggleButton {
   color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
+  background: var(--button-background);
+  border: 1px solid var(--border-color);
+  forced-color-adjust: none;
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
@@ -74,50 +69,24 @@ import {ToggleButton} from 'react-aria-components';
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
+    background: var(--button-background-pressed);
+    border-color: var(--border-color-pressed);
   }
 
   &[data-selected] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
+    background: var(--highlight-background);
+    border-color: var(--highlight-background);
+    color: var(--highlight-foreground);
 
     &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
+      background: var(--highlight-background-pressed);
+      border-color: var(--highlight-background-pressed);
     }
   }
 
   &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-border-color: GrayText;
-      --selected-color: GrayText;
-      --text-color: GrayText;
-    }
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
   }
 }
 ```
@@ -144,6 +113,12 @@ the state using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> key
 
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="togglebutton" />
 
 ## Selection
 
@@ -172,6 +147,21 @@ A `ToggleButton` can be disabled using the `isDisabled` prop.
 ```tsx example
 <ToggleButton isDisabled>Pin</ToggleButton>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ToggleButton {
+  &[data-disabled] {
+    border-color: var(--border-color-disabled);
+    background: var(--button-background);
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Props
 

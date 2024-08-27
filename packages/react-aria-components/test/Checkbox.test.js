@@ -11,7 +11,7 @@
  */
 
 import {Checkbox, CheckboxContext} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -52,7 +52,10 @@ describe('Checkbox', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Checkbox>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-hovered');
@@ -61,10 +64,14 @@ describe('Checkbox', () => {
     await user.hover(checkbox);
     expect(checkbox).toHaveAttribute('data-hovered', 'true');
     expect(checkbox).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(checkbox);
     expect(checkbox).not.toHaveAttribute('data-hovered');
     expect(checkbox).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
@@ -83,6 +90,35 @@ describe('Checkbox', () => {
     await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
+  });
+
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let {getByRole, getByText} = render(
+      <>
+        <Checkbox onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur}>Test</Checkbox>
+        <button>Steal focus</button>
+      </>
+    );
+
+    let checkbox = getByRole('checkbox');
+    let button = getByText('Steal focus');
+
+    await user.tab();
+    expect(document.activeElement).toBe(checkbox);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
   it('should support press state', () => {
@@ -169,7 +205,7 @@ describe('Checkbox', () => {
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
-    expect(checkbox).toHaveAttribute('aria-required', 'true');
+    expect(checkbox).toHaveAttribute('required');
     expect(label).toHaveAttribute('data-required', 'true');
     expect(label).toHaveClass('required');
   });
@@ -182,5 +218,29 @@ describe('Checkbox', () => {
 
     await user.click(checkbox);
     expect(checkbox).toHaveTextContent('Selected');
+  });
+
+  it('should support refs', () => {
+    let ref = React.createRef();
+    let {getByRole} = render(<Checkbox ref={ref}>Test</Checkbox>);
+    expect(ref.current).toBe(getByRole('checkbox').closest('.react-aria-Checkbox'));
+  });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(<Checkbox inputRef={inputRef}>Test</Checkbox>);
+    expect(inputRef.current).toBe(getByRole('checkbox'));
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <CheckboxContext.Provider value={{inputRef: contextInputRef}}>
+        <Checkbox inputRef={inputRef}>Test</Checkbox>
+      </CheckboxContext.Provider>
+    );
+    expect(inputRef.current).toBe(getByRole('checkbox'));
+    expect(contextInputRef.current).toBe(getByRole('checkbox'));
   });
 });

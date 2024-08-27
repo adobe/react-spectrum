@@ -18,6 +18,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
+import {Key} from '@react-types/shared';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
@@ -399,6 +400,55 @@ Links.story = {
   args: {
     collapsed: false
   }
+};
+
+export const Nested = (props) => {
+  return (
+    <Tabs aria-label="Some tabs" width={'500px'} {...props} >
+      <TabList>
+        <Item key="one">Tab 1</Item>
+        <Item key="two">Tab 2</Item>
+        <Item key="three">Tab 3</Item>
+        <Item key="four">Tab 4</Item>
+        <Item key="five">Tab 5</Item>
+      </TabList>
+      <TabPanels>
+        <Item key="one">
+          <Heading>Nested</Heading>
+          <Tabs {...props}>
+            <TabList>
+              <Item>Tab 1</Item>
+              <Item>Tab 2</Item>
+            </TabList>
+            <TabPanels>
+              <Item>
+                <TextField label="Tab 1" />
+              </Item>
+              <Item>
+                <TextField label="Tab 2" />
+              </Item>
+            </TabPanels>
+          </Tabs>
+        </Item>
+        <Item key="two">
+          <Heading>Bar</Heading>
+          <Text>To bar or not to bar.</Text>
+        </Item>
+        <Item key="three">
+          <Heading>Foobar</Heading>
+          <Text>That is the foobar.</Text>
+        </Item>
+        <Item key="four">
+          <Heading>Foofoo</Heading>
+          <Text>Once more foo upon the foo.</Text>
+        </Item>
+        <Item key="five">
+          <Heading>Barfoo</Heading>
+          <Text>What's he that barfoos so?</Text>
+        </Item>
+      </TabPanels>
+    </Tabs>
+  );
 };
 
 function render(props = {}) {
@@ -857,7 +907,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
 };
 
 let ControlledSelection = () => {
-  let [selectedKey, setSelectedKey] = useState<React.Key>('Tab 1');
+  let [selectedKey, setSelectedKey] = useState<Key>('Tab 1');
 
   return (
     <div style={{width: '80%'}}>

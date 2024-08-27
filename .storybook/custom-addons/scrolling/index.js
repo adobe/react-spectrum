@@ -1,13 +1,11 @@
-import {addons, makeDecorator} from '@storybook/addons';
+import {addons} from '@storybook/preview-api';
 import clsx from 'clsx';
-import {getQueryParams} from '@storybook/client-api';
+import {getQueryParams} from '@storybook/preview-api';
 import React, {useEffect, useState} from 'react';
-import {useViewportSize} from '@react-aria/utils';
 
 function ScrollingDecorator(props) {
   let {children} = props;
   let [isScrolling, setScrolling] = useState(getQueryParams()?.scrolling === 'true' || false);
-  let {height: minHeight} = useViewportSize();
 
   useEffect(() => {
     let channel = addons.getChannel();
@@ -31,7 +29,7 @@ function ScrollingDecorator(props) {
     );
   } else {
     return (
-      <StoryWrapper style={{...styles, minHeight: minHeight}}>
+      <StoryWrapper style={{...styles, minHeight: '100svh'}}>
         {children}
       </StoryWrapper>
     );

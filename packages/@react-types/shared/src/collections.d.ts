@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactElement, ReactNode} from 'react';
+import {Key} from '@react-types/shared';
 import {LinkDOMProps} from './dom';
+import {ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> extends LinkDOMProps {
   /** Rendered contents of the item or child items. */
@@ -122,6 +123,28 @@ export interface KeyboardDelegate {
   getKeyForSearch?(search: string, fromKey?: Key): Key | null
 }
 
+export interface Rect {
+  x: number,
+  y: number,
+  width: number,
+  height: number
+}
+
+export interface Size {
+  width: number,
+  height: number
+}
+
+/** A LayoutDelegate provides layout information for collection items. */
+export interface LayoutDelegate {
+  /** Returns a rectangle for the item with the given key. */
+  getItemRect(key: Key): Rect | null,
+  /** Returns the visible rectangle of the collection. */
+  getVisibleRect(): Rect,
+  /** Returns the size of the scrollable content in the collection. */
+  getContentSize(): Size
+}
+
 /**
  * A generic interface to access a readonly sequential
  * collection of unique keyed items.
@@ -165,7 +188,7 @@ export interface Node<T> {
   key: Key,
   /** The object value the node was created from. */
   value: T | null,
-  /** The level of depth this node is at in the heirarchy. */
+  /** The level of depth this node is at in the hierarchy. */
   level: number,
   /** Whether this item has children, even if not loaded yet. */
   hasChildNodes: boolean,
@@ -193,5 +216,7 @@ export interface Node<T> {
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */
-  shouldInvalidate?: (context: unknown) => boolean
+  shouldInvalidate?: (context: unknown) => boolean,
+  /** A function that renders this node to a React Element in the DOM. */
+  render?: (node: Node<any>) => ReactElement
 }

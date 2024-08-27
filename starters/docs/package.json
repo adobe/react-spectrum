@@ -1,0 +1,31 @@
+{
+  "devDependencies": {
+    "@babel/preset-react": "^7.24.1",
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-interactions": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/react": "^7.5.3",
+    "@storybook/react-webpack5": "^7.5.3",
+    "@storybook/testing-library": "^0.2.2",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "lightningcss-loader": "^2.1.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-aria-components": "latest",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.5.3",
+    "storybook-dark-mode": "^3.0.1",
+    "typescript": "5.3.3"
+  },
+  "resolutions": {
+    "@types/mime": "3.0.4",
+    "jackspeak": "2.1.1"
+  },
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  }
+}

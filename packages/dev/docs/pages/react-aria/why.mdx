@@ -47,10 +47,10 @@ perception of the web as an inferior app platform compared to native apps.
 ## React Aria
 
 React Aria separates the behavior and accessibility implementation for many common UI components out into
-[React Hooks](https://reactjs.org/docs/hooks-intro.html), which enables them to be reused easily between
-design systems. You remain in complete control over the rendering and styling aspects of your components,
-but get most of the [behavior](interactions.html), [accessibility](accessibility.html), and
-[internationalization](internationalization.html) support for free.
+unstyled React components and hooks, which enables them to be reused easily between
+design systems and applications. You remain in complete control over the rendering and styling aspects of your components,
+but get most of the [behavior](interactions.html), [accessibility](accessibility.html),
+[internationalization](internationalization.html), and much more for free.
 
 Rather than starting with only divs and building everything yourself, you start with elements that have semantic meaning,
 behavior, and interactions built in. This allows you to **build components more quickly**, and ensures that they work well
@@ -59,21 +59,20 @@ across mouse, touch, and keyboard interactions, as well as with screen readers a
 ## Customization
 
 The main reason developers need to create their own component libraries from scratch is styling. Built-in browser UI controls
-are not customizable enough, and in many cases do not exist at all. Because of this, React Aria is intentionally very low level:
-unlike many open source component libraries, it provides **no rendering at all**, just behavior and accessibility.
-We impose no specific DOM structure or styling methodology.
-The hooks are small and **composable**, which allows you to combine them together and achieve your design with only the
-features you need in your component.
+are not customizable enough, and in many cases do not exist at all. React Aria does not include any styles by default, allowing
+you to build custom designs to fit your application or design system using any styling solution. React Aria components include
+built-in CSS class names, states, and render props to make styling a breeze. See our [styling](styling.html)
+guide to learn more.
 
 Most components have behavior that is consistent even across design systems. The
-[WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/) published by the W3C specifies
+[ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/) published by the W3C specifies
 the expected keyboard and accessibility behavior for most common components. In addition, touch and mouse behavior
 is usually quite consistent regardless of the design. A button is still a button, even if it looks a little different.
 
-That said, some customization across design systems may be warranted in some cases. Since you are in full control over
-the rendering of your components, you can choose to override certain props returned by React Aria hooks to add additional
-behavior as needed. For example, you might have a custom keyboard shortcut in a component, so you could chain a custom
-`onKeyDown` handler with the one returned by a React Aria hook in order to implement this.
+React Aria offers a unique combination of high-level components that provide an easy to use API, and low-level hooks
+that enable advanced customization use cases. This allows you to customize the DOM structure, intercept events to implement custom
+behavior, override internal state management, and much more when you need to, while keeping things simple when you don't.
+Check out our [advanced customization](advanced.html) guide to learn more.
 
 ## Learn more
 

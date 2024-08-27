@@ -11,8 +11,9 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
@@ -38,7 +39,7 @@ export interface DateSegment {
   isEditable: boolean
 }
 
-export interface DateFieldState {
+export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue,
   /** The current value, converted to a native JavaScript `Date` object.  */
@@ -92,7 +93,9 @@ export interface DateFieldState {
   /** Clears the value of the given segment, reverting it to the placeholder. */
   clearSegment(type: SegmentType): void,
   /** Formats the current date value using the given options. */
-  formatValue(fieldOptions: FieldOptions): string
+  formatValue(fieldOptions: FieldOptions): string,
+  /** Gets a formatter based on state's props. */
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 const EDITABLE_SEGMENTS = {
@@ -149,7 +152,10 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     hideTimeZone,
     isDisabled,
     isReadOnly,
-    isRequired
+    isRequired,
+    minValue,
+    maxValue,
+    isDateUnavailable
   } = props;
 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
@@ -208,7 +214,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => props.value || props.defaultValue ? {...allSegments} : {}
   );
 
-  let clearedSegment = useRef<string>();
+  let clearedSegment = useRef<string>(undefined);
 
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);
@@ -314,11 +320,25 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
-    isInvalid(calendarValue, props.minValue, props.maxValue);
+  let builtinValidation = useMemo(() => getValidationResult(
+    value,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    formatOpts
+  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
+
+  let validation = useFormValidationState({
+    ...props,
+    value,
+    builtinValidation
+  });
+
+  let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
+    ...validation,
     value: calendarValue,
     dateValue,
     calendar,
@@ -394,6 +414,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let formatOptions = getFormatOptions(fieldOptions, formatOpts);
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
+    },
+    getDateFormatter(locale, formatOptions: FormatterOptions) {
+      let newOptions = {...formatOpts, ...formatOptions};
+      let newFormatOptions = getFormatOptions({}, newOptions);
+      return new DateFormatter(locale, newFormatOptions);
     }
   };
 }

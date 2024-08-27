@@ -33,7 +33,7 @@ To submit a new RFC, follow these steps:
 
 1. Fork this repo.
 2. Create a directory inside this `rfcs` directory. The directory name should begin with the year and include a meaningful description, such as `rfcs/2018-cyclebutton-new-component`.
-3. Copy the [template.md](template.md) file from this `rfcs` directory into your newly created subdirectory (such as `rfcs/2018-cyclebutton-new-componet/README.md`). Be sure to name your file `README.md` so it is easily viewable in the GitHub interface.
+3. Copy the [template.md](template.md) file from this `rfcs` directory into your newly created subdirectory (such as `rfcs/2018-cyclebutton-new-component/README.md`). Be sure to name your file `README.md` so it is easily viewable in the GitHub interface.
 4. If you want to include images in your RFC, place them in the same directory as the `README.md`.
 5. Fill in the RFC. Please fill in every section in the template with as much detail as possible.
 6. Submit a pull request to this repo with all of your files.

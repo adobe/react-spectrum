@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {
   TableCell,
@@ -49,8 +49,8 @@ function Table(props) {
     ...otherProps,
     showSelectionCheckboxes: otherProps.selectionMode === 'multiple'
   });
-  let ref = useRef();
-  let bodyRef = useRef();
+  let ref = useRef(undefined);
+  let bodyRef = useRef(undefined);
   let {collection} = state;
   let {gridProps} = useTable({...otherProps, scrollRef: bodyRef}, state, ref);
 

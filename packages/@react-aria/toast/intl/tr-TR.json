@@ -1,4 +1,4 @@
 {
   "close": "Kapat",
-  "notifications": "Bildirimler"
+  "notifications": "{count, plural, one {# bildirim} other {# bildirim}}."
 }

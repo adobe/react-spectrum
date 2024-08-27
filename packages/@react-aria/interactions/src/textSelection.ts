@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isIOS, runAfterTransition} from '@react-aria/utils';
+import {getOwnerDocument, isIOS, runAfterTransition} from '@react-aria/utils';
 
 // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
 // is to add user-select: none to the entire page. Adding it to the pressable element prevents
@@ -36,8 +36,10 @@ let modifiedElementMap = new WeakMap<Element, string>();
 export function disableTextSelection(target?: Element) {
   if (isIOS()) {
     if (state === 'default') {
-      savedUserSelect = document.documentElement.style.webkitUserSelect;
-      document.documentElement.style.webkitUserSelect = 'none';
+      // eslint-disable-next-line no-restricted-globals
+      const documentObject = getOwnerDocument(target);
+      savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
+      documentObject.documentElement.style.webkitUserSelect = 'none';
     }
 
     state = 'disabled';
@@ -67,8 +69,10 @@ export function restoreTextSelection(target?: Element) {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-          if (document.documentElement.style.webkitUserSelect === 'none') {
-            document.documentElement.style.webkitUserSelect = savedUserSelect || '';
+          // eslint-disable-next-line no-restricted-globals
+          const documentObject = getOwnerDocument(target);
+          if (documentObject.documentElement.style.webkitUserSelect === 'none') {
+            documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';
           }
 
           savedUserSelect = '';
@@ -80,7 +84,7 @@ export function restoreTextSelection(target?: Element) {
     // If not iOS, restore the target's original user-select if any
     // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {
-      let targetOldUserSelect = modifiedElementMap.get(target);
+      let targetOldUserSelect = modifiedElementMap.get(target) as string;
 
       if (target.style.userSelect === 'none') {
         target.style.userSelect = targetOldUserSelect;

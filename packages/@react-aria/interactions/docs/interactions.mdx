@@ -34,7 +34,7 @@ high level gesture events, or even the concept of a “press” event that works
 We just have low level events like mouse, touch, keyboard, and focus events, and it's up to developers to put them
 together properly. This leads to many web apps not working consistently across various types of devices and interaction models.
 
-React Aria includes a collection of [Hooks](https://reactjs.org/docs/hooks-intro.html) that provide higher level abstractions
+React Aria includes a collection of [Hooks](https://react.dev/reference/react/hooks) that provide higher level abstractions
 over the low level events exposed by the web platform, and helps normalize the behavior across browsers and devices. This includes
 support for high level events like “press”, “hover”, and “focus”. Some of these seem simple at first, but you’d be surprised how
 complicated it is to handle these events in a cross-browser, cross-device way. There are many tiny behavioral
@@ -78,7 +78,7 @@ At a high level, keyboard navigation is broken up into **tab stops**, which may 
 move to the next tab stop, and <Keyboard>Shift</Keyboard> + <Keyboard>Tab</Keyboard> to move to the previous tab stop. A tab stop may be an atomic
 component like a text field or button, or a composite component like a listbox, radio group, grid, or toolbar. Composite components
 behave as a single tab stop. Elements within a composite component are typically navigated with the arrow keys, while the <Keyboard>Tab</Keyboard>
-key continues to navigate to the next/previous tab stop. React Aria implements hooks for many of these composite components and handles
+key continues to navigate to the next/previous tab stop. React Aria implements many of these composite components and handles
 all of the keyboard navigation behavior for elements inside them.
 
 Overlay elements like dialogs, popovers, and menus have additional focus behavior to ensure that focus stays within them while they
@@ -96,7 +96,7 @@ the user is currently navigating with a keyboard or not.
 An assistive technology, such as a screen reader, relies on semantic information exposed to the browser through ARIA or native HTML element
 semantics. This allows it to know what an element represents and relay this information to the user. As a screen reader or other
 assistive technology navigates around an application, it may fire various JavaScript events. Since screen readers are navigating
-the app in a completely different way than tranditional mouse, touch, or keyboard behavior, these events are emulated by a
+the app in a completely different way than traditional mouse, touch, or keyboard behavior, these events are emulated by a
 screen reader. It may focus elements, fire click events to activate them, or otherwise emulate mouse and keyboard events.
 
 React Aria is careful to handle events fired by assistive technology, and normalizes this behavior as needed so it is consistent
@@ -109,9 +109,7 @@ so that components receive a consistent stream of events regardless of the inter
 All React Aria components are tested across a wide variety of browsers and devices. We test across devices with
 mouse input, touchscreens, and also hybrid devices.
 
-* Chrome 88+ on macOS and Windows
-* Firefox 85+ on macOS and Windows
-* Safari 13+ on macOS
-* Edge 88+ on Windows
-* Safari 13+ on iOS and iPadOS
-* Chrome 88+ on Android
+* Chrome on macOS, Windows, and Android
+* Firefox on macOS and Windows
+* Safari on macOS, iOS, and iPadOS
+* Edge on Windows

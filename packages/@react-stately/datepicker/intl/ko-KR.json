@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "값은 {maxValue} 이전이어야 합니다.",
+  "rangeReversed": "시작일은 종료일 이전이어야 합니다.",
+  "rangeUnderflow": "값은 {minValue} 이상이어야 합니다.",
+  "unavailableDate": "선택한 날짜를 사용할 수 없습니다."
+}

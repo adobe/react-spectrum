@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 import {TabListState} from '@react-stately/tabs';
 
 export const tabsIds = new WeakMap<TabListState<unknown>, string>();
 
-export function generateId<T>(state: TabListState<T>, key: Key, role: string) {
+export function generateId<T>(state: TabListState<T> | null, key: Key | null | undefined, role: string) {
+  if (!state) {
+    // this case should only happen in the first render before the tabs are registered
+    return '';
+  }
   if (typeof key === 'string') {
     key = key.replace(/\s+/g, '');
   }

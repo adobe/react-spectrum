@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
+import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
@@ -33,7 +33,7 @@ export interface AriaSelectableCollectionOptions {
   /**
    * The ref attached to the element representing the collection.
    */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
@@ -80,7 +80,7 @@ export interface AriaSelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement>,
+  scrollRef?: RefObject<HTMLElement | null>,
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.
@@ -140,8 +140,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let item = scrollRef.current.querySelector(`[data-key="${key}"]`);
-          router.open(item, e);
+          let item = scrollRef.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
+          let itemProps = manager.getItemProps(key);
+          router.open(item, e, itemProps.href, itemProps.routerOptions);
 
           return;
         }
@@ -163,49 +164,57 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
-          e.preventDefault();
           let nextKey = manager.focusedKey != null
-              ? delegate.getKeyBelow(manager.focusedKey)
+              ? delegate.getKeyBelow?.(manager.focusedKey)
               : delegate.getFirstKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = delegate.getFirstKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       }
       case 'ArrowUp': {
         if (delegate.getKeyAbove) {
-          e.preventDefault();
           let nextKey = manager.focusedKey != null
-              ? delegate.getKeyAbove(manager.focusedKey)
+              ? delegate.getKeyAbove?.(manager.focusedKey)
               : delegate.getLastKey?.();
           if (nextKey == null && shouldFocusWrap) {
             nextKey = delegate.getLastKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       }
       case 'ArrowLeft': {
         if (delegate.getKeyLeftOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+          let nextKey = delegate.getKeyLeftOf?.(manager.focusedKey);
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+          }
         }
         break;
       }
       case 'ArrowRight': {
         if (delegate.getKeyRightOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+          let nextKey = delegate.getKeyRightOf?.(manager.focusedKey);
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
           }
-          navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          }
         }
         break;
       }
@@ -235,16 +244,20 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       case 'PageDown':
         if (delegate.getKeyPageBelow) {
-          e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       case 'PageUp':
         if (delegate.getKeyPageAbove) {
-          e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-          navigateToKey(nextKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
         }
         break;
       case 'a':
@@ -254,8 +267,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Escape':
-        e.preventDefault();
-        if (!disallowEmptySelection) {
+        if (!disallowEmptySelection && manager.selectedKeys.size !== 0) {
+          e.stopPropagation();
+          e.preventDefault();
           manager.clearSelection();
         }
         break;
@@ -291,6 +305,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   };
 
   // Store the scroll position so we can restore it later.
+  /// TODO: should this happen all the time??
   let scrollPos = useRef({top: 0, left: 0});
   useEvent(scrollRef, 'scroll', isVirtualized ? null : () => {
     scrollPos.current = {
@@ -340,9 +355,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       scrollRef.current.scrollLeft = scrollPos.current.left;
     }
 
-    if (!isVirtualized && manager.focusedKey != null) {
+    if (manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
-      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         if (!element.contains(document.activeElement)) {
@@ -379,7 +394,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // If there are any selected keys, make the first one the new focus target
       let selectedKeys = manager.selectedKeys;
       if (selectedKeys.size) {
-        focusedKey = selectedKeys.values().next().value;
+        for (let key of selectedKeys) {
+          if (manager.canSelectItem(key)) {
+            focusedKey = key;
+            break;
+          }
+        }
       }
 
       manager.setFocused(true);
@@ -390,32 +410,45 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         focusSafely(ref.current);
       }
     }
-    autoFocusRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // If not virtualized, scroll the focused element into view when the focusedKey changes.
-  // When virtualized, Virtualizer handles this internally.
+  // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    let modality = getInteractionModality();
-    if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
-      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
-      if (element && modality === 'keyboard') {
-        if (!isVirtualized) {
-          scrollIntoView(scrollRef.current, element);
+    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef?.current) {
+      let modality = getInteractionModality();
+      let element = ref.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
+      if (!element) {
+        // If item element wasn't found, return early (don't update autoFocusRef and lastFocusedKey).
+        // The collection may initially be empty (e.g. virtualizer), so wait until the element exists.
+        return;
+      }
+
+      if (modality === 'keyboard' || autoFocusRef.current) {
+        scrollIntoView(scrollRef.current, element);
+
+        // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
+        if (modality !== 'virtual') {
+          scrollIntoViewport(element, {containingElement: ref.current});
         }
-        scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
 
     // If the focused key becomes null (e.g. the last item is deleted), focus the whole collection.
-    if (manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
+    if (!shouldUseVirtualFocus && manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
       focusSafely(ref.current);
     }
 
     lastFocusedKey.current = manager.focusedKey;
-  }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
+    autoFocusRef.current = false;
+  });
+
+  // Intercept FocusScope restoration since virtualized collections can reuse DOM nodes.
+  useEvent(ref, 'react-aria-focus-scope-restore', e => {
+    e.preventDefault();
+    manager.setFocused(true);
+  });
 
   let handlers = {
     onKeyDown,

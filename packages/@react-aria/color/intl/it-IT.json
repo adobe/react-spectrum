@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Selettore colore",
+  "colorSwatch": "campione di colore",
+  "transparent": "trasparente",
   "twoDimensionalSlider": "Cursore 2D"
 }

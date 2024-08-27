@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DisabledBehavior, FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
-import {Key} from 'react';
+import {DisabledBehavior, FocusStrategy, Key, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+
 
 export interface FocusState {
   /** Whether the collection is currently focused. */
@@ -23,7 +23,7 @@ export interface FocusState {
   /** Whether the first or last child of the focused key should receive focus. */
   readonly childFocusStrategy: FocusStrategy,
   /** Sets the focused key, and optionally, whether the first or last child of that key should receive focus. */
-  setFocusedKey(key: Key, child?: FocusStrategy): void
+  setFocusedKey(key: Key | null, child?: FocusStrategy): void
 }
 
 export interface SingleSelectionState extends FocusState {
@@ -105,5 +105,7 @@ export interface MultipleSelectionManager extends FocusState {
   /** Sets the selection behavior for the collection. */
   setSelectionBehavior(selectionBehavior: SelectionBehavior): void,
   /** Returns whether the given key is a hyperlink. */
-  isLink(key: Key): boolean
+  isLink(key: Key): boolean,
+  /** Returns the props for the given item. */
+  getItemProps(key: Key): any
 }

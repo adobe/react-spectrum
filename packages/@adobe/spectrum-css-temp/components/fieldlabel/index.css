@@ -196,7 +196,7 @@ governing permissions and limitations under the License.
   }
 
   /* With labelPosition=top, we use a normal flex stack */
-  &:where(.spectrum-Form--positionTop) {
+  &.spectrum-Form--positionTop {
     display: flex;
     flex-direction: column;
     margin: 0;

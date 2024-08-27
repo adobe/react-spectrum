@@ -36,6 +36,7 @@ import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
+import {useFormProps} from '@react-spectrum/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
@@ -43,7 +44,8 @@ import {useSelectState} from '@react-stately/select';
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  props = useFormProps(props);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/picker');
   let {
     autoComplete,
     isDisabled,
@@ -51,8 +53,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     align = 'start',
     shouldFlip = true,
     placeholder = stringFormatter.format('placeholder'),
-    validationState,
-    isInvalid = validationState === 'invalid',
     isQuiet,
     label,
     labelPosition = 'top' as LabelPosition,
@@ -64,10 +64,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let state = useSelectState(props);
   let domRef = useDOMRef(ref);
 
-  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
+  let triggerRef = useRef<FocusableRefValue<HTMLElement>>(undefined);
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
-  let listboxRef = useRef();
+  let listboxRef = useRef(undefined);
 
   let isLoadingInitial = props.isLoading && state.collection.size === 0;
   let isLoadingMore = props.isLoading && state.collection.size > 0;
@@ -76,11 +76,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
-  let layout = useListBoxLayout(state, isLoadingMore);
-  let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps} = useSelect({
+  let layout = useListBoxLayout();
+  let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
     ...props,
-    'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),
-    keyboardDelegate: layout
+    'aria-describedby': (isLoadingInitial ? progressCircleId : undefined)
   }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
@@ -101,6 +100,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       // Set max height: inherit so Tray scrolling works
       UNSAFE_style={{maxHeight: 'inherit'}}
       isLoading={props.isLoading}
+      showLoadingSpinner={isLoadingMore}
       onLoadMore={props.onLoadMore} />
   );
 
@@ -192,6 +192,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           <SlotProvider
             slots={{
               icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
+              avatar: {UNSAFE_className: classNames(styles, 'spectrum-Dropdown-avatar'), size: 'avatar-size-100'},
               text: {
                 ...valueProps,
                 UNSAFE_className: classNames(
@@ -224,14 +225,14 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     </div>
   );
 
-  let wrapperClassName = label ? classNames(
+  let wrapperClassName = classNames(
     styles,
     'spectrum-Field',
     {
       'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
       'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
     }
-  ) : '';
+  );
 
   return (
     <Field
@@ -241,6 +242,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      isInvalid={isInvalid}
+      validationErrors={validationErrors}
+      validationDetails={validationDetails}
       showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
       elementType="span">

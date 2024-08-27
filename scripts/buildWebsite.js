@@ -17,6 +17,7 @@ const path = require('path');
 const glob = require('fast-glob');
 const semver = require('semver');
 const spawn = require('cross-spawn');
+const spawnSync = require('child_process').spawnSync;
 
 build().catch(err => {
   console.error(err.stack);
@@ -30,14 +31,17 @@ async function build() {
   console.log(`Building into ${dir}...`);
 
   // Generate a package.json containing just what we need to build the website
+  let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
   let pkg = {
     name: 'rsp-website',
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/*/*',
-      'packages/react-aria-components'
+      'packages/@internationalized/string-compiler',
+      'packages/dev/*',
+      'packages/@adobe/spectrum-css-temp'
     ],
+    packageManager: 'yarn@4.2.2',
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
         .filter(([name]) =>
@@ -46,22 +50,34 @@ async function build() {
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe') ||
           name === 'sharp' ||
-          name === 'recast'
+          name === 'recast' ||
+          name === 'framer-motion' ||
+          name === 'tailwindcss-animate' ||
+          name === 'tailwindcss' ||
+          name === 'autoprefixer' ||
+          name === 'lucide-react' ||
+          name === 'tailwind-variants' ||
+          name === 'react' ||
+          name === 'react-dom' ||
+          name === 'typescript'
         )
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
+      '@react-aria/example-theme': 'latest',
       'react-aria': 'latest',
       'react-stately': 'latest',
-      'react-aria-components': 'latest'
+      'react-aria-components': 'latest',
+      'tailwindcss-react-aria-components': 'latest',
+      '@spectrum-icons/illustrations': 'latest',
+      '@react-spectrum/autocomplete': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process GIT_HASH=${gitHash} parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
@@ -100,19 +116,23 @@ async function build() {
       }
     }
   }
+  // Add test-utils to the dependencies because it doesn't have a docs dir, but is used in other docs pages
+  pkg.dependencies['@react-spectrum/test-utils'] = 'latest';
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
+  fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
+  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
@@ -131,7 +151,7 @@ async function build() {
   }
 
   // Install dependencies from npm
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   for (let p of packages) {
@@ -140,16 +160,11 @@ async function build() {
     }
   }
 
-  // TEMP HACK: Patch textfield css to workaround parcel bug
-  fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
-  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
-  let tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'import "./label.css";\n' + tf;
-  fs.writeFileSync(tfpath, tf);
-  tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
-  tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'require("./label.css");\n' + tf;
-  fs.writeFileSync(tfpath, tf);
+  // Patch react-aria-components package.json for example CSS.
+  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
+  let json = JSON.parse(fs.readFileSync(p));
+  json.sideEffects = ['*.css'];
+  fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});

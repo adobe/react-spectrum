@@ -117,7 +117,16 @@ export let AriaLabelWithDynamicHelpText: HelpTextStory = {
 
 function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
-  let [valid, setValid] = useState(undefined);
+  let [valid, setValid] = useState<string | undefined>(undefined);
+
+  let validState;
+  if (value.length) {
+    validState = 'invalid';
+  } else if (valid === 'valid') {
+    validState = 'valid';
+  } else {
+    validState = undefined;
+  }
 
   return (
     <Flex
@@ -127,7 +136,7 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
         {...props}
         value={value}
         onChange={setValue}
-        validationState={value.length ? 'invalid' : valid} />
+        validationState={validState} />
       <RadioGroup
         label="Valid State"
         value={valid ? valid : ''}

@@ -11,7 +11,7 @@
  */
 
 import {PartialNode} from '@react-stately/collections';
-import React, {ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 import {TableBodyProps} from '@react-types/table';
 
 function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars

@@ -116,7 +116,7 @@ export const TableRowGroup = React.forwardRef((props: any, ref) => {
 });
 
 export function TableHeaderRow({item, state, children, className}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
   return (
@@ -163,7 +163,7 @@ function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
   );
 }
 export function TableColumnHeader({column, state, layout, onResizeStart, onResize, onResizeEnd}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
@@ -204,7 +204,7 @@ export function TableColumnHeader({column, state, layout, onResizeStart, onResiz
 }
 
 export function TableRow({item, children, state, className}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -224,7 +224,7 @@ export function TableRow({item, children, state, className}) {
 }
 
 export function TableCell({cell, state, layout}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let column = cell.column;
@@ -257,7 +257,7 @@ export function TableCell({cell, state, layout}) {
 }
 
 export function TableCheckboxCell({cell, state, layout}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
 
@@ -278,7 +278,7 @@ export function TableCheckboxCell({cell, state, layout}) {
 }
 
 export function TableSelectAllCell({column, state, layout}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
 

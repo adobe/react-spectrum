@@ -10,20 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, RefObject} from 'react';
+import {MutableRefObject} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useLayoutEffect} from './';
 
 interface ContextValue<T> {
-  ref?: MutableRefObject<T>
+  ref?: MutableRefObject<T | null>
 }
 
 // Syncs ref from context with ref passed to hook
-export function useSyncRef<T>(context: ContextValue<T>, ref: RefObject<T>) {
+export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<T | null>) {
   useLayoutEffect(() => {
     if (context && context.ref && ref) {
       context.ref.current = ref.current;
       return () => {
-        context.ref.current = null;
+        if (context.ref) {
+          context.ref.current = null;
+        }
       };
     }
   });

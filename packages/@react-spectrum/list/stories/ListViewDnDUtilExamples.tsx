@@ -93,9 +93,9 @@ export function DragExampleUtilHandlers(props) {
 }
 
 export function ReorderExampleUtilHandlers(props) {
-  let {listViewProps, dndOptions} = props;
+  let {listViewProps, dndOptions, items} = props;
   let list = useListData({
-    initialItems: folderList1,
+    initialItems: (items as typeof folderList1) || folderList1,
     getKey: (item) => item.identifier
   });
 

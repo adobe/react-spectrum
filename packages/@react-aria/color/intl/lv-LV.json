@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Krāsu atlasītājs",
+  "colorSwatch": "krāsu paraugs",
+  "transparent": "caurspīdīgs",
   "twoDimensionalSlider": "2D slīdnis"
 }

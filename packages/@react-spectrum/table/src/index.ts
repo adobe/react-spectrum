@@ -14,6 +14,7 @@
 
 export {TableView} from './TableViewWrapper';
 import {Column} from '@react-stately/table';
+import {JSX} from 'react';
 import {SpectrumColumnProps} from '@react-types/table';
 
 // Override TS for Column to support spectrum specific props.

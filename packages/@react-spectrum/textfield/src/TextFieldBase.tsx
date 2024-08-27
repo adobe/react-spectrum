@@ -15,14 +15,14 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {mergeProps} from '@react-aria/utils';
-import {PressEvents} from '@react-types/shared';
-import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
+import {PressEvents, RefObject, ValidationResult} from '@react-types/shared';
+import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
-interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {
+interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | 'validate'>, PressEvents, Partial<ValidationResult> {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,
@@ -31,15 +31,15 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   loadingIndicator?: ReactElement,
   isLoading?: boolean,
   disableFocusRing?: boolean
 }
 
-function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
+function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let {
-    validationState,
+    validationState = props.isInvalid ? 'invalid' : null,
     icon,
     isQuiet = false,
     isDisabled,
@@ -81,14 +81,14 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   if (icon) {
     let UNSAFE_className = classNames(
       styles,
-      icon.props && icon.props.UNSAFE_className,
+      icon.props && (icon.props as any).UNSAFE_className,
       'spectrum-Textfield-icon'
     );
 
     icon = cloneElement(icon, {
       UNSAFE_className,
       size: 'S'
-    });
+    } as any);
   }
 
   let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;

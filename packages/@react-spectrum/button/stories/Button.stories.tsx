@@ -16,6 +16,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
 import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
@@ -31,8 +32,11 @@ export default {
     onPress: action('press'),
     onPressStart: action('pressstart'),
     onPressEnd: action('pressend'),
+    onPressChange: action('presschange'),
+    onPressUp: action('pressup'),
     onFocus: action('focus'),
-    onBlur: action('blur')
+    onBlur: action('blur'),
+    onKeyUp: action('keyup')
   },
   argTypes: {
     onPress: {
@@ -46,6 +50,11 @@ export default {
       }
     },
     onPressEnd: {
+      table: {
+        disable: true
+      }
+    },
+    onPressUp: {
       table: {
         disable: true
       }
@@ -257,6 +266,15 @@ function PendingButtonContainerComponent(props) {
 }
 
 function Pending(props) {
+  let [tooltipPending, setTooltipPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setTooltipPending(true);
+    setTimeout(() => {
+      setTooltipPending(false);
+    }, timerValue);
+  };
 
   return (
     <div>
@@ -285,34 +303,55 @@ function Pending(props) {
         </PendingButtonContainerComponent>
       </Flex>
 
-      <View flexBasis={'100%'} paddingTop={16}>Controlled:</View>
+      <Flex wrap="wrap" alignItems={'center'}>
+        <Text>Aria-label "Button label" on button</Text>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent
+            {...props}
+            aria-label="Button label">
+            <Bell />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
 
-      <Flex wrap="wrap">
+        <Text>Aria-label "icon label" on icon</Text>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>
+            <Bell aria-label="icon label" />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <Text>No aria-labels--bad implementation</Text>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>
+            <Bell />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <Text>Tooltip and aria-label "Notifications" on button</Text>
         <PendingButtonContainerComponent {...props}>
           <TooltipTrigger offset={2}>
-            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Button {...props} isPending={tooltipPending} onPress={handlePress} aria-label="Notifications">
               <Bell />
             </Button>
-            <Tooltip>Notifications</Tooltip>
+            <Tooltip>Click here to view</Tooltip>
           </TooltipTrigger>
         </PendingButtonContainerComponent>
 
-        <PendingButtonContainerComponent {...props}>
-          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Bell />
-          </Button>
-        </PendingButtonContainerComponent>
+      </Flex>
 
-        <PendingButtonContainerComponent {...props}>
-          <Button {...props} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Bell />
-          </Button>
-        </PendingButtonContainerComponent>
-
+      <Flex wrap="wrap" alignItems={'center'}>
         <PendingButtonContainerComponent {...props}>
           <Button {...props} isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Text>Controlled pending</Text>
+            <Text>Controlled</Text>
           </Button>
+        </PendingButtonContainerComponent>
+      </Flex>
+
+      <Flex wrap="wrap" alignItems={'center'}>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonFormComponent {...props} type="submit">
+            Form submit
+          </PendingButtonFormComponent>
         </PendingButtonContainerComponent>
       </Flex>
     </div>
@@ -358,5 +397,30 @@ function PendingButtonOnClickComponent(props) {
       onClick={handlePress}>
       {props.children}
     </Button>
+  );
+}
+
+function PendingButtonFormComponent(props) {
+  let [isPending, setPending] = useState(false);
+
+  let onSubmit = (e) => {
+    console.log('onSubmit called.');
+    e.preventDefault();
+    if (!isPending) {
+      setPending(true);
+      setTimeout(() => {
+        setPending(false);
+      }, timerValue);
+    }
+  };
+
+  return (
+    <Form onSubmit={onSubmit}>
+      <Button
+        {...props}
+        isPending={isPending}>
+        {props.children}
+      </Button>
+    </Form>
   );
 }

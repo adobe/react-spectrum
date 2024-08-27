@@ -227,6 +227,7 @@ governing permissions and limitations under the License.
   /* TODO: Confirm if this is ok for the validation icon sizing
     Note that the sizes are a bit different when compared with old background icons(more noticable for checkmark)
   */
+  box-sizing: content-box;
   position: absolute;
   padding-inline-end: calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2);
   pointer-events: all;
@@ -263,7 +264,7 @@ governing permissions and limitations under the License.
 }
 
 /* styles the textfield properly if the left icon is provided */
-.spectrum-Textfield-inputIcon {
+.spectrum-Textfield-input.spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
   /* These values have real names in a spectrum-css update, when we update, use those. */
   padding-inline-start: calc(

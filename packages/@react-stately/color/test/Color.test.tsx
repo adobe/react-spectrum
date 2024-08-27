@@ -140,6 +140,12 @@ describe('Color', function () {
       expect(color.getChannelValue('alpha')).toBe(0);
       expect(color.toString('hsla')).toBe('hsla(320, 100%, 0%, 0)');
     });
+
+    it('should allow 360 as a hue value', function () {
+      let color = parseColor('hsl(360, 100%, 50%)');
+      expect(color.getChannelValue('hue')).toBe(360);
+      expect(color.toString('hsl')).toBe('hsl(360, 100%, 50%)');
+    });
   });
 
   it('withChannelValue', () => {
@@ -180,6 +186,12 @@ describe('Color', function () {
       expect(color.getChannelValue('alpha')).toBe(0);
       expect(color.toString('hsba')).toBe('hsba(320, 100%, 0%, 0)');
     });
+
+    it('should allow 360 as a hue value', function () {
+      let color = parseColor('hsb(360, 100%, 50%)');
+      expect(color.getChannelValue('hue')).toBe(360);
+      expect(color.toString('hsb')).toBe('hsb(360, 100%, 50%)');
+    });
   });
 
   describe('conversions', () => {
@@ -190,11 +202,11 @@ describe('Color', function () {
 
 
     let rgb = fc.tuple(fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}))
-      .map(([r, g, b]) => (['rgb', `rgb(${r}, ${g}, ${b})`, [r, g, b]]));
+      .map(([r, g, b]) => (['rgb' as ColorFormat, `rgb(${r}, ${g}, ${b})`, [r, g, b]]));
     let hsl = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
-      .map(([h, s, l]) => (['hsl', `hsl(${h}, ${s}%, ${l}%)`, [h, s, l]]));
+      .map(([h, s, l]) => (['hsl' as ColorFormat, `hsl(${h}, ${s}%, ${l}%)`, [h, s, l]]));
     let hsb = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
-      .map(([h, s, b]) => (['hsb', `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
+      .map(([h, s, b]) => (['hsb' as ColorFormat, `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
     let options = fc.record({
       colorSpace: fc.oneof(fc.constant('rgb'), fc.constant('hsl'), fc.constant('hsb')),
       color: fc.oneof(rgb, hsl, hsb)
@@ -220,6 +232,7 @@ describe('Color', function () {
     };
 
     it('can perform round trips', () => {
+      // @ts-ignore
       fc.assert(fc.property(options, ({colorSpace, color}: {colorSpace: ColorFormat, color: [string, string, number[]]}) => {
         let testColor = parseColor(color[1]);
         let convertedColor = testColor.toString(colorSpace);
@@ -265,6 +278,116 @@ describe('Color', function () {
     it('hsb to hsl', () => {
       expect(parseColor('hsb(0, 0%, 0%)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
       expect(parseColor('hsb(0, 1%, 0%)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
+    });
+  });
+
+  describe('#getColorName', function () {
+    it('should return localized color name', function () {
+      let color = parseColor('hsl(30, 0%, 22.5%)');
+      expect(color.getColorName('en-US')).toBe('dark gray');
+      color = parseColor('hsl(30, 50%, 100%)');
+      expect(color.getColorName('en-US')).toBe('white');
+      color = parseColor('hsl(30, 100%, 0%)');
+      expect(color.getColorName('en-US')).toBe('black');
+      color = parseColor('#E78B8B');
+      expect(color.getColorName('en-US')).toBe('light red');
+      color = parseColor('#E7E7B8');
+      expect(color.getColorName('en-US')).toBe('very light pale yellow');
+      color = parseColor('hsl(30, 39%, 25%)');
+      expect(color.getColorName('en-US')).toBe('dark grayish brown');
+      color = parseColor('hsl(30, 100%, 50%)');
+      expect(color.getColorName('en-US')).toBe('vibrant orange');
+      color = parseColor('hsl(30, 100%, 80%)');
+      expect(color.getColorName('en-US')).toBe('light pale orange');
+      color = parseColor('hsb(200, 60%, 62%)');
+      expect(color.getColorName('en-US')).toBe('grayish cyan blue');
+      color = parseColor('hsb(0, 100%, 100%)');
+      expect(color.getColorName('en-US')).toBe('vibrant red');
+      color = parseColor('hsba(0, 100%, 100%, 0.2)');
+      expect(color.getColorName('en-US')).toBe('vibrant red, 80% transparent');
+      // Based on the css named colors
+      expect(parseColor('#FFFF00').getColorName('en-US')).toBe('very light vibrant yellow'); // yellow
+      expect(parseColor('#800080').getColorName('en-US')).toBe('dark vibrant magenta'); // purple
+      expect(parseColor('#FF0000').getColorName('en-US')).toBe('vibrant red'); // red
+      expect(parseColor('#800000').getColorName('en-US')).toBe('dark vibrant red'); // maroon
+      expect(parseColor('#FF00FF').getColorName('en-US')).toBe('light vibrant magenta'); // fuchsia
+      expect(parseColor('#008000').getColorName('en-US')).toBe('dark vibrant green'); // green
+      expect(parseColor('#00FF00').getColorName('en-US')).toBe('very light vibrant green'); // lime
+      expect(parseColor('#808000').getColorName('en-US')).toBe('yellow green'); // olive
+      expect(parseColor('#000080').getColorName('en-US')).toBe('very dark vibrant blue'); // navy
+      expect(parseColor('#0000FF').getColorName('en-US')).toBe('dark vibrant blue'); // blue
+      expect(parseColor('#008080').getColorName('en-US')).toBe('dark grayish cyan'); // teal
+      expect(parseColor('#00FFFF').getColorName('en-US')).toBe('very light vibrant cyan'); // aqua
+      expect(parseColor('#faebd7').getColorName('en-US')).toBe('light pale orange yellow'); // antiquewhite
+      expect(parseColor('#7fffd4').getColorName('en-US')).toBe('very light green cyan'); // aquamarine
+      expect(parseColor('#8a2be2').getColorName('en-US')).toBe('dark vibrant purple'); // blueviolet
+      expect(parseColor('#a52a2a').getColorName('en-US')).toBe('dark vibrant red'); // css calls this 'brown' but it is definitely more red
+      expect(parseColor('#5f9ea0').getColorName('en-US')).toBe('grayish cyan'); // cadetblue
+      expect(parseColor('#7fff00').getColorName('en-US')).toBe('very light vibrant green'); // chartreuse
+      expect(parseColor('#d2691e').getColorName('en-US')).toBe('vibrant brown'); // chocolate
+      expect(parseColor('#ff7f50').getColorName('en-US')).toBe('light vibrant red orange'); // coral
+      expect(parseColor('#6495ed').getColorName('en-US')).toBe('cyan blue'); // cornflowerblue
+      expect(parseColor('#dc143c').getColorName('en-US')).toBe('vibrant red'); // crimson
+      expect(parseColor('#00ffff').getColorName('en-US')).toBe('very light vibrant cyan'); // cyan
+      expect(parseColor('#00008b').getColorName('en-US')).toBe('very dark vibrant blue'); // darkblue
+      expect(parseColor('#008b8b').getColorName('en-US')).toBe('grayish cyan'); // darkcyan
+      expect(parseColor('#b8860b').getColorName('en-US')).toBe('brown yellow'); // darkgoldenrod
+      expect(parseColor('#a9a9a9').getColorName('en-US')).toBe('light gray'); // css calls this 'darkgray' but it isn't very dark (actually lighter than just 'gray')
+      expect(parseColor('#006400').getColorName('en-US')).toBe('dark green'); // darkgreen
+      expect(parseColor('#bdb76b').getColorName('en-US')).toBe('light pale yellow green'); // darkkhaki (also not that dark)
+      expect(parseColor('#8b008b').getColorName('en-US')).toBe('dark vibrant magenta'); // darkmagenta
+      expect(parseColor('#556b2f').getColorName('en-US')).toBe('dark grayish yellow green'); // darkolivegreen
+      expect(parseColor('#ff8c00').getColorName('en-US')).toBe('vibrant orange'); // darkorange
+      expect(parseColor('#9932cc').getColorName('en-US')).toBe('dark vibrant purple magenta'); // darkorchid
+      expect(parseColor('#8b0000').getColorName('en-US')).toBe('dark vibrant red'); // darkred
+      expect(parseColor('#e9967a').getColorName('en-US')).toBe('light red orange'); // darksalmon
+      expect(parseColor('#8fbc8f').getColorName('en-US')).toBe('light pale green'); // darkseagreen
+      expect(parseColor('#483d8b').getColorName('en-US')).toBe('dark purple'); // darkslateblue
+      expect(parseColor('#2f4f4f').getColorName('en-US')).toBe('dark grayish cyan'); // darkslategray
+      expect(parseColor('#00ced1').getColorName('en-US')).toBe('light cyan'); // darkturquoise
+      expect(parseColor('#ff1493').getColorName('en-US')).toBe('vibrant pink'); // deeppink
+      expect(parseColor('#00bfff').getColorName('en-US')).toBe('light vibrant cyan blue'); // deep sky blue
+      expect(parseColor('#696969').getColorName('en-US')).toBe('dark gray'); // dimgray
+      expect(parseColor('#1e90ff').getColorName('en-US')).toBe('vibrant cyan blue'); // dodgerblue
+      expect(parseColor('#b22222').getColorName('en-US')).toBe('dark vibrant red'); // firebrick
+      expect(parseColor('#228b22').getColorName('en-US')).toBe('vibrant green'); // forestgreen
+      expect(parseColor('#ffd700').getColorName('en-US')).toBe('very light vibrant yellow'); // gold
+      expect(parseColor('#daa520').getColorName('en-US')).toBe('orange yellow'); // goldenrod
+      expect(parseColor('#808080').getColorName('en-US')).toBe('gray'); // gray
+      expect(parseColor('#adff2f').getColorName('en-US')).toBe('very light vibrant yellow green'); // greenyellow
+      expect(parseColor('#ff69b4').getColorName('en-US')).toBe('light vibrant pink'); // hotpink
+      expect(parseColor('#cd5c5c').getColorName('en-US')).toBe('red'); // indianred
+      expect(parseColor('#4b0082').getColorName('en-US')).toBe('dark vibrant purple'); // indigo
+      expect(parseColor('#f0e68c').getColorName('en-US')).toBe('very light yellow'); // khaki
+      expect(parseColor('#e6e6fa').getColorName('en-US')).toBe('very light pale purple'); // lavender
+      expect(parseColor('#7cfc00').getColorName('en-US')).toBe('very light vibrant green'); // lawngreen
+      expect(parseColor('#90ee90').getColorName('en-US')).toBe('very light vibrant green'); // lightgreen
+      expect(parseColor('#ffa07a').getColorName('en-US')).toBe('light red orange'); // lightsalmon
+      expect(parseColor('#778899').getColorName('en-US')).toBe('grayish cyan blue'); // lightslategray
+      expect(parseColor('#32cd32').getColorName('en-US')).toBe('light vibrant green'); // limegreen
+      expect(parseColor('#0000cd').getColorName('en-US')).toBe('dark vibrant blue'); // mediumblue
+      expect(parseColor('#9370db').getColorName('en-US')).toBe('vibrant purple'); // mediumpurple
+      expect(parseColor('#00fa9a').getColorName('en-US')).toBe('very light vibrant green cyan'); // mediumspringgreen
+      expect(parseColor('#48d1cc').getColorName('en-US')).toBe('light cyan'); // mediumturquoise
+      expect(parseColor('#c71585').getColorName('en-US')).toBe('vibrant pink'); // mediumvioletred
+      expect(parseColor('#191970').getColorName('en-US')).toBe('very dark blue'); // midnightblue
+      expect(parseColor('#ffe4b5').getColorName('en-US')).toBe('light pale orange yellow'); // moccasin
+      expect(parseColor('#6b8e23').getColorName('en-US')).toBe('yellow green'); // olivedrab
+      expect(parseColor('#ffa500').getColorName('en-US')).toBe('vibrant orange'); // orange
+      expect(parseColor('#ff4500').getColorName('en-US')).toBe('vibrant red orange'); // orangered
+      expect(parseColor('#98fb98').getColorName('en-US')).toBe('very light vibrant green'); // palegreen
+      expect(parseColor('#afeeee').getColorName('en-US')).toBe('very light pale cyan'); // paleturquoise
+      expect(parseColor('#ffefd5').getColorName('en-US')).toBe('light pale orange yellow'); // papayawhip
+      expect(parseColor('#cd853f').getColorName('en-US')).toBe('brown'); // peru
+      expect(parseColor('#4169e1').getColorName('en-US')).toBe('vibrant blue'); // royalblue
+      expect(parseColor('#8b4513').getColorName('en-US')).toBe('dark brown'); // saddlebrown
+      expect(parseColor('#f4a460').getColorName('en-US')).toBe('orange'); // sandybrown
+      expect(parseColor('#6a5acd').getColorName('en-US')).toBe('dark vibrant purple'); // slateblue
+      expect(parseColor('#ff6347').getColorName('en-US')).toBe('vibrant red orange'); // tomato
+      expect(parseColor('#d2b48c').getColorName('en-US')).toBe('grayish orange yellow'); // tan
+      expect(parseColor('#008080').getColorName('en-US')).toBe('dark grayish cyan'); // teal
+      expect(parseColor('#ee82ee').getColorName('en-US')).toBe('light vibrant magenta'); // violet
+      expect(parseColor('#9acd32').getColorName('en-US')).toBe('light vibrant yellow green'); // yellowgreen
     });
   });
 });

@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Az értéknek {maxValue} vagy korábbinak kell lennie.",
+  "rangeReversed": "A kezdő dátumnak a befejező dátumnál korábbinak kell lennie.",
+  "rangeUnderflow": "Az értéknek {minValue} vagy későbbinek kell lennie.",
+  "unavailableDate": "A kiválasztott dátum nem érhető el."
+}

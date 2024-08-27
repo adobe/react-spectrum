@@ -1,0 +1,12 @@
+{
+  "name": "@react-aria/optimize-locales-plugin",
+  "version": "1.1.1",
+  "main": "LocalesPlugin.js",
+  "types": "LocalesPlugin.d.ts",
+  "dependencies": {
+    "unplugin": "^1.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {AriaLabelingProps, DOMProps, ItemElement, ItemRenderer, Key, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {ReactElement} from 'react';
 
 // Not extending CollectionBase to avoid async loading props
 export interface ActionGroupProps<T> extends MultipleSelection {

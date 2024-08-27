@@ -115,6 +115,7 @@ with a keyboard, not with a mouse or touch.
 ```tsx example export=true
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 
 function Checkbox(props) {
   let state = useToggleState(props);
@@ -126,7 +127,7 @@ function Checkbox(props) {
   return (
     <label style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} ref={ref} />
+        <input {...mergeProps(inputProps, focusProps)} ref={ref} />
       </VisuallyHidden>
       <svg
         width={24}

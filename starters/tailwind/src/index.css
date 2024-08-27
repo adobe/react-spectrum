@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scale up hit targets on high resolution mobile devices. */
+@media (min-resolution: 200dpi) {
+  html {
+    font-size: 18px;
+  }
+
+  .text-sm {
+    /* ensure minimum font size of 16px */
+    font-size: 0.9rem;
+  }
+}
+
+body {
+  @apply bg-white dark:bg-zinc-900;
+  color-scheme: dark light;
+}
