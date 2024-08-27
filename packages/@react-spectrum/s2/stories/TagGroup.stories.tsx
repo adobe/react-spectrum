@@ -56,6 +56,7 @@ export let Example = {
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
         <TagGroup {...args}>
           <Tag id="chocolate">Chocolate</Tag>
+          <Tag>Very very very very very very very very very very very very very very very very long tag </Tag>
           <Tag>Mint</Tag>
           <Tag>Strawberry</Tag>
           <Tag>Vanilla</Tag>
