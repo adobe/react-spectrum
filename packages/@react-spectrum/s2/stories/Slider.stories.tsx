@@ -42,13 +42,13 @@ Example.args = {
   defaultValue: 30
 };
 
-export const FillOffset = (args: any) => (
+export const FillOffsetS2 = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
     <Slider {...args} />
   </div>
 );
 
-FillOffset.args = {
+FillOffsetS2.args = {
   label: 'Exposure',
   fillOffset: 0,
   defaultValue: 1.83,
