@@ -59,7 +59,7 @@ import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRe
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
-import {useIsMobileDevice} from './utils';
+import {useIsMobileDevice} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -110,7 +110,7 @@ const tableWrapper = style({
   width: 'full'
 });
 
-const table = style<TableRenderProps & S2TableProps>({
+const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckboxSelection?: boolean}>({
   height: 'full',
   userSelect: 'none',
   minHeight: 0,
@@ -260,7 +260,6 @@ export function Table(props: TableProps) {
     ...otherProps
   } = props;
 
-  // TODO: perhaps just make a useScale
   let scale = (useIsMobileDevice() ? 'large' : 'medium') as Scale;
   let layout = useMemo(() => {
     return new S2TableLayout({
@@ -437,7 +436,8 @@ const columnStyles = style({
     default: 'gray-800', // neutral-content-color-default
     isHovered: 'gray-900', // neutral-content-color-hover
     isPressed: 'gray-900', // neutral-content-color-down
-    isFocusVisible: 'gray-900' // neutral-content-color-key-focus
+    isFocusVisible: 'gray-900', // neutral-content-color-key-focus,
+    forcedColors: 'ButtonText'
   },
   paddingX: {
     default: 16,
@@ -533,6 +533,10 @@ const sortIcon = style({
   verticalAlign: {
     default: 'bottom',
     isButton: 0
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
   }
 });
 
@@ -563,6 +567,7 @@ function ColumnContents(props: ColumnContentProps) {
 }
 
 const resizableMenuButtonWrapper = style({
+  color: 'gray-800', // body-color
   width: 'full',
   position: 'relative',
   display: 'flex',
@@ -590,7 +595,8 @@ const resizableMenuButtonWrapper = style({
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: size(6)
+  borderRadius: size(6),
+  disableTapHighlight: true
 });
 
 const resizerHandleContainer = style({
@@ -628,7 +634,7 @@ const resizerHandle = style({
     isResizing: '--focus-ring-color',
     forcedColors: {
       default: 'Background',
-      isHovered: 'Highlight',
+      isHovered: 'ButtonBorder',
       isFocusVisible: 'Highlight',
       isResizing: 'Highlight'
     }
@@ -641,7 +647,7 @@ const resizerHandle = style({
 const columnHeaderText = style({
   truncate: true,
   // Make it so the text doesn't completely disappear when column is resized to smallest width + both sort and chevron icon is rendered
-  minWidth: 8,
+  minWidth: fontRelative(16),
   flexGrow: 0,
   flexShrink: 1,
   flexBasis: 'auto'
@@ -651,7 +657,11 @@ const chevronIcon = style({
   rotate: 90,
   marginStart: 'text-to-visual',
   minWidth: fontRelative(16),
-  flexShrink: 0
+  flexShrink: 0,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
 });
 
 const nubbin = style({
@@ -897,7 +907,8 @@ const cell = style<CellRenderProps & S2TableProps>({
       default: 'gray-300',
       forcedColors: 'ButtonBorder'
     }
-  }
+  },
+  disableTapHighlight: true
 });
 
 const stickyCell = {
@@ -982,7 +993,7 @@ export function Cell(props: CellProps) {
       // @ts-ignore
       isSticky={isSticky}
       // This is a inline style because it needs to set properties ONLY for the end border (don't want to set a color for the bottom border)
-      style={{borderInlineEndColor: showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: showDivider ? 1 : 0, borderRightStyle: showDivider ? 'solid' : 'none'}}
+      style={{borderInlineEndColor: showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: showDivider ? 1 : 0, borderInlineEndStyle: showDivider ? 'solid' : 'none'}}
       className={renderProps => cell({
         ...renderProps,
         ...tableVisualOptions
