@@ -466,7 +466,6 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
-      // Sort of weird to have both subdued and subtle that map to the same color...
       'negative-subtle': colorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
