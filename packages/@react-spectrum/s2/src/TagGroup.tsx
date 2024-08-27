@@ -545,7 +545,7 @@ let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
 export {_Tag as Tag};
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
-  let {size} = useContext(InternalTagGroupContext) ?? {};
+  let {size = 'M'} = useContext(InternalTagGroupContext) ?? {};
   return (
     <>
       {isInRealDOM && (
