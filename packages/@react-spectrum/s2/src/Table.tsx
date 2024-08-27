@@ -107,11 +107,14 @@ export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehav
 let InternalTableContext = createContext<TableProps & {scale?: Scale, layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
 
 const tableWrapper = style({
-  width: 'full'
+  minHeight: 0,
+  minWidth: 0,
+  display: 'flex',
+  isolation: 'isolate'
 });
 
 const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckboxSelection?: boolean}>({
-  height: 'full',
+  width: 'full',
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,

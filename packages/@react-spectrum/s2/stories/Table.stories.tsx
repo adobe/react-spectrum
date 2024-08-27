@@ -565,9 +565,9 @@ export const ResizingUncontrolledSortableColumns = {
   name: 'resizable, sortable, reddit example'
 };
 
-let manyColunns = [];
+let manyColumns = [] as any[];
 for (let i = 0; i < 100; i++) {
-  manyColunns.push({name: 'Column ' + i, id: 'C' + i});
+  manyColumns.push({name: 'Column ' + i, id: 'C' + i});
 }
 
 let manyRows = [];
@@ -583,14 +583,14 @@ for (let i = 0; i < 1000; i++) {
 export const ManyItems = {
   render: (args) => (
     <Table aria-label="Many items table" {...args} styles={style({width: '[800px]', height: '[400px]'})}>
-      <TableHeader columns={manyColunns}>
+      <TableHeader columns={manyColumns}>
         {(column) => (
           <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={manyRows}>
         {item => (
-          <Row id={item.id} columns={manyColunns}>
+          <Row id={item.id} columns={manyColumns}>
             {(column) => {
               return <Cell>{item[column.id]}</Cell>;
             }}
@@ -601,5 +601,65 @@ export const ManyItems = {
   ),
   args: {
     ...Example.args
-  }
+  },
+  name: 'many items table'
+};
+
+export const FlexHeight = {
+  render: (args) => (
+    <div className={style({display: 'flex', width: '[400px]', height: '[400px]', alignItems: 'stretch', flexDirection: 'column'})}>
+      <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
+      <Table aria-label="Many items table" {...args}>
+        <TableHeader columns={manyColumns}>
+          {(column) => (
+            <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody items={manyRows}>
+          {item => (
+            <Row id={item.id} columns={manyColumns}>
+              {(column) => {
+                return <Cell>{item[column.id]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <div className={style({backgroundColor: 'blue-200'})}>Flex child 2</div>
+    </div>
+  ),
+  args: {
+    ...Example.args
+  },
+  name: 'flex calculated height, flex direction column'
+};
+
+
+export const FlexWidth = {
+  render: (args) => (
+    <div className={style({display: 'flex', width: '[400px]', height: '[400px]', alignItems: 'stretch'})}>
+      <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
+      <Table aria-label="Many items table" {...args}>
+        <TableHeader columns={manyColumns}>
+          {(column) => (
+            <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
+          )}
+        </TableHeader>
+        <TableBody items={manyRows}>
+          {item => (
+            <Row id={item.id} columns={manyColumns}>
+              {(column) => {
+                return <Cell>{item[column.id]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <div className={style({backgroundColor: 'blue-200'})}>Flex child 2</div>
+    </div>
+  ),
+  args: {
+    ...Example.args
+  },
+  name: 'flex calculated height, flex direction row'
 };
