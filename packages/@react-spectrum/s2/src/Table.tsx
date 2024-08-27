@@ -303,7 +303,6 @@ export function Table(props: TableProps) {
     onLoadMore
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
-  // TODO: update this line when highlight selection is readded
   let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
 
   return (
@@ -408,12 +407,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
   );
 }
 
-const cellFocus = style({
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  right: 0,
-  left: 0,
+const cellFocus = {
   outlineStyle: {
     default: 'none',
     isFocusVisible: 'solid'
@@ -422,11 +416,11 @@ const cellFocus = style({
   outlineWidth: 2,
   outlineColor: 'focus-ring',
   borderRadius: size(6)
-});
+} as const;
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
   let {isFocusVisible} = props;
-  return <div role="presentation" className={cellFocus({isFocusVisible})} />;
+  return <div role="presentation" style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}} className={style({...cellFocus})({isFocusVisible})} />;
 }
 
 const columnStyles = style({
@@ -482,7 +476,7 @@ export interface ColumnProps extends RACColumnProps {
    */
   align?: 'start' | 'center' | 'end',
   /** The content to render as the column header. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export function Column(props: ColumnProps) {
@@ -567,6 +561,7 @@ function ColumnContents(props: ColumnContentProps) {
 }
 
 const resizableMenuButtonWrapper = style({
+  ...cellFocus,
   color: 'gray-800', // body-color
   width: 'full',
   position: 'relative',
@@ -587,15 +582,6 @@ const resizableMenuButtonWrapper = style({
   fontSize: 'control',
   fontFamily: 'sans',
   fontWeight: 'bold',
-  // TODO: Same styles from cellFocus, consolidate later. Right now the design differ slightly on the border radius (4 on focus ring but 6 on the table's corner radius)
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineOffset: -2,
-  outlineWidth: 2,
-  outlineColor: 'focus-ring',
-  borderRadius: size(6),
   disableTapHighlight: true
 });
 
@@ -619,7 +605,6 @@ const resizerHandleContainer = style({
     }
   },
   // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
-  zIndex: 1000,
   '--focus-ring-color': {
     type: 'outlineColor',
     value: 'focus-ring'
@@ -673,7 +658,6 @@ const nubbin = style({
 
 interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'>, Pick<ColumnProps, 'align' | 'children'> {}
 
-// TODO: placeholder, just copied over from v3. Request filed in airtable for the actual nubbin
 function Nubbin() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -734,10 +718,8 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
 
-
   let buttonAlignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';
-  // TODO: align center is quite strange, copied this from S1 but really there isn't a good place to put the menu when the column text is centered
   if (align === 'center') {
     buttonAlignment = 'center';
   } else if (align === 'end') {
@@ -952,7 +934,7 @@ const cellContent = style({
     }
   },
   width: 'full',
-  zIndex: 100,
+  isolation: 'isolate',
   padding: {
     default: 4,
     isSticky: 0
@@ -979,7 +961,7 @@ export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'sh
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export function Cell(props: CellProps) {
@@ -1020,21 +1002,18 @@ export function Cell(props: CellProps) {
   );
 }
 
-// TODO: reminder, these dark theme colors were grabbed from the spectrum tokens but they feel quite dark IMO. Will comment in design file
 const rowBackgroundColor = {
   default: 'gray-25',
   isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
   isHovered: 'gray-900/7', // table-row-hover-color
   isPressed: 'gray-900/10', // table-row-hover-color
   isSelected: {
-    // TODO: I've tried adding +50 to the dark color opacity and it doesn't look too bad
     default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
     isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
     isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
     isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
   },
   isQuiet: {
-    // TODO: there aren't designs for quiet + selected? For now I've made it the same as non-quiet
     default: 'transparent',
     isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
     isHovered: 'gray-900/7', // table-row-hover-color
