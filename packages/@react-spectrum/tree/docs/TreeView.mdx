@@ -364,26 +364,6 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 ### With action groups
 
 ```tsx example
-type MyItem = {
-  id: string,
-  name: string,
-  icon: JSX.Element,
-  childItems?: MyItem[]
-};
-
-let items: MyItem[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
-      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
-  ]}
-];
-
 <TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
   {(item: MyItem) => (
     <TreeViewItem childItems={item.childItems} textValue={item.name}>
@@ -407,26 +387,6 @@ let items: MyItem[] = [
 ### With action menus
 
 ```tsx example
-type MyItem = {
-  id: string,
-  name: string,
-  icon: JSX.Element,
-  childItems?: MyItem[]
-};
-
-let items: MyItem[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
-      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
-  ]}
-];
-
 <TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
   {(item: MyItem) => (
     <TreeViewItem childItems={item.childItems} textValue={item.name}>
