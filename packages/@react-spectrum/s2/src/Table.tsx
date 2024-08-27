@@ -76,8 +76,6 @@ interface S2TableProps {
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate',
-  /** How selection should be displayed. */
-  selectionStyle?: 'checkbox' | 'highlight',
   // TODO: will we contine with onAction or rename to onRowAction like it is in RAC?
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
@@ -139,6 +137,21 @@ const table = style<TableRenderProps & S2TableProps>({
   borderRadius: {
     default: size(6),
     isQuiet: 'none'
+  },
+  // These scroll padding values are kinda odd (expected them to match the header height and checkbox column width) but they are the best fit from testing
+  scrollPaddingTop: {
+    scale: {
+      medium: '[21px]',
+      large: '[27px]'
+    }
+  },
+  scrollPaddingStart: {
+    isCheckboxSelection: {
+      scale: {
+        medium: '[27px]',
+        large: '[33px]'
+      }
+    }
   }
 }, getAllowedOverrides({height: true}));
 
@@ -237,7 +250,6 @@ export function Table(props: TableProps) {
     isQuiet = false,
     density = 'regular',
     overflowMode = 'truncate',
-    selectionStyle = 'checkbox',
     styles,
     loadingState,
     onLoadMore,
@@ -278,13 +290,12 @@ export function Table(props: TableProps) {
     isQuiet,
     density,
     overflowMode,
-    selectionStyle,
     loadingState,
     isInResizeMode,
     setIsInResizeMode,
     scale,
     layout
-  }), [isQuiet, density, overflowMode, selectionStyle, loadingState, scale, layout, isInResizeMode, setIsInResizeMode]);
+  }), [isQuiet, density, overflowMode, loadingState, scale, layout, isInResizeMode, setIsInResizeMode]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef(null);
@@ -293,6 +304,8 @@ export function Table(props: TableProps) {
     onLoadMore
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
+  // TODO: update this line when highlight selection is readded
+  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
 
   return (
     <ResizableTableContainer
@@ -307,9 +320,11 @@ export function Table(props: TableProps) {
             ref={scrollRef}
             className={renderProps => table({
               ...renderProps,
+              scale,
+              isCheckboxSelection,
               isQuiet
             })}
-            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+            selectionBehavior="toggle"
             onRowAction={onAction}
             {...otherProps} />
         </InternalTableContext.Provider>
