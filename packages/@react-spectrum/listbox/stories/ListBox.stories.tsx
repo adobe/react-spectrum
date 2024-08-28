@@ -22,6 +22,7 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {FocusScope} from '@react-aria/focus';
 import {Item, ListBox, Section} from '../';
+import {Key} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useRef, useState} from 'react';
@@ -943,15 +944,12 @@ export function FocusExample(args = {}) {
 
   let [dialog, setDialog] = useState(null);
   let ref = useRef(null);
-  let message = 'Are you sure you want to delete all items?';
-  if (tree.selectedKeys !== 'all') {
-    message = `Are you sure you want to delete ${tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?`;
-  }
+
   return (
     <FocusScope>
       <Flex direction={'column'}>
         <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-          {(tree.selectedKeys === 'all' || tree.selectedKeys.size > 0) &&
+          {(tree.selectedKeys.size > 0) &&
             <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
           }
         </ActionGroup>
@@ -965,7 +963,25 @@ export function FocusExample(args = {}) {
                 aria-labelledby="label"
                 items={tree.items}
                 selectedKeys={tree.selectedKeys}
-                onSelectionChange={tree.setSelectedKeys}
+                onSelectionChange={(keys) => {
+                  if (keys === 'all') {
+                    tree.setSelectedKeys(new Set(tree.items.reduce((acc, item) => {
+                      acc.push(item.key);
+                      function traverse(children) {
+                        if (children) {
+                          children.forEach(child => {
+                            acc.push(child.key);
+                            traverse(child.children);
+                          });
+                        }
+                      }
+                      traverse(item.children);
+                      return acc;
+                    }, [] as Key[])));
+                  } else {
+                    tree.setSelectedKeys(keys);
+                  }
+                }}
                 selectionMode="multiple"
                 {...args}>
                 {item => item.children.length && (
@@ -984,7 +1000,7 @@ export function FocusExample(args = {}) {
               variant="destructive"
               primaryActionLabel="Delete"
               onPrimaryAction={() => tree.removeSelectedItems()}>
-              {message}
+              Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
             </AlertDialog>
           }
         </DialogContainer>

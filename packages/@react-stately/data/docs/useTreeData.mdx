@@ -88,14 +88,32 @@ let tree = useTreeData<Iitem>({
   ],
   initialSelectedKeys: ['Sam', 'Kangaroo'],
   getKey: item => item.name,
-  getChildren: item => item.items || []
+  getChildren: item => item.items
 });
 
 <ListBox
   aria-label="List organisms"
   items={tree.items}
   selectedKeys={tree.selectedKeys}
-  onSelectionChange={tree.setSelectedKeys}>
+  onSelectionChange={(keys) => {
+    if (keys === 'all') {
+      tree.setSelectedKeys(tree.items.reduce((acc, item) => {
+        acc.push(item.key);
+        function traverse(children) {
+          if (children) {
+            children.forEach(child => {
+              acc.push(child.key);
+              traverse(child.children);
+            });
+          }
+        }
+        traverse(item.children);
+        return acc;
+      }, []));
+    } else {
+      tree.setSelectedKeys(keys);
+    }
+  }}>
   {node =>
     <Section title={node.value.name} items={node.children}>
       {node => <Item>{node.value.name}</Item>}

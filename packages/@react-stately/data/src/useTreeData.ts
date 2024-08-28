@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, Selection} from '@react-types/shared';
+import {Key} from '@react-types/shared';
 import {useState} from 'react';
 
 export interface TreeOptions<T extends object> {
@@ -21,7 +21,7 @@ export interface TreeOptions<T extends object> {
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that returns the children for an item object. */
-  getChildren?: (item: T) => T[]
+  getChildren?: (item: T) => T[] | undefined
 }
 
 interface TreeNode<T extends object> {
@@ -40,10 +40,10 @@ export interface TreeData<T extends object> {
   items: TreeNode<T>[],
 
   /** The keys of the currently selected items in the tree. */
-  selectedKeys: Selection,
+  selectedKeys: Set<Key>,
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Selection): void,
+  setSelectedKeys(keys: Set<Key>): void,
 
   /**
    * Gets a node from the tree by key.
@@ -123,7 +123,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let {
     initialItems = [],
     initialSelectedKeys,
-    getKey = (item: any) => item.id || item.key,
+    getKey = (item: any) => item.id ?? item.key,
     getChildren = (item: any) => item.children
   } = options;
 
@@ -131,7 +131,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let [tree, setItems] = useState<{items: TreeNode<T>[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems, new Map()));
   let {items, nodeMap} = tree;
 
-  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<Key>(initialSelectedKeys || []));
+  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
   function buildTree(initialItems: T[] = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
     return {
@@ -314,24 +314,17 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
       setItems(newTree);
 
-      let selection: Selection = 'all';
-      if (selectedKeys !== 'all') {
-        selection = new Set(selectedKeys);
-        for (let key of selectedKeys) {
-          if (!newTree.nodeMap.has(key)) {
-            selection.delete(key);
-          }
+      let selection = new Set(selectedKeys);
+      for (let key of selectedKeys) {
+        if (!newTree.nodeMap.has(key)) {
+          selection.delete(key);
         }
       }
 
       setSelectedKeys(selection);
     },
     removeSelectedItems() {
-      let keys = selectedKeys;
-      if (selectedKeys === 'all') {
-        keys = new Set(items.map(node => node.key));
-      }
-      this.remove(...keys);
+      this.remove(...selectedKeys);
     },
     move(key: Key, toParentKey: Key | null, index: number) {
       setItems(({items, nodeMap: originalMap}) => {
