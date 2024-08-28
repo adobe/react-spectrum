@@ -40,6 +40,10 @@ export const Example = (args: any) => (
   </SegmentedControl>
 );
 
+Example.args = {
+  'aria-label': 'Time granularity'
+}
+
 export const WithIcons = (args: any) => (
   <SegmentedControl {...args}>
     <ControlItem value="unordered"><ListBulleted />Unordered</ControlItem>
@@ -47,6 +51,10 @@ export const WithIcons = (args: any) => (
     <ControlItem value="task list"><ListMultiSelect />Task List</ControlItem>
   </SegmentedControl>
 );
+
+WithIcons.args = {
+  'aria-label': 'List organization'
+}
 
 export const OnlyIcons = (args: any) => (
   <SegmentedControl {...args}>
@@ -56,6 +64,10 @@ export const OnlyIcons = (args: any) => (
   </SegmentedControl>
 );
 
+OnlyIcons.args = {
+  'aria-label': 'Text alignment'
+}
+
 export const CustomWidth = (args: any) => (
   <SegmentedControl {...args} styles={style({width: '[400px]'})}>
     <ControlItem value="overview">Overview</ControlItem>
@@ -64,3 +76,7 @@ export const CustomWidth = (args: any) => (
     <ControlItem value="accessibility">Accessibility</ControlItem>
   </SegmentedControl>
 );
+
+CustomWidth.args = {
+  'aria-label': 'Getting started'
+}
