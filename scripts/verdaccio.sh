@@ -22,10 +22,11 @@ function cleanup {
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
     if [ "$commit_to_revert" != "HEAD" ];
     then
-      git tag -d $(git tag -l)
       git fetch
       git reset --hard $commit_to_revert
       npm set registry $original_registry
+      yarn config set npmPublishRegistry $original_registry
+      yarn config set npmRegistryServer $original_registry
     fi
   else
     # lsof doesn't work in circleci
@@ -47,7 +48,12 @@ yarn verdaccio --listen $port &>${output}&
 grep -q 'http address' <(tail -f $output)
 
 # Login as test user
-yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
+yarn config set npmPublishRegistry $registry
+yarn config set npmRegistryServer $registry
+yarn config set npmAlwaysAuth true
+yarn config set npmAuthIdent abc
+yarn config set npmAuthToken blah
+npm set registry $registry
 
 if [ "$ci" = true ];
 then
@@ -56,8 +62,10 @@ then
 fi
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn lerna version minor --force-publish --allow-branch `git branch --show-current` --no-push --yes
-commit_to_revert="HEAD~1"
+yarn workspaces foreach --all --no-private version minor --deferred
+yarn version apply --all
+
+commit_to_revert="HEAD~0"
 
 if [ "$ci" = true ];
 then
@@ -66,11 +74,7 @@ then
 fi
 
 # Publish packages to verdaccio
-yarn lerna publish from-package --registry $registry --yes
-
-# set the npm registry because that will set it at a higher level, making local testing easier
-npm set registry $registry
-yarn config set npmRegistryServer $registry
+yarn workspaces foreach --all --no-private -pt npm publish
 
 if [ "$ci" = true ];
 then
@@ -81,11 +85,11 @@ then
   yarn config set npmRegistryServer $registry
   cd ../..
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
-  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
+  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~0`/verdaccio/docs make website-production
 
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
-  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~0`/verdaccio
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
