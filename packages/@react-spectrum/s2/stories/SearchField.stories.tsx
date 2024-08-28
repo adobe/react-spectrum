@@ -42,12 +42,12 @@ Example.args = {
   label: 'Search'
 };
 
-export const CustomWidthS2 = (args: any) => <SearchField {...args} styles={style({width: 256})} />;
+export const CustomFieldWidth = (args: any) => <SearchField {...args} styles={style({width: 256})} />;
 
-CustomWidthS2.args = {
+CustomFieldWidth.args = {
   label: 'Search'
 };
-CustomWidthS2.parameters = {
+CustomFieldWidth.parameters = {
   docs: {
     disable: true
   }

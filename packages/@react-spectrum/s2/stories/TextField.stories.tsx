@@ -111,12 +111,12 @@ TextAreaExample.args = {
   label: 'Comment'
 };
 
-export const CustomWidthS2 = (args: any) => <TextField {...args} styles={style({width: 384})} />;
+export const CustomFieldWidth = (args: any) => <TextField {...args} styles={style({width: 384})} />;
 
-CustomWidthS2.args = {
+CustomFieldWidth.args = {
   label: 'Name'
 };
-CustomWidthS2.parameters = {
+CustomFieldWidth.parameters = {
   docs: {
     disable: true
   }
