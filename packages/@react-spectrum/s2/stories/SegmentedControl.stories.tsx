@@ -42,7 +42,7 @@ export const Example = (args: any) => (
 
 Example.args = {
   'aria-label': 'Time granularity'
-}
+};
 
 export const WithIcons = (args: any) => (
   <SegmentedControl {...args}>
@@ -54,7 +54,7 @@ export const WithIcons = (args: any) => (
 
 WithIcons.args = {
   'aria-label': 'List organization'
-}
+};
 
 export const OnlyIcons = (args: any) => (
   <SegmentedControl {...args}>
@@ -66,7 +66,7 @@ export const OnlyIcons = (args: any) => (
 
 OnlyIcons.args = {
   'aria-label': 'Text alignment'
-}
+};
 
 export const CustomWidth = (args: any) => (
   <SegmentedControl {...args} styles={style({width: '[400px]'})}>
@@ -79,4 +79,4 @@ export const CustomWidth = (args: any) => (
 
 CustomWidth.args = {
   'aria-label': 'Getting started'
-}
+};

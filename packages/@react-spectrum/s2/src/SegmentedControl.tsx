@@ -10,18 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, FocusEvents, InputDOMProps, ValueBase} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, Radio, RadioGroup, RadioGroupProps,RadioGroupStateContext, RadioProps, SlotProps} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupProps, RadioGroupStateContext, RadioProps} from 'react-aria-components';
+import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
+import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {pressScale} from './pressScale';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Text, TextContext} from './Content';
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly' | 'name' | 'isRequired' | 'isInvalid' | 'validate' | 'validationBehavior' | 'children' | 'className' | 'style' | 'aria-label'>{
+export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly' | 'name' | 'isRequired' | 'isInvalid' | 'validate' | 'validationBehavior' | 'children' | 'className' | 'style' | 'aria-label'>, StyleProps{
   /**
    * The content to display in the segmented control.
    */
@@ -49,15 +51,12 @@ const segmentedControl = style<{size: string}>({
   display: 'flex',
   backgroundColor: 'gray-100',
   borderRadius: 'lg',
-  width: 'full',
-  zIndex: 1,
-  position: 'relative'
+  width: 'full'
 }, getAllowedOverrides());
 
 const controlItem = style({
-  ...focusRing(),
+  position: 'relative',
   display: 'flex',
-  gap: 'text-to-visual',
   forcedColorAdjust: 'none',
   color: {
     default: 'gray-700',
@@ -70,38 +69,10 @@ const controlItem = style({
       isSelected: 'HighlightText'
     }
   },
-  // backgroundColor: {
-  //   isSelected: 'gray-25',
-  //   forcedColors: {
-  //     isSelected: 'Highlight',
-  //     isDisabled: {
-  //       isSelected: 'GrayText'
-  //     },
-  //   },
-  // },
-  // the padding should be a little less for segmented controls that only contain icons but not sure of a good way to do that
+  // TODO: update this padding for icon-only items when we introduce the non-track style back
   paddingX: 'edge-to-text',
   height: 32,
   alignItems: 'center',
-  boxSizing: 'border-box',
-  borderStyle: 'solid',
-  borderColor: 'transparent',
-  // borderWidth: 2,
-  // borderColor: {
-  //   default: 'transparent',
-  //   isSelected: {
-  //     default: 'gray-900',
-  //     isDisabled: 'disabled'
-  //   },
-  //   forcedColors: {
-  //     isDisabled: 'GrayText',
-  //     isSelected: {
-  //       default: 'Highlight',
-  //       isDisabled: 'GrayText'
-  //     }
-  //   }
-  // },
-  borderRadius: 'control',
   flexBasis: 0,
   flexGrow: 1,
   flexShrink: 0,
@@ -110,19 +81,37 @@ const controlItem = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
-  },
-  zIndex: 2
+  }
 }, getAllowedOverrides());
 
-interface InternalSegmentedControlContextProps extends Omit<SegmentedControlProps, 'aria-label'> {
-  register?: (value: string) => void
+const slider = style({
+  ...focusRing(),
+  backgroundColor: 'gray-25',
+  width: 'full',
+  height: 'full',
+  position: 'absolute',
+  boxSizing: 'border-box',
+  borderStyle: 'solid',
+  borderWidth: 2,
+  borderColor: {
+    default: 'gray-900',
+    isDisabled: 'disabled'
+  },
+  borderRadius: 'lg'
+});
+
+interface InternalSegmentedControlContextProps {
+  register?: (value: string, isDisabled?: boolean) => void,
+  prevRef?: RefObject<DOMRect | null>,
+  currentSelectedRef?: RefObject<HTMLDivElement | null>
 }
 
 interface DefaultSelectionTrackProps {
   defaultValue?: string | null,
   value?: string | null,
   children?: ReactNode,
-  domRef?
+  prevRef: RefObject<DOMRect | null>,
+  currentSelectedRef: RefObject<HTMLDivElement | null>
 }
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
@@ -135,15 +124,29 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
   } = props;
   let domRef = useDOMRef(ref);
 
+  let prevRef = useRef<DOMRect>(null);
+  let currentSelectedRef = useRef<HTMLDivElement>(null);
+
+  let onChange = (value: string) => {
+    if (currentSelectedRef.current) {
+      prevRef.current = currentSelectedRef?.current.getBoundingClientRect();
+    }
+    
+    if (props.onChange) {
+      props.onChange(value);
+    }
+  };
+
   return (
     <RadioGroup 
       {...props}
       ref={domRef}
       orientation="horizontal"
       style={props.UNSAFE_style}
+      onChange={onChange}
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
       aria-label={props['aria-label']}>
-      <DefaultSelectionTracker defaultValue={defaultValue} value={value} domRef={domRef} >
+      <DefaultSelectionTracker defaultValue={defaultValue} value={value} prevRef={prevRef} currentSelectedRef={currentSelectedRef}>
         {props.children}
       </DefaultSelectionTracker>
     </RadioGroup>
@@ -151,131 +154,81 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
 }
 
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
-  let {
-    domRef
-  } = props;
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
-  let itemRef = useRef(null);
-
-  let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
-    transform: undefined,
-    width: undefined,
-    height: undefined
-  });
+  let disabledIsRegistered = useRef<string | null>(null);
 
   // default select the first available item
-  let register = useCallback((value: string) => {
-    if (state && !isRegistered.current) {
+  let register = useCallback((value: string, isDisabled?: boolean) => {
+    if (state && !isRegistered.current && !isDisabled) {
       isRegistered.current = true;
 
       state.setSelectedValue(value);
+    } else if (isDisabled && disabledIsRegistered.current == null) {
+      disabledIsRegistered.current = value;
     }
   }, []);
 
-  // First: get the current bounds of the element
-  useEffect(() => {
-    if (domRef.current) {
-      let item = domRef.current.querySelector('label[data-selected=true]');
-      itemRef.current = item;
-
-      // i don't really want to have this here, and honestly, it should probably go in useLayoutEffect
-      // however, then i basically have to pull all the code currently in useEffect to useLayoutEffect which feels repetitive so I'm just keeping it here for now
-      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
-        transform: undefined,
-        width: undefined,
-        height: undefined
-      };
-
-      let finalW = item?.offsetWidth;
-      let finalH = item?.offsetHeight;
-
-      styleObj.width = finalW;
-      styleObj.height = finalH;
-      setStyle(styleObj);
-
-    }
-  }, [state?.selectedValue]);
-
-  // Last: get the final bounds of the element
+  // if the registration fails, then we will default select the first item
   useLayoutEffect(() => {
-    if (domRef.current) {
-      let slide = document.querySelector('#animate');
-      let item = domRef.current.querySelector('label[data-selected=true]');
-      // let cachedItem = itemRef?.current?.getBoundingClientRect();
-
-
-      if (slide && itemRef.current) {
-        // let finalItem = item.getBoundingClientRect();
-
-        // Invert: determine the delta between the first and last bounds of the element
-        // let deltaX = cachedItem.left - finalItem.left;
-        // let deltaW = cachedItem.width / finalItem.width;
-        // let deltaW = finalItem.width / cachedItem.width;
-        // let deltaH = cachedItem.height / finalItem.height;
-        // let cachedX = itemRef?.current.offsetLeft;
-        let finalX = item.offsetLeft;
-        // let finalW = item.offsetWidth;
-        // let finalH = item.offsetHeight;
-
-        // styleObj.width = finalW;
-        // styleObj.height = finalH;
-        // setStyle(styleObj);
-        
-        // Play: animate the final element from its first bounds to its last bound
-        slide.animate(
-          [
-            {transform: `translateX(${finalX}px)`}
-          ],
-          {
-            duration: 150,
-            easing: 'ease-in',
-            fill: 'forwards'
-          }
-        );
-      }
+    if (state && isRegistered.current === false) {
+      console.log(disabledIsRegistered.current);
+      state.setSelectedValue(disabledIsRegistered.current);
+    } else {
+      new Error('Could not determine a default selected item');
     }
-  }, [state?.selectedValue]);
+  }, []);
 
 
-  // style={{transform: move ? `translateX(100px)` : 'translateX(0px)'}}
-  // style={{transform: 'translateX(120px)'}}
   return (
     <Provider
       values={[
-        [InternalSegmentedControlContext, {register: register}]
-      ]}>
+        [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef}]
+      ]}> 
       {props.children}
-      <span style={style} id="animate" className={test} /> 
     </Provider>
   );
 }
 
-const test = style({
-  backgroundColor: 'gray-25',
-  width: 56,
-  height: 32,
-  position: 'absolute',
-  boxSizing: 'border-box',
-  borderStyle: 'solid',
-  borderWidth: 2,
-  borderColor: 'gray-900',
-  borderRadius: 'lg',
-  zIndex: 1
-});
-
 function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
-  let {register} = useContext(InternalSegmentedControlContext);
-  // @ts-ignore Property 'isDisabled' does not exist on type 'RadioGroupState | null', not sure why it's complaining...
-  let {isDisabled: isRadioGroupDisabled} = useContext(RadioGroupStateContext);
+  let divRef = useRef<HTMLDivElement>(null);
+  let {register, prevRef, currentSelectedRef} = useContext(InternalSegmentedControlContext);
+  let state = useContext(RadioGroupStateContext);
+  let isSelected = props.value === state?.selectedValue;
+  // do not apply animation if a user has the prefers-reduced-motion setting
+  const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  useEffect(() => {
-    if (!props.isDisabled && !isRadioGroupDisabled) {
-      register?.(props.value);
+  useLayoutEffect(() => {
+    if (!props.isDisabled) {
+      register?.(props.value, props.isDisabled);
+    } else if (props.isDisabled) {
+      register?.(props.value, props.isDisabled);
     }
   }, []);
+
+  useLayoutEffect(() => {
+    if (isSelected && prevRef?.current && currentSelectedRef?.current && !isReduced) {
+      let currentItem = currentSelectedRef?.current.getBoundingClientRect();
+
+      let deltaX = prevRef?.current.left - currentItem?.left;
+      // let duration = Math.abs(deltaX)/0.3;
+
+      currentSelectedRef.current.animate(
+        [
+          {transform: `translateX(${deltaX}px)`, width: `${prevRef?.current.width}px`},
+          {transform: 'translateX(0px)', width: `${currentItem.width}px`}
+        ],
+        {
+          duration: 200,
+          easing: 'ease-out'
+        }
+      );
+
+      prevRef.current = null;
+    }
+  }, [isSelected]);
 
   return (
     <Radio 
@@ -284,14 +237,26 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
       inputRef={inputRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps}, props.styles)} >
-      <Provider 
-        values={[
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
-          }]
-        ]}>
-        {props.children}
-      </Provider>
+      {({isSelected, isFocusVisible, isPressed, isDisabled}) => (
+        <>
+          {isSelected && <div id="animate" className={slider({isFocusVisible, isDisabled})} ref={currentSelectedRef} />}
+          <Provider 
+            values={[
+              [IconContext, {
+                render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
+              }],
+              [RACTextContext, {slots: {[DEFAULT_SLOT]: {}}}],
+              [TextContext, {styles: style({order: 1, truncate: true})}
+              ]
+            ]}>
+            {/* still need this zIndex unfortunately. without it, the slider renders on top of the text */}
+            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual'})}>
+              {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+            </div>
+          </Provider>
+        </>
+      )
+      }
     </Radio>
   );
 }
