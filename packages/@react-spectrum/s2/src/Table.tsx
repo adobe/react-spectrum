@@ -110,7 +110,8 @@ const tableWrapper = style({
   minHeight: 0,
   minWidth: 0,
   display: 'flex',
-  isolation: 'isolate'
+  isolation: 'isolate',
+  disableTapHighlight: true
 });
 
 const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckboxSelection?: boolean}>({
@@ -319,6 +320,7 @@ export function Table(props: TableProps) {
         <InternalTableContext.Provider value={context}>
           <RACTable
             ref={scrollRef}
+            style={{WebkitTransform: 'translateZ(0)'}}
             className={renderProps => table({
               ...renderProps,
               scale,
@@ -584,8 +586,7 @@ const resizableMenuButtonWrapper = style({
   borderStyle: 'none',
   fontSize: 'control',
   fontFamily: 'sans',
-  fontWeight: 'bold',
-  disableTapHighlight: true
+  fontWeight: 'bold'
 });
 
 const resizerHandleContainer = style({
@@ -892,8 +893,7 @@ const cell = style<CellRenderProps & S2TableProps>({
       default: 'gray-300',
       forcedColors: 'ButtonBorder'
     }
-  },
-  disableTapHighlight: true
+  }
 });
 
 const stickyCell = {
