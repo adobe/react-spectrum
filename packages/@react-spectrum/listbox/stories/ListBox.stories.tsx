@@ -1066,7 +1066,7 @@ export const WithAvatars = {
 
 interface Iitem {
   name: string,
-  items?: Array<Iitem>
+  items?: Array<Iitem> | null
 }
 
 export function WithTreeData() {
@@ -1085,7 +1085,7 @@ export function WithTreeData() {
         items: [
           {name: 'Aardvark'},
           {name: 'Kangaroo'},
-          {name: 'Snake'}
+          {name: 'Snake', items: null}
         ]
       }
     ],

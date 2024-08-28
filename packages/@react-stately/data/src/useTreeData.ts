@@ -21,7 +21,7 @@ export interface TreeOptions<T extends object> {
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that returns the children for an item object. */
-  getChildren?: (item: T) => T[]
+  getChildren?: (item: T) => T[] | null
 }
 
 interface TreeNode<T extends object> {
@@ -133,7 +133,10 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[] = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
+  function buildTree(initialItems: T[] | null = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
+    if (initialItems == null) {
+      initialItems = [];
+    }
     return {
       items: initialItems.map(item => {
         let node: TreeNode<T> = {
