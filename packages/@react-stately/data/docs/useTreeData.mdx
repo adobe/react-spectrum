@@ -94,10 +94,11 @@ let tree = useTreeData<Iitem>({
 <ListBox
   aria-label="List organisms"
   items={tree.items}
+  selectionMode="multiple"
   selectedKeys={tree.selectedKeys}
   onSelectionChange={(keys) => {
     if (keys === 'all') {
-      tree.setSelectedKeys(tree.items.reduce((acc, item) => {
+      tree.setSelectedKeys(new Set(tree.items.reduce((acc, item) => {
         acc.push(item.key);
         function traverse(children) {
           if (children) {
@@ -109,7 +110,7 @@ let tree = useTreeData<Iitem>({
         }
         traverse(item.children);
         return acc;
-      }, []));
+      }, [] as Key[])));
     } else {
       tree.setSelectedKeys(keys);
     }

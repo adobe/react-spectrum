@@ -1063,3 +1063,68 @@ export const WithAvatars = {
     </StoryDecorator>
   )]
 };
+
+interface Iitem {
+  name: string,
+  items?: Array<Iitem>
+}
+
+export function WithTreeData() {
+  let tree = useTreeData<Iitem>({
+    initialItems: [
+      {
+        name: 'People',
+        items: [
+          {name: 'David'},
+          {name: 'Sam'},
+          {name: 'Jane'}
+        ]
+      },
+      {
+        name: 'Animals',
+        items: [
+          {name: 'Aardvark'},
+          {name: 'Kangaroo'},
+          {name: 'Snake'}
+        ]
+      }
+    ],
+    initialSelectedKeys: ['Sam', 'Kangaroo'],
+    getKey: item => item.name,
+    getChildren: item => item.items
+  });
+  return (
+    <ListBox
+      width="250px"
+      height={400}
+      aria-label="List organisms"
+      items={tree.items}
+      selectedKeys={tree.selectedKeys}
+      selectionMode="multiple"
+      onSelectionChange={(keys) => {
+        if (keys === 'all') {
+          tree.setSelectedKeys(new Set(tree.items.reduce((acc, item) => {
+            acc.push(item.key);
+            function traverse(children) {
+              if (children) {
+                children.forEach(child => {
+                  acc.push(child.key);
+                  traverse(child.children);
+                });
+              }
+            }
+            traverse(item.children);
+            return acc;
+          }, [] as Key[])));
+        } else {
+          tree.setSelectedKeys(keys);
+        }
+      }}>
+      {node => (
+        <Section title={node.value.name} items={node.children}>
+          {node => <Item>{node.value.name}</Item>}
+        </Section>
+      )}
+    </ListBox>
+  );
+}
