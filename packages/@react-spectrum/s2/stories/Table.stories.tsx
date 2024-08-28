@@ -565,12 +565,12 @@ export const ResizingUncontrolledSortableColumns = {
   name: 'resizable, sortable, reddit example'
 };
 
-let manyColumns = [] as any[];
+let manyColumns = [] as {name: string, id: string}[];
 for (let i = 0; i < 100; i++) {
   manyColumns.push({name: 'Column ' + i, id: 'C' + i});
 }
 
-let manyRows = [];
+let manyRows = [] as {id: string}[];
 for (let i = 0; i < 1000; i++) {
   let row = {id: 'R' + i};
   for (let j = 0; j < 100; j++) {
