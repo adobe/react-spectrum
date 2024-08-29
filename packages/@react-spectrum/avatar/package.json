@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/avatar",
-  "version": "3.0.14",
+  "version": "3.0.15",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,8 +36,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.25.1",
-    "@react-spectrum/utils": "^3.11.9",
+    "@react-aria/utils": "^3.25.2",
+    "@react-spectrum/utils": "^3.11.10",
     "@react-types/avatar": "^3.0.9",
     "@react-types/shared": "^3.24.1",
     "@swc/helpers": "^0.5.0"

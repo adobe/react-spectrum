@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Does nothing 1`] = `
+"import {DateField} from '@adobe/react-spectrum';
+
+<div>
+  <DateField label="Event date" />
+</div>"
+`;

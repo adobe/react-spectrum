@@ -77,7 +77,7 @@ module.exports = new Packager({
       let keyStack = [];
       let fn = (t, k) => {
         if (t && t.type === 'reference') {
-          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier);
+          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier && !bundleGraph.isDependencySkipped(d));
           let res = bundleGraph.getResolvedAsset(dep, bundle);
           let result = res ? processAsset(res)[t.imported] : null;
           if (result) {
@@ -533,7 +533,7 @@ function omit(obj, toOmit, nodes) {
 // Exactly the same as `omit()` above except for `keys.has(key)` instead of `!keys.has(key)`.
 function pick(obj, toPick, nodes) {
   obj = resolveValue(obj, nodes);
-  
+
   if (obj.type === 'interface' || obj.type === 'object') {
     let keys = new Set();
     if (toPick.type === 'string' && toPick.value) {

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/actiongroup",
-  "version": "3.7.7",
+  "version": "3.7.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,11 +22,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.18.1",
-    "@react-aria/i18n": "^3.12.1",
-    "@react-aria/interactions": "^3.22.1",
-    "@react-aria/utils": "^3.25.1",
-    "@react-stately/list": "^3.10.7",
+    "@react-aria/focus": "^3.18.2",
+    "@react-aria/i18n": "^3.12.2",
+    "@react-aria/interactions": "^3.22.2",
+    "@react-aria/utils": "^3.25.2",
+    "@react-stately/list": "^3.10.8",
     "@react-types/actiongroup": "^3.4.11",
     "@react-types/shared": "^3.24.1",
     "@swc/helpers": "^0.5.0"

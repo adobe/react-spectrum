@@ -257,7 +257,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
 
   let renderProps = useRenderProps({
     ...props,
-    defaultChildren: rendered || placeholder || stringFormatter.format('selectPlaceholder'),
+    defaultChildren: rendered ?? placeholder ?? stringFormatter.format('selectPlaceholder'),
     defaultClassName: 'react-aria-SelectValue',
     values: {
       selectedItem: state.selectedItem?.value as T ?? null,
