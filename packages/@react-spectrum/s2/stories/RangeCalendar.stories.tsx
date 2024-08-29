@@ -18,7 +18,8 @@ const meta: Meta<typeof RangeCalendar> = {
   component: RangeCalendar,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/RangeCalendar'
 };
 
 export default meta;

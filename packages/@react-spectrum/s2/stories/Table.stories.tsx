@@ -19,7 +19,8 @@ const meta: Meta<typeof Table> = {
   component: Table,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/Table'
 };
 
 export default meta;

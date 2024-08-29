@@ -27,7 +27,8 @@ const meta: Meta<typeof Avatar> = {
         {children(args)}
       </div>
     ) : children(args)
-  )
+  ),
+  title: 'S2/Avatar'
 };
 
 export default meta;

@@ -18,7 +18,8 @@ const meta: Meta<typeof AlertDialog> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/AlertDialog'
 };
 
 export default meta;
@@ -28,7 +29,7 @@ export const Example = (args: any) => (
     <ActionButton>Save</ActionButton>
     <AlertDialog {...args} >
       You have not saved your profile information
-      for this account. Would you like to register now?   
+      for this account. Would you like to register now?
     </AlertDialog>
   </DialogTrigger>
 );

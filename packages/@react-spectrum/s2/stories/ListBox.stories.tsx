@@ -18,7 +18,8 @@ const meta: Meta<typeof ListBox> = {
   component: ListBox,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/ListBox'
 };
 
 export default meta;

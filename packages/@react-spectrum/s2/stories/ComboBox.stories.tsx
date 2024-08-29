@@ -26,7 +26,8 @@ const meta: Meta<typeof ComboBox<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'S2/ComboBox'
 };
 
 export default meta;

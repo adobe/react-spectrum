@@ -18,7 +18,8 @@ const meta: Meta<typeof DatePicker> = {
   component: DatePicker,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/DatePicker'
 };
 
 export default meta;

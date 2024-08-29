@@ -18,7 +18,8 @@ const meta: Meta<typeof GridList> = {
   component: GridList,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/GridList'
 };
 
 export default meta;

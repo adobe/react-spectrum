@@ -20,7 +20,8 @@ const meta: Meta<typeof Badge> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/Badge'
 };
 
 export default meta;

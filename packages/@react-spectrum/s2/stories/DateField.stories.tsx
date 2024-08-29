@@ -18,7 +18,8 @@ const meta: Meta<typeof DateField> = {
   component: DateField,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/DateField'
 };
 
 export default meta;

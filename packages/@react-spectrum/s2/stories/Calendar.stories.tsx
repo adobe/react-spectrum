@@ -18,7 +18,8 @@ const meta: Meta<typeof Calendar> = {
   component: Calendar,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/Calendar'
 };
 
 export default meta;

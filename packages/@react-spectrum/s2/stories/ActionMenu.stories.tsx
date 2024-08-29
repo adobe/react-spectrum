@@ -23,7 +23,8 @@ const meta: Meta<typeof ActionMenu> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onOpenChange'])
-  }
+  },
+  title: 'S2/ActionMenu'
 };
 
 export default meta;

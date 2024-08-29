@@ -30,7 +30,8 @@ const meta: Meta<typeof CheckboxGroup> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/CheckboxGroup'
 };
 
 export default meta;

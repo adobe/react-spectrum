@@ -18,7 +18,8 @@ const meta: Meta<typeof TimeField> = {
   component: TimeField,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/TimeField'
 };
 
 export default meta;

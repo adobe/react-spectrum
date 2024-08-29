@@ -29,7 +29,8 @@ const meta: Meta<typeof ColorField> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/ColorField'
 };
 
 export default meta;

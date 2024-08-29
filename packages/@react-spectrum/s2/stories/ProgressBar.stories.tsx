@@ -20,7 +20,8 @@ const meta: Meta<typeof ProgressBar> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/ProgressBar'
 };
 
 export default meta;

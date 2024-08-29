@@ -24,7 +24,8 @@ const meta: Meta<typeof ToggleButton> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
-  }
+  },
+  title: 'S2/ToggleButton'
 };
 
 export default meta;

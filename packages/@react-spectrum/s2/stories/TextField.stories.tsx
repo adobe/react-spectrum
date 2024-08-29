@@ -25,7 +25,8 @@ const meta: Meta<typeof TextField> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/TextField'
 };
 
 export default meta;
@@ -111,12 +112,12 @@ TextAreaExample.args = {
   label: 'Comment'
 };
 
-export const CustomFieldWidth = (args: any) => <TextField {...args} styles={style({width: 384})} />;
+export const CustomWidth = (args: any) => <TextField {...args} styles={style({width: 384})} />;
 
-CustomFieldWidth.args = {
+CustomWidth.args = {
   label: 'Name'
 };
-CustomFieldWidth.parameters = {
+CustomWidth.parameters = {
   docs: {
     disable: true
   }

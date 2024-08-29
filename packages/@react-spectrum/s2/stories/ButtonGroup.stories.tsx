@@ -20,7 +20,8 @@ const meta: Meta<typeof ButtonGroup> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/ButtonGroup'
 };
 
 export default meta;

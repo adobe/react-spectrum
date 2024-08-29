@@ -26,7 +26,8 @@ const meta: Meta<typeof ActionButton> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
-  }
+  },
+  title: 'S2/ActionButton'
 };
 
 export default meta;

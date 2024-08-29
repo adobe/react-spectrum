@@ -39,7 +39,8 @@ const meta: Meta<typeof Picker<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'S2/Picker'
 };
 
 export default meta;

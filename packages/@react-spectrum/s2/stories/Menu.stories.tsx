@@ -33,7 +33,8 @@ const meta: Meta<typeof CombinedMenu> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'])
-  }
+  },
+  title: 'S2/Menu'
 };
 
 export default meta;

@@ -26,7 +26,8 @@ const meta: Meta<typeof Slider> = {
   tags: ['autodocs'],
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/Slider'
 };
 
 export default meta;
@@ -42,13 +43,13 @@ Example.args = {
   defaultValue: 30
 };
 
-export const FillOffsetExample = (args: any) => (
+export const FillOffset = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
     <Slider {...args} />
   </div>
 );
 
-FillOffsetExample.args = {
+FillOffset.args = {
   label: 'Exposure',
   fillOffset: 0,
   defaultValue: 1.83,

@@ -25,7 +25,8 @@ const meta: Meta<typeof Toolbar> = {
   component: Toolbar,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/Toolbar'
 };
 
 export default meta;

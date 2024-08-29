@@ -22,7 +22,8 @@ const meta: Meta<typeof ColorArea> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  }
+  },
+  title: 'S2/ColorArea'
 };
 
 export default meta;

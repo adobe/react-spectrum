@@ -22,7 +22,8 @@ const meta: Meta<typeof Tabs> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/Tabs'
 };
 
 export default meta;

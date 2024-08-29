@@ -31,7 +31,8 @@ const meta: Meta<typeof Breadcrumbs> = {
       table: {category: 'Events'}
     }
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/Breadcrumbs'
 };
 
 export default meta;
