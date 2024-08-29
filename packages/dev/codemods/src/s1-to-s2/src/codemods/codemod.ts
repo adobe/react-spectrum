@@ -4,6 +4,7 @@ import {API, FileInfo} from 'jscodeshift';
 import {changes as changesJSON} from './changes';
 import {functionMap} from './transforms';
 import {getComponents} from '../getComponents';
+import {iconMap} from '../iconMap';
 import * as t from '@babel/types';
 import {transformStyleProps} from './styleProps';
 import traverse, {Binding, NodePath} from '@babel/traverse';
@@ -39,6 +40,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   let importedComponents = new Map<string, t.ImportSpecifier | t.ImportNamespaceSpecifier>();
   let elements: [string, NodePath<t.JSXElement>][] = [];
   let lastImportPath: NodePath<t.ImportDeclaration> | null = null;
+  let iconImports: Map<string, {path: NodePath<t.ImportDeclaration>, newName: string | null}> = new Map();
   const leadingComments = root.find(j.Program).get('body', 0).node.leadingComments;
   traverse(root.paths()[0].node, {
     ImportDeclaration(path) {
@@ -90,6 +92,22 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
             }
           }
         }
+      } else if (path.node.source.value.startsWith('@spectrum-icons/workflow/')) {
+        let importSource = path.node.source.value;
+        let iconName = importSource.split('/').pop();
+        if (!iconName) {return;}
+
+        let specifier = path.node.specifiers[0];
+        if (!specifier || !t.isImportDefaultSpecifier(specifier)) {return;}
+
+        let localName = specifier.local.name;
+        
+        if (iconMap.has(iconName)) {
+          let newIconName = iconMap.get(iconName)!;
+          iconImports.set(localName, {path, newName: newIconName});
+        } else {
+          iconImports.set(localName, {path, newName: null});
+        }
       }
     },
     Import(path) {
@@ -109,6 +127,41 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
 
       // TODO: implement this. could be a bit challenging. punting for now.
       addComment(call.node, ' TODO(S2-upgrade): check this dynamic import');
+    },
+    JSXOpeningElement(path) {
+      let name = path.node.name;
+      if (t.isJSXIdentifier(name) && iconImports.has(name.name)) {
+        let iconInfo = iconImports.get(name.name)!;
+        if (iconInfo.newName === null) {
+          addComment(path.node, ` TODO(S2-upgrade): A Spectrum 2 equivalent to '${name.name}' was not found. Please update this icon manually.`);
+        }
+      }
+    }
+  });
+
+  iconImports.forEach((iconInfo, localName) => {
+    let {path, newName} = iconInfo;
+    if (newName) {
+      let newImportSource = `@react-spectrum/s2/icons/${newName}`;
+      
+      // Check if we can update local name
+      let newLocalName = localName;
+      if (localName === path.node.source.value.split('/').pop() && localName !== newName) {
+        let binding = path.scope.getBinding(localName);
+        if (binding && !path.scope.hasBinding(newName)) {
+          newLocalName = newName;
+          // Rename all references
+          binding.referencePaths.forEach(refPath => {
+            if (t.isJSXIdentifier(refPath.node)) {
+              refPath.node.name = newName;
+            }
+          });
+        }
+      }
+
+      // Update the import
+      path.node.source = t.stringLiteral(newImportSource);
+      path.node.specifiers = [t.importDefaultSpecifier(t.identifier(newLocalName))];
     }
   });
 
