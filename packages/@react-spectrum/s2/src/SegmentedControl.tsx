@@ -175,9 +175,9 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 
   // if the registration fails, then we will default select the first item
   useLayoutEffect(() => {
-    if (state && isRegistered.current == false) {
+    if (state && isRegistered.current === false) {
       state.setSelectedValue(disabledIsRegistered.current);
-    } else if (isRegistered.current == false && disabledIsRegistered.current == null) {
+    } else if (isRegistered.current === false && disabledIsRegistered.current == null) {
       throw new Error('Could not determine a default selected item');
     }
   }, []);
