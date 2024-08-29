@@ -213,7 +213,7 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
       let currentItem = currentSelectedRef?.current.getBoundingClientRect();
 
       let deltaX = prevRef?.current.left - currentItem?.left;
-      // let duration = Math.abs(deltaX)/0.3;
+      let duration = Math.abs(deltaX)/0.4;
 
       currentSelectedRef.current.animate(
         [
@@ -221,7 +221,7 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
           {transform: 'translateX(0px)', width: `${currentItem.width}px`}
         ],
         {
-          duration: 200,
+          duration: duration,
           easing: 'ease-out'
         }
       );
