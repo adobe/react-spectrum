@@ -964,21 +964,7 @@ export function FocusExample(args = {}) {
                 items={tree.items}
                 selectedKeys={tree.selectedKeys}
                 onSelectionChange={(keys) => {
-                  if (keys === 'all') {
-                    tree.setSelectedKeys(new Set(tree.items.reduce((acc, item) => {
-                      acc.push(item.key);
-                      function traverse(children) {
-                        if (children) {
-                          children.forEach(child => {
-                            acc.push(child.key);
-                            traverse(child.children);
-                          });
-                        }
-                      }
-                      traverse(item.children);
-                      return acc;
-                    }, [] as Key[])));
-                  } else {
+                  if (keys !== 'all') {
                     tree.setSelectedKeys(keys);
                   }
                 }}
@@ -1091,7 +1077,7 @@ export function WithTreeData() {
     ],
     initialSelectedKeys: ['Sam', 'Kangaroo'],
     getKey: item => item.name,
-    getChildren: item => item.items
+    getChildren: item => item.items || []
   });
   return (
     <ListBox

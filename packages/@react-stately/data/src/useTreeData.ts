@@ -21,7 +21,7 @@ export interface TreeOptions<T extends object> {
   /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
   /** A function that returns the children for an item object. */
-  getChildren?: (item: T) => T[] | null
+  getChildren?: (item: T) => T[]
 }
 
 interface TreeNode<T extends object> {
