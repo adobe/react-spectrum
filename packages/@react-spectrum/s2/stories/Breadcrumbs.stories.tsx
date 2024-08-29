@@ -108,3 +108,23 @@ export const ManyWithLinks = (args: any) => (
     </Breadcrumbs>
   </div>
 );
+
+// will delete this story afterwards because it's just for testing
+let exactlyMaxItems = [
+  {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
+  {id: 'Folder 2', name: 'My Documents', href: '/folder2'},
+  {id: 'Folder 3', name: 'Kangaroos jump high', href: '/folder3'},
+  {id: 'Folder 4', name: 'Koalas are very cute', href: '/folder4'}
+];
+
+export const ExactlyMaxItems = (args: any) => (
+  <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
+    <Breadcrumbs items={exactlyMaxItems} {...args}>
+      {item => (
+        <Breadcrumb href={item.href}>
+          {item.name}
+        </Breadcrumb>
+      )}
+    </Breadcrumbs>
+  </div>
+);

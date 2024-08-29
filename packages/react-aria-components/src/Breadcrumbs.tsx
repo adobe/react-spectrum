@@ -31,6 +31,7 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
+  console.log('Breadcrumbs RAC', props.isDisabled);
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>

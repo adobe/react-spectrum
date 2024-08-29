@@ -233,6 +233,12 @@ const chevronStyles = style({
     default: 'text-to-visual',
     isMenu: 0
   },
+  color: {
+    default: 'neutral',
+    forcedColors: {
+      default: 'LinkText'
+    }
+  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -380,6 +386,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
   let {containerRef, onAction} = useContext(CollapseContext) ?? {};
   let [visibleItems, setVisibleItems] = useState(collection.size);
+  let {size} = useContext(InternalBreadcrumbsContext);
 
   let children = useMemo(() => {
     let result: Node<any>[] = [];
@@ -412,16 +419,26 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
     let containerGap = parseInt(getComputedStyle(container).gap, 10);
     let folderGap = parseInt(getComputedStyle(folder).marginInlineStart, 10);
     let newVisibleItems = 0;
+    let maxVisibleItems = MAX_VISIBLE_ITEMS;
 
     let widths: Array<number> = [];
+    let totalWidth = 0;
     for (let breadcrumb of listItems) {
       let width = breadcrumb.offsetWidth + 1; // offsetWidth is rounded down
       widths.push(width);
+      totalWidth += width;
+    }
+
+    // can we fit all the items without collapsing
+    if (totalWidth <= containerWidth - (collection.size * containerGap) && collection.size <= MAX_VISIBLE_ITEMS) {
+      setVisibleItems(collection.size);
+      return;
     }
 
     // we know there is always at least one item because of the listItems.length check up above
     let widthOfFirst = widths.shift()!;
     let availableWidth = containerWidth - widthOfFirst - folderGap - folder.offsetWidth - containerGap;
+    maxVisibleItems -= 2; // account for the first item and folder
     for (let width of widths.reverse()) {
       availableWidth -= width;
       if (availableWidth <= 0) {
@@ -431,7 +448,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       newVisibleItems++;
     }
 
-    setVisibleItems(Math.max(MIN_VISIBLE_ITEMS, Math.min(MAX_VISIBLE_ITEMS, newVisibleItems)));
+    setVisibleItems(Math.max(MIN_VISIBLE_ITEMS, Math.min(maxVisibleItems, newVisibleItems)));
   }, [collection.size, setVisibleItems]);
 
   // making bad assumption that i can listen to containerRef when it's declared in the parent?
@@ -452,7 +469,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
 
   return (
     <>
-      <HiddenBreadcrumbs items={children} size="M" listRef={listRef} />
+      <HiddenBreadcrumbs items={children} size={size} listRef={listRef} />
       {visibleItems < collection.size ? (
         <>
           {children[0].render?.(children[0])}
@@ -462,7 +479,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
         </>
       ) : (
         <>
-          {children.map(node => node.render?.(node))}
+          {children.map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment>)}
         </>
       )}
     </>
