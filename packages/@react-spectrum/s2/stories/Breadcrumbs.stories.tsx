@@ -109,7 +109,7 @@ export const ManyWithLinks = (args: any) => (
   </div>
 );
 
-// will delete this story afterwards because it's just for testing
+// will delete these stories afterwards because it's just for testing
 let exactlyMaxItems = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
   {id: 'Folder 2', name: 'My Documents', href: '/folder2'},
@@ -120,6 +120,39 @@ let exactlyMaxItems = [
 export const ExactlyMaxItems = (args: any) => (
   <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
     <Breadcrumbs items={exactlyMaxItems} {...args}>
+      {item => (
+        <Breadcrumb href={item.href}>
+          {item.name}
+        </Breadcrumb>
+      )}
+    </Breadcrumbs>
+  </div>
+);
+
+let twoItems = [
+  {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
+  {id: 'Folder 2', name: 'My Documents', href: '/folder2'}
+];
+
+export const TwoItems = (args: any) => (
+  <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
+    <Breadcrumbs items={twoItems} {...args}>
+      {item => (
+        <Breadcrumb href={item.href}>
+          {item.name}
+        </Breadcrumb>
+      )}
+    </Breadcrumbs>
+  </div>
+);
+
+let oneItems = [
+  {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'}
+];
+
+export const OneItems = (args: any) => (
+  <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
+    <Breadcrumbs items={oneItems} {...args}>
       {item => (
         <Breadcrumb href={item.href}>
           {item.name}

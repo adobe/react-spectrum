@@ -465,7 +465,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
   return (
     <>
       <HiddenBreadcrumbs items={children} size={size} listRef={listRef} />
-      {visibleItems < collection.size ? (
+      {visibleItems < collection.size && collection.size > 2 ? (
         <>
           {children[0].render?.(children[0])}
           <BreadcrumbMenu items={children.slice(1, sliceIndex)} onAction={onAction} />
