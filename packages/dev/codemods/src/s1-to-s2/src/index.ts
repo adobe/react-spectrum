@@ -53,7 +53,7 @@ export async function s1_to_s2(options: S1ToS2CodemodOptions) {
       `  - Vite: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/examples/s2-vite-project')}\n` +
       `  - Rollup: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/examples/s2-rollup-starter-app')}\n` +
       `  - ESBuild: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/examples/s2-esbuild-starter-app')}\n\n` +
-      `or view documentation for the plugin here: ${chalk.underline('https://jsr.io/@unplugin/macros')}`
+      `or view documentation here: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/intro--docs#configuring-your-bundler')}`
     );
   }
 
@@ -63,7 +63,7 @@ export async function s1_to_s2(options: S1ToS2CodemodOptions) {
     `${chalk.bold('TODO(S2-upgrade)')}\n\n` +
     'You should be able to search your codebase and handle these manually. \n\n' +
     'We also recommend running your project\'s code formatter (i.e. Prettier, ESLint) after the upgrade process to clean up any extraneous formatting from the codemod.\n\n' +
-    `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://github.com/adobe/react-spectrum/tree/main/packages/@react-spectrum/codemods/s1-to-s2/UPGRADE.md')}`
+    `For additional help, reference the Spectrum 2 Migration Guide: ${chalk.underline('https://react-spectrum.adobe.com/s2/index.html?path=/docs/migrating--docs')}`
   );
 
   console.log(boxen(
