@@ -22,13 +22,13 @@ export function announce(
   message: string,
   assertiveness: Assertiveness = 'assertive',
   timeout = LIVEREGION_TIMEOUT_DELAY,
-  isIds = false // better name? better description?
+  mode: 'message' | 'ids' = 'message'
 ) {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
   }
 
-  liveAnnouncer.announce(message, assertiveness, timeout, isIds);
+  liveAnnouncer.announce(message, assertiveness, timeout, mode);
 }
 
 /**
@@ -106,13 +106,13 @@ class LiveAnnouncer {
     this.node = null;
   }
 
-  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY, isIds = false) {
+  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY, mode: 'message' | 'ids' = 'message') {
     if (!this.node) {
       return;
     }
 
     let node = document.createElement('div');
-    if (!isIds) {
+    if (mode === 'message') {
       node.textContent = message;
     } else {
       // To read an aria-labelledby, the element must have an appropriate role, such as img.

@@ -92,7 +92,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /** The value associated with the button's name when it's submitted with the form data. */
   value?: string,
   /**
-   * Whether to disable events immediately and display a `renderPendingState` after a `pendingDelay`.
+   * Whether to disable events immediately and display the `ProgressBar`.
    */
   isPending?: boolean
 }
@@ -169,7 +169,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       <Provider
         values={[
           [TextContext, {id: contentId, ref: textCallbackRef}],
-          [ProgressBarContext, {id: progressId, style: {display: isPending ? undefined : 'none'}, ref: progressCallbackRef}]
+          [ProgressBarContext, {id: progressId, style: {display: isPending ? undefined : 'none'}, isIndeterminate: true, ref: progressCallbackRef}]
         ]}>
         {renderProps.children}
       </Provider>
@@ -206,13 +206,13 @@ function useEnforcePendingComponents(props) {
     progressRef.current = node;
     queueMicrotask(() => {
       if (!progressRef.current && ref.current && isPending) {
-        throw new Error('Expected <Progress> to be used with pending button');
+        throw new Error('Expected <ProgressBar> to be used with pending button');
       }
     });
   }, [isPending, ref]);
   useEffect(() => {
     if (isPending && (!textRef.current || !progressRef.current)) {
-      throw new Error('Expected <Text> and <Progress> to be used with pending button');
+      throw new Error('Expected <Text> and <ProgressBar> to be used with pending button');
     }
   }, [isPending, textRef, progressRef]);
   return {textCallbackRef, progressCallbackRef};
