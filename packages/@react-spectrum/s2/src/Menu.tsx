@@ -42,7 +42,7 @@ import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressProvider} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
@@ -515,9 +515,9 @@ function MenuTrigger(props: MenuTriggerProps) {
       <AriaMenuTrigger {...props}>
         {/* RAC sets isPressed via PressResponder when the menu is open.
             We don't want press scaling to appear to get "stuck", so override this. */}
-        <PressResponder isPressed={false}>
+        <PressProvider isPressed={false}>
           {props.children}
-        </PressResponder>
+        </PressProvider>
       </AriaMenuTrigger>
     </InternalMenuTriggerContext.Provider>
   );
