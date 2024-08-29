@@ -183,6 +183,10 @@ const ROW_HEIGHTS = {
 type Scale = 'large' | 'medium';
 
 export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
+  constructor(options) {
+    super({...options, loaderHeight: 60});
+  }
+
   protected isStickyColumn(node: GridNode<T>): boolean {
     return node.props.isSticky;
   }
