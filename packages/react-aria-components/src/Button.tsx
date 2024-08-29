@@ -142,9 +142,9 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   let wasPending = useRef(isPending);
   useEffect(() => {
     if (!wasPending.current && isFocused && isPending && isAppleDevice()) {
-      announce(isPendingAriaLiveLabelledby, 'assertive', undefined, true);
+      announce(isPendingAriaLiveLabelledby, 'assertive', undefined, 'ids');
     } else if (wasPending.current && isFocused && !isPending && isAppleDevice()) {
-      announce(buttonId, 'assertive', undefined, true);
+      announce(buttonId, 'assertive', undefined, 'ids');
     }
     wasPending.current = isPending;
   }, [isPending, isFocused, isPendingAriaLiveLabelledby, buttonId]);

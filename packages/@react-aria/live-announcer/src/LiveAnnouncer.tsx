@@ -57,9 +57,9 @@ export function destroyAnnouncer() {
 // is simple enough to implement without React, so that's what we do here.
 // See this discussion for more details: https://github.com/reactwg/react-18/discussions/125#discussioncomment-2382638
 class LiveAnnouncer {
-  node: HTMLElement | null;
-  assertiveLog: HTMLElement;
-  politeLog: HTMLElement;
+  node: HTMLElement | null = null;
+  assertiveLog: HTMLElement | null = null;
+  politeLog: HTMLElement | null = null;
 
   constructor() {
     if (typeof document !== 'undefined') {
