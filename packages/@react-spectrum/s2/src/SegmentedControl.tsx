@@ -17,7 +17,7 @@ import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -70,7 +70,10 @@ const controlItem = style({
     }
   },
   // TODO: update this padding for icon-only items when we introduce the non-track style back
-  paddingX: 'edge-to-text',
+  paddingX: {
+    default: 'edge-to-text',
+    isIconOnly: size(6)
+  },
   height: 32,
   alignItems: 'center',
   flexBasis: 0,
@@ -172,8 +175,10 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 
   // if the registration fails, then we will default select the first item
   useLayoutEffect(() => {
-    if (state && isRegistered.current === false) {
+    if (state && isRegistered.current == false) {
       state.setSelectedValue(disabledIsRegistered.current);
+    } else if (isRegistered.current == false && disabledIsRegistered.current == null) {
+      throw new Error('Could not determine a default selected item');
     }
   }, []);
 
@@ -199,14 +204,23 @@ function SegmentedControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLab
   let isReduced = false;
   if (window?.matchMedia) {
     isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   }
   
+  let isIconOnly = useRef<boolean>(false);
+  useLayoutEffect(() => {
+    if (domRef?.current) {
+      let textContent = domRef.current.textContent;
+      if (!textContent) {
+        isIconOnly.current = true;
+      }
+    }
+  }, []);
+
   useLayoutEffect(() => {
     if (!props.isDisabled) {
-      register?.(props.value, props.isDisabled);
+      register?.(props.value, false);
     } else if (props.isDisabled) {
-      register?.(props.value, props.isDisabled);
+      register?.(props.value, true);
     }
   }, []);
 
@@ -238,10 +252,10 @@ function SegmentedControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLab
       ref={domRef} 
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps}, props.styles)} >
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isIconOnly: isIconOnly?.current}, props.styles)} >
       {({isSelected, isFocusVisible, isPressed, isDisabled}) => (
         <>
-          {isSelected && <div id="animate" className={slider({isFocusVisible, isDisabled})} ref={currentSelectedRef} />}
+          {isSelected && <div className={slider({isFocusVisible, isDisabled})} ref={currentSelectedRef} />}
           <Provider 
             values={[
               [IconContext, {
@@ -251,7 +265,7 @@ function SegmentedControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLab
               [TextContext, {styles: style({order: 1, truncate: true})}
               ]
             ]}>
-            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual'})}>
+            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual', transition: 'default'})}>
               {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
             </div>
           </Provider>
