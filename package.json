@@ -48,7 +48,7 @@
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
     "version:nightly": "yarn workspaces foreach --all --no-private -t version -d 3.0.0-nightly-$(git rev-parse --short HEAD)-$(date +'%d%m%y') && yarn version apply --all",
-    "publish:nightly": "yarn workspaces foreach --all --no-private -t npm publish",
+    "publish:nightly": "yarn workspaces foreach --all --no-private -t npm publish --tag nightly",
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
