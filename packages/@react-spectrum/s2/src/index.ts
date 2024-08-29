@@ -51,7 +51,7 @@ export {Radio} from './Radio';
 export {RadioGroup, RadioGroupContext} from './RadioGroup';
 export {RangeSlider, RangeSliderContext} from './RangeSlider';
 export {SearchField, SearchFieldContext} from './SearchField';
-export {SegmentedControl, ControlItem, SegmentedControlContext} from './SegmentedControl';
+export {SegmentedControl, SegmentedControlItem, SegmentedControlContext} from './SegmentedControl';
 export {Slider, SliderContext} from './Slider';
 export {StatusLight, StatusLightContext} from './StatusLight';
 export {Switch, SwitchContext} from './Switch';

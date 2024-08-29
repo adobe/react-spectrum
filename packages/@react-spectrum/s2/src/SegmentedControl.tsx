@@ -23,7 +23,7 @@ import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly' | 'name' | 'isRequired' | 'isInvalid' | 'validate' | 'validationBehavior' | 'children' | 'className' | 'style' | 'aria-label'>, StyleProps{
+export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly' | 'name' | 'isRequired' | 'isInvalid' | 'validate' | 'validationBehavior' | 'children' | 'className' | 'style' | 'aria-label' | 'orientation'>, StyleProps{
   /**
    * The content to display in the segmented control.
    */
@@ -78,6 +78,7 @@ const controlItem = style({
   flexShrink: 0,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
+  disableTapHighlight: true,
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -156,7 +157,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
-  let disabledIsRegistered = useRef<string | null>(null);
+  let disabledIsRegistered = useRef<string | null>(props.defaultValue ?? props.value ?? null);
 
   // default select the first available item
   let register = useCallback((value: string, isDisabled?: boolean) => {
@@ -172,10 +173,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   // if the registration fails, then we will default select the first item
   useLayoutEffect(() => {
     if (state && isRegistered.current === false) {
-      console.log(disabledIsRegistered.current);
       state.setSelectedValue(disabledIsRegistered.current);
-    } else {
-      new Error('Could not determine a default selected item');
     }
   }, []);
 
@@ -190,7 +188,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   );
 }
 
-function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
+function SegmentedControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let divRef = useRef<HTMLDivElement>(null);
@@ -198,8 +196,12 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
   let state = useContext(RadioGroupStateContext);
   let isSelected = props.value === state?.selectedValue;
   // do not apply animation if a user has the prefers-reduced-motion setting
-  const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let isReduced = false;
+  if (window?.matchMedia) {
+    isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  }
+  
   useLayoutEffect(() => {
     if (!props.isDisabled) {
       register?.(props.value, props.isDisabled);
@@ -213,7 +215,7 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
       let currentItem = currentSelectedRef?.current.getBoundingClientRect();
 
       let deltaX = prevRef?.current.left - currentItem?.left;
-      let duration = Math.abs(deltaX)/0.4;
+      let duration = Math.abs(deltaX) / 0.4;
 
       currentSelectedRef.current.animate(
         [
@@ -249,7 +251,6 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
               [TextContext, {styles: style({order: 1, truncate: true})}
               ]
             ]}>
-            {/* still need this zIndex unfortunately. without it, the slider renders on top of the text */}
             <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual'})}>
               {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
             </div>
@@ -264,8 +265,8 @@ function ControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement
 /**
  * A control items represents an individual control within a segmented control.
  */
-const _ControlItem = /*#__PURE__*/ forwardRef(ControlItem);
-export {_ControlItem as ControlItem};
+const _SegmentedControlItem = /*#__PURE__*/ forwardRef(SegmentedControlItem);
+export {_SegmentedControlItem as SegmentedControlItem};
 
 /**
  * A segmented control is a mutually exclusive group of buttons, with or without a track.
