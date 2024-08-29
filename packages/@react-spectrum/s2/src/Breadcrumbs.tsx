@@ -144,7 +144,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
                 {...item.props.originalProps}
                 key={item.key}>
                 <Text slot="label">
-                  {item.props.children({size, isInCtx: true, isCurrent: false, isMenu: true})}
+                  {item.props.children({size, isCurrent: false, isMenu: true})}
                 </Text>
               </MenuItem>
             )}
@@ -190,7 +190,7 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
             style={item.props.UNSAFE_style}
             key={item.key}
             className={item.props.className({size, isCurrent: idx === items.length - 1})}>
-            {item.props.children({size, isInCtx: true, isCurrent: idx === items.length - 1})}
+            {item.props.children({size, isCurrent: idx === items.length - 1})}
           </div>
         );
       })}
