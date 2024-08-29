@@ -138,7 +138,6 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
           <S2ActionButton isDisabled={isDisabled} isQuiet aria-label="See more"><FolderIcon /></S2ActionButton>
-          {/* @ts-ignore - how are these onAction's not compatible? */}
           <Menu items={items} onAction={onAction}>
             {(item: Node<any>) => (
               <MenuItem
@@ -386,7 +385,7 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
   let {containerRef, onAction} = useContext(CollapseContext) ?? {};
   let [visibleItems, setVisibleItems] = useState(collection.size);
-  let {size} = useContext(InternalBreadcrumbsContext);
+  let {size = 'M'} = useContext(InternalBreadcrumbsContext);
 
   let children = useMemo(() => {
     let result: Node<any>[] = [];
@@ -473,7 +472,6 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       {visibleItems < collection.size ? (
         <>
           {children[0].render?.(children[0])}
-          {/* @ts-ignore - how are these onAction's not compatible? */}
           <BreadcrumbMenu items={children.slice(1, sliceIndex)} onAction={onAction} />
           {children.slice(sliceIndex).map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment >)}
         </>
