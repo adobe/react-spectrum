@@ -443,6 +443,8 @@ function ActionGroup(props) {
 const tagStyles = style({
   ...focusRing(),
   display: 'inline-flex',
+  boxSizing: 'border-box',
+  maxWidth: 'full',
   verticalAlign: 'middle',
   alignItems: 'center',
   justifyContent: 'center',
