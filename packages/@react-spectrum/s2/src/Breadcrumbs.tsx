@@ -247,6 +247,7 @@ const chevronStyles = style({
 const linkStyles = style({
   ...focusRing(),
   borderRadius: 'sm',
+  font: 'control',
   color: {
     default: 'neutral-subdued',
     isDisabled: 'disabled',
@@ -257,11 +258,6 @@ const linkStyles = style({
     }
   },
   transition: 'default',
-  font: 'control',
-  fontWeight: {
-    default: 'normal',
-    isCurrent: 'bold'
-  },
   textDecoration: {
     default: 'none',
     isHovered: 'underline',
@@ -339,7 +335,7 @@ function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIEle
                   ping={ping}
                   referrerPolicy={referrerPolicy}
                   isDisabled={isDisabled || isCurrent}
-                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isCurrent, isPressed})}>
+                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed})}>
                   {children}
                 </Link>
                 <ChevronIcon
