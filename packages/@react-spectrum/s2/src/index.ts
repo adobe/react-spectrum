@@ -100,7 +100,7 @@ export type {ProviderProps} from './Provider';
 export type {RadioProps} from './Radio';
 export type {RadioGroupProps} from './RadioGroup';
 export type {SearchFieldProps} from './SearchField';
-export type {SegmentedControlProps, ControlItemProps} from './SegmentedControl';
+export type {SegmentedControlProps, SegmentedControlItemProps} from './SegmentedControl';
 export type {SliderProps} from './Slider';
 export type {RangeSliderProps} from './RangeSlider';
 export type {StatusLightProps} from './StatusLight';

@@ -37,7 +37,7 @@ export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly
    */
   'aria-label': string
 }
-export interface ControlItemProps extends Omit<RadioProps, 'children' | 'className' | 'style' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
+export interface SegmentedControlItemProps extends Omit<RadioProps, 'children' | 'className' | 'style' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
   /**
    * The content to display in the control item.
    */
@@ -193,7 +193,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   );
 }
 
-function SegmentedControlItem(props: ControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
+function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let divRef = useRef<HTMLDivElement>(null);
