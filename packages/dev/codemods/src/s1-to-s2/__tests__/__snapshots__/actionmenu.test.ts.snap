@@ -2,7 +2,6 @@
 
 exports[`Dynamic - no change 1`] = `
 "import { MenuItem, ActionMenu } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 let actionMenuItems = [
   {name: 'Cut'},
   {name: 'Copy'},
@@ -19,7 +18,6 @@ let actionMenuItems = [
 
 exports[`Static - no change 1`] = `
 "import { MenuItem, ActionMenu } from "@react-spectrum/s2";
-import { Item } from '@adobe/react-spectrum';
 
 <div>
   <ActionMenu>

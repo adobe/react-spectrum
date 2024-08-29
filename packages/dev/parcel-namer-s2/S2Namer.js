@@ -25,7 +25,7 @@ module.exports = new Namer({
         ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
       }
       let originalExt = path.extname(mainAsset.filePath);
-      let name = path.basename(mainAsset.filePath, originalExt);
+      let name = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
       if (mainAsset.filePath.includes('spectrum-illustrations/linear')) {
         if (originalExt === '.svg') {
           return 'linear/internal/' + name + ext;
