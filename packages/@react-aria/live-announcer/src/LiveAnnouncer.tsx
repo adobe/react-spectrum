@@ -121,9 +121,9 @@ class LiveAnnouncer {
     }
 
     if (assertiveness === 'assertive') {
-      this.assertiveLog.appendChild(node);
+      this.assertiveLog?.appendChild(node);
     } else {
-      this.politeLog.appendChild(node);
+      this.politeLog?.appendChild(node);
     }
 
     if (message !== '') {
@@ -138,11 +138,11 @@ class LiveAnnouncer {
       return;
     }
 
-    if (!assertiveness || assertiveness === 'assertive') {
+    if ((!assertiveness || assertiveness === 'assertive') && this.assertiveLog) {
       this.assertiveLog.innerHTML = '';
     }
 
-    if (!assertiveness || assertiveness === 'polite') {
+    if ((!assertiveness || assertiveness === 'polite') && this.politeLog) {
       this.politeLog.innerHTML = '';
     }
   }
