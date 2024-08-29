@@ -15,6 +15,7 @@ let availableComponents = getComponents();
 availableComponents.add('View');
 availableComponents.add('Flex');
 availableComponents.add('Grid');
+availableComponents.add('Well');
 
 // Replaced by collection component-specific items
 availableComponents.add('Item');
@@ -203,9 +204,11 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
         t.isIdentifier(b.path.node.imported) &&
         (b.path.node.imported.name === 'Item' || b.path.node.imported.name === 'Section')
       ) {
-        // Keep Item and Section imports
-        // TODO: remove if they are unused
-        return;
+        // Keep Item and Section imports if they are still used
+        bindings[0]?.path.scope.crawl();
+        if (bindings[0]?.path.scope.bindings[b.path.node.local.name]?.referencePaths.length > 0) {
+          return;
+        }
       }
       b.path.remove();
 
