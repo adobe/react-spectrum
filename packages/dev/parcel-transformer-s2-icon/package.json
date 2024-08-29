@@ -6,7 +6,7 @@
     "parcel": "2.0.0-dev.1599"
   },
   "dependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.34",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.46",
     "@parcel/plugin": "2.0.0-dev.1601"
   },
   "rsp": {
