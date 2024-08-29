@@ -40,11 +40,11 @@ import {
   UNSTABLE_Virtualizer,
   useTableOptions
 } from 'react-aria-components';
+import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
 import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -59,7 +59,7 @@ import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRe
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
-import {useIsMobileDevice} from '@react-spectrum/utils';
+import {useIsMobileDevice} from './utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -145,15 +145,15 @@ const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckbox
   // These scroll padding values are kinda odd (expected them to match the header height and checkbox column width) but they are the best fit from testing
   scrollPaddingTop: {
     scale: {
-      medium: '[21px]',
-      large: '[27px]'
+      medium: size(21),
+      large: size(27)
     }
   },
   scrollPaddingStart: {
     isCheckboxSelection: {
       scale: {
-        medium: '[27px]',
-        large: '[33px]'
+        medium: size(27),
+        large: size(33)
       }
     }
   }
@@ -432,10 +432,7 @@ const columnStyles = style({
   height: '[inherit]',
   boxSizing: 'border-box',
   color: {
-    default: 'gray-800', // neutral-content-color-default
-    isHovered: 'gray-900', // neutral-content-color-hover
-    isPressed: 'gray-900', // neutral-content-color-down
-    isFocusVisible: 'gray-900', // neutral-content-color-key-focus,
+    default: 'neutral',
     forcedColors: 'ButtonText'
   },
   paddingX: {
@@ -785,13 +782,7 @@ const tableHeader = style({
 });
 
 const selectAllCheckbox = style({
-  marginStart: 16, // table-edge-to-content, same between mobile and desktop
-  marginEnd: {
-    default: 8,
-    scale: {
-      large: 14
-    }
-  }
+  marginStart: 16 // table-edge-to-content, same between mobile and desktop
 });
 
 const selectAllCheckboxColumn = style({
@@ -822,14 +813,14 @@ export function TableHeader<T extends object>({columns, children}: TableHeaderPr
         {selectionBehavior === 'toggle' && (
           // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
           // @ts-ignore
-          <RACColumn isSticky width={scale === 'medium' ? 40 : 48} minWidth={40} className={selectAllCheckboxColumn}>
+          <RACColumn isSticky width={scale === 'medium' ? 40 : 52} minWidth={scale === 'medium' ? 40 : 52} className={selectAllCheckboxColumn}>
             {({isFocusVisible}) => (
               <>
                 {selectionMode === 'single' &&
                   <CellFocusRing isFocusVisible={isFocusVisible} />
                 }
                 {selectionMode === 'multiple' &&
-                  <Checkbox isEmphasized styles={selectAllCheckbox({scale})} slot="selection" />
+                  <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
                 }
               </>
             )}
@@ -860,27 +851,9 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps>({
   ...commonCellStyles,
-  color: {
-    default: 'gray-800', // neutral-content-color-default
-    isHovered: 'gray-900', // neutral-content-color-hover
-    isPressed: 'gray-900', // neutral-content-color-down
-    isFocusVisible: 'gray-900' // neutral-content-color-key-focus
-  },
-  // Still need this paddingTop/Bottom for overflow wrap
-  paddingTop: {
-    default: size(10), // table-row-top-to-text-medium-regular
-    density: {
-      spacious: size(15), // table-row-top-to-text-medium-spacious
-      compact: size(6) // table-row-top-to-text-medium-compact
-    }
-  },
-  paddingBottom: {
-    default: 12, // table-row-bottom-to-text-medium-spacious
-    density: {
-      spacious: size(15), // table-row-bottom-to-text-medium-spacious
-      compact: 8 // table-row-bottom-to-text-medium-compact
-    }
-  },
+  color: 'neutral',
+  paddingY: centerPadding(),
+  minHeight: 'control',
   boxSizing: 'border-box',
   height: 'full',
   width: 'full',
@@ -904,12 +877,6 @@ const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
   paddingStart: 16,
-  paddingEnd: {
-    default: 8,
-    scale: {
-      large: 14
-    }
-  },
   alignContent: 'center',
   height: '[calc(100% - 1px)]',
   borderBottomWidth: 0
@@ -1101,7 +1068,7 @@ export function Row<T extends object>({id, columns, children, ...otherProps}: Ro
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-        <Cell isSticky className={checkboxCellStyle({scale: tableVisualOptions.scale})}>
+        <Cell isSticky className={checkboxCellStyle}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>
       )}
