@@ -132,7 +132,6 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
   let {direction} = useLocale();
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
   // TODO localize See more
-  // somehow remove the "link out" icon in Menus?
   return (
     <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
