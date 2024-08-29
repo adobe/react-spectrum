@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 port=4000
+# usually defaults to https://registry.npmjs.com/
 original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
