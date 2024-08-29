@@ -16,6 +16,7 @@ let availableComponents = getComponents();
 availableComponents.add('View');
 availableComponents.add('Flex');
 availableComponents.add('Grid');
+availableComponents.add('Well');
 
 // Replaced by collection component-specific items
 availableComponents.add('Item');

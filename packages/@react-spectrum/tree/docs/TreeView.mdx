@@ -51,7 +51,7 @@ keywords: [tree, grid]
 ## Example
 
 ```tsx example
-<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={new Set(['documents', 'photos'])} height="size-4600">
+<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={new Set(['documents', 'photos'])} height="size-4600" maxWidth="size-6000">
   <TreeViewItem id="documents" textValue="Documents">
     <Text>Documents</Text>
     <Folder />
@@ -125,7 +125,7 @@ let items: MyItem[] = [
 
 function ExampleTree(props) {
   return (
-    <TreeView aria-label="Example tree with dynamic content" height="size-3000" items={items} {...props}>
+    <TreeView aria-label="Example tree with dynamic content" height="size-3000" maxWidth="size-6000" items={items} {...props}>
       {(item: MyItem) => (
         <TreeViewItem childItems={item.childItems} textValue={item.name}>
           <Text>{item.name}</Text>
@@ -337,7 +337,7 @@ This behavior is slightly different in the highlight selection style, where sing
 Tree items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<TreeViewItem>` component. Links behave the same way as described above for item actions depending on the `selectionMode` and `selectionStyle`.
 
 ```tsx example
-<TreeView aria-label="Example tree with links" defaultExpandedKeys={new Set(['bookmarks'])} height="size-2000">
+<TreeView aria-label="Example tree with links" defaultExpandedKeys={new Set(['bookmarks'])} height="size-2000" maxWidth="size-6000">
   <TreeViewItem id="bookmarks" textValue="Bookmarks">
     <Text>Bookmarks</Text>
     <Folder />
@@ -364,27 +364,7 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 ### With action groups
 
 ```tsx example
-type MyItem = {
-  id: string,
-  name: string,
-  icon: JSX.Element,
-  childItems?: MyItem[]
-};
-
-let items: MyItem[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
-      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
-  ]}
-];
-
-<TreeView aria-label="Example tree with action groups" height="size-3000" items={items}>
+<TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
   {(item: MyItem) => (
     <TreeViewItem childItems={item.childItems} textValue={item.name}>
       <Text>{item.name}</Text>
@@ -407,27 +387,7 @@ let items: MyItem[] = [
 ### With action menus
 
 ```tsx example
-type MyItem = {
-  id: string,
-  name: string,
-  icon: JSX.Element,
-  childItems?: MyItem[]
-};
-
-let items: MyItem[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
-      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
-  ]}
-];
-
-<TreeView aria-label="Example tree with action menus" height="size-3000" items={items}>
+<TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
   {(item: MyItem) => (
     <TreeViewItem childItems={item.childItems} textValue={item.name}>
       <Text>{item.name}</Text>
@@ -477,7 +437,7 @@ function renderEmptyState() {
   );
 }
 
-<TreeView aria-label="Example tree for empty state" height="size-2400" renderEmptyState={renderEmptyState}>
+<TreeView aria-label="Example tree for empty state" height="size-2400" maxWidth="size-6000" renderEmptyState={renderEmptyState}>
   {[]}
 </TreeView>
 ```

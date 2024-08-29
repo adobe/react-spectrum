@@ -53,6 +53,11 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Code>size</Code> to be a pixel value if it currently matches <Code>'avatar-size-*'</Code></li>
         </ul>
 
+        <H3>Badge</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="info"</Code> to <Code>variant="informative"</Code></li>
+        </ul>
+
         <H3>Breadcrumbs</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>showRoot</Code> (it has not been implemented yet)</li>
@@ -341,6 +346,27 @@ export function Migrating() {
         <H3>View</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Update <Code>View</Code> to be a <Code>div</Code> and apply styles using the style macro</li>
+        </ul>
+
+        <H3>Well</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>
+            Update <Code>Well</Code> to be a <Code>div</Code> and apply styles using the style macro:
+            <pre className={'sb-unstyled ' + style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', fontFamily: 'code', fontSize: 'code-sm', lineHeight: 'code'})}>
+              <div>{`<div className={style({`}</div>
+              <div>{`  display: 'block',`}</div>
+              <div>{`  textAlign: 'start',`}</div>
+              <div>{`  padding: 16,`}</div>
+              <div>{`  minWidth: 160,`}</div>
+              <div>{`  marginTop: 4,`}</div>
+              <div>{`  borderWidth: 1,`}</div>
+              <div>{`  borderRadius: 'sm',`}</div>
+              <div>{`  borderStyle: 'solid',`}</div>
+              <div>{`  borderColor: 'transparent-black-75',`}</div>
+              <div>{`  font: 'body-sm'`}</div>
+              <div>{`})} />`}</div>
+            </pre>
+          </li>
         </ul>
 
         <H2>Style props</H2>
