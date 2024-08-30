@@ -487,7 +487,7 @@ function handleProp(
       addComment(path.node, ' TODO(S2-upgrade): check this UNSAFE_style');
       break;
     case 'UNSAFE_className':
-      if (element === 'Flex' || element === 'Grid' || element === 'View') {
+      if (element === 'Flex' || element === 'Grid' || element === 'View' || element === 'Well') {
         path.get('name').replaceWith(t.jsxIdentifier('className'));
       } else {
         addComment(path.node, ' TODO(S2-upgrade): check this UNSAFE_className');
@@ -511,11 +511,23 @@ export function transformStyleProps(path: NodePath<t.JSXElement>, element: strin
   let dynamicValues = new Map<string, t.ObjectProperty['value']>;
   let conditions = new Map<string, t.ObjectProperty['value']>;
 
-  let isDOMElement = element === 'Flex' || element === 'Grid' || element === 'View';
+  let isDOMElement = element === 'Flex' || element === 'Grid' || element === 'View' || element === 'Well';
   if (element === 'Flex') {
     macroValues.set('display', 'flex');
   } else if (element === 'Grid') {
     macroValues.set('display', 'grid');
+  } else if (element === 'Well') {
+    macroValues.set('display', 'block');
+    macroValues.set('textAlign', 'start');
+    macroValues.set('minWidth', 160);
+    macroValues.set('padding', 16);
+    macroValues.set('marginTop', 4);
+    macroValues.set('borderWidth', 1);
+    macroValues.set('borderRadius', 'sm');
+    macroValues.set('backgroundColor', 'layer-1');
+    macroValues.set('borderStyle', 'solid');
+    macroValues.set('borderColor', 'transparent-black-75');
+    macroValues.set('font', 'body-sm');
   }
 
   let attrs = path.get('openingElement').get('attributes');
