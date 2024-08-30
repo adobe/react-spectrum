@@ -19,7 +19,6 @@ import {
   FormEventHandler,
   HTMLAttributeAnchorTarget,
   HTMLAttributeReferrerPolicy,
-  HTMLAttributes,
   DOMAttributes as ReactDOMAttributes,
   ReactEventHandler
 } from 'react';
