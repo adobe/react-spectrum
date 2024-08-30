@@ -88,7 +88,7 @@ function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
   let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles, children} = props;
 
   let domRef = useFocusableRef(ref);
-  let isSkeleton = useContext(SkeletonContext);
+  let isSkeleton = useContext(SkeletonContext) || false;
   [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
 
   useLayoutEffect(() => {

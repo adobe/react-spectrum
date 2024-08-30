@@ -13,10 +13,10 @@
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
 import {createContext, forwardRef, ImgHTMLAttributes, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ContentProps extends UnsafeStyles, SlotProps {
@@ -105,7 +105,7 @@ function Text(props: ContentProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, children, ...otherProps} = props;
   let racContext = useContext(RACTextContext);
-  let isSkeleton = useContext(SkeletonContext);
+  let isSkeleton = useIsSkeleton();
   [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
   if (isHidden) {
     return null;

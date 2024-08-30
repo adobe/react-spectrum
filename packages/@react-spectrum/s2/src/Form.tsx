@@ -14,9 +14,9 @@ import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
-import {SkeletonContext} from './Skeleton';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useIsSkeleton} from './Skeleton';
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   /**
@@ -37,7 +37,7 @@ export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className
 export const FormContext = createContext<FormStyleProps | null>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
-  let isSkeleton = useContext(SkeletonContext);
+  let isSkeleton = useIsSkeleton();
   return useMemo(() => {
     let result: T = props;
     if (ctx || isSkeleton) {

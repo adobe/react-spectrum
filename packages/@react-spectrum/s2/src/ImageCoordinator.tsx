@@ -1,6 +1,6 @@
 import {Context, createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer} from 'react';
 
-interface ImageCoordinatorProps {
+export interface ImageCoordinatorProps {
   children: ReactNode,
   timeout?: number,
   group?: ImageGroup

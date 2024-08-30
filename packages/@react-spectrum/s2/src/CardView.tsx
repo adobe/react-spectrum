@@ -19,18 +19,19 @@ import {
 } from 'react-aria-components';
 import {CardContext, CardViewContext} from './Card';
 import {ImageCoordinator} from './ImageCoordinator';
-import {Key, Node} from '@react-types/shared';
-import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {Key, LoadingState, Node} from '@react-types/shared';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useLoadMore} from '@react-aria/utils';
 import {useMemo, useRef} from 'react';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior'> {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior'> {
   layout?: 'grid' | 'waterfall',
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   density?: 'compact' | 'regular' | 'spacious',
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet',
-  isLoading?: boolean,
+  selectionStyle?: 'checkbox' | 'highlight',
+  loadingState?: LoadingState,
   onLoadMore?: () => void
 }
 
@@ -55,7 +56,7 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
   }
 
-  update(invalidationContext): void {
+  update(invalidationContext: InvalidationContext): void {
     let visibleWidth = this.virtualizer.visibleRect.width;
 
     // The max item width is always the entire viewport.
@@ -88,17 +89,25 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
     let iterator = this.virtualizer.collection[Symbol.iterator]();
     let y = rows > 0 ? this.minSpace.height : 0;
     let newLayoutInfos = new Map();
+    let skeleton: Node<T> | null = null;
+    let skeletonCount = 0;
     for (let row = 0; row < rows; row++) {
       let maxHeight = 0;
       let rowLayoutInfos: LayoutInfo[] = [];
       for (let col = 0; col < this.numColumns; col++) {
-        let node = iterator.next().value;
+        // Repeat skeleton until the end of the current row.
+        let node = skeleton || iterator.next().value;
         if (!node) {
           break;
         }
 
+        if (node.type === 'skeleton') {
+          skeleton = node;
+        }
+
+        let key = skeleton ? `${skeleton.key}-${skeletonCount++}` : node.key;
         let x = this.horizontalSpacing + col * (itemWidth + this.horizontalSpacing);
-        let oldLayoutInfo = this.layoutInfos.get(node.key);
+        let oldLayoutInfo = this.layoutInfos.get(key);
         let height = itemHeight;
         let estimatedSize = true;
         if (oldLayoutInfo) {
@@ -107,10 +116,13 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
         }
 
         let rect = new Rect(x, y, itemWidth, height);
-        let layoutInfo = new LayoutInfo('item', node.key, rect);
+        let layoutInfo = new LayoutInfo(node.type, key, rect);
         layoutInfo.estimatedSize = estimatedSize;
         layoutInfo.allowOverflow = true;
-        newLayoutInfos.set(node.key, layoutInfo);
+        if (skeleton) {
+          layoutInfo.content = {...skeleton};
+        }
+        newLayoutInfos.set(key, layoutInfo);
         rowLayoutInfos.push(layoutInfo);
 
         maxHeight = Math.max(maxHeight, rect.height);
@@ -121,6 +133,11 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
       }
 
       y += maxHeight + this.minSpace.height;
+
+      // Keep adding skeleton rows until we fill the viewport
+      if (skeleton && row === rows - 1 && y < this.virtualizer.visibleRect.height) {
+        rows++;
+      }
     }
 
     this.layoutInfos = newLayoutInfos;
@@ -184,7 +201,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
   }
 
-  update(invalidationContext): void {
+  update(invalidationContext: InvalidationContext): void {
     let visibleWidth = this.virtualizer.visibleRect.width;
 
     // The max item width is always the entire viewport.
@@ -216,8 +233,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
     // Setup an array of column heights
     let columnHeights = Array(this.numColumns).fill(this.minSpace.height);
     let newLayoutInfos = new Map();
-    for (let node of this.virtualizer.collection) {
-      let key = node.key;
+    let addNode = (key, node) => {
       let oldLayoutInfo = this.layoutInfos.get(key);
       let height = itemHeight;
       let estimatedSize = true;
@@ -238,6 +254,25 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
       newLayoutInfos.set(key, layoutInfo);
 
       columnHeights[column] += layoutInfo.rect.height + this.minSpace.height;
+      return layoutInfo;
+    };
+
+    let skeletonCount = 0;
+    for (let node of this.virtualizer.collection) {
+      if (node.type === 'skeleton') {
+        // Add skeleton cards until every column has at least one, and we fill the viewport.
+        let startingHeights = [...columnHeights];
+        while (
+          !columnHeights.every((h, i) => h !== startingHeights[i]) ||
+          Math.min(...columnHeights) < this.virtualizer.visibleRect.height
+        ) {
+          let layoutInfo = addNode(`${node.key}-${skeletonCount++}`, node);
+          layoutInfo.content = this.layoutInfos.get(layoutInfo.key)?.content || {...node};
+        }
+        break;
+      } else {
+        addNode(node.key, node);
+      }
     }
 
     // Reset all columns to the maximum for the next section
@@ -279,6 +314,63 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
     }
 
     return false;
+  }
+
+  // Override keyboard navigation to work spacially.
+  getKeyRightOf(key: Key): Key | null {
+    let layoutInfo = this.getLayoutInfo(key);
+    if (!layoutInfo) {
+      return null;
+    }
+
+    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
+    let layoutInfos = this.getVisibleLayoutInfos(rect);
+    let bestKey: Key | null = null;
+    let bestDistance = Infinity;
+    for (let candidate of layoutInfos) {
+      if (candidate.key === key) {
+        continue;
+      }
+
+      // Find the closest item in the x direction with the most overlap in the y direction.
+      let deltaX = candidate.rect.x - rect.x;
+      let overlapY = Math.min(candidate.rect.maxY, rect.maxY) - Math.max(candidate.rect.y, rect.y);
+      let distance = deltaX - overlapY;
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestKey = candidate.key;
+      }
+    }
+
+    return bestKey;
+  }
+
+  getKeyLeftOf(key: Key): Key | null {
+    let layoutInfo = this.getLayoutInfo(key);
+    if (!layoutInfo) {
+      return null;
+    }
+
+    let rect = new Rect(0, layoutInfo.rect.y, layoutInfo.rect.x, layoutInfo.rect.height);
+    let layoutInfos = this.getVisibleLayoutInfos(rect);
+    let bestKey: Key | null = null;
+    let bestDistance = Infinity;
+    for (let candidate of layoutInfos) {
+      if (candidate.key === key) {
+        continue;
+      }
+
+      // Find the closest item in the x direction with the most overlap in the y direction.
+      let deltaX = rect.maxX - candidate.rect.maxX;
+      let overlapY = Math.min(candidate.rect.maxY, rect.maxY) - Math.max(candidate.rect.y, rect.y);
+      let distance = deltaX - overlapY;
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestKey = candidate.key;
+      }
+    }
+
+    return bestKey;
   }
 }
 
@@ -371,7 +463,7 @@ const layoutOptions = {
 };
 
 export function CardView<T extends object>(props: CardViewProps<T>) {
-  let {children, layout: layoutName = 'grid', size = 'M', density = 'regular', variant = 'primary', ...otherProps} = props;
+  let {children, layout: layoutName = 'grid', size = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', ...otherProps} = props;
   let options = layoutOptions[size][density];
   let layout = useMemo(() => {
     variant; // needed to invalidate useMemo
@@ -380,8 +472,8 @@ export function CardView<T extends object>(props: CardViewProps<T>) {
 
   let ref = useRef(null);
   useLoadMore({
-    isLoading: props.isLoading,
-    items: props.items,
+    isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
+    items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
     onLoadMore: props.onLoadMore
   }, ref);
 
@@ -394,6 +486,7 @@ export function CardView<T extends object>(props: CardViewProps<T>) {
               ref={ref}
               {...otherProps}
               layout="grid"
+              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               className={renderProps => style({
                 overflowY: {
                   default: 'auto',
@@ -405,8 +498,9 @@ export function CardView<T extends object>(props: CardViewProps<T>) {
                 },
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center'
-              })({...renderProps, isLoading: props.isLoading})}>
+                justifyContent: 'center',
+                outlineStyle: 'none'
+              })({...renderProps, isLoading: props.loadingState === 'loading'})}>
               {children}
             </AriaGridList>
           </ImageCoordinator>

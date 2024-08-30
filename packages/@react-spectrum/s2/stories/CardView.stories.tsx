@@ -10,22 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Avatar, Content, Heading, IllustratedMessage, Image, MenuItem, Text} from '../src';
-import {Card, CardPreview} from '../src/Card';
-import {CardView, CardViewProps} from '../src/CardView';
+import {ActionMenu, Avatar, Card, CardPreview, CardView, CardViewProps, Collection, CollectionCardPreview, Content, Heading, IllustratedMessage, Image, MenuItem, SkeletonCollection, Text} from '../src';
 import EmptyIcon from 'illustration:../spectrum-illustrations/gradient/S2_fill_image_generic1_160.svg';
-import ErrorIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
+import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
+import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import type {Meta} from '@storybook/react';
-import {Skeleton} from '../src/Skeleton';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from 'react-stately';
 
 const meta: Meta<typeof CardView> = {
   component: CardView,
   parameters: {
-    // layout: 'centered'
     layout: 'fullscreen'
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;
@@ -43,19 +41,6 @@ type Item = {
   height: number
 };
 
-let mockItems: Item[] = [];
-for (let i = 0; i < 50; i++) {
-  mockItems.push({
-    id: i,
-    user: {name: 'Devon Govett', profile_image: {small: ''}},
-    urls: {regular: ''},
-    description: 'This is a fake description. Kinda long so it wraps to a new line.',
-    alt_description: '',
-    width: 400,
-    height: 200 + Math.max(0, Math.round(Math.random() * 400) - 200)
-  });
-}
-
 function PhotoCard({item, layout}: {item: Item, layout: string}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
@@ -72,7 +57,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
           }}
           renderError={() => (
             <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
-              <ErrorIcon />
+              <ErrorIcon size="S" />
             </div>
           )} />
       </CardPreview>
@@ -81,7 +66,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
         <ActionMenu>
           <MenuItem>Test</MenuItem>
         </ActionMenu>
-        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridColumnEnd: 'span 2'})}>
           <Avatar src={item.user.profile_image.small} />
           <Text slot="description">{item.user.name}</Text>
         </div>
@@ -90,48 +75,68 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
   );
 }
 
-export const Example = (args: CardViewProps<any>) => {
-  let list = useAsyncList<Item, number>({
-    async load({signal, cursor}) {
+export const Example = (args: CardViewProps<any>, {viewMode}) => {
+  let list = useAsyncList<Item, number | null>({
+    async load({signal, cursor, items}) {
       let page = cursor || 1;
       let res = await fetch(
         `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
         {signal}
       );
-      let items = await res.json();
-      return {items, cursor: page + 1};
+      let nextItems = await res.json();
+      // Filter duplicates which might be returned by the API.
+      let existingKeys = new Set(items.map(i => i.id));
+      nextItems = nextItems.filter(i => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
     }
   });
 
-  let isLoading = args.isLoading || list.loadingState === 'loading';
+  let loadingState = args.loadingState === 'idle' ? list.loadingState : args.loadingState;
+  let items = loadingState === 'loading' ? [] : list.items;
+
   return (
-    <Skeleton isLoading={isLoading}>
-      <CardView
-        aria-label="Assets"
-        {...args}
-        items={isLoading ? mockItems : list.items}
-        isLoading={args.isLoading || list.isLoading}
-        onLoadMore={list.loadMore}
-        style={{height: '100vh', width: '100vw'}}
-        dependencies={[args.layout]}>
-        {item => <PhotoCard item={item} layout={args.layout} />}
-      </CardView>
-    </Skeleton>
+    <CardView
+      aria-label="Assets"
+      {...args}
+      loadingState={loadingState}
+      onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
+      style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
+      <Collection items={items} dependencies={[args.layout]}>
+        {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
+      </Collection>
+      {(loadingState === 'loading' || loadingState === 'loadingMore') && (
+        <SkeletonCollection>
+          {() => (
+            <PhotoCard 
+              item={{
+                id: Math.random(),
+                user: {name: 'Devon Govett', profile_image: {small: ''}},
+                urls: {regular: ''},
+                description: 'This is a fake description. Kinda long so it wraps to a new line.',
+                alt_description: '',
+                width: 400,
+                height: 200 + Math.max(0, Math.round(Math.random() * 400))
+              }}
+              layout={args.layout || 'grid'} />
+          )}
+        </SkeletonCollection>
+      )}
+    </CardView>
   );
 };
 
 Example.args = {
-  isLoading: false,
+  loadingState: 'idle',
   onAction: null,
   selectionMode: 'multiple'
 };
 
-export const Empty = (args: CardViewProps<any>) => {
+export const Empty = (args: CardViewProps<any>, {viewMode}) => {
   return (
     <CardView 
       aria-label="Assets"
       {...args}
-      style={{height: '100vh', width: '100vw'}}
+      style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}
       renderEmptyState={() => (
         <IllustratedMessage size="L">
           <EmptyIcon />
@@ -142,4 +147,85 @@ export const Empty = (args: CardViewProps<any>) => {
       {[]}
     </CardView>
   );
+};
+
+interface Topic {
+  id: string,
+  title: string,
+  total_photos: number,
+  links: {html: string},
+  preview_photos: {id: string, urls: {small: string}}[]
+}
+
+function TopicCard({topic}: {topic: Topic}) {
+  return (
+    <Card href={topic.links.html} target="_blank" textValue={topic.title}>
+      <CollectionCardPreview>
+        {topic.preview_photos.slice(0, 4).map(photo => (
+          <Image key={photo.id} alt="" src={photo.urls.small} />
+        ))}
+      </CollectionCardPreview>
+      <Content>
+        <Text slot="title">{topic.title}</Text>
+        <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 8})}>
+          <Folder />
+          <Text slot="description">{topic.total_photos.toLocaleString()} photos</Text>
+        </div>
+      </Content>
+    </Card>
+  );
+}
+
+export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
+  let list = useAsyncList<Topic, number | null>({
+    async load({signal, cursor}) {
+      let page = cursor || 1;
+      let res = await fetch(
+        `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        {signal}
+      );
+      let items = await res.json();
+      return {items, cursor: items.length ? page + 1 : null};
+    }
+  });
+
+  let loadingState = args.loadingState === 'idle' ? list.loadingState : args.loadingState;
+  let items = loadingState === 'loading' ? [] : list.items;
+
+  return (
+    <CardView
+      aria-label="Assets"
+      {...args}
+      loadingState={loadingState}
+      onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
+      style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
+      <Collection items={items} dependencies={[args.layout]}>
+        {topic => <TopicCard topic={topic} />}
+      </Collection>
+      {(loadingState === 'loading' || loadingState === 'loadingMore') && (
+        <SkeletonCollection>
+          {() => (
+            <TopicCard
+              topic={{
+                id: Math.random().toString(36),
+                title: 'Topic title',
+                total_photos: 80,
+                links: {html: ''},
+                preview_photos: [
+                  {id: 'a', urls: {small: ''}},
+                  {id: 'b', urls: {small: ''}},
+                  {id: 'c', urls: {small: ''}},
+                  {id: 'd', urls: {small: ''}}
+                ]
+              }} />
+          )}
+        </SkeletonCollection>
+      )}
+    </CardView>
+  );
+};
+
+CollectionCards.args = {
+  loadingState: 'idle',
+  onAction: null
 };

@@ -12,28 +12,31 @@
 
 import {ActionMenuContext} from './ActionMenu';
 import {AvatarContext} from './Avatar';
-import {Button, ContextValue, DEFAULT_SLOT, GridListItemProps, Provider, useContextProps} from 'react-aria-components';
+import {Button, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
 import {ContentContext, FooterContext, TextContext} from './Content';
-import {createContext, CSSProperties, ElementType, ReactNode, useContext} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
-import {focusRing, StyleProps} from './style-utils' with {type: 'macro'};
+import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
-import {SkeletonContext, SkeletonWrapper} from './Skeleton';
+import {pressScale} from './pressScale';
+import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'isDisabled'>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
   children: ReactNode,
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   density?: 'compact' | 'regular' | 'spacious',
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet',
-  orientation?: 'vertical' | 'horizontal'
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet'
 }
 
 const borderRadius = {
@@ -46,12 +49,7 @@ const borderRadius = {
 
 let card = style({
   display: 'flex',
-  flexDirection: {
-    orientation: {
-      vertical: 'column',
-      horizontal: 'row'
-    }
-  },
+  flexDirection: 'column',
   position: 'relative',
   borderRadius,
   '--s2-container-bg': {
@@ -97,6 +95,9 @@ let card = style({
   disableTapHighlight: true,
   userSelect: {
     isCardView: 'none'
+  },
+  cursor: {
+    isLink: 'pointer'
   },
   width: {
     size: {
@@ -173,7 +174,7 @@ let card = style({
       quiet: 'none'
     }
   }
-});
+}, getAllowedOverrides());
 
 let selectionIndicator = style({
   position: 'absolute',
@@ -262,7 +263,12 @@ let description = style({
 
 let content = style({
   display: 'grid',
-  gridTemplateColumns: ['1fr', 'auto'],
+  // By default, all elements are displayed in a stack.
+  // If an action menu is present, place it next to the title.
+  gridTemplateColumns: {
+    ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
+  },
+  columnGap: 4,
   flexDirection: 'column',
   flexGrow: 1,
   alignItems: 'baseline',
@@ -292,8 +298,8 @@ let footer = style({
   paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
 });
 
-export const CardViewContext = createContext<ElementType>('div');
-export const CardContext = createContext<ContextValue<Partial<CardProps>, HTMLElement>>(null);
+export const CardViewContext = createContext<'div' | typeof GridListItem>('div');
+export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
   isQuiet: boolean,
@@ -319,11 +325,12 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export function Card(props: CardProps) {
-  [props] = useContextProps(props, null, CardContext);
-  let {density = 'regular', size = 'M', variant = 'primary', orientation = 'vertical'} = props;
+export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+  [props] = useSpectrumContextProps(props, ref, CardContext);
+  let domRef = useDOMRef(ref);
+  let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles} = props;
   let isQuiet = variant === 'quiet';
-  let isSkeleton = useContext(SkeletonContext);
+  let isSkeleton = useIsSkeleton();
   let children = (
     <Provider
       values={[
@@ -338,7 +345,14 @@ export function Card(props: CardProps) {
         [ContentContext, {styles: content({size})}],
         [DividerContext, {size: 'S'}],
         [FooterContext, {styles: footer}],
-        [ActionMenuContext, {isQuiet: true, size: actionButtonSize[size], isDisabled: isSkeleton}]
+        [ActionMenuContext, {
+          isQuiet: true,
+          size: actionButtonSize[size],
+          isDisabled: isSkeleton,
+          // @ts-ignore
+          'data-slot': 'menu'
+        }],
+        [SkeletonContext, isSkeleton]
       ]}>
       <ImageCoordinator>
         {props.children}
@@ -347,9 +361,13 @@ export function Card(props: CardProps) {
   );
 
   let ElementType = useContext(CardViewContext);
-  if (ElementType === 'div') {
+  if (ElementType === 'div' || isSkeleton) {
     return (
-      <div className={card({size, density, variant, orientation})}>
+      <div 
+        // @ts-ignore - React < 19 compat
+        inert={isSkeleton ? 'true' : undefined}
+        ref={domRef}
+        className={card({size, density, variant, isCardView: ElementType !== 'div'})}>
         <InternalCardContext.Provider value={{size, isQuiet, isHovered: false, isFocusVisible: false, isSelected: false}}>
           {children}
         </InternalCardContext.Provider>
@@ -357,13 +375,26 @@ export function Card(props: CardProps) {
     );
   }
 
+  let press = pressScale(domRef, UNSAFE_style);
   return (
-    <ElementType {...props} className={renderProps => card({...renderProps, isCardView: true, size, density, variant, orientation})}>
+    <ElementType
+      {...props}
+      ref={domRef}
+      className={renderProps => UNSAFE_className + card({...renderProps, isCardView: true, isLink: !!props.href, size, density, variant}, styles)}
+      style={renderProps => 
+        // Only apply press scaling to card when it has an action, not selection.
+        // When clicking the card selects it, the checkbox will scale down instead.
+        // TODO: confirm with design
+        // @ts-ignore - do we want to expose hasAction publically in RAC?
+        renderProps.hasAction && (renderProps.selectionMode === 'none' || renderProps.selectionBehavior === 'toggle') 
+          ? press(renderProps) 
+          : UNSAFE_style
+      }>
       {({selectionMode, selectionBehavior, allowsDragging, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider value={{size, isQuiet, isHovered, isFocusVisible, isSelected}}>
           {!isQuiet && <SelectionIndicator />}
           {allowsDragging && <Button slot="drag">≡</Button>}
-          {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+          {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
             <PressResponder isPressed={isPressed}>
               <div 
                 className={style({
@@ -382,33 +413,42 @@ export function Card(props: CardProps) {
               </div>
             </PressResponder>
           )}
-          {children}
+          {/* this makes the :first-child selector work even with the checkbox */}
+          <div className={style({display: 'contents'})}>
+            {children}
+          </div>
         </InternalCardContext.Provider>
       )}
     </ElementType>
   );
-}
+});
 
 function SelectionIndicator() {
   let {isSelected} = useContext(InternalCardContext);
   return <div className={selectionIndicator({isSelected})} />;
 }
 
-interface CardPreviewProps {
+export interface CardPreviewProps extends UnsafeStyles {
   children: ReactNode
 }
 
-export function CardPreview(props: CardPreviewProps) {
+export const CardPreview = forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size, isQuiet, isHovered, isFocusVisible, isSelected} = useContext(InternalCardContext);
+  let {UNSAFE_className, UNSAFE_style} = props;
+  let domRef = useDOMRef(ref);
   return (
-    <div className={preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}>
+    <div
+      slot="preview"
+      ref={domRef}
+      className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
+      style={UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
       <div className={style({borderRadius: '[inherit]', overflow: 'clip'})}>
         {props.children}
       </div>
     </div>
   );
-}
+});
 
 const collection = style({
   display: 'grid',
@@ -436,10 +476,10 @@ const collectionImage = style({
   userSelect: 'none'
 });
 
-export function CollectionCardPreview(props: CardPreviewProps) {
+export const CollectionCardPreview = forwardRef(function CollectionCardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size} = useContext(InternalCardContext)!;
   return (
-    <CardPreview>
+    <CardPreview {...props} ref={ref}>
       <div className={collection({size})}>
         <ImageContext.Provider value={{styles: collectionImage}}>
           {props.children}
@@ -447,11 +487,13 @@ export function CollectionCardPreview(props: CardPreviewProps) {
       </div>
     </CardPreview>
   );
-}
+});
 
-export function AssetCard(props: CardProps) {
+export interface AssetCardProps extends Omit<CardProps, 'density'> {}
+
+export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
   return (
-    <Card {...props} density="regular">
+    <Card {...props} ref={ref} density="regular">
       <Provider
         values={[
           [ImageContext, {
@@ -493,7 +535,7 @@ export function AssetCard(props: CardProps) {
       </Provider>
     </Card>
   );
-}
+});
 
 const avatarSize = {
   XS: 24,
@@ -503,10 +545,12 @@ const avatarSize = {
   XL: 80
 } as const;
 
-export function UserCard(props: CardProps) {
+export interface UserCardProps extends Omit<CardProps, 'density'> {}
+
+export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
   return (
-    <Card {...props} density="spacious">
+    <Card {...props} ref={ref} density="spacious">
       <Provider
         values={[
           [ImageContext, {
@@ -527,29 +571,18 @@ export function UserCard(props: CardProps) {
             styles: style({
               position: 'relative',
               marginTop: {
-                default: '[calc(var(--size) / -2)]',
-                ':first-child': 0
+                default: 0,
+                ':is([slot=preview] + &)': '[calc(var(--size) / -2)]'
               }
             }),
             isOverBackground: true
-            // UNSAFE_className: style({
-            //   outlineStyle: 'solid',
-            //   outlineWidth: {
-            //     default: 2,
-            //     size: {
-            //       XS: 1
-            //     },
-            //     ':first-child': 0
-            //   },
-            //   outlineColor: '--card-bg'
-            // })({size})
           }]
         ]}>
         {props.children}
       </Provider>
     </Card>
   );
-}
+});
 
 const buttonSize = {
   XS: 'S',
@@ -559,11 +592,13 @@ const buttonSize = {
   XL: 'L'
 } as const;
 
-export function ProductCard(props: CardProps) {
+export interface ProductCardProps extends Omit<CardProps, 'density'> {}
+
+export const ProductCard = forwardRef(function ProductCard(props: ProductCardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
-  let isSkeleton = useContext(SkeletonContext);
+  let isSkeleton = useIsSkeleton();
   return (
-    <Card {...props} density="spacious">
+    <Card {...props} ref={ref} density="spacious">
       <Provider
         values={[
           [ImageContext, {
@@ -602,8 +637,8 @@ export function ProductCard(props: CardProps) {
                   },
                   objectFit: 'cover',
                   marginTop: {
-                    default: '[calc(self(height) / -2)]',
-                    ':first-child': 0
+                    default: 0,
+                    ':is([slot=preview] + &)': '[calc(self(height) / -2)]'
                   },
                   outlineStyle: 'solid',
                   outlineWidth: {
@@ -629,4 +664,4 @@ export function ProductCard(props: CardProps) {
       </Provider>
     </Card>
   );
-}
+});

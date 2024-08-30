@@ -18,10 +18,14 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
+let reduceMotion = typeof window?.matchMedia === 'function'
+  ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  : false;
+
 export function useLoadingAnimation(isAnimating: boolean) {
   let animationRef = useRef<Animation | null>(null);
-  return useCallback((element: HTMLElement) => {
-    if (isAnimating && !animationRef.current && element) {
+  return useCallback((element: HTMLElement | null) => {
+    if (isAnimating && !animationRef.current && element && !reduceMotion) {
       // Use web animation API instead of CSS animations so that we can
       // synchronize it between all loading elements on the page (via startTime).
       animationRef.current = element.animate(
@@ -51,8 +55,16 @@ export type SkeletonElement = ReactElement<{
 }>;
 
 export const SkeletonContext = createContext<boolean | null>(null);
+export function useIsSkeleton(): boolean {
+  return useContext(SkeletonContext) || false;
+}
 
-export function Skeleton({children, isLoading}) {
+export interface SkeletonProps {
+  children: ReactNode,
+  isLoading: boolean
+}
+
+export function Skeleton({children, isLoading}: SkeletonProps) {
   // Disable all form components inside a skeleton.
   return (
     <SkeletonContext.Provider value={isLoading}>
@@ -69,7 +81,7 @@ export const loadingStyle = raw(`
   }
 `, 'UNSAFE_overrides');
 
-export function useSkeletonText(children: ReactNode, style: CSSProperties): [ReactNode, CSSProperties] {
+export function useSkeletonText(children: ReactNode, style: CSSProperties | undefined): [ReactNode, CSSProperties | undefined] {
   let isSkeleton = useContext(SkeletonContext);
   if (isSkeleton) {
     children = <SkeletonText>{children}</SkeletonText>;
@@ -103,7 +115,7 @@ export function SkeletonText({children}) {
 // Clones the child element and displays it with skeleton styling.
 export function SkeletonWrapper({children}: {children: SkeletonElement}) {
   let isLoading = useContext(SkeletonContext);
-  let animation = useLoadingAnimation(isLoading);
+  let animation = useLoadingAnimation(isLoading || false);
   if (isLoading == null) {
     return children;
   }

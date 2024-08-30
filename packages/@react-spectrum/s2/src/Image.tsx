@@ -1,7 +1,7 @@
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
-import {loadingStyle, SkeletonContext, useLoadingAnimation} from './Skeleton';
+import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleString} from '../style/types';
@@ -9,7 +9,7 @@ import {UnsafeStyles} from './style-utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-interface ImageProps extends UnsafeStyles, SlotProps {
+export interface ImageProps extends UnsafeStyles, SlotProps {
   src?: string,
   // TODO
   srcSet?: string,
@@ -133,7 +133,7 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
     };
   }, [hidden, register, unregister, src]);
 
-  let isSkeleton = useContext(SkeletonContext);
+  let isSkeleton = useIsSkeleton();
   let isAnimating = isSkeleton || state === 'loading' || state === 'loaded';
   let animation = useLoadingAnimation(isAnimating);
   useLayoutEffect(() => {

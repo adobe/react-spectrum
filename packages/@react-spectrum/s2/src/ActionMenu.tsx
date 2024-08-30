@@ -42,7 +42,6 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
     buttonProps['aria-label'] = stringFormatter.format('menu.moreActions');
   }
 
-  // size independently controlled?
   return (
     <MenuTrigger
       isOpen={props.isOpen}
@@ -53,7 +52,6 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
       shouldFlip={props.shouldFlip}>
       <ActionButton
         ref={ref}
-        aria-label="Help"
         size={props.size}
         isDisabled={props.isDisabled}
         autoFocus={props.autoFocus}

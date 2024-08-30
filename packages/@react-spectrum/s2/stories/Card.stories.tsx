@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Avatar, Badge, Button, Content, Divider, Footer, Image, MenuItem, Meter, StatusLight, Text} from '../src';
-import {AssetCard, Card, CardPreview, CardProps, CollectionCardPreview, ProductCard, UserCard} from '../src/Card';
+import {ActionMenu, AssetCard, Avatar, Badge, Button, Card, CardPreview, CardProps, CollectionCardPreview, Content, Divider, Footer, Image, MenuItem, Meter, ProductCard, Skeleton, StatusLight, Text, UserCard} from '../src';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import FolderGradient from '../spectrum-illustrations/gradient/S2_fill_folderClose_generic2_160.svg';
+import FolderGradient from 'illustration:../spectrum-illustrations/gradient/S2_fill_folderClose_generic2_160.svg';
 import type {Meta} from '@storybook/react';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
-import {Skeleton} from '../src/Skeleton';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<CardProps & {isLoading?: boolean}> = {
@@ -25,6 +23,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
   parameters: {
     layout: 'centered'
   },
+  tags: ['autodocs'],
   args: {
     isLoading: false
   },
@@ -39,10 +38,11 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
     target: {table: {disable: true}},
     value: {table: {disable: true}},
     textValue: {table: {disable: true}},
-    onAction: {table: {disable: true}}
+    onAction: {table: {disable: true}},
+    isDisabled: {table: {disable: true}}
   },
   decorators: (children, {args}) => (
-    <Skeleton isLoading={args.isLoading}>
+    <Skeleton isLoading={args.isLoading || false}>
       {children(args)}
     </Skeleton>
   )
@@ -87,11 +87,6 @@ export const Example = (args: any) => (
 
 const specificArgTypes = {
   density: {
-    table: {
-      disable: true
-    }
-  },
-  orientation: {
     table: {
       disable: true
     }
@@ -278,7 +273,7 @@ export const Custom = (args: any) => (
       </CardPreview>
       <Content>
         <Text slot="title">Yummburger</Text>
-        <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 4})}>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
           <Project />
           <Text slot="description"><span className={style({fontWeight: 'bold'})}>35k</span> experiences use this</Text>
         </div>
@@ -295,11 +290,6 @@ export const Custom = (args: any) => (
 
 Custom.argTypes = {
   size: {
-    table: {
-      disable: true
-    }
-  },
-  orientation: {
     table: {
       disable: true
     }
