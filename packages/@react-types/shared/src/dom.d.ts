@@ -56,7 +56,12 @@ export interface AriaValidationProps {
 
 // A set of common DOM props that are allowed on any component
 // Ensure this is synced with DOMPropNames in filterDOMProps
-export interface DOMProps extends Pick<HTMLAttributes<HTMLElement>, 'id'> {}
+export interface DOMProps {
+  /**
+   * The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).
+   */
+  id?: string | undefined
+}
 
 export interface FocusableDOMProps extends DOMProps {
   /**
