@@ -338,7 +338,6 @@ function TagGroupInner<T>({
                 })}>
                 {allItems.map(item => {
                   // pull off individual props as an allow list, don't want refs or other props getting through
-                  // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
                   return (
                     <div
                       style={item.props.UNSAFE_style}
