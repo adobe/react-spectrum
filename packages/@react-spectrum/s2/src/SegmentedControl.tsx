@@ -12,7 +12,7 @@
 
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupProps, RadioGroupStateContext, RadioProps} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -175,9 +175,9 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 
   // if the registration fails, then we will default select the first item
   useLayoutEffect(() => {
-    if (state && isRegistered.current === false) {
+    if (state && !isRegistered.current) {
       state.setSelectedValue(disabledIsRegistered.current);
-    } else if (isRegistered.current === false && disabledIsRegistered.current == null) {
+    } else if (!isRegistered.current && disabledIsRegistered.current == null) {
       throw new Error('Could not determine a default selected item');
     }
   }, []);
@@ -206,22 +206,18 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
     isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
   
-  let isIconOnly = useRef<boolean>(false);
+  let [isIconOnly, setIsIconOnly] = useState<boolean>(false);
   useLayoutEffect(() => {
     if (domRef?.current) {
       let textContent = domRef.current.textContent;
       if (!textContent) {
-        isIconOnly.current = true;
+        setIsIconOnly(true);
       }
     }
   }, []);
 
   useLayoutEffect(() => {
-    if (!props.isDisabled) {
-      register?.(props.value, false);
-    } else if (props.isDisabled) {
-      register?.(props.value, true);
-    }
+    register?.(props.value, !!props.isDisabled);
   }, []);
 
   useLayoutEffect(() => {
@@ -229,7 +225,6 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
       let currentItem = currentSelectedRef?.current.getBoundingClientRect();
 
       let deltaX = prevRef?.current.left - currentItem?.left;
-      let duration = Math.abs(deltaX) / 0.4;
 
       currentSelectedRef.current.animate(
         [
@@ -237,7 +232,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
           {transform: 'translateX(0px)', width: `${currentItem.width}px`}
         ],
         {
-          duration: duration,
+          duration: 200,
           easing: 'ease-out'
         }
       );
@@ -252,7 +247,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
       ref={domRef} 
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isIconOnly: isIconOnly?.current}, props.styles)} >
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isIconOnly}, props.styles)} >
       {({isSelected, isFocusVisible, isPressed, isDisabled}) => (
         <>
           {isSelected && <div className={slider({isFocusVisible, isDisabled})} ref={currentSelectedRef} />}
