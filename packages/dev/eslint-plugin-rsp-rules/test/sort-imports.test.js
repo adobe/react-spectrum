@@ -42,19 +42,19 @@ import {B} from 'bar';
       code: "import {B, A} from 'foo';",
       output: "import {A, B} from 'foo';",
       errors: 1
-    }
+    },
     // we don't support this case yet
-//     {
-//       code: `
-// import {B} from 'bar';
-// import {A} from 'foo';
-// `,
-//       output: `
-// import {A} from 'foo';
-// import {B} from 'bar';
-// `,
-//       errors: 1
-//     }
+    {
+      code: `
+import {B} from 'bar';
+import {A} from 'foo';
+`,
+      output: `
+import {A} from 'foo';
+import {B} from 'bar';
+`,
+      errors: 1
+    }
     ]
   }
 );

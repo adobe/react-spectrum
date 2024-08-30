@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    {
+      "name": "preset-default",
+      "params": {
+        "overrides": {
+          "removeViewBox": false,
+          "removeAttrs": {
+            "attrs": "(id|data.*)"
+          }
+        }
+      }
+    }
+  ]
+}

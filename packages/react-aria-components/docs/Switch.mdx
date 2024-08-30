@@ -195,7 +195,7 @@ function Example() {
 
   return (
     <>
-      <MySwitch onChange={setSelected}>Low power mode</MySwitch>
+      <MySwitch isSelected={selected} onChange={setSelected}>Low power mode</MySwitch>
       <p>{selected ? 'Low' : 'High'} power mode active.</p>
     </>
   );

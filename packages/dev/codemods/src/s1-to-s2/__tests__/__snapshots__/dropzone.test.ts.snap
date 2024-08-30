@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Does nothing 1`] = `
+"import { DropZone, IllustratedMessage, Heading } from "@react-spectrum/s2";
+import Upload from '@spectrum-icons/illustrations/Upload';
+
+<div>
+  <DropZone>
+    <IllustratedMessage>
+      <Upload />
+      <Heading>
+        {'Drag and drop your file'}
+      </Heading>
+    </IllustratedMessage>
+  </DropZone>
+</div>"
+`;

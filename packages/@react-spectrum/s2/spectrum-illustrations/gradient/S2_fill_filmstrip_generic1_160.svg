@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="-24.968" x2="201.25" y1="134.343" y2="-3.286" gradientUnits="userSpaceOnUse">
+      <stop offset=".06" stop-color="#8480FE"/>
+      <stop offset=".6" stop-color="#8480FE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="156.572" x2="59.525" y1="35.63" y2="139.982" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="38.635" x2="210.673" y1="154.384" y2="58.011" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FC7D00" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#FC7D00"/>
+      <stop offset=".609" stop-color="#FC7D00"/>
+      <stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="rotate(90 36.639 52.036) scale(60.5342)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#FF709F"/>
+      <stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="rotate(90 52.947 88.085) scale(60.5342)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="a">
+      <rect width="139.142" height="139.142" x="10" y="10" fill="#fff" rx="3.461"/>
+    </clipPath>
+    <clipPath id="c">
+      <path fill="#fff" d="M10 10h139.142v139.142H10z"/>
+    </clipPath>
+  </defs>
+  <mask id="b" width="120" height="92" x="20" y="34" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="M20 50v60c0 8.837 7.163 16 16 16h88c8.837 0 16-7.163 16-16V50c0-8.837-7.163-16-16-16H36c-8.837 0-16 7.163-16 16Zm99 1a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-17 0a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-17 0a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-17 0a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-19 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm-17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm19 47a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-7Zm-19 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm34 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Zm17 0a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-5Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <rect width="139.142" height="139.142" x="10" y="10" fill="#FFECCF" rx="3.461"/>
+    <g clip-path="url(#c)">
+      <path fill="#FFECCF" d="M10 10h139.142v139.142H10z"/>
+      <circle cx="88.675" cy="15.397" r="60.534" fill="url(#d)" transform="rotate(-.08 88.675 15.397)"/>
+      <path fill="url(#e)" d="M63.108-14.579a33.407 33.407 0 0 0-34.95-.104l-107.277 65.5c-10.506 6.414-10.524 21.556-.032 27.995l106.567 65.406a33.404 33.404 0 0 0 34.95-.023l106.347-65.468c10.437-6.425 10.456-21.482.032-27.932L63.108-14.579Z"/>
+      <path fill="url(#f)" d="M30.052 76.061c2.378-51.945 46.417-92.128 98.362-89.75 51.946 2.379 92.128 46.417 89.75 98.363-2.378 51.945-46.416 92.128-98.362 89.749-51.946-2.378-92.128-46.416-89.75-98.362Z"/>
+      <path fill="url(#g)" d="M-46.373 110.312c20.649-8.809 42.918-8.431 62.212-.726 38.606 15.456 61.07 5.9 76.65-32.618 7.762-19.329 22.914-35.698 43.585-44.517 41.33-17.604 89.044 1.498 106.624 42.706 17.579 41.208-1.662 88.846-42.983 106.474-20.718 8.838-43.03 8.424-62.352.65-38.544-15.374-60.966-5.781-76.527 32.783-7.78 19.282-22.929 35.595-43.577 44.404-41.297 17.618-89.011-1.484-106.58-42.669-17.57-41.185 1.651-88.869 42.948-106.487Z"/>
+      <circle cx="141.032" cy="35.138" r="60.534" fill="url(#h)" transform="rotate(-.08 141.032 35.138)"/>
+    </g>
+  </g>
+</svg>

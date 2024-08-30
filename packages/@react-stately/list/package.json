@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/list",
-  "version": "3.10.7",
+  "version": "3.10.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@react-stately/collections": "^3.10.9",
-    "@react-stately/selection": "^3.16.1",
-    "@react-stately/utils": "^3.10.2",
+    "@react-stately/selection": "^3.16.2",
+    "@react-stately/utils": "^3.10.3",
     "@react-types/shared": "^3.24.1",
     "@swc/helpers": "^0.5.0"
   },

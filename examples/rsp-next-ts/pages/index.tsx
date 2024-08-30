@@ -82,7 +82,7 @@ import {
   ColorSlider,
   ColorSwatch,
   ColorSwatchPicker,
-  ColorWheel,
+  ColorWheel
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
@@ -110,6 +110,7 @@ export default function Home() {
       <Head>
         <title>React Spectrum + NextJS</title>
         <meta name="description" content="React Spectrum + NextJS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -240,16 +241,18 @@ export default function Home() {
           </Section>
 
           <Section title="Color">
-            <ColorArea defaultValue="#7f0000" />
             <ColorField label="Primary Color" />
-            <ColorSlider defaultValue="#7f0000" channel="red" />
-            <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
-            <ColorSwatchPicker defaultValue="#f00">
-              <ColorSwatch color="#f00" />
-              <ColorSwatch color="#0f0" />
-              <ColorSwatch color="#0ff" />
-              <ColorSwatch color="#00f" />
+            <ColorSwatchPicker>
+              <ColorSwatch color="#A00" />
+              <ColorSwatch color="#f80" />
+              <ColorSwatch color="#080" />
+              <ColorSwatch color="#08f" />
+              <ColorSwatch color="#088" />
+              <ColorSwatch color="#008" />
             </ColorSwatchPicker>
+            <ColorSlider defaultValue="#7f0000" channel="red" />
+            <ColorArea defaultValue="#7f0000" />
+            <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
           </Section>
 
           <Section title="Date and Time">

@@ -11,7 +11,7 @@ function verdaccioPkgSize() {
   let verdaccioStorePath = exec('echo ~/.config/verdaccio/storage/').toString().trim();
 
   if (!fs.existsSync(verdaccioStorePath)) {
-    verdaccioStorePath = path.join(__dirname, '..', 'storage/');
+    verdaccioStorePath = path.join(__dirname, '..', 'verdaccio', 'storage/');
   }
 
   let json = {};
