@@ -38,7 +38,8 @@ export default async function installPackage(packageName: string, options?: {dev
   }
   try {
     logger.info(`Installing ${chalk.bold(packageName)} using ${chalk.bold(packageManager.name)}...`);
-    await execa(packageManager.name, [packageManager.installCommand, `${packageName}@latest`, options?.dev ? '-D' : undefined]);
+    const devFlag = options?.dev ? ['-D'] : [];
+    await execa(packageManager.name, [packageManager.installCommand, `${packageName}@latest`, ...devFlag]);
     logger.success(`Successfully installed ${chalk.bold(packageName)}!\n`);
     return true;
   } catch (e: any) {
