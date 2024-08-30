@@ -62,6 +62,9 @@ for (let key in themes) {
   };
 }
 
+export let S2ColorThemes = ['light', 'dark'];
+export let S2Backgrounds = ['base', 'layer-1', 'layer-2'];
+
 // Based on https://adobe.sharepoint.com/sites/global/SitePages/Languages%20Supported.aspx
 export let locales = [
   {label: 'Auto', value: ''},
