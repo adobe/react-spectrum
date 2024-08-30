@@ -14,7 +14,8 @@ import {act, fireEvent, waitFor, within} from '@testing-library/react';
 import {triggerLongPress} from './events';
 import {UserOpts} from './user';
 interface TableOptions extends UserOpts {
-  user: any
+  user: any,
+  advanceTimer: UserOpts['advanceTimer']
 }
 
 // TODO: Previously used logic like https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
@@ -24,7 +25,7 @@ export class TableTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _table: HTMLElement;
+  private _table: HTMLElement | undefined;
 
   constructor(opts: TableOptions) {
     this.user = opts.user;
@@ -68,6 +69,10 @@ export class TableTester {
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
       if (needsLongPress) {
+        if (this._advanceTimer == null) {
+          throw new Error('No advanceTimers provided for long press.');
+        }
+
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer});
         // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
         // To reproduce, try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
@@ -80,6 +85,10 @@ export class TableTester {
 
     // Handle cases where the table may transition in response to the row selection/deselection
     await act(async () => {
+      if (this._advanceTimer == null) {
+        throw new Error('No advanceTimers provided for table transition.');
+      }
+
       await this._advanceTimer(200);
     });
   };
@@ -150,6 +159,10 @@ export class TableTester {
 
       // Handle cases where the table may transition in response to the row selection/deselection
       await act(async () => {
+        if (this._advanceTimer == null) {
+          throw new Error('No advanceTimers provided for table transition.');
+        }
+
         await this._advanceTimer(200);
       });
 
@@ -194,7 +207,7 @@ export class TableTester {
   // add much value if we provide that to them
 
   toggleSelectAll = async () => {
-    let checkbox = within(this._table).getByLabelText('Select All');
+    let checkbox = within(this.getTable()).getByLabelText('Select All');
     if (this._interactionType === 'keyboard') {
       // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
       await this.user.click(checkbox);
@@ -229,7 +242,7 @@ export class TableTester {
       text
     } = opts;
 
-    let cell = within(this._table).getByText(text);
+    let cell = within(this.getTable()).getByText(text);
     if (cell) {
       while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role') || '')) {
         if (cell.parentElement) {
@@ -271,12 +284,12 @@ export class TableTester {
   };
 
   getRowHeaders = () => {
-    let table = this._table;
-    return table ? within(this._table).queryAllByRole('rowheader') : [];
+    let table = this.getTable();
+    return table ? within(table).queryAllByRole('rowheader') : [];
   };
 
   getCells = () => {
-    let table = this._table;
+    let table = this.getTable();
     return table ? within(table).queryAllByRole('gridcell') : [];
   };
 

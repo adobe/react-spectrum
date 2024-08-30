@@ -21,8 +21,8 @@ interface ComboBoxOptions extends UserOpts {
 export class ComboBoxTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
-  private _combobox: HTMLElement;
-  private _trigger: HTMLElement;
+  private _combobox: HTMLElement | undefined;
+  private _trigger: HTMLElement | undefined;
 
   constructor(opts: ComboBoxOptions) {
     this.user = opts.user;
@@ -54,35 +54,37 @@ export class ComboBoxTester {
 
   open = async (opts: {triggerBehavior?: 'focus' | 'manual'} = {}) => {
     let {triggerBehavior = 'manual'} = opts;
-    let isDisabled = this.getTrigger().hasAttribute('disabled');
+    let trigger = this.getTrigger();
+    let combobox = this.getCombobox();
+    let isDisabled = trigger.hasAttribute('disabled');
 
     if (this._interactionType === 'mouse') {
       if (triggerBehavior === 'focus') {
-        await this.user.click(this.getCombobox());
+        await this.user.click(combobox);
       } else {
-        await this.user.click(this.getTrigger());
+        await this.user.click(trigger);
       }
-    } else if (this._interactionType === 'keyboard') {
-      act(() => this._trigger.focus());
+    } else if (this._interactionType === 'keyboard' && this._trigger != null) {
+      act(() => this._trigger!.focus());
       if (triggerBehavior !== 'focus') {
         await this.user.keyboard('{ArrowDown}');
       }
     } else if (this._interactionType === 'touch') {
       if (triggerBehavior === 'focus') {
-        await this.user.pointer({target: this.getCombobox(), keys: '[TouchA]'});
+        await this.user.pointer({target: combobox, keys: '[TouchA]'});
       } else {
-        await this.user.pointer({target: this.getTrigger(), keys: '[TouchA]'});
+        await this.user.pointer({target: trigger, keys: '[TouchA]'});
       }
     }
 
     await waitFor(() => {
-      if (!isDisabled && this.getCombobox().getAttribute('aria-controls') == null) {
+      if (!isDisabled && combobox.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on combobox trigger element.');
       } else {
         return true;
       }
     });
-    let listBoxId = this.getCombobox().getAttribute('aria-controls');
+    let listBoxId = combobox.getAttribute('aria-controls');
     await waitFor(() => {
       if (!isDisabled && (!listBoxId || document.getElementById(listBoxId) == null)) {
         throw new Error(`Listbox with id of ${listBoxId} not found in document.`);
@@ -159,8 +161,8 @@ export class ComboBoxTester {
   };
 
   getListbox = () => {
-    let listBoxId = this._combobox.getAttribute('aria-controls');
-    return listBoxId ? document.getElementById(listBoxId) : undefined;
+    let listBoxId = this.getCombobox().getAttribute('aria-controls');
+    return listBoxId ? document.getElementById(listBoxId) || undefined : undefined;
   };
 
   // TODO: Perhaps this should also be able to take a section and return only the options from said section?

@@ -20,7 +20,7 @@ interface SelectOptions extends UserOpts {
 export class SelectTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
-  private _trigger: HTMLElement;
+  private _trigger: HTMLElement | undefined;
 
   constructor(opts: SelectOptions) {
     this.user = opts.user;
@@ -41,23 +41,24 @@ export class SelectTester {
   };
 
   open = async () => {
+    let trigger = this.getTrigger();
     if (this._interactionType === 'mouse') {
       await this.user.click(this._trigger);
     } else if (this._interactionType === 'keyboard') {
-      act(() => this._trigger.focus());
+      act(() => trigger.focus());
       await this.user.keyboard('[Enter]');
     } else if (this._interactionType === 'touch') {
       await this.user.pointer({target: this._trigger, keys: '[TouchA]'});
     }
 
     await waitFor(() => {
-      if (this._trigger.getAttribute('aria-controls') == null) {
+      if (trigger.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on select element trigger.');
       } else {
         return true;
       }
     });
-    let listBoxId = this._trigger.getAttribute('aria-controls');
+    let listBoxId = trigger.getAttribute('aria-controls');
     await waitFor(() => {
       if (!listBoxId || document.getElementById(listBoxId) == null) {
         throw new Error(`ListBox with id of ${listBoxId} not found in document.`);
@@ -68,7 +69,8 @@ export class SelectTester {
   };
 
   selectOption = async (optionText) => {
-    if (!this._trigger.getAttribute('aria-controls')) {
+    let trigger = this.getTrigger();
+    if (!trigger.getAttribute('aria-controls')) {
       await this.open();
     }
     let listbox = this.getListbox();
@@ -137,7 +139,7 @@ export class SelectTester {
   };
 
   getListbox = () => {
-    let listBoxId = this._trigger.getAttribute('aria-controls');
+    let listBoxId = this.getTrigger().getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) : undefined;
   };
 

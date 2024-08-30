@@ -25,7 +25,7 @@ export interface UserOpts {
   // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}
   // A real timer user would pass async () => await new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
-  advanceTimer?: (time?: number) => Promise<unknown>
+  advanceTimer?: (time?: number) => void | Promise<unknown>
 }
 
 let keyToUtil = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester} as const;
@@ -44,7 +44,7 @@ type ObjectType<T> =
     T extends 'GridListTester' ? GridListTester :
     never;
 
-let defaultAdvanceTimer = async (waitTime: number) => await new Promise((resolve) => setTimeout(resolve, waitTime));
+let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));
 
 export class User {
   user;

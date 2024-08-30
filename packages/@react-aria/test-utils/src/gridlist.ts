@@ -19,7 +19,7 @@ interface GridListOptions extends UserOpts {
 export class GridListTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
-  private _gridlist: HTMLElement;
+  private _gridlist: HTMLElement | undefined;
 
 
   constructor(opts: GridListOptions) {

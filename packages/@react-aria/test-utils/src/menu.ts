@@ -21,7 +21,7 @@ export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _trigger: HTMLElement;
+  private _trigger: HTMLElement | undefined;
 
   constructor(opts: MenuOptions) {
     this.user = opts.user;
@@ -57,27 +57,32 @@ export class MenuTester {
       needsLongPress
     } = opts;
 
+    let trigger = this.getTrigger();
     if (this._interactionType === 'mouse') {
       if (needsLongPress) {
-        await triggerLongPress({element: this.getTrigger(), advanceTimer: this._advanceTimer});
+        if (this._advanceTimer == null) {
+          throw new Error('No advanceTimers provided for long press.');
+        }
+
+        await triggerLongPress({element: trigger, advanceTimer: this._advanceTimer});
       } else {
-        await this.user.click(this.getTrigger());
+        await this.user.click(trigger);
       }
     } else if (this._interactionType === 'keyboard') {
-      act(() => this.getTrigger().focus());
+      act(() => trigger.focus());
       await this.user.keyboard('[Enter]');
     } else if (this._interactionType === 'touch') {
-      await this.user.pointer({target: this.getTrigger(), keys: '[TouchA]'});
+      await this.user.pointer({target: trigger, keys: '[TouchA]'});
     }
 
     await waitFor(() => {
-      if (this.getTrigger().getAttribute('aria-controls') == null) {
+      if (trigger.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on menu trigger element.');
       } else {
         return true;
       }
     });
-    let menuId = this.getTrigger().getAttribute('aria-controls');
+    let menuId = trigger.getAttribute('aria-controls');
     await waitFor(() => {
       if (!menuId || document.getElementById(menuId) == null) {
         throw new Error(`Menu with id of ${menuId} not found in document.`);
@@ -91,7 +96,8 @@ export class MenuTester {
   // Close on select is also kinda specific?
   selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean}) => {
     let {optionText, menuSelectionMode = 'single', needsLongPress, closesOnSelect = true, option} = opts;
-    if (!this.getTrigger().getAttribute('aria-controls')) {
+    let trigger = this.getTrigger();
+    if (!trigger.getAttribute('aria-controls')) {
       // TODO: technically this would need the user to pass in if their menu needs long press if we want calling selectOption to
       // work without needing to call open first. Bit annoying though, maybe I add opts and have one of them be needsLongPress?
       await this.open({needsLongPress});
@@ -120,7 +126,7 @@ export class MenuTester {
 
       if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect) {
         await waitFor(() => {
-          if (document.activeElement !== this.getTrigger()) {
+          if (document.activeElement !== trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
           } else {
             return true;

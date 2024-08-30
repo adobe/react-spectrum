@@ -58,7 +58,7 @@ describe('Picker/Select ', function () {
       expect(picker).toHaveAttribute('data-testid', 'test');
 
       let label = getAllByText('Test')[0];
-      let value = getByText('Select an option…');
+      let value = getByText('Select…');
       expect(label).toBeVisible();
       expect(value).toBeVisible();
 
@@ -167,7 +167,7 @@ describe('Picker/Select ', function () {
       expect(picker).toHaveAttribute('data-testid', 'test');
 
       let label = getAllByText('Test')[0];
-      let value = getByText('Select an option…');
+      let value = getByText('Select…');
       expect(label).toBeVisible();
       expect(value).toBeVisible();
 
