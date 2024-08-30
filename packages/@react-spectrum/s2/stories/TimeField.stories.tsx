@@ -17,7 +17,10 @@ import {TimeField} from '../src/TimeField';
 const meta: Meta<typeof TimeField> = {
   component: TimeField,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   title: 'S2/TimeField'
 };

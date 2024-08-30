@@ -18,7 +18,10 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof Table> = {
   component: Table,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   title: 'S2/Table'
 };

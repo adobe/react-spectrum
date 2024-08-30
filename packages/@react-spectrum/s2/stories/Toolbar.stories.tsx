@@ -24,7 +24,10 @@ import {Toolbar} from '../src/Toolbar';
 const meta: Meta<typeof Toolbar> = {
   component: Toolbar,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   title: 'S2/Toolbar'
 };

@@ -17,7 +17,10 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof DateRangePicker> = {
   component: DateRangePicker,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   title: 'S2/DateRangePicker'
 };

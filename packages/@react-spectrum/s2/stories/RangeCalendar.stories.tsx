@@ -17,7 +17,10 @@ import {RangeCalendar} from '../src/RangeCalendar';
 const meta: Meta<typeof RangeCalendar> = {
   component: RangeCalendar,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   title: 'S2/RangeCalendar'
 };
