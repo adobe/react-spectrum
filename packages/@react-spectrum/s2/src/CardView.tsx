@@ -18,6 +18,7 @@ import {
   UNSTABLE_Virtualizer
 } from 'react-aria-components';
 import {CardContext, CardViewContext} from './Card';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key, LoadingState, Node} from '@react-types/shared';
@@ -25,14 +26,15 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useLoadMore} from '@react-aria/utils';
 import {useMemo, useRef} from 'react';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior'> {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
   layout?: 'grid' | 'waterfall',
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   density?: 'compact' | 'regular' | 'spacious',
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet',
   selectionStyle?: 'checkbox' | 'highlight',
   loadingState?: LoadingState,
-  onLoadMore?: () => void
+  onLoadMore?: () => void,
+  styles?: StylesPropWithHeight
 }
 
 class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
@@ -41,9 +43,6 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
   protected minSpace: Size;
   protected maxColumns: number;
   protected dropIndicatorThickness: number;
-  protected itemSize: Size = new Size();
-  protected numColumns: number = 0;
-  protected horizontalSpacing: number = 0;
   protected contentSize: Size = new Size();
   protected layoutInfos: Map<Key, LayoutInfo> = new Map();
 
@@ -68,13 +67,13 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
 
     // Compute the number of rows and columns needed to display the content
     let columns = Math.floor(visibleWidth / (this.minItemSize.width + this.minSpace.width));
-    this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
+    let numColumns = Math.max(1, Math.min(this.maxColumns, columns));
 
     // Compute the available width (minus the space between items)
-    let width = visibleWidth - (this.minSpace.width * Math.max(0, this.numColumns));
+    let width = visibleWidth - (this.minSpace.width * Math.max(0, numColumns));
 
     // Compute the item width based on the space available
-    let itemWidth = Math.floor(width / this.numColumns);
+    let itemWidth = Math.floor(width / numColumns);
     itemWidth = Math.max(this.minItemSize.width, Math.min(maxItemWidth, itemWidth));
 
     // Compute the item height, which is proportional to the item width
@@ -83,9 +82,9 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
     itemHeight = Math.max(this.minItemSize.height, Math.min(maxItemHeight, itemHeight));    
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * itemWidth) / (this.numColumns + 1));
+    let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
 
-    let rows = Math.ceil(this.virtualizer.collection.size / this.numColumns);
+    let rows = Math.ceil(this.virtualizer.collection.size / numColumns);
     let iterator = this.virtualizer.collection[Symbol.iterator]();
     let y = rows > 0 ? this.minSpace.height : 0;
     let newLayoutInfos = new Map();
@@ -94,7 +93,7 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
     for (let row = 0; row < rows; row++) {
       let maxHeight = 0;
       let rowLayoutInfos: LayoutInfo[] = [];
-      for (let col = 0; col < this.numColumns; col++) {
+      for (let col = 0; col < numColumns; col++) {
         // Repeat skeleton until the end of the current row.
         let node = skeleton || iterator.next().value;
         if (!node) {
@@ -106,7 +105,7 @@ class FlexibleGridLayout<T extends object, O> extends Layout<Node<T>, O> {
         }
 
         let key = skeleton ? `${skeleton.key}-${skeletonCount++}` : node.key;
-        let x = this.horizontalSpacing + col * (itemWidth + this.horizontalSpacing);
+        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing);
         let oldLayoutInfo = this.layoutInfos.get(key);
         let height = itemHeight;
         let estimatedSize = true;
@@ -186,9 +185,6 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
   protected minSpace: Size;
   protected maxColumns: number;
   protected dropIndicatorThickness: number;
-  protected itemSize: Size = new Size();
-  protected numColumns: number = 0;
-  protected horizontalSpacing: number = 0;
   protected contentSize: Size = new Size();
   protected layoutInfos: Map<Key, LayoutInfo> = new Map();
 
@@ -213,13 +209,13 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
 
     // Compute the number of rows and columns needed to display the content
     let columns = Math.floor(visibleWidth / (this.minItemSize.width + this.minSpace.width));
-    this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
+    let numColumns = Math.max(1, Math.min(this.maxColumns, columns));
 
     // Compute the available width (minus the space between items)
-    let width = visibleWidth - (this.minSpace.width * Math.max(0, this.numColumns));
+    let width = visibleWidth - (this.minSpace.width * Math.max(0, numColumns));
 
     // Compute the item width based on the space available
-    let itemWidth = Math.floor(width / this.numColumns);
+    let itemWidth = Math.floor(width / numColumns);
     itemWidth = Math.max(this.minItemSize.width, Math.min(maxItemWidth, itemWidth));
 
     // Compute the item height, which is proportional to the item width
@@ -228,10 +224,10 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
     itemHeight = Math.max(this.minItemSize.height, Math.min(maxItemHeight, itemHeight));    
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * itemWidth) / (this.numColumns + 1));
+    let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
 
     // Setup an array of column heights
-    let columnHeights = Array(this.numColumns).fill(this.minSpace.height);
+    let columnHeights = Array(numColumns).fill(this.minSpace.height);
     let newLayoutInfos = new Map();
     let addNode = (key, node) => {
       let oldLayoutInfo = this.layoutInfos.get(key);
@@ -244,7 +240,7 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
 
       // Figure out which column to place the item in, and compute its position.
       let column = columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
-      let x = this.horizontalSpacing + column * (itemWidth + this.horizontalSpacing);
+      let x = horizontalSpacing + column * (itemWidth + horizontalSpacing);
       let y = columnHeights[column];
 
       let rect = new Rect(x, y, itemWidth, height);
@@ -462,8 +458,23 @@ const layoutOptions = {
   }
 };
 
+const cardViewStyles = style({
+  overflowY: {
+    default: 'auto',
+    isLoading: 'hidden'
+  },
+  scrollPadding: '[18px]',
+  display: {
+    isEmpty: 'flex'
+  },
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  outlineStyle: 'none'
+}, getAllowedOverrides({height: true}));
+
 export function CardView<T extends object>(props: CardViewProps<T>) {
-  let {children, layout: layoutName = 'grid', size = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', ...otherProps} = props;
+  let {children, layout: layoutName = 'grid', size = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   let options = layoutOptions[size][density];
   let layout = useMemo(() => {
     variant; // needed to invalidate useMemo
@@ -487,20 +498,11 @@ export function CardView<T extends object>(props: CardViewProps<T>) {
               {...otherProps}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
-              className={renderProps => style({
-                overflowY: {
-                  default: 'auto',
-                  isLoading: 'hidden'
-                },
-                scrollPadding: '[18px]',
-                display: {
-                  isEmpty: 'flex'
-                },
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                outlineStyle: 'none'
-              })({...renderProps, isLoading: props.loadingState === 'loading'})}>
+              style={{
+                ...UNSAFE_style,
+                scrollPadding: options.minSpace.height
+              }}
+              className={renderProps => UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, styles)}>
               {children}
             </AriaGridList>
           </ImageCoordinator>

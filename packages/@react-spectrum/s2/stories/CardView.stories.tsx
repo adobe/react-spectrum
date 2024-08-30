@@ -100,7 +100,7 @@ export const Example = (args: CardViewProps<any>, {viewMode}) => {
       {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
+      UNSAFE_style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
       <Collection items={items} dependencies={[args.layout]}>
         {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
       </Collection>
@@ -136,7 +136,7 @@ export const Empty = (args: CardViewProps<any>, {viewMode}) => {
     <CardView 
       aria-label="Assets"
       {...args}
-      style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}
+      UNSAFE_style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}
       renderEmptyState={() => (
         <IllustratedMessage size="L">
           <EmptyIcon />
@@ -198,7 +198,7 @@ export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
       {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
+      UNSAFE_style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
       <Collection items={items} dependencies={[args.layout]}>
         {topic => <TopicCard topic={topic} />}
       </Collection>

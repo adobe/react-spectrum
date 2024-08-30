@@ -146,7 +146,13 @@ export const User = (args: any) => (
   </div>
 );
 
-User.argTypes = specificArgTypes;
+User.argTypes = {
+  ...specificArgTypes,
+  variant: {
+    control: 'radio',
+    options: ['primary', 'secondary', 'tertiary']
+  }
+};
 
 export const Product = (args: any) => (
   <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center'}}>
@@ -182,7 +188,13 @@ export const Product = (args: any) => (
   </div>
 );
 
-Product.argTypes = specificArgTypes;
+Product.argTypes = {
+  ...specificArgTypes,
+  variant: {
+    control: 'radio',
+    options: ['primary', 'secondary', 'tertiary']
+  }
+};
 
 export const Collection = (args: any) => (
   <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'end', justifyContent: 'center'}}>

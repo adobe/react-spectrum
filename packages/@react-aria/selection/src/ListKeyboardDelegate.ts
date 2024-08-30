@@ -151,7 +151,9 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     // @ts-ignore
     if (this.layoutDelegate.getKeyRightOf) {
       // @ts-ignore
-      return this.layoutDelegate.getKeyRightOf(key);
+      key = this.layoutDelegate.getKeyRightOf(key);
+      // @ts-ignore
+      return this.findNextNonDisabled(key, key => this.layoutDelegate.getKeyRightOf(key));
     }
 
     if (this.layout === 'grid') {
@@ -171,7 +173,9 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     // @ts-ignore
     if (this.layoutDelegate.getKeyLeftOf) {
       // @ts-ignore
-      return this.layoutDelegate.getKeyLeftOf(key);
+      key = this.layoutDelegate.getKeyLeftOf(key);
+      // @ts-ignore
+      return this.findNextNonDisabled(key, key => this.layoutDelegate.getKeyLeftOf(key));
     }
 
     if (this.layout === 'grid') {

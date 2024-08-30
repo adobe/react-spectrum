@@ -12,11 +12,11 @@
 
 import {ActionMenuContext} from './ActionMenu';
 import {AvatarContext} from './Avatar';
-import {Button, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
 import {ContentContext, FooterContext, TextContext} from './Content';
+import {ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
@@ -57,9 +57,7 @@ let card = style({
     value: {
       variant: {
         primary: 'elevated',
-        secondary: 'layer-1',
-        tertiary: 'transparent',
-        quiet: 'transparent'
+        secondary: 'layer-1'
       },
       forcedColors: 'ButtonFace'
     }
@@ -390,10 +388,9 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
           ? press(renderProps) 
           : UNSAFE_style
       }>
-      {({selectionMode, selectionBehavior, allowsDragging, isHovered, isFocusVisible, isSelected, isPressed}) => (
+      {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider value={{size, isQuiet, isHovered, isFocusVisible, isSelected}}>
           {!isQuiet && <SelectionIndicator />}
-          {allowsDragging && <Button slot="drag">≡</Button>}
           {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
             <PressResponder isPressed={isPressed}>
               <div 
@@ -545,7 +542,10 @@ const avatarSize = {
   XL: 80
 } as const;
 
-export interface UserCardProps extends Omit<CardProps, 'density'> {}
+export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
+  // Quiet is not supported due to lack of indent between preview and avatar.
+  variant?: 'primary' | 'secondary' | 'tertiary'
+}
 
 export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
@@ -592,11 +592,13 @@ const buttonSize = {
   XL: 'L'
 } as const;
 
-export interface ProductCardProps extends Omit<CardProps, 'density'> {}
+export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
+  // Quiet is not supported due to lack of indent between preview and thumbnail.
+  variant?: 'primary' | 'secondary' | 'tertiary'
+}
 
 export const ProductCard = forwardRef(function ProductCard(props: ProductCardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
-  let isSkeleton = useIsSkeleton();
   return (
     <Card {...props} ref={ref} density="spacious">
       <Provider
@@ -657,8 +659,8 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
               justifyContent: 'end'
             }))
           }],
-          [ButtonContext, {size: buttonSize[size], isDisabled: isSkeleton}],
-          [LinkButtonContext, {size: buttonSize[size], isDisabled: isSkeleton}]
+          [ButtonContext, {size: buttonSize[size]}],
+          [LinkButtonContext, {size: buttonSize[size]}]
         ]}>
         {props.children}
       </Provider>

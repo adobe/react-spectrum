@@ -12,8 +12,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface ImageProps extends UnsafeStyles, SlotProps {
   src?: string,
   // TODO
-  srcSet?: string,
-  sizes?: string,
+  // srcSet?: string,
+  // sizes?: string,
   alt?: string,
   crossOrigin?: 'anonymous' | 'use-credentials',
   decoding?: 'async' | 'auto' | 'sync',
