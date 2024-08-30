@@ -28718,6 +28718,7 @@ __metadata:
     "@react-aria/dnd": "npm:^3.7.2"
     "@react-aria/focus": "npm:^3.18.2"
     "@react-aria/interactions": "npm:^3.22.2"
+    "@react-aria/live-announcer": "npm:^3.3.4"
     "@react-aria/menu": "npm:^3.15.3"
     "@react-aria/toolbar": "npm:3.0.0-beta.8"
     "@react-aria/tree": "npm:3.0.0-alpha.5"
