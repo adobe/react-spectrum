@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionItemAriaProps, useAccordionItem} from '@react-aria/accordion';
-import {AccordionItemState, useAccordionItemState} from '@react-stately/accordion';
+import {AriaDisclosureProps, useDisclosure} from '@react-aria/accordion';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {DisclosureState, useDisclosureState} from '@react-stately/accordion';
 import {forwardRefType} from '@react-types/shared';
 import {HoverEvents} from 'react-aria';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
-export interface AccordionItemProps extends Omit<AccordionItemAriaProps, 'children' | 'panelRef'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
+export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'children' | 'contentRef'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
 
 export interface AccordionItemRenderProps {
   /**
@@ -45,24 +45,24 @@ export interface AccordionItemRenderProps {
   /**
    * State of the accordion item.
    */
-  state: AccordionItemState
+  state: DisclosureState
 }
 
 export const AccordionItemContext = createContext<ContextValue<AccordionItemProps, HTMLDivElement>>(null);
-export const AccordionItemStateContext = createContext<AccordionItemState | null>(null);
+export const DisclosureStateContext = createContext<DisclosureState | null>(null);
 
 interface InternalAccordionContextValue {
-  regionProps: DOMAttributes<HTMLElement>,
-  panelRef: React.RefObject<HTMLElement>
+  contentProps: DOMAttributes<HTMLElement>,
+  contentRef: React.RefObject<HTMLElement>
 }
 
 const InternalAccordionContext = createContext<InternalAccordionContextValue | null>(null);
 
 function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, AccordionItemContext);
-  let state = useAccordionItemState(props);
-  let panelRef = useRef<HTMLElement>(null);
-  let {buttonProps, regionProps} = useAccordionItem({...props, panelRef}, state);
+  let state = useDisclosureState(props);
+  let contentRef = useRef<HTMLElement>(null);
+  let {triggerProps, contentProps} = useDisclosure({...props, contentRef}, state);
 
   let renderProps = useRenderProps({
     ...props,
@@ -79,11 +79,11 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
       values={[
         [ButtonContext, {
           slots: {
-            trigger: buttonProps
+            trigger: triggerProps
           }
         }],
-        [InternalAccordionContext, {regionProps, panelRef}],
-        [AccordionItemStateContext, state]
+        [InternalAccordionContext, {contentProps, contentRef}],
+        [DisclosureStateContext, state]
       ]}>
       <div
         ref={ref}
@@ -97,11 +97,17 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
 }
 
 export interface AccordionPanelProps extends RenderProps<{}> {
+  /**
+   * The accessibility role for the accordion item's panel.
+   * @default 'region'
+   */
+  role?: string,
   children: ReactNode
 }
 
 function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElement>) {
-  let {regionProps, panelRef} = useContext(InternalAccordionContext)!;
+  let {role = 'region'} = props;
+  let {contentProps, contentRef} = useContext(InternalAccordionContext)!;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-AccordionPanel',
@@ -109,10 +115,10 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElemen
       // TODO: add more values?
     }
   });
-  let mergedRef = useObjectRef(mergeRefs(panelRef, ref));
+  let mergedRef = useObjectRef(mergeRefs(contentRef, ref));
   return (
     // @ts-ignore
-    <div ref={mergedRef} {...renderProps} {...regionProps}>
+    <div role={role} ref={mergedRef} {...renderProps} {...contentProps}>
       {props.children}
     </div>
   );

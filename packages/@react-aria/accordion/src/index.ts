@@ -9,6 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useAccordionItem} from './useAccordionItem';
-export type {AccordionItemAria, AccordionItemAriaProps} from './useAccordionItem';
+export {useDisclosure} from './useDisclosure';
+export type {DisclosureAria, AriaDisclosureProps} from './useDisclosure';
 export type {AriaAccordionProps} from '@react-types/accordion';

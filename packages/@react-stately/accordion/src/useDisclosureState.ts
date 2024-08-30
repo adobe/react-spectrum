@@ -14,34 +14,34 @@ import {useCallback} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 // TODO: move this to @react-types/accordion
-export interface AccordionItemProps {
-  /** Whether the accordion item's panel is open (controlled). */
+export interface DisclosureProps {
+  /** Whether the disclosure is open (controlled). */
   isOpen?: boolean,
-  /** Whether the accordion item's panel is open by default (uncontrolled). */
+  /** Whether the disclosure is open by default (uncontrolled). */
   defaultOpen?: boolean,
-  /** Handler that is called when the accordion item's panel open state changes. */
+  /** Handler that is called when the disclosure open state changes. */
   onOpenChange?: (isOpen: boolean) => void
 }
 
 
-export interface AccordionItemState {
-  /** Whether the accordion item's panel is currently open. */
+export interface DisclosureState {
+  /** Whether the disclosure is currently open. */
   readonly isOpen: boolean,
-  /** Sets whether the accordion item's panel is open. */
+  /** Sets whether the disclosure is open. */
   setOpen(isOpen: boolean): void,
-  /** Opens the accordion item's panel. */
+  /** Opens the disclosure. */
   open(): void,
-  /** Closes the accordion item's panel. */
+  /** Closes the disclosure. */
   close(): void,
-  /** Toggles the accordion item's panel visibility. */
+  /** Toggles the disclosure's visibility. */
   toggle(): void
 }
 
 /**
- * Manages state for an accordion item. Tracks whether the accordion panel is open, and provides
+ * Manages state for a disclosure widget. Tracks whether the disclosure is open, and provides
  * methods to toggle this state.
  */
-export function useAccordionItemState(props: AccordionItemProps): AccordionItemState  {
+export function useDisclosureState(props: DisclosureProps): DisclosureState  {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
   const open = useCallback(() => {

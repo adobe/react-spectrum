@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {useAccordionItemState} from './useAccordionItemState';
+export {useDisclosureState} from './useDisclosureState';
 
-// export type {AccordionItemProps} from '@react-types/accordion';
-export type {AccordionItemState} from './useAccordionItemState';
+// export type {DisclosureProps} from '@react-types/accordion';
+export type {DisclosureState} from './useDisclosureState';
