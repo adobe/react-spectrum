@@ -384,7 +384,7 @@ describe('ComboBox', function () {
 
     expect(combobox.value).toBe('On');
     expect(items[0]).toHaveTextContent('One');
-    expect(combobox).toHaveAttribute('aria-controls', getListbox.id);
+    expect(combobox).toHaveAttribute('aria-controls', getListbox().id);
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
 
     await user.keyboard('{ArrowDown}');

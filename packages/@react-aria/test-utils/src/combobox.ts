@@ -154,7 +154,7 @@ export class ComboBoxTester {
 
   getTrigger = () => {
     if (!this._trigger) {
-      throw new Error('Combobox trigger element hasn\'t been set yet. Did you call `setElement()` yet?');
+      throw new Error('Combobox trigger element hasn\'t been set yet. Did you call `setElement()` or `setTrigger()` yet?');
     }
 
     return this._trigger;
@@ -165,7 +165,6 @@ export class ComboBoxTester {
     return listBoxId ? document.getElementById(listBoxId) || undefined : undefined;
   };
 
-  // TODO: Perhaps this should also be able to take a section and return only the options from said section?
   getOptions = (opts: {element?: HTMLElement} = {}): HTMLElement[] | never[] => {
     let {element} = opts;
     element = element || this.getListbox();

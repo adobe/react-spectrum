@@ -58,6 +58,7 @@ export class MenuTester {
     } = opts;
 
     let trigger = this.getTrigger();
+    let isDisabled = trigger.hasAttribute('disabled');
     if (this._interactionType === 'mouse') {
       if (needsLongPress) {
         if (this._advanceTimer == null) {
@@ -76,20 +77,22 @@ export class MenuTester {
     }
 
     await waitFor(() => {
-      if (trigger.getAttribute('aria-controls') == null) {
+      if (trigger.getAttribute('aria-controls') == null && !isDisabled) {
         throw new Error('No aria-controls found on menu trigger element.');
       } else {
         return true;
       }
     });
-    let menuId = trigger.getAttribute('aria-controls');
-    await waitFor(() => {
-      if (!menuId || document.getElementById(menuId) == null) {
-        throw new Error(`Menu with id of ${menuId} not found in document.`);
-      } else {
-        return true;
-      }
-    });
+    if (!isDisabled) {
+      let menuId = trigger.getAttribute('aria-controls');
+      await waitFor(() => {
+        if (!menuId || document.getElementById(menuId) == null) {
+          throw new Error(`Menu with id of ${menuId} not found in document.`);
+        } else {
+          return true;
+        }
+      });
+    }
   };
 
   // TODO: also very similar to select, barring potential long press support
@@ -145,22 +148,25 @@ export class MenuTester {
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
   openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean}): Promise<MenuTester | null> => {
     let {submenuTrigger, submenuTriggerText, needsLongPress} = opts;
-    if (!this.getTrigger().getAttribute('aria-controls')) {
+    let trigger = this.getTrigger();
+    let isDisabled = trigger.hasAttribute('disabled');
+    if (!trigger.getAttribute('aria-controls') && !isDisabled) {
       await this.open({needsLongPress});
     }
+    if (!isDisabled) {
+      let menu = this.getMenu();
+      if (menu) {
+        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType});
+        if (submenuTrigger) {
+          submenuTriggerTester.setElement(submenuTrigger);
+        } else if (submenuTriggerText) {
+          submenuTriggerTester.setElement(within(menu).getByText(submenuTriggerText));
+        }
 
-    let menu = this.getMenu();
-    if (menu) {
-      let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType});
-      if (submenuTrigger) {
-        submenuTriggerTester.setElement(submenuTrigger);
-      } else if (submenuTriggerText) {
-        submenuTriggerTester.setElement(within(menu).getByText(submenuTriggerText));
+        await submenuTriggerTester.open();
+
+        return submenuTriggerTester;
       }
-
-      await submenuTriggerTester.open();
-
-      return submenuTriggerTester;
     }
 
     return null;

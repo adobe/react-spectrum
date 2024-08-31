@@ -263,9 +263,9 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name does not trigger on disabled button', async function ({Component, props}) {
     let tree = renderComponent(Component, props, {}, {isDisabled: true});
-    let {setElement, getTrigger, getMenu} = testUtilUser.createTester('MenuTester');
+    let {setElement, open, getMenu} = testUtilUser.createTester('MenuTester');
     setElement(tree.container);
-    await user.click(getTrigger());
+    await open();
     act(() => {jest.runAllTimers();});
     let menu = getMenu();
     expect(menu).toBeFalsy();

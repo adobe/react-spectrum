@@ -42,6 +42,8 @@ export class SelectTester {
 
   open = async () => {
     let trigger = this.getTrigger();
+    let isDisabled = trigger.hasAttribute('disabled');
+
     if (this._interactionType === 'mouse') {
       await this.user.click(this._trigger);
     } else if (this._interactionType === 'keyboard') {
@@ -52,7 +54,7 @@ export class SelectTester {
     }
 
     await waitFor(() => {
-      if (trigger.getAttribute('aria-controls') == null) {
+      if (!isDisabled && trigger.getAttribute('aria-controls') == null) {
         throw new Error('No aria-controls found on select element trigger.');
       } else {
         return true;
@@ -60,7 +62,7 @@ export class SelectTester {
     });
     let listBoxId = trigger.getAttribute('aria-controls');
     await waitFor(() => {
-      if (!listBoxId || document.getElementById(listBoxId) == null) {
+      if (!isDisabled && (!listBoxId || document.getElementById(listBoxId) == null)) {
         throw new Error(`ListBox with id of ${listBoxId} not found in document.`);
       } else {
         return true;
