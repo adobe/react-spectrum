@@ -108,6 +108,7 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   props = disablePendingProps(props);
+  let isPendable = Object.hasOwn(props, 'isPending');
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
@@ -173,18 +174,20 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
         ]}>
         {renderProps.children}
       </Provider>
-      <VisuallyHidden>
-        <div aria-live={isFocused ? ariaLive : 'off'}>
-          {isPending &&
-            <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
-          }
-        </div>
-        {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
-      Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
-      https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
-      The aria-live may cause extra announcements in other browsers. */}
-        <div id={safariDupeLabellingId} role="img" aria-label={isPending ? isPendingAriaLiveLabel : undefined} />
-      </VisuallyHidden>
+      {/* Only render if we expect isPending to be used with this button. */}
+      {isPendable && (
+        <VisuallyHidden>
+          <div aria-live={isFocused ? ariaLive : 'off'}>
+              {isPending &&
+                <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />}
+          </div>
+          {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
+              Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
+              https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
+              The aria-live may cause extra announcements in other browsers. */}
+          <div id={safariDupeLabellingId} role="img" aria-label={isPending ? isPendingAriaLiveLabel : undefined} />
+        </VisuallyHidden>
+      )}
     </button>
   );
 }
