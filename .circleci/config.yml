@@ -15,7 +15,6 @@ parameters:
 
 orbs:
   azure-cli: circleci/azure-cli@1.2.0
-  cimg/azure:YYYY.MM.I
 
 executors:
   rsp:
