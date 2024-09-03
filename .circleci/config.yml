@@ -486,7 +486,7 @@ jobs:
 
   deploy:
     docker:
-      - image: cimg/azure:2024.03.1
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
@@ -501,7 +501,7 @@ jobs:
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
   deploy-verdaccio:
     docker:
-      - image: cimg/azure:2024.03.1
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/verdaccio_dist
@@ -514,7 +514,7 @@ jobs:
 
   deploy-production:
     docker:
-      - image: cimg/azure:2024.03.1
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
