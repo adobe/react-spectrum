@@ -5558,6 +5558,7 @@ __metadata:
     "@react-aria/button": "npm:^3.9.8"
     "@react-aria/selection": "npm:^3.19.3"
     "@react-aria/utils": "npm:^3.25.2"
+    "@react-stately/accordion": "npm:^3.0.0"
     "@react-stately/tree": "npm:^3.8.4"
     "@react-types/accordion": "npm:3.0.0-alpha.23"
     "@react-types/button": "npm:^3.9.6"
