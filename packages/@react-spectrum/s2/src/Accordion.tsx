@@ -11,9 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, Header, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Header, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
-import {DisclosureStateContext} from '../../../react-aria-components/src/Accordion';
 import {Divider} from './Divider';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';

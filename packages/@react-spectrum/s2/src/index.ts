@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel} from './Accordion';
+export {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel, AccordionGroupContext, AccordionItemContext} from './Accordion';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
