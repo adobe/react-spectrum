@@ -87,7 +87,6 @@ Example.play = async ({canvasElement}) => {
   await within(body).findByRole('tooltip');
 };
 
-
 Example.story = {
   argTypes: {
     isOpen: {

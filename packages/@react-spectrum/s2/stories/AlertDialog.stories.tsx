@@ -12,6 +12,7 @@
 
 import {ActionButton, AlertDialog, DialogTrigger} from '../src';
 import type {Meta} from '@storybook/react';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog as any,
@@ -39,4 +40,11 @@ Example.args = {
   cancelLabel: 'Cancel',
   secondaryActionLabel: 'Remind me later',
   primaryActionLabel: 'Register'
+};
+
+Example.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[Enter]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('alertdialog');
 };

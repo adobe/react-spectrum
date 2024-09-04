@@ -1,6 +1,7 @@
 import {Content, ContextualHelp, Footer, Heading, Text} from '../src';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof ContextualHelp> = {
   component: ContextualHelp,
@@ -37,4 +38,11 @@ export const Example: Story = {
       </ContextualHelp>
     );
   }
+};
+
+Example.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('{Enter}');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
 };

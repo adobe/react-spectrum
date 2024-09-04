@@ -17,6 +17,7 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -47,6 +48,13 @@ Example.args = {
   label: 'Ice cream flavor'
 };
 
+Example.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('{ArrowDown}');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('listbox');
+};
+
 export const Sections: Story = {
   render: (args) => (
     <ComboBox {...args}>
@@ -74,6 +82,9 @@ export const Sections: Story = {
   }
 };
 
+Sections.play = async (context) => {
+  await Example.play(context);
+};
 
 interface IExampleItem {
   id: string,
@@ -98,6 +109,9 @@ export const Dynamic: Story = {
   }
 };
 
+Dynamic.play = async (context) => {
+  await Example.play(context);
+};
 
 export const WithIcons: Story = {
   render: (args) => (
@@ -117,6 +131,10 @@ export const WithIcons: Story = {
   args: {
     label: 'Where to share'
   }
+};
+
+WithIcons.play = async (context) => {
+  await Example.play(context);
 };
 
 export const Validation = (args: any) => (
@@ -163,6 +181,13 @@ ContextualHelpExample.args = {
       </Footer>
     </ContextualHelp>
   )
+};
+
+ContextualHelpExample.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('{Enter}');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
 };
 
 ContextualHelpExample.parameters = {
@@ -219,4 +244,8 @@ CustomWidth.parameters = {
   docs: {
     disable: true
   }
+};
+
+CustomWidth.play = async (context) => {
+  await Example.play(context);
 };

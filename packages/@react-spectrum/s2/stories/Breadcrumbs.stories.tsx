@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Breadcrumb, Breadcrumbs} from '../src';
 import type {Meta} from '@storybook/react';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
@@ -66,6 +67,14 @@ export const WithActions = (args: any) => (
   </Breadcrumbs>
 );
 
+WithActions.play = async ({canvasElement}) => {
+  // This uses click because using .tab twice didn't move focus to the menu
+  let trigger = await within(canvasElement).findByRole('button');
+  await userEvent.click(trigger);
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('menu');
+};
+
 let manyItems = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over'},
   {id: 'Folder 2', name: 'My Documents'},
@@ -87,6 +96,10 @@ export const Many = (args: any) => (
     </Breadcrumbs>
   </div>
 );
+
+Many.play = async (context) => {
+  await WithActions.play(context);
+};
 
 let manyItemsWithLinks = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},

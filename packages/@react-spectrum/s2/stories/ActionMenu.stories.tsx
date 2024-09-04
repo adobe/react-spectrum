@@ -14,6 +14,7 @@ import {ActionMenu, MenuItem} from '../src';
 
 import {categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
@@ -41,6 +42,14 @@ export const Example: Story = {
     );
   }
 };
+
+Example.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[Enter]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('menu');
+};
+
 interface IExampleItem {
   id: string,
   label: string
@@ -61,6 +70,10 @@ export const DynamicExample: Story = {
   args: {
     items
   }
+};
+
+DynamicExample.play = async (context) => {
+  await Example.play(context);
 };
 
 DynamicExample.parameters = {
