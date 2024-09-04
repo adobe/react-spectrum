@@ -25,7 +25,7 @@ export interface AriaDisclosureProps {
   /** Whether the disclosure is open by default (uncontrolled). */
   defaultOpen?: boolean,
   /** The ref for the disclosure's content element. */
-  contentRef: RefObject<HTMLElement>
+  contentRef: RefObject<HTMLElement | null>
 }
 
 export interface DisclosureAria {

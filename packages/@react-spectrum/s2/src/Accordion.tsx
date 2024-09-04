@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, Header, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps} from 'react-aria-components';
+import {Button, ContextValue, Header, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {DisclosureStateContext} from '../../../react-aria-components/src/Accordion';
 import {Divider} from './Divider';
@@ -26,7 +26,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
-export interface AccordionGroupProps extends UnsafeStyles, DOMProps {
+export interface AccordionGroupProps extends UnsafeStyles, DOMProps, SlotProps {
   /** The accordion items in the accordion group. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */
