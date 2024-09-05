@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, screen, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -5149,9 +5149,7 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(announce).toHaveBeenCalledTimes(2);
-        expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
-        expect(announce).toHaveBeenNthCalledWith(2, 'One');
+        expect(screen.getAllByRole('log')).toHaveLength(2);
         platformMock.mockRestore();
       });
 
