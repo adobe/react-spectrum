@@ -17,7 +17,6 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -48,13 +47,6 @@ Example.args = {
   label: 'Ice cream flavor'
 };
 
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{ArrowDown}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('listbox');
-};
-
 export const Sections: Story = {
   render: (args) => (
     <ComboBox {...args}>
@@ -82,10 +74,6 @@ export const Sections: Story = {
   }
 };
 
-Sections.play = async (context) => {
-  await Example.play(context);
-};
-
 interface IExampleItem {
   id: string,
   label: string
@@ -109,9 +97,6 @@ export const Dynamic: Story = {
   }
 };
 
-Dynamic.play = async (context) => {
-  await Example.play(context);
-};
 
 export const WithIcons: Story = {
   render: (args) => (
@@ -133,10 +118,6 @@ export const WithIcons: Story = {
   }
 };
 
-WithIcons.play = async (context) => {
-  await Example.play(context);
-};
-
 export const Validation = (args: any) => (
   <Form>
     <ComboBox {...args}>
@@ -151,43 +132,37 @@ Validation.args = {
   isRequired: true
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <ComboBox {...args}>
-    <ComboBoxItem>Chocolate</ComboBoxItem>
-    <ComboBoxItem>Mint</ComboBoxItem>
-    <ComboBoxItem>Strawberry</ComboBoxItem>
-    <ComboBoxItem>Vanilla</ComboBoxItem>
-    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-  </ComboBox>
-);
-
-ContextualHelpExample.args = {
-  label: 'Ice cream flavor',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Ice cream flavor',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };
 
 ContextualHelpExample.parameters = {
@@ -244,8 +219,4 @@ CustomWidth.parameters = {
   docs: {
     disable: true
   }
-};
-
-CustomWidth.play = async (context) => {
-  await Example.play(context);
 };

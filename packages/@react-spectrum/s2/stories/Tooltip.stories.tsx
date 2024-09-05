@@ -16,12 +16,14 @@ import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
@@ -81,12 +83,6 @@ export const Example = (args: any) => {
   );
 };
 
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
 Example.story = {
   argTypes: {
     isOpen: {
@@ -141,12 +137,6 @@ LongLabel.story = {
   }
 };
 
-LongLabel.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
 export const ColorScheme = (args: any) => (
   <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
     <Example {...args} />
@@ -160,10 +150,4 @@ ColorScheme.story = {
       options: [true, false, undefined]
     }
   }
-};
-
-ColorScheme.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
 };

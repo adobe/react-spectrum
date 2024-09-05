@@ -29,7 +29,6 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -56,13 +55,6 @@ export const Example = (args: any) => (
     <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
   </Picker>
 );
-
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{ArrowDown}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('listbox');
-};
 
 Example.args = {
   label: 'Ice cream flavor'
@@ -95,10 +87,6 @@ export const Sections: Story = {
   }
 };
 
-Sections.play = async (context) => {
-  await Example.play(context);
-};
-
 interface IExampleItem {
   id: string,
   label: string
@@ -122,10 +110,6 @@ export const Dynamic: Story = {
   }
 };
 
-Dynamic.play = async (context) => {
-  await Example.play(context);
-};
-
 export const WithIcons: Story = {
   render: (args) => (
     <Picker {...args}>
@@ -144,10 +128,6 @@ export const WithIcons: Story = {
   args: {
     label: 'Where to share'
   }
-};
-
-WithIcons.play = async (context) => {
-  await Example.play(context);
 };
 
 export const Validation = (args: any) => (
@@ -170,10 +150,6 @@ CustomWidth.parameters = {
   docs: {
     disable: true
   }
-};
-
-CustomWidth.play = async (context) => {
-  await Example.play(context);
 };
 
 export const ContextualHelpExample = (args: any) => (
@@ -206,13 +182,6 @@ ContextualHelpExample.args = {
       </Footer>
     </ContextualHelp>
   )
-};
-
-ContextualHelpExample.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
 };
 
 ContextualHelpExample.parameters = {

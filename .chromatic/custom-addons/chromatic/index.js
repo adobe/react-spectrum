@@ -27,7 +27,7 @@ export const withChromaticProvider = makeDecorator({
       height = options.height;
     }
 
-    if (context.title.includes('S2/')) {
+    if (context.title.includes('S2')) {
       return <RenderS2 getStory={getStory} context={context} options={options} selectedLocales={selectedLocales} height={height} minHeight={minHeight} />
     } else {
       return <RenderV3 getStory={getStory} context={context} options={options} selectedLocales={selectedLocales} height={height} minHeight={minHeight} />

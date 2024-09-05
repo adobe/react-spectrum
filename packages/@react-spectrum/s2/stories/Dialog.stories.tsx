@@ -14,7 +14,6 @@ import {Button, ButtonGroup, Checkbox, Content, Dialog, DialogContainer, DialogT
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useState} from 'react';
-import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog as any,
@@ -22,6 +21,9 @@ const meta: Meta<typeof Dialog> = {
     layout: 'centered',
     docs: {
       controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
+    },
+    chromatic: {
+      disableSnapshot: true
     }
   },
   argTypes: {
@@ -61,13 +63,6 @@ export const Example = (args: any) => (
     </Dialog>
   </DialogTrigger>
 );
-
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
-};
 
 Example.parameters = {
   docs: {
@@ -113,10 +108,6 @@ DialogTriggerExample.args = {
   showButtons: true,
   paragraphs: 1,
   title: 'Dialog title'
-};
-
-DialogTriggerExample.play = async (context) => {
-  await Example.play(context);
 };
 
 DialogTriggerExample.parameters = {
@@ -166,10 +157,6 @@ export function DialogContainerExample(props: any) {
   );
 }
 
-DialogContainerExample.play = async (context) => {
-  await Example.play(context);
-};
-
 DialogContainerExample.args = DialogTriggerExample.args;
 DialogContainerExample.parameters = {
   docs: {
@@ -209,10 +196,6 @@ export const ColorScheme = (args: any) => (
     <DialogTriggerExample {...args} />
   </Provider>
 );
-
-ColorScheme.play = async (context) => {
-  await Example.play(context);
-};
 
 ColorScheme.args = DialogTriggerExample.args;
 ColorScheme.parameters = {

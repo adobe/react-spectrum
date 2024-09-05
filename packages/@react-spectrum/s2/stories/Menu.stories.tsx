@@ -23,12 +23,14 @@ import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
@@ -79,13 +81,6 @@ export const Example: Story = {
       </MenuTrigger>
     );
   }
-};
-
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{ArrowDown}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
 };
 
 Example.parameters = {
@@ -144,10 +139,6 @@ export const KeyboardShortcuts: Story = {
       </MenuTrigger>
     );
   }
-};
-
-KeyboardShortcuts.play = async (context) => {
-  await Example.play(context);
 };
 
 export const PublishAndExport: Story = {
@@ -237,10 +228,6 @@ export const PublishAndExport: Story = {
     selectedKeys: ['quick-export'],
     disabledKeys: ['livestream']
   }
-};
-
-PublishAndExport.play = async (context) => {
-  await Example.play(context);
 };
 
 PublishAndExport.parameters = {
@@ -371,9 +358,6 @@ export const BlendModes: Story = {
   }
 };
 
-BlendModes.play = async (context) => {
-  await Example.play(context);
-};
 interface IExampleItem {
   id: string,
   label: string,
@@ -434,10 +418,6 @@ export const DynamicExample: Story = {
   args: {
     items
   }
-};
-
-DynamicExample.play = async (context) => {
-  await Example.play(context);
 };
 
 DynamicExample.parameters = {

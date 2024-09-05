@@ -10,39 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, AlertDialog, DialogTrigger} from '../src';
+import {AlertDialog} from '../src';
+import {Example as Base} from '../stories/AlertDialog.stories';
 import type {Meta} from '@storybook/react';
+import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof AlertDialog> = {
-  component: AlertDialog as any,
+  component: AlertDialog,
   parameters: {
     layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
+    chromatic: {delay: 4000}
   },
-  tags: ['autodocs'],
-  title: 'S2/AlertDialog'
+  title: 'S2 Chromatic/AlertDialog'
 };
 
 export default meta;
 
-export const Example = {
-  render: (args) => {
-    return (
-      <DialogTrigger>
-        <ActionButton>Save</ActionButton>
-        <AlertDialog {...args} >
-          You have not saved your profile information
-          for this account. Would you like to register now?
-        </AlertDialog>
-      </DialogTrigger>
-    );
-  },
-  args: {
-    title: 'Register profile',
-    cancelLabel: 'Cancel',
-    secondaryActionLabel: 'Remind me later',
-    primaryActionLabel: 'Register'
-  }
+export const Example = {...Base};
+
+Example.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[Enter]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('alertdialog');
 };
