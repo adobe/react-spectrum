@@ -264,7 +264,11 @@ const chevronStyles = style({
     }
   },
   transitionDuration: '100ms',
-  transitionProperty: 'rotate'
+  transitionProperty: 'rotate',
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
 });
 
 function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement>) {
