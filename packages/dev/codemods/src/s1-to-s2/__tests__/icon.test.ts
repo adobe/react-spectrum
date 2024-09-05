@@ -19,3 +19,47 @@ function CustomIcon(props) {
   );
 }
 `);
+
+test('Migrate S1 icon with same name to S2', `
+import Add from '@spectrum-icons/workflow/Add';
+
+<Add />;
+`);
+
+test('Migrate S1 icon with different name to S2', `
+import Alert from '@spectrum-icons/workflow/Alert';
+
+<Alert />;
+`);
+
+test('Migrate custom-named S1 icon to S2. Keep name as custom name.', `
+import AlertIcon from '@spectrum-icons/workflow/Alert';
+import Alert from 'elsewhere';
+
+<div>
+  <AlertIcon />
+  <Alert />
+</div>
+`);
+
+test('Migrate S1 icon with different name to S2. Keep name if already taken in scope.', `
+import Alert from '@spectrum-icons/workflow/Alert';
+import AlertTriangle from 'elsewhere';
+
+<div>
+  <Alert />
+  <AlertTriangle />
+</div>
+`);
+
+test('Leave comment if no matching S2 icon found', `
+import AssetCheck from '@spectrum-icons/workflow/AssetCheck';
+
+<AssetCheck />;
+`);
+
+test('Does not affect existing S2 icons', `
+import Add from '@react-spectrum/s2/icons/Add';
+
+<Add />;
+`);
