@@ -112,6 +112,7 @@
           "./packages/@react-spectrum/codemods",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
+          "./packages/@react-stately/accordion",
           "./packages/@react-stately/calendar",
           "./packages/@react-stately/checkbox",
           "./packages/@react-stately/color",
