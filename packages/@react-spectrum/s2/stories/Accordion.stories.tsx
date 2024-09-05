@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel} from '../src';
+import {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
@@ -57,7 +57,7 @@ export const Example: Story = {
               People
             </AccordionHeader>
             <AccordionPanel>
-              People content
+              <TextField label="Name" />
             </AccordionPanel>
           </AccordionItem>
         </AccordionGroup>

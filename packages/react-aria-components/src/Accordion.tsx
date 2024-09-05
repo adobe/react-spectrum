@@ -15,8 +15,8 @@ import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DisclosureState, useDisclosureState} from '@react-stately/accordion';
 import {forwardRefType} from '@react-types/shared';
-import {HoverEvents} from 'react-aria';
-import {mergeRefs, useObjectRef} from '@react-aria/utils';
+import {HoverEvents, useFocusRing} from 'react-aria';
+import {mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
 export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'children' | 'contentRef'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
@@ -108,17 +108,26 @@ export interface AccordionPanelProps extends RenderProps<{}> {
 function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElement>) {
   let {role = 'region'} = props;
   let {contentProps, contentRef} = useContext(InternalAccordionContext)!;
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-AccordionPanel',
     values: {
-      // TODO: add more values?
+      isFocusVisibleWithin
     }
   });
   let mergedRef = useObjectRef(mergeRefs(contentRef, ref));
   return (
-    // @ts-ignore
-    <div role={role} ref={mergedRef} {...renderProps} {...contentProps}>
+    <div
+      role={role}
+      // @ts-ignore
+      ref={mergedRef}
+      {...mergeProps(contentProps, focusWithinProps)}
+      {...renderProps}
+      data-focus-visible-within={isFocusVisibleWithin || undefined}>
       {props.children}
     </div>
   );
