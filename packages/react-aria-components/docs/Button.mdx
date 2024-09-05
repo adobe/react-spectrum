@@ -159,6 +159,138 @@ A `Button` can be disabled using the `isDisabled` prop.
 
 </details>
 
+## Pending
+
+A `Button` can be put into the pending state using the `isPending` prop.
+Both a `Text` and [ProgressBar](ProgressBar.html) component are required to show the pending state correctly.
+Make sure to internationalize the label you pass to the [ProgressBar](ProgressBar.html) component.
+
+```tsx example
+import {useEffect, useRef, useState} from 'react';
+import {ProgressBar, Text} from 'react-aria-components';
+
+function PendingButton(props) {
+  let [isPending, setPending] = useState(false);
+
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let handlePress = (e) => {
+    setPending(true);
+    timeout.current = setTimeout(() => {
+      setPending(false);
+      timeout.current = undefined;
+    }, 5000);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}>
+        {({isPending}) => (
+          <>
+            <Text className={isPending ? 'pending' : undefined}>Click me</Text>
+            <ProgressBar
+              aria-label="loading"
+              isIndeterminate
+              className={['spinner', (isPending ? 'spinner-pending' : '')].join(' ')}>
+              <span className={'loader'} />
+            </ProgressBar>
+          </>
+        )}
+    </Button>
+  );
+}
+<PendingButton />
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@keyframes load {
+  99% {
+    visibility: hidden;
+  }
+
+  100% {
+    visibility: visible;
+  }
+}
+
+@keyframes hidden {
+  99% {
+    visibility: visible;
+  }
+
+  100% {
+    visibility: hidden;
+  }
+}
+
+.react-aria-Button {
+  position: relative;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+}
+.spinner-pending {
+  animation: 1s load;
+  animation-fill-mode: forwards;
+}
+
+.pending {
+  animation: 1s hidden;
+  animation-fill-mode: forwards;
+  visibility: visible;
+}
+
+.loader {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--background-color);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader::after {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid;
+  border-color: var(--purple-400) transparent;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+```
+
+</details>
+
 ## Link buttons
 
 The `Button` component always represents a button semantically. To create a link that visually looks like a button, use the [Link](Link.html) component instead. You can reuse the same styles you apply to the `Button` component on the `Link`.
