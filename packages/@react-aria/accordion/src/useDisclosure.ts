@@ -67,7 +67,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     triggerProps: {
       id: triggerId,
       'aria-expanded': state.isOpen,
-      'aria-controls': state.isOpen ? contentId : undefined,
+      'aria-controls': contentId,
       onPress: state.toggle,
       isDisabled: isDisabled
     },
