@@ -56,8 +56,6 @@ jobs:
       - run:
           name: build
           command: |
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-            yarn config set npmAuthToken $NPM_TOKEN
             yarn --immutable
 
       - save_cache:
