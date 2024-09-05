@@ -11,17 +11,26 @@
  */
 
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
+import {
+  ButtonRenderProps,
+  ContextValue,
+  Link,
+  LinkProps,
+  OverlayTriggerStateContext,
+  Provider,
+  Button as RACButton,
+  ButtonProps as RACButtonProps
+} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
+import {ProgressCircle, ProgressCircleContext} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { ProgressCircle, ProgressCircleContext } from './ProgressCircle';
 
 interface ButtonStyleProps {
   /**
@@ -274,7 +283,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
-  let {isPending} = props;
+  let {
+    isPending,
+    variant = 'primary',
+    fillStyle = 'fill',
+    size = 'M',
+    staticColor
+  } = props;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -297,6 +312,25 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
     };
   }, [isPending]);
 
+  let staticColorProgress = undefined as 'white' | 'black' | undefined;
+  // static colors have preference
+  if (staticColor === 'black' && fillStyle === 'fill') {
+    staticColorProgress = 'white';
+  } else if (staticColor === 'black' && fillStyle === 'outline') {
+    staticColorProgress = 'black';
+  } else if (staticColor === 'white' && fillStyle === 'fill') {
+    staticColorProgress = 'black';
+  } else if (staticColor === 'white' && fillStyle === 'outline') {
+    staticColorProgress = 'white';
+  } else if (variant === 'accent' || variant === 'negative') {
+    staticColorProgress = 'white';
+  } else if (variant === 'secondary') {
+    staticColorProgress = undefined;
+  } else if (variant === 'primary') {
+    // really needs to be static and switch based on dark/light mode
+    staticColorProgress = undefined;
+  }
+
   return (
     <RACButton
       {...props}
@@ -306,10 +340,10 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        variant: props.variant || 'primary',
-        fillStyle: props.fillStyle || 'fill',
-        size: props.size || 'M',
-        staticColor: props.staticColor
+        variant,
+        fillStyle,
+        size,
+        staticColor
       }, props.styles)}>
       <Provider
         values={[
@@ -320,6 +354,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               default: 'visible',
               isProgressVisible: 'hidden'
             }
+            // @ts-ignore not sure why it won't allow a data-* attribute here
           })({isProgressVisible}), 'data-rsp-slot': 'text'}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
@@ -332,23 +367,26 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
                 isProgressVisible: 'hidden'
               }
             })({isProgressVisible})
-          }],
-          [ProgressCircleContext, {UNSAFE_className: style({
+          }]
+        ]}>
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        <div className={style({
             position: 'absolute',
             top: '[50%]',
             left: '[50%]',
             transform: 'translate(-50%, -50%)',
             visibility: {
+              default: 'hidden',
               isProgressVisible: 'visible'
             },
             display: {
               default: 'none',
-              isProgressVisible: 'block'
-            }
-          })({isProgressVisible})}]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-        <ProgressCircle isIndeterminate aria-label={'Loading'} />
+              isPending: 'block'
+            },
+            height: 16 // better way to do this? not sure why the height is bigger than the content
+          })({isProgressVisible, isPending})}>
+          <ProgressCircle isIndeterminate aria-label={'Loading'} size='S' staticColor={staticColorProgress} />
+        </div>
       </Provider>
     </RACButton>
   );

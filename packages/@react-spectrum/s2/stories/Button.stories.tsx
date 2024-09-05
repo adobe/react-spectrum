@@ -15,6 +15,8 @@ import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {useEffect, useRef, useState} from 'react';
+import {action} from '@storybook/addon-actions';
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -48,3 +50,46 @@ export const Example: Story = {
     );
   }
 };
+
+export const PendingButton = {
+  render: (args) => <PendingButtonExample {...args} />,
+  args: {
+    children: 'Press me'
+  }
+};
+
+function PendingButtonExample(props) {
+  let [isPending, setPending] = useState(false);
+
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let handlePress = (e) => {
+    action('pressed')(e);
+    setPending(true);
+    timeout.current = setTimeout(() => {
+      setPending(false);
+      timeout.current = undefined;
+    }, 5000);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  let [hideOthers, setHideOthers] = useState(false);
+
+  return (
+    <>
+      {!hideOthers && (
+        <Button
+          {...props}
+          isPending={isPending}
+          onPress={handlePress}>
+          <Text>Press me</Text>
+        </Button>
+      )}
+      <Button onPress={() => setHideOthers(prev => !prev)}>Toggle others</Button>
+    </>
+  );
+}
