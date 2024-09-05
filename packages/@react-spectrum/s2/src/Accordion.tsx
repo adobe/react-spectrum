@@ -257,10 +257,10 @@ const buttonStyles = style({
 const chevronStyles = style({
   rotate: {
     deg: 0,
-    isOpen: 90,
+    isExpanded: 90,
     isRTL: {
       deg: 180,
-      isOpen: 270
+      isExpanded: 270
     }
   },
   transitionDuration: '100ms',
@@ -279,7 +279,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
   } = props;
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
-  let {isOpen} = useContext(DisclosureStateContext)!;
+  let {isExpanded} = useContext(DisclosureStateContext)!;
   let {size, density, isQuiet} = useContext(InternalAccordionGroupContext);
   let isRTL = direction === 'rtl';
   return (
@@ -290,7 +290,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
       className={(UNSAFE_className ?? undefined)}>
       <Heading className={headingStyle}>
         <Button className={({isHovered, isFocused, isFocusVisible}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet})} slot="trigger">
-          <Chevron size={size} className={chevronStyles({isOpen, isRTL})} aria-hidden="true" />
+          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
           {props.children}
         </Button>
       </Heading>
@@ -312,13 +312,13 @@ const panelStyles = style({
   font: 'body',
   height: 'auto',
   paddingTop: {
-    isOpen: sizeValue(8)
+    isExpanded: sizeValue(8)
   },
   paddingBottom: {
-    isOpen: sizeValue(16)
+    isExpanded: sizeValue(16)
   },
   paddingX: {
-    isOpen: {
+    isExpanded: {
       size: {
         S: sizeValue(8),
         M: sizeValue(9),
@@ -337,14 +337,14 @@ function AccordionPanel(props: AccordionPanelProps, ref: DOMRef<HTMLDivElement>)
   } = props;
   const domProps = filterDOMProps(otherProps);
   let {size} = useContext(InternalAccordionGroupContext);
-  let {isOpen} = useContext(DisclosureStateContext)!;
+  let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (
     <RACAccordionPanel
       {...domProps}
       ref={panelRef}
       style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + panelStyles({size, isOpen})}>
+      className={(UNSAFE_className ?? '') + panelStyles({size, isExpanded})}>
       {props.children}
     </RACAccordionPanel>
   );

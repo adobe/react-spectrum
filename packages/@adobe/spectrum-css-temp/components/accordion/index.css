@@ -111,7 +111,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-item {
-  &.is-open {
+  &.is-expanded {
     > .spectrum-Accordion-itemHeading {
       > .spectrum-Accordion-itemHeader {
         > .spectrum-Accordion-itemIndicator {
@@ -126,7 +126,7 @@ governing permissions and limitations under the License.
     }
 
     > .spectrum-Accordion-itemHeader::after {
-      /* No bottom border when open, so be less tall */
+      /* No bottom border when expanded, so be less tall */
       height: var(--spectrum-accordion-item-height-actual);
     }
 

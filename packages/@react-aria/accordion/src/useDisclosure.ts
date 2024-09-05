@@ -18,12 +18,12 @@ import {useId} from '@react-aria/utils';
 export interface AriaDisclosureProps {
   /** Whether the disclosure is disabled. */
   isDisabled?: boolean,
-  /** Handler that is called when the disclosure's open state changes. */
-  onOpenChange?: (isOpen: boolean) => void,
-  /** Whether the disclosure is open (controlled). */
-  isOpen?: boolean,
-  /** Whether the disclosure is open by default (uncontrolled). */
-  defaultOpen?: boolean,
+  /** Handler that is called when the disclosure's expanded state changes. */
+  onExpandedChange?: (isExpanded: boolean) => void,
+  /** Whether the disclosure is expanded (controlled). */
+  isExpanded?: boolean,
+  /** Whether the disclosure is expanded by default (uncontrolled). */
+  defaultExpanded?: boolean,
   /** The ref for the disclosure's content element. */
   contentRef: RefObject<HTMLElement | null>
 }
@@ -42,13 +42,13 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   } = props;
   let triggerId = useId();
   let contentId = useId();
-  let isControlled = props.isOpen !== undefined;
+  let isControlled = props.isExpanded !== undefined;
   let supportsBeforeMatch = 'onbeforematch' in document.body;
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && contentRef.current && !isControlled) {
-      if (state.isOpen) {
+      if (state.isExpanded) {
         // @ts-ignore
         contentRef.current.hidden = undefined;
       } else {
@@ -56,17 +56,17 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
         contentRef.current.hidden = 'until-found';
         // @ts-ignore
         contentRef.current.onbeforematch = () => {
-          state.open();
+          state.expand();
         };
       }
     }
-  }, [isControlled, contentRef, props.isOpen, state, supportsBeforeMatch]);
+  }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch]);
   
 
   return {
     triggerProps: {
       id: triggerId,
-      'aria-expanded': state.isOpen,
+      'aria-expanded': state.isExpanded,
       'aria-controls': contentId,
       onPress: state.toggle,
       isDisabled: isDisabled
@@ -74,7 +74,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     contentProps: {
       id: contentId,
       'aria-labelledby': triggerId,
-      hidden: (!supportsBeforeMatch || isControlled) ? !state.isOpen : true
+      hidden: (!supportsBeforeMatch || isControlled) ? !state.isExpanded : true
     }
   };
 }

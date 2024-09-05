@@ -22,11 +22,11 @@ export default {
 
 export const AccordionExample = (args: any) => (
   <AccordionItem {...args}>
-    {({isOpen}) => (
+    {({isExpanded}) => (
       <>
         <Header>
           <Heading level={3}>
-            <Button slot="trigger">{isOpen ? '⬇️' : '➡️'} This is an accordion header</Button>
+            <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
           </Heading>
         </Header>
         <AccordionPanel>
@@ -38,14 +38,14 @@ export const AccordionExample = (args: any) => (
 );
 
 export const AccordionControlledExample = (args: any) => {
-  let [isOpen, setOpen] = React.useState(false);
+  let [isExpanded, setExpanded] = React.useState(false);
   return (
-    <AccordionItem {...args} isOpen={isOpen} onOpenChange={setOpen}>
-      {({isOpen}) => (
+    <AccordionItem {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
+      {({isExpanded}) => (
         <>
           <Header>
             <Heading level={3}>
-              <Button slot="trigger">{isOpen ? '⬇️' : '➡️'} This is an accordion header</Button>
+              <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
             </Heading>
           </Header>
           <AccordionPanel>

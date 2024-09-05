@@ -15,52 +15,52 @@ import {useControlledState} from '@react-stately/utils';
 
 // TODO: move this to @react-types/accordion
 export interface DisclosureProps {
-  /** Whether the disclosure is open (controlled). */
-  isOpen?: boolean,
-  /** Whether the disclosure is open by default (uncontrolled). */
-  defaultOpen?: boolean,
-  /** Handler that is called when the disclosure open state changes. */
-  onOpenChange?: (isOpen: boolean) => void
+  /** Whether the disclosure is expanded (controlled). */
+  isExpanded?: boolean,
+  /** Whether the disclosure is expanded by default (uncontrolled). */
+  defaultExpanded?: boolean,
+  /** Handler that is called when the disclosure expanded state changes. */
+  onExpandedChange?: (isExpanded: boolean) => void
 }
 
 
 export interface DisclosureState {
-  /** Whether the disclosure is currently open. */
-  readonly isOpen: boolean,
-  /** Sets whether the disclosure is open. */
-  setOpen(isOpen: boolean): void,
-  /** Opens the disclosure. */
-  open(): void,
-  /** Closes the disclosure. */
-  close(): void,
+  /** Whether the disclosure is currently expanded. */
+  readonly isExpanded: boolean,
+  /** Sets whether the disclosure is expanded. */
+  setExpanded(isExpanded: boolean): void,
+  /** Expand the disclosure. */
+  expand(): void,
+  /** Collapse the disclosure. */
+  collapse(): void,
   /** Toggles the disclosure's visibility. */
   toggle(): void
 }
 
 /**
- * Manages state for a disclosure widget. Tracks whether the disclosure is open, and provides
+ * Manages state for a disclosure widget. Tracks whether the disclosure is expanded, and provides
  * methods to toggle this state.
  */
 export function useDisclosureState(props: DisclosureProps): DisclosureState  {
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+  let [isExpanded, setExpanded] = useControlledState(props.isExpanded, props.defaultExpanded || false, props.onExpandedChange);
 
-  const open = useCallback(() => {
-    setOpen(true);
-  }, [setOpen]);
+  const expand = useCallback(() => {
+    setExpanded(true);
+  }, [setExpanded]);
 
-  const close = useCallback(() => {
-    setOpen(false);
-  }, [setOpen]);
+  const collapse = useCallback(() => {
+    setExpanded(false);
+  }, [setExpanded]);
 
   const toggle = useCallback(() => {
-    setOpen(!isOpen);
-  }, [setOpen, isOpen]);
+    setExpanded(!isExpanded);
+  }, [setExpanded, isExpanded]);
 
   return {
-    isOpen,
-    setOpen,
-    open,
-    close,
+    isExpanded,
+    setExpanded,
+    expand,
+    collapse,
     toggle
   };
 }

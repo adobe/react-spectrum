@@ -49,8 +49,8 @@ function AccordionItem(props: SpectrumAccordionItemProps) {
   return (
     <RACAccordionItem
       {...props}
-      className={({isOpen, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
-        'is-open': isOpen,
+      className={({isExpanded, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
+        'is-expanded': isExpanded,
         'is-disabled': isDisabled
       })}>
       {props.children}

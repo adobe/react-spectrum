@@ -23,10 +23,10 @@ export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'children'
 
 export interface AccordionItemRenderProps {
   /**
-   * Whether the accordion item is open (controlled).
-   * @selector [data-open]
+   * Whether the accordion item is expanded (controlled).
+   * @selector [data-expanded]
    */
-  isOpen?: boolean,
+  isExpanded?: boolean,
   /**
    * Whether the accordion item is focused, either via a mouse or keyboard.
    * @selector [data-focused]
@@ -68,7 +68,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
     ...props,
     defaultClassName: 'react-aria-AccordionItem',
     values: {
-      isOpen: state.isOpen,
+      isExpanded: state.isExpanded,
       isDisabled: props.isDisabled || false,
       state
     }
@@ -87,7 +87,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
       ]}>
       <div
         ref={ref}
-        data-open={state.isOpen || undefined}
+        data-expanded={state.isExpanded || undefined}
         data-disabled={props.isDisabled || undefined}
         {...renderProps}>
         {renderProps.children}
