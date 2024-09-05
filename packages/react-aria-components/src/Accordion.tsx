@@ -53,7 +53,7 @@ export const DisclosureStateContext = createContext<DisclosureState | null>(null
 
 interface InternalAccordionContextValue {
   contentProps: DOMAttributes<HTMLElement>,
-  contentRef: React.RefObject<HTMLElement>
+  contentRef: React.RefObject<HTMLElement | null>
 }
 
 const InternalAccordionContext = createContext<InternalAccordionContextValue | null>(null);
