@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Button, Text} from '../src';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useEffect, useRef, useState} from 'react';
-import {action} from '@storybook/addon-actions';
 
 const meta: Meta<typeof Button> = {
   component: Button,

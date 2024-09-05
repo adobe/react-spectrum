@@ -370,7 +370,8 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-        <div className={style({
+        <div
+          className={style({
             position: 'absolute',
             top: '[50%]',
             left: '[50%]',
@@ -385,7 +386,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
             },
             height: 16 // better way to do this? not sure why the height is bigger than the content
           })({isProgressVisible, isPending})}>
-          <ProgressCircle isIndeterminate aria-label={'Loading'} size='S' staticColor={staticColorProgress} />
+          <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColorProgress} />
         </div>
       </Provider>
     </RACButton>

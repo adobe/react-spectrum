@@ -178,8 +178,8 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {isPendable && (
         <VisuallyHidden>
           <div aria-live={isFocused ? ariaLive : 'off'}>
-              {isPending &&
-                <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />}
+            {isPending &&
+            <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />}
           </div>
           {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
               Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
