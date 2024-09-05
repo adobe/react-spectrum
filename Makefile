@@ -98,7 +98,6 @@ publish: build
 	yarn publish
 
 publish-nightly: build
-	yarn version:nightly
 	yarn publish:nightly
 
 build:
