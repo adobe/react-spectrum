@@ -22,6 +22,7 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {FocusScope} from '@react-aria/focus';
 import {Item, ListBox, Section} from '../';
+import {Key} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useRef, useState} from 'react';
@@ -943,11 +944,12 @@ export function FocusExample(args = {}) {
 
   let [dialog, setDialog] = useState(null);
   let ref = useRef(null);
+
   return (
     <FocusScope>
       <Flex direction={'column'}>
         <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-          {tree.selectedKeys.size > 0 &&
+          {(tree.selectedKeys.size > 0) &&
             <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
           }
         </ActionGroup>
@@ -961,7 +963,11 @@ export function FocusExample(args = {}) {
                 aria-labelledby="label"
                 items={tree.items}
                 selectedKeys={tree.selectedKeys}
-                onSelectionChange={tree.setSelectedKeys}
+                onSelectionChange={(keys) => {
+                  if (keys !== 'all') {
+                    tree.setSelectedKeys(keys);
+                  }
+                }}
                 selectionMode="multiple"
                 {...args}>
                 {item => item.children.length && (
@@ -1043,3 +1049,68 @@ export const WithAvatars = {
     </StoryDecorator>
   )]
 };
+
+interface Iitem {
+  name: string,
+  items?: Array<Iitem> | null
+}
+
+export function WithTreeData() {
+  let tree = useTreeData<Iitem>({
+    initialItems: [
+      {
+        name: 'People',
+        items: [
+          {name: 'David'},
+          {name: 'Sam'},
+          {name: 'Jane'}
+        ]
+      },
+      {
+        name: 'Animals',
+        items: [
+          {name: 'Aardvark'},
+          {name: 'Kangaroo'},
+          {name: 'Snake', items: null}
+        ]
+      }
+    ],
+    initialSelectedKeys: ['Sam', 'Kangaroo'],
+    getKey: item => item.name,
+    getChildren: item => item.items || []
+  });
+  return (
+    <ListBox
+      width="250px"
+      height={400}
+      aria-label="List organisms"
+      items={tree.items}
+      selectedKeys={tree.selectedKeys}
+      selectionMode="multiple"
+      onSelectionChange={(keys) => {
+        if (keys === 'all') {
+          tree.setSelectedKeys(new Set(tree.items.reduce((acc, item) => {
+            acc.push(item.key);
+            function traverse(children) {
+              if (children) {
+                children.forEach(child => {
+                  acc.push(child.key);
+                  traverse(child.children);
+                });
+              }
+            }
+            traverse(item.children);
+            return acc;
+          }, [] as Key[])));
+        } else {
+          tree.setSelectedKeys(keys);
+        }
+      }}>
+      {node => (
+        <Section title={node.value.name} items={node.children}>
+          {node => <Item>{node.value.name}</Item>}
+        </Section>
+      )}
+    </ListBox>
+  );
+}
