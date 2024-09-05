@@ -541,7 +541,7 @@ jobs:
           name: Authenticate with npm
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-            yarn config set authToken $NPM_TOKEN
+            yarn config set npmAuthToken $NPM_TOKEN
             git update-index --skip-worktree .npmrc
       - run:
           name: Publish
