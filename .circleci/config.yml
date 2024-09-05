@@ -40,14 +40,6 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
-  rsp-xlarge-nodeupdate:
-    docker:
-      - image: cimg/node:18.20.3
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
 jobs:
   install:
     executor: rsp-large
@@ -279,7 +271,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge-nodeupdate
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -549,6 +541,7 @@ jobs:
           name: Authenticate with npm
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            yarn config set authToken $NPM_TOKEN
             git update-index --skip-worktree .npmrc
       - run:
           name: Publish
