@@ -310,10 +310,7 @@ export interface AccordionPanelProps extends RACAccordionPanelProps, UnsafeStyle
 
 const panelStyles = style({
   font: 'body',
-  height: {
-    default: 'auto',
-    isOpen: 'control'
-  },
+  height: 'auto',
   paddingTop: {
     isOpen: sizeValue(8)
   },

@@ -42,7 +42,7 @@ type Story = StoryObj<typeof AccordionGroup>;
 export const Example: Story = {
   render: (args) => {
     return (
-      <div className={style({minHeight: 224})}>
+      <div className={style({minHeight: 240})}>
         <AccordionGroup styles={style({width: 384})}  {...args}>
           <AccordionItem key="files">
             <AccordionHeader>
@@ -98,5 +98,11 @@ export const WithLongTitle: Story = {
         </AccordionGroup>
       </div>
     );
+  }
+};
+
+WithLongTitle.parameters = {
+  docs: {
+    disable: true
   }
 };
