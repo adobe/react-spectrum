@@ -5558,7 +5558,7 @@ __metadata:
     "@react-aria/button": "npm:^3.9.8"
     "@react-aria/selection": "npm:^3.19.3"
     "@react-aria/utils": "npm:^3.25.2"
-    "@react-stately/accordion": "npm:^3.0.0"
+    "@react-stately/accordion": "npm:^3.0.0-alpha.0"
     "@react-stately/tree": "npm:^3.8.4"
     "@react-types/accordion": "npm:3.0.0-alpha.23"
     "@react-types/button": "npm:^3.9.6"
@@ -8048,7 +8048,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/accordion@npm:^3.0.0, @react-stately/accordion@workspace:packages/@react-stately/accordion":
+"@react-stately/accordion@npm:^3.0.0-alpha.0, @react-stately/accordion@workspace:packages/@react-stately/accordion":
   version: 0.0.0-use.local
   resolution: "@react-stately/accordion@workspace:packages/@react-stately/accordion"
   dependencies:
@@ -28741,7 +28741,7 @@ __metadata:
     "@react-aria/tree": "npm:3.0.0-alpha.5"
     "@react-aria/utils": "npm:^3.25.2"
     "@react-aria/virtualizer": "npm:^4.0.2"
-    "@react-stately/accordion": "npm:^3.0.0"
+    "@react-stately/accordion": "npm:^3.0.0-alpha.0"
     "@react-stately/color": "npm:^3.7.2"
     "@react-stately/layout": "npm:^4.0.2"
     "@react-stately/menu": "npm:^3.8.2"

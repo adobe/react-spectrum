@@ -51,7 +51,7 @@
     "@react-aria/tree": "3.0.0-alpha.5",
     "@react-aria/utils": "^3.25.2",
     "@react-aria/virtualizer": "^4.0.2",
-    "@react-stately/accordion": "^3.0.0",
+    "@react-stately/accordion": "^3.0.0-alpha.0",
     "@react-stately/color": "^3.7.2",
     "@react-stately/layout": "^4.0.2",
     "@react-stately/menu": "^3.8.2",
