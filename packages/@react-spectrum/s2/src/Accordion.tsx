@@ -155,8 +155,7 @@ const buttonStyles = style({
   outlineStyle: 'solid',
   outlineColor: {
     default: 'transparent',
-    isFocused: 'gray-50',
-    isHovered: 'gray-75',
+    isHovered: 'transparent-black-100',
     isFocusVisible: 'focus-ring'
   },
   outlineWidth: 2,
@@ -167,6 +166,7 @@ const buttonStyles = style({
     isDisabled: 'disabled'
   },
   fontWeight: 'bold',
+  lineHeight: 'ui',
   display: 'flex',
   alignItems: 'center',
   paddingX: {
@@ -222,8 +222,8 @@ const buttonStyles = style({
   width: 'full',
   backgroundColor: {
     default: 'transparent',
-    isFocused: 'gray-50',
-    isHovered: 'gray-75'
+    isFocusVisible: 'transparent-black-100',
+    isHovered: 'transparent-black-100'
   },
   borderWidth: 0,
   borderRadius: {
