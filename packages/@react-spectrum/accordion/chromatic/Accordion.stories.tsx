@@ -13,9 +13,8 @@
 import {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
+const meta: Meta = {
   title: 'Accordion',
   component: AccordionItem,
   excludeStories: ['Template']
