@@ -55,8 +55,8 @@ export class ComboBoxTester {
 
   open = async (opts: {triggerBehavior?: 'focus' | 'manual'} = {}) => {
     let {triggerBehavior = 'manual'} = opts;
-    let trigger = this.getTrigger();
-    let combobox = this.getCombobox();
+    let trigger = this.trigger;
+    let combobox = this.combobox;
     let isDisabled = trigger.hasAttribute('disabled');
 
     if (this._interactionType === 'mouse') {
@@ -97,11 +97,11 @@ export class ComboBoxTester {
 
   selectOption = async (opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual'} = {}) => {
     let {optionText, option, triggerBehavior} = opts;
-    if (!this.getCombobox().getAttribute('aria-controls')) {
+    if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
     }
 
-    let listbox = this.getListbox();
+    let listbox = this.listbox;
     if (listbox) {
       if (!option && optionText) {
         option = within(listbox).getByText(optionText);
@@ -130,9 +130,9 @@ export class ComboBoxTester {
   };
 
   close = async () => {
-    let listbox = this.getListbox();
+    let listbox = this.listbox;
     if (listbox) {
-      act(() => this.getCombobox().focus());
+      act(() => this.combobox.focus());
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
@@ -145,30 +145,30 @@ export class ComboBoxTester {
     }
   };
 
-  getCombobox = () => {
+  get combobox() {
     if (!this._combobox) {
       throw new Error('Combobox input element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._combobox;
-  };
+  }
 
-  getTrigger = () => {
+  get trigger() {
     if (!this._trigger) {
       throw new Error('Combobox trigger element hasn\'t been set yet. Did you call `setElement()` or `setTrigger()` yet?');
     }
 
     return this._trigger;
-  };
+  }
 
-  getListbox = () => {
-    let listBoxId = this.getCombobox().getAttribute('aria-controls');
+  get listbox() {
+    let listBoxId = this.combobox.getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) || undefined : undefined;
-  };
+  }
 
-  getOptions = (opts: {element?: HTMLElement} = {}): HTMLElement[] | never[] => {
+  options = (opts: {element?: HTMLElement} = {}): HTMLElement[] | never[] => {
     let {element} = opts;
-    element = element || this.getListbox();
+    element = element || this.listbox;
     let options = [];
     if (element) {
       options = within(element).queryAllByRole('option');
@@ -177,17 +177,17 @@ export class ComboBoxTester {
     return options;
   };
 
-  getSections = () => {
-    let listbox = this.getListbox();
+  get sections() {
+    let listbox = this.listbox;
     if (listbox) {
       return within(listbox).queryAllByRole('group');
     } else {
       return [];
     }
-  };
+  }
 
-  getFocusedOption = () =>  {
-    let focusedOptionId = this.getCombobox().getAttribute('aria-activedescendant');
+  get focusedOptions() {
+    let focusedOptionId = this.combobox.getAttribute('aria-activedescendant');
     return focusedOptionId ? document.getElementById(focusedOptionId) : undefined;
-  };
+  }
 }
