@@ -32,6 +32,9 @@ const meta: Meta<typeof AccordionGroup> = {
     density: {
       control: 'radio',
       options: ['compact', 'regular', 'spacious']
+    },
+    isDisabled: {
+      control: {type: 'boolean'}
     }
   }
 };
@@ -101,7 +104,40 @@ export const WithLongTitle: Story = {
   }
 };
 
+export const WithDisabledAccordionItem: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <AccordionGroup styles={style({width: 384})}  {...args}>
+          <AccordionItem key="files">
+            <AccordionHeader>
+              Files
+            </AccordionHeader>
+            <AccordionPanel>
+              Files content
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem isDisabled key="people">
+            <AccordionHeader>
+              People
+            </AccordionHeader>
+            <AccordionPanel>
+              <TextField label="Name" />
+            </AccordionPanel>
+          </AccordionItem>
+        </AccordionGroup>
+      </div>
+    );
+  }
+};
+
 WithLongTitle.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+WithDisabledAccordionItem.parameters = {
   docs: {
     disable: true
   }

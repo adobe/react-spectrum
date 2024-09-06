@@ -41,7 +41,9 @@ export interface AccordionGroupProps extends UnsafeStyles, DOMProps, SlotProps {
    */
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the accordion should be displayed with a quiet style. */
-  isQuiet?: boolean
+  isQuiet?: boolean,
+  /** Whether the accordion should be disabled. */
+  isDisabled?: boolean
 }
 
 const groupStyles = style({
@@ -52,7 +54,7 @@ const groupStyles = style({
 
 export const AccordionGroupContext = createContext<ContextValue<AccordionGroupProps, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalAccordionGroupContext = createContext<{size?: 'S' | 'M' | 'L' | 'XL', isQuiet?: boolean, density?: 'compact' | 'regular' | 'spacious'}>({});
+let InternalAccordionGroupContext = createContext<Pick<AccordionGroupProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
 
 function AccordionGroup(props: AccordionGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AccordionGroupContext);
@@ -63,13 +65,14 @@ function AccordionGroup(props: AccordionGroupProps, ref: DOMRef<HTMLDivElement>)
     size = 'M',
     density = 'regular',
     isQuiet,
+    isDisabled,
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
   return (
     <Provider
       values={[
-        [InternalAccordionGroupContext, {size, isQuiet, density}]
+        [InternalAccordionGroupContext, {size, isQuiet, density, isDisabled}]
       ]}>
       <div
         {...domProps}
@@ -112,15 +115,17 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className = '',
+    isDisabled,
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
-  let {isQuiet} = useContext(InternalAccordionGroupContext);
+  let {isQuiet, isDisabled: isGroupDisabled} = useContext(InternalAccordionGroupContext);
   return (
     <>
       {!isQuiet && <Divider size="S" />}
       <RACAccordionItem
         {...domProps}
+        isDisabled={isDisabled || isGroupDisabled}
         ref={domRef}
         style={UNSAFE_style}
         className={(UNSAFE_className ?? '') + itemStyles}>
@@ -157,6 +162,10 @@ const buttonStyles = style({
   outlineWidth: 2,
   outlineOffset: 0,
   font: 'heading',
+  color: {
+    default: 'neutral',
+    isDisabled: 'disabled'
+  },
   fontWeight: 'bold',
   display: 'flex',
   alignItems: 'center',
@@ -290,7 +299,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
       style={UNSAFE_style}
       className={(UNSAFE_className ?? undefined)}>
       <Heading className={headingStyle}>
-        <Button className={({isHovered, isFocused, isFocusVisible}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet})} slot="trigger">
+        <Button className={({isHovered, isFocused, isFocusVisible, isDisabled}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet, isDisabled})} slot="trigger">
           <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
           {props.children}
         </Button>
