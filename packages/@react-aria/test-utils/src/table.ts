@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
+import {BaseTesterOpts, UserOpts} from './user';
 import {triggerLongPress} from './events';
-import {UserOpts} from './user';
-interface TableOptions extends UserOpts {
+export interface TableOptions extends UserOpts, BaseTesterOpts {
   user: any,
   advanceTimer: UserOpts['advanceTimer']
 }
@@ -28,14 +28,12 @@ export class TableTester {
   private _table: HTMLElement | undefined;
 
   constructor(opts: TableOptions) {
-    this.user = opts.user;
-    this._interactionType = opts.interactionType || 'mouse';
-    this._advanceTimer = opts.advanceTimer;
+    let {root, user, interactionType, advanceTimer} = opts;
+    this.user = user;
+    this._interactionType = interactionType || 'mouse';
+    this._advanceTimer = advanceTimer;
+    this._table = root;
   }
-
-  setElement = (element: HTMLElement) => {
-    this._table = element;
-  };
 
   setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;

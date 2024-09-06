@@ -11,10 +11,10 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {BaseTesterOpts, UserOpts} from './user';
 import {triggerLongPress} from './events';
-import {UserOpts} from './user';
 
-interface MenuOptions extends UserOpts {
+export interface MenuOptions extends UserOpts, BaseTesterOpts {
   user: any
 }
 export class MenuTester {
@@ -24,27 +24,26 @@ export class MenuTester {
   private _trigger: HTMLElement | undefined;
 
   constructor(opts: MenuOptions) {
-    this.user = opts.user;
-    this._interactionType = opts.interactionType || 'mouse';
-    this._advanceTimer = opts.advanceTimer;
-  }
+    let {root, user, interactionType, advanceTimer} = opts;
+    this.user = user;
+    this._interactionType = interactionType || 'mouse';
+    this._advanceTimer = advanceTimer;
 
-  setElement = (element: HTMLElement) => {
     // Handle case where a submenu trigger is provided to the tester
-    if (element.getAttribute('role') === 'menuitem') {
-      this._trigger = element;
+    if (root.getAttribute('role') === 'menuitem') {
+      this._trigger = root;
     } else {
       // Handle case where element provided is a wrapper of the trigger button
-      let trigger = within(element).queryByRole('button');
+      let trigger = within(root).queryByRole('button');
       if (trigger) {
         this._trigger = trigger;
       }
     }
 
     if (this._trigger == null) {
-      this._trigger = element;
+      this._trigger = root;
     }
-  };
+  }
 
   setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
@@ -156,13 +155,14 @@ export class MenuTester {
     if (!isDisabled) {
       let menu = this.getMenu();
       if (menu) {
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType});
+        let submenu;
         if (submenuTrigger) {
-          submenuTriggerTester.setElement(submenuTrigger);
+          submenu = submenuTrigger;
         } else if (submenuTriggerText) {
-          submenuTriggerTester.setElement(within(menu).getByText(submenuTriggerText));
+          submenu = within(menu).getByText(submenuTriggerText);
         }
 
+        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenu});
         await submenuTriggerTester.open();
 
         return submenuTriggerTester;

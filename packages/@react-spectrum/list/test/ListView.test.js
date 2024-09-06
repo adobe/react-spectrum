@@ -160,8 +160,7 @@ describe('ListView', function () {
     );
 
     let grid = getByRole('grid');
-    let {setElement, getRows, getCells} = testUtilUser.createTester('GridListTester');
-    setElement(grid);
+    let {getRows, getCells} = testUtilUser.createTester('GridListTester', {root: grid});
 
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'List');
@@ -841,8 +840,7 @@ describe('ListView', function () {
     it('should support select all and clear all via keyboard', async function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
       let grid = tree.getByRole('grid');
-      let {setElement, toggleRowSelection, getSelectedRows, getRows} = testUtilUser.createTester('GridListTester');
-      setElement(grid);
+      let {toggleRowSelection, getSelectedRows, getRows} = testUtilUser.createTester('GridListTester', {root: grid});
       let rows = getRows();
 
       await toggleRowSelection({index: 0});
@@ -874,8 +872,7 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
-        let {triggerRowAction, toggleRowSelection, setElement} = testUtilUser.createTester('GridListTester');
-        setElement(tree.getByRole('grid'));
+        let {triggerRowAction, toggleRowSelection} = testUtilUser.createTester('GridListTester', {root: tree.getByRole('grid')});
 
         await triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -896,8 +893,7 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
-        let {setInteractionType, triggerRowAction, toggleRowSelection, setElement} = testUtilUser.createTester('GridListTester');
-        setElement(tree.getByRole('grid'));
+        let {setInteractionType, triggerRowAction, toggleRowSelection} = testUtilUser.createTester('GridListTester', {root: tree.getByRole('grid')});
 
         await triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -958,8 +954,7 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
-        let {setInteractionType, triggerRowAction, toggleRowSelection, setElement} = testUtilUser.createTester('GridListTester');
-        setElement(tree.getByRole('grid'));
+        let {setInteractionType, triggerRowAction, toggleRowSelection} = testUtilUser.createTester('GridListTester', {root: tree.getByRole('grid')});
         setInteractionType('keyboard');
 
         await triggerRowAction({index: 1});

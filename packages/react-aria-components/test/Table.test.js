@@ -193,8 +193,7 @@ describe('Table', () => {
 
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
-    let {setElement, getTable, getRows, getRowGroups, getColumns, getRowHeaders, getCells} = testUtilUser.createTester('TableTester');
-    setElement(getByRole('grid'));
+    let {getTable, getRows, getRowGroups, getColumns, getRowHeaders, getCells} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
     let table = getTable();
     expect(table).toHaveAttribute('class', 'react-aria-Table');
 
@@ -618,8 +617,7 @@ describe('Table', () => {
       </Table>
     );
 
-    let {setElement, triggerRowAction} = testUtilUser.createTester('TableTester');
-    setElement(getByRole('grid'));
+    let {triggerRowAction} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
     await triggerRowAction({index: 0});
     expect(onAction).toHaveBeenCalled();
   });
@@ -631,8 +629,7 @@ describe('Table', () => {
       columnProps: {allowsSorting: true}
     });
 
-    let {setElement, getColumns, toggleSort} = testUtilUser.createTester('TableTester');
-    setElement(getByRole('grid'));
+    let {getColumns, toggleSort} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
 
     let columns = getColumns();
     expect(columns[0]).toHaveAttribute('aria-sort', 'ascending');
@@ -669,8 +666,7 @@ describe('Table', () => {
   it('supports removing rows', async () => {
     let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
 
-    let {setElement, getRows} = testUtilUser.createTester('TableTester');
-    setElement(getByRole('grid'));
+    let {getRows} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
     await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBoxTester} from './combobox';
-import {GridListTester} from './gridlist';
-import {MenuTester} from './menu';
+import {ComboBoxOptions, ComboBoxTester} from './combobox';
+import {GridListOptions, GridListTester} from './gridlist';
+import {MenuOptions, MenuTester} from './menu';
 import {pointerMap} from './';
-import {SelectTester} from './select';
-import {TableTester} from './table';
+import {SelectOptions, SelectTester} from './select';
+import {TableOptions, TableTester} from './table';
 import userEvent from '@testing-library/user-event';
 
 // https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
@@ -26,6 +26,11 @@ export interface UserOpts {
   // A real timer user would pass async () => await new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
   advanceTimer?: (time?: number) => void | Promise<unknown>
+}
+
+export interface BaseTesterOpts {
+  // The base element for the given tester (e.g. the table, menu trigger, etc)
+  root: HTMLElement
 }
 
 let keyToUtil = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester} as const;
@@ -39,6 +44,14 @@ type ObjectType<T> =
     T extends 'ComboBoxTester' ? ComboBoxTester :
     T extends 'GridListTester' ? GridListTester :
     never;
+
+type ObjectOptionsTypes<T> =
+  T extends 'SelectTester' ? SelectOptions :
+  T extends 'TableTester' ? TableOptions :
+  T extends 'MenuTester' ? MenuOptions :
+  T extends 'ComboBoxTester' ? ComboBoxOptions :
+  T extends 'GridListTester' ? GridListOptions :
+  never;
 
 let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));
 
@@ -54,7 +67,7 @@ export class User {
     this.advanceTimer = advanceTimer || defaultAdvanceTimer;
   }
 
-  createTester<T extends PatternNames>(patternName: T): ObjectType<T> {
-    return new (keyToUtil)[patternName]({user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as ObjectType<T>;
+  createTester<T extends PatternNames>(patternName: T, opts: ObjectOptionsTypes<T>): ObjectType<T> {
+    return new (keyToUtil)[patternName]({...opts, user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as ObjectType<T>;
   }
 }

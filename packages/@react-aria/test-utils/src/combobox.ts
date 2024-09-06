@@ -11,10 +11,11 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {UserOpts} from './user';
+import {BaseTesterOpts, UserOpts} from './user';
 
-interface ComboBoxOptions extends UserOpts {
-  user: any
+export interface ComboBoxOptions extends UserOpts, BaseTesterOpts {
+  user: any,
+  trigger?: HTMLElement
 }
 // TODO: Probably should set up some base classes to reduce duplication of this setup (user/interactiontype)
 // advanceTimer isn't used in all places
@@ -25,28 +26,28 @@ export class ComboBoxTester {
   private _trigger: HTMLElement | undefined;
 
   constructor(opts: ComboBoxOptions) {
-    this.user = opts.user;
-    this._interactionType = opts.interactionType || 'mouse';
-  }
+    let {root, trigger, user, interactionType} = opts;
+    this.user = user;
+    this._interactionType = interactionType || 'mouse';
 
-  setElement = (element: HTMLElement) => {
-    this._combobox = element;
-    // Handle case where element provided is a wrapper around the combobox
-    let combobox = within(element).queryByRole('combobox');
+    // Handle case where element provided is a wrapper around the combobox. The expectation is that the user at least uses a ref/data attribute to
+    // query their combobox/combobox wrapper (in the case of RSP) which they then pass to thhis
+    this._combobox = root;
+    let combobox = within(root).queryByRole('combobox');
     if (combobox) {
       this._combobox = combobox;
     }
 
-    let trigger = within(element).queryByRole('button', {hidden: true});
+    // TODO: This is for if user need to directly set the trigger button element (aka the element provided in setElement was the combobox input or the trigger is somewhere unexpected)
     if (trigger) {
       this._trigger = trigger;
+    } else {
+      let trigger = within(root).queryByRole('button', {hidden: true});
+      if (trigger) {
+        this._trigger = trigger;
+      }
     }
-  };
-
-  // TODO: This is for if user need to directly set the trigger button element (aka the element provided in setElement was the combobox input or the trigger is somewhere unexpected)
-  setTrigger = (element: HTMLElement) => {
-    this._trigger = element;
-  };
+  }
 
   setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;

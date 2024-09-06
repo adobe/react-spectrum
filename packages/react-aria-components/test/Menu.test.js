@@ -1001,8 +1001,7 @@ describe('Menu', () => {
 
       let button = getByRole('button');
       expect(button).not.toHaveAttribute('data-pressed');
-      let {setElement, open, getSections, getMenu, getSubmenuTriggers, openSubmenu} = testUtilUser.createTester('MenuTester');
-      setElement(button);
+      let {open, getSections, getMenu, getSubmenuTriggers, openSubmenu} = testUtilUser.createTester('MenuTester', {root: button});
       await open();
       expect(button).toHaveAttribute('data-pressed');
 

@@ -2393,11 +2393,10 @@ export let tableTests = () => {
 
     describe('select all', function () {
       it('should support selecting all via the checkbox', async function () {
-        let {setElement, setInteractionType, getRows, getSelectedRows, toggleSelectAll} = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
+        let {setInteractionType, getRows, getSelectedRows, toggleSelectAll} = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
         setInteractionType('keyboard');
-        setElement(tree.getByRole('grid'));
 
         checkSelectAll(tree, 'unchecked');
 
@@ -2843,13 +2842,12 @@ export let tableTests = () => {
       describe('needs PointerEvent defined', () => {
         installPointerEvent();
         it('should support long press to enter selection mode on touch', async function () {
-          let {setElement, setInteractionType, toggleRowSelection} = testUtilUser.createTester('TableTester');
-          setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
           let tree = renderTable({onSelectionChange, onAction, selectionStyle: 'highlight'});
+          let {setInteractionType, toggleRowSelection} = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+          setInteractionType('touch');
 
-          setElement(tree.getByRole('grid'));
           act(() => jest.runAllTimers());
           await user.pointer({target: document.body, keys: '[TouchA]'});
 
@@ -2983,11 +2981,10 @@ export let tableTests = () => {
       describe('needs pointerEvents', function () {
         installPointerEvent();
         it('should toggle selection with touch', async function () {
-          let {setElement, setInteractionType, toggleRowSelection} = testUtilUser.createTester('TableTester');
-          setInteractionType('touch');
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
-          setElement(tree.getByRole('grid'));
+          let {setInteractionType, toggleRowSelection} = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+          setInteractionType('touch');
           expect(tree.queryByLabelText('Select All')).toBeNull();
 
           await toggleRowSelection({text: 'Baz 5'});
@@ -3015,11 +3012,10 @@ export let tableTests = () => {
       });
 
       it('should support double click to perform onAction with mouse', async function () {
-        let {setElement, toggleRowSelection, triggerRowAction} = testUtilUser.createTester('TableTester');
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-        setElement(tree.getByRole('grid'));
+        let {toggleRowSelection, triggerRowAction} = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
 
         await toggleRowSelection({text: 'Foo 5'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
@@ -3133,15 +3129,16 @@ export let tableTests = () => {
         describe('still needs pointer events install', function () {
           installPointerEvent();
           it('should support long press to enter selection mode on touch', async function () {
-            let {setElement, setInteractionType, findCell, toggleRowSelection} = testUtilUser.createTester('TableTester');
-            setInteractionType('touch');
             let onSelectionChange = jest.fn();
             let onAction = jest.fn();
             let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-            setElement(tree.getByRole('grid'));
             act(() => {
               jest.runAllTimers();
             });
+
+            let {setInteractionType, findCell, toggleRowSelection} = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+            setInteractionType('touch');
+
             await user.click(document.body);
 
             // TODO: Not replacing this with util for long press since it tests various things in the middle of the press
@@ -4369,11 +4366,10 @@ export let tableTests = () => {
     });
 
     it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
-      let {setElement, setInteractionType, getColumns, toggleSort} = testUtilUser.createTester('TableTester');
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
+      let {setInteractionType, getColumns, toggleSort} = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
       setInteractionType('keyboard');
-      setElement(tree.getByRole('grid'));
       let columnheaders = getColumns();
       expect(columnheaders).toHaveLength(3);
       expect(columnheaders[0]).not.toHaveAttribute('aria-sort');

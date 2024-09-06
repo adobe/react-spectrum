@@ -102,8 +102,7 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let {setElement, getTrigger, selectOption} = testUtilUser.createTester('SelectTester');
-      setElement(screen.getByTestId('test'));
+      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
       await selectOption('Three');
       expect(getTrigger()).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -129,8 +128,7 @@ describe('Picker/Select ', function () {
         </Select>
       );
 
-      let {setElement, getTrigger, selectOption} = testUtilUser.createTester('SelectTester');
-      setElement(screen.getByTestId('test'));
+      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
       await selectOption('Cat');
       expect(getTrigger()).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -212,8 +210,7 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let {setElement, getTrigger, selectOption} = testUtilUser.createTester('SelectTester');
-      setElement(screen.getByTestId('test'));
+      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
       await selectOption('Three');
       expect(getTrigger()).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -239,8 +236,7 @@ describe('Picker/Select ', function () {
         </Select>
       );
 
-      let {setElement, getTrigger, selectOption} = testUtilUser.createTester('SelectTester');
-      setElement(screen.getAllByTestId('test')[0]);
+      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getAllByTestId('test')[0]});
       await selectOption('Cat');
       expect(getTrigger()).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -266,8 +262,7 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let {setElement,  open, getListbox} = testUtilUser.createTester('SelectTester');
-      setElement(screen.getByTestId('test'));
+      let {open, getListbox} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
       await open();
       expect(await screen.findByTestId('tray')).toContainElement(getListbox());
     });

@@ -44,9 +44,8 @@ describe('Select', () => {
 
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
-    let {setElement, open, getTrigger, getOptions, getListbox} = testUtilUser.createTester('SelectTester');
     let wrapper = getByTestId('select');
-    setElement(wrapper);
+    let {open, getTrigger, getOptions, getListbox} = testUtilUser.createTester('SelectTester', {root: wrapper});
 
     let trigger = getTrigger();
     expect(trigger).toHaveTextContent('Select an item');
@@ -88,8 +87,7 @@ describe('Select', () => {
       </SelectContext.Provider>
     );
 
-    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
-    setElement(getByTestId('select'));
+    let {getTrigger} = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
     let trigger = getTrigger();
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
     expect(trigger).toHaveAttribute('aria-label', 'test');
@@ -123,8 +121,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
-    setElement(getByTestId('select'));
+    let {getTrigger} = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
     let trigger = getTrigger();
     expect(trigger).toHaveTextContent('Cat');
   });
@@ -153,16 +150,14 @@ describe('Select', () => {
       </Select>
     );
 
-    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
-    setElement(getByTestId('select'));
+    let {getTrigger} = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
     let trigger = getTrigger();
     expect(trigger).toHaveTextContent('1 - Cat');
   });
 
   it('supports placeholder', () => {
     let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
-    let {setElement, getTrigger} = testUtilUser.createTester('SelectTester');
-    setElement(getByTestId('select'));
+    let {getTrigger} = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
     let trigger = getTrigger();
     expect(trigger).toHaveTextContent('Select an animal');
   });
@@ -189,8 +184,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let {setElement, open, getTrigger} = testUtilUser.createTester('SelectTester');
-    setElement(getByTestId('select'));
+    let {open, getTrigger} = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
     let trigger = getTrigger();
     expect(trigger).toHaveTextContent('open');
 
@@ -234,9 +228,8 @@ describe('Select', () => {
       </form>
     );
 
-    let {setElement, getTrigger, selectOption} = testUtilUser.createTester('SelectTester');
     let wrapper = getByTestId('test-select');
-    setElement(getByTestId('test-select'));
+    let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: wrapper});
     let trigger = getTrigger();
     let select = wrapper;
     let input = document.querySelector('[name=select]');

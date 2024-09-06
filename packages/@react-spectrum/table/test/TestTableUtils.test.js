@@ -74,9 +74,8 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilRealTimer.createTester('TableTester');
+      let {setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
       setInteractionType(interactionType);
-      setElement(screen.getByTestId('test'));
       await toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
@@ -105,9 +104,8 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSort} = testUtilRealTimer.createTester('TableTester');
+      let {setInteractionType, toggleRowSelection, toggleSort} = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
       setInteractionType(interactionType);
-      setElement(screen.getByTestId('test'));
       await toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
@@ -148,9 +146,8 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilFakeTimer.createTester('TableTester');
+      let {setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
       setInteractionType(interactionType);
-      setElement(screen.getByTestId('test'));
       await toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
@@ -179,9 +176,8 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let {setElement, setInteractionType, toggleRowSelection, toggleSort} = testUtilFakeTimer.createTester('TableTester');
+      let {setInteractionType, toggleRowSelection, toggleSort} = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
       setInteractionType(interactionType);
-      setElement(screen.getByTestId('test'));
 
       await toggleRowSelection({index: 2, focusToSelect: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);

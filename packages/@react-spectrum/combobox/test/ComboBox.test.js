@@ -308,8 +308,7 @@ describe('ComboBox', function () {
 
   it('can be disabled', async function () {
     let tree = renderComboBox({isDisabled: true});
-    let {setInteractionType, setElement, getCombobox, getListbox, open} = testUtilUser.createTester('ComboBoxTester');
-    setElement(tree.container);
+    let {setInteractionType, getCombobox, getListbox, open} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
     act(() => {
       getCombobox().focus();
@@ -334,8 +333,7 @@ describe('ComboBox', function () {
 
   it('can be readonly', async function () {
     let tree = renderComboBox({isReadOnly: true, defaultInputValue: 'Blargh'});
-    let {setInteractionType, setElement, getCombobox, getListbox, open} = testUtilUser.createTester('ComboBoxTester');
-    setElement(tree.container);
+    let {setInteractionType, getCombobox, getListbox, open} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
     act(() => {
       getCombobox().focus();
@@ -363,8 +361,7 @@ describe('ComboBox', function () {
 
   it('features default behavior of completionMode suggest and menuTrigger input', async function () {
     let tree = renderComboBox();
-    let {setElement, getCombobox, getListbox, getOptions, getFocusedOption} = testUtilUser.createTester('ComboBoxTester');
-    setElement(tree.container);
+    let {getCombobox, getListbox, getOptions, getFocusedOption} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
     let combobox = getCombobox();
     expect(combobox).not.toHaveAttribute('aria-controls');
@@ -422,8 +419,7 @@ describe('ComboBox', function () {
     describe('menuTrigger = focus', function () {
       it('opens menu when combobox is focused', async function () {
         let tree = renderComboBox({menuTrigger: 'focus'});
-        let {setElement, getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester');
-        setElement(tree.container);
+        let {getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
         let button = getTrigger();
         let combobox = getCombobox();
@@ -437,8 +433,7 @@ describe('ComboBox', function () {
 
       it('opens menu when combobox is focused by clicking button', async function () {
         let tree = renderComboBox({menuTrigger: 'focus'});
-        let {setElement, getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester');
-        setElement(tree.container);
+        let {getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
         let button = getTrigger();
         let combobox = getCombobox();
@@ -454,11 +449,9 @@ describe('ComboBox', function () {
     describe('button click', function () {
       it('keeps focus within the textfield after opening the menu', async function () {
         let {getByRole} = renderComboBox();
-        let {setElement, getCombobox, getListbox, getTrigger, setTrigger, open} = testUtilUser.createTester('ComboBoxTester');
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        setElement(combobox);
-        setTrigger(button);
+        let {getCombobox, getListbox, getTrigger, open} = testUtilUser.createTester('ComboBoxTester', {root: combobox, trigger: button});
 
         expect(getListbox()).toBeFalsy();
         await open();
@@ -492,8 +485,7 @@ describe('ComboBox', function () {
 
       it('opens for touch', async () => {
         let tree = renderComboBox({});
-        let {setElement, getCombobox, getListbox, getTrigger, setInteractionType, open} = testUtilUser.createTester('ComboBoxTester');
-        setElement(tree.container);
+        let {getCombobox, getListbox, getTrigger, setInteractionType, open} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
         let combobox = getCombobox();
         expect(document.activeElement).not.toBe(combobox);
@@ -514,8 +506,7 @@ describe('ComboBox', function () {
 
       it('resets the focused item when re-opening the menu', async function () {
         let tree = renderComboBox({});
-        let {setElement, getCombobox, getOptions, selectOption, open} = testUtilUser.createTester('ComboBoxTester');
-        setElement(tree.container);
+        let {getCombobox, getOptions, selectOption, open} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
         await open();
         expect(getCombobox()).not.toHaveAttribute('aria-activedescendant');
@@ -865,8 +856,7 @@ describe('ComboBox', function () {
 
     it('resets input text if reselecting a selected option with click', async function () {
       let tree = renderComboBox({defaultSelectedKey: '2'});
-      let {setElement, getCombobox, getOptions, selectOption, getListbox} = testUtilUser.createTester('ComboBoxTester');
-      setElement(tree.container);
+      let {getCombobox, getOptions, selectOption, getListbox} = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
 
       let combobox = getCombobox();
       expect(combobox.value).toBe('Two');

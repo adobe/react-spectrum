@@ -11,9 +11,9 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {UserOpts} from './user';
+import {BaseTesterOpts, UserOpts} from './user';
 
-interface SelectOptions extends UserOpts {
+export interface SelectOptions extends UserOpts, BaseTesterOpts {
   // TODO: I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
   user: any
 }
@@ -23,18 +23,16 @@ export class SelectTester {
   private _trigger: HTMLElement | undefined;
 
   constructor(opts: SelectOptions) {
-    this.user = opts.user;
-    this._interactionType = opts.interactionType || 'mouse';
-  }
-
-  setElement = (element: HTMLElement) => {
+    let {root, user, interactionType} = opts;
+    this.user = user;
+    this._interactionType = interactionType || 'mouse';
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
-    let triggerButton = within(element).queryByRole('button');
+    let triggerButton = within(root).queryByRole('button');
     if (triggerButton == null) {
-      triggerButton = element;
+      triggerButton = root;
     }
     this._trigger = triggerButton;
-  };
+  }
 
   setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;

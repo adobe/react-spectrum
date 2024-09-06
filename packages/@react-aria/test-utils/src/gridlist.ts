@@ -11,9 +11,9 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {UserOpts} from './user';
+import {BaseTesterOpts, UserOpts} from './user';
 
-interface GridListOptions extends UserOpts {
+export interface GridListOptions extends UserOpts, BaseTesterOpts {
   user: any
 }
 export class GridListTester {
@@ -23,13 +23,11 @@ export class GridListTester {
 
 
   constructor(opts: GridListOptions) {
-    this.user = opts.user;
-    this._interactionType = opts.interactionType || 'mouse';
+    let {root, user, interactionType} = opts;
+    this.user = user;
+    this._interactionType = interactionType || 'mouse';
+    this._gridlist = root;
   }
-
-  setElement = (element: HTMLElement) => {
-    this._gridlist = element;
-  };
 
   setInteractionType = (type: UserOpts['interactionType']) => {
     this._interactionType = type;
