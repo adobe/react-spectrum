@@ -46,7 +46,7 @@ function RenderS2({getStory, context, options, selectedLocales, height, minHeigh
       <div style={{display: 'flex', flexDirection: 'column', height, minHeight, width: '90vw'}}>
         {colorSchemes.map(colorScheme =>
           backgrounds.map(background =>
-            (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale =>
+            (colorScheme === 'light' || context.title.includes('RTL') ? selectedLocales : ['en-US']).map(locale =>
               <S2Provider key={`${colorScheme}_${background}_${locale}`} background={background} colorScheme={colorScheme} locale={locale}>
                 <div style={{margin: '8px'}}>
                   <h1 style={{margin: 0, padding: 0, color: colorScheme === 'dark' ? 'white' : 'black'}}>{`${colorScheme}, ${background}, ${locale}`}</h1>
