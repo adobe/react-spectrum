@@ -10,16 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext, ProgressBar, Text} from '../';
-import React, {useState} from 'react';
+import {Button, ButtonContext} from '../';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Button', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
-    jest.useFakeTimers();
   });
 
   it('should render a button with default class', () => {
@@ -137,67 +136,5 @@ describe('Button', () => {
 
     fireEvent.mouseUp(button);
     expect(button).toHaveTextContent('Test');
-  });
-
-  // isPending state
-  it('displays a spinner after a short delay when isPending prop is true', async function () {
-    let onPressSpy = jest.fn();
-    function TestComponent() {
-      let [pending, setPending] = useState(false);
-      return (
-        <Button
-          onPress={() => {
-            setPending(true);
-            onPressSpy();
-          }}
-          isPending={pending}>
-          {({isPending}) => (
-            <>
-              <Text style={{visibility: isPending ? 'hidden' : undefined}}>Test</Text>
-              <ProgressBar
-                aria-label="loading"
-                style={{visibility: isPending ? undefined : 'hidden'}}
-                isIndeterminate>
-                loading
-              </ProgressBar>
-            </>
-          )}
-        </Button>
-      );
-    }
-    let {getByRole} = render(<TestComponent />);
-    let button = getByRole('button');
-    expect(button).not.toHaveAttribute('aria-disabled');
-    await user.click(button);
-    // Button is disabled immediately, but spinner visibility is delayed
-    expect(button).toHaveAttribute('aria-disabled', 'true');
-    // Multiple clicks shouldn't call onPressSpy
-    await user.click(button);
-    act(() => {
-      jest.advanceTimersByTime(1000);
-    });
-    expect(button).toHaveAttribute('aria-disabled', 'true');
-    expect(onPressSpy).toHaveBeenCalledTimes(1);
-  });
-
-  // isPending anchor element
-  it('removes href attribute from anchor element when isPending is true', () => {
-    let {getByRole} = render(
-      <Button href="//example.com" isPending>
-        {({isPending}) => (
-          <>
-            <Text style={{visibility: isPending ? 'hidden' : undefined}}>Click me</Text>
-            <ProgressBar
-              aria-label="loading"
-              style={{visibility: isPending ? undefined : 'hidden'}}
-              isIndeterminate>
-              loading
-            </ProgressBar>
-          </>
-        )}
-      </Button>
-    );
-    let button = getByRole('button');
-    expect(button).not.toHaveAttribute('href');
   });
 });
