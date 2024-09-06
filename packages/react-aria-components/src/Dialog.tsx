@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
-import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {forwardRefType} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';

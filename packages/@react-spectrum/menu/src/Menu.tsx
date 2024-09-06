@@ -98,8 +98,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
                   <MenuSection
                     key={item.key}
                     item={item}
-                    state={state}
-                    onAction={completeProps.onAction} />
+                    state={state} />
                 );
               }
 
@@ -107,8 +106,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
                 <MenuItem
                   key={item.key}
                   item={item}
-                  state={state}
-                  onAction={completeProps.onAction} />
+                  state={state} />
               );
 
               if (item.wrapper) {

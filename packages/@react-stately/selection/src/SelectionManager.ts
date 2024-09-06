@@ -376,7 +376,7 @@ export class SelectionManager implements MultipleSelectionManager {
   private getSelectAllKeys() {
     let keys: Key[] = [];
     let addKeys = (key: Key) => {
-      while (key) {
+      while (key != null) {
         if (this.canSelectItem(key)) {
           let item = this.collection.getItem(key);
           if (item.type === 'item') {

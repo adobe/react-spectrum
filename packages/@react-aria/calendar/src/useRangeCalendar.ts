@@ -12,16 +12,16 @@
 
 import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {FocusableElement} from '@react-types/shared';
+import {FocusableElement, RefObject} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
-import {RefObject, useRef} from 'react';
 import {useEvent} from '@react-aria/utils';
+import {useRef} from 'react';
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
+export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement | null>): CalendarAria {
   let res = useCalendarBase(props, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.

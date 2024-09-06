@@ -12,18 +12,19 @@
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionDocumentContext, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {CollectionBuilder} from '@react-aria/collections';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface ComboBoxRenderProps {
@@ -67,42 +68,32 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(nul
 
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
-  let {collection, document} = useCollectionDocument();
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
-  children = useMemo(() => (
-    typeof children === 'function'
-      ? children({
-        isOpen: false,
-        isDisabled,
-        isInvalid,
-        isRequired,
-        defaultChildren: null
-      })
-      : children
-  ), [children, isDisabled, isInvalid, isRequired]);
+  let content = useMemo(() => (
+    <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
+      {typeof children === 'function'
+        ? children({
+          isOpen: false,
+          isDisabled,
+          isInvalid,
+          isRequired,
+          defaultChildren: null
+        })
+        : children}
+    </ListBoxContext.Provider>
+  ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
 
   return (
-    <>
-      {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
-        * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
-      <Hidden>
-        <Provider
-          values={[
-            [CollectionDocumentContext, document],
-            [ListBoxContext, {items: props.items ?? props.defaultItems}]
-          ]}>
-          {children}
-        </Provider>
-      </Hidden>
-      <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />
-    </>
+    <CollectionBuilder content={content}>
+      {collection => <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />}
+    </CollectionBuilder>
   );
 }
 
 interface ComboBoxInnerProps<T extends object> {
   props: ComboBoxProps<T>,
   collection: Collection<Node<T>>,
-  comboBoxRef: RefObject<HTMLDivElement>
+  comboBoxRef: RefObject<HTMLDivElement | null>
 }
 
 function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {
@@ -197,6 +188,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [PopoverContext, {
           ref: popoverRef,
           triggerRef: inputRef,
+          scrollRef: listBoxRef,
           placement: 'bottom start',
           isNonModal: true,
           trigger: 'ComboBox',
@@ -223,7 +215,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
     </Provider>
   );
 }

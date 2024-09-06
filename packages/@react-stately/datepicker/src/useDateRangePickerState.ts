@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
+import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
@@ -69,7 +70,9 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
   /** Whether the date range picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string}
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
+  /** Gets a formatter based on state's props. */
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 /**
@@ -295,6 +298,11 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
         start: startFormatter.format(startDate),
         end: endFormatter.format(endDate)
       };
+    },
+    getDateFormatter(locale, formatOptions: FormatterOptions) {
+      let newOptions = {...formatOpts, ...formatOptions};
+      let newFormatOptions = getFormatOptions({}, newOptions);
+      return new DateFormatter(locale, newFormatOptions);
     }
   };
 }

@@ -29,7 +29,7 @@ export function ToastContainer({children, ...otherProps}) {
 
 function ToastRegion() {
   let state = useContext(ToastContext);
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {regionProps} = useToastRegion({}, state, ref);
   return (
     <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0}}>
@@ -44,7 +44,7 @@ function Toast(props) {
   let state = useContext(ToastContext);
   let ref = useRef(null);
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(props, state, ref);
-  let buttonRef = useRef();
+  let buttonRef = useRef(undefined);
   let {buttonProps} = useButton(closeButtonProps, buttonRef);
 
   return (

@@ -25,7 +25,7 @@ export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement,
+  children: ReactElement<any>,
   /**
    * Size of Icon (changes based on scale).
    */

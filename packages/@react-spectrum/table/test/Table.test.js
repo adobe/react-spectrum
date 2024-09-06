@@ -3621,31 +3621,67 @@ export let tableTests = () => {
       </TableView>
     );
 
-    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
+    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', async function () {
       let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeTruthy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
 
       rerender(tree, <TableWithBreadcrumbs selectionMode="single" />);
       row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeTruthy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
     });
 
-    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none" and disabledBehavior="all"', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledBehavior="all" selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeFalsy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeFalsy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered and selection mode is "none", disabledBehavior="selection" and has a action', async function () {
+      let tree = render(<TableWithBreadcrumbs onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered, disabledBehavior="selection", row is disabled and has a action', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered, has a action, but is disabled and disabledBehavior="all"', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="all" selectionMode="multiple" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeFalsy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
     });
   });
 
@@ -4167,6 +4203,7 @@ export let tableTests = () => {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 4100);
       let items = [];
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -4208,11 +4245,15 @@ export let tableTests = () => {
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 1000);
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
-      let onLoadMoreSpy = jest.fn();
+      let onLoadMore = jest.fn(() => {
+        scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 2000);
+      });
 
       let TableMock = (props) => (
         <TableView aria-label="Table">
@@ -4220,7 +4261,7 @@ export let tableTests = () => {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+          <TableBody items={props.items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
                 {key => <Cell>{row[key]}</Cell>}
@@ -4232,7 +4273,8 @@ export let tableTests = () => {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
   });
 

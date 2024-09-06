@@ -684,6 +684,44 @@ describe('Menu', function () {
       expect(onAction).toHaveBeenCalledWith('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
+
+    it('should support onAction on menu and menu items', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let onAction = jest.fn();
+      let itemAction = jest.fn();
+      let {getAllByRole} = render(
+        <Menu aria-label="Test" onAction={onAction}>
+          <Item id="cat" onAction={itemAction}>Cat</Item>
+          <Item id="dog">Dog</Item>
+          <Item id="kangaroo">Kangaroo</Item>
+        </Menu>
+      );
+
+      let items = getAllByRole('menuitem');
+      await user.click(items[0]);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(itemAction).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support onAction on menu and menu items in sections', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let onAction = jest.fn();
+      let itemAction = jest.fn();
+      let {getAllByRole} = render(
+        <Menu aria-label="Test" onAction={onAction}>
+          <Section title="Animals">
+            <Item id="cat" onAction={itemAction}>Cat</Item>
+            <Item id="dog">Dog</Item>
+            <Item id="kangaroo">Kangaroo</Item>
+          </Section>
+        </Menu>
+      );
+
+      let items = getAllByRole('menuitem');
+      await user.click(items[0]);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(itemAction).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('supports complex menu items with aria-labelledby and aria-describedby', function () {

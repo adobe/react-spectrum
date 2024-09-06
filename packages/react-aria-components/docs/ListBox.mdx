@@ -598,7 +598,7 @@ let albums = [
   items={albums}
   selectionMode="multiple">
   {item => (
-    <ListBoxItem>
+    <ListBoxItem textValue={item.title}>
       <img src={item.image} alt="" />
       <Text slot="label">{item.title}</Text>
       <Text slot="description">{item.artist}</Text>
@@ -687,7 +687,7 @@ The `layout` prop can be set to `"grid"` to enable two-dimensional keyboard navi
   items={albums}
   selectionMode="multiple">
   {item => (
-    <ListBoxItem>
+    <ListBoxItem textValue={item.title}>
       <img src={item.image} alt="" />
       <Text slot="label">{item.title}</Text>
       <Text slot="description">{item.artist}</Text>
@@ -723,7 +723,7 @@ The `layout="grid"` and `orientation="horizontal"` props can be combined to buil
   items={albums}
   selectionMode="multiple">
   {item => (
-    <ListBoxItem>
+    <ListBoxItem textValue={item.title}>
       <img src={item.image} alt="" />
       <Text slot="label">{item.title}</Text>
       <Text slot="description">{item.artist}</Text>

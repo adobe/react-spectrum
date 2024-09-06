@@ -9,11 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {RefObject, useEffect, useRef} from 'react';
+
+import {RefObject} from '@react-types/shared';
+import {useEffect, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
 export function useFormReset<T>(
-  ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null>,
   initialValue: T,
   onReset: (value: T) => void
 ) {

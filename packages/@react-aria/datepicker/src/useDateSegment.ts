@@ -12,18 +12,18 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
-import React, {RefObject, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
-  segmentProps: DOMAttributes
+  segmentProps: React.HTMLAttributes<HTMLDivElement>
 }
 
 /**
@@ -31,7 +31,7 @@ export interface DateSegmentAria {
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement | null>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale} = useLocale();
   let displayNames = useDisplayNames();
@@ -269,6 +269,17 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     selection.collapse(ref.current);
   };
 
+  let documentRef = useRef(typeof document !== 'undefined' ? document : null);
+  useEvent(documentRef, 'selectionchange', () => {
+    // Enforce that the selection is collapsed when inside a date segment.
+    // Otherwise, when tapping on a segment in Android Chrome and then entering text,
+    // composition events will be fired that break the DOM structure and crash the page.
+    let selection = window.getSelection();
+    if (ref.current.contains(selection.anchorNode)) {
+      selection.collapse(ref.current);
+    }
+  });
+
   let compositionRef = useRef('');
   // @ts-ignore - TODO: possibly old TS version? doesn't fail in my editor...
   useEvent(ref, 'beforeinput', e => {
@@ -375,7 +386,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
-      autoCapitalize: isEditable ? 'off' : undefined,
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,

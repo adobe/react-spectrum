@@ -1,4 +1,4 @@
 {
   "close": "Închideţi",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{count, plural, one {# notificare} other {# notificări}}."
 }

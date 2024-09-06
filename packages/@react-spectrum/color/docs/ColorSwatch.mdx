@@ -63,12 +63,20 @@ function Example() {
 }
 ```
 
-### No value
-
-When no `color` prop is provided, the value is `null`, or the color is transparent, ColorSwatch displays a red slash across the swatch.
+Fully transparent colors are displayed with a red slash through the swatch, while partially transparent colors are shown with a checkerboard background.
 
 ```tsx example
-<ColorSwatch color={null} />
+import {parseColor, ColorSlider} from '@react-spectrum/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0)'));
+  return (
+    <Flex direction="column" gap="size-100">
+      <ColorSlider value={color} onChange={setColor} channel="alpha" />
+      <ColorSwatch color={color} />
+    </Flex>
+  );
+}
 ```
 
 ## Labeling

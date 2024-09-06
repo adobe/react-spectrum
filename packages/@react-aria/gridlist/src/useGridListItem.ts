@@ -11,11 +11,11 @@
  */
 
 import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
@@ -57,7 +57,7 @@ const EXPANSION_KEYS = {
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement | null>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,

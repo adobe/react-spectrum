@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RouterOptions} from '@react-types/shared';
+import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject, RouterOptions} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -98,7 +97,7 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
-export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement | null>): MenuItemAria {
   let {
     id,
     key,
@@ -134,12 +133,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
     if (item?.props?.onAction) {
       item.props.onAction();
+    } else if (props.onAction) {
+      props.onAction(key);
     }
 
-    if (props.onAction) {
-      props.onAction(key);
-    } else if (data.onAction) {
-      data.onAction(key);
+    if (data.onAction) {
+      // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
+      let onAction = data.onAction;
+      onAction(key);
     }
 
     if (e.target instanceof HTMLAnchorElement) {

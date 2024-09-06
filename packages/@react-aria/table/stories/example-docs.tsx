@@ -27,7 +27,7 @@ export function Table(props) {
   } = props;
 
   let state = useTableState(props);
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {collection} = state;
   let {gridProps} = useTable(
     {
@@ -103,7 +103,7 @@ function ResizableTableRowGroup({type: Element, children, className}) {
 }
 
 function ResizableTableHeaderRow({item, state, children}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
   return (
@@ -151,7 +151,7 @@ function Button(props) {
 
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {resizerProps, inputProps, isResizing} = useTableColumnResize({
     column,
     'aria-label': 'Resizer',
@@ -174,7 +174,7 @@ function Resizer(props) {
 }
 
 function ResizableTableRow({item, children, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps, isPressed} = useTableRow({
     node: item
@@ -206,7 +206,7 @@ function ResizableTableRow({item, children, state}) {
 }
 
 function ResizableTableCell({cell, state, layoutState}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let column = cell.column;

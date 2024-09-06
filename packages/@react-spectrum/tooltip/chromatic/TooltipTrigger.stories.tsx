@@ -78,11 +78,12 @@ export const ContainerPadding50AtEdge: TooltipTriggerStory = {
       <Tooltip>Long tooltip message that just goes on and on again. But it just keeps going and going and going and going.</Tooltip>
     ]
   },
-  // padding is 231 so that it flips, this is because the tooltip has a width of 180px with the tip + 3px margin on the tooltip + 50px of container padding from this story
-  // anything less than 232px padding on the div will result in a flip, so this is how we can visually test container padding
-  // this uses slightly less than the required padding so that we account for any rounding and have a stable test
+
+  // Padding is 223 + 8px from the story margin itself = 231px of space from edge to button.
+  // Size that the tooltip takes is 180 (tooltip width) + 3 (margin on overlay) + 50 (container padding) - 1 (offset applied via tooltiptrigger) = 232px
+  // Note the above size that is calculated is slightly off, will need to update calculatePosition
   decorators: [(Story) => (
-    <div style={{width: '100%', padding: '230px'}}>
+    <div style={{width: '100%', padding: '223px'}}>
       <Story />
     </div>
   )]

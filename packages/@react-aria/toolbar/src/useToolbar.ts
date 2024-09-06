@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Orientation} from '@react-types/shared';
+import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
-import {HTMLAttributes, KeyboardEventHandler, RefObject, useRef, useState} from 'react';
+import {HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
@@ -37,7 +37,7 @@ export interface ToolbarAria {
  * @param props - Props to be applied to the toolbar.
  * @param ref - A ref to a DOM element for the toolbar.
  */
-export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElement>): ToolbarAria {
+export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElement | null>): ToolbarAria {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,

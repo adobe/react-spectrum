@@ -17,7 +17,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
-  <ComboBox defaultInputValue="C" data-foo="bar" {...props}>
+  <ComboBox name="test-combobox" defaultInputValue="C" data-foo="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Input />
     <Button />
@@ -282,5 +282,14 @@ describe('ComboBox', () => {
     expect(input).toHaveFocus();
     fireEvent.scroll(input); // simulate what happens when the text is long and overflows
     expect(listbox).toBeInTheDocument();
+  });
+
+  it('should not open the menu when isReadOnly', async () => {
+    let {getByRole, queryByRole} = render(<TestComboBox isReadOnly menuTrigger="focus" />);
+
+    let input = getByRole('combobox');
+    await user.click(input);
+
+    expect(queryByRole('listbox')).not.toBeInTheDocument();
   });
 });

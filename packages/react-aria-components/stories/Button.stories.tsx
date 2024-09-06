@@ -35,7 +35,7 @@ function RippleButton(props) {
   const [coords, setCoords] = useState({x: -1, y: -1});
   const [isRippling, setIsRippling] = useState(false);
 
-  let timeout = useRef<ReturnType<typeof setTimeout>>();
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let onPress = (e) => {
     setCoords({x: e.x, y: e.y});
     if (e.x !== -1 && e.y !== -1) {

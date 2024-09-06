@@ -1,4 +1,4 @@
 {
   "close": "Sluiten",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{count, plural, one {# melding} other {# meldingen}}."
 }

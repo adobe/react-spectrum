@@ -11,9 +11,9 @@
  */
 
 import {AriaLinkProps} from '@react-types/link';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, shouldClientNavigate, useLinkProps, useRouter} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
@@ -39,7 +39,7 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement | null>): LinkAria {
   let {
     elementType = 'a',
     onPress,

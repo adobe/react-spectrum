@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, RefObject} from '@react-types/shared';
 import {ColorChannelFieldProps, ColorChannelFieldState} from '@react-stately/color';
 import {NumberFieldAria, useNumberField} from '@react-aria/numberfield';
-import {RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaColorChannelFieldProps extends ColorChannelFieldProps, AriaLabelingProps {}
@@ -23,7 +22,7 @@ export interface ColorChannelFieldAria extends NumberFieldAria {}
  * Provides the behavior and accessibility implementation for a color channel field, allowing users to edit the
  * value of an individual color channel.
  */
-export function useColorChannelField(props: AriaColorChannelFieldProps, state: ColorChannelFieldState, inputRef: RefObject<HTMLInputElement>): ColorChannelFieldAria {
+export function useColorChannelField(props: AriaColorChannelFieldProps, state: ColorChannelFieldState, inputRef: RefObject<HTMLInputElement | null>): ColorChannelFieldAria {
   let {locale} = useLocale();
   return useNumberField({
     ...props,

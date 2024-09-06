@@ -374,17 +374,45 @@ describe('ColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should support the channel prop', async function () {
-    let onChange = jest.fn();
-    let {getByRole} = renderComponent({label: null, value: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
-    let colorField = getByRole('textbox');
-    expect(colorField.value).toBe('210°');
-    expect(colorField).toHaveAttribute('aria-label', 'Hue');
+  describe('channel', function () {
+    it('should support the channel prop', async function () {
+      let onChange = jest.fn();
+      let {getByRole} = renderComponent({label: null, value: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
+      let colorField = getByRole('textbox');
+      expect(colorField.value).toBe('210°');
+      expect(colorField).toHaveAttribute('aria-label', 'Hue');
 
-    await user.tab();
-    await user.keyboard('100');
-    await user.tab();
-    expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
+      await user.tab();
+      await user.keyboard('100');
+      await user.tab();
+      expect(onChange).toHaveBeenCalledWith(parseColor('hsl(100, 25%, 73.33%)'));
+    });
+
+    it('should default to empty', function () {
+      let {getByRole} = renderComponent({label: null, colorSpace: 'hsl', channel: 'hue'});
+      let colorField = getByRole('textbox');
+      expect(colorField).toHaveValue('');
+    });
+
+    it('should support null value', function () {
+      let {getByRole} = renderComponent({label: null, value: null, colorSpace: 'hsl', channel: 'hue'});
+      let colorField = getByRole('textbox');
+      expect(colorField).toHaveValue('');
+    });
+
+    it('should support clearing value', async function () {
+      let onChange = jest.fn();
+      let {getByRole} = renderComponent({label: null, defaultValue: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
+      let colorField = getByRole('textbox');
+      expect(colorField).toHaveValue('210°');
+
+      await user.tab();
+      await user.keyboard('{Backspace}');
+      await user.tab();
+
+      expect(colorField).toHaveValue('');
+      expect(onChange).toHaveBeenCalledWith(null);
+    });
   });
 
   describe('validation', () => {

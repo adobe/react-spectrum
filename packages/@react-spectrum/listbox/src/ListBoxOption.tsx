@@ -38,7 +38,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
   let {state, shouldFocusOnHover, shouldUseVirtualFocus} = useContext(ListBoxContext);
 
-  let ref = useRef<any>();
+  let ref = useRef<any>(undefined);
   let {optionProps, labelProps, descriptionProps, isSelected, isDisabled, isFocused} = useOption(
     {
       'aria-label': item['aria-label'],

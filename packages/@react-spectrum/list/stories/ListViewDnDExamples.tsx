@@ -85,9 +85,9 @@ let itemList2 = [
 ];
 
 export function ReorderExample(props) {
-  let {onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
+  let {items, onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
   let list = useListData({
-    initialItems: props.items || itemList1
+    initialItems: items || itemList1
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.

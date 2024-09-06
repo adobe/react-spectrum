@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement} from '@react-types/shared';
+import {FocusableElement, RefObject} from '@react-types/shared';
 import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
 import type {GridNode} from '@react-types/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes} from 'react';
 import {mergeProps, useSyntheticLinkProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
 import {tableNestedRows} from '@react-stately/flags';
@@ -38,7 +38,7 @@ const EXPANSION_KEYS = {
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement>): GridRowAria {
+export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): GridRowAria {
   let {node, isVirtualized} = props;
   let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
   let {direction} = useLocale();

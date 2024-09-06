@@ -7,7 +7,7 @@ import {SelectProps, useSelectState} from '@react-stately/select';
 import userEvent from '@testing-library/user-event';
 
 const HiddenSelectExample = (props: Partial<SelectProps<{ key: number, value: string }>> & { hiddenProps?: Partial<HiddenSelectProps<any>> }) => {
-  const triggerRef = useRef();
+  const triggerRef = useRef(undefined);
   const state = useSelectState({
     children: (item) => (
       <Item>{item.value}</Item>

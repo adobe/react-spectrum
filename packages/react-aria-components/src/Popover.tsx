@@ -11,12 +11,14 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, useState} from 'react';
+import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
@@ -31,7 +33,7 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
    * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>,
+  triggerRef?: RefObject<Element | null>,
   /**
    * Whether the popover is currently performing an entry animation.
    */
@@ -84,7 +86,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
-  let isHidden = useContext(HiddenContext);
+  let isHidden = useIsHidden();
 
   // If we are in a hidden tree, we still need to preserve our children.
   if (isHidden) {
@@ -140,14 +142,14 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
       setArrowWidth(arrowRef.current.getBoundingClientRect().width);
     }
   }, [state.isOpen, arrowRef]);
-  
+
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8,
     arrowSize: arrowWidth
   }, state);
 
-  let ref = props.popoverRef as RefObject<HTMLDivElement>;
+  let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
   let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,

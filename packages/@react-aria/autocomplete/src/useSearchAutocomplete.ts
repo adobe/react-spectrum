@@ -14,8 +14,8 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
 import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes, KeyboardDelegate, ValidationResult} from '@react-types/shared';
-import {InputHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes, KeyboardDelegate, LayoutDelegate, RefObject, ValidationResult} from '@react-types/shared';
+import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
@@ -37,13 +37,19 @@ export interface SearchAutocompleteAria<T> extends ValidationResult {
 
 export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocompleteProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
+  popoverRef: RefObject<HTMLDivElement | null>,
   /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement>,
+  listBoxRef: RefObject<HTMLElement | null>,
   /** An optional keyboard delegate implementation, to override the default. */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate
 }
 
 /**
@@ -58,6 +64,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     inputRef,
     listBoxRef,
     keyboardDelegate,
+    layoutDelegate,
     onSubmit = () => {},
     onClear,
     onKeyDown,
@@ -98,6 +105,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     {
       ...otherProps,
       keyboardDelegate,
+      layoutDelegate,
       popoverRef,
       listBoxRef,
       inputRef,

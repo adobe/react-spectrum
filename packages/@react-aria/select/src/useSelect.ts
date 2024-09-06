@@ -14,8 +14,8 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, KeyboardDelegate, ValidationResult} from '@react-types/shared';
-import {FocusEvent, RefObject, useMemo} from 'react';
+import {DOMAttributes, FocusableElement, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
+import {FocusEvent, useMemo} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -66,7 +66,7 @@ export const selectData = new WeakMap<SelectState<any>, SelectData>();
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement>): SelectAria<T> {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement | null>): SelectAria<T> {
   let {
     keyboardDelegate,
     isDisabled,

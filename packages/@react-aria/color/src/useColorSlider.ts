@@ -12,8 +12,8 @@
 
 import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
-import {DOMAttributes} from '@react-types/shared';
-import {InputHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes, RefObject} from '@react-types/shared';
+import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -21,9 +21,9 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
-  trackRef: RefObject<Element>,
+  trackRef: RefObject<Element | null>,
   /** A ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement | null>
 }
 
 export interface ColorSliderAria {
