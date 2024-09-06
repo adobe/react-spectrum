@@ -268,7 +268,8 @@ const chevronStyles = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
-  }
+  },
+  flexShrink: 0
 });
 
 function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement>) {
