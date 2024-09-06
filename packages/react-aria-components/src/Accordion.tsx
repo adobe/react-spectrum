@@ -128,7 +128,12 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElemen
       {...mergeProps(contentProps, focusWithinProps)}
       {...renderProps}
       data-focus-visible-within={isFocusVisibleWithin || undefined}>
-      {props.children}
+      <Provider
+        values={[
+          [ButtonContext, null]
+        ]}>
+        {props.children}
+      </Provider>
     </div>
   );
 }
