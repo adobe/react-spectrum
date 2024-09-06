@@ -1792,7 +1792,8 @@ describe('Table', () => {
       }
 
       let row = getAllByRole('row')[1];
-      await triggerLongPress({element: row, advanceTimer: jest.advanceTimersByTime});
+      // Note that long press interactions with rows is strictly touch only for grid rows
+      await triggerLongPress({element: row, advanceTimer: jest.advanceTimersByTime, pointerOpts: {pointerType: 'touch'}});
       expect(row).toHaveAttribute('aria-selected', 'true');
 
       for (let row of getAllByRole('row')) {

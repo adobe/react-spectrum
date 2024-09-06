@@ -68,12 +68,13 @@ export class TableTester {
       await this.pressElement(rowCheckbox);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      if (needsLongPress) {
+      if (needsLongPress && this._interactionType === 'touch') {
         if (this._advanceTimer == null) {
           throw new Error('No advanceTimers provided for long press.');
         }
 
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer});
+        // Note that long press interactions with rows is strictly touch only for grid rows
+        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
         // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
         // To reproduce, try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
         // run Table.test's "should support long press to enter selection mode on touch" test to see what happens

@@ -59,21 +59,21 @@ export class MenuTester {
 
     let trigger = this.getTrigger();
     let isDisabled = trigger.hasAttribute('disabled');
-    if (this._interactionType === 'mouse') {
+    if (this._interactionType === 'mouse' || this._interactionType === 'touch') {
       if (needsLongPress) {
         if (this._advanceTimer == null) {
           throw new Error('No advanceTimers provided for long press.');
         }
-
-        await triggerLongPress({element: trigger, advanceTimer: this._advanceTimer});
-      } else {
+        let pointerType = this._interactionType === 'mouse' ? 'mouse' : 'touch';
+        await triggerLongPress({element: trigger, advanceTimer: this._advanceTimer, pointerOpts: {pointerType}});
+      } else if (this._interactionType === 'mouse') {
         await this.user.click(trigger);
+      } else {
+        await this.user.pointer({target: trigger, keys: '[TouchA]'});
       }
     } else if (this._interactionType === 'keyboard') {
       act(() => trigger.focus());
       await this.user.keyboard('[Enter]');
-    } else if (this._interactionType === 'touch') {
-      await this.user.pointer({target: trigger, keys: '[TouchA]'});
     }
 
     await waitFor(() => {
