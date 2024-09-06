@@ -23,7 +23,8 @@ let liveAnnouncer: LiveAnnouncer | null = null;
 export function announce(
   message: string,
   assertiveness: Assertiveness = 'assertive',
-  timeout = LIVEREGION_TIMEOUT_DELAY
+  timeout = LIVEREGION_TIMEOUT_DELAY,
+  mode: 'message' | 'ids' = 'message'
 ) {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
@@ -31,7 +32,7 @@ export function announce(
     // otherwise Safari won't announce the message if it's added too quickly
     // found most times less than 100ms were not consistent when announcing with Safari
     setTimeout(() => {
-      if (liveAnnouncer.isAttached()) {
+      if (liveAnnouncer?.isAttached()) {
         liveAnnouncer?.announce(message, assertiveness, timeout, mode);
       }
     }, 100);
@@ -97,7 +98,7 @@ class LiveAnnouncer {
   }
 
   isAttached() {
-    return this.node.isConnected;
+    return this.node?.isConnected;
   }
 
   createLog(ariaLive: string) {
@@ -117,18 +118,24 @@ class LiveAnnouncer {
     this.node = null;
   }
 
-  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
+  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY, mode: 'message' | 'ids' = 'message') {
     if (!this.node) {
       return;
     }
 
     let node = document.createElement('div');
-    node.textContent = message;
+    if (mode === 'message') {
+      node.textContent = message;
+    } else {
+      // To read an aria-labelledby, the element must have an appropriate role, such as img.
+      node.setAttribute('role', 'img');
+      node.setAttribute('aria-labelledby', message);
+    }
 
     if (assertiveness === 'assertive') {
-      this.assertiveLog.appendChild(node);
+      this.assertiveLog?.appendChild(node);
     } else {
-      this.politeLog.appendChild(node);
+      this.politeLog?.appendChild(node);
     }
 
     if (message !== '') {
@@ -143,11 +150,11 @@ class LiveAnnouncer {
       return;
     }
 
-    if (!assertiveness || assertiveness === 'assertive') {
+    if ((!assertiveness || assertiveness === 'assertive') && this.assertiveLog) {
       this.assertiveLog.innerHTML = '';
     }
 
-    if (!assertiveness || assertiveness === 'polite') {
+    if ((!assertiveness || assertiveness === 'polite') && this.politeLog) {
       this.politeLog.innerHTML = '';
     }
   }
