@@ -22,7 +22,7 @@ interface SlottedValue<T> {
 }
 
 export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
-export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
+export type ContextValue<T, E> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
