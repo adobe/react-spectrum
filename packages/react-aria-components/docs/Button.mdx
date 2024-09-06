@@ -166,7 +166,7 @@ Both a `Text` and [ProgressBar](ProgressBar.html) component are required to show
 Make sure to internationalize the label you pass to the [ProgressBar](ProgressBar.html) component.
 
 ```tsx example
-import {useEffect, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import {ProgressBar, Text} from 'react-aria-components';
 
 function PendingButton(props) {
@@ -180,12 +180,6 @@ function PendingButton(props) {
       timeout.current = undefined;
     }, 5000);
   };
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeout.current);
-    };
-  }, []);
 
   return (
     <Button

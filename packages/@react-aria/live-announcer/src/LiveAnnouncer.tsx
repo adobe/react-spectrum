@@ -15,6 +15,8 @@ type Assertiveness = 'assertive' | 'polite';
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
+let liveAnnouncer: LiveAnnouncer | null = null;
+
 /**
  * Announces the message using screen reader technology.
  */
@@ -26,9 +28,17 @@ export function announce(
 ) {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
+    // wait for the live announcer regions to be added to the dom, then announce
+    // otherwise Safari won't announce the message if it's added too quickly
+    // found most times less than 100ms were not consistent when announcing with Safari
+    setTimeout(() => {
+      if (liveAnnouncer?.isAttached()) {
+        liveAnnouncer?.announce(message, assertiveness, timeout, mode);
+      }
+    }, 100);
+  } else {
+    liveAnnouncer.announce(message, assertiveness, timeout, mode);
   }
-
-  liveAnnouncer.announce(message, assertiveness, timeout, mode);
 }
 
 /**
@@ -89,6 +99,10 @@ class LiveAnnouncer {
     }
   }
 
+  isAttached() {
+    return this.node?.isConnected;
+  }
+
   createLog(ariaLive: string) {
     let node = document.createElement('div');
     node.setAttribute('role', 'log');
@@ -147,7 +161,3 @@ class LiveAnnouncer {
     }
   }
 }
-
-// singleton, setup immediately so that the DOM is primed for the first announcement as soon as possible
-// Safari has a race condition where the first announcement is not read if we wait until the first announce call
-let liveAnnouncer: LiveAnnouncer | null = new LiveAnnouncer();
