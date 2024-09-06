@@ -5796,6 +5796,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/disclosure@npm:3.0.0-alpha.0, @react-aria/disclosure@workspace:packages/@react-aria/disclosure":
+  version: 0.0.0-use.local
+  resolution: "@react-aria/disclosure@workspace:packages/@react-aria/disclosure"
+  dependencies:
+    "@react-aria/button": "npm:^3.9.8"
+    "@react-aria/selection": "npm:^3.19.3"
+    "@react-aria/utils": "npm:^3.25.2"
+    "@react-stately/accordion": "npm:^3.0.0-alpha.0"
+    "@react-stately/tree": "npm:^3.8.4"
+    "@react-types/accordion": "npm:3.0.0-alpha.23"
+    "@react-types/button": "npm:^3.9.6"
+    "@react-types/shared": "npm:^3.24.1"
+    "@swc/helpers": "npm:^0.5.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@react-aria/dnd@npm:^3.0.0, @react-aria/dnd@npm:^3.1.0, @react-aria/dnd@npm:^3.7.1, @react-aria/dnd@npm:^3.7.2, @react-aria/dnd@workspace:packages/@react-aria/dnd":
   version: 0.0.0-use.local
   resolution: "@react-aria/dnd@workspace:packages/@react-aria/dnd"
@@ -8158,6 +8177,19 @@ __metadata:
     "@react-stately/overlays": "npm:^3.6.10"
     "@react-stately/utils": "npm:^3.10.3"
     "@react-types/datepicker": "npm:^3.8.2"
+    "@react-types/shared": "npm:^3.24.1"
+    "@swc/helpers": "npm:^0.5.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
+"@react-stately/disclosure@npm:3.0.0-alpha.0, @react-stately/disclosure@workspace:packages/@react-stately/disclosure":
+  version: 0.0.0-use.local
+  resolution: "@react-stately/disclosure@workspace:packages/@react-stately/disclosure"
+  dependencies:
+    "@react-stately/utils": "npm:^3.10.3"
+    "@react-types/accordion": "npm:3.0.0-alpha.23"
     "@react-types/shared": "npm:^3.24.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -28732,6 +28764,7 @@ __metadata:
     "@react-aria/accordion": "npm:3.0.0-alpha.33"
     "@react-aria/collections": "npm:3.0.0-alpha.4"
     "@react-aria/color": "npm:3.0.0-rc.2"
+    "@react-aria/disclosure": "npm:3.0.0-alpha.0"
     "@react-aria/dnd": "npm:^3.7.2"
     "@react-aria/focus": "npm:^3.18.2"
     "@react-aria/interactions": "npm:^3.22.2"
@@ -28743,6 +28776,7 @@ __metadata:
     "@react-aria/virtualizer": "npm:^4.0.2"
     "@react-stately/accordion": "npm:^3.0.0-alpha.0"
     "@react-stately/color": "npm:^3.7.2"
+    "@react-stately/disclosure": "npm:3.0.0-alpha.0"
     "@react-stately/layout": "npm:^4.0.2"
     "@react-stately/menu": "npm:^3.8.2"
     "@react-stately/table": "npm:^3.12.2"

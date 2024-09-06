@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDisclosureProps, useDisclosure} from '@react-aria/accordion';
+import {AriaDisclosureProps, useDisclosure} from '@react-aria/disclosure';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DisclosureState, useDisclosureState} from '@react-stately/accordion';
+import {DisclosureState, useDisclosureState} from '@react-stately/disclosure';
 import {forwardRefType} from '@react-types/shared';
 import {HoverEvents, useFocusRing} from 'react-aria';
 import {mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
