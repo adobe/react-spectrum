@@ -18,7 +18,7 @@ const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
   parameters: {
     layout: 'centered',
-    chromatic: {delay: 1000}
+    chromatic: {delay: 10000}
   },
   tags: ['autodocs'],
   argTypes: {
