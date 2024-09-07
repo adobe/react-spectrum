@@ -140,7 +140,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 10, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
