@@ -440,6 +440,7 @@ const linkIconSize = {
 export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
+  let isLinkOut = isLink && props.target === '_blank';
   let {size} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
@@ -480,7 +481,7 @@ export function MenuItem(props: MenuItemProps) {
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLink && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
+              {isLinkOut && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
               {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
                   <ChevronRightIcon
