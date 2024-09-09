@@ -40,14 +40,6 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
-  rsp-xlarge-nodeupdate:
-    docker:
-      - image: cimg/node:18.20.3
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
 jobs:
   install:
     executor: rsp-large
@@ -279,7 +271,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge-nodeupdate
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -485,7 +477,8 @@ jobs:
             - '*/verdaccio/'
 
   deploy:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
@@ -499,7 +492,8 @@ jobs:
 
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
   deploy-verdaccio:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/verdaccio_dist
@@ -511,7 +505,8 @@ jobs:
             fi
 
   deploy-production:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
@@ -546,6 +541,7 @@ jobs:
           name: Authenticate with npm
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            yarn config set npmAuthToken $NPM_TOKEN
             git update-index --skip-worktree .npmrc
       - run:
           name: Publish

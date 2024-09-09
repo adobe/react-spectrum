@@ -47,15 +47,7 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
 export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style({
-  ...bar(),
-  width: {
-    default: 208,
-    size: {
-      S: 192,
-      L: 224,
-      XL: 240
-    }
-  }
+  ...bar()
 }, getAllowedOverrides());
 
 const valueStyles = style({
