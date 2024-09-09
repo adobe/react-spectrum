@@ -64,8 +64,8 @@ let card = style({
     }
   },
   backgroundColor: {
+    default: '--s2-container-bg',
     variant: {
-      default: '--s2-container-bg',
       tertiary: 'transparent',
       quiet: 'transparent'
     }
