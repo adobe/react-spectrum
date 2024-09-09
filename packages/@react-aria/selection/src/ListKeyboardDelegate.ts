@@ -148,12 +148,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   getKeyRightOf(key: Key) {
     // This is a temporary solution for CardView until we refactor useSelectableCollection.
     // https://github.com/orgs/adobe/projects/19/views/32?pane=issue&itemId=77825042
-    // @ts-ignore
-    if (this.layoutDelegate.getKeyRightOf) {
-      // @ts-ignore
-      key = this.layoutDelegate.getKeyRightOf(key);
-      // @ts-ignore
-      return this.findNextNonDisabled(key, key => this.layoutDelegate.getKeyRightOf(key));
+    let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyRightOf' : 'getKeyLeftOf';
+    if (this.layoutDelegate[layoutDelegateMethod]) {
+      key = this.layoutDelegate[layoutDelegateMethod](key);
+      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key));
     }
 
     if (this.layout === 'grid') {
@@ -170,12 +168,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyLeftOf(key: Key) {
-    // @ts-ignore
-    if (this.layoutDelegate.getKeyLeftOf) {
-      // @ts-ignore
-      key = this.layoutDelegate.getKeyLeftOf(key);
-      // @ts-ignore
-      return this.findNextNonDisabled(key, key => this.layoutDelegate.getKeyLeftOf(key));
+    let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyLeftOf' : 'getKeyRightOf';
+    if (this.layoutDelegate[layoutDelegateMethod]) {
+      key = this.layoutDelegate[layoutDelegateMethod](key);
+      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key));
     }
 
     if (this.layout === 'grid') {
