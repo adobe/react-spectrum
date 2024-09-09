@@ -37,8 +37,7 @@ export const withChromaticProvider = makeDecorator({
 
 function RenderS2({getStory, context, options, selectedLocales, height, minHeight}) {
   let colorSchemes = options.colorSchemes || S2ColorThemes;
-  // TODO: not sure if we need to snapshot against layers? Doesn't look like any of the colors of the components change with respect to the layer
-  let backgrounds = options.backgrounds || S2Backgrounds;
+  let backgrounds = options.backgrounds || ['base'];
 
   // TODO: there is perhaps some things that can still be shared between the two renders but figured it be easiest to just split them out for the most part
   return (
