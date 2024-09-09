@@ -13,6 +13,7 @@
 import type {Meta} from '@storybook/react';
 import {ProgressBar} from '../src';
 import {StaticColorDecorator} from './utils';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ProgressBar> = {
   component: ProgressBar,
@@ -25,9 +26,17 @@ const meta: Meta<typeof ProgressBar> = {
 
 export default meta;
 
-export const Example = (args: any) => <ProgressBar {...args} />;
+export const Example = {
+  args: {
+    label: 'Loading…',
+    value: 80
+  }
+};
 
-Example.args = {
-  label: 'Loading…',
-  value: 80
+export const CustomWidth = {
+  args: {
+    label: 'Loading…',
+    value: 80,
+    styles: style({width: 384})
+  }
 };

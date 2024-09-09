@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps} from 'react-aria';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
@@ -31,13 +31,14 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
+  let {navProps} = useBreadcrumbs(props);
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => (
         <ol
           ref={ref}
-          {...filterDOMProps(props, {labelable: true})}
+          {...navProps}
           slot={props.slot || undefined}
           style={props.style}
           className={props.className ?? 'react-aria-Breadcrumbs'}>

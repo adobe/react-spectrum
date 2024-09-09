@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from './ActionButton';
 import {
   Breadcrumb as AriaBreadcrumb,
   BreadcrumbsProps as AriaBreadcrumbsProps,
@@ -29,12 +30,14 @@ import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, 
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
-import {ActionButton as S2ActionButton} from './ActionButton';
 import {size, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {Text} from './Content';
 import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const MIN_VISIBLE_ITEMS = 1;
@@ -128,15 +131,16 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<H
 }
 
 let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProps<unknown>['onAction']}) => {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {items, onAction} = props;
   let {direction} = useLocale();
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
-  // TODO localize See more
+  let label = stringFormatter.format('breadcrumbs.more');
   return (
     <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
-          <S2ActionButton isDisabled={isDisabled} isQuiet aria-label="See more"><FolderIcon /></S2ActionButton>
+          <ActionButton isDisabled={isDisabled} isQuiet aria-label={label}><FolderIcon /></ActionButton>
           <Menu items={items} onAction={onAction}>
             {(item: Node<any>) => (
               <MenuItem
@@ -193,7 +197,7 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
           </div>
         );
       })}
-      <S2ActionButton data-hidden-button isQuiet><FolderIcon /></S2ActionButton>
+      <ActionButton data-hidden-button isQuiet><FolderIcon /></ActionButton>
     </div>
   );
 };
