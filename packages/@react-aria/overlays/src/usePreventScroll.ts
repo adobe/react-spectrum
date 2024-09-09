@@ -127,7 +127,7 @@ function preventScrollMobileSafari() {
       // If there are two touch points, the user is likely trying to zoom. As we
       // don't want to  prevent pinch zooming by calling `e.preventDefault()`,
       // we return early here.
-      return
+      return;
     }
 
     // Prevent scrolling the window.
