@@ -11,44 +11,147 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, SubmenuTrigger, Text} from '../src';
+import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, SubmenuTrigger, Text, MenuSection, Heading, Collection} from '../src';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 import { AriaMenuTests } from '../../../react-aria-components/test/AriaMenu.test-util';
+import { Selection } from '@react-types/shared';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
 // what about the button label?
 // where and how can i define the requirements/assumptions for setup for the test?
 let withSection = [
-  {name: 'Heading 1', children: [
-    {name: 'Foo'},
-    {name: 'Bar'},
-    {name: 'Baz'}
+  {id: 'heading 1', name: 'Heading 1', children: [
+    {id: 'foo', name: 'Foo'},
+    {id: 'bar', name: 'Bar'},
+    {id: 'baz', name: 'Baz'}
   ]}
 ];
 
+let items = [
+  {id: 'foo', name: 'Foo'},
+  {id: 'bar', name: 'Bar'},
+  {id: 'baz', name: 'Baz'}
+];
+
+function SelectionStatic(props)  {
+  let {selectionMode = 'single'} = props;
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+  return (
+    <MenuTrigger>
+      <Button variant="primary">Menu Button</Button>
+      <Menu
+        aria-label="Test"
+        selectionMode={selectionMode}
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        <MenuSection>
+          <Header>Heading 1</Header>
+          <MenuItem id="foo">Foo</MenuItem>
+          <MenuItem id="bar">Bar</MenuItem>
+          <MenuItem id="baz">Baz</MenuItem>
+          <MenuItem id="fizz">Fizz</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  );
+}
+
 AriaMenuTests({
-  render: ({name}) => {
-    switch (name) {
-      case 'AriaMenuTrigger Menu has default behavior (button renders, menu is closed)':
-        return render(
-          <MenuTrigger>
-            <Button variant="primary">Menu Button</Button>
-            <Menu aria-label="Test" items={withSection}>
-              {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
-            </Menu>
-          </MenuTrigger>
-        );
-      default:
-        return render(
-          <MenuTrigger>
-            <Button variant="primary">Menu Button</Button>
-            <Menu aria-label="Test" items={withSection}>
-              {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
-            </Menu>
-          </MenuTrigger>
-        );
-    }
+  prefix: 'spectrum2-static',
+  renderers: {
+    standard: () => render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test">
+          <MenuSection>
+            <Header><Heading>Heading 1</Heading></Header>
+            <MenuItem>Foo</MenuItem>
+            <MenuItem>Bar</MenuItem>
+            <MenuItem>Baz</MenuItem>
+          </MenuSection>
+        </Menu>
+      </MenuTrigger>
+    ),
+    disabledTrigger: () => render(
+      <MenuTrigger>
+        <Button variant="primary" isDisabled>Menu Button</Button>
+        <Menu aria-label="Test">
+          <MenuSection>
+            <Header><Heading>Heading 1</Heading></Header>
+            <MenuItem>Foo</MenuItem>
+            <MenuItem>Bar</MenuItem>
+            <MenuItem>Baz</MenuItem>
+          </MenuSection>
+        </Menu>
+      </MenuTrigger>
+    ),
+    // TODO: something wrong with icon rendering?
+    // singleSelection: () => render(
+    //   <SelectionStatic />
+    // ),
+    // multipleSelection: () => render(
+    //   <SelectionStatic selectionMode="multiple" />
+    // ),
+  }
+});
+
+// TODO what is wrong with this rendering?
+AriaMenuTests({
+  prefix: 'spectrum2-dynamic',
+  renderers: {
+    standard: () => render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={withSection}>
+          {(section) => {
+            return (
+              <MenuSection>
+                <Header><Heading>{section.name}</Heading></Header>
+                <Collection items={section.children}>
+                  {item => {
+                    return <MenuItem>{item.name}</MenuItem>
+                  }}
+                </Collection>
+              </MenuSection>
+            )}}
+        </Menu>
+      </MenuTrigger>
+    ),
+    disabledTrigger: () => render(
+      <MenuTrigger>
+        <Button variant="primary" isDisabled>Menu Button</Button>
+        <Menu aria-label="Test" items={withSection}>
+          {(section) => {
+            return (
+              <MenuSection>
+                <Header><Heading>{section.name}</Heading></Header>
+                <Collection items={section.children}>
+                  {item => {
+                    return <MenuItem>{item.name}</MenuItem>
+                  }}
+                </Collection>
+              </MenuSection>
+            )}}
+        </Menu>
+      </MenuTrigger>
+    )
+  }
+});
+
+AriaMenuTests({
+  prefix: 'spectrum2-dynamic-no-section',
+  renderers: {
+    standard: () => render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test" items={items}>
+          {(item) =>
+            <MenuItem>{item.name}</MenuItem>
+          }
+        </Menu>
+      </MenuTrigger>
+    )
   }
 });

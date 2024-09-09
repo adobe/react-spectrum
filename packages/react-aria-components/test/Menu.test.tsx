@@ -11,11 +11,12 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from '..';
+import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text, Collection} from '..';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 import { AriaMenuTests } from './AriaMenu.test-util';
+import { Selection } from '@react-types/shared';
 
 let TestMenu = ({menuProps, itemProps, hasSubmenu, hasNestedSubmenu}) => (
   <Menu aria-label="Test" {...menuProps}>
@@ -1063,38 +1064,182 @@ describe('Menu', () => {
 // what about the button label?
 // where and how can i define the requirements/assumptions for setup for the test?
 let withSection = [
-  {name: 'Heading 1', children: [
-    {name: 'Foo'},
-    {name: 'Bar'},
-    {name: 'Baz'}
+  {id: 'heading 1', name: 'Heading 1', children: [
+    {id: 'foo', name: 'Foo'},
+    {id: 'bar', name: 'Bar'},
+    {id: 'baz', name: 'Baz'},
+    {id: 'fizz', name: 'Fizz'}
   ]}
 ];
 
+function SelectionStatic(props) {
+  let {selectionMode = 'single'} = props;
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+  return (
+    <MenuTrigger>
+      <Button>Menu Button</Button>
+      <Popover>
+        <Menu
+        aria-label="Test"
+        selectionMode={selectionMode}
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+          <Section>
+            <Header>Heading 1</Header>
+            <MenuItem>Foo</MenuItem>
+            <MenuItem>Bar</MenuItem>
+            <MenuItem>Baz</MenuItem>
+            <MenuItem>Fizz</MenuItem>
+          </Section>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+
+function SelectionDynamic(props) {
+  let {selectionMode = 'single'} = props;
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+  return (
+    <MenuTrigger>
+      <Button>Menu Button</Button>
+      <Popover>
+        <Menu
+        aria-label="Test"
+        items={withSection}
+        selectionMode={selectionMode}
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        {(section) => (
+          <Section>
+            <Header>{section.name}</Header>
+            <Collection items={section.children}>
+              {item => <MenuItem>{item.name}</MenuItem>}
+            </Collection>
+          </Section>
+        )}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+
 AriaMenuTests({
-  render: ({name}) => {
-    switch (name) {
-      case 'AriaMenuTrigger Menu has default behavior (button renders, menu is closed)':
-        return render(
-          <MenuTrigger>
-            <Button>Menu Button</Button>
-            <Popover>
-              <Menu aria-label="Test" items={withSection}>
-                {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
-              </Menu>
-            </Popover>
-          </MenuTrigger>
-        );
-      default:
-        return render(
-          <MenuTrigger>
-            <Button>Menu Button</Button>
-            <Popover>
-              <Menu aria-label="Test" items={withSection}>
-                {(item) => <MenuItem id={item.name}>{item.name}</MenuItem>}
-              </Menu>
-            </Popover>
-          </MenuTrigger>
-        );
-    }
+  prefix: 'rac-static',
+  renderers: {
+    standard: () => render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <Menu aria-label="Test">
+            <Section>
+              <Header>Heading 1</Header>
+              <MenuItem>Foo</MenuItem>
+              <MenuItem>Bar</MenuItem>
+              <MenuItem>Baz</MenuItem>
+            </Section>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    ),
+    disabledTrigger: () => render(
+      <MenuTrigger>
+        <Button isDisabled>Menu Button</Button>
+        <Popover>
+          <Menu aria-label="Test">
+            <Section>
+              <Header>Heading 1</Header>
+              <MenuItem>Foo</MenuItem>
+              <MenuItem>Bar</MenuItem>
+              <MenuItem>Baz</MenuItem>
+            </Section>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    ),
+    singleSelection: () => render(
+      <SelectionStatic />
+    ),
+    multipleSelection: () => render(
+      <SelectionStatic selectionMode="multiple" />
+    ),
+    siblingFocusableElement: () => render(
+      <>
+        <input aria-label="before" />
+        <MenuTrigger>
+          <Button>Menu Button</Button>
+          <Popover>
+            <Menu aria-label="Test">
+              <Section>
+                <Header>Heading 1</Header>
+                <MenuItem>Foo</MenuItem>
+                <MenuItem>Bar</MenuItem>
+                <MenuItem>Baz</MenuItem>
+              </Section>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+        <input aria-label="after" />
+      </>
+    ),
+    multipleMenus: () => render(
+      <>
+        <MenuTrigger>
+          <Button>Menu Button1</Button>
+          <Popover>
+            <Menu aria-label="Test1">
+              <Section>
+                <Header>Heading 1</Header>
+                <MenuItem>Foo</MenuItem>
+                <MenuItem>Bar</MenuItem>
+                <MenuItem>Baz</MenuItem>
+              </Section>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+        <MenuTrigger>
+          <Button>Menu Button2</Button>
+          <Popover>
+            <Menu aria-label="Test2">
+              <Section>
+                <Header>Heading 1</Header>
+                <MenuItem>Foo</MenuItem>
+                <MenuItem>Bar</MenuItem>
+                <MenuItem>Baz</MenuItem>
+              </Section>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      </>
+    )
+  }
+});
+
+AriaMenuTests({
+  prefix: 'rac-dynamic',
+  renderers: {
+    standard: () => render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <Menu aria-label="Test" items={withSection}>
+            {(section) => (
+              <Section>
+                <Header>{section.name}</Header>
+                <Collection items={section.children}>
+                  {item => <MenuItem>{item.name}</MenuItem>}
+                </Collection>
+              </Section>
+            )}
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    ),
+    singleSelection: () => render(
+      <SelectionDynamic />
+    ),
+    multipleSelection: () => render(
+      <SelectionDynamic selectionMode="multiple" />
+    )
   }
 });

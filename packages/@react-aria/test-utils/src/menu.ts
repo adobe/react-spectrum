@@ -49,10 +49,11 @@ export class MenuTester {
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType'], direction?: 'up' | 'down'} = {}) => {
     let {
       needsLongPress,
       interactionType = this._interactionType
+      direction
     } = opts;
 
     let trigger = this.trigger;
@@ -70,8 +71,16 @@ export class MenuTester {
         await this.user.pointer({target: trigger, keys: '[TouchA]'});
       }
     } else if (interactionType === 'keyboard' && !isDisabled) {
-      act(() => trigger.focus());
-      await this.user.keyboard('[Enter]');
+      if (direction === 'up') {
+        act(() => trigger.focus());
+        await this.user.keyboard('[ArrowUp]');
+      } else if (direction === 'down') {
+        act(() => trigger.focus());
+        await this.user.keyboard('[ArrowDown]');
+      } else {
+        act(() => trigger.focus());
+        await this.user.keyboard('[Enter]');
+      }
     }
 
     await waitFor(() => {
@@ -95,7 +104,15 @@ export class MenuTester {
 
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) => {
+  selectOption = async (opts: {
+    option?: HTMLElement,
+    optionText?: string,
+    menuSelectionMode?: 'single' | 'multiple',
+    needsLongPress?: boolean,
+    closesOnSelect?: boolean,
+      interactionType = this._interactionType,
+    keyboardActivation?: 'Space' | 'Enter'
+  }) => {
     let {
       optionText,
       menuSelectionMode = 'single',
@@ -103,6 +120,7 @@ export class MenuTester {
       closesOnSelect = true,
       option,
       interactionType = this._interactionType
+      keyboardActivation = 'Enter'
     } = opts;
     let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
@@ -120,8 +138,12 @@ export class MenuTester {
           act(() => menu.focus());
         }
 
+        if (option) {
+          optionText = option.textContent || '';
+        }
+
         await this.user.keyboard(optionText);
-        await this.user.keyboard('[Enter]');
+        await this.user.keyboard(`[${keyboardActivation}]`);
       } else {
         if (interactionType === 'mouse') {
           await this.user.click(option);
@@ -130,7 +152,7 @@ export class MenuTester {
         }
       }
 
-      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect) {
+      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space') {
         await waitFor(() => {
           if (document.activeElement !== trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
