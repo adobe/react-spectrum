@@ -19,7 +19,8 @@ import {ContentContext, FooterContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
@@ -62,7 +63,13 @@ let card = style({
       forcedColors: 'ButtonFace'
     }
   },
-  backgroundColor: '--s2-container-bg',
+  backgroundColor: {
+    variant: {
+      default: '--s2-container-bg',
+      tertiary: 'transparent',
+      quiet: 'transparent'
+    }
+  },
   boxShadow: {
     default: 'emphasized',
     isHovered: 'elevated',
@@ -267,8 +274,6 @@ let content = style({
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
   columnGap: 4,
-  flexDirection: 'column',
-  flexGrow: 1,
   alignItems: 'baseline',
   alignContent: 'space-between',
   rowGap: {
@@ -326,7 +331,7 @@ const actionButtonSize = {
 export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let domRef = useDOMRef(ref);
-  let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
   let isQuiet = variant === 'quiet';
   let isSkeleton = useIsSkeleton();
   let children = (
@@ -361,11 +366,14 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   let ElementType = useContext(CardViewContext);
   if (ElementType === 'div' || isSkeleton) {
     return (
-      <div 
+      <div
+        {...filterDOMProps(otherProps)}
+        id={String(id)}
         // @ts-ignore - React < 19 compat
         inert={isSkeleton ? 'true' : undefined}
         ref={domRef}
-        className={card({size, density, variant, isCardView: ElementType !== 'div'})}>
+        className={UNSAFE_className + card({size, density, variant, isCardView: ElementType !== 'div'}, styles)}
+        style={UNSAFE_style}>
         <InternalCardContext.Provider value={{size, isQuiet, isHovered: false, isFocusVisible: false, isSelected: false}}>
           {children}
         </InternalCardContext.Provider>
@@ -425,7 +433,7 @@ function SelectionIndicator() {
   return <div className={selectionIndicator({isSelected})} />;
 }
 
-export interface CardPreviewProps extends UnsafeStyles {
+export interface CardPreviewProps extends UnsafeStyles, DOMProps {
   children: ReactNode
 }
 
@@ -435,6 +443,7 @@ export const CardPreview = forwardRef(function CardPreview(props: CardPreviewPro
   let domRef = useDOMRef(ref);
   return (
     <div
+      {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
       className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}

@@ -18,7 +18,7 @@ import {
   UNSTABLE_Virtualizer
 } from 'react-aria-components';
 import {CardContext, CardViewContext} from './Card';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key, LoadingState, Node} from '@react-types/shared';
@@ -463,14 +463,20 @@ const cardViewStyles = style({
     default: 'auto',
     isLoading: 'hidden'
   },
-  scrollPadding: '[18px]',
   display: {
     isEmpty: 'flex'
   },
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  outlineStyle: 'none'
+  ...focusRing(),
+  outlineStyle: {
+    default: 'none',
+    isEmpty: {
+      isFocusVisible: 'solid'
+    }
+  },
+  outlineOffset: -2
 }, getAllowedOverrides({height: true}));
 
 export function CardView<T extends object>(props: CardViewProps<T>) {

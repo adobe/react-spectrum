@@ -61,7 +61,6 @@ module.exports = new Transformer({
         plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']
       })
     ).replace('export default ForwardRef;', '');
-    // will need to use svgr's templating to add ref support if we want that https://github.com/facebook/create-react-app/pull/5457
     let newFile = template(asset, iconName, optimized);
     return [{
       type: 'tsx',

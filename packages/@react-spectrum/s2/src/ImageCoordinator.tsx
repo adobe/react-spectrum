@@ -22,7 +22,7 @@ const defaultContext: ImageGroupValue = {
   load() {}
 };
 
-export const DefaultImageGroup = createContext<ImageGroupValue>(defaultContext);
+export const DefaultImageGroup = createImageGroup();
 
 export function createImageGroup(): ImageGroup {
   return createContext(defaultContext);
@@ -108,7 +108,7 @@ function isAllLoaded(loaded: Map<string, boolean>) {
 }
 
 export function ImageCoordinator(props: ImageCoordinatorProps) {
-  // If we are already inside another ImageList, just pass
+  // If we are already inside another ImageCoordinator, just pass
   // through children and coordinate loading at the root.
   let ctx = useContext(props.group || DefaultImageGroup);
   if (ctx !== defaultContext) {

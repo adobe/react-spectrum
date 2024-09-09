@@ -133,6 +133,16 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
     };
   }, [hidden, register, unregister, src]);
 
+  let onLoad = useCallback(() => {
+    load(src);
+    dispatch({type: 'loaded'});
+  }, [load, src]);
+
+  let onError = useCallback(() => {
+    dispatch({type: 'error'});
+    unregister(src);
+  }, [unregister, src]);
+
   let isSkeleton = useIsSkeleton();
   let isAnimating = isSkeleton || state === 'loading' || state === 'loaded';
   let animation = useLoadingAnimation(isAnimating);
@@ -150,16 +160,6 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
 
     animation(domRef.current);
   });
-
-  let onLoad = useCallback(() => {
-    load(src);
-    dispatch({type: 'loaded'});
-  }, [load, src]);
-
-  let onError = useCallback(() => {
-    dispatch({type: 'error'});
-    unregister(src);
-  }, [unregister, src]);
 
   if (props.alt == null) {
     console.warn(
