@@ -120,7 +120,8 @@ module.exports = {
     'AsyncIterable': 'readonly',
     'FileSystemFileEntry': 'readonly',
     'FileSystemDirectoryEntry': 'readonly',
-    'FileSystemEntry': 'readonly'
+    'FileSystemEntry': 'readonly',
+    'globalThis': 'readonly'
   },
   settings: {
     jsdoc: {
