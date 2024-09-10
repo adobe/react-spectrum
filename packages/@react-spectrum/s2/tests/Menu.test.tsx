@@ -10,13 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, SubmenuTrigger, Text, MenuSection, Heading, Collection} from '../src';
+import {render} from '@react-spectrum/test-utils-internal';
+import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
+import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger} from '../src';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
-import userEvent from '@testing-library/user-event';
-import { AriaMenuTests } from '../../../react-aria-components/test/AriaMenu.test-util';
-import { Selection } from '@react-types/shared';
+import {Selection} from '@react-types/shared';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
 // what about the button label?
@@ -35,28 +33,28 @@ let items = [
   {id: 'baz', name: 'Baz'}
 ];
 
-function SelectionStatic(props)  {
-  let {selectionMode = 'single'} = props;
-  let [selected, setSelected] = React.useState<Selection>(new Set());
-  return (
-    <MenuTrigger>
-      <Button variant="primary">Menu Button</Button>
-      <Menu
-        aria-label="Test"
-        selectionMode={selectionMode}
-        selectedKeys={selected}
-        onSelectionChange={setSelected}>
-        <MenuSection>
-          <Header>Heading 1</Header>
-          <MenuItem id="foo">Foo</MenuItem>
-          <MenuItem id="bar">Bar</MenuItem>
-          <MenuItem id="baz">Baz</MenuItem>
-          <MenuItem id="fizz">Fizz</MenuItem>
-        </MenuSection>
-      </Menu>
-    </MenuTrigger>
-  );
-}
+// function SelectionStatic(props)  {
+//   let {selectionMode = 'single'} = props;
+//   let [selected, setSelected] = React.useState<Selection>(new Set());
+//   return (
+//     <MenuTrigger>
+//       <Button variant="primary">Menu Button</Button>
+//       <Menu
+//         aria-label="Test"
+//         selectionMode={selectionMode}
+//         selectedKeys={selected}
+//         onSelectionChange={setSelected}>
+//         <MenuSection>
+//           <Header>Heading 1</Header>
+//           <MenuItem id="foo">Foo</MenuItem>
+//           <MenuItem id="bar">Bar</MenuItem>
+//           <MenuItem id="baz">Baz</MenuItem>
+//           <MenuItem id="fizz">Fizz</MenuItem>
+//         </MenuSection>
+//       </Menu>
+//     </MenuTrigger>
+//   );
+// }
 
 AriaMenuTests({
   prefix: 'spectrum2-static',
@@ -86,7 +84,7 @@ AriaMenuTests({
           </MenuSection>
         </Menu>
       </MenuTrigger>
-    ),
+    )
     // TODO: something wrong with icon rendering?
     // singleSelection: () => render(
     //   <SelectionStatic />
@@ -111,11 +109,12 @@ AriaMenuTests({
                 <Header><Heading>{section.name}</Heading></Header>
                 <Collection items={section.children}>
                   {item => {
-                    return <MenuItem>{item.name}</MenuItem>
+                    return <MenuItem>{item.name}</MenuItem>;
                   }}
                 </Collection>
               </MenuSection>
-            )}}
+            );
+          }}
         </Menu>
       </MenuTrigger>
     ),
@@ -129,11 +128,12 @@ AriaMenuTests({
                 <Header><Heading>{section.name}</Heading></Header>
                 <Collection items={section.children}>
                   {item => {
-                    return <MenuItem>{item.name}</MenuItem>
+                    return <MenuItem>{item.name}</MenuItem>;
                   }}
                 </Collection>
               </MenuSection>
-            )}}
+            );
+          }}
         </Menu>
       </MenuTrigger>
     )

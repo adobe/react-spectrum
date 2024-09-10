@@ -11,12 +11,13 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text, Collection} from '..';
+import {AriaMenuTests} from './AriaMenu.test-util';
+import {Button, Collection, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from '..';
 import React from 'react';
+import {Selection} from '@react-types/shared';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
-import { AriaMenuTests } from './AriaMenu.test-util';
-import { Selection } from '@react-types/shared';
 
 let TestMenu = ({menuProps, itemProps, hasSubmenu, hasNestedSubmenu}) => (
   <Menu aria-label="Test" {...menuProps}>
@@ -1058,6 +1059,46 @@ describe('Menu', () => {
       expect(menu).not.toBeInTheDocument();
     });
   });
+
+  describe('portalContainer', () => {
+    function InfoMenu(props) {
+      return (
+        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+          <MenuTrigger>
+            <Button aria-label="trigger" />
+            <Popover>
+              <Menu aria-label="Test">
+                <MenuItem id="1">One</MenuItem>
+                <MenuItem id="">Two</MenuItem>
+                <MenuItem id="3">Three</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </UNSTABLE_PortalProvider>
+      );
+    }
+
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoMenu container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    it('should render the menu in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+  });
 });
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
@@ -1080,10 +1121,10 @@ function SelectionStatic(props) {
       <Button>Menu Button</Button>
       <Popover>
         <Menu
-        aria-label="Test"
-        selectionMode={selectionMode}
-        selectedKeys={selected}
-        onSelectionChange={setSelected}>
+          aria-label="Test"
+          selectionMode={selectionMode}
+          selectedKeys={selected}
+          onSelectionChange={setSelected}>
           <Section>
             <Header>Heading 1</Header>
             <MenuItem>Foo</MenuItem>
@@ -1105,18 +1146,18 @@ function SelectionDynamic(props) {
       <Button>Menu Button</Button>
       <Popover>
         <Menu
-        aria-label="Test"
-        items={withSection}
-        selectionMode={selectionMode}
-        selectedKeys={selected}
-        onSelectionChange={setSelected}>
-        {(section) => (
-          <Section>
-            <Header>{section.name}</Header>
-            <Collection items={section.children}>
-              {item => <MenuItem>{item.name}</MenuItem>}
-            </Collection>
-          </Section>
+          aria-label="Test"
+          items={withSection}
+          selectionMode={selectionMode}
+          selectedKeys={selected}
+          onSelectionChange={setSelected}>
+          {(section) => (
+            <Section>
+              <Header>{section.name}</Header>
+              <Collection items={section.children}>
+                {item => <MenuItem>{item.name}</MenuItem>}
+              </Collection>
+            </Section>
         )}
         </Menu>
       </Popover>

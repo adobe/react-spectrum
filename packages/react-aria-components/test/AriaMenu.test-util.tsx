@@ -10,55 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen, within} from '@testing-library/react';
-import {action} from '@storybook/addon-actions';
-import {ActionButton, MenuItem, Menu, MenuTrigger, Section, Button} from 'react-aria-components';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {
-  DEFAULT_LONG_PRESS_TIME,
-  installPointerEvent,
-  pointerMap,
-  simulateDesktop,
-  triggerLongPress
+  pointerMap
 } from '@react-spectrum/test-utils-internal';
-import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
-import { setup } from 'axe-core';
+
 
 let triggerText = 'Menu Button';
 
-interface Items {
-  name: string,
-  children?: Items[]
-}
-let withSection = [
-  {name: 'Heading 1', children: [
-    {name: 'Foo'},
-    {name: 'Bar'},
-    {name: 'Baz'}
-  ]}
-];
-
-// function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonProps = {}) {
-//   return render(
-//     <Provider theme={theme}>
-//       <div data-testid="scrollable">
-//         <Component {...triggerProps}>
-//           <Button {...buttonProps}>
-//             {triggerText}
-//           </Button>
-//           <Menu items={withSection} {...menuProps}>
-//             {item => (
-//               <Section key={item.name} items={item.children} title={item.name}>
-//                 {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-//               </Section>
-//             )}
-//           </Menu>
-//         </Component>
-//       </div>
-//     </Provider>
-//   );
-// }
 let ariaRender = render;
 interface AriaBaseTestProps {
   setup?: () => void,
@@ -78,7 +39,9 @@ interface AriaMenuTestProps extends AriaBaseTestProps {
     // TODO: better to have tests return JSX and I call `render`? could allow me to inject elements in the DOM more easily
     siblingFocusableElement?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
     // needs two menus that are siblings
-    multipleMenus?: (props?: {name: string}) => ReturnType<typeof ariaRender>
+    multipleMenus?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    // Menu should only open on long press
+    longPress?: (props?: {name: string}) => ReturnType<typeof ariaRender>
   }
 }
 export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => {
@@ -89,7 +52,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
     let onSelect = jest.fn();
     let onSelectionChange = jest.fn();
     let user;
-    let windowSpy;
     let testUtilUser = new User();
     setup?.();
 
@@ -594,7 +556,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
         it('focuses the next tabbable thing after the trigger if tab is hit inside the menu', async function () {
           let tree = (renderers.siblingFocusableElement!)();
           let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
-          let triggerButton = menuTester.getTrigger();
 
           await menuTester.open();
           act(() => {jest.runAllTimers();});
@@ -614,8 +575,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
         it('two menus can not be open at the same time', async function () {
           let tree = (renderers.multipleMenus!)();
           let [button1, button2] = tree.getAllByRole('button');
-          let menu1Tester = testUtilUser.createTester('MenuTester', {root: button1});
-          let menu2Tester = testUtilUser.createTester('MenuTester', {root: button2});
+          // TODO: should i try to open with the tester?
+          // let menu1Tester = testUtilUser.createTester('MenuTester', {root: button1});
+          // let menu2Tester = testUtilUser.createTester('MenuTester', {root: button2});
 
           await user.click(button1);
           act(() => jest.runAllTimers());
@@ -636,444 +598,10 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       });
     }
 
+
     // TODO: closeOnSelect is not implemented in RAC and therefor not in S2
-
-    // describe('MenuTrigger trigger="longPress" open behavior', function () {
-    //   installPointerEvent();
-
-    //   const ERROR_MENU_NOT_FOUND = new Error('Menu not found');
-    //   const getMenuOrThrow = (tree, button) => {
-    //     try {
-    //       let menu = tree.getByRole('menu');
-    //       expect(menu).toBeTruthy();
-    //       expect(menu).toHaveAttribute('aria-labelledby', button.id);
-    //     } catch (e) {
-    //       throw ERROR_MENU_NOT_FOUND;
-    //     }
-    //   };
-
-    //   it('should open the menu on longPress', async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
-    //       expect(button).toHaveAttribute('aria-describedby');
-    //       expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Long press or press Alt + ArrowDown to open menu');
-
-    //       if (!menu) {
-    //         await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
-    //       } else {
-    //         await user.pointer({target: button, keys: '[TouchA]'});
-    //       }
-    //     });
-    //   });
-
-    //   it('should not open menu on click', async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     let tree = renderComponent(MenuTrigger, props, {});
-    //     let button = tree.getByRole('button');
-
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-    //   });
-
-    //   it(`should not open menu on short press (default threshold set to ${DEFAULT_LONG_PRESS_TIME}ms)`, async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     let tree = renderComponent(MenuTrigger, props, {});
-    //     let button = tree.getByRole('button');
-
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-    //   });
-
-    //   it('should not open the menu on Enter', async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     let tree = renderComponent(MenuTrigger, props, {});
-    //     let button = tree.getByRole('button');
-
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-    //   });
-
-    //   it('should not open the menu on Space', async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     let tree = renderComponent(MenuTrigger, props, {});
-    //     let button = tree.getByRole('button');
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-    //   });
-
-    //   it('should open the menu on Alt+ArrowUp', async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
-    //       if (!menu) {
-    //         fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
-    //       } else {
-    //         await user.pointer({target: button, keys: '[TouchA]'});
-    //       }
-    //     });
-    //   });
-
-    //   it('should open the menu on Alt+ArrowDown', async function () {
-    //     const props = {onOpenChange, trigger: 'longPress'};
-    //     await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
-    //       if (!menu) {
-    //         fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
-    //       } else {
-    //         await user.pointer({target: button, keys: '[TouchA]'});
-    //       }
-    //     });
-    //   });
-    // });
-
-    // describe('MenuTrigger trigger="longPress" focus behavior', function () {
-    //   installPointerEvent();
-
-    //   function expectMenuItemToBeActive(tree, idx, selectionMode) {
-    //     let menuItemRole = 'menuitem';
-    //     if (selectionMode === 'multiple') {
-    //       menuItemRole = 'menuitemcheckbox';
-    //     } else if (selectionMode === 'single') {
-    //       menuItemRole = 'menuitemradio';
-    //     }
-    //     let menu = tree.getByRole('menu');
-    //     expect(menu).toBeTruthy();
-    //     let menuItems = within(menu).getAllByRole(menuItemRole);
-    //     let selectedItem = menuItems[idx < 0 ? menuItems.length + idx : idx];
-    //     expect(selectedItem).toBe(document.activeElement);
-    //     return menu;
-    //   }
-
-    //   it('should focus the selected item on menu open', async function () {
-    //     let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar'], selectionMode: 'single'});
-    //     let button = tree.getByRole('button');
-    //     await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
-    //     let menu = expectMenuItemToBeActive(tree, 1, 'single');
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     act(() => {
-    //       jest.runAllTimers();
-    //     });
-    //     expect(menu).not.toBeInTheDocument();
-
-    //     // Opening menu via Alt+ArrowUp still autofocuses the selected item
-    //     fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
-    //     menu = expectMenuItemToBeActive(tree, 1, 'single');
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     act(() => {
-    //       jest.runAllTimers();
-    //     });
-    //     expect(menu).not.toBeInTheDocument();
-
-    //     // Opening menu via Alt+ArrowDown still autofocuses the selected item
-    //     fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
-    //     menu = expectMenuItemToBeActive(tree, 1, 'single');
-    //     await user.pointer({target: button, keys: '[TouchA]'});
-    //     act(() => {
-    //       jest.runAllTimers();
-    //     });
-    //     expect(menu).not.toBeInTheDocument();
-    //   });
-
-    //   it('should focus the last item on Alt+ArrowUp if no selectedKeys specified', function () {
-    //     let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {});
-    //     let button = tree.getByRole('button');
-    //     fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
-    //     expectMenuItemToBeActive(tree, -1);
-    //   });
-
-    //   it('should focus the first item on Alt+ArrowDown if no selectedKeys specified', function () {
-    //     let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {});
-    //     let button = tree.getByRole('button');
-    //     fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
-    //     expectMenuItemToBeActive(tree, 0);
-    //   });
-    // });
-
-    // describe('sub dialogs', function () {
-    //   let tree;
-    //   afterEach(() => {
-    //     act(() => {jest.runAllTimers();});
-    //     if (tree) {
-    //       tree.unmount();
-    //     }
-    //     tree = null;
-    //     act(() => {jest.runAllTimers();});
-    //   });
-
-    //   describe('unavailable item', function () {
-    //     let renderTree = (options = {}) => {
-    //       let {providerProps = {}, isItem2Unavailable = true} = options;
-    //       let {locale = 'en-US'} = providerProps;
-    //       tree = render(
-    //         <Provider theme={theme} locale={locale}>
-    //           <input data-testid="previous" />
-    //           <MenuTrigger>
-    //             <ActionButton>Menu</ActionButton>
-    //             <Menu onAction={action('onAction')}>
-    //               <Item key="1">One</Item>
-    //               <ContextualHelpTrigger isUnavailable={isItem2Unavailable}>
-    //                 <Item key="foo" textValue="Hello">
-    //                   <Text>Hello</Text>
-    //                   <Text slot="description">Is it me you're looking for?</Text>
-    //                 </Item>
-    //                 <Dialog>
-    //                   <Heading>Lionel Richie says:</Heading>
-    //                   <Content>I can see it in your eyes</Content>
-    //                 </Dialog>
-    //               </ContextualHelpTrigger>
-    //               <Item key="3">Three</Item>
-    //               <Item key="5">Five</Item>
-    //               <ContextualHelpTrigger isUnavailable>
-    //                 <Item key="bar" textValue="Choose a college major">Choose a College Major</Item>
-    //                 <Dialog>
-    //                   <Heading>Choosing a College Major</Heading>
-    //                   <Content>What factors should I consider when choosing a college major?</Content>
-    //                   <Footer>Visit this link before choosing this action. <Link>Learn more</Link></Footer>
-    //                 </Dialog>
-    //               </ContextualHelpTrigger>
-    //             </Menu>
-    //           </MenuTrigger>
-    //           <input data-testid="next" />
-    //         </Provider>
-    //       );
-    //     };
-    //     let openMenu = async () => {
-    //       let triggerButton = tree.getByRole('button');
-    //       await user.click(triggerButton);
-    //       act(() => {jest.runAllTimers();});
-
-    //       return tree.getByRole('menu');
-    //     };
-
-    //     it('adds the expected spectrum icon', async function () {
-    //       renderTree();
-    //       let menu = await openMenu();
-    //       let unavailableItem = within(menu).getAllByRole('menuitem')[1];
-    //       expect(unavailableItem).toBeVisible();
-
-    //       let icon = within(unavailableItem).getByRole('img', {hidden: true});
-    //       expect(icon).not.toHaveAttribute('aria-hidden');
-    //     });
-
-    //     it('can open a sub dialog with hover', async function () {
-    //       renderTree();
-    //       let menu = await openMenu();
-    //       let menuItems = within(menu).getAllByRole('menuitem');
-    //       let unavailableItem = menuItems[1];
-    //       expect(unavailableItem).toBeVisible();
-    //       expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
-
-    //       fireEvent.mouseEnter(unavailableItem);
-    //       act(() => {jest.runAllTimers();});
-    //       let dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeVisible();
-
-    //       fireEvent.mouseLeave(unavailableItem);
-    //       fireEvent.mouseEnter(menuItems[2]);
-    //       act(() => {jest.runAllTimers();});
-    //       expect(menu).toBeVisible();
-    //       expect(dialog).not.toBeInTheDocument();
-    //       expect(document.activeElement).toBe(menuItems[2]);
-    //     });
-
-    //     it('can not open a sub dialog with hover if isUnavailable is false', async function () {
-    //       renderTree({isItem2Unavailable: false});
-    //       let menu = await openMenu();
-    //       let menuItems = within(menu).getAllByRole('menuitem');
-    //       let availableItem = menuItems[1];
-    //       expect(availableItem).toBeVisible();
-    //       expect(within(availableItem).queryByRole('img', {hidden: true})).toBeNull();
-    //       expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
-
-    //       fireEvent.mouseEnter(availableItem);
-    //       act(() => {jest.runAllTimers();});
-    //       expect(tree.queryByRole('dialog')).toBeNull();
-
-    //       expect(document.activeElement).toBe(availableItem);
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    //       expect(tree.queryByRole('dialog')).toBeNull();
-    //     });
-
-    //     it('can open a sub dialog with keyboard', async function () {
-    //       renderTree();
-    //       let menu = await openMenu();
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    //       let unavailableItem = within(menu).getAllByRole('menuitem')[1];
-    //       expect(document.activeElement).toBe(unavailableItem);
-
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-
-    //       let dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeVisible();
-    //     });
-
-    //     it('will close sub dialogs as you hover other items even if you click open it', async function () {
-    //       renderTree();
-    //       let menu = await openMenu();
-    //       let menuItems = within(menu).getAllByRole('menuitem');
-    //       let unavailableItem = menuItems[1];
-    //       expect(unavailableItem).toBeVisible();
-    //       expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
-
-    //       fireEvent.mouseEnter(unavailableItem);
-    //       fireEvent.mouseDown(unavailableItem);
-    //       fireEvent.mouseUp(unavailableItem);
-    //       act(() => {jest.runAllTimers();});
-    //       let dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeVisible();
-
-    //       fireEvent.mouseLeave(unavailableItem);
-    //       fireEvent.mouseEnter(menuItems[2]);
-    //       act(() => {jest.runAllTimers();});
-    //       expect(dialog).not.toBeVisible();
-
-    //       fireEvent.mouseLeave(menuItems[2]);
-    //       fireEvent.mouseEnter(menuItems[3]);
-    //       act(() => {jest.runAllTimers();});
-    //       fireEvent.mouseLeave(menuItems[3]);
-    //       fireEvent.mouseEnter(menuItems[4]);
-    //       act(() => {jest.runAllTimers();});
-
-    //       expect(menu).toBeVisible();
-    //       dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeInTheDocument();
-    //       expect(document.activeElement).toBe(dialog);
-
-    //       await user.tab();
-    //       act(() => {jest.runAllTimers();});
-    //       let link = screen.getByRole('link');
-    //       expect(document.activeElement).toBe(link);
-
-    //       await user.tab();
-    //       act(() => {jest.runAllTimers();});
-    //       expect(dialog).not.toBeInTheDocument();
-    //       expect(menu).not.toBeInTheDocument();
-    //       let input = tree.getByTestId('next');
-    //       expect(document.activeElement).toBe(input);
-    //     });
-
-    //     it('will close everything if the user shift tabs out of the subdialog', async function () {
-    //       renderTree();
-    //       let menu = await openMenu();
-    //       let menuItems = within(menu).getAllByRole('menuitem');
-    //       let unavailableItem = menuItems[4];
-    //       expect(unavailableItem).toBeVisible();
-    //       expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
-
-    //       fireEvent.mouseEnter(unavailableItem);
-    //       act(() => {jest.runAllTimers();});
-    //       let dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeVisible();
-
-    //       expect(document.activeElement).toBe(dialog);
-
-    //       await user.tab({shift: true});
-    //       act(() => {jest.runAllTimers();});
-    //       act(() => {jest.runAllTimers();});
-    //       expect(dialog).not.toBeInTheDocument();
-    //       let input = tree.getByTestId('previous');
-    //       expect(document.activeElement).toBe(input);
-    //     });
-
-    //     it('will close everything if the user shift tabs out of the subdialog', async function () {
-    //       renderTree({providerProps: {locale: 'ar-AE'}});
-    //       let menu = await openMenu();
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    //       let unavailableItem = within(menu).getAllByRole('menuitem')[1];
-    //       expect(document.activeElement).toBe(unavailableItem);
-
-    //       fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-    //       fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
-
-    //       let dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeVisible();
-    //     });
-
-    //     it('should close everything if the user clicks on the underlay of the root menu', async function () {
-    //       renderTree();
-    //       let menu = await openMenu();
-    //       let menuItems = within(menu).getAllByRole('menuitem');
-    //       let unavailableItem = menuItems[4];
-    //       expect(unavailableItem).toBeVisible();
-    //       expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
-
-    //       fireEvent.mouseEnter(unavailableItem);
-    //       act(() => {jest.runAllTimers();});
-    //       let dialog = tree.getByRole('dialog');
-    //       expect(dialog).toBeVisible();
-
-    //       expect(document.activeElement).toBe(dialog);
-
-    //       let underlay = tree.getByTestId('underlay', {hidden: true});
-    //       fireEvent.mouseDown(underlay);
-    //       fireEvent.mouseUp(underlay);
-    //       act(() => {jest.runAllTimers();});
-    //       act(() => {jest.runAllTimers();});
-    //       expect(dialog).not.toBeInTheDocument();
-    //       expect(menu).not.toBeInTheDocument();
-
-    //       let triggerButton = tree.getByRole('button');
-    //       expect(document.activeElement).toBe(triggerButton);
-    //     });
-    //   });
-    // });
-
-    // describe('portalContainer', () => {
-    //   function InfoMenu(props) {
-    //     return (
-    //       <Provider theme={theme}>
-    //         <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
-    //           <MenuTrigger>
-    //             <ActionButton aria-label="trigger" />
-    //             <Menu>
-    //               <Item key="1">One</Item>
-    //               <Item key="">Two</Item>
-    //               <Item key="3">Three</Item>
-    //             </Menu>
-    //           </MenuTrigger>
-    //         </UNSTABLE_PortalProvider>
-    //       </Provider>
-    //     );
-    //   }
-
-    //   function App() {
-    //     let container = React.useRef(null);
-    //     return (
-    //       <>
-    //         <InfoMenu container={container} />
-    //         <div ref={container} data-testid="custom-container" />
-    //       </>
-    //     );
-    //   }
-
-    //   it('should render the menu in the portal container', async () => {
-    //     let {getByRole, getByTestId} = render(
-    //       <App />
-    //     );
-
-    //     let button = getByRole('button');
-    //     await user.click(button);
-
-    //     expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
-    //   });
-
-    //   it('should render the menu tray in the portal container', async () => {
-    //     windowSpy.mockImplementation(() => 700);
-    //     let {getByRole, getByTestId} = render(
-    //       <App />
-    //     );
-
-    //     let button = getByRole('button');
-    //     await user.click(button);
-
-    //     expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
-    //   });
-    // });
+    // TODO: long press might be implementation specific, better to test in S2 and RAC separately, also hard because i don't have a way to know if a button was "pressed"
+    // TODO: sub dialogs not implemented yet in RAC
+    // TODO: where to test portalContainer? it's implementation specific, so RAC only?
   });
 };
