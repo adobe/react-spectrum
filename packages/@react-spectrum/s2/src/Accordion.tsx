@@ -145,6 +145,11 @@ let _AccordionItem = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionItem)
 export {_AccordionItem as AccordionItem};
 
 export interface AccordionHeaderProps extends UnsafeStyles, DOMProps {
+  /** The heading level of the accordion header.
+   * 
+   * @default 3
+   */
+  level?: number,
   children: React.ReactNode
 }
 
@@ -286,6 +291,7 @@ const chevronStyles = style({
 
 function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement>) {
   let {
+    level = 3,
     UNSAFE_style,
     UNSAFE_className = '',
     ...otherProps
@@ -299,6 +305,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
   return (
     <Heading
       {...domProps}
+      level={level}
       ref={domRef}
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
