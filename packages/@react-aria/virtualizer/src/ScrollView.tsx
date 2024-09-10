@@ -189,17 +189,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
   useLayoutEffect(() => {
-    if (!isUpdatingSize.current) {
-      // Detect when scrollbar state might have changed.
-      let prevShowX = lastContentSize.current?.width > state.width;
-      let prevShowY = lastContentSize.current?.height > state.height;
-      let curShowX = contentSize.width > state.width;
-      let curShowY = contentSize.height > state.height;
-
-      if (lastContentSize.current && prevShowX === curShowX && prevShowY === curShowY) {
-        return;
-      }
-
+    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
       // React doesn't allow flushSync inside effects, so queue a microtask.
       // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
       // If we are in an `act` environment, update immediately without a microtask so you don't need
