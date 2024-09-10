@@ -47,7 +47,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && contentRef.current && !isControlled) {
+    if (supportsBeforeMatch && contentRef.current && !isControlled && !isDisabled) {
       if (state.isExpanded) {
         // @ts-ignore
         contentRef.current.hidden = undefined;
@@ -60,7 +60,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
         };
       }
     }
-  }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch]);
+  }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
   
 
   return {
@@ -74,7 +74,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     contentProps: {
       id: contentId,
       'aria-labelledby': triggerId,
-      hidden: (!supportsBeforeMatch || isControlled) ? !state.isExpanded : true
+      hidden: (!supportsBeforeMatch || isControlled || isDisabled) ? !state.isExpanded : true
     }
   };
 }
