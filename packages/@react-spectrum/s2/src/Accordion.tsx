@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, DisclosureStateContext, Header, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {Divider} from './Divider';
 import {filterDOMProps} from '@react-aria/utils';
@@ -290,24 +290,23 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
     UNSAFE_className = '',
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {size, density, isQuiet} = useContext(InternalAccordionGroupContext);
   let isRTL = direction === 'rtl';
   return (
-    <Header
+    <Heading
       {...domProps}
-      ref={ref}
+      ref={domRef}
       style={UNSAFE_style}
-      className={(UNSAFE_className ?? undefined)}>
-      <Heading className={headingStyle}>
-        <Button className={({isHovered, isFocused, isFocusVisible, isDisabled}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet, isDisabled})} slot="trigger">
-          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
-          {props.children}
-        </Button>
-      </Heading>
-    </Header>
+      className={(UNSAFE_className ?? '') + headingStyle}>
+      <Button className={({isHovered, isFocused, isFocusVisible, isDisabled}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet, isDisabled})} slot="trigger">
+        <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+        {props.children}
+      </Button>
+    </Heading>
   );
 }
 
