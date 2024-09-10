@@ -40,7 +40,7 @@ describe('ColorPicker', function () {
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Fill');
-    expect(within(button).getByLabelText('vibrant red')).toBeInTheDocument();
+    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'vibrant red');
 
     await user.click(button);
 
@@ -67,7 +67,7 @@ describe('ColorPicker', function () {
     act(() => dialog.focus());
     await user.keyboard('{Escape}');
     act(() => {jest.runAllTimers();});
-    expect(within(button).getByLabelText('dark vibrant blue')).toBeInTheDocument();
+    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'dark vibrant blue');
   });
 
   it('should have default value of black', async function () {
@@ -81,7 +81,7 @@ describe('ColorPicker', function () {
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Fill');
-    expect(within(button).getByLabelText('black')).toBeInTheDocument();
+    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'black');
 
     await user.click(button);
 
@@ -132,6 +132,6 @@ describe('ColorPicker', function () {
     act(() => getByRole('dialog').focus());
     await user.keyboard('{Escape}');
     act(() => {jest.runAllTimers();});
-    expect(within(button).getByLabelText('vibrant orange')).toBeInTheDocument();
+    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'vibrant orange');
   });
 });
