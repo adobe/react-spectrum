@@ -34,9 +34,22 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
+  /** The children of the Card. */
   children: ReactNode,
+  /**
+   * The size of the Card.
+   * @default 'M'
+   */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The amount of internal padding within the Card.
+   * @default 'regular'
+   */
   density?: 'compact' | 'regular' | 'spacious',
+  /**
+   * The visual style of the Card.
+   * @default 'primary'
+   */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet'
 }
 

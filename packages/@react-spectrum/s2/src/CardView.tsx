@@ -27,13 +27,36 @@ import {useLoadMore} from '@react-aria/utils';
 import {useMemo, useRef} from 'react';
 
 export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
+  /**
+   * The layout of the cards.
+   * @default 'grid'
+   */
   layout?: 'grid' | 'waterfall',
+  /**
+   * The size of the cards.
+   * @default 'M'
+   */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The amount of space between the cards.
+   * @default 'regular'
+   */
   density?: 'compact' | 'regular' | 'spacious',
+  /**
+   * The visual style of the cards.
+   * @default 'primary'
+   */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet',
+  /**
+   * How selection should be displayed.
+   * @default 'checkbox'
+   */
   selectionStyle?: 'checkbox' | 'highlight',
+  /** The loading state of the CardView. */
   loadingState?: LoadingState,
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => void,
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
 
