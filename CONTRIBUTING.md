@@ -159,7 +159,7 @@ Then, open [http://localhost:1234](http://localhost:1234) in your browser.
 
 Here are a few examples:
 
-```bash
+```
 @parcel/transformer-typescript-types: Property 'style' does not exist on type 'Element'.
 @parcel/transformer-typescript-types: Property 'type' does not exist on type 'EventTarget'.
 @parcel/transformer-typescript-types: Property 'isContentEditable' does not exist on type 'EventTarget'
@@ -170,7 +170,7 @@ It will complete successfully at the end.
 
 > `yarn build` fails with scary errors.
 
-```bash
+```
 parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
 libc++abi: terminating due to uncaught exception of type std::__1::system_error: mutex lock failed: Invalid argument
 make: *** [build] Abort trap: 6
@@ -184,7 +184,7 @@ It's likely that you are using a different version of Node.js. Please use Node.j
 
 For example:
 
-```bash
+```
 @parcel/core: packages/@react-aria/virtualizer/src/index.ts does not export 'useVirtualizer'
 ```
 
