@@ -12,7 +12,7 @@
 
 import {AccordionItemProps, AccordionPanelProps} from 'react-aria-components/src/Accordion';
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {Button, Header, Heading, AccordionItem as RACAccordionItem, AccordionPanel as RACAccordionPanel} from 'react-aria-components';
+import {Button, Heading, AccordionItem as RACAccordionItem, AccordionPanel as RACAccordionPanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -78,27 +78,25 @@ export interface SpectrumAccordionHeaderProps extends DOMProps, AriaLabelingProp
 function AccordionHeader(props) {
   let {direction} = useLocale();
   return (
-    <Header {...props}>
-      <Heading className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
-        <Button
-          slot="trigger"
-          className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
-            'is-hovered': isHovered,
-            'focus-ring': isFocusVisible
-          })}>
-          {direction === 'ltr' ? (
-            <ChevronRightMedium
-              aria-hidden="true"
-              UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+    <Heading className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
+      <Button
+        slot="trigger"
+        className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
+          'is-hovered': isHovered,
+          'focus-ring': isFocusVisible
+        })}>
+        {direction === 'ltr' ? (
+          <ChevronRightMedium
+            aria-hidden="true"
+            UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
               ) : (
                 <ChevronLeftMedium
                   aria-hidden="true"
                   UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
               )}
-          {props.children}
-        </Button>
-      </Heading>
-    </Header>
+        {props.children}
+      </Button>
+    </Heading>
   );
 }
 
