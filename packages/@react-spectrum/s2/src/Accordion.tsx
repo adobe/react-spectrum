@@ -260,7 +260,8 @@ const buttonStyles = style({
       }
     }
   },
-  textAlign: 'start'
+  textAlign: 'start',
+  disableTapHighlight: true
 });
 
 const chevronStyles = style({
