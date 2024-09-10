@@ -753,7 +753,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
           </div>
           <Chevron size="M" className={chevronIcon} />
         </Button>
-        <Menu onAction={onMenuSelect} items={items}>
+        <Menu onAction={onMenuSelect} items={items} styles={style({minWidth: 128})}>
           {(item) => <MenuItem>{item?.label}</MenuItem>}
         </Menu>
       </MenuTrigger>
@@ -782,7 +782,9 @@ function ResizerIndicator({isFocusVisible, isHovered, isResizing, isInResizeMode
 const tableHeader = style({
   height: 'full',
   width: 'full',
-  backgroundColor: 'gray-75'
+  backgroundColor: 'gray-75',
+  // Attempt to prevent 1px area where you can see scrolled cell content between the table outline and the table header
+  marginTop: '[-1px]'
 });
 
 const selectAllCheckbox = style({
@@ -857,7 +859,13 @@ const cell = style<CellRenderProps & S2TableProps>({
   ...commonCellStyles,
   color: 'neutral',
   paddingY: centerPadding(),
-  minHeight: 'control',
+  minHeight: {
+    default: 40,
+    density: {
+      compact: 32,
+      spacious: 48
+    }
+  },
   boxSizing: 'border-box',
   height: 'full',
   width: 'full',

@@ -186,7 +186,12 @@ export const LoadingStateNoItems = {
     ...Example.args,
     loadingState: 'loading'
   },
-  name: 'loading state, no items'
+  name: 'loading state, no items',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
 
 export const LoadingStateWithItems = {
@@ -195,7 +200,12 @@ export const LoadingStateWithItems = {
     ...Example.args,
     loadingState: 'loadingMore'
   },
-  name: 'loading state, has items'
+  name: 'loading state, has items',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
 
 export const LoadingStateWithItemsStatic = {
@@ -204,7 +214,12 @@ export const LoadingStateWithItemsStatic = {
     ...Example.args,
     loadingState: 'loadingMore'
   },
-  name: 'loading state, static items'
+  name: 'loading state, static items',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
 
 let dividerColumns = [
@@ -562,7 +577,12 @@ export const ResizingUncontrolledSortableColumns = {
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd')
   },
-  name: 'resizable, sortable, reddit example'
+  name: 'resizable, sortable, reddit example',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
 
 let manyColumns = [] as {name: string, id: string}[];
@@ -602,7 +622,12 @@ export const ManyItems = {
   args: {
     ...Example.args
   },
-  name: 'many items table'
+  name: 'many items table',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
 
 export const FlexHeight = {
@@ -630,6 +655,11 @@ export const FlexHeight = {
   ),
   args: {
     ...Example.args
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   },
   name: 'flex calculated height, flex direction column'
 };
@@ -660,6 +690,11 @@ export const FlexWidth = {
   ),
   args: {
     ...Example.args
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   },
   name: 'flex calculated height, flex direction row'
 };
