@@ -204,7 +204,10 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
       // If we are in an `act` environment, update immediately without a microtask so you don't need
       // to mock timers in tests. In this case, the update is synchronous already.
-      if (globalThis.IS_REACT_ACT_ENVIRONMENT) {
+      // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+      // https://github.com/reactwg/react-18/discussions/102
+      // @ts-ignore
+      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
         updateSize(fn => fn());
       } else {
         queueMicrotask(() => updateSize(flushSync));

@@ -121,7 +121,7 @@ module.exports = {
     'FileSystemFileEntry': 'readonly',
     'FileSystemDirectoryEntry': 'readonly',
     'FileSystemEntry': 'readonly',
-    'globalThis': 'readonly'
+    'IS_REACT_ACT_ENVIRONMENT': 'readonly'
   },
   settings: {
     jsdoc: {
