@@ -63,7 +63,7 @@ export interface SpectrumAccordionPanelProps extends AccordionPanelProps, DOMPro
   children: React.ReactNode
 }
 
-function AccordionPanel(props) {
+function AccordionPanel(props: SpectrumAccordionPanelProps) {
   return (
     <RACAccordionPanel className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
       {props.children}
@@ -72,13 +72,19 @@ function AccordionPanel(props) {
 }
 
 export interface SpectrumAccordionHeaderProps extends DOMProps, AriaLabelingProps {
+  /** 
+   * The heading level of the accordion header.
+   * @default 3
+   */
+  level?: number,
   children: React.ReactNode
 }
 
-function AccordionHeader(props) {
+function AccordionHeader(props: SpectrumAccordionHeaderProps) {
+  let {level = 3} = props;
   let {direction} = useLocale();
   return (
-    <Heading className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
+    <Heading level={level} className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
       <Button
         slot="trigger"
         className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
