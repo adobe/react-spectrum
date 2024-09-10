@@ -13,7 +13,6 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
-import {Divider} from './Divider';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, useContext} from 'react';
@@ -90,11 +89,6 @@ function AccordionGroup(props: AccordionGroupProps, ref: DOMRef<HTMLDivElement>)
 let _AccordionGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionGroup);
 export {_AccordionGroup as AccordionGroup};
 
-const itemStyles = style({
-  color: 'heading',
-  padding: '[2px]'
-}, getAllowedOverrides());
-
 export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles, DOMProps {
   /** The contents of the accordion item, consisting of an AccordionHeader and AccordionPanel. */
   children: React.ReactNode,
@@ -104,12 +98,25 @@ export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles,
 
 export const AccordionItemContext = createContext<ContextValue<AccordionItemProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const lastDividerStyles = style({
-  display: {
-    default: 'none',
-    ':last-child': 'block'
-  }
-});
+const itemStyles = style({
+  color: 'heading',
+  padding: '[2px]',
+  borderTopWidth: {
+    default: 1,
+    isQuiet: 0
+  },
+  borderBottomWidth: {
+    default: 0,
+    ':last-child': {
+      default: 1,
+      isQuiet: 0
+    }
+  },
+  borderStartWidth: 0,
+  borderEndWidth: 0,
+  borderStyle: 'solid',
+  borderColor: 'gray-200'
+}, getAllowedOverrides());
 
 function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AccordionItemContext);
@@ -124,16 +131,14 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   let {isQuiet, isDisabled: isGroupDisabled} = useContext(InternalAccordionGroupContext);
   return (
     <>
-      {!isQuiet && <Divider size="S" />}
       <RACAccordionItem
         {...domProps}
         isDisabled={isDisabled || isGroupDisabled}
         ref={domRef}
         style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + itemStyles(null, props.styles)}>
+        className={(UNSAFE_className ?? '') + itemStyles({isQuiet}, props.styles)}>
         {props.children}
       </RACAccordionItem>
-      {!isQuiet && <Divider UNSAFE_className={lastDividerStyles} size="S" />}
     </>
   );
 }
