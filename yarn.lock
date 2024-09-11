@@ -7569,7 +7569,6 @@ __metadata:
     "@react-aria/interactions": "npm:^3.22.2"
     "@react-aria/test-utils": "npm:1.0.0-alpha.1"
     "@react-aria/utils": "npm:^3.25.2"
-    "@react-spectrum/test-utils-internal": "npm:^3.0.0-alpha.1"
     "@react-spectrum/utils": "npm:^3.11.10"
     "@react-stately/virtualizer": "npm:^4.0.1"
     "@react-types/color": "npm:3.0.0-rc.1"
@@ -7826,7 +7825,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/test-utils-internal@npm:3.0.0-alpha.1, @react-spectrum/test-utils-internal@npm:^3.0.0-alpha.1, @react-spectrum/test-utils-internal@workspace:packages/dev/test-utils":
+"@react-spectrum/test-utils-internal@npm:3.0.0-alpha.1, @react-spectrum/test-utils-internal@workspace:packages/dev/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/test-utils-internal@workspace:packages/dev/test-utils"
   dependencies:
