@@ -416,7 +416,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           await user.keyboard('{Enter>}');
 
           act(() => {jest.runAllTimers();});
-          fireEvent.keyDown(document.activeElement, {key: 'Enter', repeat: true})
+          fireEvent.keyDown(document.activeElement!, {key: 'Enter', repeat: true});
           let menu = menuTester.getMenu();
           expect(menu).toBeInTheDocument();
           await user.keyboard('{/Enter}');
@@ -534,7 +534,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           await user.keyboard('{Enter>}');
 
           act(() => {jest.runAllTimers();});
-          fireEvent.keyDown(document.activeElement, {key: 'Enter', repeat: true})
+          fireEvent.keyDown(document.activeElement!, {key: 'Enter', repeat: true});
           let menu = menuTester.getMenu();
           expect(menu).toBeInTheDocument();
           await user.keyboard('{/Enter}');
@@ -617,7 +617,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let submenuTrigger = menuTester.getSubmenuTriggers()[0];
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let submenuUtil = await menuTester.openSubmenu({submenuTrigger});
+          let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.getMenu();
@@ -625,7 +625,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
 
           // Click a submenu item
           // not sure why i can't use submenuUtil.selectOption
-          await user.click(submenuUtil.getOptions().filter(item => item.getAttribute('aria-haspopup') == null)[0]);
+          await user.click(submenuUtil.getOptions().filter(item => item?.getAttribute('aria-haspopup') == null)[0]);
           // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
@@ -642,7 +642,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let submenuTrigger = menuTester.getSubmenuTriggers()[0];
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let submenuUtil = await menuTester.openSubmenu({submenuTrigger});
+          let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.getMenu();
@@ -651,11 +651,11 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let nestedSubmenuTrigger = submenuUtil.getSubmenuTriggers()[0];
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let nestedSubmenuUtil = await menuTester.openSubmenu({submenuTrigger: nestedSubmenuTrigger});
+          let nestedSubmenuUtil = (await menuTester.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.getMenu();
-          expect(submenu).toBeInTheDocument();
+          expect(nestedSubmenu).toBeInTheDocument();
 
           // Click a nested submenu item
           // not sure why i can't use submenuUtil.selectOption
@@ -675,7 +675,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let submenuTrigger = menuTester.getSubmenuTriggers()[0];
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let submenuUtil = await menuTester.openSubmenu({submenuTrigger});
+          let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.getMenu();
@@ -684,7 +684,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let nestedSubmenuTrigger = submenuUtil.getSubmenuTriggers()[0];
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let nestedSubmenuUtil = await menuTester.openSubmenu({submenuTrigger: nestedSubmenuTrigger});
+          let nestedSubmenuUtil = (await menuTester.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.getMenu();

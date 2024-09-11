@@ -102,7 +102,7 @@ AriaMenuTests({
             <MenuItem id="rename">Rename…</MenuItem>
             <MenuItem id="duplicate">Duplicate</MenuItem>
             <SubmenuTrigger>
-            <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="share">Share…</MenuItem>
               <Menu>
                 <MenuSection>
                   <Header><Heading>Subheading 1</Heading></Header>
@@ -112,11 +112,11 @@ AriaMenuTests({
                     <Menu>
                       <MenuSection>
                         <Header><Heading>Subheading 1</Heading></Header>
-                          <MenuItem id="work">Work</MenuItem>
-                          <MenuItem id="personal">Personal</MenuItem>
+                        <MenuItem id="work">Work</MenuItem>
+                        <MenuItem id="personal">Personal</MenuItem>
                       </MenuSection>
                     </Menu>
-                    </SubmenuTrigger>
+                  </SubmenuTrigger>
                   <MenuItem id="sms">SMS</MenuItem>
                   <MenuItem id="twitter">Twitter</MenuItem>
                 </MenuSection>

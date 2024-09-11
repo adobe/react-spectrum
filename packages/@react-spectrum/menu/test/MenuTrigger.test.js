@@ -1239,7 +1239,7 @@ describe('MenuTrigger', function () {
 
 function SelectionStatic(props) {
   let {selectionMode = 'single'} = props;
-  let [selected, setSelected] = React.useState<Selection>(new Set());
+  let [selected, setSelected] = React.useState(new Set());
   return (
     <Provider theme={theme}>
       <MenuTrigger>
@@ -1263,6 +1263,7 @@ AriaMenuTests({
   prefix: 'rspv3-static',
   setup: () => {
     let offsetWidth, offsetHeight;
+    // eslint-disable-next-line no-unused-vars
     let windowSpy;
 
     beforeAll(function () {
@@ -1290,7 +1291,7 @@ AriaMenuTests({
     standard: () => render(
       <Provider theme={theme}>
         <MenuTrigger>
-          <Button variant='primary'>
+          <Button variant="primary">
             {triggerText}
           </Button>
           <Menu>
@@ -1304,7 +1305,7 @@ AriaMenuTests({
     disabledTrigger: () => render(
       <Provider theme={theme}>
         <MenuTrigger>
-          <Button isDisabled variant='primary'>
+          <Button isDisabled variant="primary">
             {triggerText}
           </Button>
           <Menu>
@@ -1325,7 +1326,7 @@ AriaMenuTests({
       <Provider theme={theme}>
         <input aria-label="before" />
         <MenuTrigger>
-          <Button variant='primary'>
+          <Button variant="primary">
             {triggerText}
           </Button>
           <Menu>
@@ -1340,7 +1341,7 @@ AriaMenuTests({
     multipleMenus: () => render(
       <Provider theme={theme}>
         <MenuTrigger>
-          <Button variant='primary'>
+          <Button variant="primary">
             Menu Button1
           </Button>
           <Menu aria-label="Test1">
@@ -1350,7 +1351,7 @@ AriaMenuTests({
           </Menu>
         </MenuTrigger>
         <MenuTrigger>
-          <Button variant='primary'>
+          <Button variant="primary">
             Menu Button2
           </Button>
           <Menu aria-label="Test2">
