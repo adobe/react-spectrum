@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DisclosureState} from '@react-stately/accordion';
+import {DisclosureState} from '@react-stately/disclosure';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
