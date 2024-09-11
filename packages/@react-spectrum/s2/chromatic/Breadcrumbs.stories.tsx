@@ -10,24 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs} from '../src';
+import {Breadcrumb, Breadcrumbs} from '../src';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {Many} from '../stories/Breadcrumbs.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
-  parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
-  },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Breadcrumbs'
 };
 
 export default meta;
 
-export const Dynamic = Many;
+export const Dynamic = Many as StoryObj;
+
+Dynamic.parameters = {
+  chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+};
 
 Dynamic.play = async ({canvasElement}) => {
   // This uses click because using .tab twice didn't move focus to the menu
@@ -35,4 +37,59 @@ Dynamic.play = async ({canvasElement}) => {
   await userEvent.click(trigger);
   let body = canvasElement.ownerDocument.body;
   await within(body).findByRole('menu');
+};
+
+let states = [
+  {isDisabled: true},
+  {size: ['M', 'L']}
+];
+
+let combinations = generatePowerset(states);
+
+function shortName(key, value) {
+  let returnVal = '';
+  switch (key) {
+    case 'isDisabled':
+      returnVal = 'd';
+      break;
+    case 'size':
+      returnVal = `size: ${value}`;
+      break;
+
+  }
+  return returnVal;
+}
+
+const Template = () => {
+  return (
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+      {combinations.map(c => {
+        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        if (!key) {
+          key = 'default';
+        }
+
+        return (
+          <Breadcrumbs key={key} {...c}>
+            <Breadcrumb href="/">
+              Home
+            </Breadcrumb>
+            <Breadcrumb href="/react-aria">
+              React Aria
+            </Breadcrumb>
+            <Breadcrumb href="/breadcrumbs">
+              Breadcrumbs
+            </Breadcrumb>
+          </Breadcrumbs>
+        );
+      })}
+    </div>
+  );
+};
+
+export const Powerset = {
+  render: Template,
+  parameters: {
+    chromaticProvider: {locales: ['en-US'], disableAnimations: true}
+  }
 };

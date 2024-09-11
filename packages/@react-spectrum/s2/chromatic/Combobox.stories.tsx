@@ -12,14 +12,13 @@
 
 import {ComboBox} from '../src';
 import {ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithIcons} from '../stories/ComboBox.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from '@storybook/testing-library';
 
-const meta: Meta<typeof ComboBox> = {
+const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/ComboBox'
@@ -27,7 +26,7 @@ const meta: Meta<typeof ComboBox> = {
 
 export default meta;
 
-export const Static = Example;
+export const Static = Example as StoryObj;
 
 Static.play = async ({canvasElement}) => {
   await userEvent.tab();
@@ -63,7 +62,7 @@ ContextualHelp.play = async ({canvasElement}) => {
   await within(body).findByRole('dialog');
 };
 
-export const WithCustomWidth = CustomWidth;
+export const WithCustomWidth = CustomWidth as StoryObj;
 
 WithCustomWidth.play = async (context) => {
   await Static.play(context);

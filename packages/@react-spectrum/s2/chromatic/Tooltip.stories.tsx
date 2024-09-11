@@ -11,15 +11,14 @@
  */
 
 import {Example, LongLabel} from '../stories/Tooltip.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {Tooltip} from '../src';
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Tooltip'
@@ -27,7 +26,7 @@ const meta: Meta<typeof Tooltip> = {
 
 export default meta;
 
-export const Default = Example;
+export const Default = Example as StoryObj;
 
 Default.play = async ({canvasElement}) => {
   await userEvent.tab();
@@ -35,7 +34,7 @@ Default.play = async ({canvasElement}) => {
   await within(body).findByRole('tooltip');
 };
 
-export const WithLongLabel = LongLabel;
+export const WithLongLabel = LongLabel as StoryObj;
 
 WithLongLabel.play = async (context) => {
   await Default.play(context);

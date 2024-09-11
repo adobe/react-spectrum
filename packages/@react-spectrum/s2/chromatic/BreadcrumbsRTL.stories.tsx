@@ -17,11 +17,10 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
   },
   title: 'S2 Chromatic/BreadcrumbsRTL'
 };
 
 export default meta;
-export {Dynamic} from './Breadcrumbs.stories';
+export {Dynamic, Powerset} from './Breadcrumbs.stories';

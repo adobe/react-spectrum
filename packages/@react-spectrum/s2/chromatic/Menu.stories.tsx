@@ -18,8 +18,7 @@ import {userEvent, within} from '@storybook/testing-library';
 const meta: Meta<typeof Menu> = {
   component: Menu,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Menu'

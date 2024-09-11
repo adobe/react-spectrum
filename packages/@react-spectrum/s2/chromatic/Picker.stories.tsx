@@ -11,15 +11,14 @@
  */
 
 import {ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithIcons} from '../stories/Picker.stories';
+import type {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../src';
-import type {Meta} from '@storybook/react';
 import {userEvent, within} from '@storybook/testing-library';
 
-const meta: Meta<typeof Picker> = {
+const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Picker'
@@ -27,7 +26,7 @@ const meta: Meta<typeof Picker> = {
 
 export default meta;
 
-export const Default = Example;
+export const Default = Example as StoryObj;
 
 Default.play = async ({canvasElement}) => {
   await userEvent.tab();
@@ -42,25 +41,25 @@ WithSections.play = async (context) => {
   await Default.play(context);
 };
 
-export const DynamicExample = {...Dynamic, name: 'Dynamic'};
+export const DynamicExample = {...Dynamic, name: 'Dynamic'} as StoryObj;
 
 DynamicExample.play = async (context) => {
   await Default.play(context);
 };
 
-export const Icons = {...WithIcons, name: 'With Icons'};
+export const Icons = {...WithIcons, name: 'With Icons'} as StoryObj;
 
 Icons.play = async (context) => {
   await Default.play(context);
 };
 
-export const WithCustomWidth = CustomWidth;
+export const WithCustomWidth = CustomWidth as StoryObj;
 
 WithCustomWidth.play = async (context) => {
   await Default.play(context);
 };
 
-export const ContextualHelp = {...ContextualHelpExample};
+export const ContextualHelp = {...ContextualHelpExample} as StoryObj;
 
 ContextualHelp.play = async ({canvasElement}) => {
   await userEvent.tab();

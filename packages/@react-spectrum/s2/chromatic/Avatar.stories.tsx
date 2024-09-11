@@ -10,16 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
+import {Avatar} from '../src';
 import type {Meta} from '@storybook/react';
-import {Picker} from '../src';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
-const meta: Meta<typeof Picker<any>> = {
-  component: Picker,
+const meta: Meta<typeof Avatar> = {
+  component: Avatar,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+    chromaticProvider: {backgrounds: ['base', 'layer-1', 'layer-2'], disableAnimations: true}
   },
-  title: 'S2 Chromatic/PickerRTL'
+  title: 'S2 Chromatic/Avatar'
 };
 
 export default meta;
-export {Default, WithSections, DynamicExample, Icons, WithCustomWidth, ContextualHelp} from './Picker.stories';
+
+export const Default = {
+  render: () => <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
+};
+
+export const OverBackground = {
+  render: () => (
+    <div className={style({backgroundColor: 'indigo-800', padding: 40})}>
+      <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
+    </div>
+  )
+};

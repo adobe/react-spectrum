@@ -12,14 +12,13 @@
 
 import {Dialog} from '../src';
 import {DialogContainerExample, DialogTriggerExample, Example} from '../stories/Dialog.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Dialog'
@@ -27,7 +26,7 @@ const meta: Meta<typeof Dialog> = {
 
 export default meta;
 
-export const Default = Example;
+export const Default = Example as StoryObj;
 
 // TODO: maybe render dialogs with different args instead (showHero/showHeader, etc)
 Default.play = async ({canvasElement}) => {
@@ -37,13 +36,13 @@ Default.play = async ({canvasElement}) => {
   await within(body).findByRole('dialog');
 };
 
-export const WithDialogTrigger = DialogTriggerExample;
+export const WithDialogTrigger = DialogTriggerExample as StoryObj;
 
 WithDialogTrigger.play = async (context) => {
   await Default.play(context);
 };
 
-export const DialogContainer = DialogContainerExample;
+export const DialogContainer = DialogContainerExample as StoryObj;
 
 DialogContainer.play = async (context) => {
   await Default.play(context);

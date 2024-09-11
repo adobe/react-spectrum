@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Tooltip} from '../src';
-
 import type {Meta} from '@storybook/react';
+import {Tooltip} from '../src';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
   },
   title: 'S2 Chromatic/TooltipRTL'
 };

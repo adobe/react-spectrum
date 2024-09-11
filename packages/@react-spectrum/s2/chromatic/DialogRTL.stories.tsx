@@ -17,8 +17,7 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
   },
   title: 'S2 Chromatic/DialogRTL'
 };

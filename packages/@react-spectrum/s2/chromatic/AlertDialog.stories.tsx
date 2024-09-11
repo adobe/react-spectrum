@@ -12,22 +12,21 @@
 
 import {AlertDialog} from '../src';
 import {Example as Base} from '../stories/AlertDialog.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog,
   parameters: {
     layout: 'centered',
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
-    chromatic: {delay: 4000}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   title: 'S2 Chromatic/AlertDialog'
 };
 
 export default meta;
 
-export const Example = {...Base};
+export const Example = {...Base} as StoryObj;
 
 Example.play = async ({canvasElement}) => {
   await userEvent.tab();
