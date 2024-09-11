@@ -7429,6 +7429,7 @@ __metadata:
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.0.0-beta.46"
     "@parcel/plugin": "npm:2.0.0-dev.1601"
+    "@svgr/core": "npm:^6.2.0"
   languageName: unknown
   linkType: soft
 
