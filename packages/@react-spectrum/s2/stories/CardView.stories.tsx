@@ -82,7 +82,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
         <ActionMenu>
           <MenuItem>Test</MenuItem>
         </ActionMenu>
-        <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridColumnEnd: 'span 2'})}>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
           <Avatar src={item.user.profile_image.small} />
           <Text slot="description">{item.user.name}</Text>
         </div>
@@ -183,7 +183,7 @@ function TopicCard({topic}: {topic: Topic}) {
       </CollectionCardPreview>
       <Content>
         <Text slot="title">{topic.title}</Text>
-        <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 8})}>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
           <Folder />
           <Text slot="description">{topic.total_photos.toLocaleString()} photos</Text>
         </div>

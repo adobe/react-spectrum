@@ -27,7 +27,6 @@ import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -135,7 +134,7 @@ let card = style({
         compact: {
           size: {
             XS: size(6),
-            S: size(10),
+            S: 8,
             M: 12,
             L: 16,
             XL: 20
@@ -207,11 +206,16 @@ let selectionIndicator = style({
   opacity: {
     default: 0,
     isSelected: 1
-  }
-  // outlineColor: 'white',
-  // outlineOffset: -4,
-  // outlineStyle: 'solid',
-  // outlineWidth: 2
+  },
+  // Quiet cards with no checkbox have an extra inner stroke
+  // to distinguish the selection indicator from the preview.
+  outlineColor: 'gray-25',
+  outlineOffset: -4,
+  outlineStyle: {
+    default: 'none',
+    isStrokeInner: 'solid'
+  },
+  outlineWidth: 2
 });
 
 let preview = style({
@@ -261,7 +265,8 @@ let title = style({
       XL: 'title-lg'
     }
   },
-  lineClamp: 3
+  lineClamp: 3,
+  gridArea: 'title'
 });
 
 let description = style({
@@ -276,7 +281,7 @@ let description = style({
     }
   },
   lineClamp: 3,
-  gridColumnEnd: 'span 2'
+  gridArea: 'description'
 });
 
 let content = style({
@@ -284,15 +289,30 @@ let content = style({
   // By default, all elements are displayed in a stack.
   // If an action menu is present, place it next to the title.
   gridTemplateColumns: {
+    default: ['1fr'],
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
+  gridTemplateAreas: {
+    default: [
+      'title',
+      'description'
+    ],
+    ':has([data-slot=menu])': [
+      'title menu',
+      'description description'
+    ]
+  },
   columnGap: 4,
+  flexGrow: 1,
   alignItems: 'baseline',
   alignContent: 'space-between',
   rowGap: {
-    default: 8,
     size: {
-      XS: 4
+      XS: 4,
+      S: 4,
+      M: size(6),
+      L: size(6),
+      XL: 8
     }
   },
   paddingTop: {
@@ -322,7 +342,9 @@ interface InternalCardContextValue {
   size: 'XS' | 'S' | 'M' | 'L' | 'XL',
   isSelected: boolean,
   isHovered: boolean,
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  isPressed: boolean,
+  isCheckboxSelection: boolean
 }
 
 const InternalCardContext = createContext<InternalCardContextValue>({
@@ -330,7 +352,9 @@ const InternalCardContext = createContext<InternalCardContextValue>({
   size: 'M',
   isSelected: false,
   isHovered: false,
-  isFocusVisible: false
+  isFocusVisible: false,
+  isPressed: false,
+  isCheckboxSelection: true
 });
 
 const actionButtonSize = {
@@ -366,7 +390,8 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
           size: actionButtonSize[size],
           isDisabled: isSkeleton,
           // @ts-ignore
-          'data-slot': 'menu'
+          'data-slot': 'menu',
+          styles: style({gridArea: 'menu'})
         }],
         [SkeletonContext, isSkeleton]
       ]}>
@@ -387,7 +412,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         ref={domRef}
         className={UNSAFE_className + card({size, density, variant, isCardView: ElementType !== 'div'}, styles)}
         style={UNSAFE_style}>
-        <InternalCardContext.Provider value={{size, isQuiet, isHovered: false, isFocusVisible: false, isSelected: false}}>
+        <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: false, isHovered: false, isFocusVisible: false, isSelected: false, isPressed: false}}>
           {children}
         </InternalCardContext.Provider>
       </div>
@@ -401,36 +426,16 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
       ref={domRef}
       className={renderProps => UNSAFE_className + card({...renderProps, isCardView: true, isLink: !!props.href, size, density, variant}, styles)}
       style={renderProps => 
-        // Only apply press scaling to card when it has an action, not selection.
-        // When clicking the card selects it, the checkbox will scale down instead.
-        // TODO: confirm with design
-        // @ts-ignore - do we want to expose hasAction publically in RAC?
-        renderProps.hasAction && (renderProps.selectionMode === 'none' || renderProps.selectionBehavior === 'toggle') 
-          ? press(renderProps) 
-          : UNSAFE_style
+        // Only the preview in quiet cards scales down on press
+        variant === 'quiet' ? UNSAFE_style : press(renderProps) 
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
-        <InternalCardContext.Provider value={{size, isQuiet, isHovered, isFocusVisible, isSelected}}>
+        <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle', isHovered, isFocusVisible, isSelected, isPressed}}>
+          {/* Selection indicator and checkbox move inside the preview for quiet cards */}
           {!isQuiet && <SelectionIndicator />}
-          {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-            <PressResponder isPressed={isPressed}>
-              <div 
-                className={style({
-                  position: 'absolute',
-                  top: 8,
-                  zIndex: 2,
-                  insetStart: 8,
-                  padding: '[6px]',
-                  backgroundColor: lightDark('transparent-white-600', 'transparent-black-600'),
-                  borderRadius: 'default',
-                  boxShadow: 'emphasized'
-                })}>
-                <Checkbox
-                  slot="selection"
-                  excludeFromTabOrder />
-              </div>
-            </PressResponder>
-          )}
+          {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' &&
+            <CardCheckbox />
+          }
           {/* this makes the :first-child selector work even with the checkbox */}
           <div className={style({display: 'contents'})}>
             {children}
@@ -442,8 +447,39 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
 });
 
 function SelectionIndicator() {
-  let {isSelected} = useContext(InternalCardContext);
-  return <div className={selectionIndicator({isSelected})} />;
+  let {size, isSelected, isQuiet, isCheckboxSelection} = useContext(InternalCardContext);
+  return (
+    <div
+      className={selectionIndicator({
+        size,
+        isSelected,
+        // Add an inner stroke only for quiet cards with no checkbox to 
+        // help distinguish the selected state from the preview.
+        isStrokeInner: isQuiet && !isCheckboxSelection
+      })} />
+  );
+}
+
+function CardCheckbox() {
+  let {size} = useContext(InternalCardContext);
+  return (
+    <div
+      className={style({
+        position: 'absolute',
+        top: '--card-spacing',
+        insetStart: '--card-spacing',
+        zIndex: 2,
+        padding: 4,
+        backgroundColor: lightDark('transparent-white-600', 'transparent-black-600'),
+        borderRadius: 'default',
+        boxShadow: 'emphasized'
+      })}>
+      <Checkbox
+        slot="selection"
+        excludeFromTabOrder
+        size={size === 'XS' ? 'S' : size} />
+    </div>
+  );
 }
 
 export interface CardPreviewProps extends UnsafeStyles, DOMProps {
@@ -451,7 +487,7 @@ export interface CardPreviewProps extends UnsafeStyles, DOMProps {
 }
 
 export const CardPreview = forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
-  let {size, isQuiet, isHovered, isFocusVisible, isSelected} = useContext(InternalCardContext);
+  let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} = useContext(InternalCardContext);
   let {UNSAFE_className, UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
   return (
@@ -460,8 +496,9 @@ export const CardPreview = forwardRef(function CardPreview(props: CardPreviewPro
       slot="preview"
       ref={domRef}
       className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
-      style={UNSAFE_style}>
+      style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
+      {isQuiet && isCheckboxSelection && <CardCheckbox />}
       <div className={style({borderRadius: '[inherit]', overflow: 'clip'})}>
         {props.children}
       </div>
@@ -608,10 +645,10 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
 
 const buttonSize = {
   XS: 'S',
-  S: 'M',
+  S: 'S',
   M: 'M',
-  L: 'M',
-  XL: 'L'
+  L: 'L',
+  XL: 'XL'
 } as const;
 
 export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
