@@ -142,20 +142,9 @@ const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckbox
     default: size(6),
     isQuiet: 'none'
   },
-  // These scroll padding values are kinda odd (expected them to match the header height and checkbox column width) but they are the best fit from testing
-  scrollPaddingTop: {
-    scale: {
-      medium: size(21),
-      large: size(27)
-    }
-  },
+  scrollPaddingTop: 32,
   scrollPaddingStart: {
-    isCheckboxSelection: {
-      scale: {
-        medium: size(27),
-        large: size(33)
-      }
-    }
+    isCheckboxSelection: 40
   }
 }, getAllowedOverrides({height: true}));
 
