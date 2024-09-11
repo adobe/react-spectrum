@@ -11,7 +11,7 @@
  */
 
 import {AccordionItem, AccordionPanel} from '../src';
-import {Button, Header, Heading} from 'react-aria-components';
+import {Button, Heading} from 'react-aria-components';
 import React from 'react';
 import './styles.css';
 
@@ -24,11 +24,9 @@ export const AccordionExample = (args: any) => (
   <AccordionItem {...args}>
     {({isExpanded}) => (
       <>
-        <Header>
-          <Heading level={3}>
-            <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
-          </Heading>
-        </Header>
+        <Heading level={3}>
+          <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
+        </Heading>
         <AccordionPanel>
           <p>This is the content of the accordion panel.</p>
         </AccordionPanel>
@@ -43,11 +41,9 @@ export const AccordionControlledExample = (args: any) => {
     <AccordionItem {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
       {({isExpanded}) => (
         <>
-          <Header>
-            <Heading level={3}>
-              <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
-            </Heading>
-          </Header>
+          <Heading level={3}>
+            <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
+          </Heading>
           <AccordionPanel>
             <p>This is the content of the accordion panel.</p>
           </AccordionPanel>
