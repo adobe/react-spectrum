@@ -14,6 +14,7 @@ import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-u
 import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger} from '../src';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
+import {Selection} from '@react-types/shared';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
 // what about the button label?
@@ -89,11 +90,10 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
+    )
   }
 });
 
-// TODO what is wrong with this rendering?
 AriaMenuTests({
   prefix: 'spectrum2-dynamic',
   renderers: {
