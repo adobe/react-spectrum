@@ -304,6 +304,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       act(() => {
         fireEvent.click(buttons[0]);
       });
+      act(() => {jest.runAllTimers();});
 
       expect(menu).not.toBeInTheDocument();
     });

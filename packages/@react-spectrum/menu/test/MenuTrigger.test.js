@@ -74,6 +74,7 @@ describe('MenuTrigger', function () {
   let user;
   let windowSpy;
   let testUtilUser = new User();
+  let originalScrollIntoView = window.HTMLElement.prototype.scrollIntoView;
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
@@ -98,8 +99,11 @@ describe('MenuTrigger', function () {
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    offsetWidth.mockRestore();
+    offsetHeight.mockRestore();
+    window.HTMLElement.prototype.scrollIntoView.mockRestore();
+    window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    jest.useRealTimers();
   });
 
   async function verifyMenuToggle(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
@@ -1185,6 +1189,16 @@ describe('MenuTrigger', function () {
   });
 
   describe('portalContainer', () => {
+    let tree;
+    afterEach(() => {
+      act(() => {jest.runAllTimers();});
+      if (tree) {
+        tree.unmount();
+      }
+      tree = null;
+      act(() => {jest.runAllTimers();});
+    });
+
     function InfoMenu(props) {
       return (
         <Provider theme={theme}>
@@ -1213,26 +1227,28 @@ describe('MenuTrigger', function () {
     }
 
     it('should render the menu in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
+      tree = render(
         <App />
       );
 
-      let button = getByRole('button');
+      let button = tree.getByRole('button');
       await user.click(button);
 
-      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
     });
 
     it('should render the menu tray in the portal container', async () => {
       windowSpy.mockImplementation(() => 700);
-      let {getByRole, getByTestId} = render(
+      tree = render(
         <App />
       );
 
-      let button = getByRole('button');
+      let button = tree.getByRole('button');
       await user.click(button);
 
-      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
     });
   });
 });
@@ -1265,6 +1281,7 @@ AriaMenuTests({
     let offsetWidth, offsetHeight;
     // eslint-disable-next-line no-unused-vars
     let windowSpy;
+    let originalScrollIntoView = window.HTMLElement.prototype.scrollIntoView;
 
     beforeAll(function () {
       offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
@@ -1283,8 +1300,10 @@ AriaMenuTests({
     });
 
     afterAll(function () {
-      offsetWidth.mockReset();
-      offsetHeight.mockReset();
+      offsetWidth.mockRestore();
+      offsetHeight.mockRestore();
+      window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+      jest.useRealTimers();
     });
   },
   renderers: {
