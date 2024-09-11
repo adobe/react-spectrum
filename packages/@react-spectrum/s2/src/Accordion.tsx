@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps, useLocale} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
@@ -19,7 +19,6 @@ import React, {createContext, forwardRef, ReactElement, useContext} from 'react'
 import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
@@ -331,12 +330,8 @@ const buttonStyles = style({
 
 const chevronStyles = style({
   rotate: {
-    deg: 0,
-    isExpanded: 90,
-    isRTL: {
-      deg: 180,
-      isExpanded: 270
-    }
+    isRTL: 180,
+    isExpanded: 90
   },
   transitionDuration: '100ms',
   transitionProperty: 'rotate',
