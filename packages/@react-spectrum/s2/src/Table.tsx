@@ -937,7 +937,7 @@ export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'sh
 }
 
 export function Cell(props: CellProps) {
-  let {children, isSticky, showDivider, align, textValue, ...otherProps} = props;
+  let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;
 
