@@ -170,6 +170,14 @@ const buttonStyles = style({
     isDisabled: 'disabled'
   },
   fontWeight: 'bold',
+  fontSize: {
+    size: {
+      S: 'ui-lg',
+      M: 'ui-xl',
+      L: 'ui-3xl',
+      XL: 'ui-5xl'
+    }
+  },
   lineHeight: 'ui',
   display: 'flex',
   alignItems: 'center',
@@ -358,7 +366,6 @@ export interface AccordionPanelProps extends RACAccordionPanelProps, UnsafeStyle
 
 const panelStyles = style({
   font: 'body',
-  height: 'auto',
   paddingTop: {
     isExpanded: sizeValue(8)
   },
