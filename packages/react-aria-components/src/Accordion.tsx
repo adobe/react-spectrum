@@ -28,15 +28,10 @@ export interface AccordionItemRenderProps {
    */
   isExpanded?: boolean,
   /**
-   * Whether the accordion item is focused, either via a mouse or keyboard.
-   * @selector [data-focused]
+   * Whether the accordion item has keyboard focus.
+   * @selector [data-focus-visible-within]
    */
-  // isFocused: boolean,
-  /**
-   * Whether the accordion item is keyboard focused.
-   * @selector [data-focus-visible]
-   */
-  // isFocusVisible: boolean,
+  isFocusVisibleWithin: boolean,
   /**
    * Whether the accordion item is disabled.
    * @selector [data-disabled]
@@ -63,6 +58,10 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
   let state = useDisclosureState(props);
   let contentRef = useRef<HTMLElement>(null);
   let {triggerProps, contentProps} = useDisclosure({...props, contentRef}, state);
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
 
   let renderProps = useRenderProps({
     ...props,
@@ -70,6 +69,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
     values: {
       isExpanded: state.isExpanded,
       isDisabled: props.isDisabled || false,
+      isFocusVisibleWithin,
       state
     }
   });
@@ -89,6 +89,8 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
         ref={ref}
         data-expanded={state.isExpanded || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-focus-visible-within={isFocusVisibleWithin || undefined}
+        {...focusWithinProps}
         {...renderProps}>
         {renderProps.children}
       </div>
