@@ -90,6 +90,18 @@ let _AccordionGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionGrou
 export {_AccordionGroup as AccordionGroup};
 
 export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles, DOMProps {
+  /**
+   * The size of the accordion item.
+   * @default "M"
+   */
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The amount of space between the accordion items.
+   * @default "regular"
+   */
+  density?: 'compact' | 'regular' | 'spacious',
+  /** Whether the accordion item should be displayed with a quiet style. */
+  isQuiet?: boolean,
   /** The contents of the accordion item, consisting of an AccordionHeader and AccordionPanel. */
   children: [ReactElement<AccordionHeaderProps>, ReactElement<AccordionPanelProps>],
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -97,6 +109,8 @@ export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles,
 }
 
 export const AccordionItemContext = createContext<ContextValue<AccordionItemProps, DOMRefValue<HTMLDivElement>>>(null);
+
+let InternalAccordionItemContext = createContext<Pick<AccordionItemProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
 
 const itemStyles = style({
   color: 'heading',
@@ -123,22 +137,29 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className = '',
-    isDisabled,
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
-  let {isQuiet, isDisabled: isGroupDisabled} = useContext(InternalAccordionGroupContext);
+  let groupProps = useContext(InternalAccordionGroupContext);
+  let size = props.size || groupProps.size;
+  let density = groupProps.density || props.density;
+  let isQuiet = groupProps.isQuiet || props.isQuiet;
+  let isDisabled = groupProps.isDisabled || props.isDisabled;
+
   return (
-    <>
+    <Provider
+      values={[
+        [InternalAccordionItemContext, {size, isQuiet, density, isDisabled}]
+      ]}>
       <RACAccordionItem
         {...domProps}
-        isDisabled={isDisabled || isGroupDisabled}
+        isDisabled={isDisabled}
         ref={domRef}
         style={UNSAFE_style}
         className={(UNSAFE_className ?? '') + itemStyles({isQuiet}, props.styles)}>
         {props.children}
       </RACAccordionItem>
-    </>
+    </Provider>
   );
 }
 
