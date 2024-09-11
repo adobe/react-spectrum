@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
 import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger} from '../src';
 import React from 'react';
-import {Selection} from '@react-types/shared';
+import {render} from '@react-spectrum/test-utils-internal';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
 // what about the button label?

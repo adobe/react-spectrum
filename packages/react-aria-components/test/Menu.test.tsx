@@ -14,12 +14,12 @@ import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@rea
 import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button, Collection, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from '..';
 import React from 'react';
-import {Selection} from '@react-types/shared';
+import {Selection, SelectionMode} from '@react-types/shared';
 import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let TestMenu = ({menuProps, itemProps, hasSubmenu, hasNestedSubmenu}) => (
+let TestMenu = ({menuProps = {}, itemProps = {}, hasSubmenu, hasNestedSubmenu}: {menuProps?: any, itemProps?: any, hasSubmenu?: boolean, hasNestedSubmenu?: any}) => (
   <Menu aria-label="Test" {...menuProps}>
     <MenuItem {...itemProps} id="cat">Cat</MenuItem>
     <MenuItem {...itemProps} id="dog">Dog</MenuItem>
@@ -51,7 +51,7 @@ let TestMenu = ({menuProps, itemProps, hasSubmenu, hasNestedSubmenu}) => (
   </Menu>
 );
 
-let renderMenu = (menuProps, itemProps) => render(<TestMenu {...{menuProps, itemProps}} />);
+let renderMenu = (menuProps = {}, itemProps = {}) => render(<TestMenu {...{menuProps, itemProps}} />);
 
 describe('Menu', () => {
   let user;
@@ -143,9 +143,9 @@ describe('Menu', () => {
   });
 
   it('should support refs', () => {
-    let listBoxRef = React.createRef();
-    let sectionRef = React.createRef();
-    let itemRef = React.createRef();
+    let listBoxRef = React.createRef<HTMLDivElement>();
+    let sectionRef = React.createRef<HTMLDivElement>();
+    let itemRef = React.createRef<HTMLDivElement>();
     render(
       <Menu aria-label="Test" ref={listBoxRef}>
         <Section ref={sectionRef} aria-label="Felines">
@@ -216,9 +216,10 @@ describe('Menu', () => {
 
     let menuitem = getByRole('menuitem');
     expect(menuitem).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(menuitem.getAttribute('aria-labelledby'))).toHaveTextContent('Copy');
+    expect(document.getElementById(menuitem.getAttribute('aria-labelledby')!)).toHaveTextContent('Copy');
     expect(menuitem).toHaveAttribute('aria-describedby');
-    expect(menuitem.getAttribute('aria-describedby').split(' ').map(o => document.getElementById(o).textContent).join(' ')).toBe('Copy the selected text ⌘C');
+    expect((menuitem.getAttribute('aria-describedby')!).split(' ')
+      .map(o => (document.getElementById(o)!).textContent).join(' ')).toBe('Copy the selected text ⌘C');
   });
 
   it('should support separators', () => {
@@ -272,7 +273,7 @@ describe('Menu', () => {
     expect(groups[1]).toHaveClass('react-aria-Section');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Veggies');
   });
 
   it('should support dynamic collections', () => {
@@ -440,7 +441,7 @@ describe('Menu', () => {
 
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
+      it.each(['none', 'single', 'multiple'] as unknown as SelectionMode[])('with selectionMode = %s', async function (selectionMode) {
         let onAction = jest.fn();
         let onSelectionChange = jest.fn();
         let tree = render(
@@ -793,8 +794,7 @@ describe('Menu', () => {
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(submenuItems[0]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      await user.keyboard('{Escape}');
       act(() => {jest.runAllTimers();});
 
       expect(submenu).not.toBeInTheDocument();
@@ -880,8 +880,7 @@ describe('Menu', () => {
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(nestedSubmenuItems[0]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      await user.keyboard('{Escape}');
       act(() => {jest.runAllTimers();});
 
       expect(nestedSubmenu).not.toBeInTheDocument();
@@ -1015,10 +1014,10 @@ describe('Menu', () => {
       expect(groups[1]).toHaveClass('react-aria-Section');
 
       expect(groups[0]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Actions');
+      expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Actions');
 
       expect(groups[1]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groups[1].getAttribute('aria-labelledby'))).toHaveTextContent('Settings');
+      expect(document.getElementById(groups[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Settings');
 
       let menu = menuTester.menu;
       expect(getAllByRole('menuitem')).toHaveLength(7);
@@ -1044,10 +1043,10 @@ describe('Menu', () => {
       expect(groupsInSubmenu[1]).toHaveClass('react-aria-Section');
 
       expect(groupsInSubmenu[0]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby'))).toHaveTextContent('Work');
+      expect(document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Work');
 
       expect(groupsInSubmenu[1]).toHaveAttribute('aria-labelledby');
-      expect(document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby'))).toHaveTextContent('Personal');
+      expect(document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Personal');
 
       await user.click(submenuItems[0]);
       act(() => {jest.runAllTimers();});
