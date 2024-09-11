@@ -46,8 +46,7 @@ export interface AccordionGroupProps extends UnsafeStyles, DOMProps, SlotProps {
 
 const groupStyles = style({
   display: 'flex',
-  flexDirection: 'column',
-  minWidth: sizeValue(200)
+  flexDirection: 'column'
 }, getAllowedOverrides());
 
 export const AccordionGroupContext = createContext<ContextValue<AccordionGroupProps, DOMRefValue<HTMLDivElement>>>(null);
@@ -128,7 +127,8 @@ const itemStyles = style({
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
-  borderColor: 'gray-200'
+  borderColor: 'gray-200',
+  minWidth: sizeValue(200)
 }, getAllowedOverrides());
 
 function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
