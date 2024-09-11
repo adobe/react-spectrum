@@ -299,10 +299,8 @@ export function Table(props: TableProps) {
     overflowMode,
     loadingState,
     isInResizeMode,
-    setIsInResizeMode,
-    scale,
-    layout
-  }), [isQuiet, density, overflowMode, loadingState, scale, layout, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode
+  }), [isQuiet, density, overflowMode, loadingState, isInResizeMode, setIsInResizeMode]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef(null);
@@ -352,8 +350,7 @@ export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 
 
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let {items, renderEmptyState, children} = props;
-  let tableVisualOptions = useContext(InternalTableContext);
-  let {loadingState} = tableVisualOptions;
+  let {loadingState} = useContext(InternalTableContext);
   let emptyRender;
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -486,13 +483,12 @@ export interface ColumnProps extends RACColumnProps {
 }
 
 export function Column(props: ColumnProps) {
-  let {isQuiet} = useContext(InternalTableContext);
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
   let {allowsResizing, children, align = 'start'} = props;
   let isColumnResizable = allowsResizing;
 
   return (
-    <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isQuiet, isColumnResizable, align})}>
+    <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isColumnResizable, align})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
@@ -808,7 +804,7 @@ const selectAllCheckboxColumn = style({
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
 
 export function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
-  let {scale} = useContext(InternalTableContext);
+  let scale = (useIsMobileDevice() ? 'large' : 'medium') as Scale;
   let {selectionBehavior, selectionMode} = useTableOptions();
   let [isHeaderRowHovered, setHeaderRowHovered] = useState(false);
 
