@@ -938,6 +938,7 @@ export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'sh
 
 export function Cell(props: CellProps) {
   let {children, isSticky, showDivider, align, textValue, ...otherProps} = props;
+  let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;
 
   return (
@@ -947,44 +948,28 @@ export function Cell(props: CellProps) {
       isSticky={isSticky}
       className={renderProps => cell({
         ...renderProps,
-       // Pretty gross but this prevents a crash due if the collections fake DOM rerenders 100000+ items due to isQuiet/density/etc changing
-       // eslint-disable-next-line react-hooks/rules-of-hooks
-        ...useContext(InternalTableContext),
+        ...tableVisualOptions,
         isDivider: showDivider
       })}
       textValue={textValue}
       {...otherProps}>
       {({isFocusVisible}) => (
-        <CellContent isFocusVisible={isFocusVisible} isSticky={isSticky} align={align}>{children}</CellContent>
+        <>
+          {/*
+            // TODO: problem with having the checkbox cell itself use the row background color directly instead
+            of having a separate white rectangle div base below a div with the row background color set above it as a mask
+            is that it doesn't come out as the same color as the other cells because the base below the sticky cell when other selected cells are scrolled below it will be the blue of the
+            other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
+            then I could do away with this styling. To reproduce this, comment out the stickyCell gray-25, get rid of the below div and apply backgroundColor: '--rowBackgroundColor' to checkboxCellStyle.
+            Having the CellFocusRing here instead of applying a outline on the cell directly also makes it NOT overlap with the border (can be remedied with a -3px outline offset) and applying a border radius to get the curved outline focus ring messes
+            with the divider rendered on the cell since those are also borders
+          */}
+          <div role="presentation" className={cellBackground({isSticky})} />
+          <CellFocusRing isFocusVisible={isFocusVisible} />
+          <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
+        </>
       )}
     </RACCell>
-  );
-}
-
-function CellContent(props) {
-  let {
-    isSticky,
-    isFocusVisible,
-    align = 'start',
-    children
-  } = props;
-
-  let tableVisualOptions = useContext(InternalTableContext);
-  return (
-    <>
-      {/*
-        // TODO: problem with having the checkbox cell itself use the row background color directly instead
-        of having a separate white rectangle div base below a div with the row background color set above it as a mask
-        is that it doesn't come out as the same color as the other cells because the base below the sticky cell when other selected cells are scrolled below it will be the blue of the
-        other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
-        then I could do away with this styling. To reproduce this, comment out the stickyCell gray-25, get rid of the below div and apply backgroundColor: '--rowBackgroundColor' to checkboxCellStyle.
-        Having the CellFocusRing here instead of applying a outline on the cell directly also makes it NOT overlap with the border (can be remedied with a -3px outline offset) and applying a border radius to get the curved outline focus ring messes
-        with the divider rendered on the cell since those are also borders
-      */}
-      <div role="presentation" className={cellBackground({isSticky})} />
-      <CellFocusRing isFocusVisible={isFocusVisible} />
-      <span className={cellContent({...tableVisualOptions, isSticky, align})}>{children}</span>
-    </>
   );
 }
 
@@ -1073,16 +1058,15 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'ch
 
 export function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
+  let tableVisualOptions = useContext(InternalTableContext);
 
   return (
     <RACRow
       id={id}
       className={renderProps => row({
         ...renderProps,
-        // Pretty gross but this prevents a crash due if the collections fake DOM rerenders 100000+ items due to isQuiet/density/etc changing
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        ...useContext(InternalTableContext)
-      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px; z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
+        ...tableVisualOptions
+      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         <Cell isSticky className={checkboxCellStyle}>
