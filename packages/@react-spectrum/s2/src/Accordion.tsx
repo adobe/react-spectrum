@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, useContext} from 'react';
 import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StyleString} from '../style/types';
@@ -100,7 +100,6 @@ export const AccordionItemContext = createContext<ContextValue<AccordionItemProp
 
 const itemStyles = style({
   color: 'heading',
-  padding: '[2px]',
   borderTopWidth: {
     default: 1,
     isQuiet: 0
@@ -163,15 +162,8 @@ const headingStyle = style({
 });
 
 const buttonStyles = style({
-  // Custom focus ring so it doesn't overlap divider
-  outlineStyle: 'solid',
-  outlineColor: {
-    default: 'transparent',
-    isHovered: 'transparent-black-100',
-    isFocusVisible: 'focus-ring'
-  },
-  outlineWidth: 2,
-  outlineOffset: 0,
+  ...focusRing(),
+  outlineOffset: -2,
   font: 'heading',
   color: {
     default: 'neutral',
@@ -189,7 +181,7 @@ const buttonStyles = style({
       XL: sizeValue(17)
     }
   },
-  paddingY: {
+  paddingTop: {
     size: {
       S: {
         density: {
@@ -200,16 +192,16 @@ const buttonStyles = style({
       },
       M: {
         density: {
-          compact: 4,
-          regular: 8,
-          spacious: 12
+          compact: sizeValue(4),
+          regular: sizeValue(8),
+          spacious: sizeValue(12)
         }
       },
       L: {
         density: {
-          compact: 4,
+          compact: sizeValue(4),
           regular: sizeValue(9),
-          spacious: 12
+          spacious: sizeValue(12)
         }
       },
       XL: {
@@ -217,6 +209,38 @@ const buttonStyles = style({
           compact: sizeValue(5),
           regular: sizeValue(9),
           spacious: sizeValue(13)
+        }
+      }
+    }
+  },
+  paddingBottom: {
+    size: {
+      S: {
+        density: {
+          compact: sizeValue(2),
+          regular: sizeValue(7),
+          spacious: sizeValue(11)
+        }
+      },
+      M: {
+        density: {
+          compact: sizeValue(5),
+          regular: sizeValue(9),
+          spacious: sizeValue(13)
+        }
+      },
+      L: {
+        density: {
+          compact: sizeValue(8),
+          regular: sizeValue(11),
+          spacious: sizeValue(16)
+        }
+      },
+      XL: {
+        density: {
+          compact: sizeValue(8),
+          regular: sizeValue(12),
+          spacious: sizeValue(16)
         }
       }
     }
@@ -229,7 +253,7 @@ const buttonStyles = style({
       XL: sizeValue(17)
     }
   },
-  height: '[inherit]',
+  height: 'full',
   minHeight: 'control',
   width: 'full',
   backgroundColor: {
