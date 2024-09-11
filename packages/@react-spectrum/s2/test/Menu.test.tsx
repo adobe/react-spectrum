@@ -32,28 +32,28 @@ let items = [
   {id: 'baz', name: 'Baz'}
 ];
 
-// function SelectionStatic(props)  {
-//   let {selectionMode = 'single'} = props;
-//   let [selected, setSelected] = React.useState<Selection>(new Set());
-//   return (
-//     <MenuTrigger>
-//       <Button variant="primary">Menu Button</Button>
-//       <Menu
-//         aria-label="Test"
-//         selectionMode={selectionMode}
-//         selectedKeys={selected}
-//         onSelectionChange={setSelected}>
-//         <MenuSection>
-//           <Header>Heading 1</Header>
-//           <MenuItem id="foo">Foo</MenuItem>
-//           <MenuItem id="bar">Bar</MenuItem>
-//           <MenuItem id="baz">Baz</MenuItem>
-//           <MenuItem id="fizz">Fizz</MenuItem>
-//         </MenuSection>
-//       </Menu>
-//     </MenuTrigger>
-//   );
-// }
+function SelectionStatic(props)  {
+  let {selectionMode = 'single'} = props;
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+  return (
+    <MenuTrigger>
+      <Button variant="primary">Menu Button</Button>
+      <Menu
+        aria-label="Test"
+        selectionMode={selectionMode}
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        <MenuSection>
+          <Header>Heading 1</Header>
+          <MenuItem id="foo">Foo</MenuItem>
+          <MenuItem id="bar">Bar</MenuItem>
+          <MenuItem id="baz">Baz</MenuItem>
+          <MenuItem id="fizz">Fizz</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  );
+}
 
 AriaMenuTests({
   prefix: 'spectrum2-static',
@@ -83,14 +83,13 @@ AriaMenuTests({
           </MenuSection>
         </Menu>
       </MenuTrigger>
-    )
-    // TODO: something wrong with icon rendering?
-    // singleSelection: () => render(
-    //   <SelectionStatic />
-    // ),
-    // multipleSelection: () => render(
-    //   <SelectionStatic selectionMode="multiple" />
-    // ),
+    ),
+    singleSelection: () => render(
+      <SelectionStatic />
+    ),
+    multipleSelection: () => render(
+      <SelectionStatic selectionMode="multiple" />
+    ),
   }
 });
 
