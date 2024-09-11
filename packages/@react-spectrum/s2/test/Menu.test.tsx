@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
-import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger} from '../src';
+import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {Selection} from '@react-types/shared';
@@ -90,6 +90,41 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
+    ),
+    submenus: () => render(
+      <MenuTrigger>
+        <Button variant="primary">Menu Button</Button>
+        <Menu aria-label="Test">
+          <MenuSection>
+            <Header><Heading>Heading 1</Heading></Header>
+
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <SubmenuTrigger>
+            <MenuItem id="share">Share…</MenuItem>
+              <Menu>
+                <MenuSection>
+                  <Header><Heading>Subheading 1</Heading></Header>
+                  <MenuItem id="email">Email…</MenuItem>
+                  <SubmenuTrigger>
+                    <MenuItem id="share">Share…</MenuItem>
+                    <Menu>
+                      <MenuSection>
+                        <Header><Heading>Subheading 1</Heading></Header>
+                          <MenuItem id="work">Work</MenuItem>
+                          <MenuItem id="personal">Personal</MenuItem>
+                      </MenuSection>
+                    </Menu>
+                    </SubmenuTrigger>
+                  <MenuItem id="sms">SMS</MenuItem>
+                  <MenuItem id="twitter">Twitter</MenuItem>
+                </MenuSection>
+              </Menu>
+            </SubmenuTrigger>
+          </MenuSection>
+        </Menu>
+      </MenuTrigger>
     )
   }
 });

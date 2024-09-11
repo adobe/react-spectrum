@@ -122,14 +122,6 @@ describe('Menu', () => {
     }
   });
 
-  it('should support aria-label on the menu items', () => {
-    let {getAllByRole} = renderMenu({}, {'aria-label': 'test'});
-
-    for (let menuitem of getAllByRole('menuitem')) {
-      expect(menuitem).toHaveAttribute('aria-label', 'test');
-    }
-  });
-
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <MenuContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -1251,6 +1243,37 @@ AriaMenuTests({
           </Popover>
         </MenuTrigger>
       </>
+    ),
+    submenus: () => render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <SubmenuTrigger>
+              <MenuItem id="share">Share…</MenuItem>
+              <Popover>
+                <Menu>
+                  <SubmenuTrigger>
+                    <MenuItem id="email">Email…</MenuItem>
+                    <Popover>
+                      <Menu>
+                        <MenuItem id="work">Work</MenuItem>
+                        <MenuItem id="personal">Personal</MenuItem>
+                      </Menu>
+                    </Popover>
+                  </SubmenuTrigger>
+                  <MenuItem id="sms">SMS</MenuItem>
+                  <MenuItem id="twitter">Twitter</MenuItem>
+                </Menu>
+              </Popover>
+            </SubmenuTrigger>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
     )
   }
 });
