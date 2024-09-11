@@ -412,17 +412,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let tree = (renderers.singleSelection!)();
           let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
+          await user.tab();
+          await user.keyboard('{Enter>}');
 
-          await menuTester.open();
           act(() => {jest.runAllTimers();});
-
-          let options = menuTester.getOptions();
-
-          fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
-          fireEvent.keyDown(document.activeElement!, {key: 'Enter', repeat: true});
-          act(() => {jest.runAllTimers();});
-          expect(options[0]).toHaveAttribute('aria-checked', 'true');
-          fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
+          fireEvent.keyDown(document.activeElement, {key: 'Enter', repeat: true})
+          let menu = menuTester.getMenu();
+          expect(menu).toBeInTheDocument();
+          await user.keyboard('{/Enter}');
+          expect(menuTester.getOptions().filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
         });
       });
     }
@@ -532,17 +530,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let tree = (renderers.multipleSelection!)();
           let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
+          await user.tab();
+          await user.keyboard('{Enter>}');
 
-          await menuTester.open();
           act(() => {jest.runAllTimers();});
-
-          let options = menuTester.getOptions();
-
-          fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
-          fireEvent.keyDown(document.activeElement!, {key: 'Enter', repeat: true});
-          act(() => {jest.runAllTimers();});
-          expect(options[0]).toHaveAttribute('aria-checked', 'true');
-          fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
+          fireEvent.keyDown(document.activeElement, {key: 'Enter', repeat: true})
+          let menu = menuTester.getMenu();
+          expect(menu).toBeInTheDocument();
+          await user.keyboard('{/Enter}');
+          expect(menuTester.getOptions().filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
         });
       });
     }
@@ -630,6 +626,8 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           // Click a submenu item
           // not sure why i can't use submenuUtil.selectOption
           await user.click(submenuUtil.getOptions().filter(item => item.getAttribute('aria-haspopup') == null)[0]);
+          // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
+          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
         });
@@ -662,6 +660,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           // Click a nested submenu item
           // not sure why i can't use submenuUtil.selectOption
           await user.click(nestedSubmenuUtil.getOptions().filter(item => item.getAttribute('aria-haspopup') == null)[0]);
+          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
         });
@@ -692,6 +691,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenu).toBeInTheDocument();
 
           await user.click(document.body);
+          act(() => {jest.runAllTimers();});
           expect(nestedSubmenu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(menu).not.toBeInTheDocument();

@@ -13,8 +13,9 @@
 import {act, fireEvent, render, screen, within} from '@testing-library/react';
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {AriaMenuTests} from 'react-aria-components/test/AriaMenu.test-util';
 import {Content, Footer} from '@react-spectrum/view';
-import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section} from '../';
+import {ContextualHelpTrigger, Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import {
   DEFAULT_LONG_PRESS_TIME,
   installPointerEvent,
@@ -1235,3 +1236,158 @@ describe('MenuTrigger', function () {
     });
   });
 });
+
+function SelectionStatic(props) {
+  let {selectionMode = 'single'} = props;
+  let [selected, setSelected] = React.useState<Selection>(new Set());
+  return (
+    <Provider theme={theme}>
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Menu
+          aria-label="Test"
+          selectionMode={selectionMode}
+          selectedKeys={selected}
+          onSelectionChange={setSelected}>
+          <Item id="foo">Foo</Item>
+          <Item id="bar">Bar</Item>
+          <Item id="baz">Baz</Item>
+          <Item id="fizz">Fizz</Item>
+        </Menu>
+      </MenuTrigger>
+    </Provider>
+  );
+}
+
+AriaMenuTests({
+  prefix: 'rspv3-static',
+  setup: () => {
+    let offsetWidth, offsetHeight;
+    let windowSpy;
+
+    beforeAll(function () {
+      offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+      window.HTMLElement.prototype.scrollIntoView = jest.fn();
+      simulateDesktop();
+      jest.useFakeTimers();
+    });
+
+    beforeEach(() => {
+      windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    });
+
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+    });
+
+    afterAll(function () {
+      offsetWidth.mockReset();
+      offsetHeight.mockReset();
+    });
+  },
+  renderers: {
+    standard: () => render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button variant='primary'>
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    ),
+    disabledTrigger: () => render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button isDisabled variant='primary'>
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    ),
+    singleSelection: () => render(
+      <SelectionStatic />
+    ),
+    multipleSelection: () => render(
+      <SelectionStatic selectionMode="multiple" />
+    ),
+    siblingFocusableElement: () => render(
+      <Provider theme={theme}>
+        <input aria-label="before" />
+        <MenuTrigger>
+          <Button variant='primary'>
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+        <input aria-label="after" />
+      </Provider>
+    ),
+    multipleMenus: () => render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button variant='primary'>
+            Menu Button1
+          </Button>
+          <Menu aria-label="Test1">
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+        <MenuTrigger>
+          <Button variant='primary'>
+            Menu Button2
+          </Button>
+          <Menu aria-label="Test2">
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    ),
+    submenus: () => render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Menu>
+            <Item id="open">Open</Item>
+            <Item id="rename">Rename…</Item>
+            <Item id="duplicate">Duplicate</Item>
+            <SubmenuTrigger>
+              <Item id="share">Share…</Item>
+              <Menu>
+                <SubmenuTrigger>
+                  <Item id="email">Email…</Item>
+                  <Menu>
+                    <Item id="work">Work</Item>
+                    <Item id="personal">Personal</Item>
+                  </Menu>
+                </SubmenuTrigger>
+                <Item id="sms">SMS</Item>
+                <Item id="twitter">Twitter</Item>
+              </Menu>
+            </SubmenuTrigger>
+            <Item id="delete">Delete…</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    )
+  }
+});
+
