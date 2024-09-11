@@ -5801,7 +5801,6 @@ __metadata:
   resolution: "@react-aria/disclosure@workspace:packages/@react-aria/disclosure"
   dependencies:
     "@react-aria/button": "npm:^3.9.8"
-    "@react-aria/interactions": "npm:^3.22.2"
     "@react-aria/selection": "npm:^3.19.3"
     "@react-aria/utils": "npm:^3.25.2"
     "@react-stately/accordion": "npm:^3.0.0-alpha.0"

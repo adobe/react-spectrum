@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@react-aria/button": "^3.9.8",
-    "@react-aria/interactions": "^3.22.2",
     "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/accordion": "^3.0.0-alpha.0",

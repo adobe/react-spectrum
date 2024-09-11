@@ -14,7 +14,6 @@ import {AriaButtonProps} from '@react-types/button';
 import {DisclosureState} from '@react-stately/accordion';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
-import {useKeyboard} from '@react-aria/interactions';
 
 export interface AriaDisclosureProps {
   /** Whether the disclosure is disabled. */
@@ -63,16 +62,6 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     }
   }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        state.toggle();
-      }
-    },
-    isDisabled
-  });
-
   return {
     triggerProps: {
       id: triggerId,
@@ -83,8 +72,13 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
           state.toggle();
         }
       },
-      isDisabled: isDisabled,
-      ...keyboardProps
+      isDisabled,
+      onKeyDown(e) {
+        if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          state.toggle();
+        }
+      }
     },
     contentProps: {
       id: contentId,
