@@ -10,19 +10,43 @@ import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ImageProps extends UnsafeStyles, SlotProps {
+  /** The URL of the image. */
   src?: string,
   // TODO
   // srcSet?: string,
   // sizes?: string,
+  /** Accessible alt text for the image. */
   alt?: string,
+  /**
+   * Indicates if the fetching of the image must be done using a CORS request.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin).
+   */
   crossOrigin?: 'anonymous' | 'use-credentials',
+  /**
+   * Whether the browser should decode images synchronously or asynchronously.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding).
+   */
   decoding?: 'async' | 'auto' | 'sync',
   // Only supported in React 19...
   // fetchPriority?: 'high' | 'low' | 'auto',
+  /**
+   * Whether the image should be loaded immediately or lazily when scrolled into view.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#loading).
+   */
   loading?: 'eager' | 'lazy',
+  /**
+   * A string indicating which referrer to use when fetching the resource.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy).
+   */
   referrerPolicy?: HTMLAttributeReferrerPolicy,
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString,
+  /** A function that is called to render a fallback when the image fails to load. */
   renderError?: () => ReactNode,
+  /**
+   * A group of images to coordinate between, matching the group passed to the `<ImageCoordinator>` component.
+   * If not provided, the default image group is used.
+   */
   group?: ImageGroup
 }
 
@@ -84,9 +108,26 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-const imageStyles = style({
+const wrapperStyles = style({
   backgroundColor: 'gray-100',
   overflow: 'hidden'
+});
+
+const imgStyles = style({
+  display: 'block',
+  width: 'full',
+  height: 'full',
+  objectFit: '[inherit]',
+  objectPosition: '[inherit]',
+  opacity: {
+    default: 0,
+    isRevealed: 1
+  },
+  transition: {
+    default: 'none',
+    isTransitioning: 'opacity'
+  },
+  transitionDuration: 500
 });
 
 function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
@@ -171,12 +212,12 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
 
   let errorState = !isSkeleton && state === 'error' && renderError?.();
   let isRevealed = state === 'revealed' && !isSkeleton;
-  let transition = isRevealed && loadTime > 200 ? 'opacity 500ms' : undefined;
+  let isTransitioning = isRevealed && loadTime > 200;
   return useMemo(() => hidden ? null : (
     <div
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(imageStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
+      className={UNSAFE_className + mergeStyles(wrapperStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
       {errorState}
       {!errorState && (
         <img
@@ -189,18 +230,10 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
           ref={imgRef}
           onLoad={onLoad}
           onError={onError}
-          style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            objectFit: 'inherit',
-            objectPosition: 'inherit',
-            opacity: isRevealed ? 1 : 0,
-            transition
-          }} />
+          className={imgStyles({isRevealed, isTransitioning})} />
         )}
     </div>
-  ), [hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, loading, referrerPolicy, onLoad, onError, isRevealed, transition]);
+  ), [hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
 }
 
 const _Image = forwardRef(Image);

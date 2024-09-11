@@ -1,8 +1,17 @@
 import {Context, createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer} from 'react';
 
 export interface ImageCoordinatorProps {
+  /** Children within the ImageCoordinator. */
   children: ReactNode,
+  /**
+   * Time in milliseconds after which images are always displayed, even if all images are not yet loaded.
+   * @default 5000
+   */
   timeout?: number,
+  /**
+   * A group of images to coordinate between, matching the group passed to the `<Image>` component.
+   * If not provided, the default image group is used.
+   */
   group?: ImageGroup
 }
 
@@ -107,6 +116,10 @@ function isAllLoaded(loaded: Map<string, boolean>) {
   return true;
 }
 
+/**
+ * An ImageCoordinator coordinates loading behavior for a group of images.
+ * Images within an ImageCoordinator are revealed together once all of them have loaded.
+ */
 export function ImageCoordinator(props: ImageCoordinatorProps) {
   // If we are already inside another ImageCoordinator, just pass
   // through children and coordinate loading at the root.

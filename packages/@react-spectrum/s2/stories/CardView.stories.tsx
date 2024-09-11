@@ -28,6 +28,21 @@ const meta: Meta<typeof CardView> = {
 
 export default meta;
 
+const cardViewStyles = style({
+  width: {
+    default: 'screen',
+    viewMode: {
+      docs: 'full'
+    }
+  },
+  height: {
+    default: 'screen',
+    viewMode: {
+      docs: '[600px]'
+    }
+  }
+});
+
 type Item = {
   id: number,
   user: {
@@ -51,6 +66,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
             width: 'full',
             pointerEvents: 'none'
           })}
+          // TODO - should we have a safe `dynamicStyles` or something for this?
           UNSAFE_style={{
             aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
             objectFit: layout === 'waterfall' ? 'contain' : 'cover'
@@ -96,11 +112,11 @@ export const Example = (args: CardViewProps<any>, {viewMode}) => {
 
   return (
     <CardView
-      aria-label="Assets"
+      aria-label="Nature photos"
       {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      UNSAFE_style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
+      styles={cardViewStyles({viewMode})}>
       <Collection items={items} dependencies={[args.layout]}>
         {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
       </Collection>
@@ -136,7 +152,7 @@ export const Empty = (args: CardViewProps<any>, {viewMode}) => {
     <CardView 
       aria-label="Assets"
       {...args}
-      UNSAFE_style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}
+      styles={cardViewStyles({viewMode})}
       renderEmptyState={() => (
         <IllustratedMessage size="L">
           <EmptyIcon />
@@ -194,12 +210,12 @@ export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
 
   return (
     <CardView
-      aria-label="Assets"
+      aria-label="Topics"
       {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      UNSAFE_style={{height: viewMode === 'docs' ? 600 : '100vh', width: viewMode === 'docs' ? '100%' : '100vw'}}>
-      <Collection items={items} dependencies={[args.layout]}>
+      styles={cardViewStyles({viewMode})}>
+      <Collection items={items}>
         {topic => <TopicCard topic={topic} />}
       </Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (

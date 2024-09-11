@@ -215,7 +215,6 @@ const sizing = {
   ...scaledSpacing,
   auto: 'auto',
   full: '100%',
-  screen: '100vh',
   min: 'min-content',
   max: 'max-content',
   fit: 'fit-content',
@@ -239,6 +238,16 @@ const sizing = {
       XL: size(20)
     }
   }
+};
+
+const height = {
+  ...sizing,
+  screen: '100vh'
+};
+
+const width = {
+  ...sizing,
+  screen: '100vw'
 };
 
 const margin = {
@@ -576,18 +585,18 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height: sizing,
-    width: sizing,
-    containIntrinsicWidth: sizing,
-    containIntrinsicHeight: sizing,
-    minHeight: sizing,
+    height,
+    width,
+    containIntrinsicWidth: width,
+    containIntrinsicHeight: height,
+    minHeight: height,
     maxHeight: {
-      ...sizing,
+      ...height,
       none: 'none'
     },
-    minWidth: sizing,
+    minWidth: width,
     maxWidth: {
-      ...sizing,
+      ...width,
       none: 'none'
     },
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
