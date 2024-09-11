@@ -840,7 +840,7 @@ const commonCellStyles = {
   paddingX: 16 // table-edge-to-content
 } as const;
 
-const cell = style<CellRenderProps & S2TableProps>({
+const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
   color: 'neutral',
   paddingY: centerPadding(),
@@ -857,12 +857,17 @@ const cell = style<CellRenderProps & S2TableProps>({
   fontSize: 'control',
   alignItems: 'center',
   display: 'flex',
-  '--dividerColor': {
-    type: 'borderColor',
-    value: {
-      default: 'gray-300',
-      forcedColors: 'ButtonBorder'
-    }
+  borderEndStyle: {
+    default: 'none',
+    isDivider: 'solid'
+  },
+  borderEndWidth: {
+    default: 0,
+    isDivider: 1
+  },
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
   }
 });
 
@@ -940,13 +945,12 @@ export function Cell(props: CellProps) {
       // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
       // @ts-ignore
       isSticky={isSticky}
-      // This is a inline style because it needs to set properties ONLY for the end border (don't want to set a color for the bottom border)
-      style={{borderInlineEndColor: showDivider ? 'var(--dividerColor)' : 'none', borderInlineEndWidth: showDivider ? 1 : 0, borderInlineEndStyle: showDivider ? 'solid' : 'none'}}
       className={renderProps => cell({
         ...renderProps,
        // Pretty gross but this prevents a crash due if the collections fake DOM rerenders 100000+ items due to isQuiet/density/etc changing
        // eslint-disable-next-line react-hooks/rules-of-hooks
-        ...useContext(InternalTableContext)
+        ...useContext(InternalTableContext),
+        isDivider: showDivider
       })}
       textValue={textValue}
       {...otherProps}>
