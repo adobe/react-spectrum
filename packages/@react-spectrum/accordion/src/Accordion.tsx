@@ -17,7 +17,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -42,7 +42,9 @@ function AccordionGroup(props: SpectrumAccordionGroupProps, ref: DOMRef<HTMLDivE
   );
 }
 
-interface SpectrumAccordionItemProps extends AccordionItemProps, DOMProps, AriaLabelingProps  {}
+interface SpectrumAccordionItemProps extends AccordionItemProps, DOMProps, AriaLabelingProps  {
+  children: [ReactElement<SpectrumAccordionHeaderProps>, ReactElement<SpectrumAccordionPanelProps>]
+}
 
 function AccordionItem(props: SpectrumAccordionItemProps) {
   props = useProviderProps(props);

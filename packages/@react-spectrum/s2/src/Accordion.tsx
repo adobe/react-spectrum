@@ -15,7 +15,7 @@ import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Accordi
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
-import React, {createContext, forwardRef, useContext} from 'react';
+import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
 import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -91,7 +91,7 @@ export {_AccordionGroup as AccordionGroup};
 
 export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles, DOMProps {
   /** The contents of the accordion item, consisting of an AccordionHeader and AccordionPanel. */
-  children: React.ReactNode,
+  children: [ReactElement<AccordionHeaderProps>, ReactElement<AccordionPanelProps>],
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString
 }
