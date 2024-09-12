@@ -23,4 +23,4 @@ const meta: Meta<typeof ComboBox<any>> = {
 };
 
 export default meta;
-export {Static, WithSections, WithDynamic, Icons, ContextualHelp, WithCustomWidth} from './ComboBox.stories';
+export {Static, WithSections, WithDynamic, Icons, ContextualHelp, WithCustomWidth} from './Combobox.stories';
