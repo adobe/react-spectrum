@@ -14,13 +14,14 @@ import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {typ
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef, useMediaQuery} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
@@ -303,6 +304,10 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
     };
   }, [isPending]);
 
+  // TODO: Doesn't work with our storybook addon??
+  let mediaColorScheme = useMediaQuery('(prefers-color-scheme: dark)') ? 'dark' : 'light';
+  let colorScheme = useContext(ColorSchemeContext) ?? mediaColorScheme;
+
   let staticColorProgress = undefined as 'white' | 'black' | undefined;
   // static colors have preference
   if (staticColor === 'black' && fillStyle === 'fill') {
@@ -316,10 +321,17 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   } else if (variant === 'accent' || variant === 'negative') {
     staticColorProgress = 'white';
   } else if (variant === 'secondary') {
-    staticColorProgress = undefined;
+    if (colorScheme === 'light') {
+      staticColorProgress = 'white';
+    } else {
+      staticColorProgress = 'black';
+    }
   } else if (variant === 'primary') {
-    // really needs to be static and switch based on dark/light mode
-    staticColorProgress = undefined;
+    if (colorScheme === 'light') {
+      staticColorProgress = 'white';
+    } else {
+      staticColorProgress = 'black';
+    }
   }
 
   return (
