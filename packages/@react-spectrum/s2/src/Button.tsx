@@ -18,8 +18,10 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
+import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
@@ -272,6 +274,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
+  props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -291,6 +294,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       }, props.styles)}>
       <Provider
         values={[
+          [SkeletonContext, null],
           [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
@@ -313,6 +317,7 @@ export {_Button as Button};
 
 function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
+  props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -332,6 +337,7 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       }, props.styles)}>
       <Provider
         values={[
+          [SkeletonContext, null],
           [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
