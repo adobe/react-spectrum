@@ -341,9 +341,9 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
           [TextContext, {styles: style({
             paddingY: '--labelPadding',
             order: 1,
-            visibility: {
-              default: 'visible',
-              isProgressVisible: 'hidden'
+            opacity: {
+              default: 1,
+              isProgressVisible: 0
             }
             // @ts-ignore not sure why it won't allow a data-* attribute here
           })({isProgressVisible}), 'data-rsp-slot': 'text'}],
@@ -353,31 +353,30 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               size: fontRelative(20),
               marginStart: '--iconMargin',
               flexShrink: 0,
-              visibility: {
-                default: 'visible',
-                isProgressVisible: 'hidden'
+              opacity: {
+                default: 1,
+                isProgressVisible: 0
               }
             })({isProgressVisible})
           }]
         ]}>
-        <div
-          className={style({
-            position: 'absolute',
-            top: '[50%]',
-            left: '[50%]',
-            transform: 'translate(-50%, -50%)',
-            visibility: {
-              default: 'hidden',
-              isProgressVisible: 'visible'
-            },
-            display: {
-              default: 'none',
-              isPending: 'block'
-            },
-            height: 16 // better way to do this? not sure why the height is bigger than the content
-          })({isProgressVisible, isPending})}>
-          <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColorProgress} />
-        </div>
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        {isPending &&
+          <div
+            className={style({
+              position: 'absolute',
+              top: '[50%]',
+              left: '[50%]',
+              transform: 'translate(-50%, -50%)',
+              visibility: {
+                default: 'hidden',
+                isProgressVisible: 'visible'
+              },
+              height: 16 // better way to do this? not sure why the height is bigger than the content
+            })({isProgressVisible, isPending})}>
+            <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColorProgress} />
+          </div>
+        }
       </Provider>
     </RACButton>
   );

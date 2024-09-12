@@ -18,22 +18,19 @@ import {
   useButton,
   useFocusRing,
   useHover,
-  useId,
-  VisuallyHidden
+  useId
 } from 'react-aria';
 import {
   ContextValue,
-  Provider,
   RenderProps,
   SlotProps,
   useContextProps,
   useRenderProps
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
-import {filterDOMProps, isAppleDevice, isFirefox} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useCallback, useEffect, useRef} from 'react';
-import {TextContext} from './Text';
+import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -108,7 +105,6 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   props = disablePendingProps(props);
-  let isPendable = Object.hasOwn(props, 'isPending');
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
@@ -122,33 +118,33 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   });
 
   // an aria label will block children and their labels from being read, this is undesirable for pending state
-  let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
-  let safariDupeLabellingId = useId();
+  // let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
+  // let safariDupeLabellingId = useId();
   let buttonId = useId(buttonProps.id);
-  let contentId = useId();
   let progressId = useId();
 
-  const isPendingAriaLiveLabel = `${hasAriaLabel ? buttonProps['aria-label'] : ''}`.trim();
-  let isPendingAriaLiveLabelledby = hasAriaLabel ? (buttonProps['aria-labelledby']?.replace(buttonId, safariDupeLabellingId) ?? safariDupeLabellingId) : `${contentId} ${safariDupeLabellingId}`.trim();
-  isPendingAriaLiveLabelledby = isPendingAriaLiveLabelledby + ' ' + progressId;
-
-  let ariaLive: 'off' | 'polite' | 'assertive' = 'polite';
-  if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
-    ariaLive = 'off';
+  let ariaLabelledby = buttonProps['aria-labelledby'];
+  if (isPending) {
+    // aria-labelledby wins over aria-label
+    // https://www.w3.org/TR/accname-1.2/#computation-steps
+    if (ariaLabelledby) {
+      ariaLabelledby = `${ariaLabelledby} ${progressId}`;
+    } else if (buttonProps['aria-label']) {
+      ariaLabelledby = `${buttonId} ${progressId}`;
+    }
   }
-
-  let {textCallbackRef, progressCallbackRef} = useEnforcePendingComponents({...props, ref});
 
   // Forcibly announce the pending state on Apple devices because otherwise it won't be announced
   let wasPending = useRef(isPending);
   useEffect(() => {
-    if (!wasPending.current && isFocused && isPending && isAppleDevice()) {
-      announce(isPendingAriaLiveLabelledby, 'assertive', undefined, 'ids');
-    } else if (wasPending.current && isFocused && !isPending && isAppleDevice()) {
-      announce(buttonId, 'assertive', undefined, 'ids');
+    let message = {'aria-labelledby': ariaLabelledby || buttonId};
+    if (!wasPending.current && isFocused && isPending) {
+      announce(message, 'assertive');
+    } else if (wasPending.current && isFocused && !isPending) {
+      announce(message, 'assertive');
     }
     wasPending.current = isPending;
-  }, [isPending, isFocused, isPendingAriaLiveLabelledby, buttonId]);
+  }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
   return (
     <button
@@ -157,8 +153,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {...renderProps}
       id={buttonId}
       ref={ref}
-      aria-label={isPending ? isPendingAriaLiveLabel : buttonProps['aria-label']}
-      aria-labelledby={isPending ? isPendingAriaLiveLabelledby : buttonProps['aria-labelledby']}
+      aria-labelledby={ariaLabelledby}
       slot={props.slot || undefined}
       aria-disabled={isPending ? 'true' : undefined}
       data-disabled={props.isDisabled || undefined}
@@ -167,58 +162,11 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      <Provider
-        values={[
-          [TextContext, {id: contentId, ref: textCallbackRef}],
-          [ProgressBarContext, {id: progressId, style: {display: isPending ? undefined : 'none'}, isIndeterminate: true, ref: progressCallbackRef}]
-        ]}>
+      <ProgressBarContext.Provider value={{id: progressId}}>
         {renderProps.children}
-      </Provider>
-      {/* Only render if we expect isPending to be used with this button. */}
-      {isPendable && (
-        <VisuallyHidden>
-          <div aria-live={isFocused ? ariaLive : 'off'}>
-            {isPending &&
-            <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />}
-          </div>
-          {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
-              Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
-              https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
-              The aria-live may cause extra announcements in other browsers. */}
-          <div id={safariDupeLabellingId} role="img" aria-label={isPending ? isPendingAriaLiveLabel : undefined} />
-        </VisuallyHidden>
-      )}
+      </ProgressBarContext.Provider>
     </button>
   );
-}
-
-function useEnforcePendingComponents(props) {
-  let {isPending, ref} = props;
-  let textRef = useRef(null);
-  let progressRef = useRef(null);
-  let textCallbackRef = useCallback(node => {
-    textRef.current = node;
-    // use a microtask so the unmounting has time to complete before we throw an error
-    queueMicrotask(() => {
-      if (!textRef.current && ref.current && isPending) {
-        throw new Error('Expected <Text> to be used with pending button');
-      }
-    });
-  }, [isPending, ref]);
-  let progressCallbackRef = useCallback(node => {
-    progressRef.current = node;
-    queueMicrotask(() => {
-      if (!progressRef.current && ref.current && isPending) {
-        throw new Error('Expected <ProgressBar> to be used with pending button');
-      }
-    });
-  }, [isPending, ref]);
-  useEffect(() => {
-    if (isPending && (!textRef.current || !progressRef.current)) {
-      throw new Error('Expected <Text> and <ProgressBar> to be used with pending button');
-    }
-  }, [isPending, textRef, progressRef]);
-  return {textCallbackRef, progressCallbackRef};
 }
 
 function disablePendingProps(props) {

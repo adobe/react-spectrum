@@ -17,14 +17,15 @@ const LIVEREGION_TIMEOUT_DELAY = 7000;
 
 let liveAnnouncer: LiveAnnouncer | null = null;
 
+type Message = string | {'aria-labelledby': string};
+
 /**
  * Announces the message using screen reader technology.
  */
 export function announce(
-  message: string,
+  message: Message,
   assertiveness: Assertiveness = 'assertive',
-  timeout = LIVEREGION_TIMEOUT_DELAY,
-  mode: 'message' | 'ids' = 'message'
+  timeout = LIVEREGION_TIMEOUT_DELAY
 ) {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
@@ -33,11 +34,11 @@ export function announce(
     // found most times less than 100ms were not consistent when announcing with Safari
     setTimeout(() => {
       if (liveAnnouncer?.isAttached()) {
-        liveAnnouncer?.announce(message, assertiveness, timeout, mode);
+        liveAnnouncer?.announce(message, assertiveness, timeout);
       }
     }, 100);
   } else {
-    liveAnnouncer.announce(message, assertiveness, timeout, mode);
+    liveAnnouncer.announce(message, assertiveness, timeout);
   }
 }
 
@@ -120,18 +121,18 @@ class LiveAnnouncer {
     this.node = null;
   }
 
-  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY, mode: 'message' | 'ids' = 'message') {
+  announce(message: Message, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
     if (!this.node) {
       return;
     }
 
     let node = document.createElement('div');
-    if (mode === 'message') {
-      node.textContent = message;
-    } else {
+    if (typeof message === 'object') {
       // To read an aria-labelledby, the element must have an appropriate role, such as img.
       node.setAttribute('role', 'img');
-      node.setAttribute('aria-labelledby', message);
+      node.setAttribute('aria-labelledby', message['aria-labelledby']);
+    } else {
+      node.textContent = message;
     }
 
     if (assertiveness === 'assertive') {
