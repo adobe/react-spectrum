@@ -370,11 +370,14 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               transform: 'translate(-50%, -50%)',
               visibility: {
                 default: 'hidden',
-                isProgressVisible: 'visible'
+                isPending: 'visible'
               },
-              height: 16 // better way to do this? not sure why the height is bigger than the content
+              opacity: {
+                default: 0,
+                isProgressVisible: 1
+              }
             })({isProgressVisible, isPending})}>
-            <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColorProgress} />
+            <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColorProgress} UNSAFE_style={{display: 'block'}} />
           </div>
         }
       </Provider>

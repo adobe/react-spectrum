@@ -32,11 +32,20 @@ export function announce(
     // wait for the live announcer regions to be added to the dom, then announce
     // otherwise Safari won't announce the message if it's added too quickly
     // found most times less than 100ms were not consistent when announcing with Safari
-    setTimeout(() => {
-      if (liveAnnouncer?.isAttached()) {
-        liveAnnouncer?.announce(message, assertiveness, timeout);
-      }
-    }, 100);
+
+    // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+    // https://github.com/reactwg/react-18/discussions/102
+    // if we're in a test environment, announce without waiting
+    // @ts-ignore
+    if (!(typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined')) {
+      setTimeout(() => {
+        if (liveAnnouncer?.isAttached()) {
+          liveAnnouncer?.announce(message, assertiveness, timeout);
+        }
+      }, 100);
+    } else {
+      liveAnnouncer.announce(message, assertiveness, timeout);
+    }
   } else {
     liveAnnouncer.announce(message, assertiveness, timeout);
   }

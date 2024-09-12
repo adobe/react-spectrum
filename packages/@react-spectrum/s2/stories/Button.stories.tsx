@@ -53,9 +53,23 @@ export const Example: Story = {
 
 
 export const PendingButton = {
-  render: (args) => <PendingButtonExample {...args} />,
-  args: {
-    children: 'Press me'
+  render: (args) => {
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+        <PendingButtonExample {...args}>Press me</PendingButtonExample>
+        <PendingButtonExample aria-label="Aria label supercedes" {...args}>Press me</PendingButtonExample>
+        <div id="foo">external label</div>
+        <PendingButtonExample iaria-label="Aria label is included" aria-labelledby="foo" {...args}><NewIcon /></PendingButtonExample>
+        <PendingButtonExample {...args}><NewIcon /><Text>Test</Text></PendingButtonExample>
+        <PendingButtonExample {...args}><Text>Test</Text><NewIcon /></PendingButtonExample>
+        <PendingButtonExample {...args}><Text>Test</Text><NewIcon aria-label="New email" /></PendingButtonExample>
+        <PendingButtonExample {...args}><NewIcon aria-label="New email" /></PendingButtonExample>
+        <PendingButtonExample {...args} styles={style({maxWidth: 128})}>
+          <NewIcon />
+          <Text>Very long button with wrapping text to see what happens</Text>
+        </PendingButtonExample>
+      </div>
+    );
   }
 };
 
@@ -78,19 +92,10 @@ function PendingButtonExample(props) {
     };
   }, []);
 
-  let [hideOthers, setHideOthers] = useState(false);
-
   return (
-    <>
-      {!hideOthers && (
-        <Button
-          {...props}
-          isPending={isPending}
-          onPress={handlePress}>
-          <Text>Press me</Text>
-        </Button>
-      )}
-      <Button onPress={() => setHideOthers(prev => !prev)}>Toggle others</Button>
-    </>
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress} />
   );
 }
