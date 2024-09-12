@@ -32,6 +32,7 @@ let states = [
 ];
 
 let combinations = generatePowerset(states);
+let chunkSize = Math.ceil(combinations.length / 3);
 
 function shortName(key, value) {
   let returnVal = '';
@@ -50,10 +51,10 @@ function shortName(key, value) {
   return returnVal;
 }
 
-const Template = (args) => {
+const Template = ({combos, ...args}) => {
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
-      {combinations.map(c => {
+      {combos.map(c => {
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
@@ -66,5 +67,19 @@ const Template = (args) => {
 };
 
 export const Default = {
-  render: Template
+  render: Template,
+  name: 'all visual option combos 1 of 3',
+  args: {combos: combinations.slice(0, chunkSize)}
+};
+
+export const ComboPt2 = {
+  render: Template,
+  args: {combos: combinations.slice(chunkSize, chunkSize * 2)},
+  name: 'all visual option combos 2 of 3'
+};
+
+export const ComboPt3 = {
+  render: Template,
+  args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
+  name: 'all visual option combos 3 of 3'
 };
