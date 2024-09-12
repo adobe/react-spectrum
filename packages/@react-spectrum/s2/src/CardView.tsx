@@ -391,6 +391,27 @@ class WaterfallLayout<T extends object, O> extends Layout<Node<T>, O> {
 
     return bestKey;
   }
+
+  // This overrides the default behavior of shift selection to work spacially
+  // rather than following the order of the items in the collection (which may appear unpredictable).
+  getKeyRange(from: Key, to: Key): Key[] {
+    let fromLayoutInfo = this.getLayoutInfo(from);
+    let toLayoutInfo = this.getLayoutInfo(to);
+    if (!fromLayoutInfo || !toLayoutInfo) {
+      return [];
+    }
+
+    // Find items where half of the area intersects the rectangle 
+    // formed from the first item to the last item in the range.
+    let rect = fromLayoutInfo.rect.union(toLayoutInfo.rect);
+    let keys: Key[] = [];
+    for (let layoutInfo of this.layoutInfos.values()) {
+      if (rect.intersection(layoutInfo.rect).area > layoutInfo.rect.area / 2) {
+        keys.push(layoutInfo.key);
+      }
+    }
+    return keys;
+  }
 }
 
 const layoutOptions = {
