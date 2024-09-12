@@ -15,8 +15,8 @@ import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
+import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {ContentContext, FooterContext, TextContext} from './Content';
-import {ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
@@ -32,9 +32,14 @@ import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
+interface CardRenderProps {
+  /** The size of the Card. */
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL'
+}
+
 export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
   /** The children of the Card. */
-  children: ReactNode,
+  children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
   /**
    * The size of the Card.
    * @default 'M'
@@ -396,7 +401,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         [SkeletonContext, isSkeleton]
       ]}>
       <ImageCoordinator>
-        {props.children}
+        {typeof props.children === 'function' ? props.children({size}) : props.children}
       </ImageCoordinator>
     </Provider>
   );
@@ -550,45 +555,47 @@ export interface AssetCardProps extends Omit<CardProps, 'density'> {}
 export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Card {...props} ref={ref} density="regular">
-      <Provider
-        values={[
-          [ImageContext, {
-            alt: '',
-            styles: style({
-              width: 'full',
-              aspectRatio: 'square',
-              objectFit: 'contain',
-              pointerEvents: 'none',
-              userSelect: 'none'
-            })
-          }],
-          [IllustrationContext, {
-            render(icon) {
-              return (
-                <SkeletonWrapper>
-                  <div
-                    className={style({
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'gray-100',
-                      aspectRatio: 'square'
-                    })}>
-                    {icon}
-                  </div>
-                </SkeletonWrapper>
-              );
-            },
-            styles: style({
-              height: 'auto',
-              maxSize: 160,
-              // TODO: this is made up.
-              width: '[50%]'
-            })
-          }]
-        ]}>
-        {props.children}
-      </Provider>
+      {composeRenderProps(props.children, children => (
+        <Provider
+          values={[
+            [ImageContext, {
+              alt: '',
+              styles: style({
+                width: 'full',
+                aspectRatio: 'square',
+                objectFit: 'contain',
+                pointerEvents: 'none',
+                userSelect: 'none'
+              })
+            }],
+            [IllustrationContext, {
+              render(icon) {
+                return (
+                  <SkeletonWrapper>
+                    <div
+                      className={style({
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'gray-100',
+                        aspectRatio: 'square'
+                      })}>
+                      {icon}
+                    </div>
+                  </SkeletonWrapper>
+                );
+              },
+              styles: style({
+                height: 'auto',
+                maxSize: 160,
+                // TODO: this is made up.
+                width: '[50%]'
+              })
+            }]
+          ]}>
+          {children}
+        </Provider>
+      ))}
     </Card>
   );
 });
@@ -610,35 +617,37 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">
-      <Provider
-        values={[
-          [ImageContext, {
-            alt: '',
-            styles: style({
-              width: 'full',
-              aspectRatio: '[3/1]',
-              objectFit: 'cover',
-              pointerEvents: 'none',
-              userSelect: 'none'
-            })
-          }],
-          [AvatarContext, {
-            size: avatarSize[size],
-            UNSAFE_style: {
-              '--size': avatarSize[size] + 'px'
-            } as CSSProperties,
-            styles: style({
-              position: 'relative',
-              marginTop: {
-                default: 0,
-                ':is([slot=preview] + &)': '[calc(var(--size) / -2)]'
-              }
-            }),
-            isOverBackground: true
-          }]
-        ]}>
-        {props.children}
-      </Provider>
+      {composeRenderProps(props.children, children => (
+        <Provider
+          values={[
+            [ImageContext, {
+              alt: '',
+              styles: style({
+                width: 'full',
+                aspectRatio: '[3/1]',
+                objectFit: 'cover',
+                pointerEvents: 'none',
+                userSelect: 'none'
+              })
+            }],
+            [AvatarContext, {
+              size: avatarSize[size],
+              UNSAFE_style: {
+                '--size': avatarSize[size] + 'px'
+              } as CSSProperties,
+              styles: style({
+                position: 'relative',
+                marginTop: {
+                  default: 0,
+                  ':is([slot=preview] + &)': '[calc(var(--size) / -2)]'
+                }
+              }),
+              isOverBackground: true
+            }]
+          ]}>
+          {children}
+        </Provider>
+      ))}
     </Card>
   );
 });
@@ -660,69 +669,71 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">
-      <Provider
-        values={[
-          [ImageContext, {
-            slots: {
-              preview: {
-                alt: '',
-                styles: style({
-                  width: 'full',
-                  aspectRatio: '[5/1]',
-                  objectFit: 'cover',
-                  pointerEvents: 'none',
-                  userSelect: 'none'
-                })
-              },
-              thumbnail: {
-                alt: '',
-                styles: style({
-                  position: 'relative',
-                  pointerEvents: 'none',
-                  userSelect: 'none',
-                  size: {
+      {composeRenderProps(props.children, children => (
+        <Provider
+          values={[
+            [ImageContext, {
+              slots: {
+                preview: {
+                  alt: '',
+                  styles: style({
+                    width: 'full',
+                    aspectRatio: '[5/1]',
+                    objectFit: 'cover',
+                    pointerEvents: 'none',
+                    userSelect: 'none'
+                  })
+                },
+                thumbnail: {
+                  alt: '',
+                  styles: style({
+                    position: 'relative',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
                     size: {
-                      XS: 24,
-                      S: 36,
-                      M: 40,
-                      L: 44,
-                      XL: 56
-                    }
-                  },
-                  borderRadius: {
-                    default: 'default',
-                    size: {
-                      XS: 'sm',
-                      S: 'sm'
-                    }
-                  },
-                  objectFit: 'cover',
-                  marginTop: {
-                    default: 0,
-                    ':is([slot=preview] + &)': '[calc(self(height) / -2)]'
-                  },
-                  outlineStyle: 'solid',
-                  outlineWidth: {
-                    default: 2,
-                    size: {
-                      XS: 1
-                    }
-                  },
-                  outlineColor: '--s2-container-bg'
-                })({size})
+                      size: {
+                        XS: 24,
+                        S: 36,
+                        M: 40,
+                        L: 44,
+                        XL: 56
+                      }
+                    },
+                    borderRadius: {
+                      default: 'default',
+                      size: {
+                        XS: 'sm',
+                        S: 'sm'
+                      }
+                    },
+                    objectFit: 'cover',
+                    marginTop: {
+                      default: 0,
+                      ':is([slot=preview] + &)': '[calc(self(height) / -2)]'
+                    },
+                    outlineStyle: 'solid',
+                    outlineWidth: {
+                      default: 2,
+                      size: {
+                        XS: 1
+                      }
+                    },
+                    outlineColor: '--s2-container-bg'
+                  })({size})
+                }
               }
-            }
-          }],
-          [FooterContext, {
-            styles: mergeStyles(footer, style({
-              justifyContent: 'end'
-            }))
-          }],
-          [ButtonContext, {size: buttonSize[size]}],
-          [LinkButtonContext, {size: buttonSize[size]}]
-        ]}>
-        {props.children}
-      </Provider>
+            }],
+            [FooterContext, {
+              styles: mergeStyles(footer, style({
+                justifyContent: 'end'
+              }))
+            }],
+            [ButtonContext, {size: buttonSize[size]}],
+            [LinkButtonContext, {size: buttonSize[size]}]
+          ]}>
+          {children}
+        </Provider>
+      ))}
     </Card>
   );
 });

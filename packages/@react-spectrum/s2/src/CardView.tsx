@@ -18,13 +18,14 @@ import {
   UNSTABLE_Virtualizer
 } from 'react-aria-components';
 import {CardContext, CardViewContext} from './Card';
+import {DOMRef, forwardRefType, Key, LayoutDelegate, LoadingState, Node} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {forwardRef, useMemo, useState} from 'react';
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Key, LoadingState, Node} from '@react-types/shared';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useLoadMore} from '@react-aria/utils';
-import {useMemo, useRef} from 'react';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
 
 export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
   /**
@@ -486,6 +487,8 @@ const layoutOptions = {
   }
 };
 
+const SIZES = ['XS', 'S', 'M', 'L', 'XL'] as const;
+
 const cardViewStyles = style({
   overflowY: {
     default: 'auto',
@@ -507,27 +510,55 @@ const cardViewStyles = style({
   outlineOffset: -2
 }, getAllowedOverrides({height: true}));
 
-export function CardView<T extends object>(props: CardViewProps<T>) {
-  let {children, layout: layoutName = 'grid', size = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
-  let options = layoutOptions[size][density];
+function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
   let layout = useMemo(() => {
     return layoutName === 'waterfall' ? new WaterfallLayout() : new FlexibleGridLayout();
   }, [layoutName]);
+  
+  // This calculates the maximum t-shirt size where at least two columns fit in the available width.
+  let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
+  let updateSize = useEffectEvent(() => {
+    let w = domRef.current.clientWidth;
+    let i = SIZES.length - 1;
+    while (i > 0) {
+      let opts = layoutOptions[SIZES[i]][density];
+      if (w >= opts.minItemSize.width * 2 + opts.minSpace.width * 3) {
+        break;
+      }
+      i--;
+    }
+    setMaxSizeIndex(i);
+  });
 
-  let ref = useRef(null);
+  useResizeObserver({
+    ref: domRef,
+    box: 'border-box',
+    onResize: updateSize
+  });
+
+  useLayoutEffect(() => {
+    updateSize();
+  }, [updateSize]);
+
+  // The actual rendered t-shirt size is the minimum between the size prop and the maximum possible size.
+  let size = SIZES[Math.min(maxSizeIndex, SIZES.indexOf(sizeProp))];
+  let options = layoutOptions[size][density];
+
   useLoadMore({
     isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
     items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
     onLoadMore: props.onLoadMore
-  }, ref);
-
+  }, domRef);
+  
   return (
     <UNSTABLE_Virtualizer layout={layout} layoutOptions={options}>
       <CardViewContext.Provider value={GridListItem}>
         <CardContext.Provider value={{size, variant}}>
           <ImageCoordinator>
             <AriaGridList
-              ref={ref}
+              ref={domRef}
               {...otherProps}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
@@ -544,3 +575,6 @@ export function CardView<T extends object>(props: CardViewProps<T>) {
     </UNSTABLE_Virtualizer>
   );
 }
+
+const _CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(CardView);
+export {_CardView as CardView};

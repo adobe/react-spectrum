@@ -56,37 +56,47 @@ type Item = {
   height: number
 };
 
+const avatarSize = {
+  XS: 16,
+  S: 20,
+  M: 24,
+  L: 28,
+  XL: 32
+} as const;
+
 function PhotoCard({item, layout}: {item: Item, layout: string}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
-      <CardPreview>
-        <Image 
-          src={item.urls.regular}
-          styles={style({
-            width: 'full',
-            pointerEvents: 'none'
-          })}
-          // TODO - should we have a safe `dynamicStyles` or something for this?
-          UNSAFE_style={{
-            aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
-            objectFit: layout === 'waterfall' ? 'contain' : 'cover'
-          }}
-          renderError={() => (
-            <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
-              <ErrorIcon size="S" />
-            </div>
-          )} />
-      </CardPreview>
-      <Content>
-        <Text slot="title">{item.description || item.alt_description}</Text>
-        <ActionMenu>
-          <MenuItem>Test</MenuItem>
-        </ActionMenu>
-        <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-          <Avatar src={item.user.profile_image.small} />
-          <Text slot="description">{item.user.name}</Text>
-        </div>
-      </Content>
+      {({size}) => (<>
+        <CardPreview>
+          <Image 
+            src={item.urls.regular}
+            styles={style({
+              width: 'full',
+              pointerEvents: 'none'
+            })}
+            // TODO - should we have a safe `dynamicStyles` or something for this?
+            UNSAFE_style={{
+              aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
+              objectFit: layout === 'waterfall' ? 'contain' : 'cover'
+            }}
+            renderError={() => (
+              <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
+                <ErrorIcon size="S" />
+              </div>
+            )} />
+        </CardPreview>
+        <Content>
+          <Text slot="title">{item.description || item.alt_description}</Text>
+          {size !== 'XS' && <ActionMenu>
+            <MenuItem>Test</MenuItem>
+          </ActionMenu>}
+          <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
+            <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
+            <Text slot="description">{item.user.name}</Text>
+          </div>
+        </Content>
+      </>)}
     </Card>
   );
 }
