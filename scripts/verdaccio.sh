@@ -155,11 +155,11 @@ then
   mv dist ../../$verdaccio_path/s2-parcel-example
 
   echo 'build Spectrum 2 + Webpack test app'
-  cd ../../examples/s2-webpack5-example
+  cd ../../examples/s2-webpack-5-example
   yarn config set npmRegistryServer $registry
   yarn install --no-immutable
   yarn build
-  mv dist ../../$verdaccio_path/s2-webpack5-example
+  mv dist ../../$verdaccio_path/s2-webpack-5-example
 
   cd ../..
 
