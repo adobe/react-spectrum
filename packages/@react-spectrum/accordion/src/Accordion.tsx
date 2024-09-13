@@ -47,11 +47,13 @@ interface SpectrumAccordionItemProps extends AccordionItemProps, DOMProps, AriaL
   children: [ReactElement<SpectrumAccordionHeaderProps>, ReactElement<SpectrumAccordionPanelProps>]
 }
 
-function AccordionItem(props: SpectrumAccordionItemProps) {
+function AccordionItem(props: SpectrumAccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  let domRef = useDOMRef(ref);
   return (
     <RACAccordionItem
       {...props}
+      ref={domRef}
       className={({isExpanded, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
         'is-expanded': isExpanded,
         'is-disabled': isDisabled
@@ -66,9 +68,10 @@ export interface SpectrumAccordionPanelProps extends AccordionPanelProps, DOMPro
   children: React.ReactNode
 }
 
-function AccordionPanel(props: SpectrumAccordionPanelProps) {
+function AccordionPanel(props: SpectrumAccordionPanelProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
   return (
-    <RACAccordionPanel className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
+    <RACAccordionPanel ref={domRef} className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
       {props.children}
     </RACAccordionPanel>
   );
@@ -84,11 +87,12 @@ export interface SpectrumAccordionHeaderProps extends DOMProps, AriaLabelingProp
   children: React.ReactNode
 }
 
-function AccordionHeader(props: SpectrumAccordionHeaderProps) {
+function AccordionHeader(props: SpectrumAccordionHeaderProps, ref: DOMRef<HTMLHeadingElement>) {
   let {level = 3} = props;
   let {direction} = useLocale();
+  let domRef = useDOMRef(ref);
   return (
-    <Heading level={level} className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
+    <Heading ref={domRef} level={level} className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
       <Button
         slot="trigger"
         className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
