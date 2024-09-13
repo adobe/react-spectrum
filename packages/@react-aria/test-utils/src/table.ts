@@ -12,7 +12,7 @@
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
-import {triggerLongPress} from './events';
+import {pressElement, triggerLongPress} from './events';
 export interface TableOptions extends UserOpts, BaseTesterOpts {
   user: any,
   advanceTimer: UserOpts['advanceTimer']
@@ -39,34 +39,21 @@ export class TableTester {
     this._interactionType = type;
   };
 
-  private pressElement = async (element: HTMLElement) => {
-    if (this._interactionType === 'mouse') {
-      await this.user.click(element);
-    } else if (this._interactionType === 'keyboard') {
-      // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
-      // stick to simulting an actual user's keyboard operations as closely as possible
-      // There are problems when using this approach though, actions like trying to trigger the select all checkbox and stuff behave oddly.
-      act(() => element.focus());
-      await this.user.keyboard('[Space]');
-    } else if (this._interactionType === 'touch') {
-      await this.user.pointer({target: element, keys: '[TouchA]'});
-    }
-  };
-
-  toggleRowSelection = async (opts: {index?: number, text?: string, needsLongPress?: boolean} = {}) => {
+  toggleRowSelection = async (opts: {index?: number, text?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
     let {
       index,
       text,
-      needsLongPress
+      needsLongPress,
+      interactionType = this._interactionType
     } = opts;
 
     let row = this.findRow({index, text});
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
-      await this.pressElement(rowCheckbox);
+      await pressElement(this.user, rowCheckbox, interactionType);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      if (needsLongPress && this._interactionType === 'touch') {
+      if (needsLongPress && interactionType === 'touch') {
         if (this._advanceTimer == null) {
           throw new Error('No advanceTimers provided for long press.');
         }
@@ -78,7 +65,7 @@ export class TableTester {
         // run Table.test's "should support long press to enter selection mode on touch" test to see what happens
         await fireEvent.click(cell);
       } else {
-        await this.pressElement(cell);
+        await pressElement(this.user, cell, interactionType);
       }
     }
 
@@ -92,10 +79,11 @@ export class TableTester {
     });
   };
 
-  toggleSort = async (opts: {index?: number, text?: string} = {}) => {
+  toggleSort = async (opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) => {
     let {
       index,
-      text
+      text,
+      interactionType = this._interactionType
     } = opts;
 
     let columnheader;
@@ -114,10 +102,10 @@ export class TableTester {
       // TODO: Focus management is all kinda of messed up if I just use .focus and Space to open the sort menu. Seems like
       // the focused key doesn't get properly set to the desired column header. Have to do this strange flow where I focus the
       // column header except if the active element is already the menu button within the column header
-      if (this._interactionType === 'keyboard' && document.activeElement !== menuButton) {
-        await this.pressElement(columnheader);
+      if (interactionType === 'keyboard' && document.activeElement !== menuButton) {
+        await pressElement(this.user, columnheader, interactionType);
       } else {
-        await this.pressElement(menuButton);
+        await pressElement(this.user, menuButton, interactionType);
       }
 
       await waitFor(() => {
@@ -141,9 +129,9 @@ export class TableTester {
         let menu = document.getElementById(menuId);
         if (menu) {
           if (currentSort === 'ascending') {
-            await this.pressElement(within(menu).getAllByRole('menuitem')[1]);
+            await pressElement(this.user, within(menu).getAllByRole('menuitem')[1], interactionType);
           } else {
-            await this.pressElement(within(menu).getAllByRole('menuitem')[0]);
+            await pressElement(this.user, within(menu).getAllByRole('menuitem')[0], interactionType);
           }
 
           await waitFor(() => {
@@ -173,28 +161,29 @@ export class TableTester {
         }
       });
     } else {
-      await this.pressElement(columnheader);
+      await pressElement(this.user, columnheader, interactionType);
     }
   };
   // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
   // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
   // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
-  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean} = {}) => {
+  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
     let {
       index,
       text,
-      needsDoubleClick
+      needsDoubleClick,
+      interactionType = this._interactionType
     } = opts;
 
     let row = this.findRow({index, text});
     if (row) {
       if (needsDoubleClick) {
         await this.user.dblClick(row);
-      } else if (this._interactionType === 'keyboard') {
+      } else if (interactionType === 'keyboard') {
         act(() => row.focus());
         await this.user.keyboard('[Enter]');
       } else {
-        await this.pressElement(row);
+        await pressElement(this.user, row, interactionType);
       }
     }
   };
@@ -205,13 +194,16 @@ export class TableTester {
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
 
-  toggleSelectAll = async () => {
+  toggleSelectAll = async (opts: {interactionType?: UserOpts['interactionType']} = {}) => {
+    let {
+      interactionType = this._interactionType
+    } = opts;
     let checkbox = within(this.table).getByLabelText('Select All');
-    if (this._interactionType === 'keyboard') {
+    if (interactionType === 'keyboard') {
       // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
       await this.user.click(checkbox);
     } else {
-      await this.pressElement(checkbox);
+      await pressElement(this.user, checkbox, interactionType);
     }
   };
 

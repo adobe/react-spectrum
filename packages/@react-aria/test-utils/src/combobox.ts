@@ -53,24 +53,24 @@ export class ComboBoxTester {
     this._interactionType = type;
   };
 
-  open = async (opts: {triggerBehavior?: 'focus' | 'manual'} = {}) => {
-    let {triggerBehavior = 'manual'} = opts;
+  open = async (opts: {triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) => {
+    let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     let combobox = this.combobox;
     let isDisabled = trigger.hasAttribute('disabled');
 
-    if (this._interactionType === 'mouse') {
+    if (interactionType === 'mouse') {
       if (triggerBehavior === 'focus') {
         await this.user.click(combobox);
       } else {
         await this.user.click(trigger);
       }
-    } else if (this._interactionType === 'keyboard' && this._trigger != null) {
+    } else if (interactionType === 'keyboard' && this._trigger != null) {
       act(() => this._trigger!.focus());
       if (triggerBehavior !== 'focus') {
         await this.user.keyboard('{ArrowDown}');
       }
-    } else if (this._interactionType === 'touch') {
+    } else if (interactionType === 'touch') {
       if (triggerBehavior === 'focus') {
         await this.user.pointer({target: combobox, keys: '[TouchA]'});
       } else {
@@ -95,8 +95,8 @@ export class ComboBoxTester {
     });
   };
 
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual'} = {}) => {
-    let {optionText, option, triggerBehavior} = opts;
+  selectOption = async (opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) => {
+    let {optionText, option, triggerBehavior, interactionType = this._interactionType} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
     }
@@ -109,7 +109,7 @@ export class ComboBoxTester {
 
       // TODO: keyboard method of selecting the the option is a bit tricky unless I simply simulate the user pressing the down arrow
       // the required amount of times to reach the option. For now just click the option even in keyboard mode
-      if (this._interactionType === 'mouse' || this._interactionType === 'keyboard') {
+      if (interactionType === 'mouse' || interactionType === 'keyboard') {
         await this.user.click(option);
       } else {
         await this.user.pointer({target: option, keys: '[TouchA]'});

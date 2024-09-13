@@ -12,6 +12,7 @@
 
 import {act, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
+import {pressElement} from './events';
 
 export interface GridListOptions extends UserOpts, BaseTesterOpts {
   user: any
@@ -33,35 +34,21 @@ export class GridListTester {
     this._interactionType = type;
   };
 
-  // TODO: taken directly from table, move to somewhere sharable. Maybe can be used by the other utils
-  // as well (not sure if the keyboard one is valid for all of them aka if we'd consider doing "".focus" directly on the element prior
-  // to the actual keystroke as valid)
-  private async pressElement(element: HTMLElement) {
-    if (this._interactionType === 'mouse') {
-      await this.user.click(element);
-    } else if (this._interactionType === 'keyboard') {
-      act(() => element.focus());
-      await this.user.keyboard('[Space]');
-    } else if (this._interactionType === 'touch') {
-      await this.user.pointer({target: element, keys: '[TouchA]'});
-    }
-  }
-
   // TODO: support long press? This is also pretty much the same as table's toggleRowSelection so maybe can share
   // For now, don't include long press, see if people need it or if we should just expose long press as a separate util if it isn't very common
   // If the current way of passing in the user specified advance timers is ok, then I'd be find including long press
   // Maybe also support an option to force the click to happen on a specific part of the element (checkbox or row). That way
   // the user can test a specific type of interaction?
-  toggleRowSelection = async (opts: {index?: number, text?: string} = {}) => {
-    let {index, text} = opts;
+  toggleRowSelection = async (opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) => {
+    let {index, text, interactionType = this._interactionType} = opts;
 
     let row = this.findRow({index, text});
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
-      await this.pressElement(rowCheckbox);
+      await pressElement(this.user, rowCheckbox, interactionType);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
-      await this.pressElement(cell);
+      await pressElement(this.user, cell, interactionType);
     }
   };
 
@@ -88,22 +75,23 @@ export class GridListTester {
 
   // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
   // user specificlly tells us
-  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean}) => {
+  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']}) => {
     let {
       index,
       text,
-      needsDoubleClick
+      needsDoubleClick,
+      interactionType = this._interactionType
     } = opts;
 
     let row = this.findRow({index, text});
     if (row) {
       if (needsDoubleClick) {
         await this.user.dblClick(row);
-      } else if (this._interactionType === 'keyboard') {
+      } else if (interactionType === 'keyboard') {
         act(() => row.focus());
         await this.user.keyboard('[Enter]');
       } else {
-        await this.pressElement(row);
+        await pressElement(this.user, row, interactionType);
       }
     }
   };

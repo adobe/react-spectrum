@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
+import {UserOpts} from './user';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
 
@@ -29,4 +30,19 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   await fireEvent.pointerDown(element, {pointerType: 'mouse', ...pointerOpts});
   await act(async () => await advanceTimer(DEFAULT_LONG_PRESS_TIME));
   await fireEvent.pointerUp(element, {pointerType: 'mouse', ...pointerOpts});
+}
+
+
+export async function pressElement(user, element: HTMLElement, interactionType: UserOpts['interactionType']) {
+  if (interactionType === 'mouse') {
+    await user.click(element);
+  } else if (interactionType === 'keyboard') {
+    // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
+    // stick to simulting an actual user's keyboard operations as closely as possible
+    // There are problems when using this approach though, actions like trying to trigger the select all checkbox and stuff behave oddly.
+    act(() => element.focus());
+    await user.keyboard('[Space]');
+  } else if (interactionType === 'touch') {
+    await user.pointer({target: element, keys: '[TouchA]'});
+  }
 }

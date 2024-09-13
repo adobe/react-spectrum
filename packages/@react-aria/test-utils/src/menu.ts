@@ -51,26 +51,27 @@ export class MenuTester {
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  open = async (opts: {needsLongPress?: boolean} = {}) => {
+  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
     let {
-      needsLongPress
+      needsLongPress,
+      interactionType = this._interactionType
     } = opts;
 
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
-    if (this._interactionType === 'mouse' || this._interactionType === 'touch') {
+    if (interactionType === 'mouse' || interactionType === 'touch') {
       if (needsLongPress) {
         if (this._advanceTimer == null) {
           throw new Error('No advanceTimers provided for long press.');
         }
-        let pointerType = this._interactionType === 'mouse' ? 'mouse' : 'touch';
+        let pointerType = interactionType === 'mouse' ? 'mouse' : 'touch';
         await triggerLongPress({element: trigger, advanceTimer: this._advanceTimer, pointerOpts: {pointerType}});
-      } else if (this._interactionType === 'mouse') {
+      } else if (interactionType === 'mouse') {
         await this.user.click(trigger);
       } else {
         await this.user.pointer({target: trigger, keys: '[TouchA]'});
       }
-    } else if (this._interactionType === 'keyboard' && !isDisabled) {
+    } else if (interactionType === 'keyboard' && !isDisabled) {
       act(() => trigger.focus());
       await this.user.keyboard('[Enter]');
     }
@@ -96,8 +97,15 @@ export class MenuTester {
 
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean}) => {
-    let {optionText, menuSelectionMode = 'single', needsLongPress, closesOnSelect = true, option} = opts;
+  selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) => {
+    let {
+      optionText,
+      menuSelectionMode = 'single',
+      needsLongPress,
+      closesOnSelect = true,
+      option,
+      interactionType = this._interactionType
+    } = opts;
     let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
       // TODO: technically this would need the user to pass in if their menu needs long press if we want calling selectOption to
@@ -111,7 +119,7 @@ export class MenuTester {
         option = within(menu).getByText(optionText);
       }
 
-      if (this._interactionType === 'keyboard') {
+      if (interactionType === 'keyboard') {
         if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
           act(() => menu.focus());
         }
@@ -119,7 +127,7 @@ export class MenuTester {
         await this.user.keyboard(optionText);
         await this.user.keyboard('[Enter]');
       } else {
-        if (this._interactionType === 'mouse') {
+        if (interactionType === 'mouse') {
           await this.user.click(option);
         } else {
           await this.user.pointer({target: option, keys: '[TouchA]'});
@@ -145,8 +153,13 @@ export class MenuTester {
   };
 
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
-  openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean}): Promise<MenuTester | null> => {
-    let {submenuTrigger, submenuTriggerText, needsLongPress} = opts;
+  openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']}): Promise<MenuTester | null> => {
+    let {
+      submenuTrigger,
+      submenuTriggerText,
+      needsLongPress,
+      interactionType = this._interactionType
+    } = opts;
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (!trigger.getAttribute('aria-controls') && !isDisabled) {
@@ -162,7 +175,7 @@ export class MenuTester {
           submenu = within(menu).getByText(submenuTriggerText);
         }
 
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenu});
+        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: interactionType, root: submenu});
         await submenuTriggerTester.open();
 
         return submenuTriggerTester;

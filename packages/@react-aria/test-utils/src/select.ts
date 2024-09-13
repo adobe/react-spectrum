@@ -38,16 +38,19 @@ export class SelectTester {
     this._interactionType = type;
   };
 
-  open = async () => {
+  open = async (opts: {interactionType?: UserOpts['interactionType']} = {}) => {
+    let {
+      interactionType = this._interactionType
+    } = opts;
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
 
-    if (this._interactionType === 'mouse') {
+    if (interactionType === 'mouse') {
       await this.user.click(this._trigger);
-    } else if (this._interactionType === 'keyboard') {
+    } else if (interactionType === 'keyboard') {
       act(() => trigger.focus());
       await this.user.keyboard('[Enter]');
-    } else if (this._interactionType === 'touch') {
+    } else if (interactionType === 'touch') {
       await this.user.pointer({target: this._trigger, keys: '[TouchA]'});
     }
 
@@ -68,7 +71,11 @@ export class SelectTester {
     });
   };
 
-  selectOption = async (optionText) => {
+  selectOption = async (opts: {optionText: string, interactionType?: UserOpts['interactionType']}) => {
+    let {
+      optionText,
+      interactionType = this._interactionType
+    } = opts || {};
     let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
       await this.open();
@@ -76,7 +83,7 @@ export class SelectTester {
     let listbox = this.listbox;
     if (listbox) {
       let option = within(listbox).getByText(optionText);
-      if (this._interactionType === 'keyboard') {
+      if (interactionType === 'keyboard') {
         if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
@@ -87,7 +94,7 @@ export class SelectTester {
         await this.user.keyboard('[Enter]');
       } else {
         // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
-        if (this._interactionType === 'mouse') {
+        if (interactionType === 'mouse') {
           await this.user.click(option);
         } else {
           await this.user.pointer({target: option, keys: '[TouchA]'});
