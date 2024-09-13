@@ -74,32 +74,27 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
   }
 
-  getNextKey(key: Key) {
-    key = this.collection.getKeyAfter(key);
+  private findNextNonDisabled(key: Key, getNext: (key: Key) => Key | null): Key | null {
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.isDisabled(item)) {
+      if (item?.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
-      key = this.collection.getKeyAfter(key);
+      key = getNext(key);
     }
 
     return null;
   }
 
+  getNextKey(key: Key) {
+    key = this.collection.getKeyAfter(key);
+    return this.findNextNonDisabled(key, key => this.collection.getKeyAfter(key));
+  }
+
   getPreviousKey(key: Key) {
     key = this.collection.getKeyBefore(key);
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.isDisabled(item)) {
-        return key;
-      }
-
-      key = this.collection.getKeyBefore(key);
-    }
-
-    return null;
+    return this.findNextNonDisabled(key, key => this.collection.getKeyBefore(key));
   }
 
   private findKey(
@@ -151,6 +146,14 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyRightOf(key: Key) {
+    // This is a temporary solution for CardView until we refactor useSelectableCollection.
+    // https://github.com/orgs/adobe/projects/19/views/32?pane=issue&itemId=77825042
+    let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyRightOf' : 'getKeyLeftOf';
+    if (this.layoutDelegate[layoutDelegateMethod]) {
+      key = this.layoutDelegate[layoutDelegateMethod](key);
+      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key));
+    }
+
     if (this.layout === 'grid') {
       if (this.orientation === 'vertical') {
         return this.getNextColumn(key, this.direction === 'rtl');
@@ -165,6 +168,12 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyLeftOf(key: Key) {
+    let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyLeftOf' : 'getKeyRightOf';
+    if (this.layoutDelegate[layoutDelegateMethod]) {
+      key = this.layoutDelegate[layoutDelegateMethod](key);
+      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key));
+    }
+
     if (this.layout === 'grid') {
       if (this.orientation === 'vertical') {
         return this.getNextColumn(key, this.direction === 'ltr');
@@ -180,30 +189,12 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      if (item?.type === 'item' && !this.isDisabled(item)) {
-        return key;
-      }
-
-      key = this.collection.getKeyAfter(key);
-    }
-
-    return null;
+    return this.findNextNonDisabled(key, key => this.collection.getKeyAfter(key));
   }
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.isDisabled(item)) {
-        return key;
-      }
-
-      key = this.collection.getKeyBefore(key);
-    }
-
-    return null;
+    return this.findNextNonDisabled(key, key => this.collection.getKeyBefore(key));
   }
 
   getKeyPageAbove(key: Key) {
@@ -280,7 +271,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
         return key;
       }
 
-      key = this.getKeyBelow(key);
+      key = this.getNextKey(key);
     }
 
     return null;
