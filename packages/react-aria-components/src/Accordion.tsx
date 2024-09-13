@@ -101,14 +101,14 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
 export interface AccordionPanelProps extends RenderProps<{}> {
   /**
    * The accessibility role for the accordion item's panel.
-   * @default 'region'
+   * @default 'group'
    */
-  role?: string,
+  role?: 'group' | 'region',
   children: ReactNode
 }
 
 function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElement>) {
-  let {role = 'region'} = props;
+  let {role = 'group'} = props;
   let {contentProps, contentRef} = useContext(InternalAccordionContext)!;
   let {
     isFocusVisible: isFocusVisibleWithin,
