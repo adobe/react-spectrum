@@ -607,9 +607,9 @@ function getStaticClassName(rules: Rule[]): string {
   return rules.map(rule => (rule.prelude.startsWith('.') ? ' ' + rule.prelude.slice(1) : '') + (Array.isArray(rule.body) ? getStaticClassName(rule.body) : '')).join('');
 }
 
-export function raw(this: MacroContext | void, css: string) {
+export function raw(this: MacroContext | void, css: string, layer = '_.a') {
   let className = generateArbitraryValueSelector(css, true);
-  css = `@layer _.a {
+  css = `@layer ${layer} {
   .${className} {
   ${css}
   }

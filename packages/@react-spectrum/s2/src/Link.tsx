@@ -11,11 +11,13 @@
  */
 
 import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface LinkStyleProps {
@@ -38,7 +40,7 @@ export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className'
 
 export const LinkContext = createContext<ContextValue<LinkProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const link = style<LinkRenderProps & LinkStyleProps>({
+const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
   ...focusRing(),
   borderRadius: 'sm',
   font: {
@@ -83,15 +85,27 @@ const link = style<LinkRenderProps & LinkStyleProps>({
 
 function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkContext);
-  let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles} = props;
+  let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles, children} = props;
 
   let domRef = useFocusableRef(ref);
+  let isSkeleton = useContext(SkeletonContext) || false;
+  [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
+
+  useLayoutEffect(() => {
+    if (domRef.current) {
+      // TODO: should RAC Link pass through inert?
+      domRef.current.inert = isSkeleton;
+    }
+  }, [domRef, isSkeleton]);
+
   return (
     <RACLink
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone}, styles)} />
+      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone, isSkeleton}, styles)}>
+      {children}
+    </RACLink>
   );
 }
 

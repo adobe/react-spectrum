@@ -36,8 +36,9 @@ import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'rea
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {forwardRefType} from './types';
-import {HeaderContext, HeadingContext, ImageContext, KeyboardContext, Text, TextContext} from './Content';
+import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
+import {ImageContext} from './Image';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
@@ -228,6 +229,7 @@ let image = style({
   marginEnd: 'text-to-visual',
   marginTop: fontRelative(6), // made up, need feedback
   alignSelf: 'center',
+  borderRadius: 'sm',
   size: {
     default: 40,
     size: {
@@ -470,7 +472,7 @@ export function MenuItem(props: MenuItemProps) {
                   }
                 }],
                 [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
-                [ImageContext, {className: image({size})}]
+                [ImageContext, {styles: image({size})}]
               ]}>
               {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
