@@ -14,6 +14,7 @@ import {Button, ButtonGroup, Text} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof ButtonGroup> = {
@@ -25,26 +26,6 @@ const meta: Meta<typeof ButtonGroup> = {
 };
 
 export default meta;
-
-function shortName(key, value) {
-  let returnVal = '';
-  switch (key) {
-    case 'isDisabled':
-      returnVal = 'd';
-      break;
-    case 'size':
-      returnVal = `size: ${value}`;
-      break;
-    case 'align':
-      returnVal = `align: ${value}`;
-      break;
-    case 'orientation':
-      returnVal = `orien: ${value}`;
-      break;
-
-  }
-  return returnVal;
-}
 
 const Template = ({combos, containerStyle, ...args}) => {
   return (

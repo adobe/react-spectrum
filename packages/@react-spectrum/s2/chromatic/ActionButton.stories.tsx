@@ -14,6 +14,7 @@ import {ActionButton, Text} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
@@ -36,29 +37,6 @@ let states = [
 ];
 
 let combinations = generatePowerset(states);
-
-function shortName(key, value) {
-  let returnVal = '';
-  switch (key) {
-    case 'isQuiet':
-      returnVal = 'q';
-      break;
-    case 'isReadOnly':
-      returnVal = 'ro';
-      break;
-    case 'isDisabled':
-      returnVal = 'd';
-      break;
-    case 'size':
-      returnVal = `size: ${value}`;
-      break;
-    case 'staticColor':
-      returnVal = `static: ${value}`;
-      break;
-
-  }
-  return returnVal;
-}
 
 const Template = (args) => {
   let {children, ...otherArgs} = args;

@@ -38,23 +38,23 @@ Default.play = async ({canvasElement}) => {
 export const WithKeyboardShortcuts = {...KeyboardShortcuts};
 
 WithKeyboardShortcuts.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const WithIcons = {...PublishAndExport};
 
 WithIcons.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const WithImages = {...BlendModes};
 
 WithImages.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const Dynamic = {...DynamicExample};
 
 Dynamic.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };

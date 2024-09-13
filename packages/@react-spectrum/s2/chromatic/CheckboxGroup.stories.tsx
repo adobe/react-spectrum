@@ -13,6 +13,7 @@
 import {Checkbox, CheckboxGroup} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
+import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof CheckboxGroup> = {
@@ -36,38 +37,6 @@ let states = [
   {necessityIndicator: ['label', 'icon']},
   {size: ['S', 'M', 'L', 'XL']}
 ];
-
-function shortName(key, value) {
-  let returnVal = '';
-  switch (key) {
-    case 'isDisabled':
-      returnVal = 'd';
-      break;
-    case 'isEmphasized':
-      returnVal = 'emp';
-      break;
-    case 'isInvalid':
-      returnVal = 'invalid';
-      break;
-    case 'isReadOnly':
-      returnVal = 'ro';
-      break;
-    case 'isRequired':
-      returnVal = 'req';
-      break;
-    case 'orientation':
-      returnVal = `orien: ${value}`;
-      break;
-    case 'necessityIndicator':
-      returnVal = `indicator: ${value}`;
-      break;
-    case 'size':
-      returnVal = `size: ${value}`;
-      break;
-
-  }
-  return returnVal;
-}
 
 const Template = ({combos, containerStyle, ...args}) => {
   return (
@@ -93,7 +62,6 @@ const Template = ({combos, containerStyle, ...args}) => {
 let horizontalStates = [
   ...states
 ];
-
 
 let horizontalCombos = generatePowerset(horizontalStates);
 let horizontalChunkSize = Math.ceil(horizontalCombos.length / 3);

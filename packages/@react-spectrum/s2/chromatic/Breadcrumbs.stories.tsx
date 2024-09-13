@@ -14,6 +14,7 @@ import {Breadcrumb, Breadcrumbs} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Many} from '../stories/Breadcrumbs.stories';
 import type {Meta, StoryObj} from '@storybook/react';
+import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {userEvent, within} from '@storybook/testing-library';
 
@@ -45,20 +46,6 @@ let states = [
 ];
 
 let combinations = generatePowerset(states);
-
-function shortName(key, value) {
-  let returnVal = '';
-  switch (key) {
-    case 'isDisabled':
-      returnVal = 'd';
-      break;
-    case 'size':
-      returnVal = `size: ${value}`;
-      break;
-
-  }
-  return returnVal;
-}
 
 const Template = () => {
   return (

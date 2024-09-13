@@ -39,11 +39,11 @@ Default.play = async ({canvasElement}) => {
 export const WithDialogTrigger = DialogTriggerExample as StoryObj;
 
 WithDialogTrigger.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const DialogContainer = DialogContainerExample as StoryObj;
 
 DialogContainer.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };

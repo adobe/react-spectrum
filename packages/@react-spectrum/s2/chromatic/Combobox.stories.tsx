@@ -38,19 +38,19 @@ Static.play = async ({canvasElement}) => {
 export const WithSections = {...Sections, name: 'Sections'};
 
 WithSections.play = async (context) => {
-  await Static.play(context);
+  await Static.play!(context);
 };
 
 export const WithDynamic = {...Dynamic, name: 'Dynamic'};
 
 WithDynamic.play = async (context) => {
-  await Static.play(context);
+  await Static.play!(context);
 };
 
 export const Icons = {...WithIcons, name: 'With Icons'};
 
 Icons.play = async (context) => {
-  await Static.play(context);
+  await Static.play!(context);
 };
 
 export const ContextualHelp = {...ContextualHelpExample};
@@ -65,5 +65,5 @@ ContextualHelp.play = async ({canvasElement}) => {
 export const WithCustomWidth = CustomWidth as StoryObj;
 
 WithCustomWidth.play = async (context) => {
-  await Static.play(context);
+  await Static.play!(context);
 };

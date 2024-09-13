@@ -37,5 +37,5 @@ Default.play = async ({canvasElement}) => {
 export const WithLongLabel = LongLabel as StoryObj;
 
 WithLongLabel.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };

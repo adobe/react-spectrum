@@ -13,6 +13,7 @@
 import {Checkbox} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
+import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof Checkbox> = {
@@ -37,38 +38,6 @@ let states = [
 ];
 
 let combinations = generatePowerset(states);
-
-function shortName(key, value) {
-  let returnVal = '';
-  switch (key) {
-    case 'defaultSelected':
-      returnVal = 'selected';
-      break;
-    case 'isDisabled':
-      returnVal = 'd';
-      break;
-    case 'isEmphasized':
-      returnVal = 'emp';
-      break;
-    case 'isIndeterminate':
-      returnVal = 'indet';
-      break;
-    case 'isInvalid':
-      returnVal = 'invalid';
-      break;
-    case 'isReadOnly':
-      returnVal = 'ro';
-      break;
-    case 'isRequired':
-      returnVal = 'req';
-      break;
-    case 'size':
-      returnVal = `size: ${value}`;
-      break;
-
-  }
-  return returnVal;
-}
 
 const Template = (args) => {
   return (

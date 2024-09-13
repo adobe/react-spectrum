@@ -38,25 +38,25 @@ Default.play = async ({canvasElement}) => {
 export const WithSections = {...Sections};
 
 WithSections.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const DynamicExample = {...Dynamic, name: 'Dynamic'} as StoryObj;
 
 DynamicExample.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const Icons = {...WithIcons, name: 'With Icons'} as StoryObj;
 
 Icons.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const WithCustomWidth = CustomWidth as StoryObj;
 
 WithCustomWidth.play = async (context) => {
-  await Default.play(context);
+  await Default.play!(context);
 };
 
 export const ContextualHelp = {...ContextualHelpExample} as StoryObj;

@@ -10,60 +10,68 @@
  * governing permissions and limitations under the License.
  */
 
-import {Badge} from '../src';
+import {ColorField} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
-const meta: Meta<typeof Badge> = {
-  component: Badge,
+const meta: Meta<typeof ColorField> = {
+  component: ColorField,
   parameters: {
     chromaticProvider: {disableAnimations: true}
   },
-  title: 'S2 Chromatic/Badge'
+  title: 'S2 Chromatic/ColorField'
 };
 
 export default meta;
 
 let states = [
-  {size: ['S', 'M', 'L', 'XL']},
-  {fillStyle: ['bold', 'subtle', 'outline']},
-  {variant: ['accent', 'informative', 'neutral', 'positive', 'notice', 'negative', 'gray', 'red', 'orange', 'yellow', 'charteuse', 'celery', 'green', 'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink', 'turquoise', 'brown', 'cinnamon', 'silver']}
+  {isInvalid: true},
+  {isReadOnly: true},
+  {isDisabled: true},
+  {isRequired: true},
+  {necessityIndicator: ['label', 'icon']},
+  {size: ['S', 'M', 'L', 'XL']}
 ];
-
-let combinations = generatePowerset(states);
-let chunkSize = Math.ceil(combinations.length / 3);
 
 const Template = ({combos, ...args}) => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 450px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
       {combos.map(c => {
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
-
-        return <Badge key={key} {...args} {...c}>{key}</Badge>;
+        return (
+          <ColorField defaultValue="#e21" label={key} description="test description" errorMessage="test error" {...c} {...args}  />
+        );
       })}
     </div>
   );
 };
 
-export const Default = {
+let sideState = states;
+let sideCombos = generatePowerset(sideState);
+
+export const LabelPositionSide = {
   render: Template,
-  name: 'all visual option combos 1 of 3',
-  args: {combos: combinations.slice(0, chunkSize)}
+  args: {
+    combos: sideCombos,
+    labelPosition: 'side'
+  }
 };
 
-export const ComboPt2 = {
-  render: Template,
-  args: {combos: combinations.slice(chunkSize, chunkSize * 2)},
-  name: 'all visual option combos 2 of 3'
-};
+let topState = [
+  ...states,
+  {labelAlign: ['start', 'end']}
+];
+let topCombos = generatePowerset(topState);
 
-export const ComboPt3 = {
+export const LabelPositionTop = {
   render: Template,
-  args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
-  name: 'all visual option combos 3 of 3'
+  args: {
+    combos: topCombos,
+    labelPosition: 'top'
+  }
 };
