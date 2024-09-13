@@ -11,4 +11,3 @@
  */
 export {useDisclosure} from './useDisclosure';
 export type {DisclosureAria, AriaDisclosureProps} from './useDisclosure';
-export type {AriaAccordionProps} from '@react-types/accordion';

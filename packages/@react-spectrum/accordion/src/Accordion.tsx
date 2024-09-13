@@ -42,7 +42,7 @@ function AccordionGroup(props: SpectrumAccordionGroupProps, ref: DOMRef<HTMLDivE
   );
 }
 
-interface SpectrumAccordionItemProps extends AccordionItemProps, DOMProps, AriaLabelingProps  {
+export interface SpectrumAccordionItemProps extends AccordionItemProps, DOMProps, AriaLabelingProps  {
   /** The contents of the accordion item. The first child should be the header, and the second child should be the panel. */
   children: [ReactElement<SpectrumAccordionHeaderProps>, ReactElement<SpectrumAccordionPanelProps>]
 }

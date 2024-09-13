@@ -11,5 +11,4 @@
  */
 /// <reference types="css-module-types" />
 export {AccordionItem, AccordionGroup, AccordionHeader, AccordionPanel} from './Accordion';
-export {Item} from '@react-stately/collections';
-export type {SpectrumAccordionProps} from '@react-types/accordion';
+export type {SpectrumAccordionGroupProps, SpectrumAccordionItemProps, SpectrumAccordionPanelProps, SpectrumAccordionHeaderProps} from './Accordion';

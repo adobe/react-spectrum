@@ -12,5 +12,4 @@
 
 export {useDisclosureState} from './useDisclosureState';
 
-// export type {DisclosureProps} from '@react-types/accordion';
-export type {DisclosureState} from './useDisclosureState';
+export type {DisclosureState, DisclosureProps} from './useDisclosureState';

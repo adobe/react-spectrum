@@ -11,10 +11,10 @@
  */
 
 import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
+import {SpectrumAccordionGroupProps} from '../src/Accordion';
 import {Template} from '../chromatic/Accordion.stories';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
+const meta: Meta<SpectrumAccordionGroupProps> = {
   title: 'Accordion'
 };
 
