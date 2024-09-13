@@ -13,6 +13,9 @@ parameters:
     type: string
     default: ""
 
+orbs:
+  azure-cli: circleci/azure-cli@1.2.0
+
 executors:
   rsp:
     docker:
@@ -474,7 +477,8 @@ jobs:
             - '*/verdaccio/'
 
   deploy:
-    executor: rsp-xlarge
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
@@ -493,7 +497,8 @@ jobs:
 
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
   deploy-verdaccio:
-    executor: rsp-xlarge
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/verdaccio_dist
@@ -511,7 +516,8 @@ jobs:
             fi
 
   deploy-production:
-    executor: rsp-xlarge
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
