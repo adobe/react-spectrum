@@ -17,6 +17,12 @@ import {
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
+let describeInteractions = (name, tests) => describe.each`
+  interactionType
+  ${'mouse'}
+  ${'keyboard'}
+  ${'touch'}
+`(`${name} - $interactionType`, tests);
 
 let triggerText = 'Menu Button';
 
@@ -343,8 +349,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
 
         it('selects an option via keyboard and autoFocuses it next time the menu is opened via keyboard, does not clear if menu is closed with Esc', async function () {
           let tree = (renderers.singleSelection!)();
-          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container});
-          menuTester.setInteractionType('keyboard');
+          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container, interactionType: 'keyboard'});
           let triggerButton = menuTester.getTrigger();
 
           await menuTester.open();
@@ -607,15 +612,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
     }
 
     if (renderers.submenus) {
-      describe('Submenus', function () {
+      describeInteractions('Submenus general interactions', function ({interactionType}) {
         it('should support a submenu trigger', async () => {
           let tree = (renderers.submenus!)();
 
-          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container});
+          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container, interactionType});
           await menuTester.open();
           let menu = menuTester.getMenu();
 
-          let submenuTrigger = menuTester.getSubmenuTriggers()[0];
+          let submenuTrigger = menuTester.getSubmenuTriggers()[0]!;
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
@@ -624,19 +629,18 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let submenu = submenuUtil.getMenu();
           expect(submenu).toBeInTheDocument();
 
-          // Click a submenu item
-          // not sure why i can't use submenuUtil.selectOption
-          await user.click(submenuUtil.getOptions().filter(item => item?.getAttribute('aria-haspopup') == null)[0]);
+          await submenuUtil.selectOption({option: submenuUtil.getOptions().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
           // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
+          expect(document.activeElement).toBe(menuTester.getTrigger());
         });
 
         it('should support nested submenu triggers', async () => {
           let tree = (renderers.submenus!)();
 
-          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container});
+          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container, interactionType});
           await menuTester.open();
           let menu = menuTester.getMenu();
 
@@ -652,20 +656,22 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let nestedSubmenuTrigger = submenuUtil.getSubmenuTriggers()[0];
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let nestedSubmenuUtil = (await menuTester.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.getMenu();
           expect(nestedSubmenu).toBeInTheDocument();
 
-          // Click a nested submenu item
-          // not sure why i can't use submenuUtil.selectOption
-          await user.click(nestedSubmenuUtil.getOptions().filter(item => item.getAttribute('aria-haspopup') == null)[0]);
+          await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.getOptions().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
+          expect(nestedSubmenu).not.toBeInTheDocument();
+          expect(document.activeElement).toBe(menuTester.getTrigger());
         });
+      });
 
+      describe('submenu specific interaction tests', function () {
         it('should close all submenus if interacting outside root submenu', async () => {
           let tree = (renderers.submenus!)();
 
@@ -685,7 +691,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let nestedSubmenuTrigger = submenuUtil.getSubmenuTriggers()[0];
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let nestedSubmenuUtil = (await menuTester.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
           act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.getMenu();
@@ -698,330 +704,31 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(menu).not.toBeInTheDocument();
         });
 
-        // it('should restore focus to menu trigger if submenu is closed with Escape key', async () => {
-        //   let {getByRole, getAllByRole} = render(
-        //     <MenuTrigger>
-        //       <Button aria-label="Menu">☰</Button>
-        //       <Popover>
-        //         <Menu>
-        //           <MenuItem id="open">Open</MenuItem>
-        //           <MenuItem id="rename">Rename…</MenuItem>
-        //           <MenuItem id="duplicate">Duplicate</MenuItem>
-        //           <SubmenuTrigger>
-        //             <MenuItem id="share">Share…</MenuItem>
-        //             <Popover>
-        //               <Menu>
-        //                 <MenuItem id="email">Email</MenuItem>
-        //                 <MenuItem id="sms">SMS</MenuItem>
-        //                 <MenuItem id="twitter">Twitter</MenuItem>
-        //               </Menu>
-        //             </Popover>
-        //           </SubmenuTrigger>
-        //           <MenuItem id="delete">Delete…</MenuItem>
-        //         </Menu>
-        //       </Popover>
-        //     </MenuTrigger>
-        //   );
+        it('should close nested submenus with Escape', async () => {
+          let tree = (renderers.submenus!)();
 
-        //   let button = getByRole('button');
-        //   expect(button).not.toHaveAttribute('data-pressed');
+          let menuTester = testUtilUser.createTester('MenuTester', {user, root: tree.container});
+          await menuTester.open();
+          let menu = menuTester.getMenu();
 
-        //   await user.click(button);
-        //   expect(button).toHaveAttribute('data-pressed');
+          let submenuTrigger = menuTester.getSubmenuTriggers()[0];
+          let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
+          act(() => {jest.runAllTimers();});
+          let submenu = submenuUtil.getMenu();
 
-        //   let menu = getAllByRole('menu')[0];
-        //   expect(getAllByRole('menuitem')).toHaveLength(5);
+          let nestedSubmenuTrigger = submenuUtil.getSubmenuTriggers()[0];
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
+          act(() => {jest.runAllTimers();});
+          let nestedSubmenu = nestedSubmenuUtil.getMenu();
 
-        //   let popover = menu.closest('.react-aria-Popover');
-        //   expect(popover).toBeInTheDocument();
-        //   expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-
-        //   let triggerItem = getAllByRole('menuitem')[3];
-        //   expect(triggerItem).toHaveTextContent('Share…');
-        //   expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
-        //   expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
-        //   expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
-        //   expect(triggerItem).not.toHaveAttribute('data-open');
-
-        //   // Open the submenu
-        //   await user.pointer({target: triggerItem});
-        //   act(() => {jest.runAllTimers();});
-        //   expect(triggerItem).toHaveAttribute('data-hovered', 'true');
-        //   expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
-        //   expect(triggerItem).toHaveAttribute('data-open', 'true');
-        //   let submenu = getAllByRole('menu')[1];
-        //   expect(submenu).toBeInTheDocument();
-
-        //   let submenuItems = within(submenu).getAllByRole('menuitem');
-        //   expect(submenuItems).toHaveLength(3);
-
-        //   await user.pointer({target: submenuItems[0]});
-        //   act(() => {jest.runAllTimers();});
-        //   expect(document.activeElement).toBe(submenuItems[0]);
-
-        //   await user.keyboard('{Escape}');
-        //   act(() => {jest.runAllTimers();});
-
-        //   expect(submenu).not.toBeInTheDocument();
-        //   expect(menu).not.toBeInTheDocument();
-        //   expect(document.activeElement).toBe(button);
-        // });
-        // it('should restore focus to menu trigger if nested submenu is closed with Escape key', async () => {
-        //   document.elementFromPoint = jest.fn().mockImplementation(query => query);
-        //   let {getByRole, getAllByRole} = render(
-        //     <MenuTrigger>
-        //       <Button aria-label="Menu">☰</Button>
-        //       <Popover>
-        //         <Menu>
-        //           <MenuItem id="open">Open</MenuItem>
-        //           <MenuItem id="rename">Rename…</MenuItem>
-        //           <MenuItem id="duplicate">Duplicate</MenuItem>
-        //           <SubmenuTrigger>
-        //             <MenuItem id="share">Share…</MenuItem>
-        //             <Popover>
-        //               <Menu>
-        //                 <SubmenuTrigger>
-        //                   <MenuItem id="email">Email…</MenuItem>
-        //                   <Popover>
-        //                     <Menu>
-        //                       <MenuItem id="work">Work</MenuItem>
-        //                       <MenuItem id="personal">Personal</MenuItem>
-        //                     </Menu>
-        //                   </Popover>
-        //                 </SubmenuTrigger>
-        //                 <MenuItem id="sms">SMS</MenuItem>
-        //                 <MenuItem id="twitter">Twitter</MenuItem>
-        //               </Menu>
-        //             </Popover>
-        //           </SubmenuTrigger>
-        //           <MenuItem id="delete">Delete…</MenuItem>
-        //         </Menu>
-        //       </Popover>
-        //     </MenuTrigger>
-        //   );
-
-        //   let button = getByRole('button');
-        //   expect(button).not.toHaveAttribute('data-pressed');
-
-        //   await user.click(button);
-        //   expect(button).toHaveAttribute('data-pressed');
-
-        //   let menu = getAllByRole('menu')[0];
-        //   expect(getAllByRole('menuitem')).toHaveLength(5);
-
-        //   let popover = menu.closest('.react-aria-Popover');
-        //   expect(popover).toBeInTheDocument();
-        //   expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-
-        //   let triggerItem = getAllByRole('menuitem')[3];
-        //   expect(triggerItem).toHaveTextContent('Share…');
-        //   expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
-        //   expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
-        //   expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
-        //   expect(triggerItem).not.toHaveAttribute('data-open');
-
-        //   // Open the submenu
-        //   await user.pointer({target: triggerItem});
-        //   act(() => {jest.runAllTimers();});
-        //   expect(triggerItem).toHaveAttribute('data-hovered', 'true');
-        //   expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
-        //   expect(triggerItem).toHaveAttribute('data-open', 'true');
-        //   let submenu = getAllByRole('menu')[1];
-        //   expect(submenu).toBeInTheDocument();
-
-        //   let submenuItems = within(submenu).getAllByRole('menuitem');
-        //   expect(submenuItems).toHaveLength(3);
-
-        //   // Open the nested submenu
-        //   await user.pointer({target: submenuItems[0]});
-        //   act(() => {jest.runAllTimers();});
-        //   expect(document.activeElement).toBe(submenuItems[0]);
-
-        //   let nestedSubmenu = getAllByRole('menu')[1];
-        //   expect(nestedSubmenu).toBeInTheDocument();
-
-        //   let nestedSubmenuItems = within(nestedSubmenu).getAllByRole('menuitem');
-        //   await user.pointer({target: nestedSubmenuItems[0]});
-        //   act(() => {jest.runAllTimers();});
-        //   expect(document.activeElement).toBe(nestedSubmenuItems[0]);
-
-        //   await user.keyboard('{Escape}');
-        //   act(() => {jest.runAllTimers();});
-
-        //   expect(nestedSubmenu).not.toBeInTheDocument();
-        //   expect(submenu).not.toBeInTheDocument();
-        //   expect(menu).not.toBeInTheDocument();
-        //   expect(document.activeElement).toBe(button);
-        // });
-        // it('should not close the menu when clicking on a element within the submenu tree', async () => {
-        //   let onAction = jest.fn();
-        //   let {getByRole, getAllByRole, queryAllByRole} = render(
-        //     <MenuTrigger>
-        //       <Button aria-label="Menu">☰</Button>
-        //       <Popover>
-        //         <Menu onAction={onAction}>
-        //           <MenuItem id="open">Open</MenuItem>
-        //           <MenuItem id="rename">Rename…</MenuItem>
-        //           <MenuItem id="duplicate">Duplicate</MenuItem>
-        //           <SubmenuTrigger>
-        //             <MenuItem id="share">Share…</MenuItem>
-        //             <Popover>
-        //               <Menu onAction={onAction}>
-        //                 <SubmenuTrigger>
-        //                   <MenuItem id="email">Email…</MenuItem>
-        //                   <Popover>
-        //                     <Menu onAction={onAction}>
-        //                       <MenuItem id="work">Work</MenuItem>
-        //                       <MenuItem id="personal">Personal</MenuItem>
-        //                     </Menu>
-        //                   </Popover>
-        //                 </SubmenuTrigger>
-        //                 <MenuItem id="sms">SMS</MenuItem>
-        //                 <MenuItem id="twitter">Twitter</MenuItem>
-        //               </Menu>
-        //             </Popover>
-        //           </SubmenuTrigger>
-        //           <MenuItem id="delete">Delete…</MenuItem>
-        //         </Menu>
-        //       </Popover>
-        //     </MenuTrigger>
-        //   );
-
-        //   let button = getByRole('button');
-        //   expect(button).not.toHaveAttribute('data-pressed');
-
-        //   await user.click(button);
-        //   expect(button).toHaveAttribute('data-pressed');
-
-        //   let menu = getAllByRole('menu')[0];
-        //   expect(getAllByRole('menuitem')).toHaveLength(5);
-
-        //   let popover = menu.closest('.react-aria-Popover');
-        //   expect(popover).toBeInTheDocument();
-
-        //   let triggerItem = getAllByRole('menuitem')[3];
-
-        //   // Open the submenu
-        //   await user.pointer({target: triggerItem});
-        //   act(() => {jest.runAllTimers();});
-        //   let submenu = getAllByRole('menu')[1];
-        //   expect(submenu).toBeInTheDocument();
-
-        //   let nestedTriggerItem = getAllByRole('menuitem')[5];
-
-        //   // Click a nested submenu item trigger
-        //   await user.click(nestedTriggerItem);
-        //   act(() => {jest.runAllTimers();});
-        //   let menus = getAllByRole('menu', {hidden: true});
-        //   expect(menus).toHaveLength(3);
-
-        //   await user.click(getAllByRole('menuitem')[6]);
-        //   menus = queryAllByRole('menu', {hidden: true});
-        //   expect(menus).toHaveLength(0);
-        //   expect(menu).not.toBeInTheDocument();
-        // });
-
-        // it('should support sections', async () => {
-        //   let onAction = jest.fn();
-        //   let {getByRole, getAllByRole} = render(
-        //     <MenuTrigger>
-        //       <Button aria-label="Menu">☰</Button>
-        //       <Popover>
-        //         <Menu onAction={onAction}>
-        //           <Section>
-        //             <Header>Actions</Header>
-        //             <MenuItem id="open">Open</MenuItem>
-        //             <MenuItem id="rename">Rename…</MenuItem>
-        //             <MenuItem id="duplicate">Duplicate</MenuItem>
-        //             <SubmenuTrigger>
-        //               <MenuItem id="share">Share…</MenuItem>
-        //               <Popover>
-        //                 <Menu onAction={onAction}>
-        //                   <Section>
-        //                     <Header>Work</Header>
-        //                     <MenuItem id="email-work">Email</MenuItem>
-        //                     <MenuItem id="sms-work">SMS</MenuItem>
-        //                     <MenuItem id="twitter-work">Twitter</MenuItem>
-        //                   </Section>
-        //                   <Separator />
-        //                   <Section>
-        //                     <Header>Personal</Header>
-        //                     <MenuItem id="email-personal">Email</MenuItem>
-        //                     <MenuItem id="sms-personal">SMS</MenuItem>
-        //                     <MenuItem id="twitter-personal">Twitter</MenuItem>
-        //                   </Section>
-        //                 </Menu>
-        //               </Popover>
-        //             </SubmenuTrigger>
-        //             <MenuItem id="delete">Delete…</MenuItem>
-        //           </Section>
-        //           <Separator />
-        //           <Section>
-        //             <Header>Settings</Header>
-        //             <MenuItem id="user">User Settings</MenuItem>
-        //             <MenuItem id="system">System Settings</MenuItem>
-        //           </Section>
-        //         </Menu>
-        //       </Popover>
-        //     </MenuTrigger>
-        //   );
-
-        //   let button = getByRole('button');
-        //   expect(button).not.toHaveAttribute('data-pressed');
-        //   let menuTester = testUtilUser.createTester('MenuTester', {user, root: button});
-        //   await menuTester.open();
-        //   expect(button).toHaveAttribute('data-pressed');
-
-        //   let groups = menuTester.getSections();
-        //   expect(groups).toHaveLength(2);
-
-        //   expect(groups[0]).toHaveClass('react-aria-Section');
-        //   expect(groups[1]).toHaveClass('react-aria-Section');
-
-        //   expect(groups[0]).toHaveAttribute('aria-labelledby');
-        //   expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Actions');
-
-        //   expect(groups[1]).toHaveAttribute('aria-labelledby');
-        //   expect(document.getElementById(groups[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Settings');
-
-        //   let menu = menuTester.getMenu()!;
-        //   expect(getAllByRole('menuitem')).toHaveLength(7);
-
-        //   let popover = menu.closest('.react-aria-Popover');
-        //   expect(popover).toBeInTheDocument();
-        //   expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-        //   let submenuTriggers = menuTester.getSubmenuTriggers();
-        //   expect(submenuTriggers).toHaveLength(1);
-
-        //   // Open the submenu
-        //   let submenuUtil = (await menuTester.openSubmenu({submenuTriggerText: 'Share…'}))!;
-        //   let submenu = submenuUtil.getMenu()!;
-        //   expect(submenu).toBeInTheDocument();
-
-        //   let submenuItems = submenuUtil.getOptions();
-        //   expect(submenuItems).toHaveLength(6);
-
-        //   let groupsInSubmenu = submenuUtil.getSections();
-        //   expect(groupsInSubmenu).toHaveLength(2);
-
-        //   expect(groupsInSubmenu[0]).toHaveClass('react-aria-Section');
-        //   expect(groupsInSubmenu[1]).toHaveClass('react-aria-Section');
-
-        //   expect(groupsInSubmenu[0]).toHaveAttribute('aria-labelledby');
-        //   expect(document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Work');
-
-        //   expect(groupsInSubmenu[1]).toHaveAttribute('aria-labelledby');
-        //   expect(document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Personal');
-
-        //   await user.click(submenuItems[0]);
-        //   act(() => {jest.runAllTimers();});
-
-        //   expect(onAction).toHaveBeenCalledTimes(1);
-        //   expect(onAction).toHaveBeenLastCalledWith('email-work');
-
-        //   expect(submenu).not.toBeInTheDocument();
-        //   expect(menu).not.toBeInTheDocument();
-        // });
+          await user.keyboard('[Escape]');
+          act(() => {jest.runAllTimers();});
+          act(() => {jest.runAllTimers();});
+          expect(menu).not.toBeInTheDocument();
+          expect(submenu).not.toBeInTheDocument();
+          expect(nestedSubmenu).not.toBeInTheDocument();
+          expect(document.activeElement).toBe(menuTester.getTrigger());
+        });
       });
     }
 
@@ -1030,5 +737,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
     // TODO: long press might be implementation specific, better to test in S2 and RAC separately, also hard because i don't have a way to know if a button was "pressed"
     // TODO: sub dialogs not implemented yet in RAC
     // TODO: where to test portalContainer? it's implementation specific, so RAC only?
+    // TODO: RTL
   });
 };

@@ -15,16 +15,18 @@ import {BaseTesterOpts, UserOpts} from './user';
 import {triggerLongPress} from './events';
 
 export interface MenuOptions extends UserOpts, BaseTesterOpts {
-  user: any
+  user: any,
+  isSubmenu?: boolean
 }
 export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _trigger: HTMLElement;
+  private _trigger: HTMLElement | undefined;
+  private _isSubmenu: boolean = false;
 
   constructor(opts: MenuOptions) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, isSubmenu} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
@@ -41,6 +43,8 @@ export class MenuTester {
         this._trigger = root;
       }
     }
+
+    this._isSubmenu = isSubmenu || false;
   }
 
   setInteractionType = (type: UserOpts['interactionType']) => {
@@ -130,7 +134,7 @@ export class MenuTester {
     let menu = this.menu;
     if (menu) {
       if (!option && optionText) {
-        option = within(menu).getByText(optionText);
+        option = within(menu).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]');
       }
 
       if (interactionType === 'keyboard') {
@@ -139,10 +143,11 @@ export class MenuTester {
         }
 
         if (option) {
-          optionText = option.textContent || '';
+          await this.keyboardNavigateToOption({option});
+        } else {
+          // valid?
+          await this.user.keyboard(optionText);
         }
-
-        await this.user.keyboard(optionText);
         await this.user.keyboard(`[${keyboardActivation}]`);
       } else {
         if (interactionType === 'mouse') {
@@ -151,8 +156,9 @@ export class MenuTester {
           await this.user.pointer({target: option, keys: '[TouchA]'});
         }
       }
+      act(() => {jest.runAllTimers();});
 
-      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space') {
+      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space' && !this._isSubmenu) {
         await waitFor(() => {
           if (document.activeElement !== trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
@@ -193,8 +199,18 @@ export class MenuTester {
           submenu = within(menu).getByText(submenuTriggerText);
         }
 
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: interactionType, root: submenu});
-        await submenuTriggerTester.open();
+        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenu, isSubmenu: true});
+        if (interactionType === 'mouse') {
+          await this.user.pointer({target: submenu});
+          act(() => {jest.runAllTimers();});
+        } else if (interactionType === 'keyboard') {
+          await this.keyboardNavigateToOption({option: submenu});
+          await this.user.keyboard('[ArrowRight]');
+          act(() => {jest.runAllTimers();});
+        } else {
+          await submenuTriggerTester.open();
+        }
+
 
         return submenuTriggerTester;
       }
@@ -202,6 +218,28 @@ export class MenuTester {
 
     return null;
   };
+
+  keyboardNavigateToOption = async (opts: {option: HTMLElement}) => {
+    let {option} = opts;
+    let options = this.getOptions();
+    let targetIndex = options.indexOf(option);
+    if (targetIndex === -1) {
+      throw new Error('Option provided is not in the menu');
+    }
+    if (document.activeElement === this.getMenu()) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+    let currIndex = options.indexOf(document.activeElement as HTMLElement);
+    if (targetIndex === -1) {
+      throw new Error('ActiveElement is not in the menu');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+  };
+
 
   close = async () => {
     let menu = this.menu;
@@ -234,7 +272,7 @@ export class MenuTester {
 
   get options(): HTMLElement[] | never[] {
     let menu = this.menu;
-    let options = [];
+    let options: HTMLElement[] = [];
     if (menu) {
       options = within(menu).queryAllByRole('menuitem');
       if (options.length === 0) {
