@@ -74,29 +74,29 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let {setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
-      setInteractionType(interactionType);
-      await toggleRowSelection({index: 2});
+      let tableTester = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      tableTester.setInteractionType(interactionType);
+      await tableTester.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      await toggleRowSelection({text: 'Foo 4'});
+      await tableTester.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
 
-      await toggleSelectAll();
+      await tableTester.toggleSelectAll();
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect((onSelectionChange.mock.calls[2][0])).toEqual('all');
 
-      await toggleSort({index: 2});
+      await tableTester.toggleSort({index: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'bar', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(2);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });
@@ -104,25 +104,25 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let {setInteractionType, toggleRowSelection, toggleSort} = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
-      setInteractionType(interactionType);
-      await toggleRowSelection({index: 2});
+      let tableTester = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      tableTester.setInteractionType(interactionType);
+      await tableTester.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      await toggleRowSelection({text: 'Foo 4'});
+      await tableTester.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 4']));
 
-      await toggleSort({index: 2});
+      await tableTester.toggleSort({index: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'baz', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(2);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });
@@ -146,29 +146,29 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let {setInteractionType, toggleRowSelection, toggleSelectAll, toggleSort} = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
-      setInteractionType(interactionType);
-      await toggleRowSelection({index: 2});
+      let tableTester = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      tableTester.setInteractionType(interactionType);
+      await tableTester.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      await toggleRowSelection({text: 'Foo 4'});
+      await tableTester.toggleRowSelection({text: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
 
-      await toggleSelectAll();
+      await tableTester.toggleSelectAll();
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect((onSelectionChange.mock.calls[2][0])).toEqual('all');
 
-      await toggleSort({index: 2});
+      await tableTester.toggleSort({index: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'bar', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(2);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });
@@ -176,26 +176,26 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let {setInteractionType, toggleRowSelection, toggleSort} = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
-      setInteractionType(interactionType);
+      let tableTester = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      tableTester.setInteractionType(interactionType);
 
-      await toggleRowSelection({index: 2, focusToSelect: true});
+      await tableTester.toggleRowSelection({index: 2, focusToSelect: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      await toggleRowSelection({text: 'Foo 4', focusToSelect: true});
+      await tableTester.toggleRowSelection({text: 'Foo 4', focusToSelect: true});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 4']));
 
-      await toggleSort({index: 2});
+      await tableTester.toggleSort({index: 2});
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'baz', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(2);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'ascending'});
 
-      await toggleSort({text: 'Foo'});
+      await tableTester.toggleSort({text: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });

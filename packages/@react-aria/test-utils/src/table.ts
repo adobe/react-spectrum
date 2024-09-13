@@ -100,9 +100,9 @@ export class TableTester {
 
     let columnheader;
     if (index != null) {
-      columnheader = this.getColumns()[index];
+      columnheader = this.columns[index];
     } else if (text != null) {
-      columnheader = within(this.getRowGroups()[0]).getByText(text);
+      columnheader = within(this.rowGroups[0]).getByText(text);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
@@ -206,7 +206,7 @@ export class TableTester {
   // add much value if we provide that to them
 
   toggleSelectAll = async () => {
-    let checkbox = within(this.getTable()).getByLabelText('Select All');
+    let checkbox = within(this.table).getByLabelText('Select All');
     if (this._interactionType === 'keyboard') {
       // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
       await this.user.click(checkbox);
@@ -222,8 +222,8 @@ export class TableTester {
     } = opts;
 
     let row;
-    let rows = this.getRows();
-    let bodyRowGroup = this.getRowGroups()[1];
+    let rows = this.rows;
+    let bodyRowGroup = this.rowGroups[1];
     if (index != null) {
       row = rows[index];
     } else if (text != null) {
@@ -241,7 +241,7 @@ export class TableTester {
       text
     } = opts;
 
-    let cell = within(this.getTable()).getByText(text);
+    let cell = within(this.table).getByText(text);
     if (cell) {
       while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role') || '')) {
         if (cell.parentElement) {
@@ -255,41 +255,40 @@ export class TableTester {
     return cell;
   };
 
-  getTable = () => {
+  get table() {
     if (!this._table) {
       throw new Error('Table element hasn\'t been set yet. Did you call `setTable()` yet?');
     }
 
     return this._table;
-  };
+  }
 
-  getRowGroups = () => {
+  get rowGroups() {
     let table = this._table;
     return table ? within(table).queryAllByRole('rowgroup') : [];
-  };
+  }
 
-  getColumns = () => {
-    let headerRowGroup = this.getRowGroups()[0];
+  get columns() {
+    let headerRowGroup = this.rowGroups[0];
     return headerRowGroup ? within(headerRowGroup).queryAllByRole('columnheader') : [];
-  };
+  }
 
-  getRows = () => {
-    let bodyRowGroup = this.getRowGroups()[1];
+  get rows() {
+    let bodyRowGroup = this.rowGroups[1];
     return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
-  };
+  }
 
-  getSelectedRows = () => {
-    return this.getRows().filter(row => row.getAttribute('aria-selected') === 'true');
-  };
+  get selectedRows() {
+    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  }
 
-  getRowHeaders = () => {
-    let table = this.getTable();
+  get rowHeaders() {
+    let table = this.table;
     return table ? within(table).queryAllByRole('rowheader') : [];
-  };
+  }
 
-  getCells = () => {
-    let table = this.getTable();
+  get cells() {
+    let table = this.table;
     return table ? within(table).queryAllByRole('gridcell') : [];
-  };
-
+  }
 }

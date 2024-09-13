@@ -75,9 +75,9 @@ export class GridListTester {
 
     let row;
     if (index != null) {
-      row = this.getRows()[index];
+      row = this.rows[index];
     } else if (text != null) {
-      row = within(this.getGridList()).getByText(text);
+      row = within(this.gridlist).getByText(text);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
@@ -109,25 +109,24 @@ export class GridListTester {
   };
 
   // TODO: do we really need this getter? Theoretically the user already has the reference to the gridlist
-  getGridList = () => {
+  get gridlist() {
     if (!this._gridlist) {
       throw new Error('Gridlist element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._gridlist;
-  };
+  }
 
-  getRows = () => {
-    return within(this.getGridList()).queryAllByRole('row');
-  };
+  get rows() {
+    return within(this.gridlist).queryAllByRole('row');
+  }
 
-  getSelectedRows = () => {
-    return this.getRows().filter(row => row.getAttribute('aria-selected') === 'true');
-  };
+  get selectedRows() {
+    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  }
 
-  getCells = (opts: {element?: HTMLElement} = {}) => {
+  cells = (opts: {element?: HTMLElement} = {}) => {
     let {element} = opts;
-    return within(element || this.getGridList()).queryAllByRole('gridcell');
+    return within(element || this.gridlist).queryAllByRole('gridcell');
   };
-
 }

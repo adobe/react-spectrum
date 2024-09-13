@@ -193,28 +193,28 @@ describe('Table', () => {
 
   it('should render with default classes', () => {
     let {getByRole} = renderTable();
-    let {getTable, getRows, getRowGroups, getColumns, getRowHeaders, getCells} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
-    let table = getTable();
+    let tableTester = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
+    let table = tableTester.table;
     expect(table).toHaveAttribute('class', 'react-aria-Table');
 
-    for (let row of getRows()) {
+    for (let row of tableTester.rows) {
       expect(row).toHaveAttribute('class', 'react-aria-Row');
     }
 
-    let rowGroups = getRowGroups();
+    let rowGroups = tableTester.rowGroups;
     expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('class', 'react-aria-TableHeader');
     expect(rowGroups[1]).toHaveAttribute('class', 'react-aria-TableBody');
 
-    for (let cell of getColumns()) {
+    for (let cell of tableTester.columns) {
       expect(cell).toHaveAttribute('class', 'react-aria-Column');
     }
 
-    for (let cell of getRowHeaders()) {
+    for (let cell of tableTester.rowHeaders) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of getCells()) {
+    for (let cell of tableTester.cells) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -617,8 +617,8 @@ describe('Table', () => {
       </Table>
     );
 
-    let {triggerRowAction} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
-    await triggerRowAction({index: 0});
+    let tableTester = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
+    await tableTester.triggerRowAction({index: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
@@ -629,9 +629,9 @@ describe('Table', () => {
       columnProps: {allowsSorting: true}
     });
 
-    let {getColumns, toggleSort} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
+    let tableTester = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
 
-    let columns = getColumns();
+    let columns = tableTester.columns;
     expect(columns[0]).toHaveAttribute('aria-sort', 'ascending');
     expect(columns[0]).toHaveTextContent('▲');
     expect(columns[1]).toHaveAttribute('aria-sort', 'none');
@@ -639,7 +639,7 @@ describe('Table', () => {
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
 
-    await toggleSort({index: 0});
+    await tableTester.toggleSort({index: 0});
     expect(onSortChange).toHaveBeenCalledTimes(1);
     expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });
@@ -666,14 +666,14 @@ describe('Table', () => {
   it('supports removing rows', async () => {
     let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
 
-    let {getRows} = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
+    let tableTester = testUtilUser.createTester('TableTester', {root: getByRole('grid')});
     await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-    let gridRows = getRows();
+    let gridRows = tableTester.rows;
     expect(gridRows).toHaveLength(4);
     let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('Program Files');
@@ -681,7 +681,7 @@ describe('Table', () => {
 
     rerender(<DynamicTable tableBodyProps={{items: [rows[0], ...rows.slice(2)]}} />);
 
-    gridRows = getRows();
+    gridRows = tableTester.rows;
     expect(gridRows).toHaveLength(3);
     cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('bootmgr');

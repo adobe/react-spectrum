@@ -1001,11 +1001,11 @@ describe('Menu', () => {
 
       let button = getByRole('button');
       expect(button).not.toHaveAttribute('data-pressed');
-      let {open, getSections, getMenu, getSubmenuTriggers, openSubmenu} = testUtilUser.createTester('MenuTester', {root: button});
-      await open();
+      let menuTester = testUtilUser.createTester('MenuTester', {root: button});
+      await menuTester.open();
       expect(button).toHaveAttribute('data-pressed');
 
-      let groups = getSections();
+      let groups = menuTester.sections;
       expect(groups).toHaveLength(2);
 
       expect(groups[0]).toHaveClass('react-aria-Section');
@@ -1017,24 +1017,24 @@ describe('Menu', () => {
       expect(groups[1]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groups[1].getAttribute('aria-labelledby'))).toHaveTextContent('Settings');
 
-      let menu = getMenu();
+      let menu = menuTester.menu;
       expect(getAllByRole('menuitem')).toHaveLength(7);
 
       let popover = menu.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-      let submenuTriggers = getSubmenuTriggers();
+      let submenuTriggers = menuTester.submenuTriggers;
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      let submenuUtil = await openSubmenu({submenuTriggerText: 'Share…'});
-      let submenu = submenuUtil.getMenu();
+      let submenuUtil = await menuTester.openSubmenu({submenuTriggerText: 'Share…'});
+      let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = submenuUtil.getOptions();
+      let submenuItems = submenuUtil.options;
       expect(submenuItems).toHaveLength(6);
 
-      let groupsInSubmenu = submenuUtil.getSections();
+      let groupsInSubmenu = submenuUtil.sections;
       expect(groupsInSubmenu).toHaveLength(2);
 
       expect(groupsInSubmenu[0]).toHaveClass('react-aria-Section');

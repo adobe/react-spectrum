@@ -39,7 +39,7 @@ export class SelectTester {
   };
 
   open = async () => {
-    let trigger = this.getTrigger();
+    let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
 
     if (this._interactionType === 'mouse') {
@@ -69,11 +69,11 @@ export class SelectTester {
   };
 
   selectOption = async (optionText) => {
-    let trigger = this.getTrigger();
+    let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
       await this.open();
     }
-    let listbox = this.getListbox();
+    let listbox = this.listbox;
     if (listbox) {
       let option = within(listbox).getByText(optionText);
       if (this._interactionType === 'keyboard') {
@@ -111,7 +111,7 @@ export class SelectTester {
   };
 
   close = async () => {
-    let listbox = this.getListbox();
+    let listbox = this.listbox;
     if (listbox) {
       act(() => listbox.focus());
       await this.user.keyboard('[Escape]');
@@ -130,26 +130,26 @@ export class SelectTester {
     }
   };
 
-  getTrigger = () => {
+  get trigger() {
     if (!this._trigger) {
       throw new Error('Select trigger hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._trigger;
-  };
+  }
 
-  getListbox = () => {
-    let listBoxId = this.getTrigger().getAttribute('aria-controls');
+  get listbox() {
+    let listBoxId = this.trigger.getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) : undefined;
-  };
+  }
 
-  getOptions = () => {
-    let listbox = this.getListbox();
+  get options() {
+    let listbox = this.listbox;
     return listbox ? within(listbox).queryAllByRole('option') : [];
-  };
+  }
 
-  getSections = () => {
-    let listbox = this.getListbox();
+  get sections() {
+    let listbox = this.listbox;
     return listbox ? within(listbox).queryAllByRole('group') : [];
-  };
+  }
 }

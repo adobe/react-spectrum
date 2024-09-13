@@ -102,9 +102,9 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
-      await selectOption('Three');
-      expect(getTrigger()).toHaveTextContent('Three');
+      let selectTester = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
+      await selectTester.selectOption('Three');
+      expect(selectTester.trigger).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
@@ -128,9 +128,9 @@ describe('Picker/Select ', function () {
         </Select>
       );
 
-      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
-      await selectOption('Cat');
-      expect(getTrigger()).toHaveTextContent('Cat');
+      let selectTester = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
+      await selectTester.selectOption('Cat');
+      expect(selectTester.trigger).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('cat');
     });
@@ -210,9 +210,9 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
-      await selectOption('Three');
-      expect(getTrigger()).toHaveTextContent('Three');
+      let selectTester = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
+      await selectTester.selectOption('Three');
+      expect(selectTester.trigger).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
@@ -236,9 +236,9 @@ describe('Picker/Select ', function () {
         </Select>
       );
 
-      let {getTrigger, selectOption} = testUtilUser.createTester('SelectTester', {root: screen.getAllByTestId('test')[0]});
-      await selectOption('Cat');
-      expect(getTrigger()).toHaveTextContent('Cat');
+      let selectTester = testUtilUser.createTester('SelectTester', {root: screen.getAllByTestId('test')[0]});
+      await selectTester.selectOption('Cat');
+      expect(selectTester.trigger).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('cat');
     });
@@ -262,9 +262,9 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let {open, getListbox} = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
-      await open();
-      expect(await screen.findByTestId('tray')).toContainElement(getListbox());
+      let selectTester = testUtilUser.createTester('SelectTester', {root: screen.getByTestId('test')});
+      await selectTester.open();
+      expect(await screen.findByTestId('tray')).toContainElement(selectTester.listbox);
     });
   });
 });

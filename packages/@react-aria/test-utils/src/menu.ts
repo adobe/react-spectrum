@@ -56,7 +56,7 @@ export class MenuTester {
       needsLongPress
     } = opts;
 
-    let trigger = this.getTrigger();
+    let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (this._interactionType === 'mouse' || this._interactionType === 'touch') {
       if (needsLongPress) {
@@ -70,7 +70,7 @@ export class MenuTester {
       } else {
         await this.user.pointer({target: trigger, keys: '[TouchA]'});
       }
-    } else if (this._interactionType === 'keyboard') {
+    } else if (this._interactionType === 'keyboard' && !isDisabled) {
       act(() => trigger.focus());
       await this.user.keyboard('[Enter]');
     }
@@ -98,14 +98,14 @@ export class MenuTester {
   // Close on select is also kinda specific?
   selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean}) => {
     let {optionText, menuSelectionMode = 'single', needsLongPress, closesOnSelect = true, option} = opts;
-    let trigger = this.getTrigger();
+    let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
       // TODO: technically this would need the user to pass in if their menu needs long press if we want calling selectOption to
       // work without needing to call open first. Bit annoying though, maybe I add opts and have one of them be needsLongPress?
       await this.open({needsLongPress});
     }
 
-    let menu = this.getMenu();
+    let menu = this.menu;
     if (menu) {
       if (!option && optionText) {
         option = within(menu).getByText(optionText);
@@ -147,13 +147,13 @@ export class MenuTester {
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
   openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean}): Promise<MenuTester | null> => {
     let {submenuTrigger, submenuTriggerText, needsLongPress} = opts;
-    let trigger = this.getTrigger();
+    let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (!trigger.getAttribute('aria-controls') && !isDisabled) {
       await this.open({needsLongPress});
     }
     if (!isDisabled) {
-      let menu = this.getMenu();
+      let menu = this.menu;
       if (menu) {
         let submenu;
         if (submenuTrigger) {
@@ -173,13 +173,13 @@ export class MenuTester {
   };
 
   close = async () => {
-    let menu = this.getMenu();
+    let menu = this.menu;
     if (menu) {
       act(() => menu.focus());
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
-        if (document.activeElement !== this.getTrigger()) {
+        if (document.activeElement !== this.trigger) {
           throw new Error(`Expected the document.activeElement after closing the menu to be the menu trigger but got ${document.activeElement}`);
         } else {
           return true;
@@ -192,21 +192,21 @@ export class MenuTester {
     }
   };
 
-  getTrigger = () => {
+  get trigger() {
     if (!this._trigger) {
       throw new Error('Menu trigger element hasn\'t been set yet. Did you call `setElement()` yet?');
     }
 
     return this._trigger;
-  };
+  }
 
-  getMenu = () => {
-    let menuId = this.getTrigger().getAttribute('aria-controls');
+  get menu() {
+    let menuId = this.trigger.getAttribute('aria-controls');
     return menuId ? document.getElementById(menuId) : undefined;
-  };
+  }
 
-  getOptions = (): HTMLElement[] | never[] => {
-    let menu = this.getMenu();
+  get options(): HTMLElement[] | never[] {
+    let menu = this.menu;
     let options = [];
     if (menu) {
       options = within(menu).queryAllByRole('menuitem');
@@ -219,23 +219,23 @@ export class MenuTester {
     }
 
     return options;
-  };
+  }
 
-  getSections = () => {
-    let menu = this.getMenu();
+  get sections() {
+    let menu = this.menu;
     if (menu) {
       return within(menu).queryAllByRole('group');
     } else {
       return [];
     }
-  };
+  }
 
-  getSubmenuTriggers = () => {
-    let options = this.getOptions();
+  get submenuTriggers() {
+    let options = this.options;
     if (options.length > 0) {
-      return this.getOptions().filter(item => item.getAttribute('aria-haspopup') != null);
+      return this.options.filter(item => item.getAttribute('aria-haspopup') != null);
     }
 
     return [];
-  };
+  }
 }
