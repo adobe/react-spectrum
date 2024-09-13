@@ -34,7 +34,7 @@ export interface VirtualizerProps<O> {
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
-const LayoutContext = createContext(null);
+const LayoutContext = createContext<Pick<VirtualizerProps<any>, 'layout' | 'layoutOptions'> | null>(null);
 
 export function Virtualizer<O>(props: VirtualizerProps<O>) {
   let {children, layout, layoutOptions} = props;

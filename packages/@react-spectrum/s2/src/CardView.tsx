@@ -71,7 +71,7 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       maxItemSize = new Size(Infinity, Infinity),
       minSpace = new Size(18, 18),
       maxColumns = Infinity
-    } = invalidationContext.layoutOptions;
+    } = invalidationContext.layoutOptions || {};
     let visibleWidth = this.virtualizer.visibleRect.width;
 
     // The max item width is always the entire viewport.
@@ -204,7 +204,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       maxItemSize = new Size(Infinity, Infinity),
       minSpace = new Size(18, 18),
       maxColumns = Infinity
-    } = invalidationContext.layoutOptions;
+    } = invalidationContext.layoutOptions || {};
     let visibleWidth = this.virtualizer.visibleRect.width;
 
     // The max item width is always the entire viewport.
@@ -520,7 +520,7 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
   let updateSize = useEffectEvent(() => {
-    let w = domRef.current.clientWidth;
+    let w = domRef.current?.clientWidth ?? 0;
     let i = SIZES.length - 1;
     while (i > 0) {
       let opts = layoutOptions[SIZES[i]][density];
