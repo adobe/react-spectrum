@@ -485,8 +485,9 @@ jobs:
       - run:
           name: Install AzCopy
           command: |
-            curl -L https://aka.ms/downloadazcopy-v10-linux | tar -xvz --strip-components=1
-            mv azcopy /usr/local/bin/
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            sudo cp ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: |
@@ -504,8 +505,9 @@ jobs:
       - run:
           name: Install AzCopy
           command: |
-            curl -L https://aka.ms/downloadazcopy-v10-linux | tar -xvz --strip-components=1
-            mv azcopy /usr/local/bin/
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            sudo cp ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: |
@@ -522,8 +524,9 @@ jobs:
       - run:
           name: Install AzCopy
           command: |
-            curl -L https://aka.ms/downloadazcopy-v10-linux | tar -xvz --strip-components=1
-            mv azcopy /usr/local/bin/
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            sudo cp ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
