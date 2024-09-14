@@ -150,7 +150,7 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
             // Normalize the path length to 100 so we can easily set stroke-dashoffset to a percentage.
             pathLength="100"
             strokeDasharray="100"
-            strokeDashoffset={isIndeterminate ? undefined : 100 - percentage}
+            strokeDashoffset={isIndeterminate || percentage == null ? undefined : 100 - percentage}
             strokeLinecap="round" />
         </svg>
       )}
