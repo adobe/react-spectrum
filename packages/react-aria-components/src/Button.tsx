@@ -109,17 +109,25 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
-  let {hoverProps, isHovered} = useHover(props);
-  let renderValues = {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false, isPending};
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled: props.isDisabled || isPending
+  });
+  let renderValues = {
+    isHovered,
+    isPressed: isPressed && !isPending,
+    isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    isPending
+  };
+
   let renderProps = useRenderProps({
     ...props,
     values: renderValues,
     defaultClassName: 'react-aria-Button'
   });
 
-  // an aria label will block children and their labels from being read, this is undesirable for pending state
-  // let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
-  // let safariDupeLabellingId = useId();
   let buttonId = useId(buttonProps.id);
   let progressId = useId();
 
@@ -134,7 +142,6 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     }
   }
 
-  // Forcibly announce the pending state on Apple devices because otherwise it won't be announced
   let wasPending = useRef(isPending);
   useEffect(() => {
     let message = {'aria-labelledby': ariaLabelledby || buttonId};
@@ -155,9 +162,9 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       ref={ref}
       aria-labelledby={ariaLabelledby}
       slot={props.slot || undefined}
-      aria-disabled={isPending ? 'true' : undefined}
+      aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
       data-disabled={props.isDisabled || undefined}
-      data-pressed={ctx.isPressed || isPressed || undefined}
+      data-pressed={renderValues.isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}

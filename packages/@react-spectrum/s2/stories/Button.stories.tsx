@@ -59,7 +59,7 @@ export const PendingButton = {
         <PendingButtonExample {...args}>Press me</PendingButtonExample>
         <PendingButtonExample aria-label="Aria label supercedes" {...args}>Press me</PendingButtonExample>
         <div id="foo">external label</div>
-        <PendingButtonExample iaria-label="Aria label is included" aria-labelledby="foo" {...args}><NewIcon /></PendingButtonExample>
+        <PendingButtonExample aria-label="Aria label is included" aria-labelledby="foo" {...args}><NewIcon /></PendingButtonExample>
         <PendingButtonExample {...args}><NewIcon /><Text>Test</Text></PendingButtonExample>
         <PendingButtonExample {...args}><Text>Test</Text><NewIcon /></PendingButtonExample>
         <PendingButtonExample {...args}><Text>Test</Text><NewIcon aria-label="New email" /></PendingButtonExample>

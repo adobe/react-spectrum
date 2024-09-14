@@ -14,14 +14,13 @@ import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {typ
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
-import {useFocusableRef, useMediaQuery} from '@react-spectrum/utils';
+import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
@@ -152,7 +151,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
-        isFocusVisible: 'gray-100'
+        isFocusVisible: 'gray-100',
+        isDisabled: 'transparent'
       }
     },
     staticColor: {
@@ -169,7 +169,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
             default: 'transparent',
             isHovered: 'transparent-white-100',
             isPressed: 'transparent-white-100',
-            isFocusVisible: 'transparent-white-100'
+            isFocusVisible: 'transparent-white-100',
+            isDisabled: 'transparent'
           }
         }
       },
@@ -186,7 +187,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
             default: 'transparent',
             isHovered: 'transparent-black-100',
             isPressed: 'transparent-black-100',
-            isFocusVisible: 'transparent-black-100'
+            isFocusVisible: 'transparent-black-100',
+            isDisabled: 'transparent'
           }
         }
       }
@@ -304,36 +306,6 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
     };
   }, [isPending]);
 
-  // TODO: Doesn't work with our storybook addon??
-  let mediaColorScheme = useMediaQuery('(prefers-color-scheme: dark)') ? 'dark' : 'light';
-  let colorScheme = useContext(ColorSchemeContext) ?? mediaColorScheme;
-
-  let staticColorProgress = undefined as 'white' | 'black' | undefined;
-  // static colors have preference
-  if (staticColor === 'black' && fillStyle === 'fill') {
-    staticColorProgress = 'white';
-  } else if (staticColor === 'black' && fillStyle === 'outline') {
-    staticColorProgress = 'black';
-  } else if (staticColor === 'white' && fillStyle === 'fill') {
-    staticColorProgress = 'black';
-  } else if (staticColor === 'white' && fillStyle === 'outline') {
-    staticColorProgress = 'white';
-  } else if (variant === 'accent' || variant === 'negative') {
-    staticColorProgress = 'white';
-  } else if (variant === 'secondary') {
-    if (colorScheme === 'light') {
-      staticColorProgress = 'white';
-    } else {
-      staticColorProgress = 'black';
-    }
-  } else if (variant === 'primary') {
-    if (colorScheme === 'light') {
-      staticColorProgress = 'white';
-    } else {
-      staticColorProgress = 'black';
-    }
-  }
-
   return (
     <RACButton
       {...props}
@@ -343,6 +315,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+        isDisabled: renderProps.isDisabled || isProgressVisible,
         variant,
         fillStyle,
         size,
@@ -389,7 +362,8 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
                 isProgressVisible: 1
               }
             })({isProgressVisible, isPending})}>
-            <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColorProgress} UNSAFE_style={{display: 'block'}} />
+            {/* TODO: size based on t-shirt size once ProgressCircle supports custom sizes */}
+            <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColor} UNSAFE_style={{display: 'block'}} />
           </div>
         }
       </Provider>
