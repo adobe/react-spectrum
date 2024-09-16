@@ -53,6 +53,7 @@ import {LayoutNode} from '@react-stately/layout';
 import {LoadingState, Node} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
+import Nubbin from '../ui-icons/S2_Icon_MoveHorizontalCircleTableWidget_16_N.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
@@ -614,7 +615,10 @@ const resizerHandle = style({
       isResizing: 'Highlight'
     }
   },
-  width: size(1),
+  width: {
+    default: size(1),
+    isResizing: size(2)
+  },
   position: 'absolute',
   insetStart: size(6)
 });
@@ -642,25 +646,15 @@ const chevronIcon = style({
 const nubbin = style({
   position: 'absolute',
   top: 0,
-  insetStart: size(-2),
-  size: fontRelative(16)
+  insetStart: size(-1),
+  size: fontRelative(16),
+  fill: {
+    default: '--focus-ring-color',
+    forcedColors: 'ButtonBorder'
+  }
 });
 
 interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'>, Pick<ColumnProps, 'align' | 'children'> {}
-
-function Nubbin() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-      <g fill="var(--focus-ring-color)" stroke="var(--focus-ring-color)" strokeWidth="2">
-        <circle cx="8" cy="8" r="8" stroke="none" />
-        <circle cx="8" cy="8" r="7" fill="none" />
-      </g>
-      <path d="M-2106-7380.263v5l2.5-2.551Z" transform="translate(2116 7385.763)" fill="#fff" stroke="#fff" strokeLinejoin="round" strokeWidth="2" />
-      <path d="M-2106-7380.263v5l2.5-2.551Z" transform="translate(-2100 -7369.763) rotate(180)" fill="#fff" stroke="#fff" strokeLinejoin="round" strokeWidth="2" />
-    </svg>
-  );
-}
-
 
 function ResizableColumnContents(props: ResizableColumnContentProps) {
   let {allowsSorting, sortDirection, sort, startResize, children, isHovered, align} = props;
