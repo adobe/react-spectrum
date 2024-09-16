@@ -46,7 +46,7 @@ export const Example: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
-        <AccordionGroup styles={style({width: 384})}  {...args}>
+        <AccordionGroup {...args}>
           <AccordionItem key="files">
             <AccordionHeader>
               Files
@@ -92,7 +92,7 @@ export const WithLongTitle: Story = {
           </AccordionItem>
           <AccordionItem key="long-title">
             <AccordionHeader>
-              Very long title that wraps
+              Very very very very very long title that wraps
             </AccordionHeader>
             <AccordionPanel>
               Accordion content
@@ -108,7 +108,7 @@ export const WithDisabledAccordionItem: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
-        <AccordionGroup styles={style({width: 384})}  {...args}>
+        <AccordionGroup {...args}>
           <AccordionItem key="files">
             <AccordionHeader>
               Files
