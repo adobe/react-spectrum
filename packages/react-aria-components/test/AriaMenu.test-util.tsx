@@ -23,6 +23,12 @@ let describeInteractions = (name, tests) => describe.each`
   ${'keyboard'}
   ${'touch'}
 `(`${name} - $interactionType`, tests);
+describeInteractions.only = (name, tests) => describe.only.each`
+  interactionType
+  ${'mouse'}
+  ${'keyboard'}
+  ${'touch'}
+`(`${name} - $interactionType`, tests);
 
 let triggerText = 'Menu Button';
 
@@ -291,6 +297,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
 
       await user.tab();
       act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(menuTester.getTrigger());
     });
@@ -307,9 +314,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       let buttons = tree.getAllByLabelText('Dismiss');
       expect(buttons.length).toBe(2);
 
-      act(() => {
-        fireEvent.click(buttons[0]);
-      });
+      await user.click(buttons[0]);
       act(() => {jest.runAllTimers();});
 
       expect(menu).not.toBeInTheDocument();
