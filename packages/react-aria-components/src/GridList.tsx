@@ -391,6 +391,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
               }],
               [TextContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   description: descriptionProps
                 }
               }],

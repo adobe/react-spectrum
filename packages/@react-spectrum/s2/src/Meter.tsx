@@ -21,6 +21,8 @@ import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {SkeletonWrapper} from './Skeleton';
+import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -121,10 +123,12 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
-          <div className={trackStyles({staticColor, size})}>
-            <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
-          </div>
+          {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
+          <SkeletonWrapper>
+            <div className={trackStyles({staticColor, size})}>
+              <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
+            </div>
+          </SkeletonWrapper>
         </>
       )}
     </AriaMeter>
