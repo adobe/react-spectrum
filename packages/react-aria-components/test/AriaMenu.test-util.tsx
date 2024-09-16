@@ -17,18 +17,28 @@ import {
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let describeInteractions = (name, tests) => describe.each`
+let describeInteractions = ((name, tests) => describe.each`
   interactionType
   ${'mouse'}
   ${'keyboard'}
   ${'touch'}
-`(`${name} - $interactionType`, tests);
-describeInteractions.only = (name, tests) => describe.only.each`
+`(`${name} - $interactionType`, tests));
+
+// @ts-ignore
+describeInteractions.only = ((name, tests) => describe.only.each`
   interactionType
   ${'mouse'}
   ${'keyboard'}
   ${'touch'}
-`(`${name} - $interactionType`, tests);
+`(`${name} - $interactionType`, tests));
+
+// @ts-ignore
+describeInteractions.skip = ((name, tests) => describe.skip.each`
+  interactionType
+  ${'mouse'}
+  ${'keyboard'}
+  ${'touch'}
+`(`${name} - $interactionType`, tests));
 
 let triggerText = 'Menu Button';
 
