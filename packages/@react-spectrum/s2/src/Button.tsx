@@ -17,10 +17,13 @@ import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
@@ -277,6 +280,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isPending,
     variant = 'primary',
@@ -330,7 +334,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               default: 1,
               isProgressVisible: 0
             }
-            // @ts-ignore not sure why it won't allow a data-* attribute here
+            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
           })({isProgressVisible}), 'data-rsp-slot': 'text'}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
@@ -363,7 +367,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               }
             })({isProgressVisible, isPending})}>
             {/* TODO: size based on t-shirt size once ProgressCircle supports custom sizes */}
-            <ProgressCircle isIndeterminate aria-label={'Loading'} size="S" staticColor={staticColor} UNSAFE_style={{display: 'block'}} />
+            <ProgressCircle isIndeterminate aria-label={stringFormatter.format('button.pending')} size="S" staticColor={staticColor} UNSAFE_style={{display: 'block'}} />
           </div>
         }
       </Provider>

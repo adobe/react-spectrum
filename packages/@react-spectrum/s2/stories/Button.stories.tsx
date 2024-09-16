@@ -70,6 +70,11 @@ export const PendingButton = {
         </PendingButtonExample>
       </div>
     );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
