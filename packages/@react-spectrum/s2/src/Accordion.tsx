@@ -353,7 +353,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size, density, isQuiet} = useContext(InternalAccordionGroupContext);
+  let {size, density, isQuiet} = useContext(InternalAccordionItemContext);
   let isRTL = direction === 'rtl';
   return (
     <Heading
