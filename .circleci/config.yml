@@ -512,7 +512,9 @@ jobs:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              azcopy copy "/tmp/verdaccio_dist/*/verdaccio/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
+              for dir in /tmp/verdaccio_dist/*/verdaccio; do
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
+              done
             fi
 
   deploy-production:
