@@ -60,7 +60,7 @@ export const Example: Story = {
               People
             </AccordionHeader>
             <AccordionPanel>
-              <TextField label="Name" />
+              <TextField label="Name" styles={style({maxWidth: 176})} />
             </AccordionPanel>
           </AccordionItem>
         </AccordionGroup>
