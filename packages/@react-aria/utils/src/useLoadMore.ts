@@ -29,7 +29,7 @@ export interface LoadMoreProps {
    */
   scrollOffset?: number,
   /** The data currently loaded. */
-  items?: any[]
+  items?: any
 }
 
 export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>) {

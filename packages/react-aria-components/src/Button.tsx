@@ -115,7 +115,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   });
   let renderValues = {
     isHovered,
-    isPressed: isPressed && !isPending,
+    isPressed: (ctx.isPressed || isPressed) && !isPending,
     isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,

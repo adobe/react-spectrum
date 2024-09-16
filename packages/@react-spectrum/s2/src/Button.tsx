@@ -21,8 +21,10 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
+import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -280,6 +282,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
+  props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isPending,
@@ -327,6 +330,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       }, props.styles)}>
       <Provider
         values={[
+          [SkeletonContext, null],
           [TextContext, {styles: style({
             paddingY: '--labelPadding',
             order: 1,
@@ -385,6 +389,7 @@ export {_Button as Button};
 
 function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
+  props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -404,6 +409,7 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       }, props.styles)}>
       <Provider
         values={[
+          [SkeletonContext, null],
           [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
