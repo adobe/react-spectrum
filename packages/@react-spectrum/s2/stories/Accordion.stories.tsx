@@ -131,6 +131,23 @@ export const WithDisabledAccordionItem: Story = {
   }
 };
 
+export const AccordionItemWithoutGroup: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <AccordionItem {...args}>
+          <AccordionHeader>
+            Files
+          </AccordionHeader>
+          <AccordionPanel>
+            Files content
+          </AccordionPanel>
+        </AccordionItem>
+      </div>
+    );
+  }
+};
+
 WithLongTitle.parameters = {
   docs: {
     disable: true
@@ -138,6 +155,12 @@ WithLongTitle.parameters = {
 };
 
 WithDisabledAccordionItem.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+AccordionItemWithoutGroup.parameters = {
   docs: {
     disable: true
   }
