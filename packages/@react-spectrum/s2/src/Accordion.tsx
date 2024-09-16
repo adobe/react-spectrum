@@ -209,39 +209,7 @@ const buttonStyles = style({
       XL: sizeValue(17)
     }
   },
-  paddingTop: {
-    size: {
-      S: {
-        density: {
-          compact: sizeValue(2),
-          regular: sizeValue(5),
-          spacious: sizeValue(9)
-        }
-      },
-      M: {
-        density: {
-          compact: sizeValue(4),
-          regular: sizeValue(8),
-          spacious: sizeValue(12)
-        }
-      },
-      L: {
-        density: {
-          compact: sizeValue(4),
-          regular: sizeValue(9),
-          spacious: sizeValue(12)
-        }
-      },
-      XL: {
-        density: {
-          compact: sizeValue(5),
-          regular: sizeValue(9),
-          spacious: sizeValue(13)
-        }
-      }
-    }
-  },
-  paddingBottom: {
+  paddingY: {
     size: {
       S: {
         density: {
