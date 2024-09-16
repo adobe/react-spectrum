@@ -140,8 +140,8 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   } = props;
   const domProps = filterDOMProps(otherProps);
   let groupProps = useContext(InternalAccordionGroupContext);
-  let size = props.size || groupProps.size;
-  let density = groupProps.density || props.density;
+  let size = props.size || groupProps.size || 'M';
+  let density = groupProps.density || props.density || 'regular';
   let isQuiet = groupProps.isQuiet || props.isQuiet;
   let isDisabled = groupProps.isDisabled || props.isDisabled;
 
@@ -407,7 +407,7 @@ function AccordionPanel(props: AccordionPanelProps, ref: DOMRef<HTMLDivElement>)
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
-  let {size} = useContext(InternalAccordionGroupContext);
+  let {size} = useContext(InternalAccordionItemContext);
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (
