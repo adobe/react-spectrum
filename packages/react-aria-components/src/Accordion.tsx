@@ -57,7 +57,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
   [props, ref] = useContextProps(props, ref, AccordionItemContext);
   let state = useDisclosureState(props);
   let contentRef = useRef<HTMLElement>(null);
-  let {triggerProps, contentProps} = useDisclosure({...props, contentRef}, state);
+  let {buttonProps, contentProps} = useDisclosure({...props, contentRef}, state);
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -79,7 +79,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
       values={[
         [ButtonContext, {
           slots: {
-            trigger: triggerProps
+            trigger: buttonProps
           }
         }],
         [InternalAccordionContext, {contentProps, contentRef}],

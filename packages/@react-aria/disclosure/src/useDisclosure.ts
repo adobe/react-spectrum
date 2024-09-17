@@ -30,7 +30,7 @@ export interface AriaDisclosureProps {
 
 export interface DisclosureAria {
   /** Props for the disclosure button. */
-  triggerProps: AriaButtonProps,
+  buttonProps: AriaButtonProps,
   /** Props for the content element. */
   contentProps: HTMLAttributes<HTMLElement>
 }
@@ -63,7 +63,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
 
   return {
-    triggerProps: {
+    buttonProps: {
       id: triggerId,
       'aria-expanded': state.isExpanded,
       'aria-controls': contentId,
