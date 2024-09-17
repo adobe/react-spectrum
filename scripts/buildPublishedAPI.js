@@ -139,8 +139,10 @@ async function build() {
   }
 
   await addDeps();
+  pkg.resolutions = {...pkg.resolutions, '@react-types/card': '3.0.0-alpha.29'};
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
   cleanPkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
+  cleanPkg.resolutions = {...cleanPkg.resolutions, '@react-types/card': '3.0.0-alpha.29'};
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
   fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
@@ -198,6 +200,8 @@ async function build() {
   // link all our packages
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(cleanPkg, false, 2));
   fs.removeSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'));
+  // temporarily copy styles source over since it's not in the build artifacts
+  fs.copySync(path.join(__dirname, '..', 'packages', '@react-spectrum', 's2', 'style'), path.join(dir, 'packages', '@react-spectrum', 's2', 'style'));
   console.log('linking packages');
   await run('yarn', ['constraints', '--fix'], {cwd: dir, stdio: 'inherit'});
   await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
