@@ -114,6 +114,7 @@ let card = style({
       quiet: 'visible'
     }
   },
+  contain: 'layout',
   disableTapHighlight: true,
   userSelect: {
     isCardView: 'none'
