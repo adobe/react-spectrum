@@ -42,7 +42,7 @@ import {
   useSlottedContext,
   useTableOptions
 } from 'react-aria-components';
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
@@ -105,7 +105,9 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, StyleProps, S2TableProps {
+export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight
 }
 
 let InternalTableContext = createContext<TableProps & {scale?: Scale, layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
@@ -322,6 +324,7 @@ export function Table(props: TableProps) {
         <InternalTableContext.Provider value={context}>
           <RACTable
             ref={scrollRef}
+            // Fix webkit bug where scrollbars appear above the checkboxes/other table elements
             style={{WebkitTransform: 'translateZ(0)'}}
             className={renderProps => table({
               ...renderProps,
@@ -426,7 +429,7 @@ const cellFocus = {
 
 function CellFocusRing(props: {isFocusVisible: boolean}) {
   let {isFocusVisible} = props;
-  return <div role="presentation" style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}} className={style({...cellFocus})({isFocusVisible})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible})} />;
 }
 
 const columnStyles = style({
