@@ -15,6 +15,7 @@ import {
   FocusStrategy,
   Selection as ISelection,
   Key,
+  LayoutDelegate,
   LongPressEvent,
   Node,
   PressEvent,
@@ -26,7 +27,8 @@ import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
-  allowsCellSelection?: boolean
+  allowsCellSelection?: boolean,
+  layoutDelegate?: LayoutDelegate
 }
 
 /**
@@ -37,12 +39,14 @@ export class SelectionManager implements MultipleSelectionManager {
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
+  private layoutDelegate: LayoutDelegate | null;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
+    this.layoutDelegate = options?.layoutDelegate || null;
   }
 
   /**
@@ -253,6 +257,10 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   private getKeyRangeInternal(from: Key, to: Key) {
+    if (this.layoutDelegate?.getKeyRange) {
+      return this.layoutDelegate.getKeyRange(from, to);
+    }
+
     let keys: Key[] = [];
     let key = from;
     while (key) {
