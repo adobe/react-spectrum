@@ -251,6 +251,7 @@
   "@parcel/transformer-css": {
     "cssModules": {
       "global": true,
+      "pattern": "[content-hash]_[local]",
       "exclude": [
         "**/*.global.css",
         "packages/@react-aria/example-theme/**",
