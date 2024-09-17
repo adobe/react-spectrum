@@ -551,11 +551,13 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
     items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
     onLoadMore: props.onLoadMore
   }, domRef);
+
+  let ctx = useMemo(() => ({size, variant}), [size, variant]);
   
   return (
     <UNSTABLE_Virtualizer layout={layout} layoutOptions={options}>
       <CardViewContext.Provider value={GridListItem}>
-        <CardContext.Provider value={{size, variant}}>
+        <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList
               ref={domRef}
