@@ -7548,6 +7548,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.2"
     "@react-aria/interactions": "npm:^3.22.2"
     "@react-aria/utils": "npm:^3.25.2"
+    "@react-aria/visually-hidden": "npm:^3.8.15"
     "@react-spectrum/utils": "npm:^3.11.10"
     "@react-stately/layout": "npm:^4.0.2"
     "@react-stately/virtualizer": "npm:^4.0.2"
