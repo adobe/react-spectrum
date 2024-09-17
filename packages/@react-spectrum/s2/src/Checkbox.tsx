@@ -141,29 +141,41 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
       inputRef={inputRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
-      {renderProps => (
-        <>
-          <CenterBaseline>
-            <div
-              ref={boxRef}
-              style={pressScale(boxRef)(renderProps)}
-              className={box({
-                ...renderProps,
-                isSelected: renderProps.isSelected || renderProps.isIndeterminate,
-                size: props.size || 'M',
-                isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
-              })}>
-              {renderProps.isIndeterminate &&
-                <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
-              }
-              {renderProps.isSelected && !renderProps.isIndeterminate &&
-                <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
-              }
-            </div>
-          </CenterBaseline>
-          {children}
-        </>
-      )}
+      {renderProps => {
+        let checkbox = (
+          <div
+            ref={boxRef}
+            style={pressScale(boxRef)(renderProps)}
+            className={box({
+              ...renderProps,
+              isSelected: renderProps.isSelected || renderProps.isIndeterminate,
+              size: props.size || 'M',
+              isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
+            })}>
+            {renderProps.isIndeterminate &&
+              <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+            }
+            {renderProps.isSelected && !renderProps.isIndeterminate &&
+              <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+            }
+          </div>
+        );
+
+        // Only render checkbox without center baseline if no label.
+        // This avoids expanding the checkbox height to the font's line height.
+        if (!children) {
+          return checkbox;
+        }
+
+        return (
+          <>
+            <CenterBaseline>
+              {checkbox}
+            </CenterBaseline>
+            {children}
+          </>
+        );
+      }}
     </AriaCheckbox>
   );
 }
