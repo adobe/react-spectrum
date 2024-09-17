@@ -35,7 +35,8 @@ export interface DisclosureAria {
   contentProps: HTMLAttributes<HTMLElement>
 }
 
-export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState): DisclosureAria {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref?: RefObject<Element | null>): DisclosureAria {
   let {
     isDisabled,
     contentRef
