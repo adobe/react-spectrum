@@ -2053,29 +2053,6 @@ export const ColumnHeaderFocusRingTable = {
   }
 };
 
-export const Blah = {
-  render: () => (
-    <div style={{display: 'flex', width: '800px', height: '800px', alignItems: 'stretch', flexDirection: 'column'}}>
-      <div style={{backgroundColor: 'red'}}>gwaegaw</div>
-      <TableView>
-        <TableHeader columns={manyColunns}>
-          {column =>
-            <Column minWidth={100}>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody items={manyRows}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-      <div style={{backgroundColor: 'red'}}>agwjkegn</div>
-    </div>
-  )
-};
-
 const allItems = [
   {key: 'sam', name: 'Sam', height: 66, birthday: 'May 3'},
   {key: 'julia', name: 'Julia', height: 70, birthday: 'February 10'}

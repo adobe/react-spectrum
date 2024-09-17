@@ -20,6 +20,7 @@ import {
   Provider,
   Cell as RACCell,
   CellProps as RACCellProps,
+  CheckboxContext as RACCheckboxContext,
   Column as RACColumn,
   ColumnProps as RACColumnProps,
   Row as RACRow,
@@ -38,6 +39,7 @@ import {
   UNSTABLE_TableLayout,
   UNSTABLE_TableLoadingIndicator,
   UNSTABLE_Virtualizer,
+  useSlottedContext,
   useTableOptions
 } from 'react-aria-components';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -63,6 +65,7 @@ import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useIsMobileDevice} from './utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
@@ -790,7 +793,10 @@ const selectAllCheckboxColumn = style({
   outlineStyle: 'none',
   position: 'relative',
   alignContent: 'center',
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
   borderXWidth: 0,
   borderTopWidth: 0,
   borderBottomWidth: 1,
@@ -816,7 +822,10 @@ export function TableHeader<T extends object>({columns, children}: TableHeaderPr
             {({isFocusVisible}) => (
               <>
                 {selectionMode === 'single' &&
-                  <CellFocusRing isFocusVisible={isFocusVisible} />
+                  <>
+                    <CellFocusRing isFocusVisible={isFocusVisible} />
+                    <VisuallyHiddenSelectAllLabel />
+                  </>
                 }
                 {selectionMode === 'multiple' &&
                   <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
@@ -830,6 +839,14 @@ export function TableHeader<T extends object>({columns, children}: TableHeaderPr
         </Collection>
       </RACTableHeader>
     </InternalTableHeaderContext.Provider>
+  );
+}
+
+function VisuallyHiddenSelectAllLabel() {
+  let checkboxProps = useSlottedContext(RACCheckboxContext, 'selection');
+
+  return (
+    <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
   );
 }
 
