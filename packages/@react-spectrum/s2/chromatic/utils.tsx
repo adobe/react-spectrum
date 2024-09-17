@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {generatePowerset} from "@react-spectrum/story-utils";
+import {generatePowerset} from '@react-spectrum/story-utils';
 
 export function shortName(key, value) {
   let returnVal = '';
@@ -77,6 +77,8 @@ export function generateComboChunks(opts: {states: Array<object>, exclude?: (mer
   let chunks = [];
   let chunkSize =  Math.ceil(combos.length / numChunks);
   for (let i = 0; i < numChunks; i++) {
+    // Not exactly sure why it is complaining about type never
+    // @ts-ignore
     chunks.push(combos.slice(i * chunkSize, (i + 1) * chunkSize));
   }
 
