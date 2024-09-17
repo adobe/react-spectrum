@@ -361,10 +361,6 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               top: '[50%]',
               left: '[50%]',
               transform: 'translate(-50%, -50%)',
-              visibility: {
-                default: 'hidden',
-                isPending: 'visible'
-              },
               opacity: {
                 default: 0,
                 isProgressVisible: 1

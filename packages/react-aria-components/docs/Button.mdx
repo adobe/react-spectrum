@@ -161,9 +161,12 @@ A `Button` can be disabled using the `isDisabled` prop.
 
 ## Pending
 
-A `Button` can be put into the pending state using the `isPending` prop.
+A `Button` can be put into a pending state using the `isPending` prop.
+This is useful when an action takes a long time to complete, and you want to provide feedback to the user that the action is in progress.
+The pending state announces the state change to assistive technologies and disables interactions with the exception of focus.
+
 A [ProgressBar](ProgressBar.html) component is required to show the pending state correctly.
-Make sure to internationalize the label you pass to the [ProgressBar](ProgressBar.html) component.
+Make sure to internationalize the `aria-label` you pass to the [ProgressBar](ProgressBar.html) component.
 
 ```tsx example
 import {useRef, useState} from 'react';
@@ -172,12 +175,10 @@ import {ProgressBar, Text} from 'react-aria-components';
 function PendingButton(props) {
   let [isPending, setPending] = useState(false);
 
-  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let handlePress = (e) => {
     setPending(true);
-    timeout.current = setTimeout(() => {
+    setTimeout(() => {
       setPending(false);
-      timeout.current = undefined;
     }, 5000);
   };
 
@@ -208,10 +209,13 @@ function PendingButton(props) {
 ```
 
 **Note:**
-The `ProgressBar` must be in the accessibility tree when the button becomes pending.
-This can be achieved by using opacity instead of visibility or display to hide the spinner if you'd like it wait a moment before showing.
-The `Text` can remain in the button when the button is pending, in which case you should decide if it stays in the accessiblity
-tree or if you should hide it in favor of the label on the `ProgressBar`.
+The `ProgressBar` must be in the accessibility tree as soon as the button becomes pending, even if it is not visible.
+For example, if you'd like to delay showing a spinner until a minimum amount of time passes, you could use `opacity: 0` to hide it so it is still available to screen readers.
+Do not use `visibility: hidden` or `display: none` since these remove the element from the accessibility tree.
+
+Additionally, you may choose to keep the button's contents in the DOM while the button is pending, e.g. to preserve the button's layout.
+If you hide the contents with `visibility: hidden`, the accessibility label for the button will only include the ProgressBar, so it should have a descriptive `aria-label` (e.g. "Saving").
+You can also choose to keep the button's contents in the accessibility tree by using `opacity: 0`, in which case the `ProgressBar`'s label will be combined with the contents (e.g. "Save, pending").
 
 Try the above example and the one below with a screen reader to see the difference in behavior.
 
@@ -223,25 +227,13 @@ import {useEffect} from 'react';
 
 function PendingDelayed(props) {
   let [isPending, setPending] = useState(false);
-  let [isPendingVisible, setPendingVisible] = useState(false);
 
-  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let handlePress = (e) => {
     setPending(true);
-    timeout.current = setTimeout(() => {
+    setTimeout(() => {
       setPending(false);
-      setPendingVisible(false);
-      timeout.current = undefined;
     }, 5000);
   };
-
-  useEffect(() => {
-    if (isPending) {
-      setTimeout(() => {
-        setPendingVisible(true);
-      }, 1000);
-    }
-  }, [isPending]);
 
   return (
     <Button
@@ -251,11 +243,11 @@ function PendingDelayed(props) {
       style={{position: 'relative'}}>
         {({isPending}) => (
           <>
-            <Text className={isPendingVisible ? 'pending' : undefined}>Save</Text>
-            {isPending && <ProgressBar
+            <Text className={isPending ? 'pending' : undefined}>Save</Text>
+            <ProgressBar
               aria-label="in progress"
               isIndeterminate
-              className={['spinner', (isPendingVisible ? 'spinner-pending' : '')].join(' ')}>
+              className={['spinner', (isPending ? 'spinner-pending' : '')].join(' ')}>
               <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
                 <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
                 <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
@@ -263,7 +255,6 @@ function PendingDelayed(props) {
                 </path>
               </svg>
             </ProgressBar>
-            }
           </>
         )}
     </Button>
@@ -272,18 +263,42 @@ function PendingDelayed(props) {
 <PendingDelayed />
 ```
 ```css
+@keyframes showSpinner {
+  0%, 99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 .spinner {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;
+  display: none;
 }
+
 .spinner-pending {
+  transition-behavior: allow-discrete;
+  transition-property: display;
+  transition-duration: 1s;
+  animation: showSpinner 1s;
+  display: block;
   opacity: 1;
 }
 
+@keyframes hideText {
+  0%, 99% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .pending {
+  animation: hideText 1s;
   opacity: 0;
 }
 ```
