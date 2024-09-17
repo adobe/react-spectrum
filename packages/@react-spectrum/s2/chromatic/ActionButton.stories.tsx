@@ -11,6 +11,7 @@
  */
 
 import {ActionButton, Text} from '../src';
+import {Fonts, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -81,10 +82,4 @@ export const IconOnly = {
   }
 };
 
-// TODO: eventually make all none S2 chromatic stories have
-// chromatic: {
-//   disableSnapshot: true
-// }
-// so that we centralize the chromatic stories. Wait until all these chromatic stories are finished
-// and we run chromatic one last time to ensure a good baseline, then have all the stories in the
-// chromatic folder import the original stories and rexport them
+export {Fonts, UnsafeClassName};

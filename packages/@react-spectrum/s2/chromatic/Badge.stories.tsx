@@ -11,6 +11,7 @@
  */
 
 import {Badge} from '../src';
+import {Example} from '../stories/Badge.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import {shortName} from './utils';
@@ -67,3 +68,5 @@ export const ComboPt3 = {
   args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
   name: 'all visual option combos 3 of 3'
 };
+
+export {Example};

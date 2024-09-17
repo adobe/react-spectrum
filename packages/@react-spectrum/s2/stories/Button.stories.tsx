@@ -20,6 +20,10 @@ const meta: Meta<typeof Button> = {
   component: Button,
   parameters: {
     layout: 'centered'
+    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
+    // chromatic: {
+    //   disableSnapshot: true
+    // }
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],

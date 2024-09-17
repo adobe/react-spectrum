@@ -12,6 +12,7 @@
 
 import {Checkbox} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
+import {LongLabel} from '../stories/Checkbox.stories';
 import type {Meta} from '@storybook/react';
 import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
@@ -57,3 +58,5 @@ const Template = (args) => {
 export const Default = {
   render: Template
 };
+
+export {LongLabel};

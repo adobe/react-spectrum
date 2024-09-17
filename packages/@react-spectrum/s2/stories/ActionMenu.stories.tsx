@@ -19,6 +19,10 @@ const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
   parameters: {
     layout: 'centered'
+    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
+    // chromatic: {
+    //   disableSnapshot: true
+    // }
   },
   tags: ['autodocs'],
   argTypes: {

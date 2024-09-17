@@ -29,6 +29,7 @@ export default meta;
 export const Dynamic = Many as StoryObj;
 
 Dynamic.parameters = {
+  // TODO: add ar-AE when we get intl strings
   chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
 };
 

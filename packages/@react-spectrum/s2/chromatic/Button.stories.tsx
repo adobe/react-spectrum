@@ -17,6 +17,7 @@ import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {Example as WithWrapping} from '../stories/Button.stories';
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -80,3 +81,5 @@ export const IconOnly = {
     children: <NewIcon />
   }
 };
+
+export {WithWrapping};
