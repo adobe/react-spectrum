@@ -17,8 +17,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
   parameters: {
-    layout: 'centered',
-    chromatic: {delay: 10000}
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {
