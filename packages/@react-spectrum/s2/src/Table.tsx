@@ -143,6 +143,13 @@ const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckbox
     default: size(6),
     isQuiet: 'none'
   },
+  // Multiple browser bugs from scrollIntoView and scrollPadding:
+  // Bug: Table doesn't scroll items into view perfectly in Chrome
+  // https://issues.chromium.org/issues/365913982
+  // Bug: Table scrolls to the left when navigating up/down through the checkboxes when body is scrolled to the right.
+  // https://issues.chromium.org/issues/40067778
+  // https://bugs.webkit.org/show_bug.cgi?id=272799
+  // Base reproduction: https://codepen.io/lfdanlu/pen/zYVVGPW
   scrollPaddingTop: 32,
   scrollPaddingStart: {
     isCheckboxSelection: 40
@@ -650,7 +657,14 @@ const nubbin = style({
   size: fontRelative(16),
   fill: {
     default: '--focus-ring-color',
-    forcedColors: 'ButtonBorder'
+    forcedColors: 'Highlight'
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: {
+      default: 'white',
+      forcedColors: 'HighlightText'
+    }
   }
 });
 

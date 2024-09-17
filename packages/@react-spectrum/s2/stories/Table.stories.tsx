@@ -154,7 +154,7 @@ function renderEmptyState() {
         No results
       </Heading>
       <Content>
-        <Content>No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.</Content>
+        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
       </Content>
     </IllustratedMessage>
   );
