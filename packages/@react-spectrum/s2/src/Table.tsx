@@ -846,7 +846,7 @@ function VisuallyHiddenSelectAllLabel() {
   let checkboxProps = useSlottedContext(RACCheckboxContext, 'selection');
 
   return (
-    <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
+    <VisuallyHidden>{checkboxProps?.['aria-label']}</VisuallyHidden>
   );
 }
 
