@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {generatePowerset} from "@react-spectrum/story-utils";
+
 export function shortName(key, value) {
   let returnVal = '';
   switch (key) {
@@ -67,4 +69,16 @@ export function shortName(key, value) {
 
   }
   return returnVal;
+}
+
+export function generateComboChunks(opts: {states: Array<object>, exclude?: (merged: any) => boolean, numChunks: number}) {
+  let {states, exclude, numChunks} = opts;
+  let combos = generatePowerset(states, exclude);
+  let chunks = [];
+  let chunkSize =  Math.ceil(combos.length / numChunks);
+  for (let i = 0; i < numChunks; i++) {
+    chunks.push(combos.slice(i * chunkSize, (i + 1) * chunkSize));
+  }
+
+  return chunks;
 }

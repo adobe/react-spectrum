@@ -11,9 +11,8 @@
  */
 
 import {ColorField} from '../src';
-import {generatePowerset} from '@react-spectrum/story-utils';
+import {generateComboChunks, shortName} from './utils';
 import type {Meta} from '@storybook/react';
-import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof ColorField> = {
@@ -51,14 +50,29 @@ const Template = ({combos, ...args}) => {
   );
 };
 
-let sideState = states;
-let sideCombos = generatePowerset(sideState);
+let sideChunks = generateComboChunks({states, numChunks: 3});
 
 export const LabelPositionSide = {
   render: Template,
   args: {
-    combos: sideCombos,
+    combos: sideChunks[0],
     labelPosition: 'side'
+  }
+};
+
+export const LabelPositionSidePt2 = {
+  render: Template,
+  args: {
+    ...LabelPositionSide.args,
+    combos: sideChunks[1]
+  }
+};
+
+export const LabelPositionSidePt3 = {
+  render: Template,
+  args: {
+    ...LabelPositionSide.args,
+    combos: sideChunks[2]
   }
 };
 
@@ -66,13 +80,46 @@ let topState = [
   ...states,
   {labelAlign: ['start', 'end']}
 ];
-let topCombos = generatePowerset(topState);
+
+let topChunks = generateComboChunks({states: topState, numChunks: 5});
 
 export const LabelPositionTop = {
   render: Template,
   args: {
-    combos: topCombos,
+    combos: topChunks[0],
     labelPosition: 'top'
+  }
+};
+
+export const LabelPositionTopPt2 = {
+  render: Template,
+  args: {
+    ...LabelPositionTop.args,
+    combos: topChunks[1]
+  }
+};
+
+export const LabelPositionTopPt3 = {
+  render: Template,
+  args: {
+    ...LabelPositionTop.args,
+    combos: topChunks[2]
+  }
+};
+
+export const LabelPositionTopPt4 = {
+  render: Template,
+  args: {
+    ...LabelPositionTop.args,
+    combos: topChunks[3]
+  }
+};
+
+export const LabelPositionTopPt5 = {
+  render: Template,
+  args: {
+    ...LabelPositionTop.args,
+    combos: topChunks[4]
   }
 };
 

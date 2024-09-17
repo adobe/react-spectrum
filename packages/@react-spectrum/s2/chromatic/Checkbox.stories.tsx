@@ -11,10 +11,9 @@
  */
 
 import {Checkbox} from '../src';
-import {generatePowerset} from '@react-spectrum/story-utils';
+import {generateComboChunks, shortName} from './utils';
 import {LongLabel} from '../stories/Checkbox.stories';
 import type {Meta} from '@storybook/react';
-import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof Checkbox> = {
@@ -38,12 +37,10 @@ let states = [
   {size: ['S', 'M', 'L', 'XL']}
 ];
 
-let combinations = generatePowerset(states);
-
-const Template = (args) => {
+const Template = ({combos, ...args}) => {
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
-      {combinations.map(c => {
+      {combos.map(c => {
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
@@ -55,8 +52,26 @@ const Template = (args) => {
   );
 };
 
+let chunks = generateComboChunks({states, numChunks: 3});
 export const Default = {
-  render: Template
+  render: Template,
+  args: {
+    combos: chunks[0]
+  }
+};
+
+export const DefaultPt2 = {
+  render: Template,
+  args: {
+    combos: chunks[1]
+  }
+};
+
+export const DefaultPt3 = {
+  render: Template,
+  args: {
+    combos: chunks[2]
+  }
 };
 
 export {LongLabel};

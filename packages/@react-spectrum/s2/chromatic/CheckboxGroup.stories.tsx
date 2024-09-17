@@ -11,9 +11,8 @@
  */
 
 import {Checkbox, CheckboxGroup, Content, ContextualHelp, Heading} from '../src';
-import {generatePowerset} from '@react-spectrum/story-utils';
+import {generateComboChunks, shortName} from './utils';
 import type {Meta} from '@storybook/react';
-import {shortName} from './utils';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof CheckboxGroup> = {
@@ -38,8 +37,6 @@ let states = [
   {size: ['S', 'M', 'L', 'XL']}
 ];
 
-let combos = generatePowerset(states);
-
 const Template = ({combos, containerStyle, ...args}) => {
   return (
     <div className={containerStyle}>
@@ -61,13 +58,12 @@ const Template = ({combos, containerStyle, ...args}) => {
   );
 };
 
-
-let chunkSize = Math.ceil(combos.length / 3);
+let chunks = generateComboChunks({states, numChunks: 5});
 
 export const Horizontal = {
   render: Template,
   args: {
-    combos: combos.slice(0, chunkSize),
+    combos: chunks[0],
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 600px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
     orientation: 'horizontal'
   }
@@ -77,7 +73,7 @@ export const HorizontalPt2 = {
   render: Template,
   args: {
     ...Horizontal.args,
-    combos: combos.slice(chunkSize, chunkSize * 2)
+    combos: chunks[1]
   }
 };
 
@@ -85,14 +81,30 @@ export const HorizontalPt3 = {
   render: Template,
   args: {
     ...Horizontal.args,
-    combos: combos.slice(chunkSize * 2, chunkSize * 3)
+    combos: chunks[2]
+  }
+};
+
+export const HorizontalPt4 = {
+  render: Template,
+  args: {
+    ...Horizontal.args,
+    combos: chunks[3]
+  }
+};
+
+export const HorizontalPt5 = {
+  render: Template,
+  args: {
+    ...Horizontal.args,
+    combos: chunks[4]
   }
 };
 
 export const Vertical = {
   render: Template,
   args: {
-    combos: combos.slice(0, chunkSize),
+    combos: chunks[0],
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
     orientation: 'vertical'
   }
@@ -102,7 +114,7 @@ export const VerticalPt2 = {
   render: Template,
   args: {
     ...Vertical.args,
-    combos: combos.slice(chunkSize, chunkSize * 2)
+    combos: chunks[1]
   }
 };
 
@@ -110,7 +122,23 @@ export const VerticalPt3 = {
   render: Template,
   args: {
     ...Vertical.args,
-    combos: combos.slice(chunkSize * 2, chunkSize * 3)
+    combos: chunks[2]
+  }
+};
+
+export const VerticalPt4 = {
+  render: Template,
+  args: {
+    ...Vertical.args,
+    combos: chunks[3]
+  }
+};
+
+export const VerticalPt5 = {
+  render: Template,
+  args: {
+    ...Vertical.args,
+    combos: chunks[4]
   }
 };
 
@@ -122,13 +150,12 @@ let statesWithContextual = [
   {size: ['S', 'M', 'L', 'XL']}
 ];
 
-let contextualCombos = generatePowerset(statesWithContextual);
-let contextualChunkSize = Math.ceil(contextualCombos.length / 3);
+let contextualHelpChunks = generateComboChunks({states: statesWithContextual, numChunks: 3});
 
 export const ContextualHelpStories = {
   render: Template,
   args: {
-    combos: contextualCombos.slice(0, contextualChunkSize),
+    combos: contextualHelpChunks[0],
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
     orientation: 'horizontal',
     contextualHelp: (
@@ -145,7 +172,7 @@ export const ContextualHelpPt2 = {
   render: Template,
   args: {
     ...ContextualHelpStories.args,
-    combos: contextualCombos.slice(contextualChunkSize, contextualChunkSize * 2)
+    combos: contextualHelpChunks[1]
   }
 };
 
@@ -153,7 +180,7 @@ export const ContextualHelpPt3 = {
   render: Template,
   args: {
     ...ContextualHelpStories.args,
-    combos: combos.slice(contextualChunkSize * 2, contextualChunkSize * 3)
+    combos: contextualHelpChunks[2]
   }
 };
 
@@ -170,7 +197,7 @@ export const ContextualHelpVerticalPt2 = {
   render: Template,
   args: {
     ...ContextualHelpVertical.args,
-    combos: contextualCombos.slice(contextualChunkSize, contextualChunkSize * 2)
+    combos: contextualHelpChunks[1]
   }
 };
 
@@ -178,6 +205,6 @@ export const ContextualHelpVerticalPt3 = {
   render: Template,
   args: {
     ...ContextualHelpVertical.args,
-    combos: combos.slice(contextualChunkSize * 2, contextualChunkSize * 3)
+    combos: contextualHelpChunks[2]
   }
 };
