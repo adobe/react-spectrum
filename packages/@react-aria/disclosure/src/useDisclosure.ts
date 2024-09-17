@@ -14,6 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {DisclosureState} from '@react-stately/disclosure';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
+import {useIsSSR} from 'react-aria';
 
 export interface AriaDisclosureProps {
   /** Whether the disclosure is disabled. */
@@ -44,7 +45,8 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   let triggerId = useId();
   let contentId = useId();
   let isControlled = props.isExpanded !== undefined;
-  let supportsBeforeMatch = 'onbeforematch' in document.body;
+  let isSSR = useIsSSR();
+  let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
