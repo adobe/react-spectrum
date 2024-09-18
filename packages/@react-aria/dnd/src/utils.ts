@@ -24,7 +24,7 @@ export const droppableCollectionMap = new WeakMap<DroppableCollectionState, Drop
 export const DIRECTORY_DRAG_TYPE = Symbol();
 
 export function getDroppableCollectionId(state: DroppableCollectionState) {
-  let {id} = droppableCollectionMap.get(state);
+  let {id} = droppableCollectionMap.get(state) || {};
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
   }
@@ -33,7 +33,7 @@ export function getDroppableCollectionId(state: DroppableCollectionState) {
 }
 
 export function getDroppableCollectionRef(state: DroppableCollectionState) {
-  let {ref} = droppableCollectionMap.get(state);
+  let {ref} = droppableCollectionMap.get(state) || {};
   if (!ref) {
     throw new Error('Droppable item outside a droppable collection');
   }
@@ -52,7 +52,7 @@ export function getTypes(items: DragItem[]): Set<string> {
   return types;
 }
 
-function mapModality(modality: string) {
+function mapModality(modality: string | null) {
   if (!modality) {
     modality = 'virtual';
   }
@@ -91,7 +91,7 @@ export function writeToDataTransfer(dataTransfer: DataTransfer, items: DragItem[
   // See e.g. https://bugs.chromium.org/p/chromium/issues/detail?id=438479.
   let groupedByType = new Map<string, string[]>();
   let needsCustomData = false;
-  let customData = [];
+  let customData: Array<{}> = [];
   for (let item of items) {
     let types = Object.keys(item);
     if (types.length > 1) {
@@ -177,6 +177,9 @@ export class DragTypes implements IDragTypes {
 
 export function readFromDataTransfer(dataTransfer: DataTransfer) {
   let items: DropItem[] = [];
+  if (!dataTransfer) {
+    return items;
+  }
 
   // If our custom drag type is available, use that. This is a JSON serialized
   // representation of all items in the drag, set when there are multiple items
@@ -214,7 +217,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
         // In the future, we may use getAsFileSystemHandle instead, but that's currently
         // only implemented in Chrome.
         if (typeof item.webkitGetAsEntry === 'function') {
-          let entry: FileSystemEntry = item.webkitGetAsEntry();
+          let entry: FileSystemEntry | null = item.webkitGetAsEntry();
           // eslint-disable-next-line max-depth
           if (!entry) {
             // For some reason, Firefox includes an item with type image/png when copy
@@ -269,7 +272,10 @@ function blobToString(blob: Blob): Promise<string> {
   });
 }
 
-function createFileItem(file: File): FileDropItem {
+function createFileItem(file: File | null): FileDropItem {
+  if (!file) {
+    throw new Error('No file provided');
+  }
   return {
     kind: 'file',
     type: file.type || GENERIC_TYPE,
@@ -348,7 +354,7 @@ export function setDraggingKeys(keys: Set<Key>) {
   globalDndState.draggingKeys = keys;
 }
 
-export function setDropCollectionRef(ref: RefObject<HTMLElement | null>) {
+export function setDropCollectionRef(ref?: RefObject<HTMLElement | null>) {
   globalDndState.dropCollectionRef = ref;
 }
 
@@ -368,8 +374,8 @@ export function isInternalDropOperation(ref?: RefObject<HTMLElement | null>) {
 }
 
 type DropEffect = 'none' | 'copy' | 'link' | 'move';
-export let globalDropEffect: DropEffect;
-export function setGlobalDropEffect(dropEffect: DropEffect) {
+export let globalDropEffect: DropEffect | undefined;
+export function setGlobalDropEffect(dropEffect: DropEffect | undefined) {
   globalDropEffect = dropEffect;
 }
 

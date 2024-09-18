@@ -12,7 +12,10 @@
 
 import {isScrollable} from './isScrollable';
 
-export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
+export function getScrollParent(node: Element | null, checkForOverflow?: boolean): Element {
+  if (!node) {
+    return document.scrollingElement || document.documentElement;
+  }
   let scrollableNode: Element | null = node;
   if (isScrollable(scrollableNode, checkForOverflow)) {
     scrollableNode = scrollableNode.parentElement;
