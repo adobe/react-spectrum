@@ -188,7 +188,7 @@ const heightProperties = [
 ] as const;
 
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
-export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof heightProperties)[number]>;
+export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (typeof heightProperties)[number]>;
 export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
 export interface UnsafeStyles {
   /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
