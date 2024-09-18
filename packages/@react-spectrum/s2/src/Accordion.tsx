@@ -15,8 +15,8 @@ import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclos
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {fontRelative, size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
-import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -261,35 +261,10 @@ const buttonStyles = style({
   borderRadius: {
     // Only rounded for keyboard focus and quiet hover.
     default: 'none',
-    size: {
-      S: {
-        isFocusVisible: '[7px]',
-        isQuiet: {
-          isHovered: '[7px]',
-          isFocusVisible: '[7px]'
-        }
-      },
-      M: {
-        isFocusVisible: 'default',
-        isQuiet: {
-          isHovered: 'default',
-          isFocusVisible: 'default'
-        }
-      },
-      L: {
-        isFocusVisible: '[9px]',
-        isQuiet: {
-          isHovered: '[9px]',
-          isFocusVisible: '[9px]'
-        }
-      },
-      XL: {
-        isFocusVisible: 'lg',
-        isQuiet: {
-          isHovered: 'lg',
-          isFocusVisible: 'lg'
-        }
-      }
+    isFocusVisible: fontRelative(6),
+    isQuiet: {
+      isHovered: fontRelative(6),
+      isFocusVisible: fontRelative(6)
     }
   },
   textAlign: 'start',
