@@ -75,7 +75,7 @@ describe('Accordion', function () {
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('allows users to open and close accordion item with enter / space key', async function () {
+  it('allows users to open and close disclosure with enter / space key', async function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
@@ -112,7 +112,7 @@ describe('Accordion', function () {
     expect(document.activeElement).toBe(thirdItem);
   });
 
-  it('allows users to type inside accordion items', async function () {
+  it('allows users to type inside disclosures', async function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let itemWithInputHeader = buttons[2];

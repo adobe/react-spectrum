@@ -28,9 +28,9 @@ export interface DisclosureAriaProps<T> {
 }
 
 export interface DisclosureAria {
-  /** Props for the accordion item button. */
+  /** Props for the disclosure button. */
   buttonProps: ButtonHTMLAttributes<HTMLElement>,
-  /** Props for the accordion item content element. */
+  /** Props for the disclosure content element. */
   regionProps: DOMAttributes
 }
 

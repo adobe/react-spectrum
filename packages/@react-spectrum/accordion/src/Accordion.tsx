@@ -22,7 +22,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export interface SpectrumAccordionProps extends StyleProps, DOMProps, AriaLabelingProps {
-  /** The accordion items within the accordion group. */
+  /** The disclosures within the accordion group. */
   children: React.ReactNode
 }
 
@@ -42,7 +42,7 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 export interface SpectrumDisclosureProps extends DisclosureProps, DOMProps, AriaLabelingProps  {
-  /** The contents of the accordion item. The first child should be the header, and the second child should be the panel. */
+  /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
   children: [ReactElement<SpectrumDisclosureHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
 }
 
@@ -113,7 +113,7 @@ function DisclosureHeader(props: SpectrumDisclosureHeaderProps, ref: DOMRef<HTML
   );
 }
 
-/** A group of accordion items that can be expanded and collapsed. */
+/** A group of disclosures that can be expanded and collapsed. */
 const _Accordion = forwardRef(Accordion) as (props: SpectrumAccordionProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
 export {_Accordion as Accordion};
 
@@ -121,10 +121,10 @@ export {_Accordion as Accordion};
 const _Disclosure = forwardRef(Disclosure) as (props: SpectrumDisclosureProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Disclosure>;
 export {_Disclosure as Disclosure};
 
-/** The panel that contains the content of an accordion item. */
+/** The panel that contains the content of an disclosure. */
 const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosurePanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosurePanel>;
 export {_DisclosurePanel as DisclosurePanel};
 
-/** The heading of the accordion item. */
+/** The heading of the disclosure. */
 const _DisclosureHeader = forwardRef(DisclosureHeader) as (props: SpectrumDisclosureHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosureHeader>;
 export {_DisclosureHeader as DisclosureHeader};
