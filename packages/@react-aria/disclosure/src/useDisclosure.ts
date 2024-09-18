@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {DisclosureState} from '@react-stately/disclosure';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
-import {useId} from '@react-aria/utils';
+import {useEvent, useId} from '@react-aria/utils';
 import {useIsSSR} from 'react-aria';
 
 export interface AriaDisclosureProps {
@@ -48,6 +48,8 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
+  useEvent(contentRef, 'beforematch', supportsBeforeMatch ? () => state.expand() : null);
+
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && contentRef.current && !isControlled && !isDisabled) {
@@ -57,10 +59,6 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       } else {
         // @ts-ignore
         contentRef.current.hidden = 'until-found';
-        // @ts-ignore
-        contentRef.current.onbeforematch = () => {
-          state.expand();
-        };
       }
     }
   }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
