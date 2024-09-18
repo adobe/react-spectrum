@@ -40,6 +40,10 @@ describe('Select', () => {
   });
 
   it('provides slots', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let {getByRole} = render(<TestSelect />);
 
     let button = getByRole('button');
@@ -75,6 +79,7 @@ describe('Select', () => {
 
     await user.click(options[1]);
     expect(button).toHaveTextContent('Dog');
+    console.error = consoleError;
   });
 
   it('should support slot', () => {
@@ -90,6 +95,10 @@ describe('Select', () => {
   });
 
   it('supports items with render props', () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let MyItem = (props) => (
       <ListBoxItem {...props}>
         {({isSelected}) => (
@@ -119,6 +128,7 @@ describe('Select', () => {
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Cat');
+    console.error = consoleError;
   });
 
   it('supports custom select value', () => {
@@ -156,6 +166,10 @@ describe('Select', () => {
   });
 
   it('should support render props', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let {getByRole} = render(
       <Select>
         {({isOpen}) => (
@@ -182,6 +196,7 @@ describe('Select', () => {
 
     await user.click(button);
     expect(button).toHaveTextContent('close');
+    console.error = consoleError;
   });
 
   it('should send disabled prop to the hidden field', () => {
@@ -201,6 +216,9 @@ describe('Select', () => {
   });
 
   it('supports validation errors', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
     let {getByRole, getByTestId} = render(
       <form data-testid="form">
         <Select name="select" isRequired>
@@ -242,9 +260,14 @@ describe('Select', () => {
     await user.click(items[0]);
     expect(button).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
+    console.error = consoleError;
   });
 
   it('should support falsy (0) as a valid default value', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let {getByRole} = render(
       <Select placeholder="pick a number">
         <Label>Pick a number</Label>
@@ -271,5 +294,6 @@ describe('Select', () => {
     await user.click(options[0]);
 
     expect(button).toHaveTextContent('0');
+    console.error = consoleError;
   });
 });

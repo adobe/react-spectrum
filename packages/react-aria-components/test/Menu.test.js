@@ -391,6 +391,11 @@ describe('Menu', () => {
   });
 
   it('should support menu trigger', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
+
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
       <MenuTrigger>
@@ -422,6 +427,7 @@ describe('Menu', () => {
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');
+    console.error = consoleError;
   });
 
   it('should support onScroll', () => {
@@ -472,6 +478,17 @@ describe('Menu', () => {
   });
 
   describe('Submenus', function () {
+    const consoleError = console.error;
+    beforeEach(() => {
+      // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+      // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+      console.error = jest.fn();
+    });
+
+    afterEach(() => {
+      console.error = consoleError;
+    });
+
     it('should support a submenu trigger', async () => {
       let onAction = jest.fn();
       let {getByRole, getAllByRole} = render(

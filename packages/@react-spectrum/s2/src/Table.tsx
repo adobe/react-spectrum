@@ -374,7 +374,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
         <Collection items={items}>
           {children}
         </Collection>
-        {loadingState === 'loadingMore' && [...items].length > 0 && loadMoreSpinner}
+        {loadingState === 'loadingMore' && loadMoreSpinner}
       </>
     );
   } else {

@@ -31,12 +31,22 @@ let TestPopover = (props) => (
 
 describe('Popover', () => {
   let user;
+  const consoleError = console.error;
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
+
+  beforeEach(() => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    console.error = jest.fn();
+  });
+
   afterEach(() => {
     act(() => jest.runAllTimers());
+    console.error = consoleError;
   });
 
   it('works with a dialog', async () => {

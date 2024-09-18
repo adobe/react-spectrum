@@ -129,6 +129,10 @@ describe('Dialog', () => {
   });
 
   it('works with popover', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let {getByRole} = render(
       <DialogTrigger>
         <Button aria-label="Help">?⃝</Button>
@@ -167,9 +171,14 @@ describe('Dialog', () => {
     await user.click(document.body);
 
     expect(dialog).not.toBeInTheDocument();
+    console.error = consoleError;
   });
 
   it('should get default aria label from trigger', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let {getByRole} = render(
       <DialogTrigger>
         <Button>Settings</Button>
@@ -187,9 +196,14 @@ describe('Dialog', () => {
 
     await user.click(document.body);
     expect(dialog).not.toBeInTheDocument();
+    console.error = consoleError;
   });
 
   it('should support render props', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
     let {getByRole} = render(
       <DialogTrigger>
         <Button aria-label="Help">?⃝</Button>
@@ -219,6 +233,7 @@ describe('Dialog', () => {
     await user.click(dismiss);
 
     expect(dialog).not.toBeInTheDocument();
+    console.error = consoleError;
   });
 
   it('should support Modal being used standalone', async () => {
