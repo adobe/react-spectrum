@@ -11,11 +11,10 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {Button, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
+import {Button, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DisclosurePanelProps, DisclosureProps} from 'react-aria-components/src/Accordion';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
