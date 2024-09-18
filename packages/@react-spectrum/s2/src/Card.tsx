@@ -331,6 +331,13 @@ let content = style({
   }
 });
 
+let actionMenu = style({
+  gridArea: 'menu',
+  // Don't cause the row to expand, preserve gap between title and description text.
+  // Would use -100% here but it doesn't work in Firefox.
+  marginY: '[calc(-1 * self(height))]'
+});
+
 let footer = style({
   display: 'flex',
   flexDirection: 'row',
@@ -397,7 +404,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
           isDisabled: isSkeleton,
           // @ts-ignore
           'data-slot': 'menu',
-          styles: style({gridArea: 'menu'})
+          styles: actionMenu
         }],
         [SkeletonContext, isSkeleton]
       ]}>
