@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {Accordion, AccordionHeader, AccordionItem, AccordionPanel, AccordionContext, AccordionItemContext} from './Accordion';
+export {Accordion, AccordionHeader, Disclosure, AccordionPanel, AccordionContext, DisclosureContext} from './Accordion';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
@@ -70,7 +70,7 @@ export {Tooltip, TooltipTrigger} from './Tooltip';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
-export type {AccordionProps, AccordionItemProps, AccordionPanelProps} from './Accordion';
+export type {AccordionProps, DisclosureProps, AccordionPanelProps} from './Accordion';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionMenuProps} from './ActionMenu';
 export type {AlertDialogProps} from './AlertDialog';

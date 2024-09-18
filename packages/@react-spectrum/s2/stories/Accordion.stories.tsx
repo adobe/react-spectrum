@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionHeader, AccordionItem, AccordionPanel, TextField} from '../src';
+import {Accordion, AccordionHeader, AccordionPanel, Disclosure, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
@@ -47,22 +47,22 @@ export const Example: Story = {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
-          <AccordionItem key="files">
+          <Disclosure key="files">
             <AccordionHeader>
               Files
             </AccordionHeader>
             <AccordionPanel>
               Files content
             </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem key="people">
+          </Disclosure>
+          <Disclosure key="people">
             <AccordionHeader>
               People
             </AccordionHeader>
             <AccordionPanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
             </AccordionPanel>
-          </AccordionItem>
+          </Disclosure>
         </Accordion>
       </div>
     );
@@ -74,75 +74,75 @@ export const WithLongTitle: Story = {
     return (
       <div className={style({minHeight: 224})}>
         <Accordion styles={style({maxWidth: 224})} {...args}>
-          <AccordionItem key="files">
+          <Disclosure key="files">
             <AccordionHeader>
               Files
             </AccordionHeader>
             <AccordionPanel>
               Files content
             </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem key="people">
+          </Disclosure>
+          <Disclosure key="people">
             <AccordionHeader>
               People
             </AccordionHeader>
             <AccordionPanel>
               People content
             </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem key="long-title">
+          </Disclosure>
+          <Disclosure key="long-title">
             <AccordionHeader>
               Very very very very very long title that wraps
             </AccordionHeader>
             <AccordionPanel>
               Accordion content
             </AccordionPanel>
-          </AccordionItem>
+          </Disclosure>
         </Accordion>
       </div>
     );
   }
 };
 
-export const WithDisabledAccordionItem: Story = {
+export const WithDisabledDisclosure: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
-          <AccordionItem key="files">
+          <Disclosure key="files">
             <AccordionHeader>
               Files
             </AccordionHeader>
             <AccordionPanel>
               Files content
             </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem isDisabled key="people">
+          </Disclosure>
+          <Disclosure isDisabled key="people">
             <AccordionHeader>
               People
             </AccordionHeader>
             <AccordionPanel>
               <TextField label="Name" />
             </AccordionPanel>
-          </AccordionItem>
+          </Disclosure>
         </Accordion>
       </div>
     );
   }
 };
 
-export const AccordionItemWithoutGroup: Story = {
+export const DisclosureWithoutGroup: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
-        <AccordionItem {...args}>
+        <Disclosure {...args}>
           <AccordionHeader>
             Files
           </AccordionHeader>
           <AccordionPanel>
             Files content
           </AccordionPanel>
-        </AccordionItem>
+        </Disclosure>
       </div>
     );
   }
@@ -154,13 +154,13 @@ WithLongTitle.parameters = {
   }
 };
 
-WithDisabledAccordionItem.parameters = {
+WithDisabledDisclosure.parameters = {
   docs: {
     disable: true
   }
 };
 
-AccordionItemWithoutGroup.parameters = {
+DisclosureWithoutGroup.parameters = {
   docs: {
     disable: true
   }

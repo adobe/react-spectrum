@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionItem, AccordionPanel} from '../src';
+import {AccordionPanel, Disclosure} from '../src';
 import {Button, Heading} from 'react-aria-components';
 import React from 'react';
 import './styles.css';
 
 export default {
   title: 'React Aria Components',
-  component: AccordionItem
+  component: Disclosure
 };
 
 export const AccordionExample = (args: any) => (
-  <AccordionItem {...args}>
+  <Disclosure {...args}>
     {({isExpanded}) => (
       <>
         <Heading level={3}>
@@ -32,13 +32,13 @@ export const AccordionExample = (args: any) => (
         </AccordionPanel>
       </>
     )}
-  </AccordionItem>
+  </Disclosure>
 );
 
 export const AccordionControlledExample = (args: any) => {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
-    <AccordionItem {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
+    <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
       {({isExpanded}) => (
         <>
           <Heading level={3}>
@@ -49,6 +49,6 @@ export const AccordionControlledExample = (args: any) => {
           </AccordionPanel>
         </>
       )}
-    </AccordionItem>
+    </Disclosure>
   );
 };

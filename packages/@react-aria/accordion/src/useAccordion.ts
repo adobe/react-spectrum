@@ -23,11 +23,11 @@ export interface AccordionAria {
   accordionProps: DOMAttributes
 }
 
-export interface AccordionItemAriaProps<T> {
+export interface DisclosureAriaProps<T> {
   item: Node<T>
 }
 
-export interface AccordionItemAria {
+export interface DisclosureAria {
   /** Props for the accordion item button. */
   buttonProps: ButtonHTMLAttributes<HTMLElement>,
   /** Props for the accordion item content element. */
@@ -37,7 +37,7 @@ export interface AccordionItemAria {
 /**
  * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
  */
-export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): AccordionItemAria {
+export function useDisclosure<T>(props: DisclosureAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): DisclosureAria {
   let {item} = props;
   let buttonId = useId();
   let regionId = useId();

@@ -388,7 +388,7 @@
   }
 }
 
-:global(.react-aria-AccordionItem) {
+:global(.react-aria-Disclosure) {
   :global(.react-aria-Button[slot=trigger]) {
     background-color: transparent;
     border: none;

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionHeader, AccordionItem, AccordionPanel} from '../';
+import {Accordion, AccordionHeader, AccordionPanel, Disclosure} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta = {
   title: 'Accordion',
-  component: AccordionItem,
+  component: Disclosure,
   excludeStories: ['Template']
 };
 
@@ -24,30 +24,30 @@ export default meta;
 
 export const Template = (args) => (
   <Accordion {...args}>
-    <AccordionItem key="files">
+    <Disclosure key="files">
       <AccordionHeader>
         Your files
       </AccordionHeader>
       <AccordionPanel>
         files
       </AccordionPanel>
-    </AccordionItem>
-    <AccordionItem key="shared">
+    </Disclosure>
+    <Disclosure key="shared">
       <AccordionHeader>
         Shared with you
       </AccordionHeader>
       <AccordionPanel>
         shared
       </AccordionPanel>
-    </AccordionItem>
-    <AccordionItem key="last">
+    </Disclosure>
+    <Disclosure key="last">
       <AccordionHeader>
         Last item
       </AccordionHeader>
       <AccordionPanel>
         last
       </AccordionPanel>
-    </AccordionItem>
+    </Disclosure>
   </Accordion>
 );
 

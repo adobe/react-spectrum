@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionItem as RACAccordionItem, AccordionItemProps as RACAccordionItemProps, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, SlotProps, useLocale} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, Disclosure as RACDisclosure, DisclosureProps as RACDisclosureProps, SlotProps, useLocale} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
@@ -87,7 +87,7 @@ function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
 let _Accordion = /*#__PURE__*/ (forwardRef as forwardRefType)(Accordion);
 export {_Accordion as Accordion};
 
-export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles, DOMProps {
+export interface DisclosureProps extends RACDisclosureProps, UnsafeStyles, DOMProps {
   /**
    * The size of the accordion item.
    * @default "M"
@@ -106,9 +106,9 @@ export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles,
   styles?: StyleString
 }
 
-export const AccordionItemContext = createContext<ContextValue<AccordionItemProps, DOMRefValue<HTMLDivElement>>>(null);
+export const DisclosureContext = createContext<ContextValue<DisclosureProps, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalAccordionItemContext = createContext<Pick<AccordionItemProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
+let InternalDisclosureContext = createContext<Pick<DisclosureProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
 
 const itemStyles = style({
   color: 'heading',
@@ -130,8 +130,8 @@ const itemStyles = style({
   minWidth: sizeValue(200)
 }, getAllowedOverrides());
 
-function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, AccordionItemContext);
+function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
   let domRef = useDOMRef(ref);
   let {
     UNSAFE_style,
@@ -148,16 +148,16 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [InternalAccordionItemContext, {size, isQuiet, density, isDisabled}]
+        [InternalDisclosureContext, {size, isQuiet, density, isDisabled}]
       ]}>
-      <RACAccordionItem
+      <RACDisclosure
         {...domProps}
         isDisabled={isDisabled}
         ref={domRef}
         style={UNSAFE_style}
         className={(UNSAFE_className ?? '') + itemStyles({isQuiet}, props.styles)}>
         {props.children}
-      </RACAccordionItem>
+      </RACDisclosure>
     </Provider>
   );
 }
@@ -165,8 +165,8 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
 /**
  * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-let _AccordionItem = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionItem);
-export {_AccordionItem as AccordionItem};
+let _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
+export {_Disclosure as Disclosure};
 
 export interface AccordionHeaderProps extends UnsafeStyles, DOMProps {
   /** The heading level of the accordion header.
@@ -321,7 +321,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size, density, isQuiet} = useContext(InternalAccordionItemContext);
+  let {size, density, isQuiet} = useContext(InternalDisclosureContext);
   let isRTL = direction === 'rtl';
   return (
     <Heading
@@ -375,7 +375,7 @@ function AccordionPanel(props: AccordionPanelProps, ref: DOMRef<HTMLDivElement>)
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
-  let {size} = useContext(InternalAccordionItemContext);
+  let {size} = useContext(InternalDisclosureContext);
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (

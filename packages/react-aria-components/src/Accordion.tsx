@@ -19,9 +19,9 @@ import {HoverEvents, useFocusRing} from 'react-aria';
 import {mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
-export interface AccordionItemProps extends Omit<AriaDisclosureProps, 'children' | 'contentRef'>, HoverEvents, RenderProps<AccordionItemRenderProps>, SlotProps {}
+export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children' | 'contentRef'>, HoverEvents, RenderProps<DisclosureRenderProps>, SlotProps {}
 
-export interface AccordionItemRenderProps {
+export interface DisclosureRenderProps {
   /**
    * Whether the accordion item is expanded (controlled).
    * @selector [data-expanded]
@@ -43,7 +43,7 @@ export interface AccordionItemRenderProps {
   state: DisclosureState
 }
 
-export const AccordionItemContext = createContext<ContextValue<AccordionItemProps, HTMLDivElement>>(null);
+export const DisclosureContext = createContext<ContextValue<DisclosureProps, HTMLDivElement>>(null);
 export const DisclosureStateContext = createContext<DisclosureState | null>(null);
 
 interface InternalAccordionContextValue {
@@ -53,8 +53,8 @@ interface InternalAccordionContextValue {
 
 const InternalAccordionContext = createContext<InternalAccordionContextValue | null>(null);
 
-function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, AccordionItemContext);
+function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, DisclosureContext);
   let state = useDisclosureState(props);
   let contentRef = useRef<HTMLElement>(null);
   let {buttonProps, contentProps} = useDisclosure({...props, contentRef}, state);
@@ -65,7 +65,7 @@ function AccordionItem(props: AccordionItemProps, ref: ForwardedRef<HTMLDivEleme
 
   let renderProps = useRenderProps({
     ...props,
-    defaultClassName: 'react-aria-AccordionItem',
+    defaultClassName: 'react-aria-Disclosure',
     values: {
       isExpanded: state.isExpanded,
       isDisabled: props.isDisabled || false,
@@ -143,8 +143,8 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElemen
 /**
  * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-const _AccordionItem = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionItem);
-export {_AccordionItem as AccordionItem};
+const _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
+export {_Disclosure as Disclosure};
 
 const _AccordionPanel = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionPanel);
 export {_AccordionPanel as AccordionPanel};
