@@ -91,7 +91,9 @@ const controlItem = style({
 const slider = style({
   ...focusRing(),
   backgroundColor: 'gray-25',
-  width: 'full',
+  left: 0,
+  right: 0,
+  // width: 'full',
   height: 'full',
   position: 'absolute',
   boxSizing: 'border-box',
@@ -257,10 +259,9 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
                 render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
               }],
               [RACTextContext, {slots: {[DEFAULT_SLOT]: {}}}],
-              [TextContext, {styles: style({order: 1, truncate: true})}
-              ]
+              [TextContext, {styles: style({order: 1, truncate: true})}]
             ]}>
-            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual', transition: 'default'})}>
+            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual', transition: 'default', alignItems: 'center'})}>
               {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
             </div>
           </Provider>
