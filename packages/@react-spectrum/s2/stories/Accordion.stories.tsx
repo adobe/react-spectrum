@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel, TextField} from '../src';
+import {Accordion, AccordionHeader, AccordionItem, AccordionPanel, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
-const meta: Meta<typeof AccordionGroup> = {
-  component: AccordionGroup,
+const meta: Meta<typeof Accordion> = {
+  component: Accordion,
   parameters: {
     layout: 'centered'
   },
@@ -40,13 +40,13 @@ const meta: Meta<typeof AccordionGroup> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AccordionGroup>;
+type Story = StoryObj<typeof Accordion>;
 
 export const Example: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
-        <AccordionGroup {...args}>
+        <Accordion {...args}>
           <AccordionItem key="files">
             <AccordionHeader>
               Files
@@ -63,7 +63,7 @@ export const Example: Story = {
               <TextField label="Name" styles={style({maxWidth: 176})} />
             </AccordionPanel>
           </AccordionItem>
-        </AccordionGroup>
+        </Accordion>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export const WithLongTitle: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 224})}>
-        <AccordionGroup styles={style({maxWidth: 224})} {...args}>
+        <Accordion styles={style({maxWidth: 224})} {...args}>
           <AccordionItem key="files">
             <AccordionHeader>
               Files
@@ -98,7 +98,7 @@ export const WithLongTitle: Story = {
               Accordion content
             </AccordionPanel>
           </AccordionItem>
-        </AccordionGroup>
+        </Accordion>
       </div>
     );
   }
@@ -108,7 +108,7 @@ export const WithDisabledAccordionItem: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
-        <AccordionGroup {...args}>
+        <Accordion {...args}>
           <AccordionItem key="files">
             <AccordionHeader>
               Files
@@ -125,7 +125,7 @@ export const WithDisabledAccordionItem: Story = {
               <TextField label="Name" />
             </AccordionPanel>
           </AccordionItem>
-        </AccordionGroup>
+        </Accordion>
       </div>
     );
   }

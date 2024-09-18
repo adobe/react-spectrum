@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionGroup, AccordionHeader, AccordionItem, AccordionPanel} from '../src';
+import {Accordion, AccordionHeader, AccordionItem, AccordionPanel} from '../src';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -26,14 +26,14 @@ let items = [
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <AccordionGroup {...props}>
+      <Accordion {...props}>
         {items.map(item => (
           <AccordionItem key={item.key}>
             <AccordionHeader>{item.title}</AccordionHeader>
             <AccordionPanel>{item.children}</AccordionPanel>
           </AccordionItem>
         ))}
-      </AccordionGroup>
+      </Accordion>
     </Provider>
   );
 }

@@ -22,12 +22,12 @@ import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumAccordionGroupProps extends StyleProps, DOMProps, AriaLabelingProps {
+export interface SpectrumAccordionProps extends StyleProps, DOMProps, AriaLabelingProps {
   /** The accordion items within the accordion group. */
   children: React.ReactNode
 }
 
-function AccordionGroup(props: SpectrumAccordionGroupProps, ref: DOMRef<HTMLDivElement>) {
+function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -115,8 +115,8 @@ function AccordionHeader(props: SpectrumAccordionHeaderProps, ref: DOMRef<HTMLHe
 }
 
 /** A group of accordion items that can be expanded and collapsed. */
-const _AccordionGroup = forwardRef(AccordionGroup) as (props: SpectrumAccordionGroupProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionGroup>;
-export {_AccordionGroup as AccordionGroup};
+const _Accordion = forwardRef(Accordion) as (props: SpectrumAccordionProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
+export {_Accordion as Accordion};
 
 /** A collapsible section of content composed of a heading that expands and collapses a panel. */
 const _AccordionItem = forwardRef(AccordionItem) as (props: SpectrumAccordionItemProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionItem>;

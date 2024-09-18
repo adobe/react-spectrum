@@ -22,7 +22,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
-export interface AccordionGroupProps extends UnsafeStyles, DOMProps, SlotProps {
+export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
   /** The accordion items in the accordion group. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -48,12 +48,12 @@ const groupStyles = style({
   flexDirection: 'column'
 }, getAllowedOverrides());
 
-export const AccordionGroupContext = createContext<ContextValue<AccordionGroupProps, DOMRefValue<HTMLDivElement>>>(null);
+export const AccordionContext = createContext<ContextValue<AccordionProps, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalAccordionGroupContext = createContext<Pick<AccordionGroupProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
+let InternalAccordionContext = createContext<Pick<AccordionProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
 
-function AccordionGroup(props: AccordionGroupProps, ref: DOMRef<HTMLDivElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, AccordionGroupContext);
+function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, AccordionContext);
   let domRef = useDOMRef(ref);
   let {
     UNSAFE_style,
@@ -68,7 +68,7 @@ function AccordionGroup(props: AccordionGroupProps, ref: DOMRef<HTMLDivElement>)
   return (
     <Provider
       values={[
-        [InternalAccordionGroupContext, {size, isQuiet, density, isDisabled}]
+        [InternalAccordionContext, {size, isQuiet, density, isDisabled}]
       ]}>
       <div
         {...domProps}
@@ -84,8 +84,8 @@ function AccordionGroup(props: AccordionGroupProps, ref: DOMRef<HTMLDivElement>)
 /**
  * A accordion group is a container for multiple accordion items.
  */
-let _AccordionGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionGroup);
-export {_AccordionGroup as AccordionGroup};
+let _Accordion = /*#__PURE__*/ (forwardRef as forwardRefType)(Accordion);
+export {_Accordion as Accordion};
 
 export interface AccordionItemProps extends RACAccordionItemProps, UnsafeStyles, DOMProps {
   /**
@@ -139,7 +139,7 @@ function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
-  let groupProps = useContext(InternalAccordionGroupContext);
+  let groupProps = useContext(InternalAccordionContext);
   let size = props.size || groupProps.size || 'M';
   let density = groupProps.density || props.density || 'regular';
   let isQuiet = groupProps.isQuiet || props.isQuiet;
