@@ -161,7 +161,6 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let state = useContext(RadioGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
-  let disabledIsRegistered = useRef<string | null>(props.defaultValue ?? props.value ?? null);
 
   // default select the first available item
   let register = useCallback((value: string) => {
