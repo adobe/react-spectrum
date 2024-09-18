@@ -12,7 +12,7 @@
 
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupProps, RadioGroupStateContext, RadioProps} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -72,7 +72,7 @@ const controlItem = style({
   // TODO: update this padding for icon-only items when we introduce the non-track style back
   paddingX: {
     default: 'edge-to-text',
-    isIconOnly: size(6)
+    ':has([slot=icon]:only-child)': size(6)
   },
   height: 32,
   alignItems: 'center',
@@ -206,16 +206,6 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
   if (window?.matchMedia) {
     isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
-  
-  let [isIconOnly, setIsIconOnly] = useState<boolean>(false);
-  useLayoutEffect(() => {
-    if (domRef?.current) {
-      let textContent = domRef.current.textContent;
-      if (!textContent) {
-        setIsIconOnly(true);
-      }
-    }
-  }, []);
 
   useLayoutEffect(() => {
     register?.(props.value, !!props.isDisabled);
@@ -248,7 +238,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
       ref={domRef} 
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isIconOnly}, props.styles)} >
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps}, props.styles)} >
       {({isSelected, isFocusVisible, isPressed, isDisabled}) => (
         <>
           {isSelected && <div className={slider({isFocusVisible, isDisabled})} ref={currentSelectedRef} />}

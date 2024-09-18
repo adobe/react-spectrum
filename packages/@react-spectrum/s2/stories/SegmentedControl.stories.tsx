@@ -17,7 +17,7 @@ import ListBulleted from '../s2wf-icons/S2_Icon_ListBulleted_20_N.svg';
 import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
 import type {Meta} from '@storybook/react';
-import {SegmentedControl, SegmentedControlItem} from '../src';
+import {SegmentedControl, SegmentedControlItem, Text} from '../src';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 
@@ -46,9 +46,9 @@ Example.args = {
 
 export const WithIcons = (args: any) => (
   <SegmentedControl {...args}>
-    <SegmentedControlItem value="unordered"><ListBulleted />Unordered</SegmentedControlItem>
-    <SegmentedControlItem value="ordered"><ListNumbered />Ordered</SegmentedControlItem>
-    <SegmentedControlItem value="task list"><ListMultiSelect />Task List</SegmentedControlItem>
+    <SegmentedControlItem value="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
+    <SegmentedControlItem value="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
+    <SegmentedControlItem value="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
   </SegmentedControl>
 );
 
