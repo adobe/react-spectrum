@@ -169,7 +169,7 @@ A [ProgressBar](ProgressBar.html) component is required to show the pending stat
 Make sure to internationalize the `aria-label` you pass to the [ProgressBar](ProgressBar.html) component.
 
 ```tsx example
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import {ProgressBar, Text} from 'react-aria-components';
 
 function PendingButton(props) {
@@ -190,23 +190,34 @@ function PendingButton(props) {
         {({isPending}) => (
           <>
             {!isPending && <Text>Save</Text>}
-            {isPending && (<ProgressBar
-              aria-label="Saving..."
-              isIndeterminate>
-              <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
-                <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
-                <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
-                  <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
-                </path>
-              </svg>
-            </ProgressBar>)}
+            {isPending && (
+              <ProgressBar aria-label="Saving..." isIndeterminate>
+                <svg width="16" height="16" style={{display: 'block'}}>
+                  <use href="#spinner" />
+                </svg>
+              </ProgressBar>
+            )}
           </>
         )}
     </Button>
   );
 }
-<PendingButton />
 ```
+
+```tsx snippet hidden
+<svg>
+  <defs>
+    <g id="spinner" transform="scale(0.66)">
+      <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+      <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+        <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </defs>
+</svg>
+```
+
+### Accessibility
 
 **Note:**
 The `ProgressBar` must be in the accessibility tree as soon as the button becomes pending, even if it is not visible.
@@ -220,11 +231,9 @@ You can also choose to keep the button's contents in the accessibility tree by u
 Try the above example and the one below with a screen reader to see the difference in behavior.
 
 <details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show other styles of implementation</summary>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show example</summary>
 
 ```tsx example
-import {useEffect} from 'react';
-
 function PendingDelayed(props) {
   let [isPending, setPending] = useState(false);
 
@@ -244,64 +253,46 @@ function PendingDelayed(props) {
         {({isPending}) => (
           <>
             <Text className={isPending ? 'pending' : undefined}>Save</Text>
-            <ProgressBar
-              aria-label="in progress"
-              isIndeterminate
-              className={['spinner', (isPending ? 'spinner-pending' : '')].join(' ')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" style={{display: 'block'}}>
-                <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
-                <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
-                  <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
-                </path>
-              </svg>
-            </ProgressBar>
+            {isPending && (
+              <ProgressBar aria-label="in progress" isIndeterminate className="spinner">
+                <svg width="16" height="16" style={{display: 'block'}}>
+                  <use href="#spinner" />
+                </svg>
+              </ProgressBar>
+            )}
           </>
         )}
     </Button>
   );
 }
-<PendingDelayed />
 ```
+
 ```css
-@keyframes showSpinner {
-  0%, 99% {
+@keyframes toggle {
+  from {
     opacity: 0;
   }
-  100% {
+
+  to {
     opacity: 1;
   }
 }
+
 .spinner {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0;
-  display: none;
-}
-
-.spinner-pending {
-  transition-behavior: allow-discrete;
-  transition-property: display;
-  transition-duration: 1s;
-  animation: showSpinner 1s;
-  display: block;
+  animation: toggle 1s steps(1);
   opacity: 1;
 }
 
-@keyframes hideText {
-  0%, 99% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 .pending {
-  animation: hideText 1s;
+  animation: toggle 1s reverse steps(1, jump-start);
   opacity: 0;
 }
 ```
+
 </details>
 
 ## Link buttons
