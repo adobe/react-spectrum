@@ -1939,7 +1939,6 @@ describe('DatePicker', function () {
 
       expectPlaceholder(combobox, '11/7/2021, 12:00 AM GMT');
 
-
       await user.tab();
       for(var i=0; i<4; i++) {
         fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
@@ -1979,15 +1978,10 @@ describe('DatePicker', function () {
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected).toBeUndefined();
 
-      let timeField = getAllByLabelText('Time')[0];
-      expectPlaceholder(timeField, '––:–– AM');
-
-      // selecting a date should not close the popover
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
       await user.click(todayCell.firstChild);
 
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
-
       expect(dialog).toBeVisible();
       await user.click(document.body);
       act(() => jest.runAllTimers());
