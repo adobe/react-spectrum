@@ -215,7 +215,7 @@ let selectionIndicator = style({
   },
   // Quiet cards with no checkbox have an extra inner stroke
   // to distinguish the selection indicator from the preview.
-  outlineColor: 'gray-25',
+  outlineColor: lightDark('transparent-white-600', 'transparent-black-600'),
   outlineOffset: -4,
   outlineStyle: {
     default: 'none',
