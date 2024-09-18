@@ -23,10 +23,10 @@ export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children' | 
 
 export interface DisclosureRenderProps {
   /**
-   * Whether the disclosure is expanded (controlled).
+   * Whether the disclosure is expanded.
    * @selector [data-expanded]
    */
-  isExpanded?: boolean,
+  isExpanded: boolean,
   /**
    * Whether the disclosure has keyboard focus.
    * @selector [data-focus-visible-within]
