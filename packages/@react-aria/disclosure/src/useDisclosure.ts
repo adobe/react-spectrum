@@ -24,9 +24,7 @@ export interface AriaDisclosureProps {
   /** Whether the disclosure is expanded (controlled). */
   isExpanded?: boolean,
   /** Whether the disclosure is expanded by default (uncontrolled). */
-  defaultExpanded?: boolean,
-  /** The ref for the disclosure's content element. */
-  contentRef: RefObject<HTMLElement | null>
+  defaultExpanded?: boolean
 }
 
 export interface DisclosureAria {
@@ -36,11 +34,15 @@ export interface DisclosureAria {
   contentProps: HTMLAttributes<HTMLElement>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/**
+ * Provides the behavior and accessibility implementation for a disclosure component.
+ * @param props - Props for the disclosure.
+ * @param state - State for the disclosure, as returned by `useDisclosureState`.
+ * @param ref - A ref for the disclosure content.
+ */
 export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref?: RefObject<Element | null>): DisclosureAria {
   let {
-    isDisabled,
-    contentRef
+    isDisabled
   } = props;
   let triggerId = useId();
   let contentId = useId();
@@ -49,20 +51,20 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
   // @ts-ignore https://github.com/facebook/react/pull/24741
-  useEvent(contentRef, 'beforematch', supportsBeforeMatch ? () => state.expand() : null);
+  useEvent(ref, 'beforematch', supportsBeforeMatch ? () => state.expand() : null);
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && contentRef.current && !isControlled && !isDisabled) {
+    if (supportsBeforeMatch && ref.current && !isControlled && !isDisabled) {
       if (state.isExpanded) {
         // @ts-ignore
-        contentRef.current.hidden = undefined;
+        ref.current.hidden = undefined;
       } else {
         // @ts-ignore
-        contentRef.current.hidden = 'until-found';
+        ref.current.hidden = 'until-found';
       }
     }
-  }, [isControlled, contentRef, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
+  }, [isControlled, ref, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
 
   return {
     buttonProps: {

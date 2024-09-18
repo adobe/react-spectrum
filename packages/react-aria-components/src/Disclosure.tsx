@@ -19,7 +19,7 @@ import {HoverEvents, useFocusRing} from 'react-aria';
 import {mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
-export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children' | 'contentRef'>, HoverEvents, RenderProps<DisclosureRenderProps>, SlotProps {}
+export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, HoverEvents, RenderProps<DisclosureRenderProps>, SlotProps {}
 
 export interface DisclosureRenderProps {
   /**
@@ -56,8 +56,7 @@ const InternalDisclosureContext = createContext<InternalDisclosureContextValue |
 function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
   let state = useDisclosureState(props);
-  let contentRef = useRef<HTMLElement>(null);
-  let {buttonProps, contentProps} = useDisclosure({...props, contentRef}, state);
+  let {buttonProps, contentProps} = useDisclosure(props, state, ref);
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -83,7 +82,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
             trigger: buttonProps
           }
         }],
-        [InternalDisclosureContext, {contentProps, contentRef}],
+        [InternalDisclosureContext, {contentProps, contentRef: ref}],
         [DisclosureStateContext, state]
       ]}>
       <div
