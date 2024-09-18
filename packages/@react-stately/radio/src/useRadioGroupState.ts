@@ -74,7 +74,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   });
 
   let setSelectedValue = (value) => {
-    if (!props.isReadOnly) {
+    if (!props.isReadOnly && !props.isDisabled) {
       setSelected(value);
       validation.commitValidation();
     }
