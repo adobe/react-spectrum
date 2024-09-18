@@ -220,16 +220,16 @@ const buttonStyles = style({
       },
       L: {
         density: {
-          compact: sizeValue(8),
+          compact: 8,
           regular: sizeValue(11),
-          spacious: sizeValue(16)
+          spacious: 16
         }
       },
       XL: {
         density: {
-          compact: sizeValue(8),
-          regular: sizeValue(12),
-          spacious: sizeValue(16)
+          compact: 8,
+          regular: 12,
+          spacious: 16
         }
       }
     }
@@ -312,17 +312,17 @@ export interface DisclosurePanelProps extends RACDisclosurePanelProps, UnsafeSty
 const panelStyles = style({
   font: 'body',
   paddingTop: {
-    isExpanded: sizeValue(8)
+    isExpanded: 8
   },
   paddingBottom: {
-    isExpanded: sizeValue(16)
+    isExpanded: 16
   },
   paddingX: {
     isExpanded: {
       size: {
-        S: sizeValue(8),
+        S: 8,
         M: sizeValue(9),
-        L: sizeValue(12),
+        L: 12,
         XL: sizeValue(15)
       }
     }
