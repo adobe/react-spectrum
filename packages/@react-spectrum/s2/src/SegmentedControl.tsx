@@ -164,25 +164,12 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let disabledIsRegistered = useRef<string | null>(props.defaultValue ?? props.value ?? null);
 
   // default select the first available item
-  let register = useCallback((value: string, isDisabled?: boolean) => {
-    if (state && !isRegistered.current && !isDisabled) {
-      isRegistered.current = true;
-
-      state.setSelectedValue(value);
-    } else if (isDisabled && disabledIsRegistered.current == null) {
-      disabledIsRegistered.current = value;
-    }
-  }, []);
-
-  // if the registration fails, then we will default select the first item
-  useLayoutEffect(() => {
+  let register = useCallback((value: string) => {
     if (state && !isRegistered.current) {
-      state.setSelectedValue(disabledIsRegistered.current);
-    } else if (!isRegistered.current && disabledIsRegistered.current == null) {
-      throw new Error('Could not determine a default selected item');
+      isRegistered.current = true;
+      state.setSelectedValue(value);
     }
   }, []);
-
 
   return (
     <Provider
@@ -208,7 +195,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
   }
 
   useLayoutEffect(() => {
-    register?.(props.value, !!props.isDisabled);
+    register?.(props.value);
   }, []);
 
   useLayoutEffect(() => {
