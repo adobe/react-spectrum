@@ -12,7 +12,7 @@
 
 import {AriaDisclosureProps, useDisclosure} from '@react-aria/disclosure';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DisclosureState, useDisclosureState} from '@react-stately/disclosure';
 import {forwardRefType} from '@react-types/shared';
 import {HoverEvents, useFocusRing} from 'react-aria';
@@ -79,6 +79,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
       values={[
         [ButtonContext, {
           slots: {
+            [DEFAULT_SLOT]: {},
             trigger: buttonProps
           }
         }],
