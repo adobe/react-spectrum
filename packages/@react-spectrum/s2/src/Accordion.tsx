@@ -15,8 +15,8 @@ import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclos
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
-import {fontRelative, size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
+import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

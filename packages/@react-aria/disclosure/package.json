@@ -26,6 +26,7 @@
     "@react-aria/selection": "^3.19.3",
     "@react-aria/utils": "^3.25.2",
     "@react-stately/disclosure": "3.0.0-alpha.0",
+    "@react-stately/toggle": "^3.7.7",
     "@react-stately/tree": "^3.8.4",
     "@react-types/button": "^3.9.6",
     "@react-types/shared": "^3.24.1",

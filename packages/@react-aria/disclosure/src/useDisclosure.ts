@@ -55,7 +55,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && ref.current && !isControlled && !isDisabled) {
+    if (supportsBeforeMatch && ref?.current && !isControlled && !isDisabled) {
       if (state.isExpanded) {
         // @ts-ignore
         ref.current.hidden = undefined;
