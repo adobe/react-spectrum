@@ -247,10 +247,10 @@ const buttonStyles = style({
   borderRadius: {
     // Only rounded for keyboard focus and quiet hover.
     default: 'none',
-    isFocusVisible: fontRelative(6),
+    isFocusVisible: 'control',
     isQuiet: {
-      isHovered: fontRelative(6),
-      isFocusVisible: fontRelative(6)
+      isHovered: 'control',
+      isFocusVisible: 'control'
     }
   },
   textAlign: 'start',
