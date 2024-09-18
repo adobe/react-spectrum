@@ -16,7 +16,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, useContext
 import {DisclosureState, useDisclosureState} from '@react-stately/disclosure';
 import {forwardRefType} from '@react-types/shared';
 import {HoverEvents, useFocusRing} from 'react-aria';
-import {mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {mergeProps, mergeRefs} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 
 export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, HoverEvents, RenderProps<DisclosureRenderProps>, SlotProps {}
