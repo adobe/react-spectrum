@@ -56,7 +56,8 @@ const InternalDisclosureContext = createContext<InternalDisclosureContextValue |
 function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
   let state = useDisclosureState(props);
-  let {buttonProps, contentProps} = useDisclosure(props, state, ref);
+  let contentRef = React.useRef<HTMLElement | null>(null);
+  let {buttonProps, contentProps} = useDisclosure(props, state, contentRef);
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -82,7 +83,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
             trigger: buttonProps
           }
         }],
-        [InternalDisclosureContext, {contentProps, contentRef: ref}],
+        [InternalDisclosureContext, {contentProps, contentRef}],
         [DisclosureStateContext, state]
       ]}>
       <div
@@ -121,12 +122,11 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLElem
       isFocusVisibleWithin
     }
   });
-  let mergedRef = useObjectRef(mergeRefs(contentRef, ref));
   return (
     <div
       role={role}
       // @ts-ignore
-      ref={mergedRef}
+      ref={mergeRefs(ref, contentRef)}
       {...mergeProps(contentProps, focusWithinProps)}
       {...renderProps}
       data-focus-visible-within={isFocusVisibleWithin || undefined}>
