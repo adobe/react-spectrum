@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionPanel, Disclosure} from '../src';
 import {Button, Heading} from 'react-aria-components';
+import {Disclosure, DisclosurePanel} from '../src';
 import React from 'react';
 import './styles.css';
 
@@ -27,9 +27,9 @@ export const AccordionExample = (args: any) => (
         <Heading level={3}>
           <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
         </Heading>
-        <AccordionPanel>
+        <DisclosurePanel>
           <p>This is the content of the accordion panel.</p>
-        </AccordionPanel>
+        </DisclosurePanel>
       </>
     )}
   </Disclosure>
@@ -44,9 +44,9 @@ export const AccordionControlledExample = (args: any) => {
           <Heading level={3}>
             <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
           </Heading>
-          <AccordionPanel>
+          <DisclosurePanel>
             <p>This is the content of the accordion panel.</p>
-          </AccordionPanel>
+          </DisclosurePanel>
         </>
       )}
     </Disclosure>

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AccordionPanelProps, DisclosureProps} from 'react-aria-components/src/Accordion';
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {Button, Heading, AccordionPanel as RACAccordionPanel, Disclosure as RACDisclosure} from 'react-aria-components';
+import {Button, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DisclosurePanelProps, DisclosureProps} from 'react-aria-components/src/Accordion';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
@@ -44,7 +44,7 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
 
 export interface SpectrumDisclosureProps extends DisclosureProps, DOMProps, AriaLabelingProps  {
   /** The contents of the accordion item. The first child should be the header, and the second child should be the panel. */
-  children: [ReactElement<SpectrumAccordionHeaderProps>, ReactElement<SpectrumAccordionPanelProps>]
+  children: [ReactElement<SpectrumAccordionHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
 }
 
 function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
@@ -63,17 +63,17 @@ function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>)
   );
 }
 
-export interface SpectrumAccordionPanelProps extends AccordionPanelProps, DOMProps, AriaLabelingProps {
+export interface SpectrumDisclosurePanelProps extends DisclosurePanelProps, DOMProps, AriaLabelingProps {
   /** The contents of the accordion panel. */
   children: React.ReactNode
 }
 
-function AccordionPanel(props: SpectrumAccordionPanelProps, ref: DOMRef<HTMLDivElement>) {
+function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   return (
-    <RACAccordionPanel ref={domRef} className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
+    <RACDisclosurePanel ref={domRef} className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
       {props.children}
-    </RACAccordionPanel>
+    </RACDisclosurePanel>
   );
 }
 
@@ -123,8 +123,8 @@ const _Disclosure = forwardRef(Disclosure) as (props: SpectrumDisclosureProps & 
 export {_Disclosure as Disclosure};
 
 /** The panel that contains the content of an accordion item. */
-const _AccordionPanel = forwardRef(AccordionPanel) as (props: SpectrumAccordionPanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionPanel>;
-export {_AccordionPanel as AccordionPanel};
+const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosurePanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosurePanel>;
+export {_DisclosurePanel as DisclosurePanel};
 
 /** The heading of the accordion item. */
 const _AccordionHeader = forwardRef(AccordionHeader) as (props: SpectrumAccordionHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionHeader>;

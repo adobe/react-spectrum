@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, DisclosureStateContext, Heading, Provider, AccordionPanel as RACAccordionPanel, AccordionPanelProps as RACAccordionPanelProps, Disclosure as RACDisclosure, DisclosureProps as RACDisclosureProps, SlotProps, useLocale} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, SlotProps, useLocale} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
@@ -100,8 +100,8 @@ export interface DisclosureProps extends RACDisclosureProps, UnsafeStyles, DOMPr
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the accordion item should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** The contents of the accordion item, consisting of an AccordionHeader and AccordionPanel. */
-  children: [ReactElement<AccordionHeaderProps>, ReactElement<AccordionPanelProps>],
+  /** The contents of the accordion item, consisting of an AccordionHeader and DisclosurePanel. */
+  children: [ReactElement<AccordionHeaderProps>, ReactElement<DisclosurePanelProps>],
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString
 }
@@ -344,7 +344,7 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
 let _AccordionHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionHeader);
 export {_AccordionHeader as AccordionHeader};
 
-export interface AccordionPanelProps extends RACAccordionPanelProps, UnsafeStyles, DOMProps, AriaLabelingProps {
+export interface DisclosurePanelProps extends RACDisclosurePanelProps, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode
 }
 
@@ -368,7 +368,7 @@ const panelStyles = style({
   }
 });
 
-function AccordionPanel(props: AccordionPanelProps, ref: DOMRef<HTMLDivElement>) {
+function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className = '',
@@ -379,19 +379,19 @@ function AccordionPanel(props: AccordionPanelProps, ref: DOMRef<HTMLDivElement>)
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (
-    <RACAccordionPanel
+    <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + panelStyles({size, isExpanded})}>
       {props.children}
-    </RACAccordionPanel>
+    </RACDisclosurePanel>
   );
 }
 
 /**
  * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-let _AccordionPanel = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionPanel);
-export {_AccordionPanel as AccordionPanel};
+let _DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosurePanel);
+export {_DisclosurePanel as DisclosurePanel};
 

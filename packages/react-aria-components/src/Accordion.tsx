@@ -98,7 +98,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
-export interface AccordionPanelProps extends RenderProps<{}> {
+export interface DisclosurePanelProps extends RenderProps<{}> {
   /**
    * The accessibility role for the accordion item's panel.
    * @default 'group'
@@ -107,7 +107,7 @@ export interface AccordionPanelProps extends RenderProps<{}> {
   children: ReactNode
 }
 
-function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElement>) {
+function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLElement>) {
   let {role = 'group'} = props;
   let {contentProps, contentRef} = useContext(InternalAccordionContext)!;
   let {
@@ -116,7 +116,7 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElemen
   } = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
-    defaultClassName: 'react-aria-AccordionPanel',
+    defaultClassName: 'react-aria-DisclosurePanel',
     values: {
       isFocusVisibleWithin
     }
@@ -146,5 +146,5 @@ function AccordionPanel(props: AccordionPanelProps, ref: ForwardedRef<HTMLElemen
 const _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
 export {_Disclosure as Disclosure};
 
-const _AccordionPanel = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionPanel);
-export {_AccordionPanel as AccordionPanel};
+const _DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosurePanel);
+export {_DisclosurePanel as DisclosurePanel};

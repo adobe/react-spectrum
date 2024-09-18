@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionHeader, AccordionPanel, Disclosure} from '../src';
+import {Accordion, AccordionHeader, Disclosure, DisclosurePanel} from '../src';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -30,7 +30,7 @@ function renderComponent(props) {
         {items.map(item => (
           <Disclosure key={item.key}>
             <AccordionHeader>{item.title}</AccordionHeader>
-            <AccordionPanel>{item.children}</AccordionPanel>
+            <DisclosurePanel>{item.children}</DisclosurePanel>
           </Disclosure>
         ))}
       </Accordion>

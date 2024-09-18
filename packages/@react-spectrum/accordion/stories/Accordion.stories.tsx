@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionHeader, AccordionPanel, Disclosure} from '../src';
+import {Accordion, AccordionHeader, Disclosure, DisclosurePanel} from '../src';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 
@@ -29,17 +29,17 @@ export const Default: AccordionStory = {
         <AccordionHeader>
           Files
         </AccordionHeader>
-        <AccordionPanel>
+        <DisclosurePanel>
           <p>Files content</p>
-        </AccordionPanel>
+        </DisclosurePanel>
       </Disclosure>
       <Disclosure key="people">
         <AccordionHeader>
           People
         </AccordionHeader>
-        <AccordionPanel>
+        <DisclosurePanel>
           <p>People content</p>
-        </AccordionPanel>
+        </DisclosurePanel>
       </Disclosure>
     </Accordion>
   )

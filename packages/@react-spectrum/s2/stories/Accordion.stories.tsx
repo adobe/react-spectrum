@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionHeader, AccordionPanel, Disclosure, TextField} from '../src';
+import {Accordion, AccordionHeader, Disclosure, DisclosurePanel, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
@@ -51,17 +51,17 @@ export const Example: Story = {
             <AccordionHeader>
               Files
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               Files content
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
           <Disclosure key="people">
             <AccordionHeader>
               People
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
         </Accordion>
       </div>
@@ -78,25 +78,25 @@ export const WithLongTitle: Story = {
             <AccordionHeader>
               Files
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               Files content
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
           <Disclosure key="people">
             <AccordionHeader>
               People
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               People content
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
           <Disclosure key="long-title">
             <AccordionHeader>
               Very very very very very long title that wraps
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               Accordion content
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
         </Accordion>
       </div>
@@ -113,17 +113,17 @@ export const WithDisabledDisclosure: Story = {
             <AccordionHeader>
               Files
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               Files content
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
           <Disclosure isDisabled key="people">
             <AccordionHeader>
               People
             </AccordionHeader>
-            <AccordionPanel>
+            <DisclosurePanel>
               <TextField label="Name" />
-            </AccordionPanel>
+            </DisclosurePanel>
           </Disclosure>
         </Accordion>
       </div>
@@ -139,9 +139,9 @@ export const DisclosureWithoutGroup: Story = {
           <AccordionHeader>
             Files
           </AccordionHeader>
-          <AccordionPanel>
+          <DisclosurePanel>
             Files content
-          </AccordionPanel>
+          </DisclosurePanel>
         </Disclosure>
       </div>
     );
