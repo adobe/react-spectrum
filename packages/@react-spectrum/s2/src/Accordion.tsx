@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, SlotProps, useLocale} from 'react-aria-components';
+import {centerPadding, focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import {fontRelative, size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
 import {StyleString} from '../style/types';
@@ -192,23 +192,16 @@ const buttonStyles = style({
   fontWeight: 'bold',
   fontSize: {
     size: {
-      S: 'ui-lg',
-      M: 'ui-xl',
-      L: 'ui-3xl',
-      XL: 'ui-5xl'
+      S: 'heading-xs',
+      M: 'heading-sm',
+      L: 'heading',
+      XL: 'heading-lg'
     }
   },
   lineHeight: 'ui',
   display: 'flex',
   alignItems: 'center',
-  paddingX: {
-    size: {
-      S: sizeValue(7),
-      M: sizeValue(11),
-      L: sizeValue(14),
-      XL: sizeValue(17)
-    }
-  },
+  paddingX: '[calc(self(minHeight) * 3/8 - 1px)]',
   paddingY: {
     size: {
       S: {
@@ -241,14 +234,7 @@ const buttonStyles = style({
       }
     }
   },
-  gap: {
-    size: {
-      S: sizeValue(7),
-      M: sizeValue(11),
-      L: sizeValue(14),
-      XL: sizeValue(17)
-    }
-  },
+  gap: '[calc(self(minHeight) * 3/8 - 1px)]',
   height: 'full',
   minHeight: 'control',
   width: 'full',

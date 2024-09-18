@@ -356,8 +356,6 @@ const fontSize = {
   'ui-xl': fontSizeToken('font-size-300'),
   'ui-2xl': fontSizeToken('font-size-400'),
   'ui-3xl': fontSizeToken('font-size-500'),
-  'ui-4xl': fontSizeToken('font-size-600'),
-  'ui-5xl': fontSizeToken('font-size-700'),
 
   control: {
     default: fontSizeToken('font-size-100'),
