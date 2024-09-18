@@ -62,9 +62,9 @@ import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRe
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
-import {useIsMobileDevice} from './utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useScale} from './utils';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface S2TableProps {
@@ -110,7 +110,7 @@ export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehav
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableProps & {scale?: Scale, layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -120,7 +120,7 @@ const tableWrapper = style({
   disableTapHighlight: true
 });
 
-const table = style<TableRenderProps & S2TableProps & {scale?: Scale, isCheckboxSelection?: boolean}>({
+const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
   width: 'full',
   userSelect: 'none',
   minHeight: 0,
@@ -181,8 +181,6 @@ const ROW_HEIGHTS = {
     large: 60
   }
 };
-
-type Scale = 'large' | 'medium';
 
 export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   constructor(options) {
@@ -270,7 +268,7 @@ export function Table(props: TableProps) {
     ...otherProps
   } = props;
 
-  let scale = (useIsMobileDevice() ? 'large' : 'medium') as Scale;
+  let scale = useScale();
   let layout = useMemo(() => {
     return new S2TableLayout({
       rowHeight: overflowMode === 'wrap'
@@ -328,7 +326,6 @@ export function Table(props: TableProps) {
             style={{WebkitTransform: 'translateZ(0)'}}
             className={renderProps => table({
               ...renderProps,
-              scale,
               isCheckboxSelection,
               isQuiet
             })}
@@ -807,7 +804,7 @@ const selectAllCheckboxColumn = style({
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
 
 export function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
-  let scale = (useIsMobileDevice() ? 'large' : 'medium') as Scale;
+  let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let [isHeaderRowHovered, setHeaderRowHovered] = useState(false);
 

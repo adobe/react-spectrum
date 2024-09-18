@@ -12,6 +12,17 @@
 
 import {useMediaQuery} from '@react-spectrum/utils';
 
+export type Scale = 'large' | 'medium';
+
 export function useIsMobileDevice(): boolean {
   return useMediaQuery('(max-width: 640px)');
+}
+
+export function useScale(): Scale {
+  let matchesFine = useMediaQuery('not ((hover: hover) and (pointer: fine))');
+  if (matchesFine) {
+    return 'large';
+  }
+
+  return 'medium';
 }
