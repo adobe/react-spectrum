@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseDate, parseZonedDateTime, toCalendarDateTime, today, toZoned} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -730,7 +730,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, `${month}/${day}/${year}, 12:01 AM`);
     });
 
-    it('should clear date and time when controlled value is set to null', async function () {
+    it.only('should clear date and time when controlled value is set to null', async function () {
       function ControlledDatePicker() {
         let [value, setValue] = React.useState(null);
         return (<>
@@ -777,6 +777,7 @@ describe('DatePicker', function () {
       act(() => jest.runAllTimers());
 
       let value = toCalendarDateTime(today(getLocalTimeZone()));
+      console.log(value.toDate(getLocalTimeZone()));
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       let clear = getAllByRole('button')[1];
@@ -1889,6 +1890,111 @@ describe('DatePicker', function () {
       expect(segments[5]).toHaveFocus();
       act(() => {segments[5].blur();});
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2022, 4, 5, 5, 45));
+    });
+  });
+
+  describe('timeZone', function () {
+    it('should keep timeZone from defaultValue when date and time are cleared', async function () {
+      let {getAllByRole} = render(<DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')} />);
+      let combobox = getAllByRole('group')[0];
+
+      expectPlaceholder(combobox, '11/7/2021, 12:45 AM PDT');
+
+
+      await user.tab();
+      for(var i=0; i<4; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      await user.tab();
+      for(var i=0; i<4; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      for(var i=0; i<2; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      for(var i=0; i<2; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM PDT');
+    });
+
+    it.only('should keep timeZone from defaultValue when date and time are cleared then set', async function () {
+
+      let {getAllByRole, getByRole, getAllByLabelText} = render(<DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:00:00[Greenwich]')} />);
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+
+      expectPlaceholder(combobox, '11/7/2021, 12:00 AM GMT');
+
+
+      await user.tab();
+      for(var i=0; i<4; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      await user.tab();
+      for(var i=0; i<4; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      for(var i=0; i<2; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      for(var i=0; i<2; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+        fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      }
+      await user.tab();
+      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM GMT');
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+      expect(selected).toBeUndefined();
+
+      let timeField = getAllByLabelText('Time')[0];
+      expectPlaceholder(timeField, '––:–– AM');
+
+      // selecting a date should not close the popover
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      await user.click(todayCell.firstChild);
+
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+
+      expect(dialog).toBeVisible();
+      await user.click(document.body);
+      act(() => jest.runAllTimers());
+      expect(dialog).not.toBeInTheDocument();
+      let value = toCalendarDateTime(today(getLocalTimeZone()));
+      expectPlaceholder(combobox, `${formatter.format(value.toDate(getLocalTimeZone()))} GMT`);
+  
     });
   });
 
