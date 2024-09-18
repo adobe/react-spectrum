@@ -23,22 +23,22 @@ export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children' | 
 
 export interface DisclosureRenderProps {
   /**
-   * Whether the accordion item is expanded (controlled).
+   * Whether the disclosure is expanded (controlled).
    * @selector [data-expanded]
    */
   isExpanded?: boolean,
   /**
-   * Whether the accordion item has keyboard focus.
+   * Whether the disclosure has keyboard focus.
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean,
   /**
-   * Whether the accordion item is disabled.
+   * Whether the disclosure is disabled.
    * @selector [data-disabled]
    */
   isDisabled: boolean,
   /**
-   * State of the accordion item.
+   * State of the disclosure.
    */
   state: DisclosureState
 }
@@ -46,12 +46,12 @@ export interface DisclosureRenderProps {
 export const DisclosureContext = createContext<ContextValue<DisclosureProps, HTMLDivElement>>(null);
 export const DisclosureStateContext = createContext<DisclosureState | null>(null);
 
-interface InternalAccordionContextValue {
+interface InternalDisclosureContextValue {
   contentProps: DOMAttributes<HTMLElement>,
   contentRef: React.RefObject<HTMLElement | null>
 }
 
-const InternalAccordionContext = createContext<InternalAccordionContextValue | null>(null);
+const InternalDisclosureContext = createContext<InternalDisclosureContextValue | null>(null);
 
 function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
@@ -82,7 +82,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
             trigger: buttonProps
           }
         }],
-        [InternalAccordionContext, {contentProps, contentRef}],
+        [InternalDisclosureContext, {contentProps, contentRef}],
         [DisclosureStateContext, state]
       ]}>
       <div
@@ -100,7 +100,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
 
 export interface DisclosurePanelProps extends RenderProps<{}> {
   /**
-   * The accessibility role for the accordion item's panel.
+   * The accessibility role for the disclosure's panel.
    * @default 'group'
    */
   role?: 'group' | 'region',
@@ -109,7 +109,7 @@ export interface DisclosurePanelProps extends RenderProps<{}> {
 
 function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLElement>) {
   let {role = 'group'} = props;
-  let {contentProps, contentRef} = useContext(InternalAccordionContext)!;
+  let {contentProps, contentRef} = useContext(InternalDisclosureContext)!;
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -141,7 +141,7 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLElem
 }
 
 /**
- * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
 const _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
 export {_Disclosure as Disclosure};

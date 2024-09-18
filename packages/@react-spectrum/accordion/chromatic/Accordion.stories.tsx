@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionHeader, Disclosure, DisclosurePanel} from '../';
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
@@ -25,25 +25,25 @@ export default meta;
 export const Template = (args) => (
   <Accordion {...args}>
     <Disclosure key="files">
-      <AccordionHeader>
+      <DisclosureHeader>
         Your files
-      </AccordionHeader>
+      </DisclosureHeader>
       <DisclosurePanel>
         files
       </DisclosurePanel>
     </Disclosure>
     <Disclosure key="shared">
-      <AccordionHeader>
+      <DisclosureHeader>
         Shared with you
-      </AccordionHeader>
+      </DisclosureHeader>
       <DisclosurePanel>
         shared
       </DisclosurePanel>
     </Disclosure>
     <Disclosure key="last">
-      <AccordionHeader>
+      <DisclosureHeader>
         Last item
-      </AccordionHeader>
+      </DisclosureHeader>
       <DisclosurePanel>
         last
       </DisclosurePanel>

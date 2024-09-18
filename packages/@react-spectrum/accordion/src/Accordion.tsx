@@ -44,7 +44,7 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
 
 export interface SpectrumDisclosureProps extends DisclosureProps, DOMProps, AriaLabelingProps  {
   /** The contents of the accordion item. The first child should be the header, and the second child should be the panel. */
-  children: [ReactElement<SpectrumAccordionHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
+  children: [ReactElement<SpectrumDisclosureHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
 }
 
 function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
@@ -77,7 +77,7 @@ function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDi
   );
 }
 
-export interface SpectrumAccordionHeaderProps extends DOMProps, AriaLabelingProps {
+export interface SpectrumDisclosureHeaderProps extends DOMProps, AriaLabelingProps {
   /** 
    * The heading level of the accordion header.
    * @default 3
@@ -87,7 +87,7 @@ export interface SpectrumAccordionHeaderProps extends DOMProps, AriaLabelingProp
   children: React.ReactNode
 }
 
-function AccordionHeader(props: SpectrumAccordionHeaderProps, ref: DOMRef<HTMLHeadingElement>) {
+function DisclosureHeader(props: SpectrumDisclosureHeaderProps, ref: DOMRef<HTMLHeadingElement>) {
   let {level = 3} = props;
   let {direction} = useLocale();
   let domRef = useDOMRef(ref);
@@ -127,5 +127,5 @@ const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosu
 export {_DisclosurePanel as DisclosurePanel};
 
 /** The heading of the accordion item. */
-const _AccordionHeader = forwardRef(AccordionHeader) as (props: SpectrumAccordionHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof AccordionHeader>;
-export {_AccordionHeader as AccordionHeader};
+const _DisclosureHeader = forwardRef(DisclosureHeader) as (props: SpectrumDisclosureHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosureHeader>;
+export {_DisclosureHeader as DisclosureHeader};

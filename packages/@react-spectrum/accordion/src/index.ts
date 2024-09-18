@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 /// <reference types="css-module-types" />
-export {Disclosure, Accordion, AccordionHeader, DisclosurePanel} from './Accordion';
-export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumAccordionHeaderProps} from './Accordion';
+export {Disclosure, Accordion, DisclosureHeader, DisclosurePanel} from './Accordion';
+export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureHeaderProps} from './Accordion';

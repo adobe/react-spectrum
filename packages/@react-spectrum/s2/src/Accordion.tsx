@@ -23,7 +23,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
-  /** The accordion items in the accordion group. */
+  /** The disclosure elements in the accordion. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString,
@@ -33,7 +33,7 @@ export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
-   * The amount of space between the accordion items.
+   * The amount of space between the disclosure items.
    * @default "regular"
    */
   density?: 'compact' | 'regular' | 'spacious',
@@ -82,26 +82,26 @@ function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * A accordion group is a container for multiple accordion items.
+ * An accordion is a container for multiple disclosures.
  */
 let _Accordion = /*#__PURE__*/ (forwardRef as forwardRefType)(Accordion);
 export {_Accordion as Accordion};
 
 export interface DisclosureProps extends RACDisclosureProps, UnsafeStyles, DOMProps {
   /**
-   * The size of the accordion item.
+   * The size of the disclosure.
    * @default "M"
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
-   * The amount of space between the accordion items.
+   * The amount of space between the disclosures.
    * @default "regular"
    */
   density?: 'compact' | 'regular' | 'spacious',
-  /** Whether the accordion item should be displayed with a quiet style. */
+  /** Whether the disclosure should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** The contents of the accordion item, consisting of an AccordionHeader and DisclosurePanel. */
-  children: [ReactElement<AccordionHeaderProps>, ReactElement<DisclosurePanelProps>],
+  /** The contents of the disclosure, consisting of an DisclosureHeader and DisclosurePanel. */
+  children: [ReactElement<DisclosureHeaderProps>, ReactElement<DisclosurePanelProps>],
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString
 }
@@ -163,13 +163,13 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
 let _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
 export {_Disclosure as Disclosure};
 
-export interface AccordionHeaderProps extends UnsafeStyles, DOMProps {
-  /** The heading level of the accordion header.
+export interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
+  /** The heading level of the disclosure header.
    * 
    * @default 3
    */
@@ -310,7 +310,7 @@ const chevronStyles = style({
   flexShrink: 0
 });
 
-function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement>) {
+function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
   let {
     level = 3,
     UNSAFE_style,
@@ -339,10 +339,10 @@ function AccordionHeader(props: AccordionHeaderProps, ref: DOMRef<HTMLDivElement
 }
 
 /**
- * A header for an accordion item. Contains a heading and a trigger button to expand/collapse the panel.
+ * A header for a disclosure. Contains a heading and a trigger button to expand/collapse the panel.
  */
-let _AccordionHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(AccordionHeader);
-export {_AccordionHeader as AccordionHeader};
+let _DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeader);
+export {_DisclosureHeader as DisclosureHeader};
 
 export interface DisclosurePanelProps extends RACDisclosurePanelProps, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode
@@ -390,7 +390,7 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement
 }
 
 /**
- * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure panel is a collapsible section of content that is hidden until the disclosure is expanded.
  */
 let _DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosurePanel);
 export {_DisclosurePanel as DisclosurePanel};
