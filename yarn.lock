@@ -5803,7 +5803,6 @@ __metadata:
     "@react-aria/utils": "npm:^3.25.2"
     "@react-stately/disclosure": "npm:3.0.0-alpha.0"
     "@react-stately/tree": "npm:^3.8.4"
-    "@react-types/accordion": "npm:3.0.0-alpha.23"
     "@react-types/button": "npm:^3.9.6"
     "@react-types/shared": "npm:^3.24.1"
     "@swc/helpers": "npm:^0.5.0"
@@ -6524,7 +6523,6 @@ __metadata:
     "@react-spectrum/utils": "npm:^3.11.9"
     "@react-stately/collections": "npm:^3.10.9"
     "@react-stately/tree": "npm:^3.8.3"
-    "@react-types/accordion": "npm:3.0.0-alpha.23"
     "@react-types/shared": "npm:^3.24.1"
     "@spectrum-icons/ui": "npm:^3.6.9"
     "@swc/helpers": "npm:^0.5.0"
@@ -8177,7 +8175,6 @@ __metadata:
   resolution: "@react-stately/disclosure@workspace:packages/@react-stately/disclosure"
   dependencies:
     "@react-stately/utils": "npm:^3.10.3"
-    "@react-types/accordion": "npm:3.0.0-alpha.23"
     "@react-types/shared": "npm:^3.24.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
