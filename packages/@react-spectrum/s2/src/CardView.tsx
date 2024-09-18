@@ -194,9 +194,20 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
   }
 }
 
+class WaterfallLayoutInfo extends LayoutInfo {
+  column = 0;
+
+  copy(): WaterfallLayoutInfo {
+    let res = super.copy() as WaterfallLayoutInfo;
+    res.column = this.column;
+    return res;
+  }
+}
+
 class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOptions> implements LayoutDelegate {
   protected contentSize: Size = new Size();
-  protected layoutInfos: Map<Key, LayoutInfo> = new Map();
+  protected layoutInfos: Map<Key, WaterfallLayoutInfo> = new Map();
+  protected numColumns = 0;
 
   update(invalidationContext: InvalidationContext<GridLayoutOptions>): void {
     let {
@@ -246,15 +257,18 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       }
 
       // Figure out which column to place the item in, and compute its position.
-      let column = columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
+      // Preserve the previous column index so items don't jump around during resizing unless the number of columns changed.
+      let prevColumn = numColumns === this.numColumns ? oldLayoutInfo?.column : undefined;
+      let column = prevColumn ?? columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
       let x = horizontalSpacing + column * (itemWidth + horizontalSpacing);
       let y = columnHeights[column];
 
       let rect = new Rect(x, y, itemWidth, height);
-      let layoutInfo = new LayoutInfo(node.type, key, rect);
+      let layoutInfo = new WaterfallLayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
       layoutInfo.allowOverflow = true;
       layoutInfo.content = node;
+      layoutInfo.column = column;
       newLayoutInfos.set(key, layoutInfo);
 
       columnHeights[column] += layoutInfo.rect.height + minSpace.height;
@@ -283,6 +297,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
     let maxHeight = Math.max(...columnHeights);
     this.contentSize = new Size(this.virtualizer.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
+    this.numColumns = numColumns;
   }
 
   getLayoutInfo(key: Key): LayoutInfo {
