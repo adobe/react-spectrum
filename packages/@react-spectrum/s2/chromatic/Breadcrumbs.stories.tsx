@@ -29,7 +29,7 @@ export default meta;
 export const Dynamic = Many as StoryObj;
 
 Dynamic.parameters = {
-  // TODO: add ar-AE when we get intl strings
+  // TODO: move these options back to meta above once we get strings for ar-AE. This is just to prevent the RTL story's config from actually applying
   chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
 };
 
@@ -52,13 +52,14 @@ const Template = () => {
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
       {combinations.map(c => {
+        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
 
         return (
-          <Breadcrumbs key={key} {...c}>
+          <Breadcrumbs data-testid={fullComboName} key={key} {...c}>
             <Breadcrumb href="/">
               Home
             </Breadcrumb>

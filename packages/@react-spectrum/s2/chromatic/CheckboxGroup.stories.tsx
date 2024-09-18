@@ -41,13 +41,14 @@ const Template = ({combos, containerStyle, ...args}) => {
   return (
     <div className={containerStyle}>
       {combos.map(c => {
+        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
 
         return (
-          <CheckboxGroup label={key} description="test description" errorMessage="test error" {...c} {...args} value="soccer">
+          <CheckboxGroup data-testid={fullComboName} label={key} description="test description" errorMessage="test error" {...c} {...args} value="soccer">
             <Checkbox value="soccer">Soccer</Checkbox>
             <Checkbox value="baseball">Baseball</Checkbox>
             <Checkbox value="basketball">Basketball</Checkbox>

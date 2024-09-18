@@ -31,13 +31,14 @@ const Template = ({combos, containerStyle, ...args}) => {
   return (
     <div className={containerStyle}>
       {combos.map(c => {
+        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
 
         return (
-          <ButtonGroup {...c} {...args}>
+          <ButtonGroup data-testid={fullComboName} {...c} {...args}>
             <Button>Press me</Button>
             <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
             <Button><NewIcon /></Button>

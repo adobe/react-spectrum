@@ -40,12 +40,13 @@ const Template = ({combos, ...args}) => {
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
       {combos.map(c => {
+        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
 
-        return <Badge key={key} {...args} {...c}>{key}</Badge>;
+        return <Badge key={key} data-testid={fullComboName} {...args} {...c}>{key}</Badge>;
       })}
     </div>
   );

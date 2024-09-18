@@ -38,12 +38,13 @@ const Template = ({combos, ...args}) => {
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 450px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
       {combos.map(c => {
+        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
         return (
-          <ColorField defaultValue="#e21" label={key} description="test description" errorMessage="test error" {...c} {...args}  />
+          <ColorField data-testid={fullComboName} defaultValue="#e21" label={key} description="test description" errorMessage="test error" {...c} {...args}  />
         );
       })}
     </div>

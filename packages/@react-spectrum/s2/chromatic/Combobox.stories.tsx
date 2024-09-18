@@ -41,7 +41,7 @@ WithSections.play = async (context) => {
   await Static.play!(context);
 };
 
-export const WithDynamic = {...Dynamic, name: 'Dynamic'};
+export const WithDynamic = {...Dynamic, name: 'Dynamic',  args: {...Dynamic.args, selectedKey: 'chocolate'}};
 
 WithDynamic.play = async (context) => {
   await Static.play!(context);
