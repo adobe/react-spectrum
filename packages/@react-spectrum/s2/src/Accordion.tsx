@@ -12,9 +12,9 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, SlotProps, useLocale} from 'react-aria-components';
-import {centerPadding, focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
+import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import {fontRelative, size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
 import {StyleString} from '../style/types';

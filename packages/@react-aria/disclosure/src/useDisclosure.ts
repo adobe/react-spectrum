@@ -48,6 +48,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
+  // @ts-ignore https://github.com/facebook/react/pull/24741
   useEvent(contentRef, 'beforematch', supportsBeforeMatch ? () => state.expand() : null);
 
   useEffect(() => {
