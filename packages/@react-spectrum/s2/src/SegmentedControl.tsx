@@ -90,7 +90,13 @@ const controlItem = style({
 
 const slider = style({
   ...focusRing(),
-  backgroundColor: 'gray-25',
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: {
+      default: 'Highlight',
+      isDisabled: 'GrayText',
+    }
+  },
   left: 0,
   width: 'full',
   height: 'full',
@@ -100,7 +106,11 @@ const slider = style({
   borderWidth: 2,
   borderColor: {
     default: 'gray-900',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'Highlight',
+      isDisabled: 'GrayText'
+    }
   },
   borderRadius: 'lg'
 });
