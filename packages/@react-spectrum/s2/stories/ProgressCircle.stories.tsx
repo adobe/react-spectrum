@@ -13,6 +13,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {ProgressCircle} from '../src';
 import {StaticColorDecorator} from './utils';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ProgressCircle> = {
   component: ProgressCircle,
@@ -44,5 +45,12 @@ export const Example: Story = {
         max: 100
       }
     }
+  }
+};
+
+export const CustomSize = (args) => <ProgressCircle aria-label="Test Progress Circle" value="40" size="S" {...args} styles={style({size: 20})} />;
+CustomSize.parameters = {
+  docs: {
+    disable: true
   }
 };
