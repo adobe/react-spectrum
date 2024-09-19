@@ -12,9 +12,10 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
+import {CenterBaseline} from './CenterBaseline';
+import {centerPadding, focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
 import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
@@ -130,43 +131,43 @@ const buttonStyles = style({
   },
   lineHeight: 'ui',
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'baseline',
   paddingX: '[calc(self(minHeight) * 3/8 - 1px)]',
-  paddingY: {
+  paddingY: centerPadding(),
+  gap: '[calc(self(minHeight) * 3/8 - 1px)]',
+  minHeight: {
+    // compact is equivalent to 'control', but other densities have more padding.
     size: {
       S: {
         density: {
-          compact: sizeValue(2),
-          regular: sizeValue(7),
-          spacious: sizeValue(11)
+          compact: 24,
+          regular: 32,
+          spacious: 40
         }
       },
       M: {
         density: {
-          compact: sizeValue(5),
-          regular: sizeValue(9),
-          spacious: sizeValue(13)
+          compact: 32,
+          regular: 40,
+          spacious: 48
         }
       },
       L: {
         density: {
-          compact: 8,
-          regular: sizeValue(11),
-          spacious: 16
+          compact: 40,
+          regular: 48,
+          spacious: 56
         }
       },
       XL: {
         density: {
-          compact: 8,
-          regular: 12,
-          spacious: 16
+          compact: 48,
+          regular: 56,
+          spacious: 64
         }
       }
     }
   },
-  gap: '[calc(self(minHeight) * 3/8 - 1px)]',
-  height: 'full',
-  minHeight: 'control',
   width: 'full',
   backgroundColor: {
     default: 'transparent',
@@ -222,7 +223,9 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
       <Button className={({isHovered, isFocused, isFocusVisible, isDisabled}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet, isDisabled})} slot="trigger">
-        <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+        <CenterBaseline>
+          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+        </CenterBaseline>
         {props.children}
       </Button>
     </Heading>
