@@ -131,23 +131,6 @@ export const WithDisabledDisclosure: Story = {
   }
 };
 
-export const DisclosureWithoutGroup: Story = {
-  render: (args) => {
-    return (
-      <div className={style({minHeight: 240})}>
-        <Disclosure {...args}>
-          <DisclosureHeader>
-            Files
-          </DisclosureHeader>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
-        </Disclosure>
-      </div>
-    );
-  }
-};
-
 WithLongTitle.parameters = {
   docs: {
     disable: true
@@ -160,8 +143,3 @@ WithDisabledDisclosure.parameters = {
   }
 };
 
-DisclosureWithoutGroup.parameters = {
-  docs: {
-    disable: true
-  }
-};
