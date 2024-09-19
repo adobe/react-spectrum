@@ -9,11 +9,28 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaButtonProps, HoverEvents, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+
+import {announce} from '@react-aria/live-announcer';
+import {
+  AriaButtonProps,
+  HoverEvents,
+  mergeProps,
+  useButton,
+  useFocusRing,
+  useHover,
+  useId
+} from 'react-aria';
+import {
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef} from 'react';
+import {ProgressBarContext} from './ProgressBar';
+import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -40,7 +57,12 @@ export interface ButtonRenderProps {
    * Whether the button is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /**
+   * If the button is currently in the `isPending` state.
+   * @selector [data-pending]
+   */
+  isPending?: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
@@ -65,7 +87,11 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /** Submitted as a pair with the button's value as part of the form data. */
   name?: string,
   /** The value associated with the button's name when it's submitted with the form data. */
-  value?: string
+  value?: string,
+  /**
+   * Whether to disable events immediately and display the `ProgressBar`.
+   */
+  isPending?: boolean
 }
 
 interface ButtonContextValue extends ButtonProps {
@@ -78,29 +104,92 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
+  props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
+  let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled: props.isDisabled || isPending
+  });
+  let renderValues = {
+    isHovered,
+    isPressed: (ctx.isPressed || isPressed) && !isPending,
+    isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    isPending
+  };
+
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false},
+    values: renderValues,
     defaultClassName: 'react-aria-Button'
   });
+
+  let buttonId = useId(buttonProps.id);
+  let progressId = useId();
+
+  let ariaLabelledby = buttonProps['aria-labelledby'];
+  if (isPending) {
+    // aria-labelledby wins over aria-label
+    // https://www.w3.org/TR/accname-1.2/#computation-steps
+    if (ariaLabelledby) {
+      ariaLabelledby = `${ariaLabelledby} ${progressId}`;
+    } else if (buttonProps['aria-label']) {
+      ariaLabelledby = `${buttonId} ${progressId}`;
+    }
+  }
+
+  let wasPending = useRef(isPending);
+  useEffect(() => {
+    let message = {'aria-labelledby': ariaLabelledby || buttonId};
+    if (!wasPending.current && isFocused && isPending) {
+      announce(message, 'assertive');
+    } else if (wasPending.current && isFocused && !isPending) {
+      announce(message, 'assertive');
+    }
+    wasPending.current = isPending;
+  }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
   return (
     <button
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
+      id={buttonId}
       ref={ref}
+      aria-labelledby={ariaLabelledby}
       slot={props.slot || undefined}
+      aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
       data-disabled={props.isDisabled || undefined}
-      data-pressed={ctx.isPressed || isPressed || undefined}
+      data-pressed={renderValues.isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-pending={isPending || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      <ProgressBarContext.Provider value={{id: progressId}}>
+        {renderProps.children}
+      </ProgressBarContext.Provider>
+    </button>
   );
+}
+
+function disablePendingProps(props) {
+  // Don't allow interaction while isPending is true
+  if (props.isPending) {
+    props.onPress = undefined;
+    props.onPressStart = undefined;
+    props.onPressEnd = undefined;
+    props.onPressChange = undefined;
+    props.onPressUp = undefined;
+    props.onKeyDown = undefined;
+    props.onKeyUp = undefined;
+    props.onClick = undefined;
+    props.href = undefined;
+  }
+  return props;
 }
 
 /**
