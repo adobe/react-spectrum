@@ -108,8 +108,6 @@ export class MenuTester {
     } = opts;
     let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
-      // TODO: technically this would need the user to pass in if their menu needs long press if we want calling selectOption to
-      // work without needing to call open first. Bit annoying though, maybe I add opts and have one of them be needsLongPress?
       await this.open({needsLongPress});
     }
 

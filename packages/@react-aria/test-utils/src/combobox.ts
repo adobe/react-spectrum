@@ -17,8 +17,7 @@ export interface ComboBoxOptions extends UserOpts, BaseTesterOpts {
   user: any,
   trigger?: HTMLElement
 }
-// TODO: Probably should set up some base classes to reduce duplication of this setup (user/interactiontype)
-// advanceTimer isn't used in all places
+
 export class ComboBoxTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
@@ -38,7 +37,7 @@ export class ComboBoxTester {
       this._combobox = combobox;
     }
 
-    // TODO: This is for if user need to directly set the trigger button element (aka the element provided in setElement was the combobox input or the trigger is somewhere unexpected)
+    // This is for if user need to directly set the trigger button element (aka the element provided in setElement was the combobox input or the trigger is somewhere unexpected)
     if (trigger) {
       this._trigger = trigger;
     } else {
