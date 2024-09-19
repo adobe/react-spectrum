@@ -215,7 +215,7 @@ let selectionIndicator = style({
   },
   // Quiet cards with no checkbox have an extra inner stroke
   // to distinguish the selection indicator from the preview.
-  outlineColor: 'gray-25',
+  outlineColor: lightDark('transparent-white-600', 'transparent-black-600'),
   outlineOffset: -4,
   outlineStyle: {
     default: 'none',
@@ -331,6 +331,13 @@ let content = style({
   }
 });
 
+let actionMenu = style({
+  gridArea: 'menu',
+  // Don't cause the row to expand, preserve gap between title and description text.
+  // Would use -100% here but it doesn't work in Firefox.
+  marginY: '[calc(-1 * self(height))]'
+});
+
 let footer = style({
   display: 'flex',
   flexDirection: 'row',
@@ -397,7 +404,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
           isDisabled: isSkeleton,
           // @ts-ignore
           'data-slot': 'menu',
-          styles: style({gridArea: 'menu'})
+          styles: actionMenu
         }],
         [SkeletonContext, isSkeleton]
       ]}>
