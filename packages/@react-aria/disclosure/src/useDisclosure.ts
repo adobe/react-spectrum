@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {DisclosureState} from '@react-stately/disclosure';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useEvent, useId} from '@react-aria/utils';
-import {useIsSSR} from 'react-aria';
+import {useIsSSR} from '@react-aria/ssr';
 
 export interface AriaDisclosureProps {
   /** Whether the disclosure is disabled. */
