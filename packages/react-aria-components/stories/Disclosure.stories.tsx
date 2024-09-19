@@ -20,32 +20,32 @@ export default {
   component: Disclosure
 };
 
-export const AccordionExample = (args: any) => (
+export const DisclosureExample = (args: any) => (
   <Disclosure {...args}>
     {({isExpanded}) => (
       <>
         <Heading level={3}>
-          <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
+          <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is a disclosure header</Button>
         </Heading>
         <DisclosurePanel>
-          <p>This is the content of the accordion panel.</p>
+          <p>This is the content of the disclosure panel.</p>
         </DisclosurePanel>
       </>
     )}
   </Disclosure>
 );
 
-export const AccordionControlledExample = (args: any) => {
+export const DisclosureControlledExample = (args: any) => {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
     <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
       {({isExpanded}) => (
         <>
           <Heading level={3}>
-            <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is an accordion header</Button>
+            <Button slot="trigger">{isExpanded ? '⬇️' : '➡️'} This is a disclosure header</Button>
           </Heading>
           <DisclosurePanel>
-            <p>This is the content of the accordion panel.</p>
+            <p>This is the content of the disclosure panel.</p>
           </DisclosurePanel>
         </>
       )}
