@@ -146,18 +146,10 @@ export class ComboBoxTester {
   };
 
   get combobox() {
-    if (!this._combobox) {
-      throw new Error('Combobox input element hasn\'t been set yet. Did you call `setElement()` yet?');
-    }
-
     return this._combobox;
   }
 
   get trigger() {
-    if (!this._trigger) {
-      throw new Error('Combobox trigger element hasn\'t been set yet. Did you call `setElement()` or `setTrigger()` yet?');
-    }
-
     return this._trigger;
   }
 
@@ -186,7 +178,7 @@ export class ComboBoxTester {
     }
   }
 
-  get focusedOptions() {
+  get focusedOption() {
     let focusedOptionId = this.combobox.getAttribute('aria-activedescendant');
     return focusedOptionId ? document.getElementById(focusedOptionId) : undefined;
   }

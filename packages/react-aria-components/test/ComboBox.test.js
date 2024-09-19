@@ -117,7 +117,7 @@ describe('ComboBox', () => {
       </ComboBox>
     );
 
-    let comboboxTester = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
       comboboxTester.combobox.focus();
     });
@@ -153,7 +153,7 @@ describe('ComboBox', () => {
       </ComboBox>
     );
 
-    let comboboxTester = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     act(() => {
       comboboxTester.combobox.focus();
     });
@@ -231,7 +231,7 @@ describe('ComboBox', () => {
       </form>
     );
 
-    let comboboxTester = testUtilUser.createTester('ComboBoxTester', {root: tree.container});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     let combobox = comboboxTester.combobox;
 
     expect(combobox).toHaveAttribute('required');

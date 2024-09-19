@@ -45,7 +45,7 @@ describe('Select', () => {
   it('provides slots', async () => {
     let {getByTestId} = render(<TestSelect />);
     let wrapper = getByTestId('select');
-    let selectTester = testUtilUser.createTester('SelectTester', {root: wrapper});
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Select an item');
@@ -87,7 +87,7 @@ describe('Select', () => {
       </SelectContext.Provider>
     );
 
-    let selectTester = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
     expect(trigger).toHaveAttribute('aria-label', 'test');
@@ -121,7 +121,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Cat');
   });
@@ -150,14 +150,14 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('1 - Cat');
   });
 
   it('supports placeholder', () => {
     let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
-    let selectTester = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Select an animal');
   });
@@ -184,7 +184,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('SelectTester', {root: getByTestId('select')});
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('open');
 
@@ -229,7 +229,7 @@ describe('Select', () => {
     );
 
     let wrapper = getByTestId('test-select');
-    let selectTester = testUtilUser.createTester('SelectTester', {root: wrapper});
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
     let trigger = selectTester.trigger;
     let select = wrapper;
     let input = document.querySelector('[name=select]');

@@ -98,10 +98,6 @@ export class GridListTester {
 
   // TODO: do we really need this getter? Theoretically the user already has the reference to the gridlist
   get gridlist() {
-    if (!this._gridlist) {
-      throw new Error('Gridlist element hasn\'t been set yet. Did you call `setElement()` yet?');
-    }
-
     return this._gridlist;
   }
 

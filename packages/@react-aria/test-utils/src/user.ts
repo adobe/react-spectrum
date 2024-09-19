@@ -33,24 +33,24 @@ export interface BaseTesterOpts {
   root: HTMLElement
 }
 
-let keyToUtil = {'SelectTester': SelectTester, 'TableTester': TableTester, 'MenuTester': MenuTester, 'ComboBoxTester': ComboBoxTester, 'GridListTester': GridListTester} as const;
+let keyToUtil = {'Select': SelectTester, 'Table': TableTester, 'Menu': MenuTester, 'ComboBox': ComboBoxTester, 'GridList': GridListTester} as const;
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 type ObjectType<T> =
-    T extends 'SelectTester' ? SelectTester :
-    T extends 'TableTester' ? TableTester :
-    T extends 'MenuTester' ? MenuTester :
-    T extends 'ComboBoxTester' ? ComboBoxTester :
-    T extends 'GridListTester' ? GridListTester :
+    T extends 'Select' ? SelectTester :
+    T extends 'Table' ? TableTester :
+    T extends 'Menu' ? MenuTester :
+    T extends 'ComboBox' ? ComboBoxTester :
+    T extends 'GridList' ? GridListTester :
     never;
 
 type ObjectOptionsTypes<T> =
-  T extends 'SelectTester' ? SelectOptions :
-  T extends 'TableTester' ? TableOptions :
-  T extends 'MenuTester' ? MenuOptions :
-  T extends 'ComboBoxTester' ? ComboBoxOptions :
-  T extends 'GridListTester' ? GridListOptions :
+  T extends 'Select' ? SelectOptions :
+  T extends 'Table' ? TableOptions :
+  T extends 'Menu' ? MenuOptions :
+  T extends 'ComboBox' ? ComboBoxOptions :
+  T extends 'GridList' ? GridListOptions :
   never;
 
 let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));

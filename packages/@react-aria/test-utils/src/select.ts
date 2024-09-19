@@ -138,10 +138,6 @@ export class SelectTester {
   };
 
   get trigger() {
-    if (!this._trigger) {
-      throw new Error('Select trigger hasn\'t been set yet. Did you call `setElement()` yet?');
-    }
-
     return this._trigger;
   }
 

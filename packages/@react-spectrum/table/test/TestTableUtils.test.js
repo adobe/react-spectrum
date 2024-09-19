@@ -74,7 +74,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let tableTester = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      let tableTester = testUtilRealTimer.createTester('Table', {root: screen.getByTestId('test')});
       tableTester.setInteractionType(interactionType);
       await tableTester.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -104,7 +104,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let tableTester = testUtilRealTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      let tableTester = testUtilRealTimer.createTester('Table', {root: screen.getByTestId('test')});
       tableTester.setInteractionType(interactionType);
       await tableTester.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -146,7 +146,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester', async function () {
       render(<TableExample />);
-      let tableTester = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      let tableTester = testUtilFakeTimer.createTester('Table', {root: screen.getByTestId('test')});
       tableTester.setInteractionType(interactionType);
       await tableTester.toggleRowSelection({index: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -176,7 +176,7 @@ describe('Table ', function () {
 
     it('basic flow with TableTester (testing menu sort change and highlight selection)', async function () {
       render(<TableExample allowsResizing selectionStyle="highlight" />);
-      let tableTester = testUtilFakeTimer.createTester('TableTester', {root: screen.getByTestId('test')});
+      let tableTester = testUtilFakeTimer.createTester('Table', {root: screen.getByTestId('test')});
       tableTester.setInteractionType(interactionType);
 
       await tableTester.toggleRowSelection({index: 2, focusToSelect: true});

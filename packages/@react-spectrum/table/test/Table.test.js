@@ -2395,7 +2395,7 @@ export let tableTests = () => {
       it('should support selecting all via the checkbox', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
-        let tableTester = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
         tableTester.setInteractionType('keyboard');
 
         checkSelectAll(tree, 'unchecked');
@@ -2845,7 +2845,7 @@ export let tableTests = () => {
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
           let tree = renderTable({onSelectionChange, onAction, selectionStyle: 'highlight'});
-          let tableTester = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+          let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
           tableTester.setInteractionType('touch');
 
           act(() => jest.runAllTimers());
@@ -2983,7 +2983,7 @@ export let tableTests = () => {
         it('should toggle selection with touch', async function () {
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
-          let tableTester = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+          let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
           tableTester.setInteractionType('touch');
           expect(tree.queryByLabelText('Select All')).toBeNull();
 
@@ -3015,7 +3015,7 @@ export let tableTests = () => {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-        let tableTester = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
 
         await tableTester.toggleRowSelection({text: 'Foo 5'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
@@ -3136,7 +3136,7 @@ export let tableTests = () => {
               jest.runAllTimers();
             });
 
-            let tableTester = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+            let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
             tableTester.setInteractionType('touch');
 
             await user.click(document.body);
@@ -4368,7 +4368,7 @@ export let tableTests = () => {
     it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
-      let tableTester = testUtilUser.createTester('TableTester', {root: tree.getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
       tableTester.setInteractionType('keyboard');
       let columnheaders = tableTester.columns;
       expect(columnheaders).toHaveLength(3);

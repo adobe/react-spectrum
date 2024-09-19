@@ -248,10 +248,6 @@ export class TableTester {
   };
 
   get table() {
-    if (!this._table) {
-      throw new Error('Table element hasn\'t been set yet. Did you call `setTable()` yet?');
-    }
-
     return this._table;
   }
 

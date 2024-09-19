@@ -206,10 +206,6 @@ export class MenuTester {
   };
 
   get trigger() {
-    if (!this._trigger) {
-      throw new Error('Menu trigger element hasn\'t been set yet. Did you call `setElement()` yet?');
-    }
-
     return this._trigger;
   }
 

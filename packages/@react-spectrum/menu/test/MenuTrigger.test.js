@@ -104,7 +104,7 @@ describe('MenuTrigger', function () {
   async function verifyMenuToggle(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
     let tree = renderComponent(Component, triggerProps, menuProps);
     let triggerButton = tree.getByRole('button');
-    let menuTester = testUtilUser.createTester('MenuTester', {root: triggerButton});
+    let menuTester = testUtilUser.createTester('Menu', {root: triggerButton});
 
     expect(onOpenChange).toBeCalledTimes(0);
 
@@ -150,7 +150,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
   `('$Name has default behavior (button renders, menu is closed)', function ({Component}) {
     let tree = renderComponent(Component);
-    let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+    let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
     let triggerButton = menuTester.trigger;
 
     expect(triggerButton).toBeTruthy();
@@ -261,7 +261,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name does not trigger on disabled button', async function ({Component, props}) {
     let tree = renderComponent(Component, props, {}, {isDisabled: true});
-    let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+    let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
     await menuTester.open();
     act(() => {jest.runAllTimers();});
     let menu = menuTester.menu;
@@ -276,7 +276,7 @@ describe('MenuTrigger', function () {
     `('$Name autofocuses the selected item on menu open', async function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectedKeys: ['Bar'], selectionMode: 'single'});
       act(() => {jest.runAllTimers();});
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       let button = menuTester.trigger;
       await menuTester.open();
       let menu = menuTester.menu;
@@ -352,7 +352,7 @@ describe('MenuTrigger', function () {
         </Provider>
       );
 
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       fireEvent.keyDown(menuTester.trigger, {key: 'ArrowDown', code: 40, charCode: 40});
 
       let selectedItem = menuTester.options[0];
@@ -379,7 +379,7 @@ describe('MenuTrigger', function () {
     });
 
     async function openAndTriggerMenuItem(tree, role, selectionMode, triggerEvent) {
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       await menuTester.open();
       let menuItems = menuTester.options;
       let itemToAction = menuItems[1];
@@ -393,7 +393,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon clicking escape key', async function ({Component, props}) {
       tree = renderComponent(Component, props);
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       menuTester.setInteractionType('keyboard');
       await menuTester.open();
 
@@ -409,7 +409,7 @@ describe('MenuTrigger', function () {
     `('$Name does not clear selection with escape', async function ({Component, props}) {
       let onSelectionChange = jest.fn();
       tree = renderComponent(Component, props, {selectionMode: 'multiple', defaultSelectedKeys: ['Foo'], onSelectionChange});
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       await menuTester.open();
       expect(onSelectionChange).not.toHaveBeenCalled();
 
@@ -457,7 +457,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
     `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
       tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       expect(onOpenChange).toBeCalledTimes(0);
       await menuTester.open();
 
@@ -495,7 +495,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
     `('$Name doesn\'t closes menu on item selection via ENTER press if closeOnSelect=false', async function ({Component, props}) {
       tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
-      let menuTester = testUtilUser.createTester('MenuTester', {root: tree.container});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       expect(onOpenChange).toBeCalledTimes(0);
       await menuTester.open();
 
