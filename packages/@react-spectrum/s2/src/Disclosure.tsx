@@ -14,10 +14,9 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {focusRing, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
 import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
-import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -38,7 +37,7 @@ export interface DisclosureProps extends RACDisclosureProps, UnsafeStyles, DOMPr
   /** The contents of the disclosure, consisting of an DisclosureHeader and DisclosurePanel. */
   children: [ReactElement<DisclosureHeaderProps>, ReactElement<DisclosurePanelProps>],
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StyleString
+  styles?: StylesPropWithHeight
 }
 
 export const DisclosureContext = createContext<ContextValue<Omit<DisclosureProps, 'children'>, DOMRefValue<HTMLDivElement>>>(null);
