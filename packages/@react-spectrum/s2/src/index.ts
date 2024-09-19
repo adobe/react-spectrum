@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {Accordion, DisclosureHeader, Disclosure, DisclosurePanel, AccordionContext, DisclosureContext} from './Accordion';
+export {Accordion, AccordionContext} from './Accordion';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
@@ -32,6 +32,7 @@ export {ColorSwatchPicker, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorWheel, ColorWheelContext} from './ColorWheel';
 export {ComboBox, ComboBoxItem, ComboBoxSection, ComboBoxContext} from './ComboBox';
 export {ContextualHelp, ContextualHelpContext} from './ContextualHelp';
+export {DisclosureHeader, Disclosure, DisclosurePanel, DisclosureContext} from './Disclosure';
 export {Heading, HeadingContext, Header, HeaderContext, Content, ContentContext, Footer, FooterContext, Text, TextContext, Keyboard, KeyboardContext} from './Content';
 export {Dialog} from './Dialog';
 export {DialogTrigger} from './DialogTrigger';
@@ -70,7 +71,7 @@ export {Tooltip, TooltipTrigger} from './Tooltip';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
-export type {AccordionProps, DisclosureProps, DisclosurePanelProps} from './Accordion';
+export type {AccordionProps} from './Accordion';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionMenuProps} from './ActionMenu';
 export type {AlertDialogProps} from './AlertDialog';
@@ -94,6 +95,7 @@ export type {ComboBoxProps, ComboBoxItemProps, ComboBoxSectionProps} from './Com
 export type {DialogProps} from './Dialog';
 export type {DialogContainerProps, DialogContainerValue} from './DialogContainer';
 export type {DialogTriggerProps} from './DialogTrigger';
+export type {DisclosureProps, DisclosurePanelProps} from './Disclosure';
 export type {DividerProps} from './Divider';
 export type {DropZoneProps} from './DropZone';
 export type {FormProps} from './Form';
