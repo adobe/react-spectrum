@@ -101,7 +101,7 @@ function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} 
 
 const baseSpacing = generateSpacing([
   0,
-  // 2, // spacing-50 !! TODO: should we support this?
+  2, // spacing-50
   4, // spacing-75
   8, // spacing-100
   12, // spacing-200
@@ -215,7 +215,6 @@ const sizing = {
   ...scaledSpacing,
   auto: 'auto',
   full: '100%',
-  screen: '100vh',
   min: 'min-content',
   max: 'max-content',
   fit: 'fit-content',
@@ -239,6 +238,16 @@ const sizing = {
       XL: size(20)
     }
   }
+};
+
+const height = {
+  ...sizing,
+  screen: '100vh'
+};
+
+const width = {
+  ...sizing,
+  screen: '100vw'
 };
 
 const margin = {
@@ -506,7 +515,8 @@ export const style = createTheme({
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color')
+      pasteboard: weirdColorToken('background-pasteboard-color'),
+      elevated: weirdColorToken('background-elevated-color')
     }),
     borderColor: createColorProperty({
       ...color,
@@ -575,18 +585,18 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height: sizing,
-    width: sizing,
-    containIntrinsicWidth: sizing,
-    containIntrinsicHeight: sizing,
-    minHeight: sizing,
+    height,
+    width,
+    containIntrinsicWidth: width,
+    containIntrinsicHeight: height,
+    minHeight: height,
     maxHeight: {
-      ...sizing,
+      ...height,
       none: 'none'
     },
-    minWidth: sizing,
+    minWidth: width,
     maxWidth: {
-      ...sizing,
+      ...width,
       none: 'none'
     },
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),

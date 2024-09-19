@@ -48,7 +48,8 @@ let excludedProps = new Set([
   'onHoverChange',
   'onFocus',
   'onBlur',
-  'onFocusChange'
+  'onFocusChange',
+  'onScroll'
 ]);
 let docGenParser = withCompilerOptions(compilerOptions, {
   shouldExtractLiteralValuesFromEnum: true,
