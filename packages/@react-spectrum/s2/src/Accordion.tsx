@@ -14,10 +14,9 @@ import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {DisclosureContext} from './Disclosure';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {getAllowedOverrides, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef} from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
-import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -25,7 +24,7 @@ export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
   /** The disclosure elements in the accordion. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StyleString,
+  styles?: StylesPropWithHeight,
   /**
    * The size of the accordion.
    * @default "M"
