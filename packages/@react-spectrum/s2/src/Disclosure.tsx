@@ -11,17 +11,17 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
 import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
-export interface DisclosureProps extends RACDisclosureProps, UnsafeStyles, DOMProps {
+export interface DisclosureProps extends RACDisclosureProps, StyleProps, DOMProps {
   /**
    * The size of the disclosure.
    * @default "M"
@@ -35,14 +35,10 @@ export interface DisclosureProps extends RACDisclosureProps, UnsafeStyles, DOMPr
   /** Whether the disclosure should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** The contents of the disclosure, consisting of an DisclosureHeader and DisclosurePanel. */
-  children: [ReactElement<DisclosureHeaderProps>, ReactElement<DisclosurePanelProps>],
-  /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  children: [ReactElement<DisclosureHeaderProps>, ReactElement<DisclosurePanelProps>]
 }
 
 export const DisclosureContext = createContext<ContextValue<Omit<DisclosureProps, 'children'>, DOMRefValue<HTMLDivElement>>>(null);
-
-let InternalDisclosureContext = createContext<Pick<DisclosureProps, 'size'| 'isQuiet'| 'density' | 'isDisabled'>>({});
 
 const disclosure = style({
   color: 'heading',
@@ -82,7 +78,7 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [InternalDisclosureContext, {size, isQuiet, density, isDisabled}]
+        [DisclosureContext, {size, isQuiet, density, isDisabled}]
       ]}>
       <RACDisclosure
         {...domProps}
@@ -216,7 +212,7 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size, density, isQuiet} = useContext(InternalDisclosureContext);
+  let {size, density, isQuiet} = useSlottedContext(DisclosureContext)!;
   let isRTL = direction === 'rtl';
   return (
     <Heading
@@ -270,7 +266,7 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
-  let {size} = useContext(InternalDisclosureContext);
+  let {size} = useSlottedContext(DisclosureContext)!;
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (

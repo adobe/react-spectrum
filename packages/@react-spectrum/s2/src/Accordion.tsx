@@ -44,7 +44,7 @@ export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
 const accordion = style({
   display: 'flex',
   flexDirection: 'column'
-}, getAllowedOverrides());
+}, getAllowedOverrides({height: true}));
 
 export const AccordionContext = createContext<ContextValue<AccordionProps, DOMRefValue<HTMLDivElement>>>(null);
 
