@@ -1,4 +1,5 @@
 {
+  "button.pending": "pending",
   "contextualhelp.info": "Information",
   "contextualhelp.help": "Help",
   "dialog.dismiss": "Dismiss",
@@ -17,5 +18,6 @@
   "tag.showAllButtonLabel": "Show all ({tagCount, number})",
   "tag.hideButtonLabel": "Show less",
   "tag.actions": "Actions",
-  "tag.noTags": "None"
+  "tag.noTags": "None",
+  "breadcrumbs.more": "More items"
 }
