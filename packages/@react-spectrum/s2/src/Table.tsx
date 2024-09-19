@@ -46,22 +46,23 @@ import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} 
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
+import {DOMRef, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
-import {LoadingState, Node} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_Icon_MoveHorizontalCircleTableWidget_16_N.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
@@ -251,7 +252,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   }
 }
 
-export function Table(props: TableProps) {
+function Table(props: TableProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className,
@@ -268,6 +269,7 @@ export function Table(props: TableProps) {
     ...otherProps
   } = props;
 
+  let domRef = useDOMRef(ref);
   let scale = useScale();
   let layout = useMemo(() => {
     return new S2TableLayout({
@@ -313,6 +315,8 @@ export function Table(props: TableProps) {
 
   return (
     <ResizableTableContainer
+      // TODO: perhaps this ref should be attached to the RACTable but it expects a table type ref which isn't true in the virtualized case
+      ref={domRef}
       onResize={propsOnResize}
       onResizeEnd={onResizeEnd}
       onResizeStart={onResizeStart}
@@ -348,6 +352,9 @@ const centeredWrapper = style({
 
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
+/**
+ * The body of a `<Table>`, containing the table rows.
+ */
 export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let {items, renderEmptyState, children} = props;
   let {loadingState} = useContext(InternalTableContext);
@@ -482,6 +489,9 @@ export interface ColumnProps extends RACColumnProps {
   children: ReactNode
 }
 
+/**
+ * A column within a `<Table>`.
+ */
 export function Column(props: ColumnProps) {
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
   let {allowsResizing, children, align = 'start'} = props;
@@ -803,6 +813,9 @@ const selectAllCheckboxColumn = style({
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
 
+/**
+ * A header within a `<Table>`, containing the table columns.
+ */
 export function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
@@ -958,6 +971,9 @@ export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'sh
   children: ReactNode
 }
 
+/**
+ * A cell within a table row.
+ */
 export function Cell(props: CellProps) {
   let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
@@ -1078,6 +1094,9 @@ const row = style<RowRenderProps & S2TableProps>({
 
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
 
+/**
+ * A row within a `<Table>`.
+ */
 export function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
@@ -1101,3 +1120,9 @@ export function Row<T extends object>({id, columns, children, ...otherProps}: Ro
     </RACRow>
   );
 }
+
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
+const _Table = /*#__PURE__*/ (forwardRef as forwardRefType)(Table);
+export {_Table as Table};
