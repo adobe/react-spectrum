@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, ButtonContext, ProgressBar, Text} from '../';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -140,7 +140,7 @@ describe('Button', () => {
   });
 
   // isPending state
-  it('displays a spinner after a short delay when isPending prop is true', async function () {
+  it('displays a spinner when isPending prop is true', async function () {
     let onPressSpy = jest.fn();
     function TestComponent() {
       let [pending, setPending] = useState(false);
@@ -153,10 +153,10 @@ describe('Button', () => {
           isPending={pending}>
           {({isPending}) => (
             <>
-              <Text style={{visibility: isPending ? 'hidden' : undefined}}>Test</Text>
+              <Text style={{opacity: isPending ? '0' : undefined}}>Test</Text>
               <ProgressBar
                 aria-label="loading"
-                style={{visibility: isPending ? undefined : 'hidden'}}
+                style={{opacity: isPending ? undefined : '0'}}
                 isIndeterminate>
                 loading
               </ProgressBar>
@@ -173,9 +173,6 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-disabled', 'true');
     // Multiple clicks shouldn't call onPressSpy
     await user.click(button);
-    act(() => {
-      jest.advanceTimersByTime(1000);
-    });
     expect(button).toHaveAttribute('aria-disabled', 'true');
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });

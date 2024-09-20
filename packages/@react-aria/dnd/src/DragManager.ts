@@ -492,7 +492,10 @@ class DragSession {
       // Announce first drop target after drag start announcement finishes.
       // Otherwise, it will never get announced because drag start announcement is assertive.
       if (!this.initialFocused) {
-        announce(item?.element.getAttribute('aria-label'), 'polite');
+        let label = item?.element.getAttribute('aria-label');
+        if (label) {
+          announce(label, 'polite');
+        }
         this.initialFocused = true;
       }
     }

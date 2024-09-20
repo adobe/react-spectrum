@@ -161,31 +161,26 @@ A `Button` can be disabled using the `isDisabled` prop.
 
 ## Pending
 
-A `Button` can be put into the pending state using the `isPending` prop.
-Both a `Text` and [ProgressBar](ProgressBar.html) component are required to show the pending state correctly.
-Make sure to internationalize the label you pass to the [ProgressBar](ProgressBar.html) component.
+A `Button` can be put into a pending state using the `isPending` prop.
+This is useful when an action takes a long time to complete, and you want to provide feedback to the user that the action is in progress.
+The pending state announces the state change to assistive technologies and disables interactions with the exception of focus.
+
+A [ProgressBar](ProgressBar.html) component is required to show the pending state correctly.
+Make sure to internationalize the `aria-label` you pass to the [ProgressBar](ProgressBar.html) component.
 
 ```tsx example
-import {useEffect, useRef, useState} from 'react';
+import {useState} from 'react';
 import {ProgressBar, Text} from 'react-aria-components';
 
 function PendingButton(props) {
   let [isPending, setPending] = useState(false);
 
-  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let handlePress = (e) => {
     setPending(true);
-    timeout.current = setTimeout(() => {
+    setTimeout(() => {
       setPending(false);
-      timeout.current = undefined;
     }, 5000);
   };
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeout.current);
-    };
-  }, []);
 
   return (
     <Button
@@ -194,47 +189,93 @@ function PendingButton(props) {
       onPress={handlePress}>
         {({isPending}) => (
           <>
-            <Text className={isPending ? 'pending' : undefined}>Click me</Text>
-            <ProgressBar
-              aria-label="loading"
-              isIndeterminate
-              className={['spinner', (isPending ? 'spinner-pending' : '')].join(' ')}>
-              <span className={'loader'} />
-            </ProgressBar>
+            {!isPending && <Text>Save</Text>}
+            {isPending && (
+              <ProgressBar aria-label="Saving..." isIndeterminate>
+                <svg width="16" height="16" style={{display: 'block'}}>
+                  <use href="#spinner" />
+                </svg>
+              </ProgressBar>
+            )}
           </>
         )}
     </Button>
   );
 }
-<PendingButton />
 ```
 
+```tsx snippet hidden
+<svg>
+  <defs>
+    <g id="spinner" transform="scale(0.66)">
+      <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+      <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+        <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </defs>
+</svg>
+```
+
+### Accessibility
+
+**Note:**
+The `ProgressBar` must be in the accessibility tree as soon as the button becomes pending, even if it is not visible.
+For example, if you'd like to delay showing a spinner until a minimum amount of time passes, you could use `opacity: 0` to hide it so it is still available to screen readers.
+Do not use `visibility: hidden` or `display: none` since these remove the element from the accessibility tree.
+
+Additionally, you may choose to keep the button's contents in the DOM while the button is pending, e.g. to preserve the button's layout.
+If you hide the contents with `visibility: hidden`, the accessibility label for the button will only include the ProgressBar, so it should have a descriptive `aria-label` (e.g. "Saving").
+You can also choose to keep the button's contents in the accessibility tree by using `opacity: 0`, in which case the `ProgressBar`'s label will be combined with the contents (e.g. "Save, pending").
+
+Try the above example and the one below with a screen reader to see the difference in behavior.
+
 <details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show example</summary>
+
+```tsx example
+function PendingDelayed(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, 5000);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}
+      style={{position: 'relative'}}>
+        {({isPending}) => (
+          <>
+            <Text className={isPending ? 'pending' : undefined}>Save</Text>
+            {isPending && (
+              <ProgressBar aria-label="in progress" isIndeterminate className="spinner">
+                <svg width="16" height="16" style={{display: 'block'}}>
+                  <use href="#spinner" />
+                </svg>
+              </ProgressBar>
+            )}
+          </>
+        )}
+    </Button>
+  );
+}
+```
 
 ```css
-@keyframes load {
-  99% {
-    visibility: hidden;
+@keyframes toggle {
+  from {
+    opacity: 0;
   }
 
-  100% {
-    visibility: visible;
+  to {
+    opacity: 1;
   }
-}
-
-@keyframes hidden {
-  99% {
-    visibility: visible;
-  }
-
-  100% {
-    visibility: hidden;
-  }
-}
-
-.react-aria-Button {
-  position: relative;
 }
 
 .spinner {
@@ -242,50 +283,13 @@ function PendingButton(props) {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  visibility: hidden;
-}
-.spinner-pending {
-  animation: 1s load;
-  animation-fill-mode: forwards;
+  animation: toggle 1s steps(1);
+  opacity: 1;
 }
 
 .pending {
-  animation: 1s hidden;
-  animation-fill-mode: forwards;
-  visibility: visible;
-}
-
-.loader {
-  width: 20px;
-  height: 20px;
-  border: 3px solid var(--background-color);
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-.loader::after {
-  content: '';
-  box-sizing: border-box;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 3px solid;
-  border-color: var(--purple-400) transparent;
-}
-
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  animation: toggle 1s reverse steps(1, jump-start);
+  opacity: 0;
 }
 ```
 

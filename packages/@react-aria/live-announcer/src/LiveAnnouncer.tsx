@@ -15,20 +15,40 @@ type Assertiveness = 'assertive' | 'polite';
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
+let liveAnnouncer: LiveAnnouncer | null = null;
+
+type Message = string | {'aria-labelledby': string};
+
 /**
  * Announces the message using screen reader technology.
  */
 export function announce(
-  message: string,
+  message: Message,
   assertiveness: Assertiveness = 'assertive',
-  timeout = LIVEREGION_TIMEOUT_DELAY,
-  mode: 'message' | 'ids' = 'message'
+  timeout = LIVEREGION_TIMEOUT_DELAY
 ) {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
-  }
+    // wait for the live announcer regions to be added to the dom, then announce
+    // otherwise Safari won't announce the message if it's added too quickly
+    // found most times less than 100ms were not consistent when announcing with Safari
 
-  liveAnnouncer.announce(message, assertiveness, timeout, mode);
+    // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+    // https://github.com/reactwg/react-18/discussions/102
+    // if we're in a test environment, announce without waiting
+    // @ts-ignore
+    if (!(typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined')) {
+      setTimeout(() => {
+        if (liveAnnouncer?.isAttached()) {
+          liveAnnouncer?.announce(message, assertiveness, timeout);
+        }
+      }, 100);
+    } else {
+      liveAnnouncer.announce(message, assertiveness, timeout);
+    }
+  } else {
+    liveAnnouncer.announce(message, assertiveness, timeout);
+  }
 }
 
 /**
@@ -89,6 +109,10 @@ class LiveAnnouncer {
     }
   }
 
+  isAttached() {
+    return this.node?.isConnected;
+  }
+
   createLog(ariaLive: string) {
     let node = document.createElement('div');
     node.setAttribute('role', 'log');
@@ -106,18 +130,18 @@ class LiveAnnouncer {
     this.node = null;
   }
 
-  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY, mode: 'message' | 'ids' = 'message') {
+  announce(message: Message, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
     if (!this.node) {
       return;
     }
 
     let node = document.createElement('div');
-    if (mode === 'message') {
-      node.textContent = message;
-    } else {
+    if (typeof message === 'object') {
       // To read an aria-labelledby, the element must have an appropriate role, such as img.
       node.setAttribute('role', 'img');
-      node.setAttribute('aria-labelledby', message);
+      node.setAttribute('aria-labelledby', message['aria-labelledby']);
+    } else {
+      node.textContent = message;
     }
 
     if (assertiveness === 'assertive') {
@@ -147,7 +171,3 @@ class LiveAnnouncer {
     }
   }
 }
-
-// singleton, setup immediately so that the DOM is primed for the first announcement as soon as possible
-// Safari has a race condition where the first announcement is not read if we wait until the first announce call
-let liveAnnouncer: LiveAnnouncer | null = new LiveAnnouncer();

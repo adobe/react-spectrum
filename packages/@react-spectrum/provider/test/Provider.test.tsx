@@ -11,7 +11,6 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-// eslint-disable-next-line rsp-rules/sort-imports
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import MatchMediaMock from 'jest-matchmedia-mock';

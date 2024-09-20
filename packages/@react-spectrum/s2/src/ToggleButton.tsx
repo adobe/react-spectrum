@@ -18,9 +18,11 @@ import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
+import {SkeletonContext} from './Skeleton';
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ActionButtonStyleProps {
@@ -34,6 +36,7 @@ export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps,
 
 function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
+  props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   return (
     <RACToggleButton
@@ -49,6 +52,7 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
       }, props.styles)}>
       <Provider
         values={[
+          [SkeletonContext, null],
           [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
