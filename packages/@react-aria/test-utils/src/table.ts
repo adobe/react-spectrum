@@ -25,7 +25,7 @@ export class TableTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _table: HTMLElement | undefined;
+  private _table: HTMLElement;
 
   constructor(opts: TableOptions) {
     let {root, user, interactionType, advanceTimer} = opts;

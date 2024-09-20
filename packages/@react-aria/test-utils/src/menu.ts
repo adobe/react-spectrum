@@ -21,7 +21,7 @@ export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _trigger: HTMLElement | undefined;
+  private _trigger: HTMLElement;
 
   constructor(opts: MenuOptions) {
     let {root, user, interactionType, advanceTimer} = opts;
@@ -37,11 +37,9 @@ export class MenuTester {
       let trigger = within(root).queryByRole('button');
       if (trigger) {
         this._trigger = trigger;
+      } else {
+        this._trigger = root;
       }
-    }
-
-    if (this._trigger == null) {
-      this._trigger = root;
     }
   }
 

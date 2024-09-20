@@ -21,7 +21,7 @@ export interface ComboBoxOptions extends UserOpts, BaseTesterOpts {
 export class ComboBoxTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
-  private _combobox: HTMLElement | undefined;
+  private _combobox: HTMLElement;
   private _trigger: HTMLElement | undefined;
 
   constructor(opts: ComboBoxOptions) {
@@ -44,6 +44,10 @@ export class ComboBoxTester {
       let trigger = within(root).queryByRole('button', {hidden: true});
       if (trigger) {
         this._trigger = trigger;
+      } else {
+        // For cases like https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/ where the combobox
+        // is also the trigger button
+        this._trigger = this._combobox;
       }
     }
   }
@@ -56,7 +60,7 @@ export class ComboBoxTester {
     let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     let combobox = this.combobox;
-    let isDisabled = trigger.hasAttribute('disabled');
+    let isDisabled = trigger!.hasAttribute('disabled');
 
     if (interactionType === 'mouse') {
       if (triggerBehavior === 'focus') {

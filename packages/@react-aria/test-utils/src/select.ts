@@ -20,7 +20,7 @@ export interface SelectOptions extends UserOpts, BaseTesterOpts {
 export class SelectTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
-  private _trigger: HTMLElement | undefined;
+  private _trigger: HTMLElement;
 
   constructor(opts: SelectOptions) {
     let {root, user, interactionType} = opts;

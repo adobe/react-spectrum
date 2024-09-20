@@ -20,7 +20,7 @@ export interface GridListOptions extends UserOpts, BaseTesterOpts {
 export class GridListTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
-  private _gridlist: HTMLElement | undefined;
+  private _gridlist: HTMLElement;
 
 
   constructor(opts: GridListOptions) {
@@ -64,7 +64,7 @@ export class GridListTester {
     if (index != null) {
       row = this.rows[index];
     } else if (text != null) {
-      row = within(this.gridlist).getByText(text);
+      row = within(this?.gridlist).getByText(text);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
@@ -102,7 +102,7 @@ export class GridListTester {
   }
 
   get rows() {
-    return within(this.gridlist).queryAllByRole('row');
+    return within(this?.gridlist).queryAllByRole('row');
   }
 
   get selectedRows() {
