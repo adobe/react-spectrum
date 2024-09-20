@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Key, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
@@ -20,7 +20,12 @@ export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionS
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */
-  suppressTextValueWarning?: boolean
+  suppressTextValueWarning?: boolean,
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * This can be used to override the behavior of shift selection.
+   */
+  layoutDelegate?: LayoutDelegate
 }
 
 export interface ListState<T> {
@@ -39,7 +44,7 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {filter} = props;
+  let {filter, layoutDelegate} = props;
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -52,8 +57,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   let collection = useCollection(props, factory, context);
 
   let selectionManager = useMemo(() =>
-    new SelectionManager(collection, selectionState)
-    , [collection, selectionState]
+    new SelectionManager(collection, selectionState, {layoutDelegate})
+    , [collection, selectionState, layoutDelegate]
   );
 
   // Reset focused key if that item is deleted from the collection.
