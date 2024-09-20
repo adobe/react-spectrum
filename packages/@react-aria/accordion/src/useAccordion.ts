@@ -34,6 +34,9 @@ export interface AccordionItemAria {
   regionProps: DOMAttributes
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): AccordionItemAria {
   let {item} = props;
   let buttonId = useId();
@@ -65,6 +68,9 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
   };
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement | null>): AccordionAria {
   let {listProps} = useSelectableList({
     ...props,

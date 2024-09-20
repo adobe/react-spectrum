@@ -10,16 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '../src/Accordion';
-import {Template} from '../chromatic/Accordion.stories';
-
-const meta: Meta<SpectrumAccordionProps> = {
-  title: 'Accordion'
-};
-
-export default meta;
-
-export const Default = {
-  render: Template
-};
+export * from './src';
