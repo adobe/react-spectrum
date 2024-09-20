@@ -142,12 +142,7 @@ export class MenuTester {
           act(() => menu.focus());
         }
 
-        if (option) {
-          await this.keyboardNavigateToOption({option});
-        } else {
-          // valid?
-          await this.user.keyboard(optionText);
-        }
+        await this.keyboardNavigateToOption({option});
         await this.user.keyboard(`[${keyboardActivation}]`);
       } else {
         if (interactionType === 'mouse') {
