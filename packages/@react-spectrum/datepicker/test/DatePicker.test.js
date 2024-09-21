@@ -2033,8 +2033,6 @@ describe('DatePicker', function () {
       expect(input).toHaveValue('2020-02-03');
     });
 
-  
-
     describe('validation', () => {
       describe('validationBehavior=native', () => {
         it('supports isRequired', async () => {
