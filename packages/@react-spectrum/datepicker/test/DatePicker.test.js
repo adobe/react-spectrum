@@ -1899,20 +1899,20 @@ describe('DatePicker', function () {
         <DatePicker
           label="Date"
           defaultValue={parseZonedDateTime(
-            "2021-11-07T00:45-07:00[America/Los_Angeles]"
+            "2024-09-21T00:00:00[America/Los_Angeles]"
           )}
         />
       );
       let combobox = getAllByRole("group")[0];
 
-      expectPlaceholder(combobox, "11/7/2021, 12:45 AM PDT");
+      expectPlaceholder(combobox, "9/21/2024, 12:00 AM PDT");
 
       await user.tab();
-      for (var i = 0; i < 4; i++) {
+      await user.keyboard("{Backspace}");
+      await user.tab();
+      for (var i = 0; i < 2; i++) {
         await user.keyboard("{Backspace}");
       }
-      await user.tab();
-      await user.keyboard("{Backspace}");
       await user.tab();
       for (var i = 0; i < 4; i++) {
         await user.keyboard("{Backspace}");
@@ -1935,7 +1935,7 @@ describe('DatePicker', function () {
       let { getAllByRole, getByRole, getAllByLabelText } = render(
         <DatePicker
           label="Date"
-          defaultValue={parseZonedDateTime("2021-11-07T00:00:00[Greenwich]")}
+          defaultValue={parseZonedDateTime("2024-09-21T00:00:00[Greenwich]")}
         />
       );
       let combobox = getAllByRole("group")[0];
@@ -1947,14 +1947,14 @@ describe('DatePicker', function () {
         minute: "numeric",
       });
 
-      expectPlaceholder(combobox, "11/7/2021, 12:00 AM GMT");
+      expectPlaceholder(combobox, "9/21/2024, 12:00 AM GMT");
 
       await user.tab();
-      for (var i = 0; i < 4; i++) {
+      await user.keyboard("{Backspace}");
+      await user.tab();
+      for (var i = 0; i < 2; i++) {
         await user.keyboard("{Backspace}");
       }
-      await user.tab();
-      await user.keyboard("{Backspace}");
       await user.tab();
       for (var i = 0; i < 4; i++) {
         await user.keyboard("{Backspace}");
@@ -2034,114 +2034,7 @@ describe('DatePicker', function () {
       expect(input).toHaveValue('2020-02-03');
     });
 
-    describe("timeZone", function () {
-      it("should keep timeZone from defaultValue when date and time are cleared", async function () {
-        let { getAllByRole } = render(
-          <DatePicker
-            label="Date"
-            defaultValue={parseZonedDateTime(
-              "2024-09-21T00:00:00[America/Los_Angeles]"
-            )}
-          />
-        );
-        let combobox = getAllByRole("group")[0];
   
-        expectPlaceholder(combobox, "9/21/2024, 12:00 AM PDT");
-  
-        await user.tab();
-        await user.keyboard("{Backspace}");
-        await user.tab();
-        for (var i = 0; i < 2; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        for (var i = 0; i < 4; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        for (var i = 0; i < 2; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        for (var i = 0; i < 2; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        await user.keyboard("{Backspace}");
-  
-        expectPlaceholder(combobox, "mm/dd/yyyy, ––:–– AM PDT");
-      });
-  
-      it("should keep timeZone from defaultValue when date and time are cleared then set", async function () {
-        let { getAllByRole, getByRole, getAllByLabelText } = render(
-          <DatePicker
-            label="Date"
-            defaultValue={parseZonedDateTime("2024-09-21T00:00:00[Greenwich]")}
-          />
-        );
-        let combobox = getAllByRole("group")[0];
-        let formatter = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-        });
-  
-        expectPlaceholder(combobox, "9/21/2024, 12:00 AM GMT");
-  
-        await user.tab();
-        await user.keyboard("{Backspace}");
-        await user.tab();
-        for (var i = 0; i < 2; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        for (var i = 0; i < 4; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        for (var i = 0; i < 2; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        for (var i = 0; i < 2; i++) {
-          await user.keyboard("{Backspace}");
-        }
-        await user.tab();
-        await user.keyboard("{Backspace}");
-  
-        expectPlaceholder(combobox, "mm/dd/yyyy, ––:–– AM GMT");
-  
-        let button = getByRole("button");
-        await user.click(button);
-  
-        let dialog = getByRole("dialog");
-        expect(dialog).toBeVisible();
-  
-        let cells = getAllByRole("gridcell");
-        let selected = cells.find(
-          (cell) => cell.getAttribute("aria-selected") === "true"
-        );
-        expect(selected).toBeUndefined();
-  
-        let todayCell = cells.find((cell) =>
-          cell.firstChild.getAttribute("aria-label")?.startsWith("Today")
-        );
-        await user.click(todayCell.firstChild);
-  
-        expect(todayCell).toHaveAttribute("aria-selected", "true");
-        expect(dialog).toBeVisible();
-        await user.click(document.body);
-        act(() => jest.runAllTimers());
-        expect(dialog).not.toBeInTheDocument();
-        let value = toCalendarDateTime(today(getLocalTimeZone()));
-        expectPlaceholder(
-          combobox,
-          `${formatter.format(value.toDate(getLocalTimeZone()))} GMT`
-        );
-      });
-    });
 
     describe('validation', () => {
       describe('validationBehavior=native', () => {
