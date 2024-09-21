@@ -56,9 +56,7 @@ function getTextValue(el) {
     return "";
   }
 
-  return [...el.childNodes]
-    .map((el) => (el.nodeType === 3 ? el.textContent : getTextValue(el)))
-    .join("");
+  return el.textContent;
 }
 
 function expectPlaceholder(el, placeholder) {
@@ -946,7 +944,6 @@ describe("DatePicker", function () {
       act(() => jest.runAllTimers());
 
       let value = toCalendarDateTime(today(getLocalTimeZone()));
-      console.log(value.toDate(getLocalTimeZone()));
       expectPlaceholder(
         combobox,
         formatter.format(value.toDate(getLocalTimeZone()))
@@ -2967,20 +2964,20 @@ describe("DatePicker", function () {
         <DatePicker
           label="Date"
           defaultValue={parseZonedDateTime(
-            "2021-11-07T00:45-07:00[America/Los_Angeles]"
+            "2024-09-21T00:00:00[America/Los_Angeles]"
           )}
         />
       );
       let combobox = getAllByRole("group")[0];
 
-      expectPlaceholder(combobox, "11/7/2021, 12:45 AM PDT");
+      expectPlaceholder(combobox, "9/21/2024, 12:00 AM PDT");
 
       await user.tab();
-      for (var i = 0; i < 4; i++) {
+      await user.keyboard("{Backspace}");
+      await user.tab();
+      for (var i = 0; i < 2; i++) {
         await user.keyboard("{Backspace}");
       }
-      await user.tab();
-      await user.keyboard("{Backspace}");
       await user.tab();
       for (var i = 0; i < 4; i++) {
         await user.keyboard("{Backspace}");
@@ -3003,7 +3000,7 @@ describe("DatePicker", function () {
       let { getAllByRole, getByRole, getAllByLabelText } = render(
         <DatePicker
           label="Date"
-          defaultValue={parseZonedDateTime("2021-11-07T00:00:00[Greenwich]")}
+          defaultValue={parseZonedDateTime("2024-09-21T00:00:00[Greenwich]")}
         />
       );
       let combobox = getAllByRole("group")[0];
@@ -3015,14 +3012,14 @@ describe("DatePicker", function () {
         minute: "numeric",
       });
 
-      expectPlaceholder(combobox, "11/7/2021, 12:00 AM GMT");
+      expectPlaceholder(combobox, "9/21/2024, 12:00 AM GMT");
 
       await user.tab();
-      for (var i = 0; i < 4; i++) {
+      await user.keyboard("{Backspace}");
+      await user.tab();
+      for (var i = 0; i < 2; i++) {
         await user.keyboard("{Backspace}");
       }
-      await user.tab();
-      await user.keyboard("{Backspace}");
       await user.tab();
       for (var i = 0; i < 4; i++) {
         await user.keyboard("{Backspace}");
