@@ -10,17 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {ContextValue, DisclosureGroup, DisclosureGroupProps, SlotProps} from 'react-aria-components';
 import {DisclosureContext} from './Disclosure';
-import {DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef} from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
+export interface AccordionProps extends DisclosureGroupProps, UnsafeStyles, DOMProps, SlotProps {
   /** The disclosure elements in the accordion. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -36,9 +35,7 @@ export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
    */
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the accordion should be displayed with a quiet style. */
-  isQuiet?: boolean,
-  /** Whether the accordion should be disabled. */
-  isDisabled?: boolean
+  isQuiet?: boolean
 }
 
 const accordion = style({
@@ -56,29 +53,23 @@ function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
     UNSAFE_className = '',
     size = 'M',
     density = 'regular',
-    isQuiet,
-    isDisabled,
-    ...otherProps
+    isQuiet
   } = props;
-  const domProps = filterDOMProps(otherProps);
   return (
-    <Provider
-      values={[
-        [DisclosureContext, {size, isQuiet, density, isDisabled}]
-      ]}>
-      <div
-        {...domProps}
+    <DisclosureContext.Provider value={{size, isQuiet, density}}>
+      <DisclosureGroup
+        {...props}
         ref={domRef}
         style={UNSAFE_style}
         className={(UNSAFE_className ?? '') + accordion(null, props.styles)}>
         {props.children}
-      </div>
-    </Provider>
+      </DisclosureGroup>
+    </DisclosureContext.Provider>
   );
 }
 
 /**
  * An accordion is a container for multiple disclosures.
  */
-let _Accordion = /*#__PURE__*/ (forwardRef as forwardRefType)(Accordion);
+let _Accordion = forwardRef(Accordion);
 export {_Accordion as Accordion};

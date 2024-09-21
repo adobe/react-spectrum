@@ -25,7 +25,7 @@ export type AccordionStory = ComponentStoryObj<typeof Accordion>;
 export const Default: AccordionStory = {
   render: (args) => (
     <Accordion {...args}>
-      <Disclosure key="files">
+      <Disclosure id="files">
         <DisclosureHeader>
           Files
         </DisclosureHeader>
@@ -33,7 +33,7 @@ export const Default: AccordionStory = {
           <p>Files content</p>
         </DisclosurePanel>
       </Disclosure>
-      <Disclosure key="people">
+      <Disclosure id="people">
         <DisclosureHeader>
           People
         </DisclosureHeader>
