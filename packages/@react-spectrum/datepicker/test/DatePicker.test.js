@@ -1993,10 +1993,10 @@ describe('DatePicker', function () {
       await user.click(document.body);
       act(() => jest.runAllTimers());
       expect(dialog).not.toBeInTheDocument();
-      let value = toCalendarDateTime(today(getLocalTimeZone()));
+      let value = toCalendarDateTime(today("Greenwich"));
       expectPlaceholder(
         combobox,
-        `${formatter.format(value.toDate(getLocalTimeZone()))} GMT`
+        `${formatter.format(value.toDate())} GMT`
       );
     });
   });
