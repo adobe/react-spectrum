@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+export {Accordion, AccordionContext} from './Accordion';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
@@ -31,6 +32,7 @@ export {ColorSwatchPicker, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorWheel, ColorWheelContext} from './ColorWheel';
 export {ComboBox, ComboBoxItem, ComboBoxSection, ComboBoxContext} from './ComboBox';
 export {ContextualHelp, ContextualHelpContext} from './ContextualHelp';
+export {DisclosureHeader, Disclosure, DisclosurePanel, DisclosureContext} from './Disclosure';
 export {Heading, HeadingContext, Header, HeaderContext, Content, ContentContext, Footer, FooterContext, Text, TextContext, Keyboard, KeyboardContext} from './Content';
 export {Dialog} from './Dialog';
 export {DialogTrigger} from './DialogTrigger';
@@ -55,6 +57,7 @@ export {Radio} from './Radio';
 export {RadioGroup, RadioGroupContext} from './RadioGroup';
 export {RangeSlider, RangeSliderContext} from './RangeSlider';
 export {SearchField, SearchFieldContext} from './SearchField';
+export {SegmentedControl, SegmentedControlItem, SegmentedControlContext} from './SegmentedControl';
 export {Slider, SliderContext} from './Slider';
 export {Skeleton, useIsSkeleton} from './Skeleton';
 export {SkeletonCollection} from './SkeletonCollection';
@@ -69,6 +72,7 @@ export {Tooltip, TooltipTrigger} from './Tooltip';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
+export type {AccordionProps} from './Accordion';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionMenuProps} from './ActionMenu';
 export type {AlertDialogProps} from './AlertDialog';
@@ -92,6 +96,7 @@ export type {ComboBoxProps, ComboBoxItemProps, ComboBoxSectionProps} from './Com
 export type {DialogProps} from './Dialog';
 export type {DialogContainerProps, DialogContainerValue} from './DialogContainer';
 export type {DialogTriggerProps} from './DialogTrigger';
+export type {DisclosureProps, DisclosurePanelProps} from './Disclosure';
 export type {DividerProps} from './Divider';
 export type {DropZoneProps} from './DropZone';
 export type {FormProps} from './Form';
@@ -109,6 +114,7 @@ export type {ProviderProps} from './Provider';
 export type {RadioProps} from './Radio';
 export type {RadioGroupProps} from './RadioGroup';
 export type {SearchFieldProps} from './SearchField';
+export type {SegmentedControlProps, SegmentedControlItemProps} from './SegmentedControl';
 export type {SliderProps} from './Slider';
 export type {RangeSliderProps} from './RangeSlider';
 export type {SkeletonProps} from './Skeleton';
