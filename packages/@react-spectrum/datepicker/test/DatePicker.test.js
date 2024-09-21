@@ -777,7 +777,6 @@ describe('DatePicker', function () {
       act(() => jest.runAllTimers());
 
       let value = toCalendarDateTime(today(getLocalTimeZone()));
-      console.log(value.toDate(getLocalTimeZone()));
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       let clear = getAllByRole('button')[1];
