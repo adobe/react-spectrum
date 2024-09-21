@@ -174,7 +174,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       // If only the time was set and not the date, don't commit. The state will be preserved until
       // the user opens the popover again.
       if (!isOpen && !value && selectedDate && hasTime) {
-        commitValue(selectedDate, selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue));
+        commitValue(selectedDate, selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue));
       }
 
       overlayState.setOpen(isOpen);
