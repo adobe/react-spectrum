@@ -251,7 +251,7 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
     months: parseDurationGroup(match.groups?.months, isNegative, 0, 12),
     weeks: parseDurationGroup(match.groups?.weeks, isNegative, 0, Infinity),
     days: parseDurationGroup(match.groups?.days, isNegative, 0, 31),
-    hours: parseDurationGroup(match.groups?.hours, isNegative, 0, 23),
+    hours: parseDurationGroup(match.groups?.hours, isNegative, 0, Infinity),
     minutes: parseDurationGroup(match.groups?.minutes, isNegative, 0, 59),
     seconds: parseDurationGroup(match.groups?.seconds, isNegative, 0, 59)
   };
