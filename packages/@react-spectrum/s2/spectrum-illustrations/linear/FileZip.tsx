@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import FileZip_L from './S2_lin_fileZip_160.svg';
-import FileZip_M from './S2_lin_fileZip_96.svg';
-import FileZip_S from './S2_lin_fileZip_48.svg';
+import FileZip_L from 'illustration:./S2_lin_fileZip_160.svg';
+import FileZip_M from 'illustration:./S2_lin_fileZip_96.svg';
+import FileZip_S from 'illustration:./S2_lin_fileZip_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

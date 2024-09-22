@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Artboard_L from './S2_lin_artboard_160.svg';
-import Artboard_M from './S2_lin_artboard_96.svg';
-import Artboard_S from './S2_lin_artboard_48.svg';
+import Artboard_L from 'illustration:./S2_lin_artboard_160.svg';
+import Artboard_M from 'illustration:./S2_lin_artboard_96.svg';
+import Artboard_S from 'illustration:./S2_lin_artboard_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

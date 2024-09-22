@@ -12,9 +12,9 @@
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
-import User_L from './S2_lin_user_160.svg';
-import User_M from './S2_lin_user_96.svg';
-import User_S from './S2_lin_user_48.svg';
+import User_L from 'illustration:./S2_lin_user_160.svg';
+import User_M from 'illustration:./S2_lin_user_96.svg';
+import User_S from 'illustration:./S2_lin_user_48.svg';
 
 export default function User(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
   [props] = useContextProps(props, null, IllustrationContext);

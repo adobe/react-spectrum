@@ -62,7 +62,12 @@ as the unique key for that item, and the `items` property as the children. In ad
 for the listbox, which will automatically be updated when items are removed from the tree.
 
 ```tsx
-let tree = useTreeData({
+interface Iitem {
+  name: string;
+  items?: Array<Iitem>;
+}
+
+let tree = useTreeData<Iitem>({
   initialItems: [
     {
       name: 'People',
@@ -83,13 +88,19 @@ let tree = useTreeData({
   ],
   initialSelectedKeys: ['Sam', 'Kangaroo'],
   getKey: item => item.name,
-  getChildren: item => item.items
+  getChildren: item => item.items || []
 });
 
 <ListBox
+  aria-label="List organisms"
   items={tree.items}
+  selectionMode="multiple"
   selectedKeys={tree.selectedKeys}
-  onSelectionChange={tree.setSelectedKeys}>
+  onSelectionChange={(keys) => {
+    if (keys !== 'all') {
+      tree.setSelectedKeys(keys);
+    }
+  }}>
   {node =>
     <Section title={node.value.name} items={node.children}>
       {node => <Item>{node.value.name}</Item>}

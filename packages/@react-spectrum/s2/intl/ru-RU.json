@@ -1,0 +1,22 @@
+{
+  "button.pending": "в ожидании",
+  "contextualhelp.help": "Справка",
+  "contextualhelp.info": "Информация",
+  "dialog.alert": "Предупреждение",
+  "dialog.dismiss": "Пропустить",
+  "dropzone.replaceMessage": "Перетащите файл для замены",
+  "inlinealert.informative": "Информация",
+  "inlinealert.negative": "Ошибка",
+  "inlinealert.notice": "Предупреждение",
+  "inlinealert.positive": "Успешно",
+  "label.(optional)": "(дополнительно)",
+  "label.(required)": "(обязательно)",
+  "menu.moreActions": "Дополнительные действия",
+  "picker.placeholder": "Выбрать параметр...",
+  "slider.maximum": "Максимум",
+  "slider.minimum": "Минимум",
+  "tag.actions": "Действия",
+  "tag.hideButtonLabel": "Показать меньше",
+  "tag.noTags": "Нет",
+  "tag.showAllButtonLabel": "Показать все ({tagCount, number})"
+}

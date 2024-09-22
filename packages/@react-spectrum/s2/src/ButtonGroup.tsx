@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonContext} from './Button';
-import {ContextValue} from './Content';
+import {ButtonContext, LinkButtonContext} from './Button';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {Provider, SlotProps, useContextProps} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   useDOMRef,
   useResizeObserver
 } from '@react-spectrum/utils';
 import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonGroupStyleProps {
   /**
@@ -52,12 +52,12 @@ export interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, Styl
   isDisabled?: boolean
 }
 
-interface ButtonGroupContextValue extends Omit<ButtonGroupProps, 'children'> {
+interface ButtonGroupContextValue extends Partial<ButtonGroupProps> {
   /** Whether the ButtonGroup shouldn't be rendered. */
-  hidden?: boolean
+  isHidden?: boolean
 }
 
-export const ButtonGroupContext = createContext<ContextValue<ButtonGroupContextValue, HTMLDivElement>>({});
+export const ButtonGroupContext = createContext<ContextValue<ButtonGroupContextValue, DOMRefValue<HTMLDivElement>>>({});
 
 const buttongroup = style<ButtonGroupStyleProps>({
   display: 'inline-flex',
@@ -102,8 +102,8 @@ const buttongroup = style<ButtonGroupStyleProps>({
 }, getAllowedOverrides());
 
 function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ButtonGroupContext);
   let domRef = useDOMRef(ref);
-  [props, domRef] = useContextProps(props, domRef, ButtonGroupContext);
   let {
     size = 'M',
     orientation = 'horizontal',
@@ -155,9 +155,11 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   }, [domRef.current]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
-  if ((props as ButtonGroupContextValue).hidden) {
+  if ((props as ButtonGroupContextValue).isHidden) {
     return null;
   }
+
+  let context = {styles: style({flexShrink: 0}), size, isDisabled};
   return (
     <div
       ref={domRef}
@@ -169,7 +171,8 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
       }, props.styles)}>
       <Provider
         values={[
-          [ButtonContext, {styles: style({flexShrink: 0}), size, isDisabled}]
+          [ButtonContext, context],
+          [LinkButtonContext, context]
         ]}>
         {children}
       </Provider>

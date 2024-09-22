@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Heart_L from './S2_lin_heart_160.svg';
-import Heart_M from './S2_lin_heart_96.svg';
-import Heart_S from './S2_lin_heart_48.svg';
+import Heart_L from 'illustration:./S2_lin_heart_160.svg';
+import Heart_M from 'illustration:./S2_lin_heart_96.svg';
+import Heart_S from 'illustration:./S2_lin_heart_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

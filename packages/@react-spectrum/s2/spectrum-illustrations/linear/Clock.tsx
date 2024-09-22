@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Clock_L from './S2_lin_clock_160.svg';
-import Clock_M from './S2_lin_clock_96.svg';
-import Clock_S from './S2_lin_clock_48.svg';
+import Clock_L from 'illustration:./S2_lin_clock_160.svg';
+import Clock_M from 'illustration:./S2_lin_clock_96.svg';
+import Clock_S from 'illustration:./S2_lin_clock_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

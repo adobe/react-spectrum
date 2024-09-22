@@ -1,0 +1,22 @@
+{
+  "button.pending": "v teku",
+  "contextualhelp.help": "Pomoč",
+  "contextualhelp.info": "Informacije",
+  "dialog.alert": "Opozorilo",
+  "dialog.dismiss": "Opusti",
+  "dropzone.replaceMessage": "Spustite datoteko za zamenjavo",
+  "inlinealert.informative": "Informacije",
+  "inlinealert.negative": "Napaka",
+  "inlinealert.notice": "Opozorilo",
+  "inlinealert.positive": "Uspešno",
+  "label.(optional)": "(opcijsko)",
+  "label.(required)": "(obvezno)",
+  "menu.moreActions": "Več možnosti",
+  "picker.placeholder": "Izberite možnost",
+  "slider.maximum": "Največji",
+  "slider.minimum": "Najmanj",
+  "tag.actions": "Dejanja",
+  "tag.hideButtonLabel": "Prikaži manj",
+  "tag.noTags": "Nič",
+  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})"
+}

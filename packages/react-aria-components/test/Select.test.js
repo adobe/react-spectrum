@@ -243,4 +243,33 @@ describe('Select', () => {
     expect(button).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });
+
+  it('should support falsy (0) as a valid default value', async () => {
+    let {getByRole} = render(
+      <Select placeholder="pick a number">
+        <Label>Pick a number</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox
+            items={Array.from({length: 5}).map((_, i) => ({
+              id: i,
+              label: i
+            }))}>
+            {(item) => <ListBoxItem id={item.id} textValue={`${item.label}`}>{item.label}</ListBoxItem>}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    await user.click(options[0]);
+
+    expect(button).toHaveTextContent('0');
+  });
 });

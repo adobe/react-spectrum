@@ -114,37 +114,27 @@ export default {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionStyle: {
-      control: {
-        type: 'radio',
-        options: ['checkbox', 'highlight']
-      }
+      control: 'radio',
+      options: ['checkbox', 'highlight']
     },
     isQuiet: {
-      control: {type: 'boolean'}
+      control: 'boolean'
     },
     density: {
-      control: {
-        type: 'select',
-        options: ['compact', 'regular', 'spacious']
-      }
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
     },
     overflowMode: {
-      control: {
-        type: 'radio',
-        options: ['truncate', 'wrap']
-      }
+      control: 'radio',
+      options: ['truncate', 'wrap']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   }
 } as ComponentMeta<typeof ListView>;
@@ -153,10 +143,10 @@ export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
   render: (args) => (
-    <ListView width="250px" aria-label="default ListView" {...args}>
-      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
-      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
-      <Item textValue="Adobe XD">Adobe XD</Item>
+    <ListView disabledKeys={['3']} width="250px" aria-label="default ListView" {...args}>
+      <Item key="1" textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item key="2" textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item key="3" textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ),
   name: 'default'

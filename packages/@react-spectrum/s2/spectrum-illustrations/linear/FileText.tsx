@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import FileText_L from './S2_lin_fileText_160.svg';
-import FileText_M from './S2_lin_fileText_96.svg';
-import FileText_S from './S2_lin_fileText_48.svg';
+import FileText_L from 'illustration:./S2_lin_fileText_160.svg';
+import FileText_M from 'illustration:./S2_lin_fileText_96.svg';
+import FileText_S from 'illustration:./S2_lin_fileText_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

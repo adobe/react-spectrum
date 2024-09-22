@@ -275,7 +275,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // Otherwise, when tapping on a segment in Android Chrome and then entering text,
     // composition events will be fired that break the DOM structure and crash the page.
     let selection = window.getSelection();
-    if (ref.current.contains(selection.anchorNode)) {
+    if (ref.current && ref.current.contains(selection.anchorNode)) {
       selection.collapse(ref.current);
     }
   });

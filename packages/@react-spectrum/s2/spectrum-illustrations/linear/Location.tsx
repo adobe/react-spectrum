@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Location_L from './S2_lin_location_160.svg';
-import Location_M from './S2_lin_location_96.svg';
-import Location_S from './S2_lin_location_48.svg';
+import Location_L from 'illustration:./S2_lin_location_160.svg';
+import Location_M from 'illustration:./S2_lin_location_96.svg';
+import Location_S from 'illustration:./S2_lin_location_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Location(props: IconProps & {size?: 'L' | 'S' | 'M'}) {

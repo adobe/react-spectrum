@@ -194,6 +194,7 @@ export function startOfWeek(date: DateValue, locale: string): DateValue {
 export function endOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
 export function endOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
 export function endOfWeek(date: CalendarDate, locale: string): CalendarDate;
+export function endOfWeek(date: DateValue, locale: string): DateValue;
 export function endOfWeek(date: DateValue, locale: string): DateValue {
   return startOfWeek(date, locale).add({days: 6});
 }

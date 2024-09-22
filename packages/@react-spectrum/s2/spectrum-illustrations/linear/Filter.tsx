@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import Filter_L from './S2_lin_filter_160.svg';
-import Filter_M from './S2_lin_filter_96.svg';
-import Filter_S from './S2_lin_filter_48.svg';
+import Filter_L from 'illustration:./S2_lin_filter_160.svg';
+import Filter_M from 'illustration:./S2_lin_filter_96.svg';
+import Filter_S from 'illustration:./S2_lin_filter_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import CloudStateError_L from './S2_lin_cloudStateError_160.svg';
-import CloudStateError_M from './S2_lin_cloudStateError_96.svg';
-import CloudStateError_S from './S2_lin_cloudStateError_48.svg';
+import CloudStateError_L from 'illustration:./S2_lin_cloudStateError_160.svg';
+import CloudStateError_M from 'illustration:./S2_lin_cloudStateError_96.svg';
+import CloudStateError_S from 'illustration:./S2_lin_cloudStateError_48.svg';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 

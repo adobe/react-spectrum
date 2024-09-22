@@ -10,91 +10,121 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {Button, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, useRef} from 'react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {forwardRef, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree';
-import {useAccordion, useAccordionItem} from '@react-aria/accordion';
-import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+export interface SpectrumAccordionProps extends StyleProps, DOMProps, AriaLabelingProps {
+  /** The disclosures within the accordion group. */
+  children: React.ReactNode
+}
 
-function Accordion<T extends object>(props: SpectrumAccordionProps<T>, ref: DOMRef<HTMLDivElement>) {
+function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let state = useTreeState<T>(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
-  let {accordionProps} = useAccordion(props, state, domRef);
-
   return (
     <div
       {...filterDOMProps(props)}
-      {...accordionProps}
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Accordion', styleProps.className)}>
-      {[...state.collection].map(item => (
-        <AccordionItem<T> key={item.key} item={item} state={state} />
-      ))}
+      {props.children}
     </div>
   );
 }
 
-interface AccordionItemProps<T> {
-  item: Node<T>,
-  state: TreeState<T>
+export interface SpectrumDisclosureProps extends DisclosureProps, DOMProps, AriaLabelingProps  {
+  /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
+  children: [ReactElement<SpectrumDisclosureHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
 }
 
-function AccordionItem<T>(props: AccordionItemProps<T>) {
+function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let ref = useRef<HTMLButtonElement>(null);
-  let {state, item} = props;
-  let {buttonProps, regionProps} = useAccordionItem<T>(props, state, ref);
-  let isOpen = state.expandedKeys.has(item.key);
-  let isDisabled = state.disabledKeys.has(item.key);
-  let {isHovered, hoverProps} = useHover({isDisabled});
-  let {direction} = useLocale();
-
+  let domRef = useDOMRef(ref);
   return (
-    <div
-      className={classNames(styles, 'spectrum-Accordion-item', {
-        'is-open': isOpen,
+    <RACDisclosure
+      {...props}
+      ref={domRef}
+      className={({isExpanded, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
+        'is-expanded': isExpanded,
         'is-disabled': isDisabled
       })}>
-      <h3 className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
-        <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
-          <button
-            {...mergeProps(buttonProps, hoverProps)}
-            ref={ref}
-            className={classNames(styles, 'spectrum-Accordion-itemHeader', {
-              'is-hovered': isHovered
-            })}>
-            {direction === 'ltr' ? (
-              <ChevronRightMedium
-                aria-hidden="true"
-                UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
+      {props.children}
+    </RACDisclosure>
+  );
+}
+
+export interface SpectrumDisclosurePanelProps extends DisclosurePanelProps, DOMProps, AriaLabelingProps {
+  /** The contents of the accordion panel. */
+  children: React.ReactNode
+}
+
+function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+  return (
+    <RACDisclosurePanel ref={domRef} className={classNames(styles, 'spectrum-Accordion-itemContent')} {...props}>
+      {props.children}
+    </RACDisclosurePanel>
+  );
+}
+
+export interface SpectrumDisclosureHeaderProps extends DOMProps, AriaLabelingProps {
+  /** 
+   * The heading level of the accordion header.
+   * @default 3
+   */
+  level?: number,
+  /** The contents of the accordion header. */
+  children: React.ReactNode
+}
+
+function DisclosureHeader(props: SpectrumDisclosureHeaderProps, ref: DOMRef<HTMLHeadingElement>) {
+  let {level = 3} = props;
+  let {direction} = useLocale();
+  let domRef = useDOMRef(ref);
+  return (
+    <Heading ref={domRef} level={level} className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
+      <Button
+        slot="trigger"
+        className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
+          'is-hovered': isHovered,
+          'focus-ring': isFocusVisible
+        })}>
+        {direction === 'ltr' ? (
+          <ChevronRightMedium
+            aria-hidden="true"
+            UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
               ) : (
                 <ChevronLeftMedium
                   aria-hidden="true"
                   UNSAFE_className={classNames(styles, 'spectrum-Accordion-itemIndicator')} />
               )}
-            {item.props.title}
-          </button>
-        </FocusRing>
-      </h3>
-      <div {...regionProps} className={classNames(styles, 'spectrum-Accordion-itemContent')}>
-        {item.props.children}
-      </div>
-    </div>
+        {props.children}
+      </Button>
+    </Heading>
   );
 }
 
-const _Accordion = forwardRef(Accordion) as <T>(props: SpectrumAccordionProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
+/** A group of disclosures that can be expanded and collapsed. */
+const _Accordion = forwardRef(Accordion) as (props: SpectrumAccordionProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
 export {_Accordion as Accordion};
+
+/** A collapsible section of content composed of a heading that expands and collapses a panel. */
+const _Disclosure = forwardRef(Disclosure) as (props: SpectrumDisclosureProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Disclosure>;
+export {_Disclosure as Disclosure};
+
+/** The panel that contains the content of an disclosure. */
+const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosurePanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosurePanel>;
+export {_DisclosurePanel as DisclosurePanel};
+
+/** The heading of the disclosure. */
+const _DisclosureHeader = forwardRef(DisclosureHeader) as (props: SpectrumDisclosureHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosureHeader>;
+export {_DisclosureHeader as DisclosureHeader};

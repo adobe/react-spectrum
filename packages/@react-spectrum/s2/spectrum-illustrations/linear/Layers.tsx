@@ -11,9 +11,9 @@
  */
 
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import Layers_L from './S2_lin_layers_160.svg';
-import Layers_M from './S2_lin_layers_96.svg';
-import Layers_S from './S2_lin_layers_48.svg';
+import Layers_L from 'illustration:./S2_lin_layers_160.svg';
+import Layers_M from 'illustration:./S2_lin_layers_96.svg';
+import Layers_S from 'illustration:./S2_lin_layers_48.svg';
 import {useContextProps} from 'react-aria-components';
 
 export default function Layers(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
