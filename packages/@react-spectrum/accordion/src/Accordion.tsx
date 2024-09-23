@@ -11,11 +11,10 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {Button, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
+import {Button, DisclosureGroup, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
@@ -31,17 +30,17 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   return (
-    <div
-      {...filterDOMProps(props)}
+    <DisclosureGroup
+      {...props}
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Accordion', styleProps.className)}>
       {props.children}
-    </div>
+    </DisclosureGroup>
   );
 }
 
-export interface SpectrumDisclosureProps extends DisclosureProps, DOMProps, AriaLabelingProps  {
+export interface SpectrumDisclosureProps extends DisclosureProps, AriaLabelingProps  {
   /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
   children: [ReactElement<SpectrumDisclosureHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
 }
@@ -78,11 +77,11 @@ function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDi
 
 export interface SpectrumDisclosureHeaderProps extends DOMProps, AriaLabelingProps {
   /** 
-   * The heading level of the accordion header.
+   * The heading level of the disclosure header.
    * @default 3
    */
   level?: number,
-  /** The contents of the accordion header. */
+  /** The contents of the disclosure header. */
   children: React.ReactNode
 }
 
