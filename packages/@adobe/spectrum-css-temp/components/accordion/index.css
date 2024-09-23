@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-itemIndicator {
   display: block;
 
-  padding-inline-start: var(--spectrum-accordion-icon-spacing);
+  padding-inline-start: var(--spectrum-accordion-icon-gap);
   padding-inline-end: var(--spectrum-accordion-icon-gap);
 
   transition: transform ease var(--spectrum-global-animation-duration-100);
@@ -66,7 +66,7 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
   /* left padding takes into account the icon's size as well as the focus state's left border */
   padding-block: var(--spectrum-accordion-item-title-padding-y);
-  padding-inline-start: 2px;
+  padding-inline-start: var(--spectrum-accordion-icon-gap);
   padding-inline-end: var(--spectrum-accordion-item-padding);
   margin: 0;
 
@@ -111,7 +111,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-item {
-  &.is-open {
+  &.is-expanded {
     > .spectrum-Accordion-itemHeading {
       > .spectrum-Accordion-itemHeader {
         > .spectrum-Accordion-itemIndicator {
@@ -126,7 +126,7 @@ governing permissions and limitations under the License.
     }
 
     > .spectrum-Accordion-itemHeader::after {
-      /* No bottom border when open, so be less tall */
+      /* No bottom border when expanded, so be less tall */
       height: var(--spectrum-accordion-item-height-actual);
     }
 
