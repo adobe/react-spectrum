@@ -10,30 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
-import {ColorArea} from '../src/ColorArea';
 import type {Meta} from '@storybook/react';
+import {Tooltip} from '../src';
 
-const meta: Meta<typeof ColorArea> = {
-  component: ColorArea,
+const meta: Meta<typeof Tooltip> = {
+  component: Tooltip,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  },
-  title: 'S2/ColorArea'
+  title: 'S2 Chromatic/TooltipRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => <ColorArea {...args} onChange={undefined} />;
-
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
-};
+export {Default, WithLongLabel} from './Tooltip.stories';

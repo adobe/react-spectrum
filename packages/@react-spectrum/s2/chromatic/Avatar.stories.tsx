@@ -10,30 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
-import {ColorArea} from '../src/ColorArea';
+import {Avatar} from '../src';
 import type {Meta} from '@storybook/react';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
-const meta: Meta<typeof ColorArea> = {
-  component: ColorArea,
+const meta: Meta<typeof Avatar> = {
+  component: Avatar,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    chromaticProvider: {backgrounds: ['base', 'layer-1', 'layer-2'], disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  },
-  title: 'S2/ColorArea'
+  title: 'S2 Chromatic/Avatar'
 };
 
 export default meta;
 
-export const Example = (args: any) => <ColorArea {...args} onChange={undefined} />;
+export const Default = {
+  render: () => <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
+};
 
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
+export const OverBackground = {
+  render: () => (
+    <div className={style({backgroundColor: 'indigo-800', padding: 40})}>
+      <Avatar alt="design provided" src="https://i.imgur.com/xIe7Wlb.png" />
+    </div>
+  )
 };

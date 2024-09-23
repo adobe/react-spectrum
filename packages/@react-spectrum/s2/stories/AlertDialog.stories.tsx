@@ -17,6 +17,10 @@ const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog as any,
   parameters: {
     layout: 'centered'
+    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
+    // chromatic: {
+    //   disableSnapshot: true
+    // }
   },
   tags: ['autodocs'],
   title: 'S2/AlertDialog'
@@ -24,19 +28,22 @@ const meta: Meta<typeof AlertDialog> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <DialogTrigger>
-    <ActionButton>Save</ActionButton>
-    <AlertDialog {...args} >
-      You have not saved your profile information
-      for this account. Would you like to register now?
-    </AlertDialog>
-  </DialogTrigger>
-);
-
-Example.args = {
-  title: 'Register profile',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Remind me later',
-  primaryActionLabel: 'Register'
+export const Example = {
+  render: (args) => {
+    return (
+      <DialogTrigger>
+        <ActionButton>Save</ActionButton>
+        <AlertDialog {...args} >
+          You have not saved your profile information
+          for this account. Would you like to register now?
+        </AlertDialog>
+      </DialogTrigger>
+    );
+  },
+  args: {
+    title: 'Register profile',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Remind me later',
+    primaryActionLabel: 'Register'
+  }
 };

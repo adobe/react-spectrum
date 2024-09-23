@@ -87,7 +87,6 @@ export const Sections: Story = {
   }
 };
 
-
 interface IExampleItem {
   id: string,
   label: string
@@ -110,7 +109,6 @@ export const Dynamic: Story = {
     items
   }
 };
-
 
 export const WithIcons: Story = {
   render: (args) => (

@@ -10,30 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
-import {ColorArea} from '../src/ColorArea';
+import {ContextualHelp} from '../src';
+import {Example} from '../stories/ContextualHelp.stories';
 import type {Meta} from '@storybook/react';
+import {userEvent, within} from '@storybook/testing-library';
 
-const meta: Meta<typeof ColorArea> = {
-  component: ColorArea,
+const meta: Meta<typeof ContextualHelp> = {
+  component: ContextualHelp,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
   tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  },
-  title: 'S2/ColorArea'
+  title: 'S2 Chromatic/ContextualHelp'
 };
 
 export default meta;
 
-export const Example = (args: any) => <ColorArea {...args} onChange={undefined} />;
+export const Default = Example;
 
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
+Default.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('{Enter}');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
 };

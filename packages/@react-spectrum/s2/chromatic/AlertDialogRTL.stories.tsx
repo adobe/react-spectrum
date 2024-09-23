@@ -10,30 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
-import {ColorArea} from '../src/ColorArea';
+import {AlertDialog} from '../src';
+
 import type {Meta} from '@storybook/react';
 
-const meta: Meta<typeof ColorArea> = {
-  component: ColorArea,
+const meta: Meta<typeof AlertDialog> = {
+  component: AlertDialog,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  },
-  title: 'S2/ColorArea'
+  title: 'S2 Chromatic/AlertDialogRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => <ColorArea {...args} onChange={undefined} />;
-
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
-};
+export {Example} from './AlertDialog.stories';
