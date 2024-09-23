@@ -33,7 +33,7 @@ export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedC
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
-export {Disclosure, DisclosureGroup, DisclosureGroupStateContext, DisclosurePanel, DisclosureStateContext, DisclosureContext} from './Disclosure';
+export {Disclosure as UNSTABLE_Disclosure, DisclosureGroup as UNSTABLE_DisclosureGroup, DisclosureGroupStateContext, DisclosurePanel as UNSTABLE_DisclosurePanel, DisclosureStateContext, DisclosureContext} from './Disclosure';
 export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
