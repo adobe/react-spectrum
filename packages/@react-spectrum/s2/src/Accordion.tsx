@@ -19,7 +19,7 @@ import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface AccordionProps extends DisclosureGroupProps, UnsafeStyles, DOMProps, SlotProps {
+export interface AccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, SlotProps {
   /** The disclosure elements in the accordion. */
   children: React.ReactNode,
   /** Spectrum-defined styles, returned by the `style()` macro. */

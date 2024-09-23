@@ -21,7 +21,7 @@ import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DisclosureProps extends RACDisclosureProps, StyleProps {
+export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
   /**
    * The size of the disclosure.
    * @default "M"
@@ -231,7 +231,7 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
 let _DisclosureHeader = forwardRef(DisclosureHeader);
 export {_DisclosureHeader as DisclosureHeader};
 
-export interface DisclosurePanelProps extends RACDisclosurePanelProps, UnsafeStyles, DOMProps, AriaLabelingProps {
+export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode
 }
 
