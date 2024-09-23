@@ -118,11 +118,13 @@ export interface TreeRenderProps {
   state: TreeState<unknown>
 }
 
+export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
+
 export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
   /** How multiple selection should behave in the tree. */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: (props: Omit<TreeRenderProps, 'isEmpty'>) => ReactNode,
+  renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode,
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
    * @default 'selection'
@@ -359,6 +361,10 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TreeItem',
+    defaultStyle: {
+      // @ts-ignore
+      '--tree-item-level': level
+    },
     values: renderPropValues
   });
 
@@ -401,8 +407,8 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
         {...renderProps}
         ref={ref}
         // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
-        data-expanded={hasChildRows ? isExpanded : undefined}
-        data-has-child-rows={hasChildRows}
+        data-expanded={(hasChildRows && isExpanded) || undefined}
+        data-has-child-rows={hasChildRows || undefined}
         data-level={level}
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}
