@@ -96,7 +96,7 @@
     "@react-spectrum/s2-icon-builder": "^0.1.0",
     "@spectrum-css/component-builder": "1.0.1",
     "@spectrum-css/vars": "^2.3.0",
-    "@storybook/addon-a11y": "^7.6.19",
+    "@storybook/addon-a11y": "patch:@storybook/addon-a11y@npm%3A7.6.19#~/.yarn/patches/@storybook-addon-a11y-npm-7.6.19-04b470eae0.patch",
     "@storybook/addon-actions": "^7.6.19",
     "@storybook/addon-controls": "^7.6.19",
     "@storybook/addon-essentials": "7.6.19",
