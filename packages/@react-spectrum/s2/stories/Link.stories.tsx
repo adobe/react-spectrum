@@ -28,7 +28,8 @@ const meta: Meta<typeof Link> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
-  }
+  },
+  title: 'S2/Link'
 };
 
 export default meta;

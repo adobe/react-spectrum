@@ -102,7 +102,8 @@ function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTM
 
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
-  let state = useListState(props);
+  let {layoutDelegate} = useContext(CollectionRendererContext);
+  let state = useListState({...props, layoutDelegate});
   return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
 }
 

@@ -29,7 +29,8 @@ const meta: Meta<typeof NumberField> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/NumberField'
 };
 
 export default meta;

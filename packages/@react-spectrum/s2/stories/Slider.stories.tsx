@@ -26,7 +26,8 @@ const meta: Meta<typeof Slider> = {
   tags: ['autodocs'],
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/Slider'
 };
 
 export default meta;

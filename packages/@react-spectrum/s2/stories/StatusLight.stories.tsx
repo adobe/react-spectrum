@@ -19,7 +19,8 @@ const meta: Meta<typeof StatusLight> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/StatusLight'
 };
 
 export default meta;
