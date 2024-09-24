@@ -9,9 +9,18 @@ export const getOwnerWindow = (
     return el;
   }
 
-  const doc = getRootNode(el as Element | null | undefined);
-  return doc instanceof ShadowRoot ?  doc.ownerDocument.defaultView || window :  doc?.defaultView || window;
+  const rootNode = el instanceof Element ? el.getRootNode() : null;
+
+  // If the root node is a ShadowRoot, get its owner document's defaultView (window)
+  if (rootNode instanceof ShadowRoot) {
+    return rootNode.ownerDocument.defaultView || window;
+  }
+
+  // Fallback to getOwnerDocument for non-Shadow DOM and iframe elements
+  const doc = getOwnerDocument(el as Element | null | undefined);
+  return doc.defaultView || window;
 };
+
 
 export const getRootNode = (el: Element | null | undefined): Document | ShadowRoot | null => {
   if (!el) {
