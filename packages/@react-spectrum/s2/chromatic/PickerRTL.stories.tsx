@@ -10,21 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateRangePicker} from '../src/DateRangePicker';
-
 import type {Meta} from '@storybook/react';
+import {Picker} from '../src';
 
-const meta: Meta<typeof DateRangePicker> = {
-  component: DateRangePicker,
+const meta: Meta<typeof Picker<any>> = {
+  component: Picker,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/PickerRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => <DateRangePicker {...args} />;
-
-Example.args = {
-  label: 'Event date'
-};
+export {Default, WithSections, DynamicExample, Icons, WithCustomWidth, ContextualHelp} from './Picker.stories';

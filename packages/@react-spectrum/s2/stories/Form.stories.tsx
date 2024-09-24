@@ -56,7 +56,8 @@ const meta: Meta<typeof Form> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
-  }
+  },
+  title: 'S2/Form'
 };
 
 export default meta;
