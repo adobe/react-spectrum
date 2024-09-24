@@ -15,7 +15,7 @@ import {colorToken} from '../style/tokens' with {type: 'macro'};
 import {mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
 let reduceMotion = typeof window?.matchMedia === 'function'

@@ -25,7 +25,7 @@ import {
   Provider,
   SectionProps
 } from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,

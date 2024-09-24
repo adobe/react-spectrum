@@ -27,9 +27,9 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {focusRing, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';

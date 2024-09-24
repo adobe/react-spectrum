@@ -18,7 +18,7 @@ import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {SegmentedControl, SegmentedControlItem, Text} from '../src';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 
 const meta: Meta<typeof SegmentedControl> = {

@@ -20,7 +20,7 @@ import {DOMRef} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';

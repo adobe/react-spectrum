@@ -11,14 +11,14 @@
  */
 
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useSlottedContext} from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

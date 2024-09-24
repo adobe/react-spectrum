@@ -14,7 +14,7 @@ import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton} from './Skeleton';
 

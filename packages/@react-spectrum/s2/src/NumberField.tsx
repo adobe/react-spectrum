@@ -21,7 +21,7 @@ import {
   Text,
   useContextProps
 } from 'react-aria-components';
-import {baseColor, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, size, style} from '../style' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';

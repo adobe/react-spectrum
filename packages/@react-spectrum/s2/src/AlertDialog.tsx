@@ -24,7 +24,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

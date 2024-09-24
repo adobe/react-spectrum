@@ -12,7 +12,7 @@
 
 import type {Meta} from '@storybook/react';
 import {StatusLight} from '../src';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof StatusLight> = {
   component: StatusLight,

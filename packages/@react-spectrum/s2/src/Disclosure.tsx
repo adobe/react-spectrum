@@ -13,10 +13,10 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {lightDark, size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {focusRing, lightDark, size as sizeValue, style} from '../style' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

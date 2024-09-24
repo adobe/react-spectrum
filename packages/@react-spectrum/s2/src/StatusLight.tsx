@@ -16,7 +16,7 @@ import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {size, style} from '../style' with {type: 'macro'};
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton} from './Skeleton';

@@ -20,7 +20,7 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {size, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
