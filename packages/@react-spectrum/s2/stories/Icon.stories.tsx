@@ -17,7 +17,8 @@ const meta: Meta<typeof NewIcon> = {
   component: NewIcon,
   parameters: {
     layout: 'centered'
-  }
+  },
+  title: 'S2/Icon'
 };
 
 export default meta;

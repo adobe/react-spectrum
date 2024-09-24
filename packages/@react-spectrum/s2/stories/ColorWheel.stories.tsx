@@ -23,7 +23,8 @@ const meta: Meta<typeof ColorWheel> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  }
+  },
+  title: 'S2/ColorWheel'
 };
 
 export default meta;

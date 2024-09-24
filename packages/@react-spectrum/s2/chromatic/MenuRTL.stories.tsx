@@ -10,29 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListBox, ListBoxItem} from '../src/ListBox';
+import {Menu} from '../src';
 
 import type {Meta} from '@storybook/react';
 
-const meta: Meta<typeof ListBox> = {
-  component: ListBox,
+const meta: Meta<typeof Menu> = {
+  component: Menu,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/MenuRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => (
-  <ListBox aria-label="Ice cream flavor" {...args}>
-    <ListBoxItem>Chocolate</ListBoxItem>
-    <ListBoxItem>Mint</ListBoxItem>
-    <ListBoxItem>Strawberry</ListBoxItem>
-    <ListBoxItem>Vanilla</ListBoxItem>
-  </ListBox>
-);
-
-Example.args = {
-  onAction: null,
-  selectionMode: 'single'
-};
+export {Default, WithKeyboardShortcuts, WithIcons, WithImages, Dynamic} from './Menu.stories';
