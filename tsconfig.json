@@ -69,6 +69,7 @@
           "./packages/@react-aria/switch",
           "./packages/@react-aria/tabs",
           "./packages/@react-aria/tag",
+          "./packages/@react-aria/test-utils",
           "./packages/@react-aria/toggle",
           "./packages/@react-aria/u",
           "./packages/@react-aria/visually-hidden",
