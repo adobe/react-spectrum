@@ -18,13 +18,16 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
   },
-  title: 'S2/ColorSlider'
+  title: 'ColorSlider'
 };
 
 export default meta;

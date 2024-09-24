@@ -36,7 +36,7 @@ const meta: Meta<typeof CombinedMenu> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'])
   },
-  title: 'S2/Menu'
+  title: 'Menu'
 };
 
 export default meta;

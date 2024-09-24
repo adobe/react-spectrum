@@ -21,13 +21,16 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
   },
-  title: 'S2/ComboBox'
+  title: 'ComboBox'
 };
 
 export default meta;

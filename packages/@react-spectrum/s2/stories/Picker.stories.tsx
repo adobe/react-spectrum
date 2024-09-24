@@ -33,14 +33,17 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
   },
-  title: 'S2/Picker'
+  title: 'Picker'
 };
 
 export default meta;

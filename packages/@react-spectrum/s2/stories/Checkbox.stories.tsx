@@ -17,11 +17,10 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {

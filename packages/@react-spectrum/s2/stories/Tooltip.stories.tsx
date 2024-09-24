@@ -30,7 +30,7 @@ const meta: Meta<typeof CombinedTooltip> = {
     onOpenChange: {table: {category: 'Events'}}
   },
   decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>],
-  title: 'S2/Tooltip'
+  title: 'Tooltip'
 };
 
 export default meta;

@@ -14,7 +14,7 @@ const meta: Meta<typeof ContextualHelp> = {
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
   },
-  title: 'S2/ContextualHelp'
+  title: 'ContextualHelp'
 };
 
 export default meta;

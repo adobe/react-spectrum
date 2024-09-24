@@ -24,17 +24,16 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/ColorField'
+  title: 'ColorField'
 };
 
 export default meta;

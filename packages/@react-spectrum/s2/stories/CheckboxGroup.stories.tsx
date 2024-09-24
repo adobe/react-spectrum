@@ -25,17 +25,16 @@ import type {Meta, StoryObj} from '@storybook/react';
 const meta: Meta<typeof CheckboxGroup> = {
   component: CheckboxGroup,
   parameters: {
-    layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/CheckboxGroup'
+  title: 'CheckboxGroup'
 };
 
 export default meta;
