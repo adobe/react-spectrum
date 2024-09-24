@@ -10,21 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {Dialog} from '../src';
+
 import type {Meta} from '@storybook/react';
 
-import {TimeField} from '../src/TimeField';
-
-const meta: Meta<typeof TimeField> = {
-  component: TimeField,
+const meta: Meta<typeof Dialog> = {
+  component: Dialog,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/DialogRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => <TimeField {...args} />;
-
-Example.args = {
-  label: 'Event time'
-};
+export {Default, WithDialogTrigger, DialogContainer} from './Dialog.stories';

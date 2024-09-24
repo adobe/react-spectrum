@@ -19,7 +19,8 @@ const meta: Meta<typeof InlineAlert> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/InlineAlert'
 };
 
 export default meta;

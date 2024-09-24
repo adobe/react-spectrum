@@ -23,7 +23,8 @@ const meta: Meta<typeof Switch> = {
   argTypes: {
     inputRef: {control: {disable: true}},
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/Switch'
 };
 
 export default meta;
