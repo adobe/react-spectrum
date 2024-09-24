@@ -15,6 +15,7 @@ import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {Image} from './Image';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -71,16 +72,17 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   let remSize = size / 16 + 'rem';
   let isLarge = size >= 64;
   return (
-    <img
+    <Image
       {...domProps}
       ref={domRef}
       alt={alt}
-      style={{
+      UNSAFE_style={{
         ...UNSAFE_style,
         width: remSize,
         height: remSize
       }}
-      className={(UNSAFE_className ?? '') + imageStyles({isOverBackground, isLarge}, props.styles)}
+      UNSAFE_className={UNSAFE_className}
+      styles={imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );
 }
