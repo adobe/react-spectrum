@@ -11,16 +11,16 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {Button, DisclosureGroup, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
+import {Button, UNSTABLE_DisclosureGroup as DisclosureGroup, DisclosureGroupProps, DisclosurePanelProps, DisclosureProps, Heading, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import React, {forwardRef, ReactElement} from 'react';
+import React, {forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumAccordionProps extends StyleProps, DOMProps, AriaLabelingProps {
+export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, StyleProps, DOMProps, AriaLabelingProps {
   /** The disclosures within the accordion group. */
   children: React.ReactNode
 }
@@ -40,9 +40,9 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-export interface SpectrumDisclosureProps extends DisclosureProps, AriaLabelingProps  {
+export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'children'>, AriaLabelingProps  {
   /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
-  children: [ReactElement<SpectrumDisclosureHeaderProps>, ReactElement<SpectrumDisclosurePanelProps>]
+  children: React.ReactNode
 }
 
 function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
@@ -61,7 +61,7 @@ function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>)
   );
 }
 
-export interface SpectrumDisclosurePanelProps extends DisclosurePanelProps, DOMProps, AriaLabelingProps {
+export interface SpectrumDisclosurePanelProps extends Omit<DisclosurePanelProps, 'className' | 'style' | 'children'>, DOMProps, AriaLabelingProps {
   /** The contents of the accordion panel. */
   children: React.ReactNode
 }
