@@ -16,8 +16,8 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, useContext
 import {DisclosureGroupState, DisclosureState, DisclosureGroupProps as StatelyDisclosureGroupProps, useDisclosureGroupState, useDisclosureState} from '@react-stately/disclosure';
 import {DOMProps, forwardRefType, Key} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useId} from '@react-aria/utils';
-import {HoverEvents, useFocusRing} from 'react-aria';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import {useFocusRing} from 'react-aria';
 
 export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps {}
 
@@ -69,7 +69,7 @@ function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivE
 const _DisclosureGroup = forwardRef(DisclosureGroup);
 export {_DisclosureGroup as DisclosureGroup};
 
-export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, HoverEvents, RenderProps<DisclosureRenderProps>, SlotProps {
+export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps {
   /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
   id?: Key
 }
