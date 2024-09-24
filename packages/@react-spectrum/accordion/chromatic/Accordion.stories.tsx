@@ -24,7 +24,7 @@ export default meta;
 
 export const Template = (args) => (
   <Accordion {...args}>
-    <Disclosure key="files">
+    <Disclosure id="files">
       <DisclosureHeader>
         Your files
       </DisclosureHeader>
@@ -32,7 +32,7 @@ export const Template = (args) => (
         files
       </DisclosurePanel>
     </Disclosure>
-    <Disclosure key="shared">
+    <Disclosure id="shared">
       <DisclosureHeader>
         Shared with you
       </DisclosureHeader>
@@ -40,7 +40,7 @@ export const Template = (args) => (
         shared
       </DisclosurePanel>
     </Disclosure>
-    <Disclosure key="last">
+    <Disclosure id="last">
       <DisclosureHeader>
         Last item
       </DisclosureHeader>
