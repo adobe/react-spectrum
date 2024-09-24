@@ -11,7 +11,7 @@
  */
 
 import {Button, Heading} from 'react-aria-components';
-import {Disclosure, DisclosurePanel} from '../src';
+import {Disclosure, DisclosurePanel} from '../src/Disclosure';
 import React from 'react';
 import './styles.css';
 

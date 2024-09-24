@@ -10,21 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateField} from '../src/DateField';
+import {Dialog} from '../src';
 
 import type {Meta} from '@storybook/react';
 
-const meta: Meta<typeof DateField> = {
-  component: DateField,
+const meta: Meta<typeof Dialog> = {
+  component: Dialog,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/DialogRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => <DateField {...args} />;
-
-Example.args = {
-  label: 'Event date'
-};
+export {Default, WithDialogTrigger, DialogContainer} from './Dialog.stories';

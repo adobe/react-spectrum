@@ -31,7 +31,8 @@ const meta: Meta<typeof RadioGroup> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/RadioGroup'
 };
 
 export default meta;
