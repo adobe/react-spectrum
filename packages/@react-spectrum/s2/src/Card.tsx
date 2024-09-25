@@ -20,7 +20,7 @@ import {ContentContext, FooterContext, TextContext} from './Content';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps, useId} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
@@ -382,7 +382,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let domRef = useDOMRef(ref);
   let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
-  id = useId(props.id ? String(props.id) : undefined);
   let isQuiet = variant === 'quiet';
   let isSkeleton = useIsSkeleton();
   let children = (
@@ -420,7 +419,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     return (
       <div
         {...filterDOMProps(otherProps)}
-        id={id}
+        id={id != null ? String(id) : undefined}
         // @ts-ignore - React < 19 compat
         inert={isSkeleton ? 'true' : undefined}
         ref={domRef}
