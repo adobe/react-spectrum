@@ -995,7 +995,7 @@ describe('Menu', () => {
 
       let button = getByRole('button');
       expect(button).not.toHaveAttribute('data-pressed');
-      let menuTester = testUtilUser.createTester('Menu', {root: button});
+      let menuTester = testUtilUser.createTester('Menu', {user, root: button});
       await menuTester.open();
       expect(button).toHaveAttribute('data-pressed');
 
@@ -1011,7 +1011,7 @@ describe('Menu', () => {
       expect(groups[1]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groups[1].getAttribute('aria-labelledby')!)).toHaveTextContent('Settings');
 
-      let menu = menuTester.menu;
+      let menu = menuTester.menu!;
       expect(getAllByRole('menuitem')).toHaveLength(7);
 
       let popover = menu.closest('.react-aria-Popover');
@@ -1021,7 +1021,7 @@ describe('Menu', () => {
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      let submenuUtil = await menuTester.openSubmenu({submenuTriggerText: 'Share…'});
+      let submenuUtil = (await menuTester.openSubmenu({submenuTriggerText: 'Share…'}))!;
       let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 

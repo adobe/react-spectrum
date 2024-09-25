@@ -15,7 +15,7 @@ import {BaseTesterOpts, UserOpts} from './user';
 import {triggerLongPress} from './events';
 
 export interface MenuOptions extends UserOpts, BaseTesterOpts {
-  user: any,
+  user?: any,
   isSubmenu?: boolean
 }
 export class MenuTester {
@@ -56,10 +56,9 @@ export class MenuTester {
   open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType'], direction?: 'up' | 'down'} = {}) => {
     let {
       needsLongPress,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
       direction
     } = opts;
-
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (interactionType === 'mouse' || interactionType === 'touch') {
@@ -114,7 +113,7 @@ export class MenuTester {
     menuSelectionMode?: 'single' | 'multiple',
     needsLongPress?: boolean,
     closesOnSelect?: boolean,
-      interactionType = this._interactionType,
+    interactionType?: UserOpts['interactionType'],
     keyboardActivation?: 'Space' | 'Enter'
   }) => {
     let {
@@ -123,18 +122,23 @@ export class MenuTester {
       needsLongPress,
       closesOnSelect = true,
       option,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
       keyboardActivation = 'Enter'
     } = opts;
     let trigger = this.trigger;
-    if (!trigger.getAttribute('aria-controls')) {
+
+    if (!trigger.getAttribute('aria-controls') && !trigger.hasAttribute('aria-expanded')) {
       await this.open({needsLongPress});
     }
 
     let menu = this.menu;
     if (menu) {
       if (!option && optionText) {
-        option = within(menu).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]');
+        // @ts-ignore
+        option = (within(menu!).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))!;
+      }
+      if (!option) {
+        throw new Error('No option found in the menu.');
       }
 
       if (interactionType === 'keyboard') {
@@ -179,6 +183,7 @@ export class MenuTester {
       needsLongPress,
       interactionType = this._interactionType
     } = opts;
+
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (!trigger.getAttribute('aria-controls') && !isDisabled) {
@@ -216,12 +221,12 @@ export class MenuTester {
 
   keyboardNavigateToOption = async (opts: {option: HTMLElement}) => {
     let {option} = opts;
-    let options = this.getOptions();
+    let options = this.options;
     let targetIndex = options.indexOf(option);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the menu');
     }
-    if (document.activeElement === this.getMenu()) {
+    if (document.activeElement === this.menu) {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
@@ -257,15 +262,18 @@ export class MenuTester {
   };
 
   get trigger() {
+    if (!this._trigger) {
+      throw new Error('No trigger element found for menu.');
+    }
     return this._trigger;
   }
 
   get menu() {
-    let menuId = this.trigger.getAttribute('aria-controls');
+    let menuId = (this.trigger!).getAttribute('aria-controls');
     return menuId ? document.getElementById(menuId) : undefined;
   }
 
-  get options(): HTMLElement[] | never[] {
+  get options(): HTMLElement[] {
     let menu = this.menu;
     let options: HTMLElement[] = [];
     if (menu) {
