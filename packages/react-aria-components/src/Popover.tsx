@@ -173,8 +173,6 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
         ref={ref}
         slot={props.slot || undefined}
         style={style}
-        // @ts-ignore - React < 19 compat
-        inert={(isEntering || isExiting) ? 'true' : undefined}
         data-trigger={props.trigger}
         data-placement={placement}
         data-entering={isEntering || undefined}
