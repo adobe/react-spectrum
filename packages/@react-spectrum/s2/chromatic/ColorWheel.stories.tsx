@@ -10,34 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColorWheel} from '../src/ColorWheel';
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof ColorWheel> = {
+  component: ColorWheel,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/ColorWheel'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
+export const Example = (args: any) => <ColorWheel {...args} onChange={undefined} />;
 
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
+Example.args = {
+  defaultValue: 'hsl(30, 100%, 50%)'
 };

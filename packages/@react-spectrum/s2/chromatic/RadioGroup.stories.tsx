@@ -26,13 +26,9 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof RadioGroup> = {
   component: RadioGroup,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    onChange: {table: {category: 'Events'}}
-  },
-  title: 'RadioGroup'
+  title: 'S2 Chromatic/RadioGroup'
 };
 
 export default meta;
@@ -110,38 +106,4 @@ ContextualHelpExample.args = {
       </Footer>
     </ContextualHelp>
   )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<RadioGroup
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Sports</Heading>
-      <Content>
-        <Text>
-          Social games we paly to have fun and stay healthy.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Sport"
-          target="_blank">Learn more about sports</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Segment"
-/>
-  <Radio isDisabled value="soccer">Soccer</Radio>
-  <Radio value="baseball">Baseball</Radio>
-  <Radio value="football">Football</Radio>
-  <Radio value="basketball">Basketball</Radio>
-</RadioGroup>`;
-      }
-    }
-  }
 };

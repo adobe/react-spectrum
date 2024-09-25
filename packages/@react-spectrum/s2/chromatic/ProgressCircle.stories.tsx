@@ -12,46 +12,46 @@
 
 import type {Meta, StoryObj} from '@storybook/react';
 import {ProgressCircle} from '../src';
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ProgressCircle> = {
   component: ProgressCircle,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressCircle'
+  title: 'S2 Chromatic/ProgressCircle'
 };
 
 export default meta;
 type Story = StoryObj<typeof ProgressCircle>;
 
 export const Example: Story = {
+  render: (args) => (
+    <div className={style({display: 'flex', alignItems: 'center', gap: 24})} >
+      <ProgressCircle aria-label="Test Progress Circle S" size="S" {...args} />
+      <ProgressCircle aria-label="Test Progress Circle M" size="M" {...args} />
+      <ProgressCircle aria-label="Test Progress Circle L" size="L" {...args} />
+    </div>
+  ),
+  args: {
+    value: 80
+  }
+}
+
+export const StaticColorWhite: Story = {
   render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
   args: {
-    staticColor: undefined,
+    staticColor: 'white',
     value: 80
-  },
-  argTypes: {
-    staticColor: {
-      control: 'select',
-      options: [undefined, 'white', 'black']
-    },
-    value: {
-      control: {
-        type: 'range',
-        min: 0,
-        max: 100
-      }
-    }
   }
-};
+}
 
-export const CustomSize = (args) => <ProgressCircle aria-label="Test Progress Circle" value="40" size="S" {...args} styles={style({size: 20})} />;
-CustomSize.parameters = {
-  docs: {
-    disable: true
+export const StaticColorBlack: Story = {
+  render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
+  args: {
+    staticColor: 'black',
+    value: 80
   }
-};
+}

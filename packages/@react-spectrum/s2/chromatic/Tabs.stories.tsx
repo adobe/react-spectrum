@@ -20,10 +20,9 @@ import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  title: 'Tabs'
+  title: 'S2 Chromatic/Tabs'
 };
 
 export default meta;

@@ -10,34 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof NewIcon> = {
+  component: NewIcon,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/Icon'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
-
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
+type Story = StoryObj<typeof NewIcon>;
+export const Example: Story = {
+  render: (args) => {
+    return (
+      <div style={{display: 'flex', gap: 8, justifyContent: 'center'}}>
+        <NewIcon {...args} />
+      </div>
+    );
   }
 };

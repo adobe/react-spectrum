@@ -12,17 +12,16 @@
 
 import type {Meta} from '@storybook/react';
 import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ProgressBar> = {
   component: ProgressBar,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/ProgressBar'
 };
 
 export default meta;
@@ -34,10 +33,57 @@ export const Example = {
   }
 };
 
-export const CustomWidth = {
+export const LabelPositionSide = {
   args: {
     label: 'Loading…',
     value: 80,
-    styles: style({width: 384})
+    labelPosition: 'side'
   }
 };
+
+
+export const Size = {
+  render: (args) => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 24})}>
+      <ProgressBar label='S' size='S' {...args} />
+      <ProgressBar label='M' size='M' {...args} />
+      <ProgressBar label='L' size='L' {...args} />
+      <ProgressBar label='XL' size='XL' {...args} />
+    </div>
+  ),
+  args: {
+    value: 80
+  }
+}
+
+export const StaticColorWhite = {
+  args: {
+    label: 'Loading',
+    value: 80,
+    staticColor: 'white'
+  }
+}
+
+export const StaticColorBlack = {
+  args: {
+    label: 'Loading',
+    value: 80,
+    staticColor: 'black'
+  }
+}
+
+export const Value0 = {
+  args: {
+    label: 'Loading',
+    value: 0
+  }
+}
+
+export const Value100 = {
+  args: {
+    label: 'Loading',
+    value: 100
+  }
+}
+
+

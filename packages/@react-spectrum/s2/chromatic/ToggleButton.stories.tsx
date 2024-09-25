@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, StaticColorDecorator} from '../stories/utils';
 import type {Meta, StoryFn} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {Text, ToggleButton} from '../src';
@@ -21,11 +21,10 @@ const meta: Meta<typeof ToggleButton> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
   },
-  title: 'ToggleButton'
+  title: 'S2 Chromatic/ToggleButton'
 };
 
 export default meta;

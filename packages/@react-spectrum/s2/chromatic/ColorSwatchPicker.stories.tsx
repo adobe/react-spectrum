@@ -10,34 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColorSwatch} from '../src/ColorSwatch';
+import {ColorSwatchPicker} from '../src/ColorSwatchPicker';
+import {Example, ManySwatches} from '../stories/ColorSwatchPicker.stories';
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof ColorSwatchPicker> = {
+  component: ColorSwatchPicker,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/ColorSwatchPicker'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
-
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
-};
+export {Example, ManySwatches}

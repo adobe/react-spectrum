@@ -11,33 +11,24 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Meter} from '../src/Meter';
+import {StaticColorDecorator} from '../stories/utils';
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof Meter> = {
+  component: Meter,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/Meter'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
+export const Example = (args: any) => <Meter {...args} />;
 
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
+Example.args = {
+  label: 'Storage space',
+  value: 80,
+  variant: 'informative'
 };

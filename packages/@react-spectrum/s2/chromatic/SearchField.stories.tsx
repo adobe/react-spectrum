@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
 import {
   Content,
   ContextualHelp,
@@ -26,13 +25,9 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof SearchField> = {
   component: SearchField,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
-  },
-  title: 'SearchField'
+  title: 'S2 Chromatic/SearchField'
 };
 
 export default meta;
@@ -74,33 +69,4 @@ ContextualHelpExample.args = {
       </Footer>
     </ContextualHelp>
   )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<SearchField
-  label="Search"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Search tips</Heading>
-      <Content>
-        <Text>
-          You can use modifiers like "date:" and "from:" to search by specific attributes.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://react-spectrum.adobe.com/"
-          target="_blank">React Spectrum</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-/>`;
-      }
-    }
-  }
 };

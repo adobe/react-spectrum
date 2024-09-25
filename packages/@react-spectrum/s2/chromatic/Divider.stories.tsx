@@ -14,16 +14,15 @@ import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Divider} from '../src';
 
 import type {Meta} from '@storybook/react';
-import {StaticColorDecorator} from './utils';
+import {StaticColorDecorator} from '../stories/utils';
 
 const meta: Meta<typeof Divider> = {
   component: Divider,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'Divider'
+  title: 'S2 Chromatic/Divider'
 };
 
 export default meta;

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {StaticColorDecorator} from '../stories/utils';
 import {LinkButton, Text} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -19,14 +19,10 @@ import {style} from '../style/spectrum-theme' with { type: 'macro' };
 const meta: Meta<typeof LinkButton> = {
   component: LinkButton,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
-  },
-  title: 'LinkButton'
+  title: 'S2 Chromatic/LinkButton'
 };
 
 export default meta;

@@ -10,34 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {Avatar, AvatarGroup, Provider} from '../src';
+import {Example, WithLabel, WithProviderBackground} from '../stories/AvatarGroup.stories';
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof AvatarGroup> = {
+  component: AvatarGroup,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {backgrounds: ['base', 'layer-1', 'layer-2'], disableAnimations: true}
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/AvatarGroup'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
-
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
-};
+export {Example, WithLabel, WithProviderBackground};

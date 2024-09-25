@@ -18,10 +18,9 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  title: 'IllustratedMessage'
+  title: 'S2 Chromatic/IllustratedMessage'
 };
 
 export default meta;

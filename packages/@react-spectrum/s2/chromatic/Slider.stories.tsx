@@ -20,14 +20,10 @@ import {style} from '../style/spectrum-theme' with { type: 'macro' };
 const meta: Meta<typeof Slider> = {
   component: Slider,
   parameters: {
-    layout: 'centered',
+    chromaticProvider: {disableAnimations: true},
     controls: {exclude: ['onChange']} // purposely excluded this control because it was slowing slider down a lot
   },
-  tags: ['autodocs'],
-  argTypes: {
-    onChangeEnd: {table: {category: 'Events'}}
-  },
-  title: 'Slider'
+  title: 'S2 Chromatic/Slider'
 };
 
 export default meta;
@@ -101,44 +97,3 @@ ContextualHelpExample.args = {
   )
 };
 
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<div
-  style={{
-    alignItems: 'start',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8
-  }}>
-  <Slider
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>
-          What is a ice cream?
-        </Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            isStandalone
-            target="_blank">
-            Learn more about ice cream
-          </Link>
-        </Footer>
-      </ContextualHelp>
-    }
-    defaultValue={30}
-    label="Cookies"
-  />
-</div>`;
-      }
-    }
-  }
-};

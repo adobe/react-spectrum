@@ -11,33 +11,23 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Switch} from '../src';
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof Switch> = {
+  component: Switch,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  argTypes: {
+    inputRef: {control: {disable: true}},
+    onChange: {table: {category: 'Events'}}
+  },
+  title: 'S2 Chromatic/Switch'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
+export const Example = (args: any) => <Switch {...args}>Wi-Fi</Switch>;
 
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
-};
+export const LongLabel = (args: any) => (<Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>);

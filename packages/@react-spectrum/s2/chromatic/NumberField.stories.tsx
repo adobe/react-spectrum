@@ -22,51 +22,66 @@ import {
   Text
 } from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {shortName} from './utils';
 
 const meta: Meta<typeof NumberField> = {
   component: NumberField,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  title: 'NumberField'
+  title: 'S2 Chromatic/NumberField'
 };
 
 export default meta;
 type Story = StoryObj<typeof NumberField>;
 
-export const Example: Story = {
-  render: (args) => (
-    <NumberField {...args} />
-  ),
+let states = [
+  {hideStepper: true},
+  {isDisabled: true},
+  {isInvalid: true},
+  {isReadOnly: true},
+  {isRequired: true},
+  {size: ['S', 'M', 'L', 'XL']}
+];
+
+let combinations = generatePowerset(states);
+
+const Template = ({...args}) => {
+  return (
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+      {combinations.map(c => {
+        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
+        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        if (!key) {
+          key = 'default';
+        }
+
+        return <NumberField label={key} data-testid={fullComboName} key={key} {...args} {...c} />;
+      })}
+    </div>
+  );
+};
+
+export const Default = {
+  render: Template
+}
+
+export const DefaultValue = {
+  render: Template,
   args: {
-    label: 'Quantity'
+    defaultValue: 10
   }
-};
+}
 
-export const Validation = (args: any) => (
-  <Form>
-    <NumberField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-Validation.args = {
-  label: 'Quantity',
-  isRequired: true
-};
-
-export const CustomWidth = (args: any) => <NumberField {...args} styles={style({width: 384})} />;
-
-CustomWidth.args = {
-  label: 'Large quantity'
-};
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const LabelPositionSide = {
+  render: Template,
+  args: {
+    labelPosition: 'side',
+    value: 10
   }
-};
-
+}
 
 export const ContextualHelpExample = (args: any) => <NumberField {...args} />;
 
@@ -88,33 +103,4 @@ ContextualHelpExample.args = {
       </Footer>
     </ContextualHelp>
   )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<NumberField
-  label="Quantity"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Quantity</Heading>
-      <Content>
-        <Text>
-          Pick a number between negative infinity and positive infinity.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Quantity"
-          target="_blank">Learn more about quantity</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-/>`;
-      }
-    }
-  }
 };

@@ -20,13 +20,12 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof TextField> = {
   component: TextField,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
   },
-  title: 'TextField'
+  title: 'S2 Chromatic/TextField'
 };
 
 export default meta;

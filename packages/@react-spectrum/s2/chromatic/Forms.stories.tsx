@@ -41,7 +41,7 @@ import {
   TextField,
   ToggleButton
 } from '../src';
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes} from '../stories/utils';
 import type {Meta} from '@storybook/react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
@@ -51,13 +51,9 @@ import {useState} from 'react';
 const meta: Meta<typeof Form> = {
   component: Form,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
-  },
-  title: 'Form'
+  title: 'S2 Chromatic/Form'
 };
 
 export default meta;
@@ -113,7 +109,6 @@ MixedForm.parameters = {
     disable: true
   }
 };
-
 
 export const CustomLabelsExample = (args: any) => {
   const [isSortAscending, setIsSortAscending] = useState(true);

@@ -11,7 +11,6 @@
  */
 
 import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
-import {categorizeArgTypes} from './utils';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from 'illustration:../spectrum-illustrations/gradient/S2_fill_cloudUpload_generic1_160.svg';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
@@ -23,13 +22,9 @@ import {style} from '../style/spectrum-theme' with { type: 'macro' };
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  argTypes: {
-    ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
-  },
-  title: 'DropZone'
+  title: 'S2 Chromatic/DropZone'
 };
 
 export default meta;

@@ -17,10 +17,9 @@ import {useState} from 'react';
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  tags: ['autodocs'],
-  title: 'InlineAlert'
+  title: 'S2 Chromatic/InlineAlert'
 };
 
 export default meta;

@@ -10,34 +10,42 @@
  * governing permissions and limitations under the License.
  */
 
+import {StaticColorDecorator} from '../stories/utils';
+import {Link} from '../src';
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof Link> = {
+  component: Link,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
+  },
+  args: {
+    href: 'https://www.imdb.com/title/tt6348138/',
+    target: '_blank'
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/Link'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
+export const Inline = (args: any) => (
+  <p
+    className={style({
+      font: 'body',
+      color: {
+        default: 'body',
+        staticColor: {white: 'white', black: 'black'}
+      }
+    })({staticColor: args.staticColor})}>
+    Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.
+  </p>
+);
 
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
-};
+export const Standalone = (args: any) => (
+  <Link {...args} isStandalone>
+    The missing link
+  </Link>
+);

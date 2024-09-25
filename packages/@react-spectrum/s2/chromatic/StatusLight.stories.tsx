@@ -11,33 +11,27 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
+import {StatusLight} from '../src';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
+const meta: Meta<typeof StatusLight> = {
+  component: StatusLight,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
+  title: 'S2 Chromatic/StatusLight'
 };
 
 export default meta;
 
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
+export const Example = (args: any) => <StatusLight {...args}>Status</StatusLight>;
+
+Example.args = {
+  variant: 'positive'
 };
 
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
+export const LongLabel = (args: any) => <StatusLight {...args} styles={style({maxWidth: 128})}>StatusLight with very long label so we can see wrapping</StatusLight>;
+
+LongLabel.args = {
+  variant: 'positive'
 };
