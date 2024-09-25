@@ -58,8 +58,12 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
   }
 
   let rectStyles = {
-    top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
-    [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
+    // TODO: For layoutInfos that are sticky that have parents with overflow visible, their "top" will be relative to the to the nearest scrolling container
+    // which WON'T be the parent since the parent has overflow visible. This means we shouldn't offset the height by the parent's position
+    // Not 100% about this change here since it is quite ambigious what the scrolling container maybe and how its top is positioned with respect to the
+    // calculated layoutInfo.y here
+    top: layoutInfo.rect.y - (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.y : 0),
+    [xProperty]: layoutInfo.rect.x - (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.x : 0),
     width: layoutInfo.rect.width,
     height: layoutInfo.rect.height
   };
