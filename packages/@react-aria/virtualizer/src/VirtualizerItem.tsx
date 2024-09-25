@@ -18,12 +18,13 @@ import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
   parent?: LayoutInfo | null,
+  style?: CSSProperties,
   className?: string,
   children: ReactNode
 }
 
 export function VirtualizerItem(props: VirtualizerItemProps) {
-  let {className, layoutInfo, virtualizer, parent, children} = props;
+  let {style, className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
   let ref = useRef(undefined);
   useVirtualizerItem({
@@ -33,7 +34,7 @@ export function VirtualizerItem(props: VirtualizerItemProps) {
   });
 
   return (
-    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(layoutInfo, direction, parent)}>
+    <div role="presentation" ref={ref} className={className} style={{...layoutInfoToStyle(layoutInfo, direction, parent), ...style}}>
       {children}
     </div>
   );

@@ -13,10 +13,11 @@
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectValue, Text} from '../';
 import React from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestSelect = (props) => (
-  <Select data-foo="bar" {...props}>
+  <Select data-testid="select" data-foo="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Button>
       <SelectValue />
@@ -35,6 +36,8 @@ let TestSelect = (props) => (
 
 describe('Select', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -44,54 +47,55 @@ describe('Select', () => {
     // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
     const consoleError = console.error;
     console.error = jest.fn();
-    let {getByRole} = render(<TestSelect />);
+    let {getByTestId} = render(<TestSelect />);
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
-    let button = getByRole('button');
-    expect(button).toHaveTextContent('Select an item');
-    expect(button).not.toHaveAttribute('data-pressed');
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an item');
+    expect(trigger).not.toHaveAttribute('data-pressed');
 
-    let select = button.closest('.react-aria-Select');
-    expect(select).toHaveAttribute('data-foo', 'bar');
+    expect(wrapper).toHaveAttribute('data-foo', 'bar');
 
-    expect(button).toHaveAttribute('aria-labelledby');
-    let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[1]);
+    expect(trigger).toHaveAttribute('aria-labelledby');
+    let label = document.getElementById(trigger.getAttribute('aria-labelledby').split(' ')[1]);
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');
 
-    let valueOrPlaceholder = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);
+    let valueOrPlaceholder = document.getElementById(trigger.getAttribute('aria-labelledby').split(' ')[0]);
     expect(valueOrPlaceholder).toHaveAttribute('class', 'react-aria-SelectValue');
     expect(valueOrPlaceholder).toHaveTextContent('Select an item');
 
-    expect(button).toHaveAttribute('aria-describedby');
-    expect(button.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(trigger).toHaveAttribute('aria-describedby');
+    expect(trigger.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
 
-    await user.click(button);
+    await selectTester.open();
 
-    expect(button).toHaveAttribute('data-pressed', 'true');
-
-    let listbox = getByRole('listbox');
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
+    let listbox = selectTester.listbox;
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
     expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
-    let options = within(listbox).getAllByRole('option');
+    let options = selectTester.options;
     expect(options).toHaveLength(3);
 
     await user.click(options[1]);
-    expect(button).toHaveTextContent('Dog');
+    expect(trigger).toHaveTextContent('Dog');
     console.error = consoleError;
   });
 
   it('should support slot', () => {
-    let {getByRole} = render(
+    let {getByTestId} = render(
       <SelectContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <TestSelect slot="test" />
       </SelectContext.Provider>
     );
 
-    let button = getByRole('button');
-    expect(button.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
-    expect(button).toHaveAttribute('aria-label', 'test');
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+    expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
+    expect(trigger).toHaveAttribute('aria-label', 'test');
   });
 
   it('supports items with render props', () => {
@@ -110,8 +114,8 @@ describe('Select', () => {
       </ListBoxItem>
     );
 
-    let {getByRole} = render(
-      <Select defaultSelectedKey="cat">
+    let {getByTestId} = render(
+      <Select data-testid="select" defaultSelectedKey="cat">
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue />
@@ -126,8 +130,9 @@ describe('Select', () => {
       </Select>
     );
 
-    let button = getByRole('button');
-    expect(button).toHaveTextContent('Cat');
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Cat');
     console.error = consoleError;
   });
 
@@ -137,8 +142,8 @@ describe('Select', () => {
       {id: 2, name: 'Dog'}
     ];
 
-    let {getByRole} = render(
-      <Select defaultSelectedKey={1}>
+    let {getByTestId} = render(
+      <Select data-testid="select" defaultSelectedKey={1}>
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue>
@@ -155,14 +160,16 @@ describe('Select', () => {
       </Select>
     );
 
-    let button = getByRole('button');
-    expect(button).toHaveTextContent('1 - Cat');
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('1 - Cat');
   });
 
   it('supports placeholder', () => {
-    let {getByRole} = render(<TestSelect placeholder="Select an animal" />);
-    let button = getByRole('button');
-    expect(button).toHaveTextContent('Select an animal');
+    let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an animal');
   });
 
   it('should support render props', async () => {
@@ -170,8 +177,8 @@ describe('Select', () => {
     // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
     const consoleError = console.error;
     console.error = jest.fn();
-    let {getByRole} = render(
-      <Select>
+    let {getByTestId} = render(
+      <Select data-testid="select">
         {({isOpen}) => (
           <>
             <Label>Favorite Animal</Label>
@@ -191,11 +198,12 @@ describe('Select', () => {
       </Select>
     );
 
-    let button = getByRole('button');
-    expect(button).toHaveTextContent('open');
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('open');
 
-    await user.click(button);
-    expect(button).toHaveTextContent('close');
+    await selectTester.open();
+    expect(trigger).toHaveTextContent('close');
     console.error = consoleError;
   });
 
@@ -219,9 +227,9 @@ describe('Select', () => {
     // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
     // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
     const consoleError = console.error;
-    let {getByRole, getByTestId} = render(
+    let {getByTestId} = render(
       <form data-testid="form">
-        <Select name="select" isRequired>
+        <Select data-testid="test-select" name="select" isRequired>
           <Label>Favorite Animal</Label>
           <Button>
             <SelectValue />
@@ -238,27 +246,25 @@ describe('Select', () => {
       </form>
     );
 
-    let button = getByRole('button');
-    let select = button.closest('.react-aria-Select');
+    let wrapper = getByTestId('test-select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+    let trigger = selectTester.trigger;
+    let select = wrapper;
     let input = document.querySelector('[name=select]');
     expect(input).toHaveAttribute('required');
-    expect(button).not.toHaveAttribute('aria-describedby');
+    expect(trigger).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(false);
     expect(select).not.toHaveAttribute('data-invalid');
 
     act(() => {getByTestId('form').checkValidity();});
 
-    expect(button).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(trigger).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(trigger.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(select).toHaveAttribute('data-invalid');
-    expect(document.activeElement).toBe(button);
+    expect(document.activeElement).toBe(trigger);
 
-    await user.click(button);
-
-    let listbox = getByRole('listbox');
-    let items = within(listbox).getAllByRole('option');
-    await user.click(items[0]);
-    expect(button).not.toHaveAttribute('aria-describedby');
+    await selectTester.selectOption({optionText: 'Cat'});
+    expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
     console.error = consoleError;
   });

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './events';
+export {triggerLongPress} from './events';
 export * from './testSetup';
 export * from './userEventMaps';
+export * from './user';

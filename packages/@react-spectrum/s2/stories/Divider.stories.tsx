@@ -22,7 +22,8 @@ const meta: Meta<typeof Divider> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/Divider'
 };
 
 export default meta;
@@ -56,4 +57,3 @@ export const Example = {
     </section>
   )
 };
-

@@ -12,6 +12,7 @@ let mapToNewKeys = {
 
 let stringsToAllow = new Set([
   'breadcrumbs.more',
+  'button.pending',
   'menu.moreActions',
   'dialog.alert',
   'contextualhelp.info',
