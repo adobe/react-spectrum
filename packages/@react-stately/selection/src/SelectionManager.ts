@@ -265,7 +265,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let key = from;
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item && item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection)) {
+      if (item && (item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection))) {
         keys.push(key);
       }
 
