@@ -10,29 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListBox, ListBoxItem} from '../src/ListBox';
-
+import {ColorArea} from '../src';
 import type {Meta} from '@storybook/react';
 
-const meta: Meta<typeof ListBox> = {
-  component: ListBox,
+const meta: Meta<typeof ColorArea> = {
+  component: ColorArea,
   parameters: {
     layout: 'centered'
-  }
+  },
+  tags: ['autodocs'],
+  title: 'S2 Chromatic/ColorArea'
 };
 
 export default meta;
 
-export const Example = (args: any) => (
-  <ListBox aria-label="Ice cream flavor" {...args}>
-    <ListBoxItem>Chocolate</ListBoxItem>
-    <ListBoxItem>Mint</ListBoxItem>
-    <ListBoxItem>Strawberry</ListBoxItem>
-    <ListBoxItem>Vanilla</ListBoxItem>
-  </ListBox>
-);
+export const Default = {
+  render: (args) => <ColorArea {...args} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)'
+  }
+};
 
-Example.args = {
-  onAction: null,
-  selectionMode: 'single'
+export const Disabled = {
+  ...Default,
+  args: {
+    ...Default.args,
+    isDisabled: true
+  }
 };

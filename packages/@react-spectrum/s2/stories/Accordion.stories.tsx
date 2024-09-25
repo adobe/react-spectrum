@@ -21,22 +21,7 @@ const meta: Meta<typeof Accordion> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  argTypes: {
-    size: {
-      control: 'radio',
-      options: ['S', 'M', 'L', 'XL']
-    },
-    isQuiet: {
-      control: {type: 'boolean'}
-    },
-    density: {
-      control: 'radio',
-      options: ['compact', 'regular', 'spacious']
-    },
-    isDisabled: {
-      control: {type: 'boolean'}
-    }
-  }
+  title: 'S2/Accordion'
 };
 
 export default meta;
@@ -47,7 +32,7 @@ export const Example: Story = {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
-          <Disclosure key="files">
+          <Disclosure id="files">
             <DisclosureHeader>
               Files
             </DisclosureHeader>
@@ -55,7 +40,7 @@ export const Example: Story = {
               Files content
             </DisclosurePanel>
           </Disclosure>
-          <Disclosure key="people">
+          <Disclosure id="people">
             <DisclosureHeader>
               People
             </DisclosureHeader>
@@ -74,7 +59,7 @@ export const WithLongTitle: Story = {
     return (
       <div className={style({minHeight: 224})}>
         <Accordion styles={style({maxWidth: 224})} {...args}>
-          <Disclosure key="files">
+          <Disclosure>
             <DisclosureHeader>
               Files
             </DisclosureHeader>
@@ -82,7 +67,7 @@ export const WithLongTitle: Story = {
               Files content
             </DisclosurePanel>
           </Disclosure>
-          <Disclosure key="people">
+          <Disclosure>
             <DisclosureHeader>
               People
             </DisclosureHeader>
@@ -90,7 +75,7 @@ export const WithLongTitle: Story = {
               People content
             </DisclosurePanel>
           </Disclosure>
-          <Disclosure key="long-title">
+          <Disclosure>
             <DisclosureHeader>
               Very very very very very long title that wraps
             </DisclosureHeader>
@@ -109,7 +94,7 @@ export const WithDisabledDisclosure: Story = {
     return (
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
-          <Disclosure key="files">
+          <Disclosure>
             <DisclosureHeader>
               Files
             </DisclosureHeader>
@@ -117,7 +102,7 @@ export const WithDisabledDisclosure: Story = {
               Files content
             </DisclosurePanel>
           </Disclosure>
-          <Disclosure isDisabled key="people">
+          <Disclosure isDisabled>
             <DisclosureHeader>
               People
             </DisclosureHeader>

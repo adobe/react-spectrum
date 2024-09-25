@@ -20,7 +20,8 @@ const meta: Meta<typeof IllustratedMessage> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/IllustratedMessage'
 };
 
 export default meta;

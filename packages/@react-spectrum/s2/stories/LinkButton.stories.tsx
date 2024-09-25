@@ -25,7 +25,8 @@ const meta: Meta<typeof LinkButton> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
-  }
+  },
+  title: 'S2/LinkButton'
 };
 
 export default meta;
