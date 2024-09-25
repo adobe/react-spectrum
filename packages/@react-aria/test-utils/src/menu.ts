@@ -269,7 +269,7 @@ export class MenuTester {
   }
 
   get menu() {
-    let menuId = (this.trigger!).getAttribute('aria-controls');
+    let menuId = this.trigger.getAttribute('aria-controls');
     return menuId ? document.getElementById(menuId) : undefined;
   }
 
