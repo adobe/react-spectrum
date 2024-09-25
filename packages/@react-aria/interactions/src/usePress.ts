@@ -317,11 +317,9 @@ export function usePress(props: PressHookProps): PressResult {
               }
             };
 
-            const ownerDocument = getRootNode(e.currentTarget);
+            const ownerDocument = getRootNode(e.currentTarget) || getOwnerDocument(e.currentTarget);
 
-            if (ownerDocument) {
-              addGlobalListener(ownerDocument, 'keyup', chain(pressUp, onKeyUp), true);
-            }
+            addGlobalListener(ownerDocument, 'keyup', chain(pressUp, onKeyUp), true);
           }
 
           if (shouldStopPropagation) {
@@ -963,7 +961,7 @@ function shouldPreventDefaultUp(target: Element) {
   if (target instanceof HTMLInputElement) {
     return false;
   }
-  
+
   if (target instanceof HTMLButtonElement) {
     return target.type !== 'submit' && target.type !== 'reset';
   }
