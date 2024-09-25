@@ -11,7 +11,7 @@
  */
 
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
-import {createContext, forwardRef, ImgHTMLAttributes, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
