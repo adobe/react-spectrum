@@ -58,9 +58,9 @@ WithIcons.args = {
 
 export const OnlyIcons = (args: any) => (
   <SegmentedControl {...args}>
-    <SegmentedControlItem value="align bottom"><AlignBottom /></SegmentedControlItem>
-    <SegmentedControlItem value="align center"><AlignCenter /></SegmentedControlItem>
-    <SegmentedControlItem value="align left"><AlignLeft /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align bottom" value="align bottom"><AlignBottom /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align center" value="align center"><AlignCenter /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align left" value="align left"><AlignLeft /></SegmentedControlItem>
   </SegmentedControl>
 );
 

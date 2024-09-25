@@ -38,7 +38,7 @@ export const Example: Story = {
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <LinkButton {...args}>Press me</LinkButton>
         <LinkButton {...args}><NewIcon /><Text>Test</Text></LinkButton>
-        <LinkButton {...args}><NewIcon /></LinkButton>
+        <LinkButton aria-label="Press me" {...args}><NewIcon /></LinkButton>
         <LinkButton {...args} styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</LinkButton>
         <LinkButton {...args} styles={style({maxWidth: 128})}>
           <NewIcon />
