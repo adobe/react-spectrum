@@ -11,9 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Content, Heading, IllustratedMessage, Link} from '../src';
+import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, Row, Table, TableBody, TableHeader} from '../src';
 import {categorizeArgTypes} from './utils';
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import {SortDescriptor} from 'react-aria-components';

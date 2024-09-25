@@ -29,11 +29,11 @@ import {
   TableBody as RACTableBody,
   TableBodyProps as RACTableBodyProps,
   TableHeader as RACTableHeader,
+  TableHeaderProps as RACTableHeaderProps,
   TableProps as RACTableProps,
   ResizableTableContainer,
   RowRenderProps,
   TableBodyRenderProps,
-  TableHeaderProps,
   TableRenderProps,
   UNSTABLE_TableLayout,
   UNSTABLE_TableLoadingIndicator,
@@ -45,7 +45,7 @@ import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} 
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
-import {DOMRef, forwardRefType, LoadingState, Node} from '@react-types/shared';
+import {DOMRef, LoadingState, Node} from '@react-types/shared';
 import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
@@ -814,6 +814,8 @@ const selectAllCheckboxColumn = style({
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
 
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies'> {}
+
 /**
  * A header within a `<Table>`, containing the table columns.
  */
@@ -1125,5 +1127,5 @@ export function Row<T extends object>({id, columns, children, ...otherProps}: Ro
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _Table = /*#__PURE__*/ (forwardRef as forwardRefType)(Table);
+const _Table = forwardRef(Table);
 export {_Table as Table};
