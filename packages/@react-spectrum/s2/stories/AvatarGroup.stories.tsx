@@ -20,7 +20,8 @@ const meta: Meta<typeof AvatarGroup> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/AvatarGroup'
 };
 
 export default meta;

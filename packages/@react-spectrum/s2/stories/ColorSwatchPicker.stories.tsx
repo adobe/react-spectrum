@@ -23,7 +23,8 @@ const meta: Meta<typeof ColorSwatchPicker> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/ColorSwatchPicker'
 };
 
 export default meta;

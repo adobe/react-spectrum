@@ -39,7 +39,8 @@ const meta: Meta<typeof Picker<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'S2/Picker'
 };
 
 export default meta;
@@ -86,7 +87,6 @@ export const Sections: Story = {
   }
 };
 
-
 interface IExampleItem {
   id: string,
   label: string
@@ -109,7 +109,6 @@ export const Dynamic: Story = {
     items
   }
 };
-
 
 export const WithIcons: Story = {
   render: (args) => (

@@ -19,7 +19,8 @@ const meta: Meta<typeof ColorSwatch> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/ColorSwatch'
 };
 
 export default meta;
