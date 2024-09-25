@@ -9,7 +9,7 @@
     "build": "webpack"
   },
   "dependencies": {
-    "@react-spectrum/s2": "^0.3.1",
+    "@react-spectrum/s2": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
