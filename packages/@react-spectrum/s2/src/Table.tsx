@@ -31,7 +31,6 @@ import {
   TableHeader as RACTableHeader,
   TableProps as RACTableProps,
   ResizableTableContainer,
-  ResizableTableContainerContext,
   RowRenderProps,
   TableBodyRenderProps,
   TableHeaderProps,
