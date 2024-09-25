@@ -44,7 +44,17 @@ describe('FocusScope', function () {
     act(() => {jest.runAllTimers();});
 
     // Iframe teardown
-    iframe.remove();
+    if (iframe && iframe.parentNode) {
+      iframe.parentNode.removeChild(iframe);
+    }
+    iframe = null;
+    iframeRoot = null;
+
+    // Reset the document body
+    document.body.innerHTML = '';
+
+    // Clear any lingering event listeners
+    jest.restoreAllMocks();
   });
 
   describe('focus containment', function () {
