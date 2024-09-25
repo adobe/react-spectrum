@@ -37,20 +37,8 @@ let TestComboBox = (props) => (
 describe('ComboBox', () => {
   let user;
   let testUtilUser = new User();
-  const consoleError = console.error;
-
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
-  });
-
-  beforeEach(() => {
-    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
-    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
-    console.error = jest.fn();
-  });
-
-  afterEach(() => {
-    console.error = consoleError;
   });
   it('provides slots', async () => {
     let {getByRole} = render(<TestComboBox />);

@@ -55,10 +55,6 @@ describe('DateRangePicker', () => {
   });
 
   it('provides slots', async () => {
-    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
-    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
-    const consoleError = console.error;
-    console.error = jest.fn();
     let {getByRole, getAllByRole} = render(<TestDateRangePicker />);
 
     let group = getByRole('group');
@@ -94,7 +90,6 @@ describe('DateRangePicker', () => {
     expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DateRangePicker');
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
-    console.error = consoleError;
   });
 
   it('should support the slot prop', () => {
@@ -110,24 +105,15 @@ describe('DateRangePicker', () => {
   });
 
   it('should apply isPressed state to button when expanded', async () => {
-    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
-    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
-    const consoleError = console.error;
-    console.error = jest.fn();
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
     await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
-    console.error = consoleError;
   });
 
   it('should support data-open state', async () => {
-    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
-    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
-    const consoleError = console.error;
-    console.error = jest.fn();
     let {getByRole} = render(<TestDateRangePicker />);
     let datePicker = document.querySelector('.react-aria-DateRangePicker');
     let button = getByRole('button');
@@ -135,7 +121,6 @@ describe('DateRangePicker', () => {
     expect(datePicker).not.toHaveAttribute('data-open');
     await user.click(button);
     expect(datePicker).toHaveAttribute('data-open');
-    console.error = consoleError;
   });
 
   it('should support render props', () => {
@@ -260,10 +245,6 @@ describe('DateRangePicker', () => {
   });
 
   it('should support close on select = true', async () => {
-    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
-    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
-    const consoleError = console.error;
-    console.error = jest.fn();
     let {getByRole, getAllByRole} = render(<TestDateRangePicker value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} />);
 
     let button = getByRole('button');
@@ -279,14 +260,9 @@ describe('DateRangePicker', () => {
     await user.click(selected.nextSibling.children[0]);
     await user.click(selected.nextSibling.children[1]);
     expect(dialog).not.toBeInTheDocument();
-    console.error = consoleError;
   });
 
   it('should support close on select = false', async () => {
-    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
-    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
-    const consoleError = console.error;
-    console.error = jest.fn();
     let {getByRole, getAllByRole} = render(<TestDateRangePicker value={{start: new CalendarDate(2023, 1, 10), end: new CalendarDate(2023, 1, 20)}} shouldCloseOnSelect={false} />);
 
     let button = getByRole('button');
@@ -302,7 +278,6 @@ describe('DateRangePicker', () => {
     await user.click(selected.nextSibling.children[0]);
     await user.click(selected.nextSibling.children[1]);
     expect(dialog).toBeInTheDocument();
-    console.error = consoleError;
   });
 
   it('should disable button and date input when DatePicker is disabled', () => {
