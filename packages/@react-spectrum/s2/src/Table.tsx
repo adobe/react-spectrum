@@ -894,7 +894,7 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   fontSize: 'control',
   alignItems: 'center',
   display: 'flex',
-  borderEndStyle: {
+  borderStyle: {
     default: 'none',
     isDivider: 'solid'
   },

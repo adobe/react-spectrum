@@ -288,8 +288,6 @@ const borderWidth = {
   4: getToken('border-width-400')
 };
 
-const borderStyle = ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'];
-
 const radius = {
   none: getToken('corner-radius-none'), // 0px
   sm: pxToRem(getToken('corner-radius-small-default')), // 4px
@@ -618,11 +616,7 @@ export const style = createTheme({
     borderEndWidth: createRenamedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
     borderBottomWidth: borderWidth,
-    borderStartStyle: createRenamedProperty('borderInlineStartStyle', borderStyle),
-    borderEndStyle: createRenamedProperty('borderInlineEndStyle', borderStyle),
-    borderTopStyle: borderStyle,
-    borderBottomStyle: borderStyle,
-    borderStyle: borderStyle,
+    borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'] as const,
     strokeWidth: {
       0: '0',
       1: '1',
