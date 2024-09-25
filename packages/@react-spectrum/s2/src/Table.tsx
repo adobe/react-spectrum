@@ -635,6 +635,10 @@ const resizerHandle = style({
       isResizing: 'Highlight'
     }
   },
+  height: {
+    default: 'full',
+    isResizing: 'screen'
+  },
   width: {
     default: size(1),
     isResizing: size(2)
@@ -775,10 +779,8 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
 }
 
 function ResizerIndicator({isFocusVisible, isHovered, isResizing, isInResizeMode}) {
-  let state = useContext(ResizableTableContainerContext);
-
   return (
-    <div style={{height: isResizing ? state?.tableHeight : '100%'}} className={resizerHandle({isFocusVisible, isHovered: isHovered || isInResizeMode, isResizing})} />
+    <div className={resizerHandle({isFocusVisible, isHovered: isHovered || isInResizeMode, isResizing})} />
   );
 }
 

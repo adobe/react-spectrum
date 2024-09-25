@@ -185,7 +185,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
 interface ResizableTableContainerContextValue {
   tableWidth: number,
-  tableHeight: number,
   tableRef: RefObject<HTMLTableElement | null>,
   scrollRef: RefObject<HTMLElement | null>,
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
@@ -195,7 +194,7 @@ interface ResizableTableContainerContextValue {
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-export const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
+const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
 
 export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<HTMLDivElement> {
   /**
@@ -220,7 +219,6 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
   let tableRef = useRef<HTMLTableElement>(null);
   let scrollRef = useRef<HTMLElement | null>(null);
   let [width, setWidth] = useState(0);
-  let [height, setHeight] = useState(0);
 
   useLayoutEffect(() => {
     // Walk up the DOM from the Table to the ResizableTableContainer and stop
@@ -240,7 +238,6 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
     box: 'border-box',
     onResize() {
       setWidth(scrollRef.current?.clientWidth ?? 0);
-      setHeight(scrollRef.current?.clientHeight ?? 0);
     }
   });
 
@@ -251,13 +248,12 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
   let ctx = useMemo(() => ({
     tableRef,
     scrollRef,
-    tableHeight: height,
     tableWidth: width,
     useTableColumnResizeState,
     onResizeStart: props.onResizeStart,
     onResize: props.onResize,
     onResizeEnd: props.onResizeEnd
-  }), [tableRef, width, height, props.onResizeStart, props.onResize, props.onResizeEnd]);
+  }), [tableRef, width, props.onResizeStart, props.onResize, props.onResizeEnd]);
 
   return (
     <div
@@ -1196,6 +1192,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
+
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
