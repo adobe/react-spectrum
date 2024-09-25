@@ -33,7 +33,7 @@ export default meta;
 export const Example: StoryFn<typeof ToggleButton> = (args) => {
   return (
     <div style={{display: 'flex', gap: 8}}>
-      <ToggleButton {...args}><NewIcon /></ToggleButton>
+      <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
       <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
     </div>
