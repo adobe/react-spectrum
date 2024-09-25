@@ -697,10 +697,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
         break;
       case 'resize':
         setIsInResizeMode?.(true);
-        // TODO: Need to wait for the menu to fully transition out, otherwise mouse movements may hover the menu items and steal focus from the resizer,
-        // causing resizing to end prematurely due to blur. Open to ideas for how to handle this since it affects RAC. Ideally we'd freeze
-        // focus from being able to move if we are in resizing mode except if the user clicks away or moves focus with something other than hover
-        setTimeout(() => startResize(), 200);
+        startResize();
         break;
     }
   };
