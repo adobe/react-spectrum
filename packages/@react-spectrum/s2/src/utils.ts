@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-export {triggerLongPress} from './events';
-export * from './testSetup';
-export * from './userEventMaps';
-export * from './user';
+import {useMediaQuery} from '@react-spectrum/utils';
+
+export type Scale = 'large' | 'medium';
+
+export function useIsMobileDevice(): boolean {
+  return useMediaQuery('(max-width: 640px)');
+}
+
+export function useScale(): Scale {
+  let matchesFine = useMediaQuery('not ((hover: hover) and (pointer: fine))');
+  if (matchesFine) {
+    return 'large';
+  }
+
+  return 'medium';
+}
