@@ -11,20 +11,15 @@
  */
 
 import type {Meta} from '@storybook/react';
+import {Tooltip} from '../src';
 
-import {TimeField} from '../src/TimeField';
-
-const meta: Meta<typeof TimeField> = {
-  component: TimeField,
+const meta: Meta<typeof Tooltip> = {
+  component: Tooltip,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/TooltipRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => <TimeField {...args} />;
-
-Example.args = {
-  label: 'Event time'
-};
+export {Default, WithLongLabel} from './Tooltip.stories';

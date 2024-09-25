@@ -69,7 +69,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
     <Card id={item.id} textValue={item.description || item.alt_description}>
       {({size}) => (<>
         <CardPreview>
-          <Image 
+          <Image
             src={item.urls.regular}
             styles={style({
               width: 'full',
@@ -133,7 +133,7 @@ export const Example = (args: CardViewProps<any>, {viewMode}) => {
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
-            <PhotoCard 
+            <PhotoCard
               item={{
                 id: Math.random(),
                 user: {name: 'Devon Govett', profile_image: {small: ''}},
@@ -159,7 +159,7 @@ Example.args = {
 
 export const Empty = (args: CardViewProps<any>, {viewMode}) => {
   return (
-    <CardView 
+    <CardView
       aria-label="Assets"
       {...args}
       styles={cardViewStyles({viewMode})}
@@ -210,7 +210,7 @@ export const CollectionCards = (args: CardViewProps<any>, {viewMode}) => {
         `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
         {signal}
       );
-      let items = await res.json();
+      let items = (await res.json()).filter((topic: Topic) => !!topic.preview_photos);
       return {items, cursor: items.length ? page + 1 : null};
     }
   });

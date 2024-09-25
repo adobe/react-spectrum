@@ -25,7 +25,8 @@ const meta: Meta<typeof TextField> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'S2/TextField'
 };
 
 export default meta;

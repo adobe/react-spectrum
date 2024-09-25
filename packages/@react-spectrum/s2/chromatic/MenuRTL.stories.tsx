@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {Menu} from '../src';
+
 import type {Meta} from '@storybook/react';
 
-import {RangeCalendar} from '../src/RangeCalendar';
-
-const meta: Meta<typeof RangeCalendar> = {
-  component: RangeCalendar,
+const meta: Meta<typeof Menu> = {
+  component: Menu,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/MenuRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => (
-  <RangeCalendar aria-label="Trip dates" {...args} />
-);
+export {Default, WithKeyboardShortcuts, WithIcons, WithImages, Dynamic} from './Menu.stories';

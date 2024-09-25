@@ -21,19 +21,22 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    chromatic: {
+      disableSnapshot: true
+    }
   },
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'])
-  }
+  },
+  title: 'S2/Menu'
 };
 
 export default meta;

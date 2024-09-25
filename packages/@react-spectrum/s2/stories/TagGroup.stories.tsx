@@ -42,7 +42,8 @@ const meta: Meta<typeof TagGroup<any>> = {
     },
     onSelectionChange: {table: {category: 'Events'}}
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/TagGroup'
 };
 
 export default meta;

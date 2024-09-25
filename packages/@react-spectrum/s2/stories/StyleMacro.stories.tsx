@@ -15,7 +15,7 @@ import React from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 export default {
-  title: 'S2 Style Macro',
+  title: 'S2/Style Macro',
   parameters: {
     docs: {disable: true}
   }
@@ -49,4 +49,3 @@ export function Well() {
     </div>
   );
 }
-
