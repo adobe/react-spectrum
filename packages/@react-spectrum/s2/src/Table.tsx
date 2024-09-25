@@ -66,7 +66,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {VisuallyHidden} from 'react-aria';
 
 interface S2TableProps {
   /** Whether the Table should be displayed with a quiet style. */
