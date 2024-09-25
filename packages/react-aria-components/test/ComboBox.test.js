@@ -37,7 +37,6 @@ let TestComboBox = (props) => (
 describe('ComboBox', () => {
   let user;
   let testUtilUser = new User();
-
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
