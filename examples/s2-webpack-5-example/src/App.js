@@ -71,6 +71,8 @@ import {
   TabList,
   TabPanel,
   Tabs,
+  Tag,
+  TagGroup,
   Text,
   TextArea,
   TextField,
@@ -367,6 +369,12 @@ function App() {
 
           <StatusLight variant="positive">Ready</StatusLight>
 
+          <TagGroup aria-label="Static TagGroup items example">
+            <Tag>News</Tag>
+            <Tag>Travel</Tag>
+            <Tag>Gaming</Tag>
+            <Tag>Shopping</Tag>
+          </TagGroup>
           <InlineAlert>
             <Heading>Payment Information</Heading>
             <Content>
