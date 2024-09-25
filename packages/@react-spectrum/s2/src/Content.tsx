@@ -172,5 +172,3 @@ function Footer(props: ContentProps, ref: DOMRef) {
 
 const _Footer = forwardRef(Footer);
 export {_Footer as Footer};
-
-export const ImageContext = createContext<ContextValue<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>>({});
