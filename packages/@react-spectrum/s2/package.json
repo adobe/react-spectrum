@@ -107,8 +107,7 @@
   ],
   "files": [
     "dist",
-    "style/dist",
-    "style/package.json",
+    "style",
     "page.css",
     "icons",
     "illustrations",
