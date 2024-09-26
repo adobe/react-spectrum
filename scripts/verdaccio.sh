@@ -147,6 +147,20 @@ then
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
 
+  echo 'build Spectrum 2 + Parcel test app'
+  cd ../../examples/s2-parcel-example
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
+  yarn build --public-url ./
+  mv dist ../../$verdaccio_path/s2-parcel-example
+
+  echo 'build Spectrum 2 + Webpack test app'
+  cd ../../examples/s2-webpack-5-example
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
+  yarn build
+  mv dist ../../$verdaccio_path/s2-webpack-5-example
+
   cd ../..
 
   echo 'get size of each package published to verdaccio'
