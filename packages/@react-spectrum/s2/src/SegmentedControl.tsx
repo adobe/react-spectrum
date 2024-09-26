@@ -14,7 +14,6 @@ import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef} from '@react-types
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupStateContext, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
-import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
