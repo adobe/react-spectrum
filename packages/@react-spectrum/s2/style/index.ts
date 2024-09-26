@@ -10,34 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
-import {ProgressBar} from '../src';
-import {StaticColorDecorator} from './utils';
-import {style} from '../style' with {type: 'macro'};
+export {baseColor, edgeToText, fontRelative, lightDark, size, space, style} from './spectrum-theme';
+export type {StyleString} from './types';
 
-const meta: Meta<typeof ProgressBar> = {
-  component: ProgressBar,
-  parameters: {
-    layout: 'centered'
+export const focusRing = () => ({
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
   },
-  decorators: [StaticColorDecorator],
-  tags: ['autodocs'],
-  title: 'ProgressBar'
-};
-
-export default meta;
-
-export const Example = {
-  args: {
-    label: 'Loading…',
-    value: 80
-  }
-};
-
-export const CustomWidth = {
-  args: {
-    label: 'Loading…',
-    value: 80,
-    styles: style({width: 384})
-  }
-};
+  outlineColor: 'focus-ring',
+  outlineWidth: 2,
+  outlineOffset: 2
+} as const);
