@@ -59,10 +59,10 @@ export interface ButtonRenderProps {
    */
   isDisabled: boolean,
   /**
-   * If the button is currently in the `isPending` state.
+   * Whether the button is currently in a pending state.
    * @selector [data-pending]
    */
-  isPending?: boolean
+  isPending: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
