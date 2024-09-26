@@ -34,7 +34,8 @@ export interface FocusVisibleProps {
  * This function creates a type-safe event listener wrapper that ensures consistent function references for event handling.
  * It uses a WeakMap to cache wrapped handlers, guaranteeing that the same function instance is always returned for a given handler, which is crucial for proper event listener cleanup and prevents unnecessary function creation.
  */
-const handlerCache = new WeakMap<EventListenerObject | EventListener, EventListener>();
+const handlerCache = new WeakMap<Function, EventListener>();
+
 function createEventListener<E extends Event>(handler: (e: E) => void): EventListener {
   if (typeof handler === 'function') {
     if (!handlerCache.has(handler)) {
