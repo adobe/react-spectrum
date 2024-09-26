@@ -263,6 +263,9 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
               {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
               <Button
                 ref={buttonRef}
+                // Prevent press scale from sticking while ComboBox is open.
+                // @ts-ignore
+                isPressed={false}
                 style={renderProps => pressScale(buttonRef)(renderProps)}
                 className={renderProps => inputButton({
                   ...renderProps,
