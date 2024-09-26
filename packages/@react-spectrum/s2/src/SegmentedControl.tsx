@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupStateContext} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupStateContext, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -23,7 +23,7 @@ import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SegmentedControlProps extends AriaLabelingProps, StyleProps {
+export interface SegmentedControlProps extends AriaLabelingProps, StyleProps, SlotProps {
   /**
    * The content to display in the segmented control.
    */
