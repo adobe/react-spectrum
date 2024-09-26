@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React, { useState } from "react";
-import "@react-spectrum/s2/page.css";
 import {
+  Accordion,
   ActionButton,
   ActionMenu,
   AlertDialog,
@@ -23,6 +22,7 @@ import {
   Breadcrumbs,
   Button,
   ButtonGroup,
+  Cell,
   Checkbox,
   CheckboxGroup,
   ColorArea,
@@ -31,6 +31,7 @@ import {
   ColorSwatch,
   ColorSwatchPicker,
   ColorWheel,
+  Column,
   ComboBox,
   ComboBoxItem,
   Content,
@@ -38,6 +39,9 @@ import {
   Dialog,
   DialogContainer,
   DialogTrigger,
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
   Divider,
   DropZone,
   Footer,
@@ -62,12 +66,18 @@ import {
   Radio,
   RadioGroup,
   RangeSlider,
+  Row,
   SearchField,
+  SegmentedControl,
+  SegmentedControlItem,
   Slider,
   StatusLight,
   SubmenuTrigger,
   Switch,
   Tab,
+  Table,
+  TableBody,
+  TableHeader,
   TabList,
   TabPanel,
   Tabs,
@@ -83,8 +93,11 @@ import {
 import Edit from "@react-spectrum/s2/icons/Edit";
 import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
-import Section from "./components/Section";
+import "@react-spectrum/s2/page.css";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import React, { useState } from "react";
+import Section from "./components/Section";
+import { CardViewExample, CollectionCardsExample } from "./components/CardViewExample";
 
 function App() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -136,6 +149,8 @@ function App() {
             <MenuItem>Action Menu Item 2</MenuItem>
             <MenuItem>Action Menu Item 3</MenuItem>
           </ActionMenu>
+          <CardViewExample />
+          <CollectionCardsExample />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
             <Menu onAction={(key) => alert(key.toString())}>
@@ -171,6 +186,38 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
+          <Table aria-label="Files" styles={style({width: 320, height: 320})}>
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+              <Column>Date Modified</Column>
+              <Column>A</Column>
+              <Column>B</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+                <Cell>6/7/2020</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+                <Cell>4/7/2021</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+              <Row id="3">
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+                <Cell>11/20/2010</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+            </TableBody>
+          </Table>
         </Section>
 
         <Section title="Color">
@@ -223,6 +270,26 @@ function App() {
         </Section>
 
         <Section title="Navigation">
+          <div className={style({ minHeight: 240 })}>
+            <Accordion>
+              <Disclosure id="files">
+                <DisclosureHeader>
+                  Files
+                </DisclosureHeader>
+                <DisclosurePanel>
+                  Files content
+                </DisclosurePanel>
+              </Disclosure>
+              <Disclosure id="people">
+                <DisclosureHeader>
+                  People
+                </DisclosureHeader>
+                <DisclosurePanel>
+                  <TextField label="Name" styles={style({ maxWidth: 176 })} />
+                </DisclosurePanel>
+              </Disclosure>
+            </Accordion>
+          </div>
           <Breadcrumbs>
             <Breadcrumb id="home">Home</Breadcrumb>
             <Breadcrumb id="trendy">Trendy</Breadcrumb>
@@ -236,6 +303,12 @@ function App() {
             The missing link.
           </Link>
           <Link href="/foo">Foo</Link>
+          <SegmentedControl styles={style({width: '[250px]'})}>
+            <SegmentedControlItem value="day">Day</SegmentedControlItem>
+            <SegmentedControlItem value="week">Week</SegmentedControlItem>
+            <SegmentedControlItem value="month">Month</SegmentedControlItem>
+            <SegmentedControlItem value="year">Year</SegmentedControlItem>
+          </SegmentedControl>
           <Tabs aria-label="History of Ancient Rome">
             <TabList>
               <Tab id="FoR">Founding of Rome</Tab>
