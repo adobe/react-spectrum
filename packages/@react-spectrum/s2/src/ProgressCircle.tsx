@@ -13,7 +13,7 @@
 import {ContextValue, ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -45,8 +45,7 @@ const wrapper = style<ProgressCircleStyleProps>({
       L: 64
     }
   },
-  aspectRatio: 'square',
-  display: 'inline-block'
+  aspectRatio: 'square'
 }, getAllowedOverrides({height: true}));
 
 const track = style<ProgressCircleStyleProps>({
@@ -73,7 +72,10 @@ const fill = style<ProgressCircleStyleProps>({
   transformOrigin: 'center'
 });
 
-export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, StyleProps {}
+export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, UnsafeStyles {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight
+}
 
 const rotationAnimation = keyframes(`
   0% {

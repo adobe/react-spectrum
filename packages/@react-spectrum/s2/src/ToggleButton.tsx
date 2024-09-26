@@ -48,7 +48,8 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
         staticColor: props.staticColor,
         size: props.size,
         isQuiet: props.isQuiet,
-        isEmphasized: props.isEmphasized
+        isEmphasized: props.isEmphasized,
+        isPending: false
       }, props.styles)}>
       <Provider
         values={[

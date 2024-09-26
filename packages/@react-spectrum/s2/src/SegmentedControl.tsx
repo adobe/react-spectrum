@@ -259,13 +259,13 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
 }
 
 /**
- * A control items represents an individual control within a segmented control.
+ * A SegmentedControlItem represents an option within a SegmentedControl.
  */
 const _SegmentedControlItem = /*#__PURE__*/ forwardRef(SegmentedControlItem);
 export {_SegmentedControlItem as SegmentedControlItem};
 
 /**
- * A segmented control is a mutually exclusive group of buttons, with or without a track.
+ * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
  */
 const _SegmentedControl = /*#__PURE__*/ forwardRef(SegmentedControl);
 export {_SegmentedControl as SegmentedControl};

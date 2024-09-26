@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, fontRelative, size as sizeValue, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -370,8 +370,21 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
                 isProgressVisible: 1
               }
             })({isProgressVisible, isPending})}>
-            {/* TODO: size based on t-shirt size once ProgressCircle supports custom sizes */}
-            <ProgressCircle isIndeterminate aria-label={stringFormatter.format('button.pending')} size="S" staticColor={staticColor} UNSAFE_style={{display: 'block'}} />
+            <ProgressCircle
+              isIndeterminate
+              aria-label={stringFormatter.format('button.pending')}
+              size="S"
+              staticColor={staticColor}
+              styles={style({
+                size: {
+                  size: {
+                    S: sizeValue(14),
+                    M: sizeValue(18),
+                    L: 20,
+                    XL: 24
+                  }
+                }
+              })({size})} />
           </div>
         }
       </Provider>
@@ -405,7 +418,8 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
         variant: props.variant || 'primary',
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
-        staticColor: props.staticColor
+        staticColor: props.staticColor,
+        isPending: false
       }, props.styles)}>
       <Provider
         values={[
