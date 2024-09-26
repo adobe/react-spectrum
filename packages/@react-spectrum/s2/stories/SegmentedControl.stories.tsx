@@ -32,7 +32,7 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <SegmentedControl {...args}>
+  <SegmentedControl {...args} styles={style({width: '[250px]'})}>
     <SegmentedControlItem value="day">Day</SegmentedControlItem>
     <SegmentedControlItem value="week">Week</SegmentedControlItem>
     <SegmentedControlItem value="month">Month</SegmentedControlItem>
@@ -45,7 +45,7 @@ Example.args = {
 };
 
 export const WithIcons = (args: any) => (
-  <SegmentedControl {...args}>
+  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
     <SegmentedControlItem value="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
     <SegmentedControlItem value="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
     <SegmentedControlItem value="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>

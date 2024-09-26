@@ -79,6 +79,7 @@ const controlItem = style({
   flexBasis: 0,
   flexGrow: 1,
   flexShrink: 0,
+  minWidth: 0,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
   disableTapHighlight: true,
@@ -90,7 +91,13 @@ const controlItem = style({
 
 const slider = style({
   ...focusRing(),
-  backgroundColor: 'gray-25',
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: {
+      default: 'Highlight',
+      isDisabled: 'GrayText'
+    }
+  },
   left: 0,
   width: 'full',
   height: 'full',
@@ -100,7 +107,11 @@ const slider = style({
   borderWidth: 2,
   borderColor: {
     default: 'gray-900',
-    isDisabled: 'disabled'
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'Highlight',
+      isDisabled: 'GrayText'
+    }
   },
   borderRadius: 'lg'
 });
@@ -236,7 +247,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
               [RACTextContext, {slots: {[DEFAULT_SLOT]: {}}}],
               [TextContext, {styles: style({order: 1, truncate: true})}]
             ]}>
-            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual', transition: 'default', alignItems: 'center'})}>
+            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual', transition: 'default', alignItems: 'center', minWidth: 0})}>
               {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
             </div>
           </Provider>
