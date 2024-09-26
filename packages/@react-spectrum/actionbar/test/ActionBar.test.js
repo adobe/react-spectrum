@@ -285,4 +285,17 @@ describe('ActionBar', () => {
 
     expect(onAction).toHaveBeenCalledWith('edit');
   });
+
+  it('should respect disabledKeys when passed in', async () => {
+    let tree = render(<Provider theme={theme}><Example disabledKeys={['edit']} /></Provider>);
+    act(() => {jest.runAllTimers();});
+
+    let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+
+    await user.click(rows[1]);
+
+    expect(within(tree.getByRole('toolbar')).getAllByRole('button')[0]).toBeDisabled();
+    expect(within(tree.getByRole('toolbar')).getAllByRole('button')[1]).not.toBeDisabled();
+  });
 });
