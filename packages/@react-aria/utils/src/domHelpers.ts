@@ -26,11 +26,8 @@ export const getRootNode = (el: Element | null | undefined): Document | ShadowRo
 
   const rootNode = el.getRootNode ? el.getRootNode() : document;
 
-  if (rootNode instanceof Document || rootNode instanceof ShadowRoot) {
-    return rootNode;
-  }
-
-  return null;
+// Return the root node, which can be either a Document or a ShadowRoot
+  return rootNode instanceof Document ? rootNode : rootNode as ShadowRoot;
 };
 
 /**
