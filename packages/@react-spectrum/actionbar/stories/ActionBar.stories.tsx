@@ -66,8 +66,8 @@ function FullWidth(props) {
 export const DisabledKeysStory: ActionBarStory = {
   ...Default,
   render: (args) => <DisabledKeys {...args} />
-}
+};
 
 function DisabledKeys(props) {
-  return <Example disabledKeys={['edit']} {...props} />
+  return <Example disabledKeys={['edit']} {...props} />;
 }

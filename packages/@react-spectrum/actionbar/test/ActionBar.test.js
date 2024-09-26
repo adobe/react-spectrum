@@ -297,5 +297,5 @@ describe('ActionBar', () => {
 
     expect(within(tree.getByRole('toolbar')).getAllByRole('button')[0]).toBeDisabled();
     expect(within(tree.getByRole('toolbar')).getAllByRole('button')[1]).not.toBeDisabled();
-  })
+  });
 });
