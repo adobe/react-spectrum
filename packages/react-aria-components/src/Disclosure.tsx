@@ -118,9 +118,10 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   let defaultId = useId();
   id ||= defaultId;
 
+  let isExpanded = groupState ? groupState.expandedKeys.has(id) : props.isExpanded;
   let state = useDisclosureState({
     ...props,
-    isExpanded: groupState ? groupState.expandedKeys.has(id) : props.isExpanded,
+    isExpanded,
     onExpandedChange(isExpanded) {
       if (groupState) {
         groupState.toggleKey(id);
@@ -134,6 +135,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   let isDisabled = props.isDisabled || groupState?.isDisabled || false;
   let {buttonProps, panelProps} = useDisclosure({
     ...props,
+    isExpanded,
     isDisabled
   }, state, panelRef);
   let {
