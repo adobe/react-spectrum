@@ -20,7 +20,7 @@ const meta: Meta<typeof ColorSwatch> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2/ColorSwatch'
+  title: 'ColorSwatch'
 };
 
 export default meta;

@@ -24,7 +24,7 @@ const meta: Meta<typeof ColorSwatchPicker> = {
   argTypes: {
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/ColorSwatchPicker'
+  title: 'ColorSwatchPicker'
 };
 
 export default meta;

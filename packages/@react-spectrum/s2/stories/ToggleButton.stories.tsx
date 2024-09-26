@@ -25,7 +25,7 @@ const meta: Meta<typeof ToggleButton> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
   },
-  title: 'S2/ToggleButton'
+  title: 'ToggleButton'
 };
 
 export default meta;

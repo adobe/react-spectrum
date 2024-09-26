@@ -26,7 +26,8 @@ const meta: Meta<typeof SegmentedControl> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'SegmentedControl'
 };
 
 export default meta;

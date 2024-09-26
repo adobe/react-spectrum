@@ -23,7 +23,7 @@ const meta: Meta<typeof Divider> = {
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
-  title: 'S2/Divider'
+  title: 'Divider'
 };
 
 export default meta;

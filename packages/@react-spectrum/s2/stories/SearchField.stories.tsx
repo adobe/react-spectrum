@@ -32,7 +32,7 @@ const meta: Meta<typeof SearchField> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
   },
-  title: 'S2/SearchField'
+  title: 'SearchField'
 };
 
 export default meta;

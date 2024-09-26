@@ -22,7 +22,7 @@ const meta: Meta<typeof ProgressBar> = {
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
-  title: 'S2/ProgressBar'
+  title: 'ProgressBar'
 };
 
 export default meta;
