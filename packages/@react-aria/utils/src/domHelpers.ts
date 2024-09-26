@@ -13,24 +13,45 @@ export const getOwnerWindow = (
   return doc.defaultView || window;
 };
 
-export const getRootNode = (el: Element | null | undefined): Document | ShadowRoot | null => {
+export const getRootNode = (
+  el: Element | null | undefined
+): Document | ShadowRoot | null => {
   if (!el) {
+    // Return the main document if the element is null or undefined
     return document;
   }
 
+  // If the element is disconnected from the DOM, return null
   if (!el.isConnected) {
     return null;
   }
 
+  // Get the root node of the element, or default to the document
   const rootNode = el.getRootNode ? el.getRootNode() : document;
 
   // Use nodeType to check the type of the rootNode
-  if (rootNode.nodeType === Node.DOCUMENT_NODE || rootNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-    return rootNode as Document | ShadowRoot;
+  // We use nodeType instead of instanceof checks because instanceof fails across different
+  // contexts (e.g., iframes or windows), as each context has its own global objects and constructors.
+  // nodeType is a primitive value and is consistent across different contexts, making it
+  // reliable for cross-context type checking.
+
+  const nodeType = rootNode.nodeType;
+
+  if (nodeType === Node.DOCUMENT_NODE) {
+    // rootNode is a Document
+    return rootNode as Document;
   }
 
+  if (nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in rootNode) {
+    // rootNode is a ShadowRoot (a specialized type of DocumentFragment)
+    // We check for the presence of the 'host' property to distinguish ShadowRoot from other DocumentFragments
+    return rootNode as ShadowRoot;
+  }
+
+  // For other types of nodes or DocumentFragments that are not ShadowRoots, return null
   return null;
 };
+
 
 /**
  * Retrieves a reference to the most appropriate "body" element for a given DOM context,
