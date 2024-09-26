@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes isQuiet 1`] = `
+"import { SearchField } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <SearchField />
+  <SearchField />
+  <SearchField />
+  <SearchField />
+  <SearchField />
+  <SearchField // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
+
+exports[`Removes placeholder 1`] = `
+"import { SearchField } from "@react-spectrum/s2";
+let placeholder = 'is this actually removed?';
+let props = {placeholder: 'is this actually removed?'};
+<div>
+  <SearchField />
+  <SearchField />
+  <SearchField />
+  <SearchField // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { SearchField } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <SearchField isInvalid />
+  <SearchField />
+  <SearchField // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState} />
+  <SearchField // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;

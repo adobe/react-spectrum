@@ -19,7 +19,7 @@ import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef>) {
+function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {

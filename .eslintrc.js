@@ -97,6 +97,12 @@ module.exports = {
         }
       ]
     }
+  },
+  {
+    files: ['packages/@react-spectrum/s2/**'],
+    rules: {
+      'react/react-in-jsx-scope': OFF
+    }
   }],
   env: {
     'browser': true,
@@ -114,7 +120,8 @@ module.exports = {
     'AsyncIterable': 'readonly',
     'FileSystemFileEntry': 'readonly',
     'FileSystemDirectoryEntry': 'readonly',
-    'FileSystemEntry': 'readonly'
+    'FileSystemEntry': 'readonly',
+    'IS_REACT_ACT_ENVIRONMENT': 'readonly'
   },
   settings: {
     jsdoc: {

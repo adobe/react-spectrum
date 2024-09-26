@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
-import {ReactElement, ReactNode, RefObject} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
 

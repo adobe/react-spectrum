@@ -12,7 +12,7 @@
 
 import {DraggableCollectionState} from '@react-stately/dnd';
 import {globalDndState, setDraggingCollectionRef} from './utils';
-import {RefObject} from 'react';
+import {RefObject} from '@react-types/shared';
 
 export interface DraggableCollectionOptions {}
 

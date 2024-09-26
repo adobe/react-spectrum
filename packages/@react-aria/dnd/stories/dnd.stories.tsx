@@ -386,7 +386,7 @@ function DraggableCollection(props) {
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -402,7 +402,7 @@ function DraggableCollection(props) {
           childNodes: []
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   let preview = useRef(null);

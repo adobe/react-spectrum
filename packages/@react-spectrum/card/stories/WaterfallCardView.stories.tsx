@@ -24,7 +24,6 @@ import {
   FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
-  IsLoadingNoHeightGrid,
   LoadingMoreGrid,
   StaticCards,
   StaticCardViewStory
@@ -156,14 +155,6 @@ export const SelectedKeys: ControlledCardViewStory = {
   ...ControlledCards,
   args: {
     ...ControlledCards.args,
-    layout: WaterfallLayout
-  }
-};
-
-export const IsLoadingNoHeightWaterfall: DynamicCardViewStory = {
-  ...IsLoadingNoHeightGrid,
-  args: {
-    ...IsLoadingNoHeightGrid.args,
     layout: WaterfallLayout
   }
 };

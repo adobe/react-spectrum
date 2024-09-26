@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Key, Node} from '@react-types/shared';
+import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Key, Node, RefObject} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {RefObject, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 
 export interface DraggableCollectionStateOptions extends DraggableCollectionProps {
   /** A collection of items. */

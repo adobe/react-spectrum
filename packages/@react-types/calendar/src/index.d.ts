@@ -67,7 +67,7 @@ export interface CalendarPropsBase {
 
 export type DateRange = RangeValue<DateValue> | null;
 export interface CalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
-export interface RangeCalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<RangeValue<T>> {
+export interface RangeCalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<RangeValue<T> | null> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.

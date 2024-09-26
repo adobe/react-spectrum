@@ -232,7 +232,7 @@ describe('TableView', function () {
         let {getByRole, getAllByText} = render(
           <DraggbleWithoutRowHeader tableViewProps={{selectedKeys: ['a'], selectionStyle: 'checkbox'}} />
         );
-      
+
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
@@ -240,9 +240,9 @@ describe('TableView', function () {
         let cell = within(row).getAllByRole('rowheader')[0];
         let cellText = getAllByText(cell.textContent);
         expect(cellText).toHaveLength(1);
-      
+
         let dataTransfer = new DataTransfer();
-      
+
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
 
@@ -414,10 +414,29 @@ describe('TableView', function () {
         });
       });
 
-      it('should not allow drag operations on a disabled row', function () {
+      it('should allow drag operations on a disabled row with disabledBehavior="selection"', function () {
         let {getByRole} = render(
-          <DraggableTableView tableViewProps={{disabledKeys: ['a']}} />
-      );
+          <DraggableTableView tableViewProps={{disabledBehavior: 'selection', disabledKeys: ['a']}} />
+        );
+
+        let grid = getByRole('grid');
+        let rowgroups = within(grid).getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+        let row = rows[0];
+        let cell = within(row).getAllByRole('rowheader')[0];
+        expect(cell).toHaveTextContent('Vin');
+        expect(row).toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+      });
+
+      it('should not allow drag operations on a disabled row with disabledBehavior="all"', function () {
+        let {getByRole} = render(
+          <DraggableTableView tableViewProps={{disabledBehavior: 'all', disabledKeys: ['a']}} />
+        );
 
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -2830,11 +2849,11 @@ describe('TableView', function () {
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
 
-      fireEvent.pointerDown(rows[0], {pointerType: 'mouse', button: 0, pointerId: 1});
+      await user.pointer({target: rows[0], keys: '[MouseLeft>]'});
       dragHandle = within(rows[0]).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
-      fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
+      await user.pointer({target: rows[0], keys: '[/MouseLeft]'});
 
       fireEvent.pointerEnter(rows[0], {pointerType: 'mouse'});
       dragHandle = within(rows[0]).getAllByRole('button')[0];
@@ -2842,13 +2861,12 @@ describe('TableView', function () {
       expect(dragHandle.style.position).toBe('absolute');
 
       // If dragHandle doesn't have a position applied, it isn't visually hidden
-      fireEvent.keyDown(rows[0], {key: 'Enter'});
-      fireEvent.keyUp(rows[0], {key: 'Enter'});
+      await user.keyboard('{Enter}');
       dragHandle = within(rows[0]).getAllByRole('button')[0];
       expect(dragHandle.style.position).toBe('');
     });
 
-    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', async function () {
+    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="select"', async function () {
       function hasDragHandle(el) {
         let buttons = within(el).queryAllByRole('button');
         if (buttons.length === 0) {
@@ -2858,7 +2876,43 @@ describe('TableView', function () {
       }
 
       let {getByRole} = render(
-        <DraggableTableView tableViewProps={{disabledKeys: ['a']}} />
+        <DraggableTableView tableViewProps={{disabledBehavior: 'select', disabledKeys: ['a']}} />
+      );
+
+      let grid = getByRole('grid');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+
+      await user.tab();
+      expect(hasDragHandle(rows[0])).toBeTruthy();
+      moveFocus('ArrowDown');
+      expect(hasDragHandle(rows[1])).toBeTruthy();
+
+      await user.pointer({target: rows[0], keys: '[MouseLeft>]'});
+      expect(hasDragHandle(rows[0])).toBeTruthy();
+      await user.pointer({target: rows[0], keys: '[/MouseLeft]'});
+
+      await user.pointer({target: rows[1], keys: '[MouseLeft>]'});
+      expect(hasDragHandle(rows[1])).toBeTruthy();
+      await user.pointer({target: rows[1], keys: '[/MouseLeft]'});
+
+      fireEvent.pointerEnter(rows[0]);
+      expect(hasDragHandle(rows[0])).toBeTruthy();
+      fireEvent.pointerEnter(rows[1]);
+      expect(hasDragHandle(rows[1])).toBeTruthy();
+    });
+
+    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="all"', async function () {
+      function hasDragHandle(el) {
+        let buttons = within(el).queryAllByRole('button');
+        if (buttons.length === 0) {
+          return false;
+        }
+        return buttons[0].getAttribute('draggable');
+      }
+
+      let {getByRole} = render(
+        <DraggableTableView tableViewProps={{disabledBehavior: 'all', disabledKeys: ['a']}} />
       );
 
       let grid = getByRole('grid');

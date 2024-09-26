@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Change variant from info to informative 1`] = `
+"import { StatusLight } from "@react-spectrum/s2";
+let variant = 'info';
+let props = {variant: 'info'};
+<div>
+  <StatusLight variant="informative">Test</StatusLight>
+  <StatusLight variant="informative">Test</StatusLight>
+  <StatusLight variant="foo">Test</StatusLight>
+  <StatusLight variant={"informative"}>Test</StatusLight>
+  <StatusLight // TODO(S2-upgrade): Prop variant could not be automatically updated because variant could not be followed.
+  variant={variant}>Test</StatusLight>
+  <StatusLight // TODO(S2-upgrade): check this spread for style props
+  {...props}>Test</StatusLight>
+</div>"
+`;
+
+exports[`Remove isDisabled 1`] = `
+"import { StatusLight } from "@react-spectrum/s2";
+let isDisabled = true;
+let props = {isDisabled: true};
+<div>
+  <StatusLight>Test</StatusLight>
+  <StatusLight>Test</StatusLight>
+  <StatusLight>Test</StatusLight>
+  <StatusLight>Test</StatusLight>
+  <StatusLight // TODO(S2-upgrade): check this spread for style props
+  {...props}>Test</StatusLight>
+</div>"
+`;

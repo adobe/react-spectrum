@@ -12,18 +12,19 @@
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionBuilder} from './Collection';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {CollectionBuilder} from '@react-aria/collections';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface ComboBoxRenderProps {
@@ -187,6 +188,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [PopoverContext, {
           ref: popoverRef,
           triggerRef: inputRef,
+          scrollRef: listBoxRef,
           placement: 'bottom start',
           isNonModal: true,
           trigger: 'ComboBox',

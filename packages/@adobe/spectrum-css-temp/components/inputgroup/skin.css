@@ -103,7 +103,7 @@ governing permissions and limitations under the License.
     specifically for readonly inputgroups that aren't disabled since the button will have the disabled class
     but we don't want the border color to be the disabled quiet one
   */
-  &:not(.is-disabled) {
+  &:not(.is-disabled):not(.is-focused) {
     .spectrum-FieldButton {
       &:disabled:before,
       &:disabled:hover:before {
@@ -148,7 +148,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.spectrum-InputGroup {
+  &.spectrum-InputGroup.spectrum-InputGroup {
     &.spectrum-InputGroup--invalid {
       .spectrum-FieldButton:before,
       .spectrum-InputGroup-input {

@@ -23,8 +23,8 @@ export class Selection extends Set<Key> {
   constructor(keys?: Iterable<Key> | Selection, anchorKey?: Key, currentKey?: Key) {
     super(keys);
     if (keys instanceof Selection) {
-      this.anchorKey = anchorKey || keys.anchorKey;
-      this.currentKey = currentKey || keys.currentKey;
+      this.anchorKey = anchorKey ?? keys.anchorKey;
+      this.currentKey = currentKey ?? keys.currentKey;
     } else {
       this.anchorKey = anchorKey;
       this.currentKey = currentKey;

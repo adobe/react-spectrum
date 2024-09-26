@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, Tag, TagGroup, TagList, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -172,5 +172,30 @@ export function VirtualizedGridListGrid() {
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
     </Virtualizer>
+  );
+}
+
+export function TagGroupInsideGridList() {
+  return (
+    <GridList
+      className={styles.menu} 
+      aria-label="Grid list with tag group"
+      style={{
+        width: 300,
+        height: 300
+      }}>
+      <MyGridListItem textValue="Tags">
+        1,1
+        <TagGroup aria-label="Tag group">
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1</Tag>
+            <Tag key="2">Tag 2</Tag>
+            <Tag key="3">Tag 3</Tag>
+          </TagList>
+        </TagGroup>
+      </MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridList>
   );
 }

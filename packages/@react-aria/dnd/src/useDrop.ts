@@ -11,11 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
+import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
 import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 

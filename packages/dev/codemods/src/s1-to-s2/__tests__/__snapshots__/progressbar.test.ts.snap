@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out labelPosition 1`] = `
+"import { ProgressBar } from "@react-spectrum/s2";
+<div>
+  // TODO(S2-upgrade): labelPosition has not been implemented yet.
+  <ProgressBar />
+  // TODO(S2-upgrade): labelPosition has not been implemented yet.
+  <ProgressBar />
+</div>"
+`;
+
+exports[`Removes showValueLabel 1`] = `
+"import { ProgressBar } from "@react-spectrum/s2";
+<div>
+  <ProgressBar />
+  <ProgressBar />
+  <ProgressBar />
+</div>"
+`;
+
+exports[`Renames variants 1`] = `
+"import { ProgressBar } from "@react-spectrum/s2";
+<div>
+  <ProgressBar staticColor="white"/>
+</div>"
+`;

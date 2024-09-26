@@ -682,6 +682,43 @@ describe('TooltipTrigger', function () {
       expect(() => getByText(helpfulText)).toThrow();
       fireEvent.mouseLeave(badButton);
     });
+
+    it('should hide tooltip on scroll', () => {
+      let {getByLabelText, getByText, getByTestId} = render(
+        <Provider theme={theme}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '30px',
+              overflow: 'scroll',
+              height: '200px'
+            }}
+            data-testid="scroll-container">
+            {new Array(10).fill().map((_, idx) => (
+              <TooltipTrigger key={idx}>
+                <ActionButton aria-label={`trigger-${idx}`} />
+                <Tooltip>{`Tooltip-${idx}`}</Tooltip>
+              </TooltipTrigger>
+            ))}
+          </div>
+        </Provider>
+      );
+
+      // Tooltip should be visible on focus
+      let button1 = getByLabelText('trigger-1');
+      act(() => {
+        button1.focus();
+      });
+      let tooltip1 = getByText('Tooltip-1');
+      expect(tooltip1).toBeVisible();
+
+      // Tooltip should not be visible on scroll
+      let scrollContainer = getByTestId('scroll-container');
+      expect(scrollContainer).toBeInTheDocument();
+      fireEvent.scroll(scrollContainer, {target: {top: 100}});
+      expect(tooltip1).not.toBeVisible();
+    });
   });
 
   it('supports a ref on the Tooltip', () => {

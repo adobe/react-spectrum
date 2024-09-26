@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dynamic - no change 1`] = `
+"import { MenuItem, ActionMenu } from "@react-spectrum/s2";
+let actionMenuItems = [
+  {name: 'Cut'},
+  {name: 'Copy'},
+  {name: 'Paste'},
+  {name: 'Select All'}
+];
+
+<div>
+  <ActionMenu items={actionMenuItems}>
+    {item => <MenuItem id={item.name}>{item.name}</MenuItem>}
+  </ActionMenu>
+</div>"
+`;
+
+exports[`Static - no change 1`] = `
+"import { MenuItem, ActionMenu } from "@react-spectrum/s2";
+
+<div>
+  <ActionMenu>
+    <MenuItem>Cut</MenuItem>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Paste</MenuItem>
+  </ActionMenu>
+</div>"
+`;

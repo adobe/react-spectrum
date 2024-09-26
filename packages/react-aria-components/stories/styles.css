@@ -387,3 +387,14 @@
     height: 100%;
   }
 }
+
+:global(.react-aria-Disclosure) {
+  :global(.react-aria-Button[slot=trigger]) {
+    background-color: transparent;
+    border: none;
+  }
+  :global(.react-aria-Header) {
+    display: flex;
+    align-items: center
+  }
+}

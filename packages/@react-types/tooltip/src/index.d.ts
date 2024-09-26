@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
+import {OverlayTriggerProps, Placement, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode} from 'react';
 
 export interface TooltipTriggerProps extends OverlayTriggerProps {
@@ -46,7 +46,12 @@ export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, '
    * anchor element.
    * @default 7
    */
-  offset?: number
+  offset?: number,
+  /**
+   * The placement of the tooltip with respect to the trigger.
+   * @default 'top'
+   */
+  placement?: Placement
 }
 
 export interface TooltipProps {

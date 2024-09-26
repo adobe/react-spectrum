@@ -31,6 +31,10 @@ export default {
     },
     isEmphasized: {
       control: 'boolean'
+    },
+    buttonLabelBehavior: {
+      control: 'select',
+      options: ['show', 'hide', 'collapse']
     }
   }
 } as ComponentMeta<typeof ActionBar>;
@@ -57,4 +61,13 @@ export const FullWidthStory: ActionBarStory = {
 function FullWidth(props) {
   let viewport = useViewportSize();
   return <Example tableWidth="100vw" containerHeight={viewport.height} isQuiet {...props} />;
+}
+
+export const DisabledKeysStory: ActionBarStory = {
+  ...Default,
+  render: (args) => <DisabledKeys {...args} />
+};
+
+function DisabledKeys(props) {
+  return <Example disabledKeys={['edit']} {...props} />;
 }

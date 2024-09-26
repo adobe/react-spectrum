@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useEffect} from 'react';
+import {RefObject} from '@react-types/shared';
+import {useEffect} from 'react';
 
 // This behavior moved from useOverlayTrigger to useOverlayPosition.
 // For backward compatibility, where useOverlayTrigger handled hiding the popover on close,

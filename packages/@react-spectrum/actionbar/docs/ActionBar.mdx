@@ -248,3 +248,47 @@ function Example({isEmphasized}: {isEmphasized?: boolean}) {
   <Example isEmphasized />
 </Flex>
 ```
+
+### isDisabled
+To disable individual items, a list of disabledKeys can be provided.
+
+```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['photoshop']));
+
+  return (
+    <ActionBarContainer height={300} width="size-5000">
+      <ListView aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <Item key="photoshop">Adobe Photoshop</Item>
+        <Item key="illustrator">Adobe Illustrator</Item>
+        <Item key="xd">Adobe XD</Item>
+      </ListView>
+      <ActionBar
+        /*- begin highlight -*/
+        disabledKeys={['edit']}
+        /*- end highlight -*/
+        isEmphasized={true}
+        selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action...`)}
+        onClearSelection={() => setSelectedKeys(new Set())}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<Example />
+```

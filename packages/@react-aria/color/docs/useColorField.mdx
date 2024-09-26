@@ -108,7 +108,7 @@ The following examples show how to use the `ColorField` component created in the
 By default, `ColorField` is uncontrolled. You can set a default value using the `defaultValue` prop.
 
 ```tsx example
-<ColorField defaultValue="#7f007f" />
+<ColorField aria-label="Color" defaultValue="#7f007f" />
 ```
 
 ### Controlled
@@ -124,7 +124,7 @@ function Example() {
   let [color, setColor] = React.useState(parseColor('#7f007f'));
   return (
     <>
-      <ColorField value={color} onChange={setColor} />
+      <ColorField aria-label="Color" value={color} onChange={setColor} />
       <p>Current color value: {color.toString('hex')}</p>
     </>
   );
@@ -137,8 +137,8 @@ A `ColorField` can be disabled using the `isDisabled` prop, and made read only u
 The difference is that read only color fields are focusable but disabled color fields are not.
 
 ```tsx example
-<ColorField defaultValue="#7f007f" isDisabled />
-<ColorField defaultValue="#7f007f" isReadOnly />
+<ColorField aria-label="Color" defaultValue="#7f007f" isDisabled />
+<ColorField aria-label="Color" defaultValue="#7f007f" isReadOnly />
 ```
 
 ### HTML forms

@@ -1,0 +1,54 @@
+diff --git a/gen-preview-modern.js b/gen-preview-modern.js
+index a1fe3d1ce6b748e533200f5af69a0481e5809c6c..aeed09de7dbaddd4606ac3579a86cb2ba389eb2f 100644
+--- a/gen-preview-modern.js
++++ b/gen-preview-modern.js
+@@ -7,9 +7,16 @@ const {
+ } = require("@storybook/core-common");
+ const { logger } = require("@storybook/node-logger");
+ const { promise: glob } = require("glob-promise");
++const isMingw = require('is-mingw');
+ 
+-const absoluteToSpecifier = (generatedEntries, abs) =>
+-  "./" + path.relative(generatedEntries, abs);
++const absoluteToSpecifier = (generatedEntries, abs) => {
++  let relativePath = path.relative(generatedEntries, abs);
++  if (isMingw()) {
++    relativePath = relativePath.replace(/\\/g, '/');
++  }
++
++  return  "./" + relativePath;
++}
+ 
+ module.exports.generatePreviewModern = async function generatePreviewModern(
+   options,
+@@ -66,7 +73,7 @@ module.exports.generatePreviewModern = async function generatePreviewModern(
+    */
+   const code = `
+   import { composeConfigs, PreviewWeb, ClientApi } from '@storybook/preview-api';
+-  
++
+   // generateAddonSetupCode
+   import { createBrowserChannel } from '@storybook/channels';
+   import { addons } from '@storybook/preview-api';
+@@ -94,7 +101,7 @@ module.exports.generatePreviewModern = async function generatePreviewModern(
+   window.__STORYBOOK_CLIENT_API__ = new ClientApi({ storyStore: preview.storyStore });
+ 
+   preview.initialize({ importFn, getProjectAnnotations });
+-  
++
+   `;
+   // ${generateHMRHandler(frameworkName)};
+   return code;
+@@ -152,7 +159,11 @@ function toImportPath(relativePath) {
+ async function toImportFn(stories, generatedEntries) {
+   const objectEntries = stories.map((file) => {
+     const ext = path.extname(file);
+-    const relativePath = /*normalizePath*/ path.relative(process.cwd(), file);
++    let relativePath = /*normalizePath*/ path.relative(process.cwd(), file);
++    if (isMingw()) {
++      relativePath = relativePath.replace(/\\/g, '/');
++    }
++
+     if (![".js", ".jsx", ".ts", ".tsx", ".mdx"].includes(ext)) {
+       logger.warn(
+         `Cannot process ${ext} file with storyStoreV7: ${relativePath}`

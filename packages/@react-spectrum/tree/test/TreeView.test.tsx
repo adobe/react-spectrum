@@ -227,7 +227,6 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('data-level');
       expect(row).toHaveAttribute('aria-posinset');
       expect(row).toHaveAttribute('aria-setsize');
-      expect(row).toHaveAttribute('data-has-child-rows');
       expect(row).toHaveAttribute('data-rac');
       expect(row).not.toHaveAttribute('data-selected');
       expect(row).not.toHaveAttribute('data-disabled');
@@ -251,7 +250,7 @@ describe('Tree', () => {
     expect(rowNoChild).toHaveAttribute('data-level', '1');
     expect(rowNoChild).toHaveAttribute('aria-posinset', '1');
     expect(rowNoChild).toHaveAttribute('aria-setsize', '2');
-    expect(rowNoChild).toHaveAttribute('data-has-child-rows', 'false');
+    expect(rowNoChild).not.toHaveAttribute('data-has-child-rows');
     expect(rowNoChild).toHaveAttribute('data-rac');
 
     let rowWithChildren = rows[1];
@@ -285,7 +284,7 @@ describe('Tree', () => {
     expect(level3ChildRow).toHaveAttribute('data-level', '3');
     expect(level3ChildRow).toHaveAttribute('aria-posinset', '1');
     expect(level3ChildRow).toHaveAttribute('aria-setsize', '1');
-    expect(level3ChildRow).toHaveAttribute('data-has-child-rows', 'false');
+    expect(level3ChildRow).not.toHaveAttribute('data-has-child-rows');
     expect(level3ChildRow).toHaveAttribute('data-rac');
 
     let level2ChildRow2 = rows[4];
@@ -296,7 +295,7 @@ describe('Tree', () => {
     expect(level2ChildRow2).toHaveAttribute('data-level', '2');
     expect(level2ChildRow2).toHaveAttribute('aria-posinset', '2');
     expect(level2ChildRow2).toHaveAttribute('aria-setsize', '3');
-    expect(level2ChildRow2).toHaveAttribute('data-has-child-rows', 'false');
+    expect(level2ChildRow2).not.toHaveAttribute('data-has-child-rows');
     expect(level2ChildRow2).toHaveAttribute('data-rac');
 
     let level2ChildRow3 = rows[5];
@@ -307,7 +306,7 @@ describe('Tree', () => {
     expect(level2ChildRow3).toHaveAttribute('data-level', '2');
     expect(level2ChildRow3).toHaveAttribute('aria-posinset', '3');
     expect(level2ChildRow3).toHaveAttribute('aria-setsize', '3');
-    expect(level2ChildRow3).toHaveAttribute('data-has-child-rows', 'false');
+    expect(level2ChildRow3).not.toHaveAttribute('data-has-child-rows');
     expect(level2ChildRow3).toHaveAttribute('data-rac');
   });
 
@@ -430,7 +429,7 @@ describe('Tree', () => {
     expect(rows[0]).toHaveAttribute('aria-label', 'Test');
     // Until the row gets children, don't mark it with the aria/data attributes.
     expect(rows[0]).not.toHaveAttribute('aria-expanded');
-    expect(rows[0]).toHaveAttribute('data-has-child-rows', 'false');
+    expect(rows[0]).not.toHaveAttribute('data-has-child-rows');
     expect(chevron).toBeTruthy();
   });
 
@@ -846,7 +845,7 @@ describe('Tree', () => {
         await trigger(rows[0], 'Enter');
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(rows[0]).toHaveAttribute('aria-level', '1');
         expect(rows[0]).toHaveAttribute('aria-posinset', '1');
         expect(rows[0]).toHaveAttribute('aria-setsize', '2');
@@ -884,7 +883,7 @@ describe('Tree', () => {
         await trigger(rows[2], 'ArrowLeft');
         expect(document.activeElement).toBe(rows[2]);
         expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[2]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[2]).not.toHaveAttribute('data-expanded');
         expect(rows[2]).toHaveAttribute('aria-level', '2');
         expect(rows[2]).toHaveAttribute('aria-posinset', '2');
         expect(rows[2]).toHaveAttribute('aria-setsize', '5');
@@ -944,14 +943,14 @@ describe('Tree', () => {
         await user.tab();
         rows = tree.getAllByRole('row');
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(rows[0]).toHaveAttribute('aria-disabled', 'true');
         expect(rows[0]).toHaveAttribute('data-disabled', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
 
         await trigger(rows[0], 'Space');
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
       });
 
@@ -971,7 +970,7 @@ describe('Tree', () => {
         await trigger(chevron, 'ArrowLeft');
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
@@ -1016,7 +1015,7 @@ describe('Tree', () => {
         let chevron = within(rows[0]).getAllByRole('button')[0];
         await trigger(chevron, 'ArrowLeft');
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
@@ -1044,7 +1043,7 @@ describe('Tree', () => {
         let chevron = within(rows[0]).getAllByRole('button')[0];
         await trigger(chevron, 'ArrowLeft');
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1075,7 +1074,7 @@ describe('Tree', () => {
         let chevron = within(rows[0]).getAllByRole('button')[0];
         await trigger(chevron, 'ArrowLeft');
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).not.toHaveAttribute('data-expanded');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
       });
@@ -1097,7 +1096,7 @@ describe('Tree', () => {
       await user.tab();
       expect(document.activeElement).toBe(rows[0]);
       expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-      expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+      expect(rows[0]).not.toHaveAttribute('data-expanded');
 
       await user.click(rows[0]);
       rows = getAllByRole('row');
@@ -1105,7 +1104,7 @@ describe('Tree', () => {
 
       await user.click(rows[0]);
       expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-      expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+      expect(rows[0]).not.toHaveAttribute('data-expanded');
       rows = getAllByRole('row');
       expect(rows).toHaveLength(2);
     });

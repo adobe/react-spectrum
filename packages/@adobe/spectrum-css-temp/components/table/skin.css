@@ -180,6 +180,10 @@ tbody.spectrum-Table-body {
     background-color: var(--spectrum-table-row-background-color-down);
   }
 
+  &.is-disabled .spectrum-Table-cell.is-disabled {
+    color: var(--spectrum-alias-text-color-disabled);
+  }
+
   /* Alternative to border on rows. Using box shadow since they don't take room unlike border which would cause wiggles
    * in the highlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
    * the bottom border curved corners were cut off when using borders.

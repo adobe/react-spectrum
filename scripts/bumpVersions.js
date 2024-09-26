@@ -41,21 +41,33 @@ let monopackages = new Set([
   'react-stately'
 ]);
 
+// Should be able to replace a lot of this file with yarns versioning plugin
+// it should ensure version bumps for dependencies
+// it can also make a preview if we use deferred updates, and we don't need to have semver
+// it can also avoid private packages in the workspace
+// shouldn't need to query npm for existing packages, since we commit the new version
+// yarn should also be able to tell us packages which have changed since last release
+
 class VersionManager {
   constructor() {
+    let workspaceLookup = {};
     // Get dependency tree from yarn workspaces
-    try {
-      // yarn 1.21 returns this structure
-      this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
-    } catch (e) {
-      try {
-        // Unknown what versions of yarn return this, but it was the original implementation.
-        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
-      } catch (e) {
-        // If that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it.
-        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString());
-      }
-    }
+    this.workspacePackages = exec('yarn workspaces list --json -v').toString().split('\n')
+      .map(line => {
+        try {
+          let result = JSON.parse(line);
+          workspaceLookup[result.location] = result.name;
+          return result;
+        } catch (e) {
+          // ignore empty lines
+        }
+      })
+      .filter(Boolean)
+      .reduce((acc, item) => {
+        acc[item.name] = item;
+        acc[item.name].workspaceDependencies = item.workspaceDependencies.map(dep => workspaceLookup[dep]);
+        return acc;
+      }, {});
     this.existingPackages = new Set();
     this.changedPackages = new Set();
     this.versionBumps = {};

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
-import {RefObject, useCallback, useEffect, useState} from 'react';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 

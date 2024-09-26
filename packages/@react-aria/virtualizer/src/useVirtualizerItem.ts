@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from '@react-types/shared';
+import {Key, RefObject} from '@react-types/shared';
 import {LayoutInfo, Size} from '@react-stately/virtualizer';
-import {RefObject, useCallback} from 'react';
+import {useCallback} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 interface IVirtualizer {

@@ -11,9 +11,9 @@
  */
 
 import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {Orientation} from '@react-types/shared';
+import {forwardRefType, Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ToolbarRenderProps {

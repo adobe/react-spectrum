@@ -375,7 +375,7 @@ function ExampleList(props) {
   return (
     <List aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
       {item => (
-        <Item>
+        <Item textValue={item.name}>
           {item.name}
           <Button onPress={() => alert(`Info for ${item.name}...`)}>
             Info

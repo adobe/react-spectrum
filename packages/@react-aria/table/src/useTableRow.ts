@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement} from '@react-types/shared';
+import {FocusableElement, RefObject} from '@react-types/shared';
 import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
 import type {GridNode} from '@react-types/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes} from 'react';
 import {mergeProps, useSyntheticLinkProps} from '@react-aria/utils';
 import {TableCollection} from '@react-types/table';
 import {tableNestedRows} from '@react-stately/flags';

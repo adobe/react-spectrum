@@ -23,10 +23,14 @@ export interface ColorChannelFieldState extends NumberFieldState {
  */
 export function useColorChannelFieldState(props: ColorChannelFieldStateOptions): ColorChannelFieldState {
   let {channel, colorSpace, locale} = props;
+  let black = useColor('#000')!;
   let initialValue = useColor(props.value);
-  let initialDefaultValue = useColor(props.defaultValue || '#0000')!;
-  let [colorValue, setColor] = useControlledState(initialValue || undefined, initialDefaultValue, props.onChange);
-  let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
+  let initialDefaultValue = useColor(props.defaultValue);
+  let [colorValue, setColor] = useControlledState(initialValue, initialDefaultValue ?? null, props.onChange);
+  let color = useMemo(() => {
+    let nonNullColorValue = colorValue || black;
+    return colorSpace && nonNullColorValue ? nonNullColorValue.toFormat(colorSpace) : nonNullColorValue;
+  }, [black, colorValue, colorSpace]);
   let value = color.getChannelValue(channel);
   let range = color.getChannelRange(channel);
   let formatOptions = useMemo(() => color.getChannelFormatOptions(channel), [color, channel]);
@@ -34,8 +38,14 @@ export function useColorChannelFieldState(props: ColorChannelFieldStateOptions):
 
   let numberFieldState = useNumberFieldState({
     locale,
-    value: value / multiplier,
-    onChange: (v) => setColor(color.withChannelValue(channel, v * multiplier)),
+    value: colorValue === null ? NaN : value / multiplier,
+    onChange: (v) => {
+      if (!Number.isNaN(v)) {
+        setColor(color.withChannelValue(channel, v * multiplier));
+      } else {
+        setColor(null);
+      }
+    },
     minValue: range.minValue / multiplier,
     maxValue: range.maxValue / multiplier,
     step: range.step / multiplier,

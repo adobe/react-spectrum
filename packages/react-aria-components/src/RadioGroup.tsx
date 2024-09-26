@@ -11,13 +11,14 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
@@ -25,7 +26,7 @@ export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvent
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: MutableRefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export interface RadioGroupRenderProps {

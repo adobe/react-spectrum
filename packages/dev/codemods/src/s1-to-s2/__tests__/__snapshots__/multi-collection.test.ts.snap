@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Does not affect unimplemented collections 1`] = `
+"import {Item, ActionBarContainer, ActionBar, ListView, ListBox} from '@adobe/react-spectrum';
+import {SearchAutocomplete} from '@react-spectrum/autocomplete';
+import {StepList} from '@react-spectrum/steplist';
+
+<div>
+  <SearchAutocomplete>
+    <Item key="one">One</Item>
+    <Item key="two">Two</Item>
+    <Item key="three">Three</Item>
+  </SearchAutocomplete>
+  <ActionBarContainer height={300} maxWidth="size-6000">
+    <ListView>
+      <Item key="photoshop">Adobe Photoshop</Item>
+      <Item key="illustrator">Adobe Illustrator</Item>
+      <Item key="xd">Adobe XD</Item>
+    </ListView>
+    <ActionBar>
+      <Item key="one">One</Item>
+      <Item key="two">Two</Item>
+      <Item key="three">Three</Item>
+    </ActionBar>
+  </ActionBarContainer>
+  <StepList>
+    <Item key="one">One</Item>
+    <Item key="two">Two</Item>
+    <Item key="three">Three</Item>
+  </StepList>
+  <ListBox>
+    <Item key="one">One</Item>
+    <Item key="two">Two</Item>
+    <Item key="three">Three</Item>
+  </ListBox>
+</div>"
+`;
+
+exports[`Static - Renames Item to Breadcrumb and adds import 1`] = `
+"import {
+  Breadcrumb,
+  MenuItem,
+  MenuSection,
+  Breadcrumbs,
+  Menu,
+  MenuTrigger,
+  SubmenuTrigger,
+  Button,
+  Header,
+  Heading,
+} from "@react-spectrum/s2";
+
+<div>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs>
+    <Breadcrumb id="home">Home</Breadcrumb>
+    <Breadcrumb id="trendy">Trendy</Breadcrumb>
+    <Breadcrumb id="march 2020 assets">March 2020 Assets</Breadcrumb>
+  </Breadcrumbs>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      <MenuItem>Cut</MenuItem>
+      <MenuItem>Copy</MenuItem>
+      <MenuItem>Paste</MenuItem>
+      <SubmenuTrigger>
+        <MenuItem>Share</MenuItem>
+        <Menu>
+          <MenuItem>SMS</MenuItem>
+          <MenuItem>Email</MenuItem>
+        </Menu>
+      </SubmenuTrigger>
+      <MenuSection>
+        <Header>
+          <Heading>Section heading</Heading>
+        </Header>
+        <MenuItem>Save</MenuItem>
+      </MenuSection>
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;

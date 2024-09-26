@@ -12,14 +12,14 @@
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useEffect, useMemo, useRef} from 'react';
 
 export interface AriaCalendarCellProps {
   /** The date that this cell represents. */

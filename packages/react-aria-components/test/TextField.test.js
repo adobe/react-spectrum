@@ -238,5 +238,24 @@ describe('TextField', () => {
       expect(outerEl[0]).not.toHaveAttribute('id');
       expect(input).toHaveAttribute('id', 'name');
     });
+
+    it('should link an id on the input to the label htmlFor', async () => {
+      let {getAllByTestId, getByRole, getByText} = render(
+        <TextField defaultValue="test" data-testid="text-field-test" data-foo="bar">
+          <Label>Test</Label>
+          <Input id="name" />
+          <Text slot="description">Description</Text>
+          <Text slot="errorMessage">Error</Text>
+        </TextField>
+      );
+      let outerEl = getAllByTestId('text-field-test');
+      let input = getByRole('textbox');
+      let label = getByText('Test');
+
+      expect(outerEl).toHaveLength(1);
+      expect(outerEl[0]).not.toHaveAttribute('id');
+      expect(input).toHaveAttribute('id', 'name');
+      expect(label).toHaveAttribute('for', 'name');
+    });
   });
 });

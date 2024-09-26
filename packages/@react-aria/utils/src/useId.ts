@@ -22,7 +22,7 @@ let canUseDOM = Boolean(
   window.document.createElement
 );
 
-let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
+let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
 
 /**
  * If a default is not provided, generate an id.
@@ -39,7 +39,12 @@ export function useId(defaultId?: string): string {
   }, []);
 
   if (canUseDOM) {
-    idsUpdaterMap.set(res, updateValue);
+    // TS not smart enough to know that `has` means the value exists
+    if (idsUpdaterMap.has(res) && !idsUpdaterMap.get(res)!.includes(updateValue)) {
+      idsUpdaterMap.set(res, [...idsUpdaterMap.get(res)!, updateValue]);
+    } else {
+      idsUpdaterMap.set(res, [updateValue]);
+    }
   }
 
   useLayoutEffect(() => {
@@ -71,15 +76,15 @@ export function mergeIds(idA: string, idB: string): string {
     return idA;
   }
 
-  let setIdA = idsUpdaterMap.get(idA);
-  if (setIdA) {
-    setIdA(idB);
+  let setIdsA = idsUpdaterMap.get(idA);
+  if (setIdsA) {
+    setIdsA.forEach(fn => fn(idB));
     return idB;
   }
 
-  let setIdB = idsUpdaterMap.get(idB);
-  if (setIdB) {
-    setIdB(idA);
+  let setIdsB = idsUpdaterMap.get(idB);
+  if (setIdsB) {
+    setIdsB.forEach(fn => fn(idA));
     return idA;
   }
 

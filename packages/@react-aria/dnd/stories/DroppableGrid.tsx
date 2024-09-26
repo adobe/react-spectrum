@@ -122,7 +122,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
     focusMode: 'cell',
     selectedKeys: props.selectedKeys,
     onSelectionChange: props.onSelectionChange,
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -138,7 +138,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
           childNodes: []
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   React.useImperativeHandle(ref, () => ({

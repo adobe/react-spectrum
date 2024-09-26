@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, RefObject, useCallback, useEffect, useRef} from 'react';
+import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
-import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';

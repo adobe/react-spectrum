@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useDOMPropsResponderContext} from './DOMPropsContext';
 
 export function useDOMPropsResponder(domRef: RefObject<Element | null>) {

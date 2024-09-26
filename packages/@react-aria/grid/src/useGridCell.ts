@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {isFocusVisible} from '@react-aria/interactions';
-import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
+import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -138,7 +138,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           let prev = keyboardDelegate.getKeyLeftOf(node.key);
           if (prev !== node.key) {
             // We prevent the capturing event from reaching children of the cell, e.g. pickers.
-            // We want arrow keys to navigate to the next cell instead. We need to re-dispatch 
+            // We want arrow keys to navigate to the next cell instead. We need to re-dispatch
             // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
             ref.current.parentElement.dispatchEvent(
               new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
@@ -180,7 +180,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
             // We prevent the capturing event from reaching children of the cell, e.g. pickers.
-            // We want arrow keys to navigate to the next cell instead. We need to re-dispatch 
+            // We want arrow keys to navigate to the next cell instead. We need to re-dispatch
             // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
             ref.current.parentElement.dispatchEvent(
               new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)

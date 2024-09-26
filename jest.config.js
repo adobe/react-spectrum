@@ -170,6 +170,7 @@ module.exports = {
     '/node_modules/',
     '\\.ssr\\.test\\.[tj]sx?$'
   ],
+  testTimeout: 20000,
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],

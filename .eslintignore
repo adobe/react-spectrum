@@ -16,3 +16,4 @@ packages/dev/storybook-builder-parcel/preview.js
 packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts
 examples/**
 starters/**
+packages/@react-spectrum/s2/icon.d.ts

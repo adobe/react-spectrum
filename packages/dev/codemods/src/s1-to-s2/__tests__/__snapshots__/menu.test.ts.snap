@@ -1,0 +1,218 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dynamic - Renames Item to MenuItem with Submenu, Section to MenuSection 1`] = `
+"import { MenuItem, MenuSection, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react-spectrum/s2";
+const items = [
+  { id: 'copy', name: 'Copy' },
+  { id: 'cut', name: 'Cut' },
+  { id: 'paste', name: 'Paste' },
+  {
+    id: 'share', name: 'Share',
+    children: [
+      { id: 'email', name: 'Email' },
+      { id: 'SMS', name: 'SMS' }
+    ]
+  },
+  {
+    id: 'save', name: 'Save', isSection: true,
+    children: [
+      {id: 'folder', name: 'Folder'},
+      {id: 'file', name: 'File'}
+    ]
+  }
+];
+<div>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu items={items}>
+      {function renderSubmenu(item) {
+        if (item.children) {
+          if (item.isSection) {
+            return (
+              <MenuSection items={item.children}>
+                {(item) => {
+                  if (item.children) {
+                    return (
+                      (<SubmenuTrigger>
+                        <MenuItem>{item.name}</MenuItem>
+                        <Menu items={item.children}>
+                          {(item) => renderSubmenu(item)}
+                        </Menu>
+                      </SubmenuTrigger>)
+                    );
+                  } else {
+                    return <MenuItem>{item.name}</MenuItem>;
+                  }
+                }}
+              </MenuSection>
+            );
+          } else {
+            return (
+              (<SubmenuTrigger>
+                <MenuItem>{item.name}</MenuItem>
+                <Menu items={item.children}>
+                  {(item) => renderSubmenu(item)}
+                </Menu>
+              </SubmenuTrigger>)
+            );
+          }
+        } else {
+          return <MenuItem>{item.name}</MenuItem>;
+        }
+      }}
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;
+
+exports[`Dynamic - Renames key to id 1`] = `
+"import { MenuItem, Menu, MenuTrigger, SubmenuTrigger, Button } from "@react-spectrum/s2";
+const items = [
+  { key: 'copy', name: 'Copy' },
+  { key: 'cut', name: 'Cut' },
+  { key: 'paste', name: 'Paste' },
+  {
+    key: 'share', name: 'Share',
+    children: [
+      { key: 'email', name: 'Email' },
+      { key: 'sms', name: 'SMS' }
+    ]
+  }
+];
+<div>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu items={items}>
+      {function renderSubmenu(item) {
+        if (item.children) {
+          return (
+            (<SubmenuTrigger>
+              <MenuItem id={item.key}>{item.name}</MenuItem>
+              <Menu items={item.children}>
+                {(item) => renderSubmenu(item)}
+              </Menu>
+            </SubmenuTrigger>)
+          );
+        } else {
+          return <MenuItem id={item.key}>{item.name}</MenuItem>;
+        }
+      }}
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;
+
+exports[`Leaves comment if no parent component detected for a Section 1`] = `
+"import { Item, Section } from '@adobe/react-spectrum';
+
+import { Menu, MenuTrigger, Button } from "@react-spectrum/s2";
+
+const sections = [
+  { key: 'copy', name: 'Copy', children: [{key: 'item', name: 'Item'}] },
+  { key: 'cut', name: 'Cut', children: [] },
+  { key: 'paste', name: 'Paste', children: [] }
+].map(section => (
+  // TODO(S2-upgrade): Couldn't automatically detect what type of collection component this is rendered in. You'll need to update this manually.
+  <Section key={section.key}>
+    {section.children.map(item => // TODO(S2-upgrade): Couldn't automatically detect what type of collection component this is rendered in. You'll need to update this manually.
+    <Item key={item.key}>{item.name}</Item>)}
+  </Section>
+));
+
+<div>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      {items}
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;
+
+exports[`Leaves comment if no parent component detected for an Item 1`] = `
+"import { Item } from '@adobe/react-spectrum';
+
+import { Menu, MenuTrigger, Button } from "@react-spectrum/s2";
+
+const items = [
+  { key: 'copy', name: 'Copy' },
+  { key: 'cut', name: 'Cut' },
+  { key: 'paste', name: 'Paste' }
+].map(item => // TODO(S2-upgrade): Couldn't automatically detect what type of collection component this is rendered in. You'll need to update this manually.
+<Item key={item.key}>{item.name}</Item>);
+
+<div>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      {items}
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;
+
+exports[`Static - Renames Item to MenuItem, Section to MenuSection 1`] = `
+"import {
+  MenuItem,
+  MenuSection,
+  Menu,
+  MenuTrigger,
+  SubmenuTrigger,
+  Button,
+  Header,
+  Heading,
+} from "@react-spectrum/s2";
+<div>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      <MenuItem>Cut</MenuItem>
+      <MenuItem>Copy</MenuItem>
+      <MenuItem>Paste</MenuItem>
+      <SubmenuTrigger>
+        <MenuItem>Share</MenuItem>
+        <Menu>
+          <MenuItem>SMS</MenuItem>
+          <MenuItem>Email</MenuItem>
+        </Menu>
+      </SubmenuTrigger>
+      <MenuSection><Header>Section heading</Header>
+        <MenuItem>Save</MenuItem>
+      </MenuSection>
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;
+
+exports[`Static - Renames key to id 1`] = `
+"import {
+  MenuItem,
+  MenuSection,
+  Menu,
+  MenuTrigger,
+  SubmenuTrigger,
+  Button,
+  Header,
+  Heading,
+} from "@react-spectrum/s2";
+<div>
+  <MenuTrigger>
+    <Button>Edit</Button>
+    <Menu>
+      <MenuItem id="cut">Cut</MenuItem>
+      <MenuItem id="copy">Copy</MenuItem>
+      <MenuItem id="paste">Paste</MenuItem>
+      <SubmenuTrigger>
+        <MenuItem id="share">Share</MenuItem>
+        <Menu>
+          <MenuItem id="sms">SMS</MenuItem>
+          <MenuItem id="email">Email</MenuItem>
+        </Menu>
+      </SubmenuTrigger>
+      <MenuSection><Header>Section heading</Header>
+        <MenuItem id="save">Save</MenuItem>
+      </MenuSection>
+    </Menu>
+  </MenuTrigger>
+</div>"
+`;

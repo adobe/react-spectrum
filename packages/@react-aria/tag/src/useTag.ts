@@ -11,12 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps} from '@react-aria/utils';
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, RefObject} from 'react';
+import {KeyboardEvent} from 'react';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates} from '@react-aria/selection';
 import {useGridListItem} from '@react-aria/gridlist';
@@ -87,6 +87,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
+      isDisabled: state.disabledKeys.has(item.key) || item.props.isDisabled,
       id: buttonId,
       onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
       excludeFromTabOrder: true

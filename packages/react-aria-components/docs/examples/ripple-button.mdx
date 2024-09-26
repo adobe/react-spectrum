@@ -20,12 +20,12 @@ import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 keywords: [example, button, aria, accessibility, react, component]
 type: component
 image: ripple-button.png
-description: A ripple animated button styled with Tailwind CSS.
+description: A button with an animated ripple effect styled with Tailwind CSS.
 ---
 
 # Ripple Button
 
-An animated Ripple [Button](../Button.html) styled with [Tailwind CSS](https://tailwindcss.com/).
+A [Button](../Button.html) with an animated ripple effect styled with [Tailwind CSS](https://tailwindcss.com/).
 
 ## Example
 
@@ -39,17 +39,17 @@ import {useEffect, useRef, useState} from 'react';
 import Airplane from '@spectrum-icons/workflow/Airplane';
 
 function RippleButton(props) {
-  const [coords, setCoords] = useState({x: -1, y: -1});
-  const [isRippling, setIsRippling] = useState(false);
+  const [coords, setCoords] = useState(null);
 
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let onPress = (e) => {
     setCoords({x: e.x, y: e.y});
     if (e.x !== -1 && e.y !== -1) {
-      setIsRippling(true);
-      timeout.current = setTimeout(() => setIsRippling(false), 600);
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => setCoords(null), 600);
     }
   };
+
   useEffect(() => {
     return () => {
       clearTimeout(timeout.current);
@@ -61,20 +61,19 @@ function RippleButton(props) {
       <Button
         onPress={onPress}
         className={`
-      relative overflow-hidden min-h-16
-      inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white
+      relative overflow-hidden
+      inline-flex items-center justify-center rounded-md bg-black bg-opacity-50 bg-clip-padding border border-white/20 px-6 py-4 text-white text-lg
       hover:bg-opacity-60 pressed:bg-opacity-70 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75`}>
-      {isRippling ? (
+      {coords && (
         <div
-          className="ripple"
+          key={`${coords.x},${coords.y}`}
+          className="absolute h-8 w-8 rounded-full opacity-100 bg-white/60"
           style={{
+            animation: 'ripple 600ms linear',
             left: coords.x - 15,
             top: coords.y - 15
-          }} />
-        ) : (
-          ''
-        )}
-        <span className="flex items-center gap-2">{props.children}</span>
+          }} />)}
+        <span className="flex items-center gap-4">{props.children}</span>
       </Button>
     </div>
   )
@@ -83,16 +82,6 @@ function RippleButton(props) {
 <RippleButton><Airplane size="S" /> Book flight</RippleButton>
 ```
 ```css
-div.ripple {
-  position: absolute;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 1;
-  animation: ripple 600ms linear;
-  background-color: rgba(255, 255, 255, .6);
-}
 @keyframes ripple {
   from {
     transform: scale(0);

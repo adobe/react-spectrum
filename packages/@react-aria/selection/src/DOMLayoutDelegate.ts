@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, LayoutDelegate, Rect, Size} from '@react-types/shared';
-import {RefObject} from 'react';
+import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 
 export class DOMLayoutDelegate implements LayoutDelegate {
   private ref: RefObject<HTMLElement>;

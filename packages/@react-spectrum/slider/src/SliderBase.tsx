@@ -11,8 +11,8 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
-import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
+import {FocusableRef, RefObject} from '@react-types/shared';
+import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
