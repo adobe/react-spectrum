@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, AssetCard, Avatar, Badge, Button, Card, CardPreview, CardProps, CollectionCardPreview, Content, Divider, Footer, Image, MenuItem, Meter, ProductCard, Skeleton, StatusLight, Text, UserCard} from '../src';
+import {ActionMenu, AssetCard, Avatar, Badge, Button, Card, CardPreview, CardProps, CollectionCardPreview, Content, Divider, Footer, Image, MenuItem, Meter, ProductCard, StatusLight, Text, UserCard} from '../src';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderGradient from 'illustration:../spectrum-illustrations/gradient/S2_fill_folderClose_generic2_160.svg';
 import type {Meta} from '@storybook/react';
@@ -18,33 +18,11 @@ import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
-const meta: Meta<CardProps & {isLoading?: boolean}> = {
+const meta: Meta<CardProps> = {
   component: Card,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
-  args: {
-    isLoading: false
-  },
-  argTypes: {
-    href: {table: {disable: true}},
-    download: {table: {disable: true}},
-    hrefLang: {table: {disable: true}},
-    referrerPolicy: {table: {disable: true}},
-    rel: {table: {disable: true}},
-    routerOptions: {table: {disable: true}},
-    ping: {table: {disable: true}},
-    target: {table: {disable: true}},
-    value: {table: {disable: true}},
-    textValue: {table: {disable: true}},
-    onAction: {table: {disable: true}},
-    isDisabled: {table: {disable: true}}
-  },
-  decorators: (children, {args}) => (
-    <Skeleton isLoading={args.isLoading || false}>
-      {children(args)}
-    </Skeleton>
-  ),
   title: 'S2 Chromatic/Card'
 };
 
@@ -162,7 +140,7 @@ export const Product = (args: any) => (
           slot="preview"
           src={new URL('assets/preview.png', import.meta.url).toString()} />
       </CardPreview>
-      <Image 
+      <Image
         slot="thumbnail"
         src={new URL('assets/placeholder.png', import.meta.url).toString()} />
       <Content>
@@ -260,14 +238,14 @@ export const Custom = (args: any) => (
   <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'end', justifyContent: 'center'}}>
     <Card {...args}>
       <CardPreview>
-        <Image 
+        <Image
           alt=""
           src="https://images.unsplash.com/photo-1671225137978-aa9a19071b9a?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
       </CardPreview>
       <Content>
         <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'space-between'})}>
           <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
-            <Select /> 
+            <Select />
             <Text slot="description">Click through rate</Text>
           </div>
           <div className={style({display: 'flex', flexDirection: 'column'})}>
@@ -279,7 +257,7 @@ export const Custom = (args: any) => (
     </Card>
     <Card {...args}>
       <CardPreview>
-        <Image 
+        <Image
           alt=""
           src="https://images.unsplash.com/photo-1460306855393-0410f61241c7?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
       </CardPreview>

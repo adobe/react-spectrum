@@ -11,8 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Cell, Column, Content, Heading, IllustratedMessage, Link, Row, Table, TableBody, TableHeader} from '../src';
-import {categorizeArgTypes} from './utils';
+import {Cell, Column, Content, Heading, IllustratedMessage, Link, Row, Table, TableBody, TableHeader} from '../src';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import {SortDescriptor} from 'react-aria-components';
@@ -370,12 +369,6 @@ let resizeColumn = [
   {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, align: 'end'},
   {name: 'Height', id: 'height', align: 'center'},
   {name: 'Weight', id: 'weight', allowsResizing: true, align: 'center'}
-];
-
-let sortResizeColumns = [
-  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, isSortable: true},
-  {name: 'Height', id: 'height', isSortable: true},
-  {name: 'Weight', id: 'weight', allowsResizing: true, isSortable: true}
 ];
 
 const SortableResizableTable = (args: any) => {
