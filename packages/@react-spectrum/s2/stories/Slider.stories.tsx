@@ -27,7 +27,7 @@ const meta: Meta<typeof Slider> = {
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}}
   },
-  title: 'S2/Slider'
+  title: 'Slider'
 };
 
 export default meta;

@@ -29,7 +29,7 @@ const meta: Meta<typeof DropZone> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
   },
-  title: 'S2/DropZone'
+  title: 'DropZone'
 };
 
 export default meta;

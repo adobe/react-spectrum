@@ -27,7 +27,7 @@ const meta: Meta<typeof ComboBox<any>> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
   },
-  title: 'S2/ComboBox'
+  title: 'ComboBox'
 };
 
 export default meta;

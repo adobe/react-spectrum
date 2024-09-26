@@ -27,12 +27,12 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style'>, UnsafeStyles {
   /**
    * The size of the ColorSwatch.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L',
   /**
    * The corner rounding of the ColorSwatch.
-   * @default "default"
+   * @default 'default'
    */
   rounding?: 'default' | 'none' | 'full',
   /** Spectrum-defined styles, returned by the `style()` macro. */

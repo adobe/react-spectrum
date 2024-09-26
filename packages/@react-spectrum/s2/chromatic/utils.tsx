@@ -66,7 +66,9 @@ export function shortName(key, value) {
     case 'labelPosition':
       returnVal = `pos: ${value}`;
       break;
-
+    case 'hideStepper':
+      returnVal = 'hidestep';
+      break;
   }
   return returnVal;
 }

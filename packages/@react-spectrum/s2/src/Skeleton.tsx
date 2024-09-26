@@ -64,6 +64,9 @@ export interface SkeletonProps {
   isLoading: boolean
 }
 
+/**
+ * A Skeleton wraps around content to render it as a placeholder.
+ */
 export function Skeleton({children, isLoading}: SkeletonProps) {
   // Disable all form components inside a skeleton.
   return (

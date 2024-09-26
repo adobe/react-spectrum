@@ -19,10 +19,6 @@ const meta: Meta<typeof Avatar> = {
   argTypes: {},
   parameters: {
     layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
   },
   tags: ['autodocs'],
   decorators: (children, {args}) => (
@@ -32,7 +28,7 @@ const meta: Meta<typeof Avatar> = {
       </div>
     ) : children(args)
   ),
-  title: 'S2/Avatar'
+  title: 'Avatar'
 };
 
 export default meta;

@@ -26,7 +26,7 @@ const meta: Meta<typeof LinkButton> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
   },
-  title: 'S2/LinkButton'
+  title: 'LinkButton'
 };
 
 export default meta;

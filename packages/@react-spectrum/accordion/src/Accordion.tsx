@@ -20,7 +20,7 @@ import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, StyleProps, DOMProps, AriaLabelingProps {
+export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, StyleProps, DOMProps {
   /** The disclosures within the accordion group. */
   children: React.ReactNode
 }
@@ -76,7 +76,7 @@ function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDi
 }
 
 export interface SpectrumDisclosureHeaderProps extends DOMProps, AriaLabelingProps {
-  /** 
+  /**
    * The heading level of the disclosure header.
    * @default 3
    */

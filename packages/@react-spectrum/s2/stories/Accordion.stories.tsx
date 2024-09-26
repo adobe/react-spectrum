@@ -21,7 +21,7 @@ const meta: Meta<typeof Accordion> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2/Accordion'
+  title: 'Accordion'
 };
 
 export default meta;

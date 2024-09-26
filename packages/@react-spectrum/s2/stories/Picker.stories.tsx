@@ -40,7 +40,7 @@ const meta: Meta<typeof Picker<any>> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
   },
-  title: 'S2/Picker'
+  title: 'Picker'
 };
 
 export default meta;

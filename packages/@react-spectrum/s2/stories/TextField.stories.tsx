@@ -26,7 +26,7 @@ const meta: Meta<typeof TextField> = {
   argTypes: {
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/TextField'
+  title: 'TextField'
 };
 
 export default meta;

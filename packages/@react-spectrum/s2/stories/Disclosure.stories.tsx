@@ -36,7 +36,8 @@ const meta: Meta<typeof Disclosure> = {
     isDisabled: {
       control: {type: 'boolean'}
     }
-  }
+  },
+  title: 'Disclosure'
 };
 
 export default meta;

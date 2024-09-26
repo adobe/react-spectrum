@@ -29,7 +29,7 @@ const meta: Meta<typeof Link> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
   },
-  title: 'S2/Link'
+  title: 'Link'
 };
 
 export default meta;

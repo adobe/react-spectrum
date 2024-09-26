@@ -37,7 +37,7 @@ interface CardRenderProps {
   size: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'>, StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
   /**
@@ -438,9 +438,9 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
       {...props}
       ref={domRef}
       className={renderProps => UNSAFE_className + card({...renderProps, isCardView: true, isLink: !!props.href, size, density, variant}, styles)}
-      style={renderProps => 
+      style={renderProps =>
         // Only the preview in quiet cards scales down on press
-        variant === 'quiet' ? UNSAFE_style : press(renderProps) 
+        variant === 'quiet' ? UNSAFE_style : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle', isHovered, isFocusVisible, isSelected, isPressed}}>
@@ -466,7 +466,7 @@ function SelectionIndicator() {
       className={selectionIndicator({
         size,
         isSelected,
-        // Add an inner stroke only for quiet cards with no checkbox to 
+        // Add an inner stroke only for quiet cards with no checkbox to
         // help distinguish the selected state from the preview.
         isStrokeInner: isQuiet && !isCheckboxSelection
       })} />

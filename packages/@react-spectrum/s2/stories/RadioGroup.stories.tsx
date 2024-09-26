@@ -32,7 +32,7 @@ const meta: Meta<typeof RadioGroup> = {
   argTypes: {
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/RadioGroup'
+  title: 'RadioGroup'
 };
 
 export default meta;

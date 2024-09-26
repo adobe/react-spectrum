@@ -49,7 +49,7 @@ export interface NumberFieldProps extends
   /**
    * The size of the NumberField.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }

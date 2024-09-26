@@ -57,7 +57,7 @@ const meta: Meta<typeof Form> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
   },
-  title: 'S2/Form'
+  title: 'Form'
 };
 
 export default meta;
