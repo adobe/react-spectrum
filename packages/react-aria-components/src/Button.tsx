@@ -120,7 +120,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
-    isPending
+    isPending: isPending ?? false
   };
 
   let renderProps = useRenderProps({
