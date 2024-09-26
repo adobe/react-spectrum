@@ -55,4 +55,39 @@ export const Default = {
   render: Template
 };
 
+export const WithExpanedKeys = {
+  render: Template,
+  args: {defaultExpandedKeys: ['shared']}
+};
+
+export const WithDisabledDisclosure = {
+  render: (args) => (
+    <Accordion {...args}>
+      <Disclosure id="files">
+        <DisclosureHeader>
+          Your files
+        </DisclosureHeader>
+        <DisclosurePanel>
+          files
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="shared">
+        <DisclosureHeader>
+          Shared with you
+        </DisclosureHeader>
+        <DisclosurePanel>
+          shared
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="last" isDisabled>
+        <DisclosureHeader>
+          Last item
+        </DisclosureHeader>
+        <DisclosurePanel>
+          last
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>)
+};
+
 // TODO: more stories
