@@ -11,6 +11,7 @@
  */
 
 export {baseColor, edgeToText, fontRelative, lightDark, size, space, style} from './spectrum-theme';
+export type {StyleString} from './types';
 
 export const focusRing = () => ({
   outlineStyle: {
