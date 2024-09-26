@@ -22,49 +22,62 @@ date: 2024-09-30
 
 ## Enhancements
 
-- Support hover events in RAC Tabs - [@lithdew](https://github.com/lithdew) - [PR](https://github.com/adobe/react-spectrum/pull/6742)
-- Support fragments in collections - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/6430)
-- Support `disabledBehavior` prop in TableView - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6832), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6863)
-- TS Strict Stately List - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6567)
-- Allow passing data attributes to FieldError in RAC - [@omarnyte](https://github.com/omarnyte) - [PR](https://github.com/adobe/react-spectrum/pull/6895)
-- Support and document `preventFocusOnPress` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6854)
-
-- Add support for windows contributors - [@davidcoleman007](https://github.com/davidcoleman007) - [PR](https://github.com/adobe/react-spectrum/pull/6313)
-- RAC Pending Button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7002), [PR](https://github.com/adobe/react-spectrum/pull/7073)
-- Allow styles on VirtualizerItem - [@patrickkuhlmann](https://github.com/patrickkuhlmann) - [PR](https://github.com/adobe/react-spectrum/pull/6998)
-- Aria pattern utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6208)
-
+- Button
+  - RAC Pending Button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7002), [PR](https://github.com/adobe/react-spectrum/pull/7073)
+- Collections
+  - Support fragments in collections - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/6430)
+- Tabs
+  - Support hover events in RAC Tabs - [@lithdew](https://github.com/lithdew) - [PR](https://github.com/adobe/react-spectrum/pull/6742)
+- TableView
+  - Support `disabledBehavior` prop in TableView - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6832), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6863)
 - Misc
   - Upgrade to Yarn 4 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6215), [PR](https://github.com/adobe/react-spectrum/pull/6767)
   - Use content hashes in CSS modules - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7029)
+  - TS Strict Stately List - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6567)
+  - Aria pattern utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6208)
+  - Allow styles on VirtualizerItem - [@patrickkuhlmann](https://github.com/patrickkuhlmann) - [PR](https://github.com/adobe/react-spectrum/pull/6998)
+  - Add support for windows contributors - [@davidcoleman007](https://github.com/davidcoleman007) - [PR](https://github.com/adobe/react-spectrum/pull/6313)
+  - Allow passing data attributes to FieldError in RAC - [@omarnyte](https://github.com/omarnyte) - [PR](https://github.com/adobe/react-spectrum/pull/6895)
+  - Support and document `preventFocusOnPress` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6854)
 
 ## Fixes
 
-- Fix `useMenuItem` `onAction` regression - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6807)
-- Update Picker placeholder to be shorter - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6796)
-- Extract `ToggleStateProps` type to use only what is needed in `useToggleState` - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/3836)
-- Keep focus on the input in Combobox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/6783)
-- Fix type regression on `useControlledState` signature - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6789)
-- Fix Combobox `isQuiet` and `isReadOnly` styling and SearchField padding right specificity - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
-- Fix type regression in Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6790)
-- Add horizontal orientation to `TabsKeyboardDelegate` to prevent switching tabs with up/down arrow keys - [@mdhmaiti]() - [PR](https://github.com/mdhmaiti)
-- Conditionally render FieldLabel only if label is provided - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/6833)
-- Fix SelectValue from showing placeholder when selected value is 0 - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6968)
-- Prevent Tooltip from getting stuck to screen when scrolling - [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/6984)
-- Fix `useTreeData` error and types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6923)
-- Prevent click events from being fired on the wrong target on Android devices - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7026)
-- Fix `useId` updater overwrite - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6788)
-- Fix conditional `useHref` call - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/7032)
-- Add missing `endOfWeek` overload - [@cyyynthia](https://github.com/cyyynthia) - [PR](https://github.com/adobe/react-spectrum/pull/6749)
-- Fix `useDateSegment` null ref error - [@teemuandersen](https://github.com/teemuandersen) - [PR](https://github.com/adobe/react-spectrum/pull/6989)
-- Pass through ActionBar `disabledKeys` to ActionGroup - [@GrantRussell](https://github.com/GrantRussell) - [PR](https://github.com/adobe/react-spectrum/pull/7090)
+- ActionBar
+  - Pass through ActionBar `disabledKeys` to ActionGroup - [@GrantRussell](https://github.com/GrantRussell) - [PR](https://github.com/adobe/react-spectrum/pull/7090)
+- Combobox
+  - Keep focus on the input in Combobox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/6783)
+  - Fix Combobox `isQuiet` and `isReadOnly` styling - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
+- Date/Time
+  - Fix type regression in Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6790)
+  - Add missing `endOfWeek` overload - [@cyyynthia](https://github.com/cyyynthia) - [PR](https://github.com/adobe/react-spectrum/pull/6749)
+  - Fix `useDateSegment` null ref error - [@teemuandersen](https://github.com/teemuandersen) - [PR](https://github.com/adobe/react-spectrum/pull/6989)
+- Menu
+  - Fix `useMenuItem` `onAction` regression - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6807)  
+- Picker
+  - Update Picker placeholder to be shorter - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6796)
+- SearchField
+  - Fix SearchField padding right specificity - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
+- Select
+  - Fix Select from showing placeholder when selected value is 0 - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6968)
+- Tabs
+  - Add horizontal orientation to `TabsKeyboardDelegate` to prevent switching tabs with up/down arrow keys - [@mdhmaiti]() - [PR](https://github.com/mdhmaiti)
+- Tooltip
+  - Prevent Tooltip from getting stuck to screen when scrolling - [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/6984)
+- Tree
+  - Fix `useTreeData` error and types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6923)
+- Misc
+  - Prevent click events from being fired on the wrong target on Android devices - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7026)
+  - Fix `useId` updater overwrite - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6788)
+  - Fix conditional `useHref` call - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/7032)
+  - Fix type regression on `useControlledState` signature - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6789)
+  - Extract `ToggleStateProps` type to use only what is needed in `useToggleState` - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/3836)
 
 ## Docs
 - Add missing prop from Switch example in docs - [@AleksandrSI](https://github.com/AleksandrSl) - [PR](https://github.com/adobe/react-spectrum/pull/6827)
 - Cleanup warnings in docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6857)
 - Fix docs from crashing in Safari browser - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6930)
 - Clarify Icons docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6955)
-- Fix `useMove docs to be more clear when events start - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6952)
+- Fix `useMove` docs to be more clear when events start - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6952)
 - Fix selection with falsy keys - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7079)
 - Fix RAC Breadcrumbs data selector docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7091)
 
@@ -74,9 +87,9 @@ date: 2024-09-30
   - Fix Tree row padding when chevron isn't present - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6545)
   - Fix TreeView so that the row height always matches the chevron height - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6950)
   - Add TreeView docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6744), [PR](https://github.com/adobe/react-spectrum/pull/6959)
-  - Add basic docs for Tree - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
+  - Add docs for Tree - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
 
-- Accordion (Alpha)
+- Accordion/DisclosureGroup/Disclosure (Alpha)
   - Accordion - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6931)
   - Add DisclosureGroup component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7063)
   - Add basic docs for Accordion, DisclosureGroup, Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
