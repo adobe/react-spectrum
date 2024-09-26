@@ -47,7 +47,6 @@ import Chevron from '../ui-icons/Chevron';
 import {colorMix, fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, LoadingState, Node} from '@react-types/shared';
-import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
