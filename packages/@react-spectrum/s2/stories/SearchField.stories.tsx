@@ -31,7 +31,8 @@ const meta: Meta<typeof SearchField> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
-  }
+  },
+  title: 'S2/SearchField'
 };
 
 export default meta;
@@ -52,7 +53,6 @@ CustomWidth.parameters = {
     disable: true
   }
 };
-
 
 export const ContextualHelpExample = (args: any) => <SearchField {...args} />;
 

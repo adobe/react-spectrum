@@ -168,7 +168,10 @@ let popover = style({
   },
   transition: '[opacity, transform]',
   willChange: '[opacity, transform]',
-  isolation: 'isolate'
+  isolation: 'isolate',
+  pointerEvents: {
+    isExiting: 'none'
+  }
 }, getAllowedOverrides());
 // TODO: animations and real Popover Arrow
 

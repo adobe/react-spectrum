@@ -20,7 +20,8 @@ const meta: Meta<typeof Meter> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'S2/Meter'
 };
 
 export default meta;

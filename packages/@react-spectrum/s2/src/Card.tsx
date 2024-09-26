@@ -419,7 +419,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     return (
       <div
         {...filterDOMProps(otherProps)}
-        id={String(id)}
+        id={id != null ? String(id) : undefined}
         // @ts-ignore - React < 19 compat
         inert={isSkeleton ? 'true' : undefined}
         ref={domRef}

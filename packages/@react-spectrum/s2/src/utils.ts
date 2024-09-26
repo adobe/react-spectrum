@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import {useMediaQuery} from '@react-spectrum/utils';
 
-import {RangeCalendar} from '../src/RangeCalendar';
+export type Scale = 'large' | 'medium';
 
-const meta: Meta<typeof RangeCalendar> = {
-  component: RangeCalendar,
-  parameters: {
-    layout: 'centered'
+export function useIsMobileDevice(): boolean {
+  return useMediaQuery('(max-width: 640px)');
+}
+
+export function useScale(): Scale {
+  let matchesFine = useMediaQuery('not ((hover: hover) and (pointer: fine))');
+  if (matchesFine) {
+    return 'large';
   }
-};
 
-export default meta;
-
-export const Example = (args: any) => (
-  <RangeCalendar aria-label="Trip dates" {...args} />
-);
+  return 'medium';
+}

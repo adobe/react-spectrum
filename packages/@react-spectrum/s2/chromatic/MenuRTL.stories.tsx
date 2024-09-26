@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar} from '../src/Calendar';
+import {Menu} from '../src';
 
 import type {Meta} from '@storybook/react';
 
-const meta: Meta<typeof Calendar> = {
-  component: Calendar,
+const meta: Meta<typeof Menu> = {
+  component: Menu,
   parameters: {
-    layout: 'centered'
-  }
+    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+  },
+  title: 'S2 Chromatic/MenuRTL'
 };
 
 export default meta;
-
-export const Example = (args: any) => (
-  <Calendar aria-label="Event date" {...args} />
-);
+export {Default, WithKeyboardShortcuts, WithIcons, WithImages, Dynamic} from './Menu.stories';
