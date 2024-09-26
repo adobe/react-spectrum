@@ -422,13 +422,11 @@ function isElementInAnyScope(element: Element) {
 }
 
 function isElementInScope(element?: Element | null, scope?: Element[] | null) {
-  if (!element) {
+  if (!element || !scope) {
     return false;
   }
-  if (!scope) {
-    return false;
-  }
-  return scope.some(node => node.contains(element));
+  const rootNode = getRootNode(scope[0]);
+  return scope.some(node => node.contains(element) && getRootNode(node) === rootNode);
 }
 
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
