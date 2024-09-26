@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupProps, RadioGroupStateContext, RadioProps} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupStateContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
-import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
 import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
@@ -23,7 +23,7 @@ import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly' | 'name' | 'isRequired' | 'isInvalid' | 'validate' | 'validationBehavior' | 'children' | 'className' | 'style' | 'aria-label' | 'orientation'>, StyleProps{
+export interface SegmentedControlProps extends AriaLabelingProps, StyleProps {
   /**
    * The content to display in the segmented control.
    */
@@ -32,16 +32,22 @@ export interface SegmentedControlProps extends Omit<RadioGroupProps, 'isReadOnly
    * Whether the segmented control is disabled.
    */
   isDisabled?: boolean,
-  /**
-   * Defines a string value that labels the current element.
-   */
-  'aria-label': string
+  /** The id of the currently selected item (controlled). */
+  selectedKey?: string | null,
+  /** The id of the initial selected item (uncontrolled). */
+  defaultSelectedKey?: string,
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (id: string) => void
 }
-export interface SegmentedControlItemProps extends Omit<RadioProps, 'children' | 'className' | 'style' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps {
+export interface SegmentedControlItemProps extends StyleProps {
   /**
-   * The content to display in the control item.
+   * The content to display in the segmented control item.
    */
-  children: ReactNode
+  children: ReactNode,
+  /** The id of the item, matching the value used in SegmentedControl's `selectedKey` prop. */
+  id: string,
+  /** Whether the item is disabled or not. */
+  isDisabled?: boolean
 }
 
 export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
@@ -135,8 +141,9 @@ const InternalSegmentedControlContext = createContext<InternalSegmentedControlCo
 function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {
-    defaultValue,
-    value
+    defaultSelectedKey,
+    selectedKey,
+    onSelectionChange
   } = props;
   let domRef = useDOMRef(ref);
 
@@ -148,8 +155,8 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       prevRef.current = currentSelectedRef?.current.getBoundingClientRect();
     }
     
-    if (props.onChange) {
-      props.onChange(value);
+    if (onSelectionChange) {
+      onSelectionChange(value);
     }
   };
 
@@ -162,7 +169,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       onChange={onChange}
       className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
       aria-label={props['aria-label']}>
-      <DefaultSelectionTracker defaultValue={defaultValue} value={value} prevRef={prevRef} currentSelectedRef={currentSelectedRef}>
+      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef}>
         {props.children}
       </DefaultSelectionTracker>
     </RadioGroup>
@@ -197,7 +204,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
   let divRef = useRef<HTMLDivElement>(null);
   let {register, prevRef, currentSelectedRef} = useContext(InternalSegmentedControlContext);
   let state = useContext(RadioGroupStateContext);
-  let isSelected = props.value === state?.selectedValue;
+  let isSelected = props.id === state?.selectedValue;
   // do not apply animation if a user has the prefers-reduced-motion setting
   let isReduced = false;
   if (window?.matchMedia) {
@@ -205,7 +212,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
   }
 
   useLayoutEffect(() => {
-    register?.(props.value);
+    register?.(props.id);
   }, []);
 
   useLayoutEffect(() => {
@@ -231,7 +238,8 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
 
   return (
     <Radio 
-      {...props} 
+      {...props}
+      value={props.id}
       ref={domRef} 
       inputRef={inputRef}
       style={props.UNSAFE_style}
