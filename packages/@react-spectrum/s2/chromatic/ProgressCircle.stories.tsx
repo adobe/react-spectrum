@@ -38,7 +38,7 @@ export const Example: Story = {
   args: {
     value: 80
   }
-}
+};
 
 export const StaticColorWhite: Story = {
   render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
@@ -46,7 +46,7 @@ export const StaticColorWhite: Story = {
     staticColor: 'white',
     value: 80
   }
-}
+};
 
 export const StaticColorBlack: Story = {
   render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
@@ -54,4 +54,4 @@ export const StaticColorBlack: Story = {
     staticColor: 'black',
     value: 80
   }
-}
+};

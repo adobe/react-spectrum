@@ -41,7 +41,6 @@ import {
   TextField,
   ToggleButton
 } from '../src';
-import {categorizeArgTypes} from '../stories/utils';
 import type {Meta} from '@storybook/react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';

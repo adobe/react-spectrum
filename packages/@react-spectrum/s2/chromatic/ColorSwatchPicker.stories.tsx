@@ -10,11 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch} from '../src/ColorSwatch';
 import {ColorSwatchPicker} from '../src/ColorSwatchPicker';
 import {Example, ManySwatches} from '../stories/ColorSwatchPicker.stories';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ColorSwatchPicker> = {
   component: ColorSwatchPicker,
@@ -26,4 +24,4 @@ const meta: Meta<typeof ColorSwatchPicker> = {
 
 export default meta;
 
-export {Example, ManySwatches}
+export {Example, ManySwatches};

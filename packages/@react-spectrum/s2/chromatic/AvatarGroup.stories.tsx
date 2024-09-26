@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Avatar, AvatarGroup, Provider} from '../src';
+import {AvatarGroup} from '../src';
 import {Example, WithLabel, WithProviderBackground} from '../stories/AvatarGroup.stories';
 import type {Meta} from '@storybook/react';
 

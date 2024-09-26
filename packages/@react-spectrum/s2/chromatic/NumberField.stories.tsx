@@ -11,20 +11,18 @@
  */
 
 import {
-  Button,
   Content,
   ContextualHelp,
   Footer,
-  Form,
   Heading,
   Link,
   NumberField,
   Text
 } from '../src';
-import type {Meta, StoryObj} from '@storybook/react';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import type {Meta} from '@storybook/react';
 import {shortName} from './utils';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {
   component: NumberField,
@@ -35,7 +33,6 @@ const meta: Meta<typeof NumberField> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof NumberField>;
 
 let states = [
   {hideStepper: true},
@@ -66,14 +63,14 @@ const Template = ({...args}) => {
 
 export const Default = {
   render: Template
-}
+};
 
 export const DefaultValue = {
   render: Template,
   args: {
     defaultValue: 10
   }
-}
+};
 
 export const LabelPositionSide = {
   render: Template,
@@ -81,7 +78,7 @@ export const LabelPositionSide = {
     labelPosition: 'side',
     value: 10
   }
-}
+};
 
 export const ContextualHelpExample = (args: any) => <NumberField {...args} />;
 

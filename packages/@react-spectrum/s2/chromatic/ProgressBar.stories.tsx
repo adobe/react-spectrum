@@ -41,20 +41,19 @@ export const LabelPositionSide = {
   }
 };
 
-
 export const Size = {
   render: (args) => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 24})}>
-      <ProgressBar label='S' size='S' {...args} />
-      <ProgressBar label='M' size='M' {...args} />
-      <ProgressBar label='L' size='L' {...args} />
-      <ProgressBar label='XL' size='XL' {...args} />
+      <ProgressBar label="S" size="S" {...args} />
+      <ProgressBar label="M" size="M" {...args} />
+      <ProgressBar label="L" size="L" {...args} />
+      <ProgressBar label="XL" size="XL" {...args} />
     </div>
   ),
   args: {
     value: 80
   }
-}
+};
 
 export const StaticColorWhite = {
   args: {
@@ -62,7 +61,7 @@ export const StaticColorWhite = {
     value: 80,
     staticColor: 'white'
   }
-}
+};
 
 export const StaticColorBlack = {
   args: {
@@ -70,20 +69,18 @@ export const StaticColorBlack = {
     value: 80,
     staticColor: 'black'
   }
-}
+};
 
 export const Value0 = {
   args: {
     label: 'Loading',
     value: 0
   }
-}
+};
 
 export const Value100 = {
   args: {
     label: 'Loading',
     value: 100
   }
-}
-
-
+};
