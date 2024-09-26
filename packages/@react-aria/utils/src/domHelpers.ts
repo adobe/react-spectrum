@@ -15,19 +15,21 @@ export const getOwnerWindow = (
 
 export const getRootNode = (el: Element | null | undefined): Document | ShadowRoot | null => {
   if (!el) {
-    // Return the main document if the element is null or undefined
     return document;
   }
 
-  // If the element is disconnected, return null
   if (!el.isConnected) {
     return null;
   }
 
   const rootNode = el.getRootNode ? el.getRootNode() : document;
 
-// Return the root node, which can be either a Document or a ShadowRoot
-  return rootNode instanceof Document ? rootNode : rootNode as ShadowRoot;
+  // Use nodeType to check the type of the rootNode
+  if (rootNode.nodeType === Node.DOCUMENT_NODE || rootNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+    return rootNode as Document | ShadowRoot;
+  }
+
+  return null;
 };
 
 /**
