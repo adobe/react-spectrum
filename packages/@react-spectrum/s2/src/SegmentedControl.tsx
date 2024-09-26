@@ -39,7 +39,7 @@ export interface SegmentedControlProps extends AriaLabelingProps, StyleProps, Sl
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (id: string) => void
 }
-export interface SegmentedControlItemProps extends StyleProps {
+export interface SegmentedControlItemProps extends AriaLabelingProps, StyleProps {
   /**
    * The content to display in the segmented control item.
    */
