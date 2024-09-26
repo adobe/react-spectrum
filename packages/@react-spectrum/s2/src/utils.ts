@@ -10,29 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListBox, ListBoxItem} from '../src/ListBox';
+import {useMediaQuery} from '@react-spectrum/utils';
 
-import type {Meta} from '@storybook/react';
+export type Scale = 'large' | 'medium';
 
-const meta: Meta<typeof ListBox> = {
-  component: ListBox,
-  parameters: {
-    layout: 'centered'
+export function useIsMobileDevice(): boolean {
+  return useMediaQuery('(max-width: 640px)');
+}
+
+export function useScale(): Scale {
+  let matchesFine = useMediaQuery('not ((hover: hover) and (pointer: fine))');
+  if (matchesFine) {
+    return 'large';
   }
-};
 
-export default meta;
-
-export const Example = (args: any) => (
-  <ListBox aria-label="Ice cream flavor" {...args}>
-    <ListBoxItem>Chocolate</ListBoxItem>
-    <ListBoxItem>Mint</ListBoxItem>
-    <ListBoxItem>Strawberry</ListBoxItem>
-    <ListBoxItem>Vanilla</ListBoxItem>
-  </ListBox>
-);
-
-Example.args = {
-  onAction: null,
-  selectionMode: 'single'
-};
+  return 'medium';
+}

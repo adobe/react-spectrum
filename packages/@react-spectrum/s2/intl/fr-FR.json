@@ -1,4 +1,5 @@
 {
+  "button.pending": "En attente",
   "contextualhelp.help": "Aide",
   "contextualhelp.info": "Informations",
   "dialog.alert": "Alerte",
@@ -14,6 +15,11 @@
   "picker.placeholder": "Sélectionnez une option...",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
+  "table.loading": "Chargement...",
+  "table.loadingMore": "Chargement supplémentaire...",
+  "table.resizeColumn": "Redimensionner la colonne",
+  "table.sortAscending": "Trier par ordre croissant",
+  "table.sortDescending": "Trier par ordre décroissant",
   "tag.actions": "Actions",
   "tag.hideButtonLabel": "Afficher moins",
   "tag.noTags": "Aucun",

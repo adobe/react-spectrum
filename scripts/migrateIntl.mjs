@@ -12,6 +12,7 @@ let mapToNewKeys = {
 
 let stringsToAllow = new Set([
   'breadcrumbs.more',
+  'button.pending',
   'menu.moreActions',
   'dialog.alert',
   'contextualhelp.info',
@@ -27,6 +28,11 @@ let stringsToAllow = new Set([
   'picker.placeholder',
   'slider.minimum',
   'slider.maximum',
+  'table.loading',
+  'table.loadingMore',
+  'table.sortAscending',
+  'table.sortDescending',
+  'table.resizeColumn',
   'tag.actions',
   'tag.showAllButtonLabel',
   'tag.hideButtonLabel',

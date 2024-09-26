@@ -14,14 +14,18 @@ import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {typ
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
@@ -60,12 +64,14 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
 export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
+const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const button = style<ButtonRenderProps & ButtonStyleProps>({
   ...focusRing(),
+  position: 'relative',
   display: 'flex',
   alignItems: {
     default: 'baseline',
-    ':has([slot=icon]:only-child)': 'center'
+    [iconOnly]: 'center'
   },
   justifyContent: 'center',
   textAlign: 'start',
@@ -75,7 +81,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   userSelect: 'none',
   minHeight: 'control',
   minWidth: {
-    ':has([slot=icon]:only-child)': 'control'
+    [iconOnly]: 'control'
   },
   borderRadius: 'pill',
   boxSizing: 'border-box',
@@ -83,11 +89,11 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   textDecoration: 'none', // for link buttons
   paddingX: {
     default: 'pill',
-    ':has([slot=icon]:only-child)': 0
+    [iconOnly]: 0
   },
   paddingY: 0,
   aspectRatio: {
-    ':has([slot=icon]:only-child)': 'square'
+    [iconOnly]: 'square'
   },
   transition: 'default',
   borderStyle: 'solid',
@@ -105,7 +111,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     type: 'marginTop',
     value: {
       default: fontRelative(-2),
-      ':has([slot=icon]:only-child)': 0
+      [iconOnly]: 0
     }
   },
   borderColor: {
@@ -151,7 +157,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
-        isFocusVisible: 'gray-100'
+        isFocusVisible: 'gray-100',
+        isDisabled: 'transparent'
       }
     },
     staticColor: {
@@ -168,7 +175,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
             default: 'transparent',
             isHovered: 'transparent-white-100',
             isPressed: 'transparent-white-100',
-            isFocusVisible: 'transparent-white-100'
+            isFocusVisible: 'transparent-white-100',
+            isDisabled: 'transparent'
           }
         }
       },
@@ -185,7 +193,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
             default: 'transparent',
             isHovered: 'transparent-black-100',
             isPressed: 'transparent-black-100',
-            isFocusVisible: 'transparent-black-100'
+            isFocusVisible: 'transparent-black-100',
+            isDisabled: 'transparent'
           }
         }
       }
@@ -275,8 +284,35 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let {
+    isPending,
+    variant = 'primary',
+    fillStyle = 'fill',
+    size = 'M',
+    staticColor
+  } = props;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+
+  let [isProgressVisible, setIsProgressVisible] = useState(false);
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (isPending) {
+      // Start timer when isPending is set to true.
+      timeout = setTimeout(() => {
+        setIsProgressVisible(true);
+      }, 1000);
+    } else {
+      // Exit loading state when isPending is set to false. */
+      setIsProgressVisible(false);
+    }
+    return () => {
+      // Clean up on unmount or when user removes isPending prop before entering loading state.
+      clearTimeout(timeout);
+    };
+  }, [isPending]);
 
   return (
     <RACButton
@@ -287,21 +323,57 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        variant: props.variant || 'primary',
-        fillStyle: props.fillStyle || 'fill',
-        size: props.size || 'M',
-        staticColor: props.staticColor
+        isDisabled: renderProps.isDisabled || isProgressVisible,
+        variant,
+        fillStyle,
+        size,
+        staticColor
       }, props.styles)}>
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {
+            styles: style({
+              paddingY: '--labelPadding',
+              order: 1,
+              opacity: {
+                default: 1,
+                isProgressVisible: 0
+              }
+            })({isProgressVisible}),
+            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+            'data-rsp-slot': 'text'
+          }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({
+              size: fontRelative(20),
+              marginStart: '--iconMargin',
+              flexShrink: 0,
+              opacity: {
+                default: 1,
+                isProgressVisible: 0
+              }
+            })({isProgressVisible})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        {isPending &&
+          <div
+            className={style({
+              position: 'absolute',
+              top: '[50%]',
+              left: '[50%]',
+              transform: 'translate(-50%, -50%)',
+              opacity: {
+                default: 0,
+                isProgressVisible: 1
+              }
+            })({isProgressVisible, isPending})}>
+            {/* TODO: size based on t-shirt size once ProgressCircle supports custom sizes */}
+            <ProgressCircle isIndeterminate aria-label={stringFormatter.format('button.pending')} size="S" staticColor={staticColor} UNSAFE_style={{display: 'block'}} />
+          </div>
+        }
       </Provider>
     </RACButton>
   );
@@ -338,7 +410,11 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {
+            styles: style({paddingY: '--labelPadding', order: 1}),
+            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+            'data-rsp-slot': 'text'
+          }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})

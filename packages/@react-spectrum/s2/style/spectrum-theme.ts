@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
-import {createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -87,8 +87,21 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: keyof typeof color, dark: keyof typeof color): `[${string}]` {
-  return `[light-dark(${color[light]}, ${color[dark]})]`;
+export function lightDark(light: Color<keyof typeof color>, dark: Color<keyof typeof color>): `[${string}]` {
+  let [lightColorValue, lightOpacity] = light.split('/');
+  let [darkColorValue, darkOpacity] = dark.split('/');
+  let lightColor = color[lightColorValue];
+  let darkColor = color[darkColorValue];
+
+  if (lightOpacity) {
+    lightColor = `rgb(from ${lightColor} r g b / ${lightOpacity}%)`;
+  }
+
+  if (darkOpacity) {
+    darkColor = `rgb(from ${darkColor} r g b / ${darkOpacity}%)`;
+  }
+
+  return `[light-dark(${lightColor}, ${darkColor})]`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {

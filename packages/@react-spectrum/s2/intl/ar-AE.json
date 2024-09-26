@@ -1,4 +1,5 @@
 {
+  "button.pending": "قيد الانتظار",
   "contextualhelp.help": "مساعدة",
   "contextualhelp.info": "معلومات",
   "dialog.alert": "تنبيه",
@@ -14,6 +15,11 @@
   "picker.placeholder": "حدد خيارًا...",
   "slider.maximum": "أقصى",
   "slider.minimum": "أدنى",
+  "table.loading": "جارٍ التحميل...",
+  "table.loadingMore": "جارٍ تحميل المزيد...",
+  "table.resizeColumn": "تغيير حجم العمود",
+  "table.sortAscending": "فرز بترتيب تصاعدي",
+  "table.sortDescending": "فرز بترتيب تنازلي",
   "tag.actions": "الإجراءات",
   "tag.hideButtonLabel": "إظهار أقل",
   "tag.noTags": "بدون",

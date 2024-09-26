@@ -1,4 +1,5 @@
 {
+  "button.pending": "čeká na vyřízení",
   "contextualhelp.help": "Nápověda",
   "contextualhelp.info": "Informace",
   "dialog.alert": "Výstraha",
@@ -14,6 +15,11 @@
   "picker.placeholder": "Vyberte vhodnou možnost...",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
+  "table.loading": "Načítání...",
+  "table.loadingMore": "Načítání dalších...",
+  "table.resizeColumn": "Změnit velikost sloupce",
+  "table.sortAscending": "Seřadit vzestupně",
+  "table.sortDescending": "Seřadit sestupně",
   "tag.actions": "Akce",
   "tag.hideButtonLabel": "Zobrazit méně",
   "tag.noTags": "Žádný",
