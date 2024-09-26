@@ -59,7 +59,8 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
     selectedItemCount,
     isOpen,
     buttonLabelBehavior = 'collapse',
-    items
+    items,
+    disabledKeys
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -113,6 +114,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
             overflowMode="collapse"
             buttonLabelBehavior={buttonLabelBehavior}
             onAction={onAction}
+            disabledKeys={disabledKeys}
             UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
             {children}
           </ActionGroup>
