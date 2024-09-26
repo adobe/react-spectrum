@@ -34,7 +34,7 @@ const meta: Meta<typeof Dialog> = {
     }
   },
   tags: ['autodocs'],
-  title: 'S2/Dialog'
+  title: 'Dialog'
 };
 
 export default meta;

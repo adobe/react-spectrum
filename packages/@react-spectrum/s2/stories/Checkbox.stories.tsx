@@ -27,7 +27,7 @@ const meta: Meta<typeof Checkbox> = {
     inputRef: {control: {disable: true}},
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/Checkbox'
+  title: 'Checkbox'
 };
 
 export default meta;
