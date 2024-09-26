@@ -18,10 +18,7 @@ const meta: Meta<typeof Avatar> = {
   component: Avatar,
   argTypes: {},
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   decorators: (children, {args}) => (

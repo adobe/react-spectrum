@@ -33,10 +33,7 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],

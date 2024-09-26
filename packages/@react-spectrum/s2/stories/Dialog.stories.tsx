@@ -21,9 +21,6 @@ const meta: Meta<typeof Dialog> = {
     layout: 'centered',
     docs: {
       controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
-    },
-    chromatic: {
-      disableSnapshot: true
     }
   },
   argTypes: {

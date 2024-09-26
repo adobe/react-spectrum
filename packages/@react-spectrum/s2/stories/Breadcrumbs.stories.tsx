@@ -19,10 +19,7 @@ const meta: Meta<typeof Breadcrumbs> = {
   parameters: {
     layout: 'centered',
     // TODO: remove this once we get intl strings for breadcrumbs and thus the story won't crash in ar-AE
-    chromaticProvider: {locales: ['en-US']},
-    chromatic: {
-      disableSnapshot: true
-    }
+    chromaticProvider: {locales: ['en-US']}
   },
   argTypes: {
     size: {

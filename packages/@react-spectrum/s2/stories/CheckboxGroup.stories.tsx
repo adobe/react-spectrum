@@ -25,10 +25,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 const meta: Meta<typeof CheckboxGroup> = {
   component: CheckboxGroup,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {

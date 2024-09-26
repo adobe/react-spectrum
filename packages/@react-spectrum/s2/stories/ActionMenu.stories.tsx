@@ -18,10 +18,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {

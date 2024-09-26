@@ -17,10 +17,7 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof ColorArea> = {
   component: ColorArea,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {

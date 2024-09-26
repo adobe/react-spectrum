@@ -20,10 +20,7 @@ import './unsafe.css';
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],

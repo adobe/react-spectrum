@@ -24,10 +24,7 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {

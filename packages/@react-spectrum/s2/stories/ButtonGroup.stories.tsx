@@ -18,10 +18,7 @@ import {style} from '../style/spectrum-theme' with { type: 'macro' };
 const meta: Meta<typeof ButtonGroup> = {
   component: ButtonGroup,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   title: 'ButtonGroup'
