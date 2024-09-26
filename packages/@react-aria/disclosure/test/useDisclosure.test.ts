@@ -10,19 +10,11 @@
  * governing permissions and limitations under the License.
  */
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
-import {PressEvent} from '@react-types/shared';
+import {KeyboardEvent, PressEvent} from '@react-types/shared';
 import {useDisclosure} from '../src/useDisclosure';
 import {useDisclosureState} from '@react-stately/disclosure';
 
 describe('useDisclosure', () => {
-  let preventDefault = jest.fn();
-  let stopPropagation = jest.fn();
-  let event = (e) => ({
-    ...e,
-    preventDefault,
-    stopPropagation
-  });
-
   let defaultProps = {};
   let ref = {current: document.createElement('div')};
 
@@ -62,7 +54,7 @@ describe('useDisclosure', () => {
     });
 
     act(() => {
-      result.current.disclosure.buttonProps.onPress({pointerType: 'mouse'} as PressEvent);
+      result.current.disclosure.buttonProps.onPress?.({pointerType: 'mouse'} as PressEvent);
     });
 
     expect(result.current.state.isExpanded).toBe(true);
@@ -75,9 +67,14 @@ describe('useDisclosure', () => {
       return {state, disclosure};
     });
 
+    let preventDefault = jest.fn();
+    let event = (e: Partial<KeyboardEvent>) => ({...e, preventDefault} as KeyboardEvent);
+
     act(() => {
-      result.current.disclosure.buttonProps.onKeyDown(event({key: 'Enter', preventDefault: jest.fn()}));
+      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
     });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
 
     expect(result.current.state.isExpanded).toBe(true);
   });
@@ -90,7 +87,7 @@ describe('useDisclosure', () => {
     });
 
     act(() => {
-      result.current.disclosure.buttonProps.onPress({pointerType: 'mouse'} as PressEvent);
+      result.current.disclosure.buttonProps.onPress?.({pointerType: 'mouse'} as PressEvent);
     });
 
     expect(result.current.state.isExpanded).toBe(false);
