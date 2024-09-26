@@ -530,10 +530,14 @@ describe('RadioGroup', () => {
     );
 
     let radios = getAllByRole('radio');
+    expect(radios[0]).toHaveAttribute('value', '0');
+    expect(radios[1]).toHaveAttribute('value', '1');
+
     await user.click(radios[0]);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
     expect(radios[0]).toBeChecked();
     expect(radios[1]).not.toBeChecked();
+
     await user.click(radios[1]);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
     expect(radios[1]).toBeChecked();
