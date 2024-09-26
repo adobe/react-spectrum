@@ -89,7 +89,8 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /** The value associated with the button's name when it's submitted with the form data. */
   value?: string,
   /**
-   * Whether to disable events immediately and display the `ProgressBar`.
+   * Whether the button is in a pending state. This disables press and hover events
+   * while retaining focusability, and announces the pending state to screen readers.
    */
   isPending?: boolean
 }
