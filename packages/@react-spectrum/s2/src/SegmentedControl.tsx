@@ -163,6 +163,8 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
   return (
     <RadioGroup 
       {...props}
+      value={selectedKey}
+      defaultValue={defaultSelectedKey}
       ref={domRef}
       orientation="horizontal"
       style={props.UNSAFE_style}
