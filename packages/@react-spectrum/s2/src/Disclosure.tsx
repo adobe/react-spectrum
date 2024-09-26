@@ -24,12 +24,12 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
   /**
    * The size of the disclosure.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The amount of space between the disclosures.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the disclosure should be displayed with a quiet style. */
