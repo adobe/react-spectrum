@@ -13,7 +13,7 @@
 import {ActionMenu, Avatar, Card, CardPreview, CardView, Collection, CollectionCardPreview, Content, Image, MenuItem, SkeletonCollection, Text} from '@react-spectrum/s2';
 import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
 import Folder from '@react-spectrum/s2/icons/Folder';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from "@react-spectrum/s2/style" with { type: "macro" };
 import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({

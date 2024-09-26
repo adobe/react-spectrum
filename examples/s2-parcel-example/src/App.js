@@ -101,6 +101,10 @@ import { CardViewExample, CollectionCardsExample } from "./components/CardViewEx
 
 function App() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
+  let [cardViewState, setCardViewState] = useState({
+    layout: 'grid', // 'grid' | 'waterfall' | undefined
+    loadingState: 'idle', // 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering'
+  });
   return (
     <main>
       <Heading
@@ -149,6 +153,8 @@ function App() {
             <MenuItem>Action Menu Item 2</MenuItem>
             <MenuItem>Action Menu Item 3</MenuItem>
           </ActionMenu>
+          <Picker label="CardView Loading State" items={['loading', 'sorting', 'loadingMore', 'error', 'idle', 'filtering']} selectedKey={cardViewState.loadingState} onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState})} />
+          <Picker label="CardView Layout" items={['grid', 'waterfall']} selectedKey={cardViewState.layout} onSelectionChange={layout => setCardViewState({...cardViewState, layout})} />
           <CardViewExample />
           <CollectionCardsExample />
           <MenuTrigger>
