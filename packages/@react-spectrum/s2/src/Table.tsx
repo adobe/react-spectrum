@@ -44,9 +44,9 @@ import {
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
+import {colorMix, fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, LoadingState, Node} from '@react-types/shared';
-import {fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -430,9 +430,8 @@ const cellFocus = {
   borderRadius: size(6)
 } as const;
 
-function CellFocusRing(props: {isFocusVisible: boolean}) {
-  let {isFocusVisible} = props;
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible})} />;
+function CellFocusRing() {
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({
@@ -463,7 +462,10 @@ const columnStyles = style({
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
   },
-  borderTopWidth: 0,
+  borderTopWidth: {
+    default: 0,
+    isQuiet: 1
+  },
   borderBottomWidth: 1,
   borderStartWidth: 0,
   borderEndWidth: {
@@ -493,17 +495,18 @@ export interface ColumnProps extends RACColumnProps {
  */
 export function Column(props: ColumnProps) {
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
+  let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let isColumnResizable = allowsResizing;
 
   return (
-    <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isColumnResizable, align})}>
+    <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isColumnResizable, align, isQuiet})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
           (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
           {/* Separate absolutely positioned element because appyling the ring on the column directly via outline means the ring's required borderRadius will cause the bottom gray border to curve as well */}
-          <CellFocusRing isFocusVisible={isFocusVisible} />
+          {isFocusVisible && <CellFocusRing />}
           {isColumnResizable ?
             (
               <ResizableColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} isHovered={isHeaderRowHovered || isHovered} align={align}>
@@ -797,7 +800,8 @@ const selectAllCheckbox = style({
 
 const selectAllCheckboxColumn = style({
   padding: 0,
-  height: '[calc(100% - 1px)]',
+  height: 'full',
+  boxSizing: 'border-box',
   outlineStyle: 'none',
   position: 'relative',
   alignContent: 'center',
@@ -806,7 +810,10 @@ const selectAllCheckboxColumn = style({
     forcedColors: 'ButtonBorder'
   },
   borderXWidth: 0,
-  borderTopWidth: 0,
+  borderTopWidth: {
+    default: 0,
+    isQuiet: 1
+  },
   borderBottomWidth: 1,
   borderStyle: 'solid',
   backgroundColor: 'gray-75'
@@ -822,6 +829,7 @@ export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style
 export function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
+  let {isQuiet} = useContext(InternalTableContext);
   let [isHeaderRowHovered, setHeaderRowHovered] = useState(false);
 
   return (
@@ -831,12 +839,12 @@ export function TableHeader<T extends object>({columns, children}: TableHeaderPr
         {selectionBehavior === 'toggle' && (
           // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
           // @ts-ignore
-          <RACColumn isSticky width={scale === 'medium' ? 40 : 52} minWidth={scale === 'medium' ? 40 : 52} className={selectAllCheckboxColumn}>
+          <RACColumn isSticky width={scale === 'medium' ? 40 : 52} minWidth={scale === 'medium' ? 40 : 52} className={selectAllCheckboxColumn({isQuiet})}>
             {({isFocusVisible}) => (
               <>
                 {selectionMode === 'single' &&
                   <>
-                    <CellFocusRing isFocusVisible={isFocusVisible} />
+                    {isFocusVisible && <CellFocusRing />}
                     <VisuallyHiddenSelectAllLabel />
                   </>
                 }
@@ -919,13 +927,8 @@ const checkboxCellStyle = style({
   paddingStart: 16,
   alignContent: 'center',
   height: '[calc(100% - 1px)]',
-  borderBottomWidth: 0
-  // TODO: problem with having the checkbox cell itself use the row background color directly instead
-  // of having a separate white rectangle div base below a div with the row background color set above it as a mask
-  // is that it doesn't come out as the same color as the other cells because the base below the sticky cell will be the blue of the
-  // other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
-  // then this would be possible. Currently waiting request for Spectrum to provide tokens for these equivalent values
-  // backgroundColor: '--rowBackgroundColor'
+  borderBottomWidth: 0,
+  backgroundColor: '--rowBackgroundColor'
 });
 
 const cellContent = style({
@@ -952,15 +955,7 @@ const cellContent = style({
   margin: {
     default: -4,
     isSticky: 0
-  }
-});
-
-const cellBackground = style({
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  right: 0,
-  left: 0,
+  },
   backgroundColor: {
     default: 'transparent',
     isSticky: '--rowBackgroundColor'
@@ -996,17 +991,7 @@ export function Cell(props: CellProps) {
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
-          {/*
-            // TODO: problem with having the checkbox cell itself use the row background color directly instead
-            of having a separate white rectangle div base below a div with the row background color set above it as a mask
-            is that it doesn't come out as the same color as the other cells because the base below the sticky cell when other selected cells are scrolled below it will be the blue of the
-            other cells, not the same white base. If I could convert informative-900/10 (and the rest of the rowBackgroundColors) to an equivalent without any opacity
-            then I could do away with this styling. To reproduce this, comment out the stickyCell gray-25, get rid of the below div and apply backgroundColor: '--rowBackgroundColor' to checkboxCellStyle.
-            Having the CellFocusRing here instead of applying a outline on the cell directly also makes it NOT overlap with the border (can be remedied with a -3px outline offset) and applying a border radius to get the curved outline focus ring messes
-            with the divider rendered on the cell since those are also borders
-          */}
-          <div role="presentation" className={cellBackground({isSticky})} />
-          <CellFocusRing isFocusVisible={isFocusVisible} />
+          {isFocusVisible && <CellFocusRing />}
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
         </>
       )}
@@ -1014,28 +999,22 @@ export function Cell(props: CellProps) {
   );
 }
 
+// Use color-mix instead of transparency so sticky cells work correctly.
+const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
+const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
 const rowBackgroundColor = {
-  default: 'gray-25',
-  isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
-  isHovered: 'gray-900/7', // table-row-hover-color
-  isPressed: 'gray-900/10', // table-row-hover-color
-  isSelected: {
-    default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
-    isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-    isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-    isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
+  default: {
+    default: 'gray-25',
+    isQuiet: 'transparent'
   },
-  isQuiet: {
-    default: 'transparent',
-    isFocusVisibleWithin: 'gray-900/7', // table-row-hover-color
-    isHovered: 'gray-900/7', // table-row-hover-color
-    isPressed: 'gray-900/10', // table-row-hover-color
-    isSelected: {
-      default: lightDark('informative-900/10', 'informative-700/10'), // table-selected-row-background-color, opacity /10
-      isFocusVisibleWithin: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-      isHovered: lightDark('informative-900/15', 'informative-700/15'), // table-selected-row-background-color, opacity /15
-      isPressed: lightDark('informative-900/15', 'informative-700/15') // table-selected-row-background-color, opacity /15
-    }
+  isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
+  isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
+  isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
+  isSelected: {
+    default: selectedBackground, // table-selected-row-background-color, opacity /10
+    isFocusVisibleWithin: selectedActiveBackground, // table-selected-row-background-color, opacity /15
+    isHovered: selectedActiveBackground, // table-selected-row-background-color, opacity /15
+    isPressed: selectedActiveBackground // table-selected-row-background-color, opacity /15
   },
   forcedColors: {
     default: 'Background'
@@ -1046,7 +1025,7 @@ const row = style<RowRenderProps & S2TableProps>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
-  backgroundColor: rowBackgroundColor,
+  backgroundColor: '--rowBackgroundColor',
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
