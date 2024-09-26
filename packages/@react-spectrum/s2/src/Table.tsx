@@ -814,7 +814,7 @@ const selectAllCheckboxColumn = style({
 
 let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({isHeaderRowHovered: false});
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies' | 'onHover' | 'onHoverStart' | 'onHoverEnd'> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -1095,7 +1095,7 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'onHover' | 'onHoverStart' | 'onHoverEnd'>  {}
 
 /**
  * A row within a `<Table>`.
