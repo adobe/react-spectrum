@@ -418,7 +418,8 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
         variant: props.variant || 'primary',
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
-        staticColor: props.staticColor
+        staticColor: props.staticColor,
+        isPending: false
       }, props.styles)}>
       <Provider
         values={[
