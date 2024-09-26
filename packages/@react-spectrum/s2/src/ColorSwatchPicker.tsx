@@ -15,8 +15,8 @@ import {Color} from '@react-types/color';
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size as sizeValue, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {focusRing, size as sizeValue, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

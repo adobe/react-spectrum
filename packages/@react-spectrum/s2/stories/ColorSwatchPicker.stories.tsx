@@ -13,7 +13,7 @@
 import {ColorSwatch} from '../src/ColorSwatch';
 import {ColorSwatchPicker} from '../src/ColorSwatchPicker';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ColorSwatchPicker> = {
   component: ColorSwatchPicker,

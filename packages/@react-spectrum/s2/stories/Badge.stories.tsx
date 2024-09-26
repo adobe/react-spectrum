@@ -13,7 +13,7 @@
 import {Badge, Text} from '../src';
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Badge> = {
   component: Badge,

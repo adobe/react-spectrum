@@ -27,7 +27,7 @@ import {
   SectionProps,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -43,7 +43,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,

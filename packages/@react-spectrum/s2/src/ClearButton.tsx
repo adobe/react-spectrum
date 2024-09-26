@@ -18,7 +18,7 @@ import {
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
 import {forwardRef} from 'react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface ClearButtonStyleProps {

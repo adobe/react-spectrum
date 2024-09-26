@@ -70,6 +70,8 @@ export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextFiel
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Tooltip, TooltipTrigger} from './Tooltip';
 
+export {pressScale} from './pressScale';
+
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 

@@ -12,7 +12,7 @@
 
 import {Link} from '../src';
 import React from 'react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 export default {
   title: 'Style Macro',

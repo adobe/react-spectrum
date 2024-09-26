@@ -13,11 +13,11 @@
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
-import {fieldInput, fieldLabel, focusRing, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore

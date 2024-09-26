@@ -21,11 +21,11 @@ import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'r
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, lightDark, size, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
-import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';

@@ -13,7 +13,7 @@
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import {Link} from '../src';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Link> = {
   component: Link,

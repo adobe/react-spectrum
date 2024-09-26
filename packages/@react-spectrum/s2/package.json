@@ -52,19 +52,19 @@
       "isLibrary": true
     },
     "style-module": {
-      "source": "style/spectrum-theme.ts",
+      "source": "style/index.ts",
       "isLibrary": true,
       "outputFormat": "esmodule",
       "context": "node"
     },
     "style-main": {
-      "source": "style/spectrum-theme.ts",
+      "source": "style/index.ts",
       "isLibrary": true,
       "outputFormat": "commonjs",
       "context": "node"
     },
     "style-types": {
-      "source": "style/spectrum-theme.ts"
+      "source": "style/index.ts"
     },
     "icons-module": {
       "source": "s2wf-icons/*.svg",

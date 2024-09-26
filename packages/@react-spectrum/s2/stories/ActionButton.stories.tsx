@@ -14,7 +14,7 @@ import {ActionButton, Text} from '../src';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
 
 const meta: Meta<typeof ActionButton> = {
