@@ -71,7 +71,9 @@ export {_DisclosureGroup as DisclosureGroup};
 
 export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps {
   /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
-  id?: Key
+  id?: Key,
+  /** The children of the component. A function may be provided to alter the children based on component state. */
+  children: ReactNode | ((values: DisclosureRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode)
 }
 
 export interface DisclosureRenderProps {
@@ -185,6 +187,9 @@ export interface DisclosurePanelProps extends RenderProps<{}> {
    * @default 'group'
    */
   role?: 'group' | 'region',
+  /**
+   * The children of the component.
+   */
   children: ReactNode
 }
 
