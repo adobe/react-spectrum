@@ -15,8 +15,8 @@ import {Color} from '@react-types/color';
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size as sizeValue, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {focusRing, size as sizeValue, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -25,17 +25,17 @@ export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>
   children: ReactNode,
   /**
    * The amount of padding between the swatches.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
   /**
    * The size of the color swatches.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L',
   /**
    * The corner rounding of the color swatches.
-   * @default "none"
+   * @default 'none'
    */
   rounding?: 'none' | 'default' | 'full'
 }

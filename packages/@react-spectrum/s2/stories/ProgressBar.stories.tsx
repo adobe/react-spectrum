@@ -13,7 +13,7 @@
 import type {Meta} from '@storybook/react';
 import {ProgressBar} from '../src';
 import {StaticColorDecorator} from './utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ProgressBar> = {
   component: ProgressBar,
@@ -22,7 +22,7 @@ const meta: Meta<typeof ProgressBar> = {
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
-  title: 'S2/ProgressBar'
+  title: 'ProgressBar'
 };
 
 export default meta;

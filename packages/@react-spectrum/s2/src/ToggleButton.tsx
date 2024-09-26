@@ -15,7 +15,7 @@ import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
@@ -48,7 +48,8 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
         staticColor: props.staticColor,
         size: props.size,
         isQuiet: props.isQuiet,
-        isEmphasized: props.isEmphasized
+        isEmphasized: props.isEmphasized,
+        isPending: false
       }, props.styles)}>
       <Provider
         values={[

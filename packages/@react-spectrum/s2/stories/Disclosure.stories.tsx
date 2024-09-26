@@ -13,7 +13,7 @@
 import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Disclosure> = {
   component: Disclosure,
@@ -36,7 +36,8 @@ const meta: Meta<typeof Disclosure> = {
     isDisabled: {
       control: {type: 'boolean'}
     }
-  }
+  },
+  title: 'Disclosure'
 };
 
 export default meta;

@@ -38,6 +38,10 @@ export interface DisclosureGroupState {
   setExpandedKeys(keys: Set<Key>): void
 }
 
+/**
+ * Manages state for a group of disclosures, e.g. an accordion.
+ * It supports both single and multiple expanded items.
+ */
 export function useDisclosureGroupState(props: DisclosureGroupProps): DisclosureGroupState {
   let {allowsMultipleExpanded = false, isDisabled = false} = props;
   let [expandedKeys, setExpandedKeys] = useControlledState(

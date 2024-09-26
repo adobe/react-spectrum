@@ -312,3 +312,11 @@ A `Tree` can be targeted with the `.react-aria-Tree` CSS selector, or by overrid
 A `TreeItem` can be targeted with the `.react-aria-TreeItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.TreeItemRenderProps.properties} showOptional />
+
+TreeItem also exposes a `--tree-item-level` CSS custom property, which you can use to adjust the indentation.
+
+```css render=false
+.react-aria-TreeItem {
+  padding-left: calc((var(--tree-item-level) - 1) * 20px);
+}
+```

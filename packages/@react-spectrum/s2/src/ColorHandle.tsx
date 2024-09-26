@@ -14,7 +14,7 @@ import {cloneElement, JSX, RefObject, useState} from 'react';
 import {ColorThumb} from 'react-aria-components';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useId, useLayoutEffect} from '@react-aria/utils';
 
 const HANDLE_SIZE = 16;

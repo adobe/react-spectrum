@@ -16,7 +16,7 @@ import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 import {Example as WithWrapping} from '../stories/Button.stories';
 
 const meta: Meta<typeof Button> = {

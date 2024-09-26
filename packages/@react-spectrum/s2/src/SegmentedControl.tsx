@@ -14,10 +14,10 @@ import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupProps, RadioGroupStateContext, RadioProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {focusRing, size, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -259,13 +259,13 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
 }
 
 /**
- * A control items represents an individual control within a segmented control.
+ * A SegmentedControlItem represents an option within a SegmentedControl.
  */
 const _SegmentedControlItem = /*#__PURE__*/ forwardRef(SegmentedControlItem);
 export {_SegmentedControlItem as SegmentedControlItem};
 
 /**
- * A segmented control is a mutually exclusive group of buttons, with or without a track.
+ * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
  */
 const _SegmentedControl = /*#__PURE__*/ forwardRef(SegmentedControl);
 export {_SegmentedControl as SegmentedControl};

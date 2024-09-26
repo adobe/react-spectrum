@@ -14,24 +14,20 @@ import {ActionButton, Text} from '../src';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
   parameters: {
     layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
   },
-  title: 'S2/ActionButton'
+  title: 'ActionButton'
 };
 
 export default meta;

@@ -102,7 +102,7 @@ function createValueLookup(values: Array<CSSValue>, atStart = false) {
   return map;
 }
 
-function parseArbitraryValue(value: any) {
+export function parseArbitraryValue(value: any) {
   if (typeof value === 'string' && value.startsWith('--')) {
     return [`var(${value})`, generateArbitraryValueSelector(value)];
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {

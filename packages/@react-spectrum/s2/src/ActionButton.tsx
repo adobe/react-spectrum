@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, Text} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macro' };
+import {getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
@@ -44,7 +44,7 @@ interface ToggleButtonStyleProps {
   isEmphasized?: boolean
 }
 
-export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
   children?: ReactNode
 }
