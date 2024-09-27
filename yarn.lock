@@ -6829,6 +6829,7 @@ __metadata:
     jscodeshift: "npm:^0.15.2"
     react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
     react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    recast: "npm:^0.23.9"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.0"
     uuid: "npm:^9.0.1"
