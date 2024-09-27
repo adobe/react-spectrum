@@ -274,7 +274,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   }
 
   root.find(j.Program).get('body', 0).node.comments = leadingComments;
-  return root.toSource();
+  return root.toSource().replace(/assert\s*\{\s*type:\s*"macro"\s*\}/g, 'with { type: "macro" }');
 }
 
 transformer.parser = 'tsx';
