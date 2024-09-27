@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Daha Fazla Öğe",
   "button.pending": "beklemede",
   "contextualhelp.help": "Yardım",
   "contextualhelp.info": "Bilgiler",
@@ -12,7 +13,7 @@
   "label.(optional)": "(isteğe bağlı)",
   "label.(required)": "(gerekli)",
   "menu.moreActions": "Daha fazla eylem",
-  "picker.placeholder": "Bir seçim yapın…",
+  "picker.placeholder": "Seçin…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
   "table.loading": "Yükleniyor...",

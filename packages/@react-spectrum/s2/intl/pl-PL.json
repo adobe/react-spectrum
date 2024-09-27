@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Więcej elementów",
   "button.pending": "oczekujące",
   "contextualhelp.help": "Pomoc",
   "contextualhelp.info": "Informacja",
@@ -12,10 +13,10 @@
   "label.(optional)": "(opcjonalne)",
   "label.(required)": "(wymagane)",
   "menu.moreActions": "Więcej akcji",
-  "picker.placeholder": "Wybierz opcję...",
+  "picker.placeholder": "Zaznacz…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "table.loading": "Ładowanie...",
+  "table.loading": "Wczytywanie...",
   "table.loadingMore": "Wczytywanie większej liczby...",
   "table.resizeColumn": "Zmień rozmiar kolumny",
   "table.sortAscending": "Sortuj rosnąco",

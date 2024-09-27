@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "čakajúce",
   "contextualhelp.help": "Pomoc",
   "contextualhelp.info": "Informácie",
@@ -12,7 +13,7 @@
   "label.(optional)": "(nepovinné)",
   "label.(required)": "(povinné)",
   "menu.moreActions": "Ďalšie akcie",
-  "picker.placeholder": "Vyberte možnosť...",
+  "picker.placeholder": "Vybrať…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Načítava sa...",

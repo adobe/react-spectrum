@@ -1,0 +1,243 @@
+{
+	"metadata": {
+		"total": 47,
+		"packageName": "react-spectrum"
+	},
+	"components": {
+		"react-aria-components": {
+			"__default__": "packages/react-aria-components/intl/en-US.json",
+			"__destination__": "packages/react-aria-components/intl",
+			"__source__": "packages/react-aria-components/intl/en-US.json"
+		},
+		"react-spectrum-contextualhelp": {
+			"__default__": "packages/@react-spectrum/contextualhelp/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/contextualhelp/intl",
+			"__source__": "packages/@react-spectrum/contextualhelp/intl/en-US.json"
+		},
+		"react-spectrum-s2": {
+			"__default__": "packages/@react-spectrum/s2/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/s2/intl",
+			"__source__": "packages/@react-spectrum/s2/intl/en-US.json"
+		},
+		"react-spectrum-pagination": {
+			"__default__": "packages/@react-spectrum/pagination/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/pagination/intl",
+			"__source__": "packages/@react-spectrum/pagination/intl/en-US.json"
+		},
+		"react-spectrum-calendar": {
+			"__default__": "packages/@react-spectrum/calendar/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/calendar/intl",
+			"__source__": "packages/@react-spectrum/calendar/intl/en-US.json"
+		},
+		"react-spectrum-card": {
+			"__default__": "packages/@react-spectrum/card/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/card/intl",
+			"__source__": "packages/@react-spectrum/card/intl/en-US.json"
+		},
+		"react-spectrum-autocomplete": {
+			"__default__": "packages/@react-spectrum/autocomplete/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/autocomplete/intl",
+			"__source__": "packages/@react-spectrum/autocomplete/intl/en-US.json"
+		},
+		"react-spectrum-picker": {
+			"__default__": "packages/@react-spectrum/picker/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/picker/intl",
+			"__source__": "packages/@react-spectrum/picker/intl/en-US.json"
+		},
+		"react-spectrum-color": {
+			"__default__": "packages/@react-spectrum/color/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/color/intl",
+			"__source__": "packages/@react-spectrum/color/intl/en-US.json"
+		},
+		"react-spectrum-datepicker": {
+			"__default__": "packages/@react-spectrum/datepicker/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/datepicker/intl",
+			"__source__": "packages/@react-spectrum/datepicker/intl/en-US.json"
+		},
+		"react-spectrum-toast": {
+			"__default__": "packages/@react-spectrum/toast/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/toast/intl",
+			"__source__": "packages/@react-spectrum/toast/intl/en-US.json"
+		},
+		"react-spectrum-listbox": {
+			"__default__": "packages/@react-spectrum/listbox/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/listbox/intl",
+			"__source__": "packages/@react-spectrum/listbox/intl/en-US.json"
+		},
+		"react-spectrum-label": {
+			"__default__": "packages/@react-spectrum/label/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/label/intl",
+			"__source__": "packages/@react-spectrum/label/intl/en-US.json"
+		},
+		"react-spectrum-slider": {
+			"__default__": "packages/@react-spectrum/slider/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/slider/intl",
+			"__source__": "packages/@react-spectrum/slider/intl/en-US.json"
+		},
+		"react-spectrum-searchwithin": {
+			"__default__": "packages/@react-spectrum/searchwithin/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/searchwithin/intl",
+			"__source__": "packages/@react-spectrum/searchwithin/intl/en-US.json"
+		},
+		"react-spectrum-combobox": {
+			"__default__": "packages/@react-spectrum/combobox/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/combobox/intl",
+			"__source__": "packages/@react-spectrum/combobox/intl/en-US.json"
+		},
+		"react-spectrum-dialog": {
+			"__default__": "packages/@react-spectrum/dialog/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/dialog/intl",
+			"__source__": "packages/@react-spectrum/dialog/intl/en-US.json"
+		},
+		"react-spectrum-button": {
+			"__default__": "packages/@react-spectrum/button/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/button/intl",
+			"__source__": "packages/@react-spectrum/button/intl/en-US.json"
+		},
+		"react-spectrum-dropzone": {
+			"__default__": "packages/@react-spectrum/dropzone/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/dropzone/intl",
+			"__source__": "packages/@react-spectrum/dropzone/intl/en-US.json"
+		},
+		"react-spectrum-table": {
+			"__default__": "packages/@react-spectrum/table/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/table/intl",
+			"__source__": "packages/@react-spectrum/table/intl/en-US.json"
+		},
+		"react-spectrum-steplist": {
+			"__default__": "packages/@react-spectrum/steplist/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/steplist/intl",
+			"__source__": "packages/@react-spectrum/steplist/intl/en-US.json"
+		},
+		"react-spectrum-list": {
+			"__default__": "packages/@react-spectrum/list/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/list/intl",
+			"__source__": "packages/@react-spectrum/list/intl/en-US.json"
+		},
+		"react-spectrum-menu": {
+			"__default__": "packages/@react-spectrum/menu/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/menu/intl",
+			"__source__": "packages/@react-spectrum/menu/intl/en-US.json"
+		},
+		"react-spectrum-actionbar": {
+			"__default__": "packages/@react-spectrum/actionbar/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/actionbar/intl",
+			"__source__": "packages/@react-spectrum/actionbar/intl/en-US.json"
+		},
+		"react-spectrum-tag": {
+			"__default__": "packages/@react-spectrum/tag/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/tag/intl",
+			"__source__": "packages/@react-spectrum/tag/intl/en-US.json"
+		},
+		"react-spectrum-inlinealert": {
+			"__default__": "packages/@react-spectrum/inlinealert/intl/en-US.json",
+			"__destination__": "packages/@react-spectrum/inlinealert/intl",
+			"__source__": "packages/@react-spectrum/inlinealert/intl/en-US.json"
+		},
+		"react-aria-tree": {
+			"__default__": "packages/@react-aria/tree/intl/en-US.json",
+			"__destination__": "packages/@react-aria/tree/intl",
+			"__source__": "packages/@react-aria/tree/intl/en-US.json"
+		},
+		"react-aria-pagination": {
+			"__default__": "packages/@react-aria/pagination/intl/en-US.json",
+			"__destination__": "packages/@react-aria/pagination/intl",
+			"__source__": "packages/@react-aria/pagination/intl/en-US.json"
+		},
+		"react-aria-calendar": {
+			"__default__": "packages/@react-aria/calendar/intl/en-US.json",
+			"__destination__": "packages/@react-aria/calendar/intl",
+			"__source__": "packages/@react-aria/calendar/intl/en-US.json"
+		},
+		"react-aria-overlays": {
+			"__default__": "packages/@react-aria/overlays/intl/en-US.json",
+			"__destination__": "packages/@react-aria/overlays/intl",
+			"__source__": "packages/@react-aria/overlays/intl/en-US.json"
+		},
+		"react-aria-dnd": {
+			"__default__": "packages/@react-aria/dnd/intl/en-US.json",
+			"__destination__": "packages/@react-aria/dnd/intl",
+			"__source__": "packages/@react-aria/dnd/intl/en-US.json"
+		},
+		"react-aria-color": {
+			"__default__": "packages/@react-aria/color/intl/en-US.json",
+			"__destination__": "packages/@react-aria/color/intl",
+			"__source__": "packages/@react-aria/color/intl/en-US.json"
+		},
+		"react-aria-datepicker": {
+			"__default__": "packages/@react-aria/datepicker/intl/en-US.json",
+			"__destination__": "packages/@react-aria/datepicker/intl",
+			"__source__": "packages/@react-aria/datepicker/intl/en-US.json"
+		},
+		"react-aria-toast": {
+			"__default__": "packages/@react-aria/toast/intl/en-US.json",
+			"__destination__": "packages/@react-aria/toast/intl",
+			"__source__": "packages/@react-aria/toast/intl/en-US.json"
+		},
+		"react-aria-combobox": {
+			"__default__": "packages/@react-aria/combobox/intl/en-US.json",
+			"__destination__": "packages/@react-aria/combobox/intl",
+			"__source__": "packages/@react-aria/combobox/intl/en-US.json"
+		},
+		"react-aria-gridlist": {
+			"__default__": "packages/@react-aria/gridlist/intl/en-US.json",
+			"__destination__": "packages/@react-aria/gridlist/intl",
+			"__source__": "packages/@react-aria/gridlist/intl/en-US.json"
+		},
+		"react-aria-table": {
+			"__default__": "packages/@react-aria/table/intl/en-US.json",
+			"__destination__": "packages/@react-aria/table/intl",
+			"__source__": "packages/@react-aria/table/intl/en-US.json"
+		},
+		"react-aria-steplist": {
+			"__default__": "packages/@react-aria/steplist/intl/en-US.json",
+			"__destination__": "packages/@react-aria/steplist/intl",
+			"__source__": "packages/@react-aria/steplist/intl/en-US.json"
+		},
+		"react-aria-menu": {
+			"__default__": "packages/@react-aria/menu/intl/en-US.json",
+			"__destination__": "packages/@react-aria/menu/intl",
+			"__source__": "packages/@react-aria/menu/intl/en-US.json"
+		},
+		"react-aria-searchfield": {
+			"__default__": "packages/@react-aria/searchfield/intl/en-US.json",
+			"__destination__": "packages/@react-aria/searchfield/intl",
+			"__source__": "packages/@react-aria/searchfield/intl/en-US.json"
+		},
+		"react-aria-spinbutton": {
+			"__default__": "packages/@react-aria/spinbutton/intl/en-US.json",
+			"__destination__": "packages/@react-aria/spinbutton/intl",
+			"__source__": "packages/@react-aria/spinbutton/intl/en-US.json"
+		},
+		"react-aria-breadcrumbs": {
+			"__default__": "packages/@react-aria/breadcrumbs/intl/en-US.json",
+			"__destination__": "packages/@react-aria/breadcrumbs/intl",
+			"__source__": "packages/@react-aria/breadcrumbs/intl/en-US.json"
+		},
+		"react-aria-tag": {
+			"__default__": "packages/@react-aria/tag/intl/en-US.json",
+			"__destination__": "packages/@react-aria/tag/intl",
+			"__source__": "packages/@react-aria/tag/intl/en-US.json"
+		},
+		"react-aria-numberfield": {
+			"__default__": "packages/@react-aria/numberfield/intl/en-US.json",
+			"__destination__": "packages/@react-aria/numberfield/intl",
+			"__source__": "packages/@react-aria/numberfield/intl/en-US.json"
+		},
+		"react-aria-grid": {
+			"__default__": "packages/@react-aria/grid/intl/en-US.json",
+			"__destination__": "packages/@react-aria/grid/intl",
+			"__source__": "packages/@react-aria/grid/intl/en-US.json"
+		},
+		"react-stately-color": {
+			"__default__": "packages/@react-stately/color/intl/en-US.json",
+			"__destination__": "packages/@react-stately/color/intl",
+			"__source__": "packages/@react-stately/color/intl/en-US.json"
+		},
+		"react-stately-datepicker": {
+			"__default__": "packages/@react-stately/datepicker/intl/en-US.json",
+			"__destination__": "packages/@react-stately/datepicker/intl",
+			"__source__": "packages/@react-stately/datepicker/intl/en-US.json"
+		}
+	}
+}

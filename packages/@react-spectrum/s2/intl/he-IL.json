@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "ממתין ל",
   "contextualhelp.help": "עזרה",
   "contextualhelp.info": "מידע",
@@ -12,7 +13,7 @@
   "label.(optional)": "(אופציונלי)",
   "label.(required)": "(נדרש)",
   "menu.moreActions": "פעולות נוספות",
-  "picker.placeholder": "בחר אפשרות...",
+  "picker.placeholder": "בחר…",
   "slider.maximum": "מקסימום",
   "slider.minimum": "מינימום",
   "table.loading": "טוען...",
