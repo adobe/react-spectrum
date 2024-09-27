@@ -14,7 +14,7 @@ import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import {LinkButton, Text} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof LinkButton> = {
   component: LinkButton,
@@ -26,7 +26,7 @@ const meta: Meta<typeof LinkButton> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
   },
-  title: 'S2/LinkButton'
+  title: 'LinkButton'
 };
 
 export default meta;

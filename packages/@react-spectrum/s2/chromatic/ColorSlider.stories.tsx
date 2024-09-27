@@ -14,7 +14,7 @@ import {ColorSlider, Content, ContextualHelp, Heading} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import {shortName} from './utils';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,

@@ -27,16 +27,13 @@ import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'])
   },
-  title: 'S2/Menu'
+  title: 'Menu'
 };
 
 export default meta;

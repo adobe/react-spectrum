@@ -5,16 +5,13 @@ import type {Meta, StoryObj} from '@storybook/react';
 const meta: Meta<typeof ContextualHelp> = {
   component: ContextualHelp,
   parameters: {
-    layout: 'centered',
-    chromatic: {
-      disableSnapshot: true
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
   },
-  title: 'S2/ContextualHelp'
+  title: 'ContextualHelp'
 };
 
 export default meta;

@@ -23,7 +23,7 @@ import {createContext, forwardRef, useRef} from 'react';
 import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

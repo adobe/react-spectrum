@@ -13,10 +13,10 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {lightDark, size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {focusRing, lightDark, size as sizeValue, style} from '../style' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -24,12 +24,12 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
   /**
    * The size of the disclosure.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The amount of space between the disclosures.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the disclosure should be displayed with a quiet style. */

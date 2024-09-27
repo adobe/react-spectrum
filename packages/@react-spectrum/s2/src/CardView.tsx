@@ -19,11 +19,11 @@ import {
 } from 'react-aria-components';
 import {CardContext, CardViewContext} from './Card';
 import {DOMRef, forwardRefType, Key, LayoutDelegate, LoadingState, Node} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {forwardRef, useMemo, useState} from 'react';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
 

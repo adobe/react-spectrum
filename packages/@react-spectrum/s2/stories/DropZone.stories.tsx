@@ -18,7 +18,7 @@ import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import type {Meta} from '@storybook/react';
 import React, {useState} from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
@@ -29,7 +29,7 @@ const meta: Meta<typeof DropZone> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
   },
-  title: 'S2/DropZone'
+  title: 'DropZone'
 };
 
 export default meta;

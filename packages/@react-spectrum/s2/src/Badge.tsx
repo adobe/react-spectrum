@@ -15,7 +15,7 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
-import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';

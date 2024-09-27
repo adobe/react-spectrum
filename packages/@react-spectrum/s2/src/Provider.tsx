@@ -16,7 +16,7 @@ import {createContext, JSX, ReactNode, useContext} from 'react';
 import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
 export interface ProviderProps extends UnsafeStyles {

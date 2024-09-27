@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
+import {ArbitraryValue} from './types';
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
@@ -87,21 +88,26 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: Color<keyof typeof color>, dark: Color<keyof typeof color>): `[${string}]` {
-  let [lightColorValue, lightOpacity] = light.split('/');
-  let [darkColorValue, darkOpacity] = dark.split('/');
-  let lightColor = color[lightColorValue];
-  let darkColor = color[darkColorValue];
-
-  if (lightOpacity) {
-    lightColor = `rgb(from ${lightColor} r g b / ${lightOpacity}%)`;
+type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
+function parseColor(value: SpectrumColor) {
+  let arbitrary = parseArbitraryValue(value);
+  if (arbitrary) {
+    return arbitrary[0];
   }
-
-  if (darkOpacity) {
-    darkColor = `rgb(from ${darkColor} r g b / ${darkOpacity}%)`;
+  let [colorValue, opacity] = value.split('/');
+  colorValue = color[colorValue];
+  if (opacity) {
+    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
   }
+  return colorValue;
+}
 
-  return `[light-dark(${lightColor}, ${darkColor})]`;
+export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
+  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+}
+
+export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
+  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {

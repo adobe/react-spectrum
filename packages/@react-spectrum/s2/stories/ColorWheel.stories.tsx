@@ -24,7 +24,7 @@ const meta: Meta<typeof ColorWheel> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
   },
-  title: 'S2/ColorWheel'
+  title: 'ColorWheel'
 };
 
 export default meta;
