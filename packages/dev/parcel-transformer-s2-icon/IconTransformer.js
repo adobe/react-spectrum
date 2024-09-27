@@ -61,7 +61,7 @@ module.exports = new Transformer({
         plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']
       })
     ).replace('export default ForwardRef;', '');
-    let newFile = template(asset, iconName, optimized);
+    let newFile = template(asset, optimized);
     return [{
       type: 'tsx',
       content: newFile,
@@ -72,65 +72,16 @@ module.exports = new Transformer({
   }
 });
 
-function template(asset, iconName, svg) {
-  let importName = iconName
-    .replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1')
-    .replace(/^S2_(fill|lin)_(.+)_(.+_)?(\d+)$/, (m, name) => name[0].toUpperCase() + name.slice(1));
-  let iconRename = importName;
-  if (/^[0-9]/.test(importName)) {
-    iconRename = '_' + importName;
-  }
+function template(asset, svg) {
   let normalizedPath = asset.filePath.replaceAll('\\', '/');
   let context = asset.pipeline === 'illustration' || normalizedPath.includes('@react-spectrum/s2/spectrum-illustrations') ? 'IllustrationContext' : 'IconContext';
   return (
 `
-import {IconProps, ${context}, IconContextValue} from '${normalizedPath.includes('@react-spectrum/s2') ? '~/src/Icon' : '@react-spectrum/s2'}';
-import {SVGProps, useRef} from 'react';
-import {useContextProps} from 'react-aria-components';
-import {SkeletonWrapper, useSkeletonIcon} from '~/src/Skeleton';
+import {createIcon, ${context}} from '${normalizedPath.includes('@react-spectrum/s2') ? '~/src/Icon' : '@react-spectrum/s2'}';
 
 ${svg.replace('import { SVGProps } from "react";', '')}
 
-export default function ${iconRename}(props: IconProps) {
-  let ref = useRef<SVGElement>(null);
-  let ctx;
-  // TODO: remove this default once we release RAC and use DEFAULT_SLOT.
-  [ctx, ref] = useContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, ${context});
-  let {render, styles} = ctx;
-  let {
-    UNSAFE_className,
-    UNSAFE_style,
-    slot,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    ...otherProps
-  } = props;
-
-  if (!ariaHidden) {
-    ariaHidden = undefined;
-  }
-
-  let svg = (
-    <SkeletonWrapper>
-      <ForwardRef
-        {...otherProps}
-        focusable={false}
-        aria-label={ariaLabel}
-        aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
-        role="img"
-        data-slot={slot}
-        className={(UNSAFE_className ?? '') + ' ' + useSkeletonIcon(styles)}
-        style={UNSAFE_style} />
-    </SkeletonWrapper>
-  );
-
-  if (render) {
-    return render(svg);
-  }
-
-  return svg;
-}
-
+export default /*#__PURE__*/ createIcon(ForwardRef, ${context});
 `
   );
 }
