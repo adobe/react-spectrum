@@ -12,15 +12,16 @@ export default BlogPostLayout;
 
 ---
 
-description: Happy fall! We’re excited to announce that our color picker components are now generally available! This includes ColorPicker, ColorArea, ColorField, ColorSlider, ColorSwatch, ColorSwatchPicker, and ColorWheel. These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
-In addition, we’ve introduced a new pending state for buttons in React Aria Components, allowing you to display a progress spinner to indicate that an action is in progress. It also handles screen reader announcements and disables other interactions, except for focus, during the pending state.
-We're also advancing the React Aria Components Tree and Spectrum TreeView to beta, and have added some basic documentation. In alpha, we have new Disclosure and DisclosureGroup components in React Aria Components, which can be used to build accordions and other collapsible panels.
+description: Happy fall! 🍁 We’re excited to announce that our color picker components are now generally available! We've also added a pending state for buttons in React Aria Components, advanced TreeView to beta, and added new Disclosure and DisclosureGroup components in alpha for building accordions and collapsible panels.
 
 date: 2024-09-30
 ---
+
 # September 30, 2024 Release
 Happy fall! 🍁 We’re excited to announce that our color picker components are now generally available! This includes ColorPicker, ColorArea, ColorField, ColorSlider, ColorSwatch, ColorSwatchPicker, and ColorWheel. These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
+
 In addition, we’ve introduced a new pending state for buttons in React Aria Components, allowing you to display a progress spinner to indicate that an action is in progress. It also handles screen reader announcements and disables other interactions, except for focus, during the pending state.
+
 We're also advancing the React Aria Components Tree and Spectrum TreeView to beta, and have added some basic documentation. In alpha, we have new Disclosure and DisclosureGroup components in React Aria Components, which can be used to build accordions and other collapsible panels.
 
 Huge thanks as always to everyone who contributed to this release! 😍
@@ -28,11 +29,11 @@ Huge thanks as always to everyone who contributed to this release! 😍
 ## Enhancements
 
 - Button
-  - RAC Pending Button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7002), [PR](https://github.com/adobe/react-spectrum/pull/7073)
+  - Add pending state to Button in React Aria Components - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7002), [PR](https://github.com/adobe/react-spectrum/pull/7073)
 - Collections
-  - Support fragments in v3 collections - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/6430)
+  - Support fragments in React Spectrum v3 collections - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/6430)
 - Tabs
-  - Support hover events in RAC Tabs - [@lithdew](https://github.com/lithdew) - [PR](https://github.com/adobe/react-spectrum/pull/6742)
+  - Support hover events in React Aria Component Tabs - [@lithdew](https://github.com/lithdew) - [PR](https://github.com/adobe/react-spectrum/pull/6742)
 - TableView
   - Support `disabledBehavior` prop in TableView - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6832), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6863)
 - Misc
@@ -64,14 +65,14 @@ Huge thanks as always to everyone who contributed to this release! 😍
 - Select
   - Fix Select from showing placeholder when selected value is 0 - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6968)
 - Tabs
-  - Add horizontal orientation to `TabsKeyboardDelegate` to prevent switching tabs with up/down arrow keys - [@mdhmaiti]() - [PR](https://github.com/mdhmaiti)
+  - Add horizontal orientation to `TabsKeyboardDelegate` to prevent switching tabs with up/down arrow keys - [@mdhmaiti](https://github.com/mdhmaiti) - [PR](https://github.com/adobe/react-spectrum/pull/6023)
 - Tooltip
   - Prevent Tooltip from getting stuck to screen when scrolling - [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/6984)
 - Tree
   - Fix `useTreeData` error and types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6923)
 - Misc
   - Prevent click events from being fired on the wrong target on Android devices - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7026)
-  - Fix `useId` updater overwrite - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6788)
+  - Fix linking ids when using htmlFor via `useId`- [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6788)
   - Fix conditional `useHref` call - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/7032)
   - Fix type regression on `useControlledState` signature - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6789)
   - Extract `ToggleStateProps` type to use only what is needed in `useToggleState` - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/3836)
