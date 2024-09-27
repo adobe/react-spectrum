@@ -23,6 +23,6 @@
   "table.sortDescending": "Trier par ordre décroissant",
   "tag.actions": "Actions",
   "tag.hideButtonLabel": "Afficher moins",
-  "tag.noTags": "Aucun(e)",
+  "tag.noTags": "Aucun",
   "tag.showAllButtonLabel": "Tout afficher ({tagCount, number})"
 }
