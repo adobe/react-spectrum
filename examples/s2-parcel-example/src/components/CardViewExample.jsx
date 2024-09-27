@@ -15,10 +15,12 @@ import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import {style} from "@react-spectrum/s2/style" with { type: "macro" };
 import {useAsyncList} from 'react-stately';
+import React from 'react';
 
 const cardViewStyles = style({
   maxWidth: '[760px]',
-  margin: 32
+  height: '[760px]',
+  margin: 32,
 });
 
 const avatarSize = {
