@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "в очікуванні",
   "contextualhelp.help": "Довідка",
   "contextualhelp.info": "Інформація",
@@ -12,7 +13,7 @@
   "label.(optional)": "(необов’язково)",
   "label.(required)": "(обов’язково)",
   "menu.moreActions": "Більше дій",
-  "picker.placeholder": "Виберіть опцію...",
+  "picker.placeholder": "Вибрати…",
   "slider.maximum": "Максимум",
   "slider.minimum": "Мінімум",
   "table.loading": "Завантаження…",
