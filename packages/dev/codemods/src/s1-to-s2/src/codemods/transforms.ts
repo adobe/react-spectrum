@@ -946,6 +946,35 @@ function updateLegacyLink(
   }
 }
 
+/**
+ * Copies the columns prop from the TableHeader to the Row component.
+ */
+function addColumnsPropToRow(
+  path: NodePath<t.JSXElement>
+) {
+
+  const tableHeaderPath = path.get('children').find((child) =>
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+    ) as NodePath<t.JSXElement> | undefined;
+
+  if (!tableHeaderPath) {
+    addComment(path.node, ' TODO(S2-upgrade): Could not find TableHeader within Table to retrieve columns prop.');
+    return;
+  }
+
+  const columnsProp = tableHeaderPath
+    .get('openingElement')
+    .get('attributes')
+    .find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'columns') as NodePath<t.JSXAttribute> | undefined;
+
+  if (columnsProp) {
+    let rowPath = path.find((p) => t.isJSXElement(p.node) && getName(p as NodePath<t.JSXElement>, p.node.openingElement.name as t.JSXIdentifier) === 'Row') as NodePath<t.JSXElement> | undefined;
+    rowPath?.node.openingElement.attributes.push(columnsProp.node);
+  }
+}
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -965,5 +994,6 @@ export const functionMap = {
   updatePlacementToSingleValue,
   removeComponentIfWithinParent,
   updateAvatarSize,
-  updateLegacyLink
+  updateLegacyLink,
+  addColumnsPropToRow
 };

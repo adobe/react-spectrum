@@ -75,6 +75,10 @@ type FunctionInfo =
   | {
     name: 'updateLegacyLink',
     args: {}
+  }
+  | {
+    name: 'addColumnsPropToRow',
+    args: {}
   };
 
 type Change = {
@@ -1188,6 +1192,50 @@ export const changes: ChangesJSON = {
             propToUpdate: 'placement',
             childComponent: 'Tooltip'
           }
+        }
+      }
+    ]
+  },
+  TableView: {
+    changes: [
+      {
+        description: 'Update TableView to Table',
+        reason: 'Updated API',
+        function: {
+          name: 'updateToNewComponent',
+          args: {newComponent: 'Table'}
+        }
+      },
+      {
+        description: 'Add columns prop to Row',
+        reason: 'Rows now require a columns prop from TableHeader',
+        function: {
+          name: 'addColumnsPropToRow',
+          args: {}
+        }
+      }
+    ]
+  },
+  Column: {
+    changes: [
+      {
+        description: 'Update key prop to id',
+        reason: 'Updated API',
+        function: {
+          name: 'updatePropName',
+          args: {oldProp: 'key', newProp: 'id'}
+        }
+      }
+    ]
+  },
+  Row: {
+    changes: [
+      {
+        description: 'Update key prop to id',
+        reason: 'Updated API',
+        function: {
+          name: 'updatePropName',
+          args: {oldProp: 'key', newProp: 'id'}
         }
       }
     ]
