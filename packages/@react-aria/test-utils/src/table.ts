@@ -136,11 +136,11 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      await act(async () => {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for table transition.');
-        }
+      if (this._advanceTimer == null) {
+        throw new Error('No advanceTimers provided for table transition.');
+      }
 
+      await act(async () => {
         await this._advanceTimer(200);
       });
 
