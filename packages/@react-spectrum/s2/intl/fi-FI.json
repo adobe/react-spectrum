@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Lisää kohteita",
   "button.pending": "odottaa",
   "contextualhelp.help": "Ohje",
   "contextualhelp.info": "Tiedot",
@@ -12,7 +13,7 @@
   "label.(optional)": "(valinnainen)",
   "label.(required)": "(pakollinen)",
   "menu.moreActions": "Lisää toimintoja",
-  "picker.placeholder": "Valitse vaihtoehto...",
+  "picker.placeholder": "Valitse…",
   "slider.maximum": "Maksimi",
   "slider.minimum": "Minimi",
   "table.loading": "Ladataan…",

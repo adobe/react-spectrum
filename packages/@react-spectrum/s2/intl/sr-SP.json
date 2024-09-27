@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "nerešeno",
   "contextualhelp.help": "Pomoć",
   "contextualhelp.info": "Informacije",
@@ -12,7 +13,7 @@
   "label.(optional)": "(opciono)",
   "label.(required)": "(obavezno)",
   "menu.moreActions": "Dodatne radnje",
-  "picker.placeholder": "Izaberite opciju",
+  "picker.placeholder": "Izaberite...",
   "slider.maximum": "Najviše",
   "slider.minimum": "Najmanje",
   "table.loading": "Učitavam...",

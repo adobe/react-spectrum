@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "更多項目",
   "button.pending": "待處理",
   "contextualhelp.help": "說明",
   "contextualhelp.info": "資訊",
@@ -12,7 +13,7 @@
   "label.(optional)": "(選填)",
   "label.(required)": "(必填)",
   "menu.moreActions": "更多動作",
-  "picker.placeholder": "選取一個選項",
+  "picker.placeholder": "選取…",
   "slider.maximum": "最大值",
   "slider.minimum": "最小值",
   "table.loading": "載入中…",

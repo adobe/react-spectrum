@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "قيد الانتظار",
   "contextualhelp.help": "مساعدة",
   "contextualhelp.info": "معلومات",
@@ -12,7 +13,7 @@
   "label.(optional)": "(اختياري)",
   "label.(required)": "(مطلوب)",
   "menu.moreActions": "المزيد من الإجراءات",
-  "picker.placeholder": "حدد خيارًا...",
+  "picker.placeholder": "تحديد…",
   "slider.maximum": "أقصى",
   "slider.minimum": "أدنى",
   "table.loading": "جارٍ التحميل...",
