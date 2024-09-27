@@ -17,8 +17,8 @@ import {style} from "@react-spectrum/s2/style" with { type: "macro" };
 import {useAsyncList} from 'react-stately';
 
 const cardViewStyles = style({
-  width: 'full',
-  height: 'screen'
+  maxWidth: '[760px]',
+  margin: 32
 });
 
 const avatarSize = {
@@ -71,7 +71,7 @@ export const CardViewExample = (props) => {
     async load({signal, cursor, items}) {
       let page = cursor || 1;
       let res = await fetch(
-        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=12&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
         {signal}
       );
       let nextItems = await res.json();
@@ -140,7 +140,7 @@ export const CollectionCardsExample = (props) => {
     async load({signal, cursor}) {
       let page = cursor || 1;
       let res = await fetch(
-        `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        `https://api.unsplash.com/topics?page=${page}&per_page=12&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
         {signal}
       );
       let items = (await res.json()).filter((topic) => !!topic.preview_photos);
