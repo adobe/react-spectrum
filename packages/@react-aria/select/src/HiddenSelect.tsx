@@ -11,6 +11,7 @@
  */
 
 import {FocusableElement, RefObject} from '@react-types/shared';
+import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import React, {ReactNode, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
@@ -108,7 +109,30 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       type: 'text',
       tabIndex: modality == null || state.isFocused || state.isOpen ? -1 : 0,
       style: {fontSize: 16},
-      onFocus: () => triggerRef.current.focus(),
+      onFocus: (e) => {
+        let position = e.relatedTarget?.compareDocumentPosition(e.currentTarget);
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = e.relatedTarget;
+        if (position & Node.DOCUMENT_POSITION_PRECEDING ) {
+          // if focus is coming from "after" this element, we know it's a shift tab
+          let prevNode = walker.previousNode() as FocusableElement | null;
+          if (prevNode) {
+            focusElement(prevNode, true);
+          } else {
+            triggerRef.current.focus();
+          }
+        } else if ( position & Node.DOCUMENT_POSITION_FOLLOWING ) {
+          // if focus is coming from "before" this element, we know it's a tab
+          let nextNode = walker.nextNode() as FocusableElement | null;
+          if (nextNode) {
+            focusElement(nextNode, true);
+          } else {
+            triggerRef.current.focus();
+          }
+        } else {
+          triggerRef.current.focus();
+        }
+      },
       disabled: isDisabled
     },
     selectProps: {
@@ -171,4 +195,20 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   }
 
   return null;
+}
+
+function focusElement(element: FocusableElement | null, scroll = false) {
+  if (element != null && !scroll) {
+    try {
+      focusSafely(element);
+    } catch (err) {
+      // ignore
+    }
+  } else if (element != null) {
+    try {
+      element.focus();
+    } catch (err) {
+      // ignore
+    }
+  }
 }
