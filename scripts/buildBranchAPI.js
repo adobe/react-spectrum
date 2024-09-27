@@ -102,6 +102,7 @@ async function build() {
 
   // Copy necessary code and configuration over
   fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
+  fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
   fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
