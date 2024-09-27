@@ -112,8 +112,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       onFocus: (e) => {
         let position = e.relatedTarget?.compareDocumentPosition(e.currentTarget);
         let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = e.relatedTarget;
-        if (position & Node.DOCUMENT_POSITION_PRECEDING ) {
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          walker.currentNode = e.relatedTarget;
           // if focus is coming from "after" this element, we know it's a shift tab
           let prevNode = walker.previousNode() as FocusableElement | null;
           if (prevNode) {
@@ -121,7 +121,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
           } else {
             triggerRef.current.focus();
           }
-        } else if ( position & Node.DOCUMENT_POSITION_FOLLOWING ) {
+        } else if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+          walker.currentNode = e.relatedTarget;
           // if focus is coming from "before" this element, we know it's a tab
           let nextNode = walker.nextNode() as FocusableElement | null;
           if (nextNode) {

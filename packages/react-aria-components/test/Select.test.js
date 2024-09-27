@@ -283,7 +283,7 @@ describe('Select', () => {
     let state = React.useContext(SelectStateContext);
     return (
       <Button
-      data-testid="clear"
+        data-testid="clear"
         // Don't inherit behavior from Select.
         slot={null}
         style={{fontSize: 'small', marginTop: 6, padding: 4}}
