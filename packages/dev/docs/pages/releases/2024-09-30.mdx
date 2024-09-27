@@ -19,7 +19,6 @@ date: 2024-09-30
 # September 30, 2024 Release
 
 
-
 ## Enhancements
 
 - Button
@@ -31,10 +30,9 @@ date: 2024-09-30
 - TableView
   - Support `disabledBehavior` prop in TableView - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6832), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6863)
 - Misc
-  - Upgrade to Yarn 4 - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6215), [PR](https://github.com/adobe/react-spectrum/pull/6767)
   - Use content hashes in CSS modules - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7029)
-  - TS Strict Stately List - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6567)
-  - Aria pattern utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6208)
+  - TS Strict support in Stately List hooks - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6567)
+  - Add test utilities for ARIA patterns to simplify test writing - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6208)
   - Allow styles on VirtualizerItem - [@patrickkuhlmann](https://github.com/patrickkuhlmann) - [PR](https://github.com/adobe/react-spectrum/pull/6998)
   - Add support for windows contributors - [@davidcoleman007](https://github.com/davidcoleman007) - [PR](https://github.com/adobe/react-spectrum/pull/6313)
   - Allow passing data attributes to FieldError in RAC - [@omarnyte](https://github.com/omarnyte) - [PR](https://github.com/adobe/react-spectrum/pull/6895)
@@ -44,15 +42,15 @@ date: 2024-09-30
 
 - ActionBar
   - Pass through ActionBar `disabledKeys` to ActionGroup - [@GrantRussell](https://github.com/GrantRussell) - [PR](https://github.com/adobe/react-spectrum/pull/7090)
-- Combobox
-  - Keep focus on the input in Combobox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/6783)
-  - Fix Combobox `isQuiet` and `isReadOnly` styling - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
+- ComboBox
+  - Keep focus on the input in ComboBox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/6783)
+  - Fix `isQuiet` and `isReadOnly` styling - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
 - Date/Time
   - Fix type regression in Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6790)
   - Add missing `endOfWeek` overload - [@cyyynthia](https://github.com/cyyynthia) - [PR](https://github.com/adobe/react-spectrum/pull/6749)
   - Fix `useDateSegment` null ref error - [@teemuandersen](https://github.com/teemuandersen) - [PR](https://github.com/adobe/react-spectrum/pull/6989)
 - Menu
-  - Fix `useMenuItem` `onAction` regression - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6807)  
+  - Fix `useMenuItem` `onAction` regression - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6807)
 - Picker
   - Update Picker placeholder to be shorter - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6796)
 - SearchField
@@ -85,14 +83,10 @@ date: 2024-09-30
 
 - TreeView/Tree (Beta):
   - Fix Tree row padding when chevron isn't present - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6545)
-  - Fix TreeView so that the row height always matches the chevron height - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6950)
+  - Fix TreeView so height matches the chevron height - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6950)
   - Add TreeView docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6744), [PR](https://github.com/adobe/react-spectrum/pull/6959)
-  - Add docs for Tree - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
 
 - Accordion/DisclosureGroup/Disclosure (Alpha)
   - Accordion - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6931)
   - Add DisclosureGroup component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7063)
   - Add basic docs for Accordion, DisclosureGroup, Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
-
-
-
