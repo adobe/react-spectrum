@@ -102,6 +102,17 @@ import { CardViewExample, CollectionCardsExample } from "./components/CardViewEx
 function App() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
   let [cardViewState, setCardViewState] = useState({layout: 'grid', loadingState: 'idle'});
+  let cardViewLoadingOptions = [
+    {id: 'loading', label: 'Loading'},
+    {id: 'sorting', label: 'Sorting'},
+    {id: 'loadingMore', label: 'Loading More'},
+    {id: 'error', label: 'Error'},
+    {id: 'idle', label: 'Idle'}
+  ];
+  let cardViewLayoutOptions = [
+    {id: 'grid', label: 'Grid'},
+    {id: 'waterfall', label: 'Waterfall'}
+  ];
   return (
     <main>
       <Heading
@@ -152,20 +163,20 @@ function App() {
           </ActionMenu>
           <Picker
             label="CardView Loading State"
-            items={['loading', 'sorting', 'loadingMore', 'error', 'idle', 'filtering']}
+            items={cardViewLoadingOptions}
             selectedKey={cardViewState.loadingState}
             onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState})}>
-            {item => <PickerItem id={item}>{item}</PickerItem>}
+            {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <Picker
             label="CardView Layout"
-            items={['grid', 'waterfall']}
+            items={cardViewLayoutOptions}
             selectedKey={cardViewState.layout}
             onSelectionChange={layout => setCardViewState({...cardViewState, layout})}>
-            {item => <PickerItem key={item}>{item}</PickerItem>}
+            {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
-          <CardViewExample />
-          <CollectionCardsExample />
+          <CardViewExample loadingState={cardViewState.loadingState} layout={cardViewState.layout} />
+          <CollectionCardsExample loadingState={cardViewState.loadingState} layout={cardViewState.layout}  />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
             <Menu onAction={(key) => alert(key.toString())}>
