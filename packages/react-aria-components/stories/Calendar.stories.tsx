@@ -41,7 +41,7 @@ export const CalendarExample = {
     <Calendar style={{width: 220}} isDateUnavailable={d => d.day === 15} {...args}>
       <div style={{display: 'flex', alignItems: 'center'}}>
         <Button slot="previous">&lt;</Button>
-        <Heading style={{flex: 1, textAlign: 'center'}}/>
+        <Heading style={{flex: 1, textAlign: 'center'}} />
         <Button slot="next">&gt;</Button>
       </div>
       <CalendarGrid style={{width: '100%'}}>
