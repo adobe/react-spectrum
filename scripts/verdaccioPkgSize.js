@@ -18,7 +18,7 @@ function verdaccioPkgSize() {
   let verdaccioDBPath = path.join(__dirname, '..', 'storage', '.verdaccio-db.json');
   let publishedPackages = JSON.parse(fs.readFileSync(verdaccioDBPath), 'utf').list;
   for (let pkg of publishedPackages) {
-    let tarballPath = glob.sync(`**/${pkg}/*.tgz`, {cwd: verdaccioStorePath});
+    let tarballPath = glob.sync(`**/${pkg}/*.tgz`, {cwd: verdaccioStorePath}).sort().at(-1);
     let size = fs.statSync(verdaccioStorePath + tarballPath).size / 1000;
     json[pkg] = size;
   }

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Change variant info to informative 1`] = `
+"import { Badge } from "@react-spectrum/s2";
+let variant = 'info';
+let props = {variant: 'info'};
+<div>
+  <Badge variant="informative">
+    Content Info
+  </Badge>
+  <Badge variant={"informative"}>
+    Content Info
+  </Badge>
+  <Badge // TODO(S2-upgrade): Prop variant could not be automatically updated because variant could not be followed.
+  variant={variant}>
+    Content Info
+  </Badge>
+  <Badge // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    Content Info
+  </Badge>
+</div>"
+`;

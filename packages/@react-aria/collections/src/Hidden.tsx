@@ -12,7 +12,7 @@
 
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useContext} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
@@ -64,7 +64,7 @@ export function Hidden(props: {children: ReactNode}) {
 
 /** Creates a component that forwards its ref and returns null if it is in a hidden subtree. */
 // Note: this function is handled specially in the documentation generator. If you change it, you'll need to update DocsTransformer as well.
-export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => ReactNode | null): (props: P & React.RefAttributes<T>) => ReactNode | null {
+export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null {
   let Wrapper = (props: P, ref: React.Ref<T>) => {
     let isHidden = useContext(HiddenContext);
     if (isHidden) {

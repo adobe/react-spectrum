@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes showValueLabel 1`] = `
+"import { ColorSlider } from "@react-spectrum/s2";
+
+<ColorSlider defaultValue="#7f0000" channel="red" />"
+`;

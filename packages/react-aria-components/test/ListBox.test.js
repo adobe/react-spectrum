@@ -18,8 +18,8 @@ import {
   Header, Heading,
   ListBox,
   ListBoxContext,
-  ListBoxItem, 
-  UNSTABLE_ListLayout as ListLayout, 
+  ListBoxItem,
+  UNSTABLE_ListLayout as ListLayout,
   Modal,
   Section,
   Text,
@@ -479,7 +479,23 @@ describe('ListBox', () => {
     );
     let items = getAllByRole('option');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on list ans list items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test" onAction={onAction}>
+        <ListBoxItem id="cat" onAction={itemAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledWith('cat');
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support empty state', () => {
@@ -725,11 +741,11 @@ describe('ListBox', () => {
     let listbox = getByRole('listbox');
     listbox.scrollTop = 200;
     fireEvent.scroll(listbox);
-    
+
     options = getAllByRole('option');
     expect(options).toHaveLength(8);
     expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);
-  
+
     await user.tab();
     await user.keyboard('{End}');
 
@@ -1051,6 +1067,96 @@ describe('ListBox', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
+  });
+
+  const FalsyExample = () => (
+    <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace">
+      <ListBoxItem id="0">Item 0</ListBoxItem>
+      <ListBoxItem id="1">Item 1</ListBoxItem>
+      <ListBoxItem id="2">Item 2</ListBoxItem>
+    </ListBox>
+  );
+
+  describe('selection with falsy keys', () => {
+    describe('keyboard', () => {
+      it('should deselect item 0 when navigating back in replace selection mode', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+  
+        // Hold Shift and press ArrowUp to select item 0
+        await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+  
+        // Hold Shift and press ArrowDown to navigate back to item 1
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+      });
+  
+      it('should correctly handle starting selection at item 0 and extending to item 2', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+  
+        // Hold Shift and press ArrowDown to select item 1
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+  
+        // Hold Shift and press ArrowDown to select item 2
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'true');
+      });
+    });
+  
+    describe('mouse', () => {
+      it('should deselect item 0 when clicking another item in replace selection mode', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+      });
+  
+      it('should correctly handle mouse selection starting at item 0 and extending to item 2', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+  
+        await user.click(items[2]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+        expect(items[2]).toHaveAttribute('aria-selected', 'true');
       });
     });
   });

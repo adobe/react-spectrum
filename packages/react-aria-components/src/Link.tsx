@@ -55,7 +55,7 @@ export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorEleme
 function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
-  let ElementType: ElementType = props.href ? 'a' : 'span';
+  let ElementType: ElementType = props.href && !props.isDisabled ? 'a' : 'span';
   let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, ref);
 
   let {hoverProps, isHovered} = useHover(props);

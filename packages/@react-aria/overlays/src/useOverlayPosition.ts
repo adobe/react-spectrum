@@ -11,9 +11,9 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
-import {RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -140,7 +140,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   }, [isOpen]);
 
   let updatePosition = useCallback(() => {
-    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
+    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !boundaryElement) {
       return;
     }
 
@@ -153,7 +153,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // so it can be restored after repositioning. This way if the overlay height
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
-    if (scrollRef.current.contains(document.activeElement)) {
+    if (scrollRef.current && scrollRef.current.contains(document.activeElement)) {
       let anchorRect = document.activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
@@ -181,7 +181,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       placement: translateRTL(placement, direction),
       overlayNode: overlayRef.current,
       targetNode: targetRef.current,
-      scrollNode: scrollRef.current,
+      scrollNode: scrollRef.current || overlayRef.current,
       padding: containerPadding,
       shouldFlip,
       boundaryElement,

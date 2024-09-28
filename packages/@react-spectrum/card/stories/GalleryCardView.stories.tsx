@@ -24,7 +24,6 @@ import {
   FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
-  IsLoadingNoHeightGrid,
   LoadingMoreGrid,
   StaticCards,
   StaticCardViewStory
@@ -159,14 +158,6 @@ export const SelectedKeys: ControlledCardViewStory = {
     ...ControlledCards.args,
     layout: GalleryLayout,
     items: itemsLowVariance
-  }
-};
-
-export const IsLoadingNoHeightGallery: DynamicCardViewStory = {
-  ...IsLoadingNoHeightGrid,
-  args: {
-    ...IsLoadingNoHeightGrid.args,
-    layout: GalleryLayout
   }
 };
 

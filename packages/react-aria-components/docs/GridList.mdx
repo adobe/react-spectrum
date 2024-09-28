@@ -49,6 +49,7 @@ type: component
 
 ```tsx example
 import {GridList, GridListItem, Button} from 'react-aria-components';
+import {MyCheckbox} from './Checkbox';
 
 <GridList aria-label="Favorite pokemon" selectionMode="multiple">
   <GridListItem textValue="Charizard">
@@ -305,8 +306,7 @@ If you will use a GridList in multiple places in your app, you can wrap all of t
 This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `GridListItem` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
 
 ```tsx example export=true
-import type {GridListProps, GridListItemProps, CheckboxProps} from 'react-aria-components';
-import {Button, Checkbox} from 'react-aria-components';
+import type {GridListProps, GridListItemProps} from 'react-aria-components';
 
 function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   return (
@@ -327,24 +327,6 @@ function MyItem({children, ...props}: GridListItemProps) {
         {children}
       </>}
     </GridListItem>
-  );
-}
-
-function MyCheckbox({children, ...props}: CheckboxProps) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate}) => <>
-        <div className="checkbox">
-          <svg viewBox="0 0 18 18" aria-hidden="true">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" />
-            }
-          </svg>
-        </div>
-        {children}
-      </>}
-    </Checkbox>
   );
 }
 

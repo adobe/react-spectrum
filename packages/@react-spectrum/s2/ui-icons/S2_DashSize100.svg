@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+
+  <path d="m8.5,6H1.5c-.55273,0-1-.44727-1-1s.44727-1,1-1h7c.55273,0,1,.44727,1,1s-.44727,1-1,1Z" fill="var(--iconPrimary, #222)"/>
+
+</svg>

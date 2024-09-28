@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Updates size prop to pixel value 1`] = `
+"import { Avatar } from "@react-spectrum/s2";
+let size = 75;
+let props = {size: 100};
+
+<div>
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    size={16} />
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    size={40} />
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    size={50} />
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    size={size} />
+  <Avatar
+    src="https://i.imgur.com/kJOwAdv.png"
+    alt="avatar with custom size"
+    // TODO(S2-upgrade): check this spread for style props
+    {...props} />
+</div>"
+`;

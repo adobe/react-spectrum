@@ -707,9 +707,9 @@ import {ListStateContext} from 'react-aria-components';
 
 function SelectionCount() {
   /*- begin highlight -*/
-  let state = React.useContext(ListStateContext)!;
+  let state = React.useContext(ListStateContext);
   /*- end highlight -*/
-  let selected = state.selectionManager.selectedKeys.size;
+  let selected = state?.selectionManager.selectedKeys.size ?? 0;
   return <small>{selected} tags selected.</small>;
 }
 

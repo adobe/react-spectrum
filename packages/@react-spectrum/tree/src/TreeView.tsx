@@ -38,7 +38,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
+export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
   /** Whether this item has children, even if not loaded yet. */
@@ -140,8 +140,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  // TODO: needed to use spectrum var since gridTemplateColumns uses baseSizing and not scaled sizing
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'var(--spectrum-global-dimension-size-500)', 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 10, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'

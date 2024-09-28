@@ -270,5 +270,8 @@ describe('DatePicker', () => {
     for (let spinbutton of spinbuttons) {
       expect(spinbutton).toHaveAttribute('aria-disabled', 'true');
     }
+
+    let hiddenInput = getByRole('textbox', {hidden: true});
+    expect(hiddenInput).toHaveAttribute('disabled');
   });
 });

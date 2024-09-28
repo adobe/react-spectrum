@@ -18,7 +18,7 @@ export type Mutable<T> = {
 }
 
 /** An immutable object representing a Node in a Collection. */
-export class NodeValue<T> implements Node<T> {
+export class CollectionNode<T> implements Node<T> {
   readonly type: string;
   readonly key: Key;
   readonly value: T | null = null;
@@ -45,8 +45,8 @@ export class NodeValue<T> implements Node<T> {
     throw new Error('childNodes is not supported');
   }
 
-  clone(): NodeValue<T> {
-    let node: Mutable<NodeValue<T>> = new NodeValue(this.type, this.key);
+  clone(): CollectionNode<T> {
+    let node: Mutable<CollectionNode<T>> = new CollectionNode(this.type, this.key);
     node.value = this.value;
     node.level = this.level;
     node.hasChildNodes = this.hasChildNodes;
@@ -71,7 +71,7 @@ export class NodeValue<T> implements Node<T> {
  * custom collection behaviors.
  */
 export class BaseCollection<T> implements ICollection<Node<T>> {
-  private keyMap: Map<Key, NodeValue<T>> = new Map();
+  private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
   private frozen = false;
@@ -183,7 +183,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return collection;
   }
 
-  addNode(node: NodeValue<T>) {
+  addNode(node: CollectionNode<T>) {
     if (this.frozen) {
       throw new Error('Cannot add a node to a frozen collection');
     }

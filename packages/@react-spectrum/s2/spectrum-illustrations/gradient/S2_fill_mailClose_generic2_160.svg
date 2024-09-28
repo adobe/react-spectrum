@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="109.502" x2="39.67" y1="15.057" y2="111.101" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4885"/>
+      <stop offset="1" stop-color="#FF4885" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="63.615" x2="76.56" y1="-27.321" y2="60.57" gradientUnits="userSpaceOnUse">
+      <stop offset=".156" stop-color="#7A6AFD"/>
+      <stop offset="1" stop-color="#7A6AFD" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="-104.034" x2="139.286" y1="148.911" y2="97.898" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#30A7FE" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#30A7FE" stop-opacity=".995"/>
+      <stop offset=".609" stop-color="#30A7FE"/>
+      <stop offset="1" stop-color="#30A7FE" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="a">
+      <rect width="130.055" height="122.6" x="15.4" y="19" fill="#fff" rx="10"/>
+    </clipPath>
+    <clipPath id="c">
+      <rect width="130.055" height="122.6" x="15.4" y="19" fill="#fff" rx="10"/>
+    </clipPath>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="matrix(0 177.012 -187.776 0 131.33 99.6)" gradientUnits="userSpaceOnUse">
+      <stop offset=".089" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <mask id="b" width="120" height="92" x="20" y="34" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="M33.846 34h92.308c3.691 0 7.045 1.6 9.527 4.206L82.56 69.2a5.843 5.843 0 0 1-6-.056l-51.7-31.476C27.28 35.38 30.418 34 33.847 34ZM20.702 44.501A16.824 16.824 0 0 0 20 49.333v61.334C20 119.135 26.2 126 33.846 126h92.308c7.647 0 13.846-6.865 13.846-15.333V49.333c0-1.417-.174-2.79-.499-4.093l-52.91 30.87a13.843 13.843 0 0 1-14.19-.134L20.7 44.5Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <g clip-path="url(#c)">
+      <rect width="130.055" height="122.6" x="15.4" y="19" fill="#D9F4FD" rx="10"/>
+      <ellipse cx="131.33" cy="99.599" fill="url(#d)" rx="187.776" ry="177.012"/>
+      <path fill="url(#e)" d="M3.695 57.4C1.608 15.022 36.357-20.925 81.31-22.893c44.953-1.968 83.086 30.79 85.174 73.166 2.087 42.376-32.662 78.323-77.615 80.291-44.953 1.967-83.087-30.79-85.174-73.166Z"/>
+      <path fill="url(#f)" d="M48.256-65.835c-10.141-5.916-22.99-5.952-33.168-.094L-86.714-7.335c-9.97 5.739-9.987 19.285-.03 25.045L14.385 76.22c10.163 5.88 23.01 5.872 33.165-.02l100.922-58.567c9.904-5.748 9.922-19.218.03-24.987L48.256-65.835Z"/>
+      <path fill="url(#g)" d="M-49.434 77.64c20.983 0 39.99 8.006 53.75 20.92 27.524 25.875 50.341 25.897 77.864.067 13.761-12.981 32.792-21.009 53.798-21.009 41.99.022 76.005 32 76.005 71.475 0 39.475-34.015 71.431-76.005 71.431-21.053 0-40.084-8.05-53.845-21.031-27.5-25.786-50.293-25.764-77.816.11-13.761 12.937-32.768 20.921-53.751 20.921-41.966 0-75.981-31.978-75.981-71.431 0-39.453 34.015-71.453 75.98-71.453Z"/>
+    </g>
+  </g>
+</svg>

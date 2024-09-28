@@ -11,7 +11,8 @@
  */
 
 import {AriaSwitchProps} from '@react-types/switch';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 

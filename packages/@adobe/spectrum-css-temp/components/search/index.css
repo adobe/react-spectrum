@@ -65,7 +65,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Search-input {
+.spectrum-Search-input.spectrum-Search-input {
   display: block;
 
   /* Correct the odd appearance of input[type="search"] in Chrome and Safari.*/
@@ -98,4 +98,3 @@ governing permissions and limitations under the License.
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }
-

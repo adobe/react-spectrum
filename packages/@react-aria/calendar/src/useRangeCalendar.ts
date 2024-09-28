@@ -12,10 +12,10 @@
 
 import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {FocusableElement} from '@react-types/shared';
+import {FocusableElement, RefObject} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
-import {RefObject, useRef} from 'react';
 import {useEvent} from '@react-aria/utils';
+import {useRef} from 'react';
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.

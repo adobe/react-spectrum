@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes isQuiet 1`] = `
+"import { ColorField } from "@react-spectrum/s2";
+
+<ColorField label="Primary Color" />"
+`;
+
+exports[`Removes placeholder 1`] = `
+"import { ColorField } from "@react-spectrum/s2";
+
+<ColorField label="Primary Color" />"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { ColorField } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <ColorField label="Primary Color" isInvalid />
+  <ColorField label="Primary Color" />
+  <ColorField label="Primary Color" isInvalid />
+  <ColorField label="Primary Color" // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState} />
+  <ColorField label="Primary Color" // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;

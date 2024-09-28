@@ -11,8 +11,9 @@
  */
 
 import {getFocusableTreeWalker} from './FocusScope';
-import {RefObject, useState} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useState} from 'react';
 
 interface AriaHasTabbableChildOptions {
   isDisabled?: boolean

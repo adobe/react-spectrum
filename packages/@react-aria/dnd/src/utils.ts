@@ -11,10 +11,9 @@
  */
 
 import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, TextDropItem} from '@react-types/shared';
+import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, RefObject, TextDropItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
-import {RefObject} from 'react';
 
 interface DroppableCollectionMap {
   id: string,

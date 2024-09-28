@@ -13,15 +13,15 @@
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {forwardRefType} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
+import {forwardRefType, RefObject} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: MutableRefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export interface SwitchRenderProps {

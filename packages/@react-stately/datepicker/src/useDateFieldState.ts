@@ -11,7 +11,7 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
@@ -93,7 +93,9 @@ export interface DateFieldState extends FormValidationState {
   /** Clears the value of the given segment, reverting it to the placeholder. */
   clearSegment(type: SegmentType): void,
   /** Formats the current date value using the given options. */
-  formatValue(fieldOptions: FieldOptions): string
+  formatValue(fieldOptions: FieldOptions): string,
+  /** Gets a formatter based on state's props. */
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 const EDITABLE_SEGMENTS = {
@@ -412,6 +414,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let formatOptions = getFormatOptions(fieldOptions, formatOpts);
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
+    },
+    getDateFormatter(locale, formatOptions: FormatterOptions) {
+      let newOptions = {...formatOpts, ...formatOptions};
+      let newFormatOptions = getFormatOptions({}, newOptions);
+      return new DateFormatter(locale, newFormatOptions);
     }
   };
 }

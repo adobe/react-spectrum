@@ -159,12 +159,6 @@ export const NoCards: NoItemCardViewStory = {
   render: (args) => <NoItemCardView {...args} />
 };
 
-export const IsLoadingNoHeightGrid: DynamicCardViewStory = {
-  ...NoCards,
-  args: {...NoCards.args, width: '800px', loadingState: 'loading'},
-  name: 'loadingState = loading, no height'
-};
-
 export const IsLoadingHeightGrid: DynamicCardViewStory = {
   ...NoCards,
   args: {...NoCards.args, width: '800px', height: '800px', loadingState: 'loading'},

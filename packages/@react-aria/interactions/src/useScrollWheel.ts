@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useCallback} from 'react';
-import {ScrollEvents} from '@react-types/shared';
+import {RefObject, ScrollEvents} from '@react-types/shared';
+import {useCallback} from 'react';
 import {useEvent} from '@react-aria/utils';
 
 export interface ScrollWheelProps extends ScrollEvents {

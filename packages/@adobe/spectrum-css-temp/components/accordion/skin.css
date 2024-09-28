@@ -39,7 +39,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-item {
-  &.is-open {
+  &.is-expanded {
     .spectrum-Accordion-itemHeader {
       &:hover {
         background-color: transparent;

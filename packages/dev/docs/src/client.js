@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === 'production') {
   window.addEventListener('load', () => listen());
 }
 
+let raf = null;
 let title = document.querySelector('h1');
 
 // Size the title to fit the available space.
@@ -45,7 +46,7 @@ function updateTitleFontSize() {
   }
 
   // Reduce the font size until it doesn't overflow.
-  while (title.scrollWidth > title.clientWidth) {
+  while (fontSize > 10 && title.scrollWidth > title.clientWidth + 1) {
     fontSize--;
     title.style.fontSize = fontSize + 'px';
   }
@@ -56,8 +57,13 @@ updateTitleFontSize();
 // Use ResizeObserver where available to detect size changes not related to window resizing, e.g. font loading.
 if (typeof ResizeObserver !== 'undefined') {
   let observer = new ResizeObserver(() => {
+    if (!raf) {
     // Avoid updating the layout during the resize event and creating circular notifications.
-    requestAnimationFrame(updateTitleFontSize);
+      raf = requestAnimationFrame(() => {
+        updateTitleFontSize();
+        raf = null;
+      });
+    }
   });
   observer.observe(title);
 } else {

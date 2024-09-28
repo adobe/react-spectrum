@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, screen, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import Filter from '@spectrum-icons/workflow/Filter';
@@ -3228,7 +3228,9 @@ describe('SearchAutocomplete', function () {
 
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
-        expect(screen.getAllByRole('log')).toHaveLength(2);
+        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenNthCalledWith(1, '3 options available.');
+        expect(announce).toHaveBeenNthCalledWith(2, 'One');
         platformMock.mockRestore();
       });
 

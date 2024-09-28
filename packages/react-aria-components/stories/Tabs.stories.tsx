@@ -89,3 +89,23 @@ const CustomTab = (props: TabProps) => {
       })} />
   );
 };
+
+export const NestedTabs = () => (
+  <Tabs>
+    <TabList style={{display: 'flex', gap: 8}}>
+      <CustomTab id="foo">Foo</CustomTab>
+      <CustomTab id="bar">Bar</CustomTab>
+    </TabList>
+    <TabPanel id="foo">
+      <Tabs>
+        <TabList style={{display: 'flex', gap: 8}}>
+          <CustomTab id="one">One</CustomTab>
+          <CustomTab id="two">Two</CustomTab>
+        </TabList>
+        <TabPanel id="one">One</TabPanel>
+        <TabPanel id="two">Two</TabPanel>
+      </Tabs>
+    </TabPanel>
+    <TabPanel id="bar">Bar</TabPanel>
+  </Tabs>
+);

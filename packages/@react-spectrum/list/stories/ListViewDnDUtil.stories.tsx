@@ -74,6 +74,18 @@ export const DragWithin: ListViewStory = {
   name: 'Drag within list (Reorder}'
 };
 
+let manyItems = [];
+for (let i = 0; i < 100; i++) {
+  manyItems.push({identifier: 'item' + i, type: 'item', name: 'Item ' + i});
+}
+
+export const DragWithinMany: ListViewStory = {
+  render: (args) => (
+    <ReorderExampleUtilHandlers {...args} items={manyItems} listViewProps={{overflowMode: 'wrap', height: 400}} />
+  ),
+  name: 'Drag within list with many items'
+};
+
 export const DropOntoItem: ListViewStory = {
   render: (args) => (
     <ItemDropExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />

@@ -290,7 +290,7 @@ let getItems = (keys) => (
 
 <ListBox aria-label="Adobe Apps" items={items} getItems={getItems} selectionMode="multiple">
   {([id, item]) => (
-    <Item key={id}>
+    <Item key={id} textValue={item.name}>
       <item.style>{item.name}</item.style>
     </Item>
   )}

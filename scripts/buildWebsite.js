@@ -37,9 +37,11 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/*/*',
-      'packages/react-aria-components'
+      'packages/@internationalized/string-compiler',
+      'packages/dev/*',
+      'packages/@adobe/spectrum-css-temp'
     ],
+    packageManager: 'yarn@4.2.2',
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
         .filter(([name]) =>
@@ -48,7 +50,6 @@ async function build() {
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe') ||
           name === 'sharp' ||
           name === 'recast' ||
           name === 'framer-motion' ||
@@ -56,7 +57,10 @@ async function build() {
           name === 'tailwindcss' ||
           name === 'autoprefixer' ||
           name === 'lucide-react' ||
-          name === 'tailwind-variants'
+          name === 'tailwind-variants' ||
+          name === 'react' ||
+          name === 'react-dom' ||
+          name === 'typescript'
         )
     ),
     dependencies: {
@@ -65,7 +69,9 @@ async function build() {
       'react-aria': 'latest',
       'react-stately': 'latest',
       'react-aria-components': 'latest',
-      'tailwindcss-react-aria-components': 'latest'
+      'tailwindcss-react-aria-components': 'latest',
+      '@spectrum-icons/illustrations': 'latest',
+      '@react-spectrum/autocomplete': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
@@ -110,14 +116,14 @@ async function build() {
       }
     }
   }
+  // Add test-utils to the dependencies because it doesn't have a docs dir, but is used in other docs pages
+  pkg.dependencies['@react-spectrum/test-utils'] = 'latest';
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
@@ -125,6 +131,8 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
   fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
+  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
@@ -143,7 +151,7 @@ async function build() {
   }
 
   // Install dependencies from npm
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
 
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   for (let p of packages) {

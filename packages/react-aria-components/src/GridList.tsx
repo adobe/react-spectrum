@@ -15,13 +15,13 @@ import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndAwareFocusedKey, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -96,7 +96,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let state = useListState({
     ...props,
     collection,
-    children: undefined
+    children: undefined,
+    layoutDelegate
   });
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -232,7 +233,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
           <CollectionRoot
             collection={collection}
             scrollRef={ref}
-            focusedKey={useDndAwareFocusedKey(selectionManager, dragAndDropHooks, dropState)}
+            persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
         {emptyState}
@@ -391,10 +392,12 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
               }],
               [TextContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   description: descriptionProps
                 }
               }],
-              [CollectionRendererContext, DefaultCollectionRenderer]
+              [CollectionRendererContext, DefaultCollectionRenderer],
+              [ListStateContext, null]
             ]}>
             {renderProps.children}
           </Provider>

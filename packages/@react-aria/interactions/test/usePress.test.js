@@ -822,6 +822,61 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
       expect(el).not.toHaveStyle('user-select: none');
     });
+
+    it('should preventDefault on touchend to prevent click events on the wrong element', function () {
+      let res = render(<Example />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(false);
+    });
+
+    it('should not preventDefault on touchend when element is a submit button', function () {
+      let res = render(<Example elementType="button" type="submit" />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is an <input type="submit">', function () {
+      let res = render(<Example elementType="input" type="submit" />);
+
+      let el = res.getByRole('button');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is an <input type="checkbox">', function () {
+      let res = render(<Example elementType="input" type="checkbox" />);
+
+      let el = res.getByRole('checkbox');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is a link', function () {
+      let res = render(<Example elementType="a" href="http://google.com" />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
   });
 
   describe('mouse events', function () {

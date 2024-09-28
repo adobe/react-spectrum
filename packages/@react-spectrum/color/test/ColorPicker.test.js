@@ -40,7 +40,7 @@ describe('ColorPicker', function () {
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Fill');
-    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'vibrant red');
+    expect(within(button).getByLabelText('vibrant red')).toBeInTheDocument();
 
     await user.click(button);
 
@@ -67,8 +67,41 @@ describe('ColorPicker', function () {
     act(() => dialog.focus());
     await user.keyboard('{Escape}');
     act(() => {jest.runAllTimers();});
-    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'dark vibrant blue');
+    expect(within(button).getByLabelText('dark vibrant blue')).toBeInTheDocument();
   });
+
+  it('should have default value of black', async function () {
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <ColorPicker label="Fill">
+          <ColorEditor />
+        </ColorPicker>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Fill');
+    expect(within(button).getByLabelText('black')).toBeInTheDocument();
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(dialog.getAttribute('aria-labelledby'))).toHaveTextContent('Fill');
+
+    let sliders = getAllByRole('slider');
+    expect(sliders).toHaveLength(3);
+
+    let picker = getAllByRole('button')[1];
+    expect(picker).toHaveTextContent('Hex');
+
+    let colorField = getAllByRole('textbox')[0];
+    expect(colorField).toHaveAttribute('aria-label', 'Hex');
+
+    let alpha = getAllByRole('textbox')[1];
+    expect(alpha).toHaveAttribute('aria-label', 'Alpha');
+  });
+
 
   it('allows switching color space', async function () {
     let {getByRole, getAllByRole} = render(
@@ -99,6 +132,6 @@ describe('ColorPicker', function () {
     act(() => getByRole('dialog').focus());
     await user.keyboard('{Escape}');
     act(() => {jest.runAllTimers();});
-    expect(within(button).getByRole('img')).toHaveAttribute('aria-label', 'vibrant orange');
+    expect(within(button).getByLabelText('vibrant orange')).toBeInTheDocument();
   });
 });

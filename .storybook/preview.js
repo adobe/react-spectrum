@@ -34,7 +34,17 @@ export const parameters = {
     source: {
       type: 'code'
     }
-  }
+  },
+  darkMode: {
+    light: {
+      brandTitle: 'React Spectrum',
+      brandImage: new URL('raw:logo.svg', import.meta.url).toString()
+    },
+    dark: {
+      brandTitle: 'React Spectrum',
+      brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
+    }
+  },
 };
 
 export const decorators = [

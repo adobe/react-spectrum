@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Change variant=overBackground to staticColor=white 1`] = `
+"import { Link } from "@react-spectrum/s2";
+let variant = 'overBackground';
+let props = {variant: 'overBackground'};
+<div>
+  <Link staticColor="white" href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    The missing link.
+  </Link>
+  <Link staticColor={"white"} href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    The missing link.
+  </Link>
+  <Link // TODO(S2-upgrade): Prop variant could not be automatically updated because variant could not be followed.
+  variant={variant} href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    The missing link.
+  </Link>
+  <Link href="https://www.imdb.com/title/tt6348138/" target="_blank" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    The missing link.
+  </Link>
+</div>"
+`;
+
+exports[`Leaves comment if inner link element is a custom router link (deprecated API) 1`] = `
+"import { Link } from "@react-spectrum/s2";
+import { Link as RouterLink } from "react-router-dom";
+
+<div>
+  // TODO(S2-upgrade): You may have been using a custom link component here. You'll need to update this manually.
+  <Link to="https://www.imdb.com/title/tt6348138/">The missing link.</Link>
+</div>"
+`;
+
+exports[`Remove inner anchor element (deprecated API) 1`] = `
+"import { Link } from "@react-spectrum/s2";
+
+<div>
+  <Link href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</Link>
+</div>"
+`;

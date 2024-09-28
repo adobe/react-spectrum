@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 export const DEFAULT_SLOT = Symbol('default');
@@ -22,7 +22,7 @@ interface SlottedValue<T> {
 }
 
 export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
-export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
+export type ContextValue<T, E> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
@@ -73,7 +73,7 @@ export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: string | ((values: T & {defaultClassName: string | undefined}) => string),
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
-  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties)
+  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined)
 }
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
@@ -196,7 +196,7 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
       mergedProps.style = (renderProps) => {
         let contextStyle = typeof contextProps.style === 'function' ? contextProps.style(renderProps) : contextProps.style;
         let defaultStyle = {...renderProps.defaultStyle, ...contextStyle};
-        let style = typeof props.style === 'function' 
+        let style = typeof props.style === 'function'
           ? props.style({...renderProps, defaultStyle})
           : props.style;
         return {...defaultStyle, ...style};

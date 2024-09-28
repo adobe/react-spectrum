@@ -1,4 +1,4 @@
 {
   "close": "Sulje",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{count, plural, one {# ilmoitus} other {# ilmoitusta}}."
 }

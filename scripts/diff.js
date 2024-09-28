@@ -2,8 +2,25 @@ const exec = require('child_process').execSync;
 const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 
-let packages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
-let uuid = require('uuid')();
+let workspaceLookup = {};
+let packages = exec('yarn workspaces list --json -v').toString().split('\n')
+  .map(line => {
+    try {
+      let result = JSON.parse(line);
+      workspaceLookup[result.location] = result.name;
+      return result;
+    } catch (e) {
+      console.log(e)
+      // ignore empty lines
+    }
+  })
+  .filter(Boolean)
+  .reduce((acc, item) => {
+    acc[item.name] = item;
+    acc[item.name].workspaceDependencies = item.workspaceDependencies.map(dep => workspaceLookup[dep]);
+    return acc;
+  }, {});
+let uuid = require('uuid').v4();
 
 let ksdiff = process.argv.includes('--ksdiff');
 let codeOnly = process.argv.includes('--code-only');

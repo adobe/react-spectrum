@@ -219,7 +219,7 @@ interface MySliderProps<T> extends SliderProps<T> {
 function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: MySliderProps<T>) {
   return (
     <Slider {...props}>
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <SliderOutput>
         {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>

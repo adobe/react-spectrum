@@ -1543,7 +1543,12 @@ describe('DatePicker', function () {
         await user.keyboard('{Backspace}');
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(newValue);
-        expect(segment.textContent).not.toBe(textContent);
+        if (label === 'AM/PM,') {
+          expect(segment).toHaveAttribute('data-placeholder', 'true');
+          expect(segment).toHaveAttribute('aria-valuetext', 'Empty');
+        } else {
+          expect(segment.textContent).not.toBe(textContent);
+        }
         unmount();
       }
 

@@ -1,17 +1,15 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
-// @ts-ignore
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
-// @ts-ignore
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
-import React, {createContext, RefObject, useContext, useEffect, useState} from 'react';
+import {Key, RefObject} from '@react-types/shared';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {TableColumnResizeState} from '@react-stately/table';

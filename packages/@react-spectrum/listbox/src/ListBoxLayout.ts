@@ -22,9 +22,9 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     this.padding = opts.padding;
   }
 
-  validate(invalidationContext: InvalidationContext<ListBoxLayoutProps>): void {
+  update(invalidationContext: InvalidationContext<ListBoxLayoutProps>): void {
     this.isLoading = invalidationContext.layoutOptions?.isLoading || false;
-    super.validate(invalidationContext);
+    super.update(invalidationContext);
   }
 
   protected buildCollection(): LayoutNode[] {

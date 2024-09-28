@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="none" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="e" x1="-22.794" x2="202.298" y1="134.5" y2="-2.445" gradientUnits="userSpaceOnUse">
+      <stop offset=".06" stop-color="#8480FE"/>
+      <stop offset=".6" stop-color="#8480FE" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="157.842" x2="61.278" y1="36.278" y2="140.11" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="40.492" x2="211.674" y1="154.441" y2="58.547" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FC7D00" stop-opacity="0"/>
+      <stop offset=".432" stop-color="#FC7D00"/>
+      <stop offset=".609" stop-color="#FC7D00"/>
+      <stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="d" cx="0" cy="0" r="1" gradientTransform="rotate(90 37.069 53.214) scale(60.2331)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#FF709F"/>
+      <stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="h" cx="0" cy="0" r="1" gradientTransform="rotate(90 53.295 89.084) scale(60.2331)" gradientUnits="userSpaceOnUse">
+      <stop offset=".167" stop-color="#EB1000"/>
+      <stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="a">
+      <rect width="138.449" height="138.449" x="11.999" y="10.775" fill="#fff" rx="3.461"/>
+    </clipPath>
+    <clipPath id="c">
+      <path fill="#fff" d="M12 10.775h138.449v138.449H12z"/>
+    </clipPath>
+  </defs>
+  <mask id="b" width="160" height="160" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:luminance">
+    <path fill="#fff" fill-rule="evenodd" d="m87.514 31.515 32.971 32.97a12.001 12.001 0 0 1 3.514 8.486V120c0 6.628-5.372 12-12 12h-64c-6.627 0-12-5.372-12-12V40c0-6.627 5.373-12 12-12h31.03a12 12 0 0 1 8.485 3.515ZM94.499 68a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15Zm-40.495 48h51.99c1.564 0 2.523-1.715 1.703-3.048L96.51 94.769a2 2 0 0 0-3.407 0l-8.816 14.329L71.197 86.9c-.776-1.307-2.666-1.307-3.441 0l-15.472 26.08c-.791 1.333.17 3.02 1.72 3.02Z" clip-rule="evenodd"/>
+  </mask>
+  <g clip-path="url(#a)" mask="url(#b)">
+    <rect width="138.449" height="138.449" x="11.999" y="10.775" fill="#FFECCF" rx="3.461"/>
+    <g clip-path="url(#c)">
+      <path fill="#FFECCF" d="M12 10.775h138.449v138.449H12z"/>
+      <circle cx="90.282" cy="16.145" r="60.233" fill="url(#d)" transform="rotate(-.08 90.282 16.145)"/>
+      <path fill="url(#e)" d="M64.843-13.68a33.24 33.24 0 0 0-34.777-.105L-76.676 51.39c-10.454 6.383-10.472 21.449-.032 27.856l106.037 65.081a33.24 33.24 0 0 0 34.775-.023l105.819-65.142c10.384-6.394 10.403-21.376.031-27.794L64.843-13.68Z"/>
+      <path fill="url(#f)" d="M31.952 76.508c2.366-51.687 46.185-91.67 97.873-89.303 51.687 2.366 91.669 46.185 89.303 97.872-2.366 51.688-46.186 91.67-97.873 89.304-51.687-2.367-91.67-46.186-89.303-97.873Z"/>
+      <path fill="url(#g)" d="M-44.093 110.588c20.546-8.765 42.705-8.389 61.902-.722 38.414 15.379 60.767 5.87 76.27-32.456 7.722-19.232 22.799-35.52 43.368-44.295 41.124-17.517 88.6 1.49 106.092 42.493 17.492 41.003-1.653 88.404-42.768 105.944-20.615 8.795-42.816 8.383-62.043.647-38.352-15.297-60.662-5.752-76.145 32.62-7.742 19.186-22.815 35.418-43.361 44.183-41.091 17.53-88.568-1.477-106.05-42.456-17.482-40.98 1.644-88.428 42.735-105.958Z"/>
+      <circle cx="142.379" cy="35.788" r="60.233" fill="url(#h)" transform="rotate(-.08 142.379 35.788)"/>
+    </g>
+  </g>
+</svg>

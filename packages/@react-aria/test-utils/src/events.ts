@@ -11,18 +11,38 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
+import {UserOpts} from './user';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
 
 /**
  * Simulates a "long press" event on a element.
- * @param element - Element to long press.
- * @param opts - Options to pass to the simulated event. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
+ * @param opts - Options for the long press.
+ * @param opts.element - Element to long press.
+ * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
+ * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
-export function triggerLongPress(element: HTMLElement, opts = {}): void {
-  fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
-  act(() => {
-    jest.advanceTimersByTime(DEFAULT_LONG_PRESS_TIME);
-  });
-  fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
+export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time?: number) => void | Promise<unknown>, pointerOpts?: {}}) {
+  // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
+  // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
+  // util before first render. Will need to document it well
+  let {element, advanceTimer, pointerOpts = {}} = opts;
+  await fireEvent.pointerDown(element, {pointerType: 'mouse', ...pointerOpts});
+  await act(async () => await advanceTimer(DEFAULT_LONG_PRESS_TIME));
+  await fireEvent.pointerUp(element, {pointerType: 'mouse', ...pointerOpts});
+}
+
+
+export async function pressElement(user, element: HTMLElement, interactionType: UserOpts['interactionType']) {
+  if (interactionType === 'mouse') {
+    await user.click(element);
+  } else if (interactionType === 'keyboard') {
+    // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
+    // stick to simulting an actual user's keyboard operations as closely as possible
+    // There are problems when using this approach though, actions like trying to trigger the select all checkbox and stuff behave oddly.
+    act(() => element.focus());
+    await user.keyboard('[Space]');
+  } else if (interactionType === 'touch') {
+    await user.pointer({target: element, keys: '[TouchA]'});
+  }
 }

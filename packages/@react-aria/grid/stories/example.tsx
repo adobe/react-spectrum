@@ -11,7 +11,7 @@ export function Grid(props) {
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         type: 'item',
@@ -21,7 +21,7 @@ export function Grid(props) {
           type: 'cell'
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   let ref = React.useRef(undefined);

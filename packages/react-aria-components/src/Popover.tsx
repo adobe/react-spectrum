@@ -13,11 +13,11 @@
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
@@ -142,7 +142,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
       setArrowWidth(arrowRef.current.getBoundingClientRect().width);
     }
   }, [state.isOpen, arrowRef]);
-  
+
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8,

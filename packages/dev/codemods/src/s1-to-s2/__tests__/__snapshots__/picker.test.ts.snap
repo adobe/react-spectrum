@@ -1,0 +1,150 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dynamic - Renames Item to PickerItem 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+let options = [
+  {id: 1, name: 'Chocolate'},
+  {id: 2, name: 'Vanilla'}
+];
+<div>
+  <Picker 
+    label="Ice Cream"
+    items={options}>
+    {(item) => <PickerItem id={item.id}>{item.name}</PickerItem>}
+  </Picker>
+  <Picker 
+    label="Ice Cream"
+    items={options}>
+    {(item) => <PickerItem id={item.id}>{item.name}</PickerItem>}
+  </Picker>
+  <Picker 
+    label="Ice Cream"
+    items={options}>
+    {(item) => <PickerItem>{item.name}</PickerItem>}
+  </Picker>
+</div>"
+`;
+
+exports[`Static - Converts menuWidth to px value 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+let menuWidth = 'size-10';
+let props = {menuWidth: 'size-10'};
+<div>
+  <Picker label="Ice Cream" menuWidth={1}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream" menuWidth={4}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream" // TODO(S2-upgrade): Unable to convert CSS unit to a pixel value
+  menuWidth="10vw">
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream" menuWidth={189}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream" // TODO(S2-upgrade): Prop menuWidth could not be automatically updated because menuWidth could not be followed.
+  menuWidth={menuWidth}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+</div>"
+`;
+
+exports[`Static - Removes isQuiet 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <Picker label="Ice Cream">
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream">
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream">
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream">
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker label="Ice Cream" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+</div>"
+`;
+
+exports[`Static - Renames Item to PickerItem 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+<div>
+  <Picker label="Ice Cream">
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+</div>"
+`;
+
+exports[`Static - Renames key to id 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+<div>
+  <Picker label="Ice Cream">
+    <PickerItem id="chocolate">Chocolate</PickerItem>
+    <PickerItem id="vanilla">Vanilla</PickerItem>
+  </Picker>
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { PickerItem, Picker } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <Picker isInvalid>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker isInvalid>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+  <Picker // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+  </Picker>
+</div>"
+`;
+
+exports[`handles sections 1`] = `
+"import { PickerSection, PickerItem, Picker } from "@react-spectrum/s2";
+<Picker>
+  <PickerSection><Header>Section title</Header>
+    <PickerItem>Item one</PickerItem>
+    <PickerItem>Item two</PickerItem>
+  </PickerSection>
+</Picker>"
+`;
