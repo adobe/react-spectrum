@@ -15,7 +15,7 @@ import {Button} from '../src/Button';
 import {Meta, StoryFn} from '@storybook/react';
 import {Orientation} from '@react-types/shared';
 import {OverlayArrow} from '../src/OverlayArrow';
-import React, {StrictMode, useState} from 'react';
+import React, {useState} from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {SelectionIndicator} from '../src/SelectionIndicator';
 import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
@@ -29,32 +29,31 @@ export default {
 
 export type TabsStory = StoryFn<typeof Tabs>;
 
+// Use Storybook toolbar / `?strict=true` for StrictMode. Hydration coverage lives in Tabs.browser.test.tsx.
 export const AnimatedSelectionIndicator: TabsStory = () => (
-  <StrictMode>
-    <Tabs defaultSelectedKey="settings">
-      <TabList aria-label="Sections" style={{display: 'flex', gap: 12}}>
-        {['overview', 'activity', 'settings'].map(key => (
-          <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
-            <SelectionIndicator
-              style={{
-                position: 'absolute',
-                inset: 0,
-                border: '2px solid currentColor',
-                borderRadius: 4,
-                pointerEvents: 'none',
-                transitionProperty: 'translate, width, height',
-                transitionDuration: '200ms'
-              }}
-            />
-            {key}
-          </Tab>
-        ))}
-      </TabList>
-      <TabPanel id="overview">Overview</TabPanel>
-      <TabPanel id="activity">Activity</TabPanel>
-      <TabPanel id="settings">Settings</TabPanel>
-    </Tabs>
-  </StrictMode>
+  <Tabs defaultSelectedKey="settings">
+    <TabList aria-label="Sections" style={{display: 'flex', gap: 12}}>
+      {['overview', 'activity', 'settings'].map(key => (
+        <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
+          <SelectionIndicator
+            style={{
+              position: 'absolute',
+              inset: 0,
+              border: '2px solid currentColor',
+              borderRadius: 4,
+              pointerEvents: 'none',
+              transitionProperty: 'translate, width, height',
+              transitionDuration: '200ms'
+            }}
+          />
+          {key}
+        </Tab>
+      ))}
+    </TabList>
+    <TabPanel id="overview">Overview</TabPanel>
+    <TabPanel id="activity">Activity</TabPanel>
+    <TabPanel id="settings">Settings</TabPanel>
+  </Tabs>
 );
 
 export const TabsExample: TabsStory = () => {

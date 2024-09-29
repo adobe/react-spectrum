@@ -12,7 +12,7 @@
 
 import {expect, it} from 'vitest';
 import {hydrateRoot} from 'react-dom/client';
-import React, {StrictMode, useEffect} from 'react';
+import React, {StrictMode, useEffect, useLayoutEffect, useRef} from 'react';
 import {render} from 'vitest-browser-react';
 import {renderToString} from 'react-dom/server.browser';
 import {SelectionIndicator} from '../src/SelectionIndicator';
@@ -126,3 +126,82 @@ it.each`
   await tester.triggerTab({tab: tabs[1]});
   expect(tester.getSelectedTab()).toBe(tabs[1]);
 });
+
+
+const interruptedKeys = ['one', 'two', 'three'];
+
+interface EnteringTabsProps {
+  onEntering: () => void;
+}
+
+function EnteringTabs({onEntering}: EnteringTabsProps) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  // `data-entering` is only applied for a single frame, so observe it rather than polling
+  // for it. The observer is attached during the commit that mounts the tabs, which is
+  // before the microtask that applies the entering state runs.
+  useLayoutEffect(() => {
+    let observer = new MutationObserver(records => {
+      if (records.some(r => (r.target as HTMLElement).hasAttribute('data-entering'))) {
+        onEntering();
+      }
+    });
+    observer.observe(ref.current!, {
+      attributes: true,
+      attributeFilter: ['data-entering'],
+      subtree: true
+    });
+    return () => observer.disconnect();
+  }, [onEntering]);
+
+  return (
+    <div ref={ref}>
+      <Tabs defaultSelectedKey="two">
+        <TabList aria-label="Entering tabs" style={{display: 'flex', gap: 12}}>
+          {interruptedKeys.map(key => (
+            <Tab key={key} id={key} style={{position: 'relative', padding: '12px 20px'}}>
+              <SelectionIndicator
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  transitionProperty: 'translate, width, height',
+                  transitionDuration: '200ms'
+                }}
+              />
+              {key}
+            </Tab>
+          ))}
+        </TabList>
+        {interruptedKeys.map(key => (
+          <TabPanel key={key} id={key}>
+            {key}
+          </TabPanel>
+        ))}
+      </Tabs>
+    </div>
+  );
+}
+
+it('does not get stuck in the entering state when effects are double invoked', async () => {
+  let enteringCount = 0;
+  let onEntering = () => {
+    enteringCount++;
+  };
+  let {container} = await render(
+    <StrictMode>
+      <EnteringTabs onEntering={onEntering} />
+    </StrictMode>
+  );
+
+  let getSelectedIndicator = () => {
+    let selectedTab = container.querySelector(
+      '[role="tab"][aria-selected="true"]'
+    ) as HTMLElement;
+    return selectedTab.querySelector('.react-aria-SelectionIndicator') as HTMLElement;
+  };
+
+  // The entering state is applied on mount...
+  await expect.poll(() => enteringCount).toBeGreaterThan(0);
+  // ...and must be cleared once the entering frame has run.
+  await expect.poll(() => getSelectedIndicator().hasAttribute('data-entering')).toBe(false);
+});
+
