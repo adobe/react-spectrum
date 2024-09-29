@@ -14,7 +14,7 @@ import {act, fireEvent, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 import {pressElement, triggerLongPress} from './events';
 export interface TableOptions extends UserOpts, BaseTesterOpts {
-  user: any,
+  user?: any,
   advanceTimer: UserOpts['advanceTimer']
 }
 
