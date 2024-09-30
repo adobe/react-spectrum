@@ -79,6 +79,7 @@ __metadata:
     "@react-spectrum/buttongroup": "npm:^3.6.15"
     "@react-spectrum/calendar": "npm:^3.4.11"
     "@react-spectrum/checkbox": "npm:^3.9.8"
+    "@react-spectrum/color": "npm:3.0.0-rc.1"
     "@react-spectrum/combobox": "npm:^3.13.2"
     "@react-spectrum/contextualhelp": "npm:^3.6.13"
     "@react-spectrum/datepicker": "npm:^3.10.1"
@@ -6837,7 +6838,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/color@workspace:packages/@react-spectrum/color":
+"@react-spectrum/color@npm:3.0.0-rc.1, @react-spectrum/color@workspace:packages/@react-spectrum/color":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/color@workspace:packages/@react-spectrum/color"
   dependencies:
@@ -6856,7 +6857,7 @@ __metadata:
     "@react-spectrum/textfield": "npm:^3.12.3"
     "@react-spectrum/utils": "npm:^3.11.9"
     "@react-spectrum/view": "npm:^3.6.12"
-    "@react-stately/color": "npm:^3.7.1"
+    "@react-stately/color": "npm:^3.7.2"
     "@react-types/color": "npm:3.0.0-rc.1"
     "@react-types/shared": "npm:^3.24.1"
     "@react-types/textfield": "npm:^3.9.5"
@@ -8109,7 +8110,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/color@npm:^3.7.1, @react-stately/color@npm:^3.7.2, @react-stately/color@workspace:packages/@react-stately/color":
+"@react-stately/color@npm:^3.7.2, @react-stately/color@workspace:packages/@react-stately/color":
   version: 0.0.0-use.local
   resolution: "@react-stately/color@workspace:packages/@react-stately/color"
   dependencies:
@@ -28797,6 +28798,7 @@ __metadata:
     "@react-aria/button": "npm:^3.9.8"
     "@react-aria/calendar": "npm:^3.5.11"
     "@react-aria/checkbox": "npm:^3.14.6"
+    "@react-aria/color": "npm:3.0.0-rc.2"
     "@react-aria/combobox": "npm:^3.10.3"
     "@react-aria/datepicker": "npm:^3.11.2"
     "@react-aria/dialog": "npm:^3.5.17"
@@ -29197,6 +29199,7 @@ __metadata:
     "@react-stately/calendar": "npm:^3.5.4"
     "@react-stately/checkbox": "npm:^3.6.8"
     "@react-stately/collections": "npm:^3.10.9"
+    "@react-stately/color": "npm:^3.7.2"
     "@react-stately/combobox": "npm:^3.9.2"
     "@react-stately/data": "npm:^3.11.6"
     "@react-stately/datepicker": "npm:^3.10.2"
