@@ -22,9 +22,6 @@ availableComponents.add('Well');
 availableComponents.add('Item');
 availableComponents.add('Section');
 
-// Renamed to Table
-availableComponents.add('TableView');
-
 // Don't update v3 Provider
 availableComponents.delete('Provider');
 
@@ -222,7 +219,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   if (importedComponents.size) {
     // Add imports to existing @react-spectrum/s2 import if it exists, otherwise add a new one.
     let importSpecifiers = new Set([...importedComponents]
-      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section' && c !== 'TableView')
+      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section')
       .map(([, specifier]) => specifier));
 
     let existingImport = root.find(j.ImportDeclaration, {

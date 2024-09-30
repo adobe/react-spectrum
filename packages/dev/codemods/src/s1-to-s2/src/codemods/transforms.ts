@@ -970,8 +970,60 @@ function addColumnsPropToRow(
     .find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'columns') as NodePath<t.JSXAttribute> | undefined;
 
   if (columnsProp) {
-    let rowPath = path.find((p) => t.isJSXElement(p.node) && getName(p as NodePath<t.JSXElement>, p.node.openingElement.name as t.JSXIdentifier) === 'Row') as NodePath<t.JSXElement> | undefined;
-    rowPath?.node.openingElement.attributes.push(columnsProp.node);
+    path.traverse({
+      JSXElement(innerPath) {
+        if (
+          t.isJSXElement(innerPath.node) &&
+          t.isJSXIdentifier(innerPath.node.openingElement.name) &&
+          getName(innerPath as NodePath<t.JSXElement>, innerPath.node.openingElement.name) === 'Row'
+        ) {
+          let rowPath = innerPath as NodePath<t.JSXElement>;
+          rowPath.node.openingElement.attributes.push(columnsProp.node);
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Updates the function signature of the Row component.
+ */
+function updateRowFunctionArg(
+  path: NodePath<t.JSXElement>
+) {
+  // Find the function passed as a child
+  let functionChild = path.get('children').find(childPath => 
+    childPath.isJSXExpressionContainer() && 
+    childPath.get('expression').isArrowFunctionExpression()
+  );
+
+  if (functionChild && functionChild.isJSXExpressionContainer()) {
+    let arrowFuncPath = functionChild.get('expression');
+    if (arrowFuncPath.isArrowFunctionExpression()) {
+      let params = arrowFuncPath.node.params;
+      if (params.length === 1 && t.isIdentifier(params[0])) {
+        let paramName = params[0].name;
+
+        // Rename parameter to 'column'
+        params[0].name = 'column';
+
+        // Replace references to the old parameter name inside the function body
+        arrowFuncPath.get('body').traverse({
+          Identifier(innerPath) {
+            if (
+              innerPath.node.name === paramName &&
+              // Ensure we're not replacing the parameter declaration
+              innerPath.node !== params[0]
+            ) {
+              // Replace with 'column.id'
+              innerPath.replaceWith(
+                t.memberExpression(t.identifier('column'), t.identifier('id'))
+              );
+            }
+          }
+        });
+      }
+    }
   }
 }
 
@@ -995,5 +1047,6 @@ export const functionMap = {
   removeComponentIfWithinParent,
   updateAvatarSize,
   updateLegacyLink,
-  addColumnsPropToRow
+  addColumnsPropToRow,
+  updateRowFunctionArg
 };

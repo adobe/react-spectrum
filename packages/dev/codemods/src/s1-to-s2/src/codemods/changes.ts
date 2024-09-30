@@ -79,6 +79,10 @@ type FunctionInfo =
   | {
     name: 'addColumnsPropToRow',
     args: {}
+  }
+  | {
+    name: 'updateRowFunctionArg',
+    args: {}
   };
 
 type Change = {
@@ -1199,14 +1203,6 @@ export const changes: ChangesJSON = {
   TableView: {
     changes: [
       {
-        description: 'Update TableView to Table',
-        reason: 'Updated API',
-        function: {
-          name: 'updateToNewComponent',
-          args: {newComponent: 'Table'}
-        }
-      },
-      {
         description: 'Add columns prop to Row',
         reason: 'Rows now require a columns prop from TableHeader',
         function: {
@@ -1236,6 +1232,14 @@ export const changes: ChangesJSON = {
         function: {
           name: 'updatePropName',
           args: {oldProp: 'key', newProp: 'id'}
+        }
+      },
+      {
+        description: 'Update child function to receive column object instead of column key',
+        reason: 'Updated API',
+        function: {
+          name: 'updateRowFunctionArg',
+          args: {}
         }
       }
     ]
