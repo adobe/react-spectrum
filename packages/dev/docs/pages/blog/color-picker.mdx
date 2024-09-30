@@ -27,11 +27,12 @@ date: 2024-09-30
 author: '[Devon Govett](https://twitter.com/devongovett)'
 ---
 
+{/* Generating color descriptions to improve color picker accessibility */}
 {/* Improving color picker accessibility with generated color descriptions */}
 {/* Accessible color descriptions */}
 {/* Using OKLCH to generate accessible color descriptions */}
 
-# Generating color descriptions to improve color picker accessibility
+# Improving color picker accessibility with generated color descriptions
 
 Recently, we released a suite of color picker components in React Aria and React Spectrum. These components help users choose a color in various ways, including a 2D [ColorArea](../react-aria/ColorArea.html), channel-based [ColorSlider](../react-aria/ColorSlider.html), circular [ColorWheel](../react-aria/ColorWheel.html), preset [ColorSwatchPicker](../react-aria/ColorSwatchPicker.html), or a hex value [ColorField](../react-aria/ColorField.hjtml). You can compose these individual pieces together to create a full [ColorPicker](../react-aria/ColorPicker.html) with whatever custom layout or configuration you need.
 
@@ -82,11 +83,11 @@ In HSL, certain hues also appear to shift as the lightness changes — for examp
 
 <div role="img" aria-label="Comparison of a blue gradient in HSL and OKLCH" style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center'}}>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
-    <div style={{width: 240, height: 240, background: 'linear-gradient(in hsl to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
+    <div style={{width: 240, height: 240, background: 'linear-gradient(to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
     <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>HSL</span>
   </div>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
-    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklch to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
+    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklab to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
     <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>OKLCH</span>
   </div>
 </div>
