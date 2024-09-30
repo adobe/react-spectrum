@@ -225,6 +225,13 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
   })}>Test</RSPButton>"
 `;
 
+exports[`Should leave existing style macros unaffected 1`] = `
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<TextField label="Name" styles={style({width: 160})} />"
+`;
+
 exports[`Updates left/right layout values to be start/end 1`] = `
 "import { Button } from "@react-spectrum/s2";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
