@@ -105,12 +105,12 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -251,7 +251,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   }
 }
 
-function Table(props: TableProps, ref: DOMRef<HTMLDivElement>) {
+function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className,
@@ -1106,5 +1106,5 @@ export function Row<T extends object>({id, columns, children, ...otherProps}: Ro
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _Table = forwardRef(Table);
-export {_Table as Table};
+const _TableView = forwardRef(TableView);
+export {_TableView as TableView};
