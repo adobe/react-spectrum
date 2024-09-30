@@ -15239,15 +15239,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"css-parse@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "css-parse@npm:2.0.0"
-  dependencies:
-    css: "npm:^2.0.0"
-  checksum: 10c0/a97e409c0060918964609fb9695d04f03b814322b14e2577bc598a6e4b9f36f8a93d0ce911c1d918a765cf73d92812af289b5bcc714ca5fea33c0247e6e39604
-  languageName: node
-  linkType: hard
-
 "css-select-base-adapter@npm:^0.1.1":
   version: 0.1.1
   resolution: "css-select-base-adapter@npm:0.1.1"
@@ -15325,18 +15316,6 @@ __metadata:
   version: 1.5.1
   resolution: "css.escape@npm:1.5.1"
   checksum: 10c0/5e09035e5bf6c2c422b40c6df2eb1529657a17df37fda5d0433d722609527ab98090baf25b13970ca754079a0f3161dd3dfc0e743563ded8cfa0749d861c1525
-  languageName: node
-  linkType: hard
-
-"css@npm:^2.0.0":
-  version: 2.2.4
-  resolution: "css@npm:2.2.4"
-  dependencies:
-    inherits: "npm:^2.0.3"
-    source-map: "npm:^0.6.1"
-    source-map-resolve: "npm:^0.5.2"
-    urix: "npm:^0.1.0"
-  checksum: 10c0/496fa66568ebd9e51b3153817dd36ec004a45780da6f818e13117e3c4e50b774af41fff70a6ff2fa03777b239c4028ff655fe571b20964b90e886441cd141569
   languageName: node
   linkType: hard
 
@@ -29119,7 +29098,6 @@ __metadata:
     core-js: "npm:^3.0.0"
     cross-env: "npm:^7.0.2"
     cross-spawn: "npm:^7.0.3"
-    css-parse: "npm:^2.0.0"
     delta-e: "npm:^0.0.8"
     diff: "npm:^5.1.0"
     eslint: "npm:^8.56.0"
@@ -31031,7 +31009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-resolve@npm:^0.5.0, source-map-resolve@npm:^0.5.2":
+"source-map-resolve@npm:^0.5.0":
   version: 0.5.3
   resolution: "source-map-resolve@npm:0.5.3"
   dependencies:
