@@ -79,6 +79,7 @@ __metadata:
     "@react-spectrum/buttongroup": "npm:^3.6.15"
     "@react-spectrum/calendar": "npm:^3.4.11"
     "@react-spectrum/checkbox": "npm:^3.9.8"
+    "@react-spectrum/color": "npm:3.0.0-rc.1"
     "@react-spectrum/combobox": "npm:^3.13.2"
     "@react-spectrum/contextualhelp": "npm:^3.6.13"
     "@react-spectrum/datepicker": "npm:^3.10.1"
@@ -6838,7 +6839,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/color@workspace:packages/@react-spectrum/color":
+"@react-spectrum/color@npm:3.0.0-rc.1, @react-spectrum/color@workspace:packages/@react-spectrum/color":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/color@workspace:packages/@react-spectrum/color"
   dependencies:
@@ -6857,7 +6858,7 @@ __metadata:
     "@react-spectrum/textfield": "npm:^3.12.3"
     "@react-spectrum/utils": "npm:^3.11.9"
     "@react-spectrum/view": "npm:^3.6.12"
-    "@react-stately/color": "npm:^3.7.1"
+    "@react-stately/color": "npm:^3.7.2"
     "@react-types/color": "npm:3.0.0-rc.1"
     "@react-types/shared": "npm:^3.24.1"
     "@react-types/textfield": "npm:^3.9.5"
@@ -8110,7 +8111,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/color@npm:^3.7.1, @react-stately/color@npm:^3.7.2, @react-stately/color@workspace:packages/@react-stately/color":
+"@react-stately/color@npm:^3.7.2, @react-stately/color@workspace:packages/@react-stately/color":
   version: 0.0.0-use.local
   resolution: "@react-stately/color@workspace:packages/@react-stately/color"
   dependencies:
@@ -15239,15 +15240,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"css-parse@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "css-parse@npm:2.0.0"
-  dependencies:
-    css: "npm:^2.0.0"
-  checksum: 10c0/a97e409c0060918964609fb9695d04f03b814322b14e2577bc598a6e4b9f36f8a93d0ce911c1d918a765cf73d92812af289b5bcc714ca5fea33c0247e6e39604
-  languageName: node
-  linkType: hard
-
 "css-select-base-adapter@npm:^0.1.1":
   version: 0.1.1
   resolution: "css-select-base-adapter@npm:0.1.1"
@@ -15325,18 +15317,6 @@ __metadata:
   version: 1.5.1
   resolution: "css.escape@npm:1.5.1"
   checksum: 10c0/5e09035e5bf6c2c422b40c6df2eb1529657a17df37fda5d0433d722609527ab98090baf25b13970ca754079a0f3161dd3dfc0e743563ded8cfa0749d861c1525
-  languageName: node
-  linkType: hard
-
-"css@npm:^2.0.0":
-  version: 2.2.4
-  resolution: "css@npm:2.2.4"
-  dependencies:
-    inherits: "npm:^2.0.3"
-    source-map: "npm:^0.6.1"
-    source-map-resolve: "npm:^0.5.2"
-    urix: "npm:^0.1.0"
-  checksum: 10c0/496fa66568ebd9e51b3153817dd36ec004a45780da6f818e13117e3c4e50b774af41fff70a6ff2fa03777b239c4028ff655fe571b20964b90e886441cd141569
   languageName: node
   linkType: hard
 
@@ -28798,6 +28778,7 @@ __metadata:
     "@react-aria/button": "npm:^3.9.8"
     "@react-aria/calendar": "npm:^3.5.11"
     "@react-aria/checkbox": "npm:^3.14.6"
+    "@react-aria/color": "npm:3.0.0-rc.2"
     "@react-aria/combobox": "npm:^3.10.3"
     "@react-aria/datepicker": "npm:^3.11.2"
     "@react-aria/dialog": "npm:^3.5.17"
@@ -29118,7 +29099,6 @@ __metadata:
     core-js: "npm:^3.0.0"
     cross-env: "npm:^7.0.2"
     cross-spawn: "npm:^7.0.3"
-    css-parse: "npm:^2.0.0"
     delta-e: "npm:^0.0.8"
     diff: "npm:^5.1.0"
     eslint: "npm:^8.56.0"
@@ -29198,6 +29178,7 @@ __metadata:
     "@react-stately/calendar": "npm:^3.5.4"
     "@react-stately/checkbox": "npm:^3.6.8"
     "@react-stately/collections": "npm:^3.10.9"
+    "@react-stately/color": "npm:^3.7.2"
     "@react-stately/combobox": "npm:^3.9.2"
     "@react-stately/data": "npm:^3.11.6"
     "@react-stately/datepicker": "npm:^3.10.2"
@@ -31029,7 +31010,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-resolve@npm:^0.5.0, source-map-resolve@npm:^0.5.2":
+"source-map-resolve@npm:^0.5.0":
   version: 0.5.3
   resolution: "source-map-resolve@npm:0.5.3"
   dependencies:

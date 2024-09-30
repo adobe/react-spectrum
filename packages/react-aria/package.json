@@ -42,6 +42,7 @@
     "@react-aria/button": "^3.9.8",
     "@react-aria/calendar": "^3.5.11",
     "@react-aria/checkbox": "^3.14.6",
+    "@react-aria/color": "3.0.0-rc.2",
     "@react-aria/combobox": "^3.10.3",
     "@react-aria/datepicker": "^3.11.2",
     "@react-aria/dialog": "^3.5.17",

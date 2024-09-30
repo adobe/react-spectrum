@@ -21,12 +21,17 @@ import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import ColorSlider from '@react-spectrum/docs/pages/assets//component-illustrations/ColorSlider.svg';
+import ColorWheel from '@react-spectrum/docs/pages/assets//component-illustrations/ColorWheel.svg';
+import ColorArea from '@react-spectrum/docs/pages/assets//component-illustrations/ColorArea.svg';
+import ColorField from '@react-spectrum/docs/pages/assets//component-illustrations/ColorField.svg';
+import ColorSwatch from '@react-spectrum/docs/pages/assets//component-illustrations/ColorSwatch.svg';
+import ColorSwatchPicker from '@react-spectrum/docs/pages/assets//component-illustrations/ColorSwatchPicker.svg';
 
 ---
 category: Color
 keywords: [color picker, aria]
 type: component
-preRelease: beta
 ---
 
 # ColorPicker
@@ -137,6 +142,56 @@ import {ColorPicker} from 'react-aria-components';
   {/* Color components here */}
 </ColorPicker>
 ```
+
+### Composed components
+
+A `ColorPicker` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="ColorArea.html"
+  title="ColorArea"
+  description="A color area allows users to adjust two channels of a color value.">
+  <ColorArea />
+</ExampleCard>
+
+<ExampleCard
+  url="ColorSlider.html"
+  title="ColorSlider"
+  description="A color slider allows users to adjust an individual channel of a color value.">
+  <ColorSlider />
+</ExampleCard>
+
+<ExampleCard
+  url="ColorWheel.html"
+  title="ColorWheel"
+  description="A color wheel allows users to adjust the hue of a color value on a circular track.">
+  <ColorWheel />
+</ExampleCard>
+
+<ExampleCard
+  url="ColorField.html"
+  title="ColorField"
+  description="A color field allows users to edit a hex color or individual color channel value.">
+  <ColorField />
+</ExampleCard>
+
+<ExampleCard
+  url="ColorSwatch.html"
+  title="ColorSwatch"
+  description="A ColorSwatch displays a preview of a selected color.">
+  <ColorSwatch />
+</ExampleCard>
+
+<ExampleCard
+  url="ColorSwatchPicker.html"
+  title="ColorSwatchPicker"
+  description="A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.">
+  <ColorSwatchPicker />
+</ExampleCard>
+
+</section>
 
 ## Reusable wrappers
 

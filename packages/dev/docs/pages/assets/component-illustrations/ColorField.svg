@@ -1,0 +1,12 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 56px) / 2) 10px" height="56" viewBox="0 0 176 56">
+  <rect id="Placement_Area" data-name="Placement Area" width="176" height="56" fill="red" opacity="0"/>
+  <g id="Label">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="39" height="24" fill="red" opacity="0"/>
+    <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Background</tspan></text>
+  </g>
+  <g id="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="176" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+  </g>
+  <text id="Text-2" data-name="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">#ABCDEF</tspan></text>
+</svg>

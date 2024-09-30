@@ -49,7 +49,7 @@
     "@react-spectrum/textfield": "^3.12.3",
     "@react-spectrum/utils": "^3.11.9",
     "@react-spectrum/view": "^3.6.12",
-    "@react-stately/color": "^3.7.1",
+    "@react-stately/color": "^3.7.2",
     "@react-types/color": "3.0.0-rc.1",
     "@react-types/shared": "^3.24.1",
     "@react-types/textfield": "^3.9.5",
