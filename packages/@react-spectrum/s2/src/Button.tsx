@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, size as sizeValue, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -64,13 +64,14 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
 export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
+const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const button = style<ButtonRenderProps & ButtonStyleProps>({
   ...focusRing(),
   position: 'relative',
   display: 'flex',
   alignItems: {
     default: 'baseline',
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': 'center'
+    [iconOnly]: 'center'
   },
   justifyContent: 'center',
   textAlign: 'start',
@@ -80,7 +81,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   userSelect: 'none',
   minHeight: 'control',
   minWidth: {
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': 'control'
+    [iconOnly]: 'control'
   },
   borderRadius: 'pill',
   boxSizing: 'border-box',
@@ -88,11 +89,11 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   textDecoration: 'none', // for link buttons
   paddingX: {
     default: 'pill',
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': 0
+    [iconOnly]: 0
   },
   paddingY: 0,
   aspectRatio: {
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': 'square'
+    [iconOnly]: 'square'
   },
   transition: 'default',
   borderStyle: 'solid',
@@ -110,7 +111,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     type: 'marginTop',
     value: {
       default: fontRelative(-2),
-      ':has([slot=icon]):not(:has([data-rsp-slot=text]))': 0
+      [iconOnly]: 0
     }
   },
   borderColor: {
@@ -331,15 +332,18 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({
-            paddingY: '--labelPadding',
-            order: 1,
-            opacity: {
-              default: 1,
-              isProgressVisible: 0
-            }
+          [TextContext, {
+            styles: style({
+              paddingY: '--labelPadding',
+              order: 1,
+              opacity: {
+                default: 1,
+                isProgressVisible: 0
+              }
+            })({isProgressVisible}),
             // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-          })({isProgressVisible}), 'data-rsp-slot': 'text'}],
+            'data-rsp-slot': 'text'
+          }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({
@@ -366,8 +370,21 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
                 isProgressVisible: 1
               }
             })({isProgressVisible, isPending})}>
-            {/* TODO: size based on t-shirt size once ProgressCircle supports custom sizes */}
-            <ProgressCircle isIndeterminate aria-label={stringFormatter.format('button.pending')} size="S" staticColor={staticColor} UNSAFE_style={{display: 'block'}} />
+            <ProgressCircle
+              isIndeterminate
+              aria-label={stringFormatter.format('button.pending')}
+              size="S"
+              staticColor={staticColor}
+              styles={style({
+                size: {
+                  size: {
+                    S: sizeValue(14),
+                    M: sizeValue(18),
+                    L: 20,
+                    XL: 24
+                  }
+                }
+              })({size})} />
           </div>
         }
       </Provider>
@@ -401,12 +418,17 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
         variant: props.variant || 'primary',
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
-        staticColor: props.staticColor
+        staticColor: props.staticColor,
+        isPending: false
       }, props.styles)}>
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {
+            styles: style({paddingY: '--labelPadding', order: 1}),
+            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+            'data-rsp-slot': 'text'
+          }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})

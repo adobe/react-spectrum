@@ -30,7 +30,8 @@ const meta: Meta<typeof Dialog> = {
       options: ['popover', 'modal', 'fullscreen', 'fullscreenTakeover']
     }
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'Dialog'
 };
 
 export default meta;

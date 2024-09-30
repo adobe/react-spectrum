@@ -159,6 +159,6 @@ function renderDropIndicatorWrapper(
       </VirtualizerItem>
     );
   }
-  
+
   return indicator;
 }

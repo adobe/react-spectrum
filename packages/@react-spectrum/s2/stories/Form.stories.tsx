@@ -45,7 +45,7 @@ import {categorizeArgTypes} from './utils';
 import type {Meta} from '@storybook/react';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUp from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useState} from 'react';
 
 const meta: Meta<typeof Form> = {
@@ -56,7 +56,8 @@ const meta: Meta<typeof Form> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onInvalid', 'onReset', 'onSubmit'])
-  }
+  },
+  title: 'Form'
 };
 
 export default meta;

@@ -12,10 +12,9 @@ configureActions({
 
 export const parameters = {
   options: {
-    storySort: (a, b) => {
-      return a.title === b.title
-        ? 0
-        : a.id.localeCompare(b.id, undefined, { numeric: true });
+    storySort: {
+      method: 'alphabetical',
+      order: ['*', 'S2', 'S2 Chromatic']
     }
   },
   a11y: {},

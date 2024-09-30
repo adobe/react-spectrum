@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ArbitraryValue} from './types';
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
-import {createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -87,8 +88,26 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: keyof typeof color, dark: keyof typeof color): `[${string}]` {
-  return `[light-dark(${color[light]}, ${color[dark]})]`;
+type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
+function parseColor(value: SpectrumColor) {
+  let arbitrary = parseArbitraryValue(value);
+  if (arbitrary) {
+    return arbitrary[0];
+  }
+  let [colorValue, opacity] = value.split('/');
+  colorValue = color[colorValue];
+  if (opacity) {
+    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
+  }
+  return colorValue;
+}
+
+export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
+  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+}
+
+export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
+  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {

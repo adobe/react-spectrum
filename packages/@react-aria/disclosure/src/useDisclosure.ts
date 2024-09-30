@@ -30,8 +30,8 @@ export interface AriaDisclosureProps {
 export interface DisclosureAria {
   /** Props for the disclosure button. */
   buttonProps: AriaButtonProps,
-  /** Props for the content element. */
-  contentProps: HTMLAttributes<HTMLElement>
+  /** Props for the disclosure panel. */
+  panelProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -51,17 +51,15 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
   // @ts-ignore https://github.com/facebook/react/pull/24741
-  useEvent(ref, 'beforematch', supportsBeforeMatch ? () => state.expand() : null);
+  useEvent(ref, 'beforematch', supportsBeforeMatch && !isControlled ? () => state.expand() : null);
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && ref?.current && !isControlled && !isDisabled) {
       if (state.isExpanded) {
-        // @ts-ignore
-        ref.current.hidden = undefined;
+        ref.current.removeAttribute('hidden');
       } else {
-        // @ts-ignore
-        ref.current.hidden = 'until-found';
+        ref.current.setAttribute('hidden', 'until-found');
       }
     }
   }, [isControlled, ref, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
@@ -72,7 +70,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       'aria-expanded': state.isExpanded,
       'aria-controls': contentId,
       onPress: (e) => {
-        if (e.pointerType !== 'keyboard') {
+        if (!isDisabled && e.pointerType !== 'keyboard') {
           state.toggle();
         }
       },
@@ -84,8 +82,10 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
         }
       }
     },
-    contentProps: {
+    panelProps: {
       id: contentId,
+      // This can be overridden at the panel element level.
+      role: 'group',
       'aria-labelledby': triggerId,
       hidden: (!supportsBeforeMatch || isControlled) ? !state.isExpanded : true
     }

@@ -27,7 +27,7 @@ const preview = {
           channel.on(DARK_MODE_EVENT_NAME, setDark);
           return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
         }, []);
-        return <DocsContainer {...props} theme={dark ? themes.dark : themes.light} />;
+        return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: 'var(--s2-container-bg)'}} />;
       },
       source: {
         // code: null, // Will disable code button, and show "No code available"

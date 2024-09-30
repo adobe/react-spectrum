@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style' with {type: 'macro'};
 import {Divider} from '../src';
 
 import type {Meta} from '@storybook/react';
@@ -22,7 +22,8 @@ const meta: Meta<typeof Divider> = {
     layout: 'centered'
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'Divider'
 };
 
 export default meta;
@@ -56,4 +57,3 @@ export const Example = {
     </section>
   )
 };
-

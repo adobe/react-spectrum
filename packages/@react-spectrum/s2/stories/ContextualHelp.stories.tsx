@@ -10,7 +10,8 @@ const meta: Meta<typeof ContextualHelp> = {
   tags: ['autodocs'],
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'ContextualHelp'
 };
 
 export default meta;

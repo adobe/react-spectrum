@@ -22,7 +22,7 @@ import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef}
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';

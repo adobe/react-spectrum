@@ -49,6 +49,7 @@ type: component
 
 ```tsx example
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-components';
+import {MyCheckbox} from './Checkbox';
 
 <Table aria-label="Files" selectionMode="multiple">
   <TableHeader>
@@ -362,8 +363,8 @@ function MyColumn(props: ColumnProps) {
 The TableHeader and Row components can also be wrapped to automatically include [checkboxes](Checkbox.html) for selection, and a drag handle when [drag and drop](#drag-and-drop) is enabled, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
 
 ```tsx example export=true render=false
-import type {TableHeaderProps, RowProps, CheckboxProps} from 'react-aria-components';
-import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
+import type {TableHeaderProps, RowProps} from 'react-aria-components';
+import {Collection, useTableOptions} from 'react-aria-components';
 
 function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
@@ -391,24 +392,6 @@ function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProp
         {children}
       </Collection>
     </Row>
-  );
-}
-
-function MyCheckbox({children, ...props}: CheckboxProps) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate}) => <>
-        <div className="checkbox">
-          <svg viewBox="0 0 18 18" aria-hidden="true">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" />
-            }
-          </svg>
-        </div>
-        {children}
-      </>}
-    </Checkbox>
   );
 }
 ```
