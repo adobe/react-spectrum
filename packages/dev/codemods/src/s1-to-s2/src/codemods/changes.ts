@@ -83,6 +83,10 @@ type FunctionInfo =
   | {
     name: 'updateRowFunctionArg',
     args: {}
+  }
+  | {
+    name: 'updateKeyToId',
+    args: {}
   };
 
 type Change = {
@@ -1218,8 +1222,8 @@ export const changes: ChangesJSON = {
         description: 'Update key prop to id',
         reason: 'Updated API',
         function: {
-          name: 'updatePropName',
-          args: {oldProp: 'key', newProp: 'id'}
+          name: 'updateKeyToId',
+          args: {}
         }
       }
     ]
@@ -1230,8 +1234,8 @@ export const changes: ChangesJSON = {
         description: 'Update key prop to id',
         reason: 'Updated API',
         function: {
-          name: 'updatePropName',
-          args: {oldProp: 'key', newProp: 'id'}
+          name: 'updateKeyToId',
+          args: {}
         }
       },
       {
