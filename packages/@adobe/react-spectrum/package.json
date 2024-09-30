@@ -51,6 +51,7 @@
     "@react-spectrum/buttongroup": "^3.6.15",
     "@react-spectrum/calendar": "^3.4.11",
     "@react-spectrum/checkbox": "^3.9.8",
+    "@react-spectrum/color": "3.0.0-rc.1",
     "@react-spectrum/combobox": "^3.13.2",
     "@react-spectrum/contextualhelp": "^3.6.13",
     "@react-spectrum/datepicker": "^3.10.1",

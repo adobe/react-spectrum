@@ -27,6 +27,7 @@
     "@react-stately/calendar": "^3.5.4",
     "@react-stately/checkbox": "^3.6.8",
     "@react-stately/collections": "^3.10.9",
+    "@react-stately/color": "^3.7.2",
     "@react-stately/combobox": "^3.9.2",
     "@react-stately/data": "^3.11.6",
     "@react-stately/datepicker": "^3.10.2",
