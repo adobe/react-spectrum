@@ -226,7 +226,8 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 `;
 
 exports[`Should leave existing style macros unaffected 1`] = `
-"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <TextField label="Name" styles={style({width: 160})} />"
 `;

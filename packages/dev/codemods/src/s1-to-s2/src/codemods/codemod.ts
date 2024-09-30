@@ -51,7 +51,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   const leadingComments = root.find(j.Program).get('body', 0).node.leadingComments;
   traverse(root.paths()[0].node, {
     ImportDeclaration(path) {
-      if (path.node.source.value === '@adobe/react-spectrum' || path.node.source.value.startsWith('@react-spectrum/')) {
+      if (path.node.source.value === '@adobe/react-spectrum' || (path.node.source.value.startsWith('@react-spectrum/') && path.node.source.value !== '@react-spectrum/s2')) {
         lastImportPath = path;
         for (let specifier of path.node.specifiers) {
           if (specifier.type === 'ImportNamespaceSpecifier') {
