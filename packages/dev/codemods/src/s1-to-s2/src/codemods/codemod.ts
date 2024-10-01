@@ -5,6 +5,7 @@ import {changes as changesJSON} from './changes';
 import {functionMap} from './transforms';
 import {getComponents} from '../getComponents';
 import {iconMap} from '../iconMap';
+import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
 import {transformStyleProps} from './styleProps';
 import traverse, {Binding, NodePath} from '@babel/traverse';
@@ -32,7 +33,13 @@ interface Options {
 }
 
 export default function transformer(file: FileInfo, api: API, options: Options) {
-  let j = api.jscodeshift;
+  let j = api.jscodeshift.withParser({
+    parse(source: string) {
+      return recastParse(source, {
+        parser: require('recast/parsers/babel')
+      });
+    }
+  });
   let root = j(file.source);
   let componentsToTransform = options.components ? new Set(options.components.split(',').filter(s => availableComponents.has(s))) : availableComponents;
 
@@ -44,7 +51,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   const leadingComments = root.find(j.Program).get('body', 0).node.leadingComments;
   traverse(root.paths()[0].node, {
     ImportDeclaration(path) {
-      if (path.node.source.value === '@adobe/react-spectrum' || path.node.source.value.startsWith('@react-spectrum/')) {
+      if (path.node.source.value === '@adobe/react-spectrum' || (path.node.source.value.startsWith('@react-spectrum/') && path.node.source.value !== '@react-spectrum/s2')) {
         lastImportPath = path;
         for (let specifier of path.node.specifiers) {
           if (specifier.type === 'ImportNamespaceSpecifier') {
@@ -277,4 +284,3 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   return root.toSource().replace(/assert\s*\{\s*type:\s*"macro"\s*\}/g, 'with { type: "macro" }');
 }
 
-transformer.parser = 'tsx';

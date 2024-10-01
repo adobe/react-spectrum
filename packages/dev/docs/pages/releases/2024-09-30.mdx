@@ -1,0 +1,99 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+
+description: Happy fall! 🍁 We’re excited to announce that our color picker components are now generally available! We've also added a pending state for buttons in React Aria Components, advanced TreeView to beta, and added new Disclosure and DisclosureGroup components in alpha for building accordions and collapsible panels.
+
+date: 2024-09-30
+---
+
+# September 30, 2024 Release
+Happy fall! 🍁 We’re excited to announce that our color picker components are now generally available! This includes [ColorPicker](https://react-spectrum.adobe.com/react-aria/ColorPicker.html), [ColorArea](https://react-spectrum.adobe.com/react-aria/ColorArea.html), [ColorField](https://react-spectrum.adobe.com/react-aria/ColorField.html), [ColorSlider](https://react-spectrum.adobe.com/react-aria/ColorSlider.html), [ColorSwatch](https://react-spectrum.adobe.com/react-aria/ColorSwatch.html), [ColorSwatchPicker](https://react-spectrum.adobe.com/react-aria/ColorSwatchPicker.html), and [ColorWheel](https://react-spectrum.adobe.com/react-aria/ColorWheel.html). These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
+
+In addition, we’ve introduced a new [pending state](https://react-spectrum.adobe.com/react-aria/Button.html#pending) for buttons in React Aria Components, allowing you to display a progress spinner to indicate that an action is in progress. It also handles screen reader announcements and disables other interactions, except for focus, during the pending state.
+
+We're also advancing the React Aria Components [Tree](https://react-spectrum.adobe.com/react-aria/Tree.html) and Spectrum [TreeView](https://react-spectrum.adobe.com/react-spectrum/TreeView.html) to beta, and have added some basic documentation. In alpha, we have new [Disclosure](https://react-spectrum.adobe.com/react-aria/Disclosure.html) and [DisclosureGroup](https://react-spectrum.adobe.com/react-aria/DisclosureGroup.html) components in React Aria Components, which can be used to build accordions and other collapsible panels.
+
+Huge thanks as always to everyone who contributed to this release! 😍
+
+## Enhancements
+
+- Button
+  - Add pending state to Button in React Aria Components - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7002), [PR](https://github.com/adobe/react-spectrum/pull/7073)
+- Collections
+  - Support fragments in React Spectrum v3 collections - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/6430)
+- Tabs
+  - Support hover events in React Aria Component Tabs - [@lithdew](https://github.com/lithdew) - [PR](https://github.com/adobe/react-spectrum/pull/6742)
+- TableView
+  - Support `disabledBehavior` prop in TableView - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6832), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6863)
+- Misc
+  - Use content hashes in CSS modules - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7029)
+  - TS Strict support in Stately List hooks - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6567)
+  - Add test utilities for ARIA patterns to simplify test writing - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6208)
+  - Allow styles on VirtualizerItem - [@patrickkuhlmann](https://github.com/patrickkuhlmann) - [PR](https://github.com/adobe/react-spectrum/pull/6998)
+  - Add support for windows contributors - [@davidcoleman007](https://github.com/davidcoleman007) - [PR](https://github.com/adobe/react-spectrum/pull/6313)
+  - Allow passing data attributes to FieldError in RAC - [@omarnyte](https://github.com/omarnyte) - [PR](https://github.com/adobe/react-spectrum/pull/6895)
+  - Support and document `preventFocusOnPress` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6854)
+
+## Fixes
+
+- ActionBar
+  - Pass through ActionBar `disabledKeys` to ActionGroup - [@GrantRussell](https://github.com/GrantRussell) - [PR](https://github.com/adobe/react-spectrum/pull/7090)
+- ComboBox
+  - Keep focus on the input in ComboBox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/6783)
+  - Fix `isQuiet` and `isReadOnly` styling - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
+- Date/Time
+  - Fix type regression in Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6790)
+  - Add missing `endOfWeek` overload - [@cyyynthia](https://github.com/cyyynthia) - [PR](https://github.com/adobe/react-spectrum/pull/6749)
+  - Fix `useDateSegment` null ref error - [@teemuandersen](https://github.com/teemuandersen) - [PR](https://github.com/adobe/react-spectrum/pull/6989)
+- Menu
+  - Fix `useMenuItem` `onAction` regression - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6807)
+- Picker
+  - Update Picker placeholder to be shorter - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6796)
+- SearchField
+  - Fix SearchField padding right specificity - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
+- Select
+  - Fix Select from showing placeholder when selected value is 0 - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6968)
+- Tabs
+  - Add horizontal orientation to `TabsKeyboardDelegate` to prevent switching tabs with up/down arrow keys - [@mdhmaiti](https://github.com/mdhmaiti) - [PR](https://github.com/adobe/react-spectrum/pull/6023)
+- Tooltip
+  - Prevent Tooltip from getting stuck to screen when scrolling - [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/6984)
+- Tree
+  - Fix `useTreeData` error and types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6923)
+- Misc
+  - Prevent click events from being fired on the wrong target on Android devices - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7026)
+  - Fix linking ids when using htmlFor via `useId`- [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6788)
+  - Fix conditional `useHref` call - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/7032)
+  - Fix type regression on `useControlledState` signature - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6789)
+  - Extract `ToggleStateProps` type to use only what is needed in `useToggleState` - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/3836)
+
+## Docs
+- Add missing prop from Switch example in docs - [@AleksandrSI](https://github.com/AleksandrSl) - [PR](https://github.com/adobe/react-spectrum/pull/6827)
+- Cleanup warnings in docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6857)
+- Fix docs from crashing in Safari browser - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6930)
+- Clarify Icons docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6955)
+- Fix `useMove` docs to be more clear when events start - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6952)
+- Fix selection with falsy keys - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7079)
+- Fix RAC Breadcrumbs data selector docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7091)
+
+## Under Construction
+
+- TreeView/Tree (Beta):
+  - Fix Tree row padding when chevron isn't present - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6545)
+  - Fix TreeView so height matches the chevron height - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6950)
+  - Add TreeView docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6744), [PR](https://github.com/adobe/react-spectrum/pull/6959)
+
+- Accordion/DisclosureGroup/Disclosure (Alpha)
+  - Accordion - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6931)
+  - Add DisclosureGroup component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7063)
+  - Add basic docs for Accordion, DisclosureGroup, Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)

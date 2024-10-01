@@ -23,6 +23,7 @@ export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Calendar, RangeCalendar} from '@react-spectrum/calendar';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+export {ColorArea, ColorEditor, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, ColorWheel, parseColor, getColorChannels} from '@react-spectrum/color';
 export {ComboBox} from '@react-spectrum/combobox';
 export {ContextualHelp} from '@react-spectrum/contextualhelp';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
@@ -78,6 +79,7 @@ export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButton
 export type {SpectrumButtonGroupProps} from '@react-spectrum/buttongroup';
 export type {SpectrumCalendarProps, SpectrumRangeCalendarProps} from '@react-spectrum/calendar';
 export type {SpectrumCheckboxGroupProps, SpectrumCheckboxProps} from '@react-spectrum/checkbox';
+export type {Color, ColorFormat, ColorSpace, SpectrumColorAreaProps, SpectrumColorEditorProps, SpectrumColorFieldProps, SpectrumColorPickerProps, SpectrumColorSliderProps, SpectrumColorSwatchPickerProps, SpectrumColorSwatchProps, SpectrumColorWheelProps} from '@react-spectrum/color';
 export type {SpectrumComboBoxProps} from '@react-spectrum/combobox';
 export type {SpectrumContextualHelpProps} from '@react-spectrum/contextualhelp';
 export type {DialogContainerValue, SpectrumAlertDialogProps, SpectrumDialogContainerProps, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-spectrum/dialog';

@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.0.0",
-    "@react-spectrum/test-utils": "1.0.0-alpha.1",
+    "@react-spectrum/test-utils": "1.0.0-alpha.2",
     "@swc/helpers": "^0.5.0",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^5.16.4",
