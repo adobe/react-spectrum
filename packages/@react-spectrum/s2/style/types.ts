@@ -50,7 +50,8 @@ type PropertyValue<T> =
         ? T[number]
         : never;
 
-type PropertyValue2<T> = PropertyValue<T> | CustomProperty | `[${string}]`;
+export type ArbitraryValue = CustomProperty | `[${string}]`;
+type PropertyValue2<T> = PropertyValue<T> | ArbitraryValue;
 type Merge<T> = T extends any ? T : never;
 type ShorthandValue<T extends Theme, P> = 
   P extends string[]

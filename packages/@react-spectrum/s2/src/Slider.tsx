@@ -20,13 +20,13 @@ import {
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

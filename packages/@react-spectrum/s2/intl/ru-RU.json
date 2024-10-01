@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Дополнительные элементы",
   "button.pending": "в ожидании",
   "contextualhelp.help": "Справка",
   "contextualhelp.info": "Информация",
@@ -12,7 +13,7 @@
   "label.(optional)": "(дополнительно)",
   "label.(required)": "(обязательно)",
   "menu.moreActions": "Дополнительные действия",
-  "picker.placeholder": "Выбрать параметр...",
+  "picker.placeholder": "Выбрать…",
   "slider.maximum": "Максимум",
   "slider.minimum": "Минимум",
   "table.loading": "Загрузка...",

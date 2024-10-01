@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2-icon-builder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
     "@parcel/reporter-cli": "2.0.0-dev.1601",
     "@parcel/resolver-default": "2.0.0-dev.1601",
     "@parcel/transformer-raw": "2.0.0-dev.1601",
-    "@react-spectrum/parcel-transformer-s2-icon": "^0.1.0"
+    "@react-spectrum/parcel-transformer-s2-icon": "^0.1.1"
   },
   "files": [
     "index.js",

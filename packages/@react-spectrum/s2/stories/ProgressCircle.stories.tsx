@@ -22,7 +22,7 @@ const meta: Meta<typeof ProgressCircle> = {
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
-  title: 'S2/ProgressCircle'
+  title: 'ProgressCircle'
 };
 
 export default meta;

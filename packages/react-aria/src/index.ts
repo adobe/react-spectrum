@@ -14,6 +14,7 @@ export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
 export {useButton, useToggleButton} from '@react-aria/button';
 export {useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from '@react-aria/calendar';
 export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
+export {useColorArea, useColorChannelField, useColorField, useColorSlider, useColorSwatch, useColorWheel} from '@react-aria/color';
 export {useComboBox} from '@react-aria/combobox';
 export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
@@ -50,6 +51,7 @@ export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, 
 export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
+export type {AriaColorAreaOptions, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
 export type {AriaComboBoxOptions, AriaComboBoxProps, ComboBoxAria} from '@react-aria/combobox';
 export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, AriaTimeFieldProps, DateFieldAria, DatePickerAria, DateRangePickerAria, DateSegmentAria, DateRange, DateValue, TimeValue} from '@react-aria/datepicker';
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';

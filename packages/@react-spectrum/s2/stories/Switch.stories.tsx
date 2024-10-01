@@ -11,7 +11,7 @@
  */
 
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {Switch} from '../src';
 
 const meta: Meta<typeof Switch> = {
@@ -24,7 +24,7 @@ const meta: Meta<typeof Switch> = {
     inputRef: {control: {disable: true}},
     onChange: {table: {category: 'Events'}}
   },
-  title: 'S2/Switch'
+  title: 'Switch'
 };
 
 export default meta;

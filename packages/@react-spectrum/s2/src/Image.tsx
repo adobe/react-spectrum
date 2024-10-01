@@ -3,7 +3,7 @@ import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, Re
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
 import {useLayoutEffect} from '@react-aria/utils';

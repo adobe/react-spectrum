@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/tree",
-  "version": "3.8.4",
+  "version": "3.8.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,10 +22,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/collections": "^3.10.9",
-    "@react-stately/selection": "^3.16.2",
-    "@react-stately/utils": "^3.10.3",
-    "@react-types/shared": "^3.24.1",
+    "@react-stately/collections": "^3.11.0",
+    "@react-stately/selection": "^3.17.0",
+    "@react-stately/utils": "^3.10.4",
+    "@react-types/shared": "^3.25.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

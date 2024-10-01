@@ -20,10 +20,6 @@ const meta: Meta<typeof Breadcrumbs> = {
     layout: 'centered',
     // TODO: remove this once we get intl strings for breadcrumbs and thus the story won't crash in ar-AE
     chromaticProvider: {locales: ['en-US']}
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
   },
   argTypes: {
     size: {
@@ -38,7 +34,7 @@ const meta: Meta<typeof Breadcrumbs> = {
     }
   },
   tags: ['autodocs'],
-  title: 'S2/Breadcrumbs'
+  title: 'Breadcrumbs'
 };
 
 export default meta;

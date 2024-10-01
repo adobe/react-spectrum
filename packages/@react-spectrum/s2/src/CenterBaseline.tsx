@@ -13,7 +13,7 @@
 import {CSSProperties, ReactNode} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
 interface CenterBaselineProps {

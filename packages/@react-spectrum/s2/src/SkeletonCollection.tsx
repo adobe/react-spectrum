@@ -19,6 +19,10 @@ export interface SkeletonCollectionProps {
 }
 
 let cache = new WeakMap();
+
+/**
+ * A SkeletonCollection generates placeholder content within a collection component such as CardView.
+ */
 export const SkeletonCollection = createLeafComponent('skeleton', (props: SkeletonCollectionProps, ref, node) => {
   // Cache rendering based on node object identity. This allows the children function to randomize
   // its content (e.g. heights) and preserve on re-renders.

@@ -226,9 +226,9 @@ export class SelectionManager implements MultipleSelectionManager {
       selection = new Selection([toKey], toKey, toKey);
     } else {
       let selectedKeys = this.state.selectedKeys as Selection;
-      let anchorKey = selectedKeys.anchorKey || toKey;
+      let anchorKey = selectedKeys.anchorKey ?? toKey;
       selection = new Selection(selectedKeys, anchorKey, toKey);
-      for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey || toKey)) {
+      for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey ?? toKey)) {
         selection.delete(key);
       }
 
@@ -263,7 +263,7 @@ export class SelectionManager implements MultipleSelectionManager {
 
     let keys: Key[] = [];
     let key = from;
-    while (key) {
+    while (key != null) {
       let item = this.collection.getItem(key);
       if (item && item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection)) {
         keys.push(key);

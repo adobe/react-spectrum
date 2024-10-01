@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Meer items",
   "button.pending": "in behandeling",
   "contextualhelp.help": "Help",
   "contextualhelp.info": "Informatie",
@@ -12,7 +13,7 @@
   "label.(optional)": "(optioneel)",
   "label.(required)": "(vereist)",
   "menu.moreActions": "Meer handelingen",
-  "picker.placeholder": "Optie selecteren...",
+  "picker.placeholder": "Selecteren…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Laden...",

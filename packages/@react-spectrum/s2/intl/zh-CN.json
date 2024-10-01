@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "更多项目",
   "button.pending": "待处理",
   "contextualhelp.help": "帮助",
   "contextualhelp.info": "信息",
@@ -12,7 +13,7 @@
   "label.(optional)": "（可选）",
   "label.(required)": "（必填）",
   "menu.moreActions": "更多操作",
-  "picker.placeholder": "选择一个选项...",
+  "picker.placeholder": "选择...",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
   "table.loading": "正在加载...",

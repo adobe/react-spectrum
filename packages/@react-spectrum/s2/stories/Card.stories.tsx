@@ -45,7 +45,8 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
     <Skeleton isLoading={args.isLoading || false}>
       {children(args)}
     </Skeleton>
-  )
+  ),
+  title: 'Card'
 };
 
 export default meta;
