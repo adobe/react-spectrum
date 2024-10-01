@@ -97,3 +97,13 @@ Huge thanks as always to everyone who contributed to this release! 😍
   - Accordion - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6931)
   - Add DisclosureGroup component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7063)
   - Add basic docs for Accordion, DisclosureGroup, Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
+
+### Accordion updates
+
+We have made improvements to the Accordion component, which includes moving away from the Collection API in favor of wrapping `Disclosure` components, which can be used standalone. This includes a few breaking changes.
+- `Item` has been replaced with the `Disclosure` component, which consists of two children: `DisclosureHeader` and `DisclosurePanel`
+- `title` on `Item` is now a child of `DisclosureHeader`
+- Children of `Item` is now children of `DisclosurePanel`
+- `key` on `Item` is now `id` on `Disclosure`
+- `disabledKeys` has been removed in favor of adding `isDisabled` on individual `Disclosure` components
+- `allowsMultipleExpanded` can be added to allow multiple Disclosure components to be expanded at once (previously default behavior)
