@@ -57,11 +57,9 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], contextOptions: {forcedColors: 'active'} },
     }
   ],
-  webServer: [
-    {
-      command: 'yarn build:test-apps && npx http-server -p 3000 tmp',
-      url: 'http://127.0.0.1:3000',
-      reuseExistingServer: !process.env.CI,
-    },
-  ]
+  webServer: {
+    command: 'yarn build:test-apps && npx http-server -p 3000 tmp',
+    url: 'http://127.0.0.1:3000',
+    reuseExistingServer: !process.env.CI,
+  }
 });

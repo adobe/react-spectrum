@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const {execSync} = require('child_process');
 
-export const testApps = [
+const testApps = [
   {
     name: 'rsp-cra-18',
     buildCmd: 'yarn build',
@@ -40,7 +40,7 @@ export const testApps = [
   }
 ];
 
-const tmpDir = path.join(__dirname, 'tmp');
+const tmpDir = path.join(__dirname, '..', 'tmp');
 
 function cleanTmpDir() {
   if (fs.existsSync(tmpDir)) {
@@ -53,12 +53,13 @@ function cleanTmpDir() {
 
 function buildTestApps() {
   testApps.forEach((app) => {
-    const appPath = path.join(__dirname, 'examples', app.name);
+    const appPath = path.join(__dirname, '..', 'examples', app.name);
     console.log(`\nBuilding ${app.name}...`);
 
     process.chdir(appPath);
 
     try {
+      execSync('yarn install --no-immutable', {stdio: 'inherit'});
       execSync(app.buildCmd, {stdio: 'inherit'});
       console.log(`Successfully built ${app.name}`);
     } catch (error) {
@@ -80,7 +81,7 @@ function buildTestApps() {
     fs.cpSync(buildOutputPath, destPath, {recursive: true});
     console.log(`Copied build output to ${destPath}`);
 
-    process.chdir(__dirname);
+    process.chdir(path.join(__dirname, '..'));
   });
 }
 
@@ -92,3 +93,5 @@ function main() {
 }
 
 main();
+
+module.exports = {testApps};
