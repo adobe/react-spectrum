@@ -61,7 +61,7 @@ export const OnlyIcons = (args: any) => (
   <SegmentedControl {...args}>
     <SegmentedControlItem aria-label="Align bottom" id="align bottom"><AlignBottom /></SegmentedControlItem>
     <SegmentedControlItem aria-label="Align center" id="align center"><AlignCenter /></SegmentedControlItem>
-    <SegmentedControlItem aria-label="Align left"  id="align left"><AlignLeft /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align left" id="align left"><AlignLeft /></SegmentedControlItem>
   </SegmentedControl>
 );
 
