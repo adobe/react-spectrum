@@ -23,18 +23,19 @@ import {ColorPicker} from 'react-aria-components';
 ---
 keywords: [color picker, color, internationalization, localization, components, accessibility, react spectrum, react]
 description: TODO
-date: 2024-09-30
+date: 2024-10-02
 author: '[Devon Govett](https://twitter.com/devongovett)'
 ---
 
-{/* Generating color descriptions to improve color picker accessibility */}
+{/* Alternative titles: */}
+{/* Generating Color Descriptions to Improve Color Picker Accessibility */}
 {/* Improving color picker accessibility with generated color descriptions */}
 {/* Accessible color descriptions */}
 {/* Using OKLCH to generate accessible color descriptions */}
 
-# Improving color picker accessibility with generated color descriptions
+# Accessible Color Descriptions for Improved Color Pickers
 
-Recently, we released a suite of color picker components in React Aria and React Spectrum. These components help users choose a color in various ways, including a 2D [ColorArea](../react-aria/ColorArea.html), channel-based [ColorSlider](../react-aria/ColorSlider.html), circular [ColorWheel](../react-aria/ColorWheel.html), preset [ColorSwatchPicker](../react-aria/ColorSwatchPicker.html), or a hex value [ColorField](../react-aria/ColorField.hjtml). You can compose these individual pieces together to create a full [ColorPicker](../react-aria/ColorPicker.html) with whatever custom layout or configuration you need.
+Recently, we released a suite of color picker components in React Aria and React Spectrum. These components help users choose a color in various ways, including a 2D [ColorArea](../react-aria/ColorArea.html), channel-based [ColorSlider](../react-aria/ColorSlider.html), circular [ColorWheel](../react-aria/ColorWheel.html), preset [ColorSwatchPicker](../react-aria/ColorSwatchPicker.html), or a hex value [ColorField](../react-aria/ColorField.html). You can compose these individual pieces together to create a full [ColorPicker](../react-aria/ColorPicker.html) with whatever custom layout or configuration you need.
 
 ## Initial accessibility experience
 
@@ -69,7 +70,7 @@ Finally, in terms of accessibility, some of the color names were difficult to un
 
 Our final solution requires only 30 short strings per language to generate a description of any color. This includes 13 hues (pink, red, orange, brown, yellow, green, cyan, blue, purple, magenta, gray, white, and black), along with the halfway points between them (e.g. red orange, yellow green, and blue purple), and modifiers for lightness (very dark, dark, light, and very light), and chroma (grayish, pale, and vibrant). These strings are combined together to form a full color description.
 
-In addition to reducing the number of strings we need, these descriptions are also simpler, more universally understood, and more easily translated to other languages. For example, the description of <span role="img" aria-roledescription="color swatch" aria-label="light pale cyan blue" style={{background: '#64B1D8', display: 'inline-block', verticalAlign: 'middle', width: 24, height: 24, borderRadius: 4}} /> is “light pale cyan blue”, and the description of <span role="img" aria-roledescription="color swatch" aria-label="“dark vibrant purple magenta" style={{background: '#9932cc', display: 'inline-block', verticalAlign: 'middle', width: 24, height: 24, borderRadius: 4}} /> is “dark vibrant purple magenta”.
+In addition to reducing the number of strings we need, these descriptions are also simpler, more universally understood, and more easily translated between languages. For example, the description of <span role="img" aria-roledescription="color swatch" aria-label="light pale cyan blue" style={{background: '#64B1D8', display: 'inline-block', verticalAlign: 'middle', width: 24, height: 24, borderRadius: 4}} /> is “light pale cyan blue”, and the description of <span role="img" aria-roledescription="color swatch" aria-label="“dark vibrant purple magenta" style={{background: '#9932cc', display: 'inline-block', verticalAlign: 'middle', width: 24, height: 24, borderRadius: 4}} /> is “dark vibrant purple magenta”.
 
 Our algorithm for generating color descriptions works in the [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch) color space, recently standardized by CSS. This color space offers the advantage of uniform lightness across all hues, unlike HSL, where hues like blue appear significantly darker than hues like green or yellow at the same lightness value. The difference between HSL and OKLCH is shown below.
 
@@ -138,7 +139,7 @@ There are also a few additional special cases. For instance, dark orange is refe
   </div>
 </div>
 
-The hue name is combined with lightness (very dark, dark, light, very light), chroma (grayish, pale, and vibrant), and transparency descriptors based on ranges in the L and C channels of the OKLCH color space to create a complete color description.
+The hue name is combined with lightness (very dark, dark, light, very light) and chroma (grayish, pale, and vibrant) descriptors based on ranges in the L and C channels of the OKLCH color space to create a complete color description.
 
 <div role="img" aria-label="Two pink gradients showing lightness and chroma. Lightness has 5 segments labeled very light, light, nothing, dark, and very dark. Chroma has 4 segments labeled grayish, pale, nothing, and vibrant." style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center'}}>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
