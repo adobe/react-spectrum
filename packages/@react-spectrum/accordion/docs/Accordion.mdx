@@ -105,6 +105,8 @@ function ControlledExpansion() {
 
 ### Multi Selection
 
+By default, only one disclosure will be expanded at a time. To expand multiple disclosures, apply the `allowsMultipleExpanded` prop to Accordion.
+
 ```tsx example
 <Accordion allowsMultipleExpanded defaultExpandedKeys={['personal', 'billing']}>
   <Disclosure id="personal">

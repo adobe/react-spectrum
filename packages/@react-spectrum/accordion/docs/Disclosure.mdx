@@ -48,6 +48,38 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
 </Disclosure>
 ```
 
+## Content
+
+Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureHeader` and `DisclosurePanel`. The `DisclosureHeader` controls the expansion of the `DisclosurePanel` and the contents inside. 
+
+Disclosure can be used as a standalone collapsible section of content. However, multiple discosures can be combined to form an [Accordion](Accordion.html)
+
+### Internationalization
+
+In order to internationalize a disclosure, all text content within the disclosure should be localized.
+
+## Events
+
+Disclosure accepts an `onExpandedChange` prop which is triggered when it is expanded or collapsed. The example below uses `onExpandedChange` to programmatically control disclosure expansion.
+
+```tsx example
+function ControlledExpansion() {
+  let [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  
+  return (
+    <>
+      <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
+        <DisclosureHeader>System Requirements</DisclosureHeader>
+        <DisclosurePanel>
+          <p>Details about system requirements here.</p>
+        </DisclosurePanel>
+      </Disclosure>
+      <div style={{marginTop: '20px'}}>{isExpanded ? 'The disclosure is expanded' : 'The disclosure is collapsed'}</div>
+    </>
+  )
+}
+```
+
 ## Props
 
 ### Disclosure
@@ -61,3 +93,28 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
 ### DisclosurePanel
 
 <PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
+
+
+## Visual Options
+
+### Disabled
+
+```tsx example
+<Disclosure isDisabled>
+  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosurePanel>
+    <p>Details about system requirements here.</p>
+  </DisclosurePanel>
+</Disclosure>
+```
+
+### Expanded
+
+```tsx example
+<Disclosure defaultExpanded>
+  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosurePanel>
+    <p>Details about system requirements here.</p>
+  </DisclosurePanel>
+</Disclosure>
+```
