@@ -27,7 +27,8 @@ const preview = {
           channel.on(DARK_MODE_EVENT_NAME, setDark);
           return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
         }, []);
-        return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: 'var(--s2-container-bg)'}} />;
+        var style = getComputedStyle(document.body)
+        return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
       },
       source: {
         // code: null, // Will disable code button, and show "No code available"
@@ -68,7 +69,7 @@ const preview = {
       storySort: {
         order: ['Intro', 'Style Macro', 'Workflow Icons', 'Illustrations', 'Migrating', 'Release Notes'],
         method: 'alphabetical'
-      }  
+      }
     }
   },
   argTypes: {
