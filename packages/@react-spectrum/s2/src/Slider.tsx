@@ -148,7 +148,6 @@ const output = style({
 });
 
 export let track = style({
-  ...fieldInput(),
   gridArea: 'track',
   position: 'relative',
   width: 'full',
