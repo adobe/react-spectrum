@@ -161,6 +161,12 @@ then
   yarn build
   mv dist ../../$verdaccio_path/s2-webpack-5-example
 
+  echo 'test icon builder'
+  cd ../../examples/s2-webpack-5-example
+  mkdir icon-test
+  cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
+  npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+
   cd ../..
 
   echo 'get size of each package published to verdaccio'

@@ -7445,13 +7445,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/parcel-transformer-s2-icon@npm:^0.1.1, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
+"@react-spectrum/parcel-transformer-s2-icon@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@react-spectrum/parcel-transformer-s2-icon@npm:0.1.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40react-spectrum%2Fparcel-transformer-s2-icon%2F-%2Fparcel-transformer-s2-icon-0.1.1.tgz"
+  dependencies:
+    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.46"
+    "@parcel/plugin": "npm:2.0.0-dev.1601"
+    "@svgr/core": "npm:^6.2.0"
+  checksum: 10c0/aa668eceec7a6a7c6b6fcdb65ab27a90e7329882b2182fce3a02ccb92b88d04d360333072344a5d4844234171262e5d709a5a0a373d1ded03da1aeda76653fec
+  languageName: node
+  linkType: hard
+
+"@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.0.0-beta.46"
     "@parcel/plugin": "npm:^2.0.0-dev.1601"
     "@svgr/core": "npm:^6.2.0"
+    "@svgr/plugin-jsx": "npm:^6.2.0"
+    "@svgr/plugin-svgo": "npm:^6.2.0"
   languageName: unknown
   linkType: soft
 
