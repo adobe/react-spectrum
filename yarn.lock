@@ -8029,8 +8029,6 @@ __metadata:
 "@react-spectrum/ts-plugin@workspace:packages/dev/ts-plugin":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/ts-plugin@workspace:packages/dev/ts-plugin"
-  dependencies:
-    typescript: "npm:^5.5.0"
   languageName: unknown
   linkType: soft
 
