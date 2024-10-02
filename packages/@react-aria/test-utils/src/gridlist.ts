@@ -30,16 +30,22 @@ export class GridListTester {
     this._gridlist = root;
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the gridlist tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
   // TODO: support long press? This is also pretty much the same as table's toggleRowSelection so maybe can share
   // For now, don't include long press, see if people need it or if we should just expose long press as a separate util if it isn't very common
   // If the current way of passing in the user specified advance timers is ok, then I'd be find including long press
   // Maybe also support an option to force the click to happen on a specific part of the element (checkbox or row). That way
   // the user can test a specific type of interaction?
-  toggleRowSelection = async (opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggles the selection for the specified gridlist row using the interaction type set on the gridlist tester.
+   */
+  async toggleRowSelection(opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) {
     let {index, text, interactionType = this._interactionType} = opts;
 
     let row = this.findRow({index, text});
@@ -50,11 +56,11 @@ export class GridListTester {
       let cell = within(row).getAllByRole('gridcell')[0];
       await pressElement(this.user, cell, interactionType);
     }
-  };
+  }
 
   // TODO: pretty much the same as table except it uses this.gridlist. Make common between the two by accepting an option for
   // an element?
-  findRow = (opts: {index?: number, text?: string}) => {
+  private findRow(opts: {index?: number, text?: string}) {
     let {
       index,
       text
@@ -71,11 +77,14 @@ export class GridListTester {
     }
 
     return row;
-  };
+  }
 
   // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
   // user specificlly tells us
-  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']}) => {
+  /**
+   * Triggers the action for the specified gridlist row using the interaction type set on the gridlist tester.
+   */
+  async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']}) {
     let {
       index,
       text,
@@ -94,23 +103,35 @@ export class GridListTester {
         await pressElement(this.user, row, interactionType);
       }
     }
-  };
+  }
 
   // TODO: do we really need this getter? Theoretically the user already has the reference to the gridlist
-  get gridlist() {
+  /**
+   * Returns the gridlist.
+   */
+  get gridlist(): HTMLElement | null {
     return this._gridlist;
   }
 
-  get rows() {
+  /**
+   * Returns the gridlist's rows if any.
+   */
+  get rows(): HTMLElement[] {
     return within(this?.gridlist).queryAllByRole('row');
   }
 
-  get selectedRows() {
+  /**
+   * Returns the gridlist's selected rows if any.
+   */
+  get selectedRows(): HTMLElement[] {
     return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
-  cells = (opts: {element?: HTMLElement} = {}) => {
+  /**
+   * Returns the gridlist's cells if any. Can be filtered against a specific row if provided.
+   */
+  cells(opts: {element?: HTMLElement} = {}): HTMLElement[] | null {
     let {element} = opts;
     return within(element || this.gridlist).queryAllByRole('gridcell');
-  };
+  }
 }

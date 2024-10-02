@@ -43,13 +43,19 @@ export class MenuTester {
     }
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the menu tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Opens the menu using the interaction type set on the menu tester.
+   */
+  async open(opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) {
     let {
       needsLongPress,
       interactionType = this._interactionType
@@ -91,11 +97,15 @@ export class MenuTester {
         }
       });
     }
-  };
+  }
 
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) => {
+  /**
+   * Selects the desired menu option using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
+   * The desired option can be targeted via the option's node or the option's text.
+   */
+  async selectOption(opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) {
     let {
       optionText,
       menuSelectionMode = 'single',
@@ -146,10 +156,13 @@ export class MenuTester {
     } else {
       throw new Error("Attempted to select a option in the menu, but menu wasn't found.");
     }
-  };
+  }
 
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
-  openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']}): Promise<MenuTester | null> => {
+  /**
+   * Opens the submenu using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
+   */
+  async openSubmenu(opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']}): Promise<MenuTester | null> {
     let {
       submenuTrigger,
       submenuTriggerText,
@@ -179,9 +192,12 @@ export class MenuTester {
     }
 
     return null;
-  };
+  }
 
-  close = async () => {
+  /**
+   * Closes the menu.
+   */
+  async close() {
     let menu = this.menu;
     if (menu) {
       act(() => menu.focus());
@@ -199,18 +215,27 @@ export class MenuTester {
         throw new Error('Expected the menu to not be in the document after closing it.');
       }
     }
-  };
+  }
 
-  get trigger() {
+  /**
+   * Returns the menu's trigger.
+   */
+  get trigger(): HTMLElement {
     return this._trigger;
   }
 
-  get menu() {
+  /**
+   * Returns the menu if present.
+   */
+  get menu(): HTMLElement | null {
     let menuId = this.trigger.getAttribute('aria-controls');
-    return menuId ? document.getElementById(menuId) : undefined;
+    return menuId ? document.getElementById(menuId) : null;
   }
 
-  get options(): HTMLElement[] | never[] {
+  /**
+   * Returns the menu's options if present.
+   */
+  get options(): HTMLElement[] {
     let menu = this.menu;
     let options = [];
     if (menu) {
@@ -226,7 +251,10 @@ export class MenuTester {
     return options;
   }
 
-  get sections() {
+  /**
+   * Returns the menu's sections if any.
+   */
+  get sections(): HTMLElement[] {
     let menu = this.menu;
     if (menu) {
       return within(menu).queryAllByRole('group');
@@ -235,7 +263,10 @@ export class MenuTester {
     }
   }
 
-  get submenuTriggers() {
+  /**
+   * Returns the menu's submenu triggers if any.
+   */
+  get submenuTriggers(): HTMLElement[] {
     let options = this.options;
     if (options.length > 0) {
       return this.options.filter(item => item.getAttribute('aria-haspopup') != null);

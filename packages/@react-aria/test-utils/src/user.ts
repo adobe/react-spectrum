@@ -21,10 +21,18 @@ import userEvent from '@testing-library/user-event';
 // https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
 // curent way is like https://testing-library.com/docs/user-event/options/#advancetimers,
 export interface UserOpts {
+  /**
+   * The interaction type (mouse, touch, keyboard) that the test util user will use when interacting with a component. This can be overridden
+   * at the aria pattern util level if needed.
+   * @default mouse
+   */
   interactionType?: 'mouse' | 'touch' | 'keyboard',
   // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}
   // A real timer user would pass async () => await new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
+  /**
+   * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table).
+   */
   advanceTimer?: (time?: number) => void | Promise<unknown>
 }
 
@@ -56,8 +64,16 @@ type ObjectOptionsTypes<T> =
 let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));
 
 export class User {
-  user;
+  private user;
+  /**
+   * The interaction type (mouse, touch, keyboard) that the test util user will use when interacting with a component. This can be overridden
+   * at the aria pattern util level if needed.
+   * @default mouse
+   */
   interactionType: UserOpts['interactionType'];
+  /**
+   * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table).
+   */
   advanceTimer: UserOpts['advanceTimer'];
 
   constructor(opts: UserOpts = {}) {
@@ -67,6 +83,9 @@ export class User {
     this.advanceTimer = advanceTimer || defaultAdvanceTimer;
   }
 
+  /**
+   * Creates an aria pattern tester, inheriting the options provided to the original user.
+   */
   createTester<T extends PatternNames>(patternName: T, opts: ObjectOptionsTypes<T>): ObjectType<T> {
     return new (keyToUtil)[patternName]({...opts, user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as ObjectType<T>;
   }

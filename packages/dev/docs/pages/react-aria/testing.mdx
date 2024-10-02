@@ -1,0 +1,63 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+import testUtilDocs from 'docs:@react-aria/test-utils';
+import combobox from 'docs:@react-aria/test-utils/src/combobox.ts';
+import gridlist from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import menu from 'docs:@react-aria/test-utils/src/menu.ts';
+import select from 'docs:@react-aria/test-utils/src/select.ts';
+import table from 'docs:@react-aria/test-utils/src/table.ts';
+import {ClassAPI, FunctionAPI, InterfaceType, TypeContext} from '@react-spectrum/docs';
+
+---
+category: Concepts
+---
+
+# Testing
+
+This page describes how to test an application built with React Aria. It documents the available testing utilities available
+for each aria pattern and how they can be used to simulate common user interactions.
+
+## React Aria test utils
+
+### Introduction
+
+TODO Introduce the test utils purpose and motivation
+
+### Installation
+
+### Setup
+
+### Patterns
+TODO perhaps these should live in each RAC pages specifically and then we link from here to those pages?
+
+TODO need to update this so PatternNames actually comes through with the expected values
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+#### Combobox
+
+<ClassAPI links={combobox.links} class={combobox.exports.ComboBoxTester} />
+
+#### Gridlist
+
+<ClassAPI links={gridlist.links} class={gridlist.exports.GridListTester} />
+
+#### Menu
+
+<ClassAPI links={menu.links} class={menu.exports.MenuTester} />
+
+#### Select
+
+<ClassAPI links={select.links} class={select.exports.SelectTester} />
+
+#### Table
+
+<ClassAPI links={table.links} class={table.exports.TableTester} />

@@ -52,11 +52,17 @@ export class ComboBoxTester {
     }
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the combobox tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
-  open = async (opts: {triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Opens the combobox dropdown using the interaction type set on the combobox tester.
+   */
+  async open(opts: {triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) {
     let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     let combobox = this.combobox;
@@ -96,9 +102,13 @@ export class ComboBoxTester {
         return true;
       }
     });
-  };
+  }
 
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Selects the desired combobox option using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
+   * The desired option can be targeted via the option's node or the option's text.
+   */
+  async selectOption(opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) {
     let {optionText, option, triggerBehavior, interactionType = this._interactionType} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
@@ -130,9 +140,12 @@ export class ComboBoxTester {
     } else {
       throw new Error("Attempted to select a option in the combobox, but the listbox wasn't found.");
     }
-  };
+  }
 
-  close = async () => {
+  /**
+   * Closes the combobox dropdown.
+   */
+  async close() {
     let listbox = this.listbox;
     if (listbox) {
       act(() => this.combobox.focus());
@@ -146,33 +159,34 @@ export class ComboBoxTester {
         }
       });
     }
-  };
+  }
 
-  get combobox() {
+  /**
+   * Returns the combobox.
+   */
+  get combobox(): HTMLElement | null {
     return this._combobox;
   }
 
-  get trigger() {
+  /**
+   * Returns the combobox trigger button if present.
+   */
+  get trigger(): HTMLElement | null {
     return this._trigger;
   }
 
-  get listbox() {
+  /**
+   * Returns the combobox's listbox if present.
+   */
+  get listbox(): HTMLElement | null {
     let listBoxId = this.combobox.getAttribute('aria-controls');
     return listBoxId ? document.getElementById(listBoxId) || undefined : undefined;
   }
 
-  options = (opts: {element?: HTMLElement} = {}): HTMLElement[] | never[] => {
-    let {element} = opts;
-    element = element || this.listbox;
-    let options = [];
-    if (element) {
-      options = within(element).queryAllByRole('option');
-    }
-
-    return options;
-  };
-
-  get sections() {
+  /**
+   * Returns the combobox's sections if present.
+   */
+  get sections(): HTMLElement[] {
     let listbox = this.listbox;
     if (listbox) {
       return within(listbox).queryAllByRole('group');
@@ -181,7 +195,24 @@ export class ComboBoxTester {
     }
   }
 
-  get focusedOption() {
+  /**
+   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided.
+   */
+  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element} = opts;
+    element = element || this.listbox;
+    let options = [];
+    if (element) {
+      options = within(element).queryAllByRole('option');
+    }
+
+    return options;
+  }
+
+  /**
+   * Returns the currently focused option in the combobox's dropdown if any.
+   */
+  get focusedOption(): HTMLElement | null {
     let focusedOptionId = this.combobox.getAttribute('aria-activedescendant');
     return focusedOptionId ? document.getElementById(focusedOptionId) : undefined;
   }
