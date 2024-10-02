@@ -19,6 +19,12 @@ jobs:
           node-version: '18'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        id: node_modules
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
       - name: install
         run: yarn install --immutable
       - name: Lint PR
