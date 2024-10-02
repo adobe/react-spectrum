@@ -17,8 +17,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
       - name: install
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Lint PR
         uses: ./.github/actions/pr-linting
         with:
