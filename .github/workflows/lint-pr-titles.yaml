@@ -20,7 +20,7 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
       - name: install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Lint PR
         uses: ./.github/actions/pr-linting
         with:
