@@ -15,20 +15,21 @@ import {
     TabPanel as AriaTabPanel,
     TabPanelProps as AriaTabPanelProps,
     TabProps as AriaTabProps,
-    TabsProps as AriaTabsProps, 
+    TabsProps as AriaTabsProps,
     ContextValue,
     Provider,
     Tab as RACTab,
     TabList as RACTabList,
     Tabs as RACTabs,
     TabListStateContext,
-    useSlottedContext} from 'react-aria-components';
+    useSlottedContext
+  } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {focusRing, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -42,7 +43,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   children?: ReactNode,
   /**
    * The amount of space between the tabs.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular'
 }
@@ -57,7 +58,7 @@ export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 
   children?: ReactNode
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {  
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
@@ -121,7 +122,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density} = useSlottedContext(TabsContext);
+  let {density} = useSlottedContext(TabsContext) ?? {};
 
   return (
     <RACTab
@@ -174,7 +175,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext);
+  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);

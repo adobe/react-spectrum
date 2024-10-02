@@ -26,18 +26,19 @@ import {
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, fontRelative, size, space, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {forwardRefType} from './types';
-import {HeaderContext, HeadingContext, ImageContext, KeyboardContext, Text, TextContext} from './Content';
+import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
+import {ImageContext} from './Image';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
@@ -228,6 +229,7 @@ let image = style({
   marginEnd: 'text-to-visual',
   marginTop: fontRelative(6), // made up, need feedback
   alignSelf: 'center',
+  borderRadius: 'sm',
   size: {
     default: 40,
     size: {
@@ -438,6 +440,7 @@ const linkIconSize = {
 export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
+  let isLinkOut = isLink && props.target === '_blank';
   let {size} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
@@ -469,7 +472,7 @@ export function MenuItem(props: MenuItemProps) {
                   }
                 }],
                 [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
-                [ImageContext, {className: image({size})}]
+                [ImageContext, {styles: image({size})}]
               ]}>
               {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
@@ -478,7 +481,7 @@ export function MenuItem(props: MenuItemProps) {
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLink && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
+              {isLinkOut && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
               {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
                   <ChevronRightIcon

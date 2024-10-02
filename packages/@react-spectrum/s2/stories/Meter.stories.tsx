@@ -17,10 +17,11 @@ import {StaticColorDecorator} from './utils';
 const meta: Meta<typeof Meter> = {
   component: Meter,
   parameters: {
-    layout: 'centered'
+    chromaticProvider: {disableAnimations: true}
   },
   decorators: [StaticColorDecorator],
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'Meter'
 };
 
 export default meta;

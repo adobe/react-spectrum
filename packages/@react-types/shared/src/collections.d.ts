@@ -142,7 +142,9 @@ export interface LayoutDelegate {
   /** Returns the visible rectangle of the collection. */
   getVisibleRect(): Rect,
   /** Returns the size of the scrollable content in the collection. */
-  getContentSize(): Size
+  getContentSize(): Size,
+  /** Returns a list of keys between `from` and `to`. */
+  getKeyRange?(from: Key, to: Key): Key[]
 }
 
 /**

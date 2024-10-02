@@ -12,7 +12,7 @@
 
 import {Avatar} from '../src';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,
@@ -27,7 +27,8 @@ const meta: Meta<typeof Avatar> = {
         {children(args)}
       </div>
     ) : children(args)
-  )
+  ),
+  title: 'Avatar'
 };
 
 export default meta;

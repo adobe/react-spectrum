@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {centerPadding} from './style-utils' with {type: 'macro'};
+import {centerPadding, fieldInput} from './style-utils' with {type: 'macro'};
 
 export const bar = () => ({
   position: 'relative',
@@ -25,7 +25,7 @@ export const bar = () => ({
     labelPosition: {
       top: [
         'label value',
-        'bar bar',
+        'bar bar'
       ],
       side: [
         'label bar value'
@@ -58,6 +58,7 @@ export const bar = () => ({
 } as const);
 
 export const track = () => ({
+  ...fieldInput(),
   gridArea: 'bar',
   overflow: 'hidden',
   borderRadius: 'full',

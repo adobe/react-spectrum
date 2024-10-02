@@ -18,24 +18,28 @@ const meta: Meta<typeof AlertDialog> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'AlertDialog'
 };
 
 export default meta;
 
-export const Example = (args: any) => (
-  <DialogTrigger>
-    <ActionButton>Save</ActionButton>
-    <AlertDialog {...args} >
-      You have not saved your profile information
-      for this account. Would you like to register now?   
-    </AlertDialog>
-  </DialogTrigger>
-);
-
-Example.args = {
-  title: 'Register profile',
-  cancelLabel: 'Cancel',
-  secondaryActionLabel: 'Remind me later',
-  primaryActionLabel: 'Register'
+export const Example = {
+  render: (args) => {
+    return (
+      <DialogTrigger>
+        <ActionButton>Save</ActionButton>
+        <AlertDialog {...args} >
+          You have not saved your profile information
+          for this account. Would you like to register now?
+        </AlertDialog>
+      </DialogTrigger>
+    );
+  },
+  args: {
+    title: 'Register profile',
+    cancelLabel: 'Cancel',
+    secondaryActionLabel: 'Remind me later',
+    primaryActionLabel: 'Register'
+  }
 };

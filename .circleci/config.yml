@@ -40,14 +40,6 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
-  rsp-xlarge-nodeupdate:
-    docker:
-      - image: cimg/node:18.20.3
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
 jobs:
   install:
     executor: rsp-large
@@ -279,7 +271,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge-nodeupdate
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -291,7 +283,7 @@ jobs:
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
 
   lint:
-    executor: rsp
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -485,39 +477,61 @@ jobs:
             - '*/verdaccio/'
 
   deploy:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
-
+      - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive
             fi
 
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
   deploy-verdaccio:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/verdaccio_dist
       - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum/$CIRCLE_SHA1/verdaccio -s /tmp/verdaccio_dist/*/verdaccio --account-name reactspectrum
+              for dir in /tmp/verdaccio_dist/*/verdaccio; do
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
+              done
             fi
 
   deploy-production:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
       - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
           name: deploy
-          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum --overwrite true
+          command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
 
   comment:
     executor: rsp
@@ -546,6 +560,7 @@ jobs:
           name: Authenticate with npm
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            yarn config set npmAuthToken $NPM_TOKEN
             git update-index --skip-worktree .npmrc
       - run:
           name: Publish

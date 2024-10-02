@@ -119,11 +119,45 @@ test('should preserve leading comment if first line is removed', `
 /*
  * Some comment
  */
-import {StatusLight} from '@adobe/react-spectrum';
-import {Button} from "@react-spectrum/s2";
+import {Button, StatusLight} from '@adobe/react-spectrum';
 
 <>
   <Button>Test</Button>
   <StatusLight variant="positive">Test</StatusLight>
 </>
+`);
+
+test('should remove unused Item/Section import even if name taken in different scope', `
+import {Menu, Section, Item} from '@adobe/react-spectrum';
+
+function foo() {
+  let Item = 'something else';
+  let Section = 'something else';
+}
+
+<div>
+  <Menu aria-label="Text">
+    <Section title="Styles">
+      <Item key="bold">Bold</Item>
+      <Item key="underline">Underline</Item>
+    </Section>
+  </Menu>
+</div>
+`);
+
+test('should remove unused Item/Section import if aliased', `
+import {Menu, Section as RSPSection, Item as RSPItem} from '@adobe/react-spectrum';
+import {Section, Item} from 'elsewhere';
+
+<div>
+  <Section>
+    <Item>Test</Item>
+  </Section>
+  <Menu aria-label="Text">
+    <RSPSection title="Styles">
+      <RSPItem key="bold"></RSPItem>
+      <RSPItem key="underline">Underline</RSPItem>
+    </RSPSection>
+  </Menu>
+</div>
 `);

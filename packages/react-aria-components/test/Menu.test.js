@@ -13,6 +13,7 @@
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from '../';
 import React from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestMenu = ({menuProps, itemProps, hasSubmenu, hasNestedSubmenu}) => (
@@ -51,6 +52,8 @@ let renderMenu = (menuProps, itemProps) => render(<TestMenu {...{menuProps, item
 
 describe('Menu', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -950,6 +953,7 @@ describe('Menu', () => {
       expect(menus).toHaveLength(0);
       expect(menu).not.toBeInTheDocument();
     });
+
     it('should support sections', async () => {
       let onAction = jest.fn();
       let {getByRole, getAllByRole} = render(
@@ -997,11 +1001,11 @@ describe('Menu', () => {
 
       let button = getByRole('button');
       expect(button).not.toHaveAttribute('data-pressed');
-
-      await user.click(button);
+      let menuTester = testUtilUser.createTester('Menu', {root: button});
+      await menuTester.open();
       expect(button).toHaveAttribute('data-pressed');
 
-      let groups = getAllByRole('group');
+      let groups = menuTester.sections;
       expect(groups).toHaveLength(2);
 
       expect(groups[0]).toHaveClass('react-aria-Section');
@@ -1013,26 +1017,24 @@ describe('Menu', () => {
       expect(groups[1]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groups[1].getAttribute('aria-labelledby'))).toHaveTextContent('Settings');
 
-      let menu = getAllByRole('menu')[0];
+      let menu = menuTester.menu;
       expect(getAllByRole('menuitem')).toHaveLength(7);
 
       let popover = menu.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
-
-      let triggerItem = getAllByRole('menuitem')[3];
-      expect(triggerItem).toHaveTextContent('Share…');
+      let submenuTriggers = menuTester.submenuTriggers;
+      expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      await user.pointer({target: triggerItem});
-      act(() => {jest.runAllTimers();});
-      let submenu = getAllByRole('menu')[1];
+      let submenuUtil = await menuTester.openSubmenu({submenuTriggerText: 'Share…'});
+      let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = within(submenu).getAllByRole('menuitem');
+      let submenuItems = submenuUtil.options;
       expect(submenuItems).toHaveLength(6);
 
-      let groupsInSubmenu = within(submenu).getAllByRole('group');
+      let groupsInSubmenu = submenuUtil.sections;
       expect(groupsInSubmenu).toHaveLength(2);
 
       expect(groupsInSubmenu[0]).toHaveClass('react-aria-Section');

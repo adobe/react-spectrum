@@ -25,7 +25,7 @@ import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
