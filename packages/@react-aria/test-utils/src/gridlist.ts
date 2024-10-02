@@ -109,7 +109,7 @@ export class GridListTester {
   /**
    * Returns the gridlist.
    */
-  get gridlist(): HTMLElement | null {
+  get gridlist(): HTMLElement {
     return this._gridlist;
   }
 
@@ -130,7 +130,7 @@ export class GridListTester {
   /**
    * Returns the gridlist's cells if any. Can be filtered against a specific row if provided.
    */
-  cells(opts: {element?: HTMLElement} = {}): HTMLElement[] | null {
+  cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element} = opts;
     return within(element || this.gridlist).queryAllByRole('gridcell');
   }

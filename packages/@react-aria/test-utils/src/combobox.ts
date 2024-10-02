@@ -22,7 +22,7 @@ export class ComboBoxTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _combobox: HTMLElement;
-  private _trigger: HTMLElement | undefined;
+  private _trigger: HTMLElement | null;
 
   constructor(opts: ComboBoxOptions) {
     let {root, trigger, user, interactionType} = opts;
@@ -164,7 +164,7 @@ export class ComboBoxTester {
   /**
    * Returns the combobox.
    */
-  get combobox(): HTMLElement | null {
+  get combobox(): HTMLElement {
     return this._combobox;
   }
 
@@ -180,7 +180,7 @@ export class ComboBoxTester {
    */
   get listbox(): HTMLElement | null {
     let listBoxId = this.combobox.getAttribute('aria-controls');
-    return listBoxId ? document.getElementById(listBoxId) || undefined : undefined;
+    return listBoxId ? document.getElementById(listBoxId) || null : null;
   }
 
   /**
@@ -198,9 +198,8 @@ export class ComboBoxTester {
   /**
    * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided.
    */
-  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element} = opts;
-    element = element || this.listbox;
+  options(opts: {element?: HTMLElement | null} = {}): HTMLElement[] {
+    let {element = this.listbox} = opts;
     let options = [];
     if (element) {
       options = within(element).queryAllByRole('option');
@@ -214,6 +213,6 @@ export class ComboBoxTester {
    */
   get focusedOption(): HTMLElement | null {
     let focusedOptionId = this.combobox.getAttribute('aria-activedescendant');
-    return focusedOptionId ? document.getElementById(focusedOptionId) : undefined;
+    return focusedOptionId ? document.getElementById(focusedOptionId) : null;
   }
 }
