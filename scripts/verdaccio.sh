@@ -65,7 +65,7 @@ then
 fi
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn workspaces foreach --all --no-private version minor --deferred
+yarn workspaces foreach --all --no-private version patch --deferred
 yarn version apply --all
 
 commit_to_revert="HEAD~0"
