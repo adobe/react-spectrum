@@ -118,6 +118,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^15.0.7",
     "@testing-library/user-event": "^14.5.2",
+    "@types/add": "^2",
+    "@types/path-browserify": "^1",
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
     "@types/storybook__react": "^4.0.2",
@@ -171,10 +173,12 @@
     "md5": "^2.2.1",
     "npm-cli-login": "^1.0.0",
     "nyc": "^10.2.0",
+    "os-browserify": "^0.3.0",
     "p-queue": "^6.2.1",
     "parcel": "2.0.0-dev.1599",
     "parcel-resolver-storybook": "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master",
     "patch-package": "^6.2.0",
+    "path-browserify": "^1.0.0",
     "playwright": "^1.45.3",
     "plop": "^2.4.0",
     "postcss": "^8.4.24",
@@ -269,5 +273,13 @@
   },
   "alias": {
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
+  },
+  "dependencies": {
+    "@component-controls/blocks": "^4.0.3",
+    "@component-controls/core": "^4.0.3",
+    "@component-controls/pages": "^4.0.3",
+    "@component-controls/search-fusejs": "^4.0.3",
+    "add": "^2.0.6",
+    "react-view": "^3.0.1"
   }
 }

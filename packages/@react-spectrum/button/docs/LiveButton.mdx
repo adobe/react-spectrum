@@ -1,0 +1,72 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/button';
+import {HeaderInfo, PropTable, PageDescription, ReactLive as DocsRL} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/button/package.json';
+
+```jsx import
+import {ActionButton, Button, SpectrumButtonProps} from '@react-spectrum/button';
+import {LiveButton} from '../src/LiveButton';
+import {UpdatableExample} from '@react-spectrum/docs';
+import {ReactLive} from '../src/ReactLive';
+import {ReactLiveV2} from '../src/ReactLiveV2';
+import componentDocs from 'docs:@react-spectrum/button';
+import ButtonStories from '../stories/Button.stories';
+
+import {Checkbox, SpectrumCheckboxProps} from '@react-spectrum/checkbox';
+import checkboxDocs from 'docs:@react-spectrum/checkbox';
+import CheckboxStories from '../../checkbox/stories/Checkbox.stories';
+
+import { ControlTypes } from '@component-controls/core';
+import { Story, Playground, PropsTable } from '@component-controls/blocks';
+```
+
+import { ControlTypes } from '@component-controls/core';
+import { Story, Playground, PropsTable } from '@component-controls/blocks';
+
+---
+category: Buttons
+---
+
+
+# LiveButton
+
+## Custom live example
+
+GenericVersion
+
+```tsx snippet
+Button
+<UpdatableExample<SpectrumButtonProps> LiveComponent={Button} componentName="Button" childrenString="Click me" componentProps={componentDocs.exports.Button} componentArgTypes={ButtonStories.argTypes} />
+```
+
+```tsx snippet
+Checkbox
+<UpdatableExample<SpectrumCheckboxProps> LiveComponent={Checkbox} componentName="Checkbox" childrenString="Unsubscribe" componentProps={checkboxDocs.exports.Checkbox} componentArgTypes={CheckboxStories.argTypes} />
+```
+
+This is an example of a live button component with dynamic props.
+
+```tsx snippet
+<LiveButton component={componentDocs.exports.Button} />
+```
+
+## Live example uber/react-view
+
+```tsx snippet
+<ReactLiveV2 />
+```
+
+## Props
+
+<PropTable component={docs.exports.Button} links={docs.links} />

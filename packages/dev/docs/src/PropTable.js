@@ -95,7 +95,7 @@ export function PropTable({component, links, style}) {
   );
 }
 
-function groupProps(props) {
+export function groupProps(props) {
   props = Object.assign({}, props);
   let groups = {};
 
