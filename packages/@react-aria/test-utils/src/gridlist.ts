@@ -14,16 +14,52 @@ import {act, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 import {pressElement} from './events';
 
-export interface GridListOptions extends UserOpts, BaseTesterOpts {
+export interface GridListTesterOpts extends UserOpts, BaseTesterOpts {
   user: any
 }
+
+// TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
+interface GridListToggleRowOpts {
+  /**
+   * The index of the row to toggle selection for.
+   */
+  index?: number,
+  /**
+   * The text of the row to toggle selection for. Alternative to `index`.
+   */
+  text?: string,
+  /**
+   * What interaction type to use when toggling the row selection. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+interface GridListRowActionOpts {
+  /**
+   * The index of the row to trigger its action for.
+   */
+  index?: number,
+  /**
+   * The text of the row to trigger its action for. Alternative to `index`.
+   */
+  text?: string,
+  /**
+   * What interaction type to use when triggering the row's action. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType'],
+  /**
+   * Whether or not the grid list needs a double click to trigger the row action. Depends on the grid list's implementation.
+   */
+  needsDoubleClick?: boolean
+}
+
 export class GridListTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _gridlist: HTMLElement;
 
 
-  constructor(opts: GridListOptions) {
+  constructor(opts: GridListTesterOpts) {
     let {root, user, interactionType} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -45,7 +81,7 @@ export class GridListTester {
   /**
    * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
-  async toggleRowSelection(opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) {
+  async toggleRowSelection(opts: GridListToggleRowOpts = {}) {
     let {index, text, interactionType = this._interactionType} = opts;
 
     let row = this.findRow({index, text});
@@ -87,7 +123,7 @@ export class GridListTester {
   /**
    * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
-  async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']}) {
+  async triggerRowAction(opts: GridListRowActionOpts) {
     let {
       index,
       text,
@@ -131,7 +167,7 @@ export class GridListTester {
   }
 
   /**
-   * Returns the gridlist's cells if any. Can be filtered against a specific row if provided.
+   * Returns the gridlist's cells if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.gridlist} = opts;

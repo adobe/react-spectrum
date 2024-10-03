@@ -13,21 +13,72 @@
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 import {pressElement, triggerLongPress} from './events';
-export interface TableOptions extends UserOpts, BaseTesterOpts {
+export interface TableTesterOpts extends UserOpts, BaseTesterOpts {
   user: any,
   advanceTimer: UserOpts['advanceTimer']
 }
 
-// TODO: Previously used logic like https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
-// but https://github.com/testing-library/dom-testing-library/issues/987#issuecomment-891901804 indicates that it may falsely indicate that fake timers are enabled
-// when they aren't
+// TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
+interface TableToggleRowOpts {
+  /**
+   * The index of the row to toggle selection for.
+   */
+  index?: number,
+  /**
+   * The text of the row to toggle selection for. Alternative to `index`.
+   */
+  text?: string,
+  /**
+   * Whether the row needs to be long pressed to be selected. Depends on the table's implementation.
+   */
+  needsLongPress?: boolean,
+  /**
+   * What interaction type to use when toggling the row selection. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+interface TableToggleSortOpts {
+  /**
+   * The index of the column to sort.
+   */
+  index?: number,
+  /**
+   * The text of the column to sort. Alternative to `index`.
+   */
+  text?: string,
+  /**
+   * What interaction type to use when sorting the column. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+interface TableRowActionOpts {
+  /**
+   * The index of the row to trigger its action for.
+   */
+  index?: number,
+  /**
+   * The text of the row to trigger its action for. Alternative to `index`.
+   */
+  text?: string,
+  /**
+   * What interaction type to use when triggering the row's action. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType'],
+  /**
+   * Whether or not the table needs a double click to trigger the row action. Depends on the table's implementation.
+   */
+  needsDoubleClick?: boolean
+}
+
 export class TableTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _table: HTMLElement;
 
-  constructor(opts: TableOptions) {
+  constructor(opts: TableTesterOpts) {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -43,9 +94,9 @@ export class TableTester {
   }
 
   /**
-   * Toggles the selection for the specified table row. Defaults to using the interaction type set on the gridlist tester.
+   * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
    */
-  async toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) {
+  async toggleRowSelection(opts: TableToggleRowOpts = {}) {
     let {
       index,
       text,
@@ -86,9 +137,9 @@ export class TableTester {
   }
 
   /**
-   * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the gridlist tester.
+   * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
    */
-  async toggleSort(opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) {
+  async toggleSort(opts: TableToggleSortOpts = {}) {
     let {
       index,
       text,
@@ -179,7 +230,7 @@ export class TableTester {
   /**
    * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
    */
-  async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']} = {}) {
+  async triggerRowAction(opts: TableRowActionOpts = {}) {
     let {
       index,
       text,
@@ -313,7 +364,7 @@ export class TableTester {
   }
 
   /**
-   * Returns the cells within the table if any. Can be filtered against a specific row if provided.
+   * Returns the cells within the table if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.table} = opts;

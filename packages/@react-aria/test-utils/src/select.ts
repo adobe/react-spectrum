@@ -13,16 +13,35 @@
 import {act, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 
-export interface SelectOptions extends UserOpts, BaseTesterOpts {
+export interface SelectTesterOpts extends UserOpts, BaseTesterOpts {
   // TODO: I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
   user: any
 }
+
+interface SelectOpenOpts {
+  /**
+   * What interaction type to use when opening the select. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+interface SelectTriggerOptionOpts extends SelectOpenOpts {
+  /**
+   * The option node to select. Option nodes can be sourced via `options()`.
+   */
+  option?: HTMLElement,
+  /**
+   * The text of the node to look for when selecting a option. Alternative to `option`.
+   */
+  optionText?: string
+}
+
 export class SelectTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _trigger: HTMLElement;
 
-  constructor(opts: SelectOptions) {
+  constructor(opts: SelectTesterOpts) {
     let {root, user, interactionType} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -43,7 +62,7 @@ export class SelectTester {
   /**
    * Opens the select. Defaults to using the interaction type set on the select tester.
    */
-  async open(opts: {interactionType?: UserOpts['interactionType']} = {}) {
+  async open(opts: SelectOpenOpts = {}) {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -104,9 +123,10 @@ export class SelectTester {
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's text.
    */
-  async selectOption(opts: {optionText: string, interactionType?: UserOpts['interactionType']}) {
+  async selectOption(opts: SelectTriggerOptionOpts) {
     let {
       optionText,
+      option,
       interactionType = this._interactionType
     } = opts || {};
     let trigger = this.trigger;
@@ -115,7 +135,11 @@ export class SelectTester {
     }
     let listbox = this.listbox;
     if (listbox) {
-      let option = within(listbox).getByText(optionText);
+
+      if (!option && optionText) {
+        option = within(listbox).getByText(optionText);
+      }
+
       if (interactionType === 'keyboard') {
         if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
@@ -151,7 +175,7 @@ export class SelectTester {
   }
 
   /**
-   * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided.
+   * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.listbox} = opts;

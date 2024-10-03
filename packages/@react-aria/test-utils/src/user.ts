@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBoxOptions, ComboBoxTester} from './combobox';
-import {GridListOptions, GridListTester} from './gridlist';
-import {MenuOptions, MenuTester} from './menu';
+import {ComboBoxTester, ComboBoxTesterOpts} from './combobox';
+import {GridListTester, GridListTesterOpts} from './gridlist';
+import {MenuTester, MenuTesterOpts} from './menu';
 import {pointerMap} from './';
-import {SelectOptions, SelectTester} from './select';
-import {TableOptions, TableTester} from './table';
+import {SelectTester, SelectTesterOpts} from './select';
+import {TableTester, TableTesterOpts} from './table';
 import userEvent from '@testing-library/user-event';
 
 // https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
@@ -45,7 +45,7 @@ let keyToUtil = {'Select': SelectTester, 'Table': TableTester, 'Menu': MenuTeste
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
-type ObjectType<T> =
+type Tester<T> =
     T extends 'Select' ? SelectTester :
     T extends 'Table' ? TableTester :
     T extends 'Menu' ? MenuTester :
@@ -53,12 +53,12 @@ type ObjectType<T> =
     T extends 'GridList' ? GridListTester :
     never;
 
-type ObjectOptionsTypes<T> =
-  T extends 'Select' ? SelectOptions :
-  T extends 'Table' ? TableOptions :
-  T extends 'Menu' ? MenuOptions :
-  T extends 'ComboBox' ? ComboBoxOptions :
-  T extends 'GridList' ? GridListOptions :
+type TesterOpts<T> =
+  T extends 'Select' ? SelectTesterOpts :
+  T extends 'Table' ? TableTesterOpts :
+  T extends 'Menu' ? MenuTesterOpts :
+  T extends 'ComboBox' ? ComboBoxTesterOpts :
+  T extends 'GridList' ? GridListTesterOpts :
   never;
 
 let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));
@@ -86,7 +86,7 @@ export class User {
   /**
    * Creates an aria pattern tester, inheriting the options provided to the original user.
    */
-  createTester<T extends PatternNames>(patternName: T, opts: ObjectOptionsTypes<T>): ObjectType<T> {
-    return new (keyToUtil)[patternName]({...opts, user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as ObjectType<T>;
+  createTester<T extends PatternNames>(patternName: T, opts: TesterOpts<T>): Tester<T> {
+    return new (keyToUtil)[patternName]({...opts, user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as Tester<T>;
   }
 }

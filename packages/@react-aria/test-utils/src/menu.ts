@@ -14,16 +14,60 @@ import {act, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 import {triggerLongPress} from './events';
 
-export interface MenuOptions extends UserOpts, BaseTesterOpts {
+export interface MenuTesterOpts extends UserOpts, BaseTesterOpts {
   user: any
 }
+
+interface MenuOpenOpts {
+  /**
+   * Whether the menu needs to be long pressed to open.
+   */
+  needsLongPress?: boolean,
+  /**
+   * What interaction type to use when opening the menu. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+interface MenuSelectOpts extends MenuOpenOpts {
+  /**
+   * The option node to select. Option nodes can be sourced via `options()`.
+   */
+  option?: HTMLElement,
+  /**
+   * The text of the node to look for when selecting a option. Alternative to `option`.
+   */
+  optionText?: string,
+  /**
+   * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon option selection.
+   * @default 'single'
+   */
+  menuSelectionMode?: 'single' | 'multiple',
+  /**
+   * Whether or not the menu closes on select. Depends on menu implementation and configuration.
+   * @default true
+   */
+  closesOnSelect?: boolean
+}
+
+interface MenuOpenSubmenuOpts extends MenuOpenOpts {
+  /**
+   * The submenu trigger to open. Available submenu trigger nodes can be sourced via `submenuTriggers`.
+   */
+  submenuTrigger?: HTMLElement,
+  /**
+   * The text of submenu trigger to open. Alternative to `submenuTrigger`.
+   */
+  submenuTriggerText?: string
+}
+
 export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _trigger: HTMLElement;
 
-  constructor(opts: MenuOptions) {
+  constructor(opts: MenuTesterOpts) {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -55,7 +99,7 @@ export class MenuTester {
   /**
    * Opens the menu. Defaults to using the interaction type set on the menu tester.
    */
-  async open(opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) {
+  async open(opts: MenuOpenOpts = {}) {
     let {
       needsLongPress,
       interactionType = this._interactionType
@@ -105,7 +149,7 @@ export class MenuTester {
    * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
    * The desired option can be targeted via the option's node or the option's text.
    */
-  async selectOption(opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) {
+  async selectOption(opts: MenuSelectOpts) {
     let {
       optionText,
       menuSelectionMode = 'single',
@@ -162,7 +206,7 @@ export class MenuTester {
   /**
    * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
    */
-  async openSubmenu(opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']}): Promise<MenuTester | null> {
+  async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester | null> {
     let {
       submenuTrigger,
       submenuTriggerText,
@@ -245,7 +289,7 @@ export class MenuTester {
   }
 
   /**
-   * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided.
+   * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.menu} = opts;

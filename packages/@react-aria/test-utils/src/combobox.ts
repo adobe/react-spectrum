@@ -13,9 +13,31 @@
 import {act, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 
-export interface ComboBoxOptions extends UserOpts, BaseTesterOpts {
+export interface ComboBoxTesterOpts extends UserOpts, BaseTesterOpts {
   user: any,
   trigger?: HTMLElement
+}
+interface ComboBoxOpenOpts {
+  /**
+   * Whether the combobox opens on focus or needs to be manually opened via user action.
+   * @default 'manual'
+   */
+  triggerBehavior?: 'focus' | 'manual',
+  /**
+   * What interaction type to use when opening the combobox. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
+  /**
+   * The option node to select. Option nodes can be sourced via `options()`.
+   */
+  option?: HTMLElement,
+  /**
+   * The text of the node to look for when selecting a option. Alternative to `option`.
+   */
+  optionText?: string
 }
 
 export class ComboBoxTester {
@@ -24,7 +46,7 @@ export class ComboBoxTester {
   private _combobox: HTMLElement;
   private _trigger: HTMLElement;
 
-  constructor(opts: ComboBoxOptions) {
+  constructor(opts: ComboBoxTesterOpts) {
     let {root, trigger, user, interactionType} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -62,7 +84,7 @@ export class ComboBoxTester {
   /**
    * Opens the combobox dropdown. Defaults to using the interaction type set on the combobox tester.
    */
-  async open(opts: {triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) {
+  async open(opts: ComboBoxOpenOpts = {}) {
     let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     let combobox = this.combobox;
@@ -108,7 +130,7 @@ export class ComboBoxTester {
    * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
    * The desired option can be targeted via the option's node or the option's text.
    */
-  async selectOption(opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) {
+  async selectOption(opts: ComboBoxSelectOpts = {}) {
     let {optionText, option, triggerBehavior, interactionType = this._interactionType} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
@@ -192,7 +214,7 @@ export class ComboBoxTester {
   }
 
   /**
-   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided.
+   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.listbox} = opts;
