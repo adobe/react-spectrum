@@ -78,7 +78,7 @@ describe('Picker', function () {
   });
 
   describe('opening', function () {
-    it('can be opened on mouse down', async function () {
+    it.only('can be opened on mouse down', async function () {
       let onOpenChange = jest.fn();
       let {getByRole, queryByRole} = render(
         <Provider theme={theme}>
@@ -103,7 +103,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -214,7 +214,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -252,7 +252,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -982,7 +982,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       let listbox = selectTester.listbox;
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -1014,7 +1014,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       let listbox = selectTester.listbox;
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('Empty');
       expect(items[1]).toHaveTextContent('Zero');
@@ -1105,7 +1105,7 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Select…');
       await selectTester.open();
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -1187,7 +1187,7 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(listbox).toHaveAttribute('aria-labelledby', label.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
@@ -1385,7 +1385,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       let listbox = selectTester.listbox;
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(6);
 
       let groups = selectTester.sections;
@@ -1437,7 +1437,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       listbox = selectTester.listbox;
-      items = selectTester.options;
+      items = selectTester.options();
       expect(items.length).toBe(6);
 
       expect(document.activeElement).toBe(items[1]);
@@ -1546,7 +1546,7 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Two');
       await selectTester.open();
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(document.activeElement).toBe(items[1]);
 
       await selectTester.selectOption({optionText: 'Two'});

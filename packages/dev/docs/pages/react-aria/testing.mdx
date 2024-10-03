@@ -30,7 +30,21 @@ for each aria pattern and how they can be used to simulate common user interacti
 
 ### Introduction
 
-TODO Introduce the test utils purpose and motivation
+As both the adoption of our component libraries and the complexity of the components offered has grown, various testing pain points have surfaced, both from within the maintaining team and from consumers of the library itself.
+The test writer may not be familiar with the internal structure of the component they are testing against and thus are unable to easily target/interact with the desired element within the component. Alternatively, the specifics
+of what events to simulate for various interaction modes can be onerous to figure out and adds unnecessary friction for new adopters.
+
+To address this, we've created [@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) which features a set of testing utilities that aims to make writing unit tests easier for consumers of our component libraries
+or for users who have built their own components following the respective ARIA pattern specification. By using the ARIA specification for any given component pattern as a source of truth,
+we can make assumptions about the existence of specific aria attributes that allow us to navigate the component's DOM structure. Similarly, we can also expect that the component
+permits specific interaction patterns described by the ARIA pattern specification and thus accurately simulate those interactions, using the aforementioned aria attributes to target the proper node
+within the component or to verify that the component's state has changed appropriately post-interaction. By providing utilities to simulate these standard interaction and getters that
+allow the user to easily look up the subcomponents of the component itself, we hope to simplify the overall test writing experience, leading towards easier adoption.
+
+These test utilities were inspired by various issues and observations that the maintainers of this library and consumers have experienced when writing tests against our components over the years. It is still very much
+a work in progress so if you discover any issues or have any feedback please feel free to report them via [GitHub issues](https://github.com/adobe/react-spectrum/issues)! If you have implemented
+any testing utilities yourself that you feel would be a good fit, we would be happy to field any pull request! Please read our [contributing guide](contribute.html)
+for more information.
 
 ### Installation
 
@@ -43,6 +57,8 @@ TODO need to update this so PatternNames actually comes through with the expecte
 <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
 
 #### Combobox
+
+TODO need to update the constructor options so the extended types can actually be expanded
 
 <ClassAPI links={combobox.links} class={combobox.exports.ComboBoxTester} />
 

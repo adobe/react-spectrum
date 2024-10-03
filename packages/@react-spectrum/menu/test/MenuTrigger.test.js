@@ -281,7 +281,7 @@ describe('MenuTrigger', function () {
       await menuTester.open();
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
-      let menuItems = menuTester.options;
+      let menuItems = menuTester.options();
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       await menuTester.close();
@@ -292,7 +292,7 @@ describe('MenuTrigger', function () {
       menuTester.setInteractionType('keyboard');
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
       fireEvent.keyUp(button, {key: 'ArrowDown', code: 40, charCode: 40});
-      menuItems = menuTester.options;
+      menuItems = menuTester.options();
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       await menuTester.close();
@@ -300,7 +300,7 @@ describe('MenuTrigger', function () {
 
       // Opening menu via up arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
-      menuItems = menuTester.options;
+      menuItems = menuTester.options();
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -355,17 +355,17 @@ describe('MenuTrigger', function () {
       let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       fireEvent.keyDown(menuTester.trigger, {key: 'ArrowDown', code: 40, charCode: 40});
 
-      let selectedItem = menuTester.options[0];
+      let selectedItem = menuTester.options()[0];
       expect(selectedItem).toBe(document.activeElement);
 
       fireEvent.keyDown(menuTester.menu, {key: 'ArrowDown', code: 40, charCode: 40});
-      expect(menuTester.options[1]).toBe(document.activeElement);
+      expect(menuTester.options()[1]).toBe(document.activeElement);
 
       fireEvent.keyDown(menuTester.menu, {key: 'ArrowDown', code: 40, charCode: 40});
-      expect(menuTester.options[2]).toBe(document.activeElement);
+      expect(menuTester.options()[2]).toBe(document.activeElement);
 
       fireEvent.keyDown(menuTester.menu, {key: 'ArrowUp', code: 38, charCode: 38});
-      expect(menuTester.options[1]).toBe(document.activeElement);
+      expect(menuTester.options()[1]).toBe(document.activeElement);
     });
   });
 
@@ -381,7 +381,7 @@ describe('MenuTrigger', function () {
     async function openAndTriggerMenuItem(tree, role, selectionMode, triggerEvent) {
       let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       await menuTester.open();
-      let menuItems = menuTester.options;
+      let menuItems = menuTester.options();
       let itemToAction = menuItems[1];
       await triggerEvent(itemToAction);
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
@@ -414,7 +414,7 @@ describe('MenuTrigger', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
 
       let menu = menuTester.menu;
-      expect(menuTester.options[0]).toHaveAttribute('aria-checked', 'true');
+      expect(menuTester.options()[0]).toHaveAttribute('aria-checked', 'true');
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
       act(() => {jest.runAllTimers();}); // FocusScope raf
@@ -427,7 +427,7 @@ describe('MenuTrigger', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
 
       menu = menuTester.menu;
-      expect(menuTester.options[0]).toHaveAttribute('aria-checked', 'true');
+      expect(menuTester.options()[0]).toHaveAttribute('aria-checked', 'true');
       expect(menu).toBeTruthy();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       expect(onSelectionChange).not.toHaveBeenCalled();

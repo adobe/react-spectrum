@@ -22,7 +22,7 @@ export class ComboBoxTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _combobox: HTMLElement;
-  private _trigger: HTMLElement | null;
+  private _trigger: HTMLElement;
 
   constructor(opts: ComboBoxOptions) {
     let {root, trigger, user, interactionType} = opts;
@@ -60,7 +60,7 @@ export class ComboBoxTester {
   }
 
   /**
-   * Opens the combobox dropdown using the interaction type set on the combobox tester.
+   * Opens the combobox dropdown. Defaults to using the interaction type set on the combobox tester.
    */
   async open(opts: {triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) {
     let {triggerBehavior = 'manual', interactionType = this._interactionType} = opts;
@@ -105,7 +105,7 @@ export class ComboBoxTester {
   }
 
   /**
-   * Selects the desired combobox option using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
+   * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
    * The desired option can be targeted via the option's node or the option's text.
    */
   async selectOption(opts: {option?: HTMLElement, optionText?: string, triggerBehavior?: 'focus' | 'manual', interactionType?: UserOpts['interactionType']} = {}) {
@@ -171,7 +171,7 @@ export class ComboBoxTester {
   /**
    * Returns the combobox trigger button if present.
    */
-  get trigger(): HTMLElement | null {
+  get trigger(): HTMLElement {
     return this._trigger;
   }
 
@@ -188,17 +188,13 @@ export class ComboBoxTester {
    */
   get sections(): HTMLElement[] {
     let listbox = this.listbox;
-    if (listbox) {
-      return within(listbox).queryAllByRole('group');
-    } else {
-      return [];
-    }
+    return listbox ? within(listbox).queryAllByRole('group') : [];
   }
 
   /**
    * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided.
    */
-  options(opts: {element?: HTMLElement | null} = {}): HTMLElement[] {
+  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.listbox} = opts;
     let options = [];
     if (element) {

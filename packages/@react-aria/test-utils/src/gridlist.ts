@@ -43,7 +43,7 @@ export class GridListTester {
   // Maybe also support an option to force the click to happen on a specific part of the element (checkbox or row). That way
   // the user can test a specific type of interaction?
   /**
-   * Toggles the selection for the specified gridlist row using the interaction type set on the gridlist tester.
+   * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
   async toggleRowSelection(opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) {
     let {index, text, interactionType = this._interactionType} = opts;
@@ -60,7 +60,10 @@ export class GridListTester {
 
   // TODO: pretty much the same as table except it uses this.gridlist. Make common between the two by accepting an option for
   // an element?
-  private findRow(opts: {index?: number, text?: string}) {
+  /**
+   * Returns a row matching the specified index or text content.
+   */
+  findRow(opts: {index?: number, text?: string}) {
     let {
       index,
       text
@@ -82,7 +85,7 @@ export class GridListTester {
   // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
   // user specificlly tells us
   /**
-   * Triggers the action for the specified gridlist row using the interaction type set on the gridlist tester.
+   * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
   async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']}) {
     let {
@@ -131,7 +134,7 @@ export class GridListTester {
    * Returns the gridlist's cells if any. Can be filtered against a specific row if provided.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element} = opts;
-    return within(element || this.gridlist).queryAllByRole('gridcell');
+    let {element = this.gridlist} = opts;
+    return within(element).queryAllByRole('gridcell');
   }
 }

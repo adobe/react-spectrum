@@ -1031,7 +1031,7 @@ describe('Menu', () => {
       let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = submenuUtil.options;
+      let submenuItems = submenuUtil.options();
       expect(submenuItems).toHaveLength(6);
 
       let groupsInSubmenu = submenuUtil.sections;

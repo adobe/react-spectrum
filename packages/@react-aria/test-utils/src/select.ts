@@ -33,12 +33,17 @@ export class SelectTester {
     }
     this._trigger = triggerButton;
   }
-
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the select tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
-  open = async (opts: {interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Opens the select. Defaults to using the interaction type set on the select tester.
+   */
+  async open(opts: {interactionType?: UserOpts['interactionType']} = {}) {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -69,9 +74,37 @@ export class SelectTester {
         return true;
       }
     });
-  };
+  }
 
-  selectOption = async (opts: {optionText: string, interactionType?: UserOpts['interactionType']}) => {
+  /**
+   * Closes the select.
+   */
+  async close() {
+    let listbox = this.listbox;
+    if (listbox) {
+      act(() => listbox.focus());
+      await this.user.keyboard('[Escape]');
+    }
+
+    await waitFor(() => {
+      if (document.activeElement !== this._trigger) {
+        throw new Error(`Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`);
+      } else {
+        return true;
+      }
+    });
+
+    if (listbox && document.contains(listbox)) {
+      throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
+    }
+  }
+
+  // TODO: update this so it also can take the option node instead of just text, might already have been added in Rob's PR
+  /**
+   * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
+   * The desired option can be targeted via the option's text.
+   */
+  async selectOption(opts: {optionText: string, interactionType?: UserOpts['interactionType']}) {
     let {
       optionText,
       interactionType = this._interactionType
@@ -115,43 +148,40 @@ export class SelectTester {
         }
       }
     }
-  };
+  }
 
-  close = async () => {
-    let listbox = this.listbox;
-    if (listbox) {
-      act(() => listbox.focus());
-      await this.user.keyboard('[Escape]');
+  /**
+   * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided.
+   */
+  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.listbox} = opts;
+    let options = [];
+    if (element) {
+      options = within(element).queryAllByRole('option');
     }
 
-    await waitFor(() => {
-      if (document.activeElement !== this._trigger) {
-        throw new Error(`Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`);
-      } else {
-        return true;
-      }
-    });
+    return options;
+  }
 
-    if (listbox && document.contains(listbox)) {
-      throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
-    }
-  };
-
-  get trigger() {
+  /**
+   * Returns the select's trigger.
+   */
+  get trigger(): HTMLElement {
     return this._trigger;
   }
 
-  get listbox() {
+  /**
+   * Returns the select's listbox if present.
+   */
+  get listbox(): HTMLElement | null {
     let listBoxId = this.trigger.getAttribute('aria-controls');
-    return listBoxId ? document.getElementById(listBoxId) : undefined;
+    return listBoxId ? document.getElementById(listBoxId) : null;
   }
 
-  get options() {
-    let listbox = this.listbox;
-    return listbox ? within(listbox).queryAllByRole('option') : [];
-  }
-
-  get sections() {
+  /**
+   * Returns the select's sections if present.
+   */
+  get sections(): HTMLElement[] {
     let listbox = this.listbox;
     return listbox ? within(listbox).queryAllByRole('group') : [];
   }

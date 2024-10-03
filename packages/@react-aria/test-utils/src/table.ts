@@ -35,11 +35,17 @@ export class TableTester {
     this._table = root;
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the table tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
-  toggleRowSelection = async (opts: {index?: number, text?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggles the selection for the specified table row. Defaults to using the interaction type set on the gridlist tester.
+   */
+  async toggleRowSelection(opts: {index?: number, text?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) {
     let {
       index,
       text,
@@ -77,9 +83,12 @@ export class TableTester {
 
       await this._advanceTimer(200);
     });
-  };
+  }
 
-  toggleSort = async (opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the gridlist tester.
+   */
+  async toggleSort(opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) {
     let {
       index,
       text,
@@ -163,11 +172,14 @@ export class TableTester {
     } else {
       await pressElement(this.user, columnheader, interactionType);
     }
-  };
+  }
   // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
   // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
   // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
-  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
+   */
+  async triggerRowAction(opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']} = {}) {
     let {
       index,
       text,
@@ -186,15 +198,17 @@ export class TableTester {
         await pressElement(this.user, row, interactionType);
       }
     }
-  };
+  }
 
   // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
   // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
   // on the mocks the user sets up for their row height/etc.
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
-
-  toggleSelectAll = async (opts: {interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggle selection for all rows in the table. Defaults to using the interaction type set on the table tester.
+   */
+  async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}) {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -205,9 +219,12 @@ export class TableTester {
     } else {
       await pressElement(this.user, checkbox, interactionType);
     }
-  };
+  }
 
-  findRow = (opts: {index?: number, text?: string} = {}) => {
+  /**
+   * Returns a row matching the specified index or text content.
+   */
+  findRow(opts: {index?: number, text?: string} = {}) {
     let {
       index,
       text
@@ -226,9 +243,12 @@ export class TableTester {
     }
 
     return row;
-  };
+  }
 
-  findCell = (opts: {text: string}) => {
+  /**
+   * Returns a cell matching the specified text content.
+   */
+  findCell(opts: {text: string}) {
     let {
       text
     } = opts;
@@ -245,38 +265,58 @@ export class TableTester {
     }
 
     return cell;
-  };
+  }
 
-  get table() {
+  /**
+   * Returns the table.
+   */
+  get table(): HTMLElement {
     return this._table;
   }
 
-  get rowGroups() {
+  /**
+   * Returns the row groups within the table.
+   */
+  get rowGroups(): HTMLElement[] {
     let table = this._table;
     return table ? within(table).queryAllByRole('rowgroup') : [];
   }
 
-  get columns() {
+  /**
+   * Returns the columns within the table.
+   */
+  get columns(): HTMLElement[] {
     let headerRowGroup = this.rowGroups[0];
     return headerRowGroup ? within(headerRowGroup).queryAllByRole('columnheader') : [];
   }
 
-  get rows() {
+  /**
+   * Returns the rows within the table if any.
+   */
+  get rows(): HTMLElement[] {
     let bodyRowGroup = this.rowGroups[1];
     return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
   }
 
-  get selectedRows() {
+  /**
+   * Returns the currently selected rows within the table if any.
+   */
+  get selectedRows(): HTMLElement[] {
     return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
-  get rowHeaders() {
-    let table = this.table;
-    return table ? within(table).queryAllByRole('rowheader') : [];
+  /**
+   * Returns the row headers within the table if any.
+   */
+  get rowHeaders(): HTMLElement[] {
+    return within(this.table).queryAllByRole('rowheader');
   }
 
-  get cells() {
-    let table = this.table;
-    return table ? within(table).queryAllByRole('gridcell') : [];
+  /**
+   * Returns the cells within the table if any. Can be filtered against a specific row if provided.
+   */
+  cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.table} = opts;
+    return within(element).queryAllByRole('gridcell');
   }
 }
