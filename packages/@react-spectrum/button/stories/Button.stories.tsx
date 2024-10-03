@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {Button, ReactLive, ReactLiveV2} from '../';
+import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
@@ -84,14 +84,6 @@ export default {
 
 export const Default: ButtonStory = {
   render: (args) => render(args)
-};
-
-export const ReactLiveStory: ButtonStory = {
-  render: () => <ReactLive />
-};
-
-export const ReactLiveV2Story: ButtonStory = {
-  render: () => <ReactLiveV2 />
 };
 
 export const WithIcon: ButtonStory = {
