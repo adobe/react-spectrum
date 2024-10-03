@@ -4,6 +4,8 @@ on:
     types: [opened, edited, reopened, synchronize]
 permissions:
   pull-requests: read
+env:
+  YARN_ENABLE_HARDENED_MODE: 0
 jobs:
   pr-title-lint:
     runs-on: ubuntu-latest
