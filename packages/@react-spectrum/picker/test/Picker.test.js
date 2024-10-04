@@ -78,7 +78,7 @@ describe('Picker', function () {
   });
 
   describe('opening', function () {
-    it.only('can be opened on mouse down', async function () {
+    it('can be opened on mouse down', async function () {
       let onOpenChange = jest.fn();
       let {getByRole, queryByRole} = render(
         <Provider theme={theme}>
