@@ -64,7 +64,6 @@ export interface MenuTesterOpts extends UserOpts, BaseTesterOpts {
 }
 
 export interface SelectTesterOpts extends UserOpts, BaseTesterOpts {
-  // TODO: I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
   /** @private */
   user: any,
   /**
