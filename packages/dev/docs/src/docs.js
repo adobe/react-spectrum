@@ -12,6 +12,7 @@
 
 import {attachToToC} from './attachToToC';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
+import {Button} from 'react-aria-components';
 import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
@@ -19,11 +20,12 @@ import docsStyle from './docs.css';
 import {FocusScope} from '@react-aria/focus';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
-import {Pressable, usePress} from '@react-aria/interactions';
+import {Pressable} from '@react-aria/interactions';
 import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import {ThemeProvider} from './ThemeSwitcher';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useOverlayTriggerState} from 'react-stately';
 
 let links = document.querySelectorAll('a[data-link]');
 let images = document.querySelectorAll('img[data-img]');
@@ -53,16 +55,13 @@ for (let link of links) {
 
 function ImageModal({children}) {
   let [trigger, contents] = React.Children.toArray(children);
-  let [isOpen, setOpen] = React.useState(false);
-  let {pressProps} = usePress({
-    onPress: () => setOpen(true)
-  });
+  let state = useOverlayTriggerState({});
 
-  trigger = React.cloneElement(trigger, pressProps);
+  trigger = React.cloneElement(trigger, {onPress: () => state.setOpen(true)});
   return (
     <>
       {trigger}
-      <Modal isDismissable isOpen={isOpen} onClose={() => setOpen(false)} UNSAFE_style={{overflow: 'scroll'}}>
+      <Modal isDismissable state={state} onClose={() => state.close()} UNSAFE_style={{overflow: 'scroll'}}>
         <FocusScope contain restoreFocus autoFocus>
           {contents}
         </FocusScope>
@@ -74,13 +73,17 @@ function ImageModal({children}) {
 for (let image of images) {
   let container = document.createElement('span');
   let url = image.src.replace(/.*\/\/[^/]*/, '');
+  let style = {};
+  for (let key of image.style) {
+    style[key.replace(/-([a-z])/g, (_, m) => m.toUpperCase())] = image.style[key];
+  }
 
   ReactDOM.createRoot(container).render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
-        <button className={docsStyle.expandableImageButton}>
-          <img src={url} className={image.className} alt={image.alt} />
-        </button>
+        <Button className={docsStyle.expandableImageButton}>
+          <img src={url} className={image.className} alt={image.alt} style={style} />
+        </Button>
         <div role="dialog" tabIndex={0}>
           <img src={url} alt={image.alt} />
         </div>
