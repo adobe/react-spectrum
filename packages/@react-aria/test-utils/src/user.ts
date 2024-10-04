@@ -65,6 +65,6 @@ export class User {
    * Creates an aria pattern tester, inheriting the options provided to the original user.
    */
   createTester<T extends PatternNames>(patternName: T, opts: TesterOpts<T>): Tester<T> {
-    return new (keyToUtil)[patternName]({user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer, ...opts}) as Tester<T>;
+    return new (keyToUtil)[patternName]({interactionType: this.interactionType, advanceTimer: this.advanceTimer, ...opts, user: this.user}) as Tester<T>;
   }
 }
