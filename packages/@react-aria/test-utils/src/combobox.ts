@@ -11,12 +11,8 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
+import {ComboBoxTesterOpts, UserOpts} from './types';
 
-export interface ComboBoxTesterOpts extends UserOpts, BaseTesterOpts {
-  user: any,
-  trigger?: HTMLElement
-}
 interface ComboBoxOpenOpts {
   /**
    * Whether the combobox opens on focus or needs to be manually opened via user action.

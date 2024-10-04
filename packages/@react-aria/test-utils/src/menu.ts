@@ -11,12 +11,8 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
+import {MenuTesterOpts, UserOpts} from './types';
 import {triggerLongPress} from './events';
-
-export interface MenuTesterOpts extends UserOpts, BaseTesterOpts {
-  user: any
-}
 
 interface MenuOpenOpts {
   /**

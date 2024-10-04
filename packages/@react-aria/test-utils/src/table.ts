@@ -11,12 +11,8 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
 import {pressElement, triggerLongPress} from './events';
-export interface TableTesterOpts extends UserOpts, BaseTesterOpts {
-  user: any,
-  advanceTimer: UserOpts['advanceTimer']
-}
+import {TableTesterOpts, UserOpts} from './types';
 
 // TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
 interface TableToggleRowOpts {

@@ -11,12 +11,7 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
-
-export interface SelectTesterOpts extends UserOpts, BaseTesterOpts {
-  // TODO: I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
-  user: any
-}
+import {SelectTesterOpts, UserOpts} from './types';
 
 interface SelectOpenOpts {
   /**
@@ -135,7 +130,6 @@ export class SelectTester {
     }
     let listbox = this.listbox;
     if (listbox) {
-
       if (!option && optionText) {
         option = within(listbox).getByText(optionText);
       }
@@ -158,7 +152,7 @@ export class SelectTester {
         }
       }
 
-      if (option.getAttribute('href') == null) {
+      if (option?.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);

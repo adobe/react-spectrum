@@ -11,12 +11,8 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
+import {GridListTesterOpts, UserOpts} from './types';
 import {pressElement} from './events';
-
-export interface GridListTesterOpts extends UserOpts, BaseTesterOpts {
-  user: any
-}
 
 // TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
 interface GridListToggleRowOpts {
