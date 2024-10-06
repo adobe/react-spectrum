@@ -292,7 +292,7 @@ function RootRoute() {
       theme={defaultTheme}
       router={{
         navigate: (to, options) => router.navigate({to, ...options}),
-        useHref: to => router.buildLocation(to).href
+        useHref: to => router.buildLocation({to}).href
       }}>
       {/* ...*/}
     </Provider>
