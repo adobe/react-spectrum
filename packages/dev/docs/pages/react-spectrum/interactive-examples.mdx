@@ -1,0 +1,434 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+```jsx import
+import {InteractiveExample} from '@react-spectrum/docs';
+
+import {
+  ActionButton,
+  ActionGroup,
+  ActionMenu,
+  Button,
+  ButtonGroup,
+  Calendar,
+  Checkbox,
+  CheckboxGroup,
+  ColorEditor,
+  ColorPicker,
+  ColorSlider,
+  ColorSwatch,
+  ColorSwatchPicker,
+  DatePicker,
+  Item,
+  ListView,
+  Menu,
+  MenuTrigger,
+  NumberField,
+  Radio,
+  RadioGroup,
+  SearchField,
+  Slider,
+  Switch,
+  TextArea,
+  TextField,
+  SpectrumActionButtonProps,
+  SpectrumActionGroupProps,
+  SpectrumActionMenuProps,
+  SpectrumButtonProps,
+  SpectrumButtonGroupProps,
+  SpectrumCalendarProps,
+  SpectrumCheckboxProps,
+  SpectrumCheckboxGroupProps,
+  SpectrumColorPickerProps,
+  SpectrumColorSliderProps,
+  SpectrumColorSwatchPickerProps,
+  SpectrumDatePickerPropsm,
+  SpectrumListViewProps,
+  SpectrumMenuTriggerProps,
+  SpectrumNumberFieldProps,
+  SpectrumRadioGroupProps,
+  SpectrumSearchFieldProps,
+  SpectrumSliderProps,
+  SpectrumSwitchProps,
+  SpectrumTextAreaProps,
+  SpectrumTextFieldProps,
+  SpectrumToggleButtonProps,
+  TagGroup,
+  ToggleButton
+} from '@adobe/react-spectrum';
+
+// Buttons
+import buttonDocs from 'docs:@react-spectrum/button';
+import actionGroupDocs from 'docs:@react-spectrum/actiongroup';
+import buttonGroupDocs from 'docs:@react-spectrum/buttongroup';
+
+import ButtonStories from '../../../../@react-spectrum/button/stories/Button.stories'
+import ActionButtonStories from '../../../../@react-spectrum/button/stories/ActionButton.stories';
+import ActionGroupStories from '../../../../@react-spectrum/actiongroup/stories/ActionGroup.stories';
+import ButtonGroupStories from '../../../../@react-spectrum/buttongroup/stories/ButtonGroup.stories';
+import ToggleButtonStories from '../../../../@react-spectrum/button/stories/ToggleButton.stories';
+
+// Collections
+import listDocs from 'docs:@react-spectrum/list';
+import menuDocs from 'docs:@react-spectrum/menu';
+import tagDocs from 'docs:@react-spectrum/tag';
+
+import ListViewStories from '../../../../@react-spectrum/list/stories/ListView.stories';
+import TagGroupStories from '../../../../@react-spectrum/tag/stories/TagGroup.stories';
+
+// Colors
+import colorDocs from 'docs:@react-spectrum/color';
+
+import ColorPickerStories from '../../../../@react-spectrum/color/stories/ColorPicker.stories';
+import ColorSliderStories from '../../../../@react-spectrum/color/stories/ColorSlider.stories';
+import ColorSwatchPickerStories from '../../../../@react-spectrum/color/stories/ColorSwatchPicker.stories';
+
+// Date and time
+import dateDocs from 'docs:@react-spectrum/datepicker';
+
+import DatePickerStories from '../../../../@react-spectrum/datepicker/stories/DatePicker.stories';
+import CheckboxGroupStories from '../../../../@react-spectrum/checkbox/stories/CheckboxGroup.stories';
+
+// Forms
+import checkboxDocs from 'docs:@react-spectrum/checkbox';
+import numberFieldDocs from 'docs:@react-spectrum/numberfield';
+import radioDocs from 'docs:@react-spectrum/radio';
+import searchFieldDocs from 'docs:@react-spectrum/searchfield';
+import sliderDocs from 'docs:@react-spectrum/slider';
+import switchDocs from 'docs:@react-spectrum/switch';
+import textfieldDocs from 'docs:@react-spectrum/textfield';
+
+import CheckboxStories from '../../../../@react-spectrum/checkbox/stories/Checkbox.stories';
+import NumberFieldStories from '../../../../@react-spectrum/numberfield/stories/NumberField.stories';
+import RadioStories from '../../../../@react-spectrum/radio/stories/Radio.stories';
+import SearchFieldStories from '../../../../@react-spectrum/searchfield/stories/SearchField.stories';
+import SliderStories from '../../../../@react-spectrum/slider/stories/Slider.stories';
+import SwitchStories from '../../../../@react-spectrum/switch/stories/Switch.stories';
+import TextFieldStories from '../../../../@react-spectrum/textfield/stories/TextField.stories';
+```
+
+
+---
+category: Concepts
+---
+
+
+# Interactive examples
+
+## Buttons
+
+### ActionButton
+
+```tsx snippet
+<InteractiveExample<SpectrumActionButtonProps> LiveComponent={ActionButton} componentName="ActionButton" children="Click me" componentProps={buttonDocs.exports.ActionButton} componentArgTypes={ActionButtonStories.argTypes} />
+```
+
+### ActionGroup
+
+```tsx snippet
+<InteractiveExample<SpectrumActionGroupProps>
+  LiveComponent={ActionGroup}
+  componentName="ActionGroup"
+  childrenString={'\n  <Item key="add">Add</Item>\n  <Item key="delete">Delete</Item>\n  <Item key="edit">Edit</Item>\n'}
+  componentProps={actionGroupDocs.exports.ActionGroup}
+  componentArgTypes={ActionGroupStories.argTypes}>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</InteractiveExample>
+```
+
+### Button
+
+```tsx snippet
+<InteractiveExample<SpectrumButtonProps> LiveComponent={Button} componentName="Button" children="Click me" componentProps={buttonDocs.exports.Button} componentArgTypes={ButtonStories.argTypes} />
+```
+
+### ButtonGroup
+
+```tsx snippet
+<InteractiveExample<SpectrumButtonGroupProps>
+  LiveComponent={ButtonGroup}
+  componentName="ButtonGroup"
+  childrenString={'\n  <Button variant="primary">Rate Now</Button>\n  <Button variant="secondary">No, thanks</Button>\n  <Button variant="secondary">Remind me later</Button>\n'}
+  componentProps={buttonGroupDocs.exports.ButtonGroup}
+  componentArgTypes={ButtonGroupStories.argTypes}>
+  <Button variant="primary">Rate Now</Button>
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+</InteractiveExample>
+```
+
+### ToggleButton
+
+```tsx snippet
+<InteractiveExample<SpectrumToogleButtonProps> LiveComponent={ToggleButton} componentName="ToogleButton" children="Pin" componentProps={buttonDocs.exports.ToggleButton} componentArgTypes={ToggleButtonStories.argTypes} />
+```
+
+## Collections
+
+{/* ### ActionMenu
+
+// doesn't open
+
+```tsx snippet
+<InteractiveExample<SpectrumActionMenuProps>
+  LiveComponent={ActionMenu}
+  componentName="ActionMenu"
+  childrenString={'\n  <Item>Cut</Item>\n  <Item>Copy</Item>\n  <Item>Paste</Item>\n'}
+  componentProps={menuDocs.exports.ActionMenu}>
+  <Item>Cut</Item>
+  <Item>Copy</Item>
+  <Item>Paste</Item>
+</InteractiveExample>
+``` */}
+
+{/* ### ListView
+
+// example isn't interactive
+
+```tsx snippet
+<InteractiveExample<SpectrumListViewProps>
+  LiveComponent={ListView}
+  componentName="ListView"
+  aria-label="Adobe CC applications"
+  width="size-6000"
+  childrenString={'\n  <Item>Adobe Photoshop</Item>\n  <Item>Adobe InDesign</Item>\n  <Item>Adobe AfterEffects</Item>\n  <Item>Adobe Illustrator</Item>\n  <Item>Adobe Lightroom</Item>\n'}
+  componentProps={listDocs.exports.ListView}
+  componentArgTypes={ListViewStories.argTypes}>
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</InteractiveExample>
+``` */}
+
+{/* ### MenuTrigger
+
+// doesn't open - stopped rendering
+
+```tsx snippet
+<InteractiveExample<SpectrumMenuTriggerProps>
+  LiveComponent={MenuTrigger}
+  componentName="MenuTrigger"
+  childrenString={'\n  <ActionButton>\n    Edit\n  </ActionButton>\n  <Menu>\n    <Item>Cut</Item>\n    <Item>Copy</Item>\n    <Item>Paste</Item>\n  </Menu>\n'}
+  componentProps={menuDocs.exports.MenuTrigger}>
+  <ActionButton>
+    Edit
+  </ActionButton>
+  <Menu>
+    <Item>Cut</Item>
+    <Item>Copy</Item>
+    <Item>Paste</Item>
+  </Menu>
+</InteractiveExample>
+``` */}
+
+### TagGroup
+
+```tsx snippet
+<InteractiveExample<SpectrumTagGroupProps>
+  LiveComponent={TagGroup}
+  componentName="TagGroup"
+  label="Categories"
+  childrenString={'\n  <Item>News</Item>\n  <Item>Travel</Item>\n  <Item>Gaming</Item>\n  <Item>Shopping</Item>\n'}
+  componentProps={tagDocs.exports.TagGroup}
+  componentArgTypes={TagGroupStories.argTypes}>
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</InteractiveExample>
+```
+
+## Color
+
+{/* ### ColorPicker
+
+// doesn't show swatch and missing props
+
+```tsx snippet
+<InteractiveExample<SpectrumColorPickerProps>
+  LiveComponent={ColorPicker}
+  componentName="ColorPicker"
+  childrenString={'\n  <ColorEditor />\n'}
+  componentProps={colorDocs.exports.ColorPicker}
+  componentArgTypes={ColorPickerStories.argTypes}
+  label="Fill"
+  defaultValue="#7f0000">
+  <ColorEditor />
+</InteractiveExample>
+``` */}
+
+### ColorSlider
+
+```tsx snippet
+<InteractiveExample<SpectrumColorSliderProps>
+  LiveComponent={ColorSlider}
+  componentName="ColorSlider"
+  componentProps={colorDocs.exports.ColorSlider}
+  componentArgTypes={ColorSliderStories.argTypes}
+  defaultValue="#7f0000"
+  channel="red" />
+```
+
+{/* ### ColorSwatchPicker
+
+// doesn't show swatch and missing props
+
+```tsx snippet
+<InteractiveExample<SpectrumColorSwatchPickerProps>
+  LiveComponent={ColorSwatchPicker}
+  componentName="ColorSwatchPicker"
+  childrenString={'\n  <ColorSwatch color="#A00" />\n  <ColorSwatch color="#f80" />\n  <ColorSwatch color="#080" />\n  <ColorSwatch color="#08f" />\n  <ColorSwatch color="#088" />\n  <ColorSwatch color="#008" />\n'}
+  componentProps={colorDocs.exports.ColorSwatchPicker}
+  componentArgTypes={ColorSwatchPickerStories.argTypes}
+  aria-label="Fill">
+  <ColorSwatch color="#A00" />
+  <ColorSwatch color="#f80" />
+  <ColorSwatch color="#080" />
+  <ColorSwatch color="#08f" />
+  <ColorSwatch color="#088" />
+  <ColorSwatch color="#008" />
+</InteractiveExample>
+``` */}
+
+
+## Date and time
+
+{/* ### Calendar
+
+// TODO: figure out the errors
+
+```tsx snippet
+<InteractiveExample<SpectrumCalendarProps>
+  LiveComponent={Calendar}
+  componentName="Calendar"
+  aria-label="Event date" />
+``` */}
+
+### DatePicker
+
+```tsx snippet
+<InteractiveExample<SpectrumDatePickerProps>
+  LiveComponent={DatePicker}
+  componentName="DatePicker"
+  componentProps={dateDocs.exports.DatePicker}
+  componentArgTypes={DatePickerStories.argTypes}
+  aria-label="Event date" />
+```
+
+## Forms
+
+### Checkbox
+
+```tsx snippet
+<InteractiveExample<SpectrumCheckboxProps>
+  LiveComponent={Checkbox}
+  componentName="Checkbox"
+  componentProps={checkboxDocs.exports.Checkbox}
+  componentArgTypes={CheckboxStories.argTypes}>
+  Unsubscribe
+</InteractiveExample>
+```
+
+### CheckboxGroup
+
+```tsx snippet
+<InteractiveExample<SpectrumCheckboxGroupProps>
+  LiveComponent={CheckboxGroup}
+  componentName="CheckboxGroup"
+  label="Favorite sports"
+  childrenString={'\n  <Checkbox value="soccer">Soccer</Checkbox>\n  <Checkbox value="baseball">Baseball</Checkbox>\n  <Checkbox value="basketball">Basketball</Checkbox>\n'}
+  componentProps={checkboxDocs.exports.CheckboxGroup}
+  componentArgTypes={CheckboxGroupStories.argTypes}>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</InteractiveExample>
+```
+
+{/* ### NumberField
+
+// fix rendering error
+
+```tsx snippet
+<InteractiveExample<SpectrumNumberFieldProps>
+  LiveComponent={NumberField}
+  componentName="NumberField"
+  label="Width"
+  componentProps={numberFieldDocs.exports.NumberField}
+  componentArgTypes={NumberFieldStories.argTypes} />
+``` */}
+
+### RadioGroup
+
+```tsx snippet
+<InteractiveExample<SpectrumRadioGroupProps>
+  LiveComponent={RadioGroup}
+  componentName="RadioGroup"
+  label="Favorite pet"
+  childrenString={'\n  <Radio value="dogs">Dogs</Radio>\n  <Radio value="cats">Cats</Radio>\n'}
+  componentProps={radioDocs.exports.RadioGroup}
+  componentArgTypes={RadioStories.argTypes}>
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</InteractiveExample>
+```
+
+### SearchField
+
+```tsx snippet
+<InteractiveExample<SpectrumSearchFieldProps>
+  LiveComponent={SearchField}
+  componentName="SearchField"
+  label="Search"
+  componentProps={searchFieldDocs.exports.SearchField}
+  componentArgTypes={SearchFieldStories.argTypes} />
+```
+
+{/* ### Slider
+
+// slider keyboard events aren't working
+
+```tsx snippet
+<InteractiveExample<SpectrumSliderProps>
+  LiveComponent={Slider}
+  componentName="Slider"
+  label="Volume"
+  componentProps={sliderDocs.exports.Slider}
+  componentArgTypes={SliderStories.argTypes} />
+``` */}
+
+### Switch
+
+```tsx snippet
+<InteractiveExample<SpectrumCheckboxProps>
+  LiveComponent={Switch}
+  componentName="Switch"
+  componentProps={switchDocs.exports.Switch}
+  componentArgTypes={SwitchStories.argTypes}>
+  Low power mode
+</InteractiveExample>
+```
+
+### TextField
+
+```tsx snippet
+<InteractiveExample<SpectrumTextFieldProps>
+  LiveComponent={TextField}
+  componentName="TextField"
+  label="Name"
+  componentProps={textfieldDocs.exports.TextField}
+  componentArgTypes={TextFieldStories.argTypes} />
+```
