@@ -407,11 +407,7 @@ test('variants with prefix', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.rac-expanded\:bg-red:where([data-rac])[data-expanded] {
-    --tw-bg-opacity: 1;
-    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
-}
-.rac-expanded\:bg-red:where(:not([data-rac]))[expanded] {
+.rac-expanded\:bg-red[data-expanded] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
