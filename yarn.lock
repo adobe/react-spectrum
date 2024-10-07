@@ -7048,7 +7048,6 @@ __metadata:
     "@react-spectrum/picker": "npm:^3.1.0"
     "@react-spectrum/provider": "npm:^3.1.0"
     "@react-spectrum/text": "npm:^3.1.0"
-    "@react-spectrum/textfield": "npm:^3.1.0"
     "@react-spectrum/theme-default": "npm:^3.1.0"
     "@react-spectrum/view": "npm:^3.1.0"
     "@spectrum-icons/illustrations": "npm:^3.1.0"
