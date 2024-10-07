@@ -24,7 +24,7 @@ function run({options, content, future = {}}) {
 }
 
 test('variants', async () => {
-  let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red focus-within:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-dragging:bg-red allows-removing:bg-red allows-sorting:bg-red has-submenu:bg-red placeholder-shown:bg-red selected:bg-red indeterminate:bg-red read-only:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red unavailable:bg-red outside-month:bg-red outside-visible-range:bg-red selection-start:bg-red selection-end:bg-red current:bg-red invalid:bg-red resizing:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red selection-single:bg-red selection-multiple:bg-red resizable-right:bg-red resizable-left:bg-red resizable-both:bg-red sort-ascending:bg-red sort-descending:bg-red group-pressed:bg-red peer-pressed:bg-red group-hover:bg-red group/custom-name group-hover/custom-name:bg-red peer-pressed/custom-name:bg-red"></div>`;
+  let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red focus-within:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-dragging:bg-red allows-removing:bg-red allows-sorting:bg-red has-submenu:bg-red placeholder-shown:bg-red selected:bg-red indeterminate:bg-red read-only:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red expanded:bg-red unavailable:bg-red outside-month:bg-red outside-visible-range:bg-red selection-start:bg-red selection-end:bg-red current:bg-red invalid:bg-red resizing:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red selection-single:bg-red selection-multiple:bg-red resizable-right:bg-red resizable-left:bg-red resizable-both:bg-red sort-ascending:bg-red sort-descending:bg-red group-pressed:bg-red peer-pressed:bg-red group-hover:bg-red group/custom-name group-hover/custom-name:bg-red peer-pressed/custom-name:bg-red"></div>`;
   return run({content}).then((result) => {
     expect(result.css).toContain(css`
 .placement-left\:bg-red[data-placement="left"] {
@@ -124,6 +124,14 @@ test('variants', async () => {
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
 .open\:bg-red:where(:not([data-rac]))[open] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+.expanded\:bg-red:where([data-rac])[data-expanded] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+.expanded\:bg-red:where(:not([data-rac]))[expanded] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
@@ -396,6 +404,14 @@ test('variants with prefix', async () => {
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
 .rac-open\:bg-red[data-open] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+.rac-expanded\:bg-red:where([data-rac])[data-expanded] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+.rac-expanded\:bg-red:where(:not([data-rac]))[expanded] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
