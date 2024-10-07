@@ -6696,6 +6696,8 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.3"
     "@react-aria/interactions": "npm:^3.22.3"
     "@react-aria/utils": "npm:^3.25.3"
+    "@react-spectrum/checkbox": "npm:^3.9.9"
+    "@react-spectrum/layout": "npm:^3.6.9"
     "@react-spectrum/progress": "npm:^3.7.10"
     "@react-spectrum/test-utils-internal": "npm:3.0.0-alpha.1"
     "@react-spectrum/text": "npm:^3.5.8"
