@@ -12,7 +12,7 @@
 import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
 import {CheckboxContext} from './RSPContexts';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
-import {ContextValue, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -204,7 +204,6 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   });
 
   let renderProps = useRenderProps({
-    // TODO: should data attrs go on the label or on the <input>? useCheckbox passes them to the input...
     ...props,
     defaultClassName: 'react-aria-Checkbox',
     values: {
@@ -240,7 +239,10 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
       data-invalid={isInvalid || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+        <input
+          // data attribute should only go to the outermost dom
+          {...mergeProps(removeDataAttributes(inputProps), focusProps)}
+          ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
