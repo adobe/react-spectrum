@@ -18,6 +18,9 @@ import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 import {Keyboard} from '@react-spectrum/text';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Disclosure from '@react-spectrum/docs/pages/assets/component-illustrations/Disclosure.svg'
+import Anatomy from './DisclosureGroupAnatomy.svg';
 
 ---
 category: Navigation
@@ -92,6 +95,8 @@ Custom styled disclosure groups can be difficult to implement in an accessible w
 
 ## Anatomy
 
+<Anatomy />
+
 A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to exapnd it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
 
 ```tsx
@@ -109,7 +114,16 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 
 ### Composed Components
 
-[Disclosure](Disclosure.html)
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Disclosure.html"
+  title="Disclosure"
+  description="A disclosure is a collapsible section of content.">
+  <Disclosure />
+</ExampleCard>
+
+</section>
 
 ## Expanded
 
@@ -118,7 +132,7 @@ An uncontrolled DisclosureGroup can be expanded by default using the `defaultExp
 ```tsx example export=true
 import type {DisclosureProps} from 'react-aria-components';
 
-interface MyDisclosureProps extends DisclosureProps {
+interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
   label?: string,
   content?: string
 }
@@ -151,7 +165,7 @@ function MyDisclosure({label, content, ...props}: MyDisclosureProps) {
 A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `defaultExpandedKeys`
 
 ```tsx example export=true
-
+import {Key} from "@react-types/shared";
 
 function ControlledExpanded(){
   let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(["system"]));

@@ -18,6 +18,7 @@ import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 import {Keyboard} from '@react-spectrum/text';
+import Anatomy from './DisclosureAnatomy.svg';
 
 ---
 category: Navigation
@@ -116,6 +117,8 @@ Custom styled disclosures can be difficult to build in an accessible way with th
 
 ## Anatomy
 
+<Anatomy />
+
 A disclosure consists of a button and panel of content. The button is wrapped in a heading element with the appropriate level based on the architecture of the page, and it contains the label representing the section of content that it controls the visibility for. The panel is the section of content that is associated with the button/header which is either expanded or collapsed.
 
 ```tsx
@@ -129,6 +132,7 @@ import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as D
 </Disclosure>
 
 ```
+
 ## Reusable wrappers
 
 If you will use a Disclosure in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -139,7 +143,7 @@ This example wraps `Disclosure` and all of its children together into a single c
 
 import type {DisclosureProps} from 'react-aria-components';
 
-interface MyDisclosureProps extends DisclosureProps {
+interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
   label?: string,
   content?: string
 }

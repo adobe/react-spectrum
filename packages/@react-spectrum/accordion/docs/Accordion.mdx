@@ -72,6 +72,8 @@ In order to internationalize an Accordion, all text content within the accordion
 Accordion accepts an `onExpandedChange` prop which is triggered when a disclosure is expanded or collapsed. The example below uses `onExpandedChange` to programmatically control disclosure expansion.
 
 ```tsx example
+import {Key} from "@react-types/shared";
+
 function ControlledExpansion() {
   let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['personal']))
   
