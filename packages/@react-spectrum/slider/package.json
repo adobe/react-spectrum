@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/slider",
-  "version": "3.6.11",
+  "version": "3.6.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,16 +36,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.18.1",
-    "@react-aria/i18n": "^3.12.1",
-    "@react-aria/interactions": "^3.22.1",
-    "@react-aria/slider": "^3.7.10",
-    "@react-aria/utils": "^3.25.1",
-    "@react-aria/visually-hidden": "^3.8.14",
-    "@react-spectrum/utils": "^3.11.9",
-    "@react-stately/slider": "^3.5.6",
-    "@react-types/shared": "^3.24.1",
-    "@react-types/slider": "^3.7.5",
+    "@react-aria/focus": "^3.18.3",
+    "@react-aria/i18n": "^3.12.3",
+    "@react-aria/interactions": "^3.22.3",
+    "@react-aria/slider": "^3.7.12",
+    "@react-aria/utils": "^3.25.3",
+    "@react-aria/visually-hidden": "^3.8.16",
+    "@react-spectrum/utils": "^3.11.11",
+    "@react-stately/slider": "^3.5.8",
+    "@react-types/shared": "^3.25.0",
+    "@react-types/slider": "^3.7.6",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
