@@ -7445,7 +7445,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/parcel-transformer-s2-icon@npm:^0.1.1, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
+"@react-spectrum/parcel-transformer-s2-icon@npm:^0.1.2, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
@@ -7556,7 +7556,7 @@ __metadata:
     "@parcel/reporter-cli": "npm:2.0.0-dev.1601"
     "@parcel/resolver-default": "npm:2.0.0-dev.1601"
     "@parcel/transformer-raw": "npm:2.0.0-dev.1601"
-    "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.1.1"
+    "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.1.2"
   bin:
     transform-icons: index.js
   languageName: unknown
