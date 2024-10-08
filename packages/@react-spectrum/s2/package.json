@@ -119,7 +119,7 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.46",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.48",
     "@parcel/macros": "2.12.1-canary.3165"
   },
   "dependencies": {

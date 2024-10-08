@@ -54,7 +54,7 @@ import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
-import Nubbin from '../ui-icons/S2_Icon_MoveHorizontalCircleTableWidget_16_N.svg';
+import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
@@ -616,11 +616,6 @@ const resizerHandleContainer = style({
       'right': 'w-resize',
       'both': 'ew-resize'
     }
-  },
-  // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
-  '--focus-ring-color': {
-    type: 'outlineColor',
-    value: 'focus-ring'
   }
 });
 
@@ -628,8 +623,8 @@ const resizerHandle = style({
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-300',
-    isFocusVisible: '--focus-ring-color',
-    isResizing: '--focus-ring-color',
+    isFocusVisible: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that will use the focusVisible version
+    isResizing: lightDark('informative-900', 'informative-700'),
     forcedColors: {
       default: 'Background',
       isHovered: 'ButtonBorder',
@@ -675,7 +670,7 @@ const nubbin = style({
   insetStart: size(-1),
   size: fontRelative(16),
   fill: {
-    default: '--focus-ring-color',
+    default: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that won't be the background color value
     forcedColors: 'Highlight'
   },
   '--iconPrimary': {
