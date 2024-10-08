@@ -16,6 +16,7 @@ import {
   Collection,
   ColumnRenderProps,
   ColumnResizer,
+  ContextValue,
   Key,
   Provider,
   Cell as RACCell,
@@ -46,7 +47,7 @@ import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
-import {DOMRef, LoadingState, Node} from '@react-types/shared';
+import {DOMRef, DOMRefValue, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -65,6 +66,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {VisuallyHidden} from 'react-aria';
 
 interface S2TableProps {
@@ -251,7 +253,10 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   }
 }
 
+export const TableContext = createContext<ContextValue<TableViewProps, DOMRefValue<HTMLDivElement>>>(null);
+
 function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TableContext);
   let {
     UNSAFE_style,
     UNSAFE_className,

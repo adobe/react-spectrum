@@ -347,7 +347,7 @@ let footer = style({
   paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
 });
 
-export const CardViewContext = createContext<'div' | typeof GridListItem>('div');
+export const InternalCardViewContext = createContext<'div' | typeof GridListItem>('div');
 export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
@@ -414,7 +414,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
-  let ElementType = useContext(CardViewContext);
+  let ElementType = useContext(InternalCardViewContext);
   if (ElementType === 'div' || isSkeleton) {
     return (
       <div
