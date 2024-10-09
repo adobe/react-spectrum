@@ -68,6 +68,18 @@ FormatOptions.args = {
   formatOptions: {style: 'currency', currency: 'JPY'}
 };
 
+export const MinMaxValue = (args: any) => (
+  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+    <Slider {...args} />
+  </div>
+);
+
+MinMaxValue.args = {
+  label: 'Size',
+  minValue: 1,
+  maxValue: 5
+};
+
 export const ContextualHelpExample = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
     <Slider {...args} />
