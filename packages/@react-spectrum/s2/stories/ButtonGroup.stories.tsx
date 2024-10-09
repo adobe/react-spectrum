@@ -33,7 +33,7 @@ export const Example: Story = {
       <ButtonGroup {...args}>
         <Button>Press me</Button>
         <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
-        <Button><NewIcon /></Button>
+        <Button aria-label="Press me"><NewIcon /></Button>
         <Button variant="negative" styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
         <Button variant="secondary" styles={style({maxWidth: 128})}>
           <NewIcon />
