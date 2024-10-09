@@ -29,16 +29,16 @@ export const AutocompleteExample = () => (
         <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
       </Button>
     </div>
-    <Popover placement="bottom end">
-      <ListBox
-        data-testid="combo-box-list-box"
-        className={styles.menu}>
-        <MyListBoxItem>Foo</MyListBoxItem>
-        <MyListBoxItem>Bar</MyListBoxItem>
-        <MyListBoxItem>Baz</MyListBoxItem>
-        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-      </ListBox>
-    </Popover>
+    {/* <Popover placement="bottom end"> */}
+    <ListBox
+      data-testid="combo-box-list-box"
+      className={styles.menu}>
+      <MyListBoxItem>Foo</MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem>Baz</MyListBoxItem>
+      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+    </ListBox>
+    {/* </Popover> */}
   </Autocomplete>
 );
 
@@ -59,13 +59,13 @@ export const AutocompleteRenderPropsStatic = () => (
             <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
           </Button>
         </div>
-        <Popover placement="bottom end">
+        {/* <Popover placement="bottom end"> */}
           <ListBox className={styles.menu}>
             <MyListBoxItem>Foo</MyListBoxItem>
             <MyListBoxItem>Bar</MyListBoxItem>
             <MyListBoxItem>Baz</MyListBoxItem>
           </ListBox>
-        </Popover>
+        {/* </Popover> */}
       </>
     )}
   </Autocomplete>
@@ -82,11 +82,11 @@ export const AutocompleteRenderPropsDefaultItems = () => (
             <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
           </Button>
         </div>
-        <Popover placement="bottom end">
+        {/* <Popover placement="bottom end"> */}
           <ListBox className={styles.menu}>
             {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
-        </Popover>
+        {/* </Popover> */}
       </>
     )}
   </Autocomplete>
@@ -104,11 +104,11 @@ export const AutocompleteRenderPropsItems = {
               <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
             </Button>
           </div>
-          <Popover placement="bottom end">
+          {/* <Popover placement="bottom end"> */}
             <ListBox className={styles.menu}>
               {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
             </ListBox>
-          </Popover>
+          {/* </Popover> */}
         </>
       )}
     </Autocomplete>
@@ -131,11 +131,11 @@ export const AutocompleteRenderPropsListBoxDynamic = () => (
             <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
           </Button>
         </div>
-        <Popover placement="bottom end">
+        {/* <Popover placement="bottom end"> */}
           <ListBox className={styles.menu} items={items}>
             {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
-        </Popover>
+        {/* </Popover> */}
       </>
     )}
   </Autocomplete>
@@ -174,12 +174,12 @@ export const AutocompleteAsyncLoadingExample = () => {
           <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
         </Button>
       </div>
-      <Popover placement="bottom end">
+      {/* <Popover placement="bottom end"> */}
         <ListBox<AutocompleteItem>
           className={styles.menu}>
           {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
         </ListBox>
-      </Popover>
+      {/* </Popover> */}
     </Autocomplete>
   );
 };
