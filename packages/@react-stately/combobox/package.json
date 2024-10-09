@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/combobox",
-  "version": "3.9.2",
+  "version": "3.10.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,14 +22,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/collections": "^3.10.9",
-    "@react-stately/form": "^3.0.5",
-    "@react-stately/list": "^3.10.8",
-    "@react-stately/overlays": "^3.6.10",
-    "@react-stately/select": "^3.6.7",
-    "@react-stately/utils": "^3.10.3",
-    "@react-types/combobox": "^3.12.1",
-    "@react-types/shared": "^3.24.1",
+    "@react-stately/collections": "^3.11.0",
+    "@react-stately/form": "^3.0.6",
+    "@react-stately/list": "^3.11.0",
+    "@react-stately/overlays": "^3.6.11",
+    "@react-stately/select": "^3.6.8",
+    "@react-stately/utils": "^3.10.4",
+    "@react-types/combobox": "^3.13.0",
+    "@react-types/shared": "^3.25.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

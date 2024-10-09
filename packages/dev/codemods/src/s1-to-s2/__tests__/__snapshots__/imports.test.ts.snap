@@ -92,7 +92,7 @@ exports[`should preserve leading comment if first line is removed 1`] = `
 "/*
  * Some comment
  */
-import { StatusLight } from "@react-spectrum/s2";
+import { Button, StatusLight } from "@react-spectrum/s2";
 
 <>
   <Button>Test</Button>

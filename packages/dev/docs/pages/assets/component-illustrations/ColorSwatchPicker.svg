@@ -1,0 +1,55 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 32px) / 2) 0; width: 100%" height="32" viewBox="0 0 236 32" fill="none">
+<g clip-path="url(#clip0_1_1032)">
+<rect width="32" height="32" rx="16" fill="var(--anatomy-gray-600)"/>
+</g>
+<g clip-path="url(#clip1_1_1032)">
+<rect x="34.5" y="0.5" width="31" height="31" rx="15.5" fill="var(--anatomy-gray-600)"/>
+<rect x="34.5" y="0.5" width="31" height="31" rx="15.5" stroke="var(--anatomy-gray-800)"/>
+</g>
+<g clip-path="url(#clip2_1_1032)">
+<rect x="68" width="32" height="32" rx="16" fill="var(--anatomy-gray-500)"/>
+</g>
+<g clip-path="url(#clip3_1_1032)">
+<rect x="102" width="32" height="32" rx="16" fill="var(--anatomy-gray-500)"/>
+<rect x="105" y="3" width="26" height="26" rx="13" stroke="var(--anatomy-gray-50)" stroke-width="2"/>
+<rect x="103" y="1" width="30" height="30" rx="15" stroke="var(--anatomy-gray-900)" stroke-width="2"/>
+</g>
+<g clip-path="url(#clip4_1_1032)">
+<rect x="136" width="32" height="32" rx="16" fill="var(--anatomy-gray-400)"/>
+<g opacity="0.2">
+<rect x="136.5" y="0.5" width="31" height="31" rx="15.5" stroke="var(--anatomy-gray-50)"/>
+</g>
+</g>
+<g clip-path="url(#clip5_1_1032)">
+<rect x="170" width="32" height="32" rx="16" fill="var(--anatomy-gray-500)"/>
+<g opacity="0.2">
+<rect x="170.5" y="0.5" width="31" height="31" rx="15.5" stroke="var(--anatomy-gray-50)"/>
+</g>
+</g>
+<g clip-path="url(#clip6_1_1032)">
+<rect x="204" width="32" height="32" rx="16" fill="var(--anatomy-gray-600)"/>
+</g>
+<defs>
+<clipPath id="clip0_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)"/>
+</clipPath>
+<clipPath id="clip1_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)" transform="translate(34)"/>
+</clipPath>
+<clipPath id="clip2_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)" transform="translate(68)"/>
+</clipPath>
+<clipPath id="clip3_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)" transform="translate(102)"/>
+</clipPath>
+<clipPath id="clip4_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)" transform="translate(136)"/>
+</clipPath>
+<clipPath id="clip5_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)" transform="translate(170)"/>
+</clipPath>
+<clipPath id="clip6_1_1032">
+<rect width="32" height="32" fill="var(--anatomy-gray-50)" transform="translate(204)"/>
+</clipPath>
+</defs>
+</svg>

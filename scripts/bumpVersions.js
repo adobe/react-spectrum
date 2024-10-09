@@ -155,12 +155,14 @@ class VersionManager {
   }
 
   getChangedPackages() {
-    let packagesIndex = process.argv.findIndex(arg => arg === '--packages');
+    let packagesIndex = process.argv.findIndex(arg => arg === '--add' || arg === '--only');
     if (packagesIndex >= 0) {
       for (let pkg of process.argv.slice(packagesIndex + 1)) {
         this.changedPackages.add(pkg);
       }
-      return;
+      if (process.argv[packagesIndex] === '--only') {
+        return;
+      }
     }
 
 
@@ -173,7 +175,7 @@ class VersionManager {
         // Diff this package since the last published version, according to the package.json.
         // We create a git tag for each package version.
         let tag = `${pkg.name}@${pkg.version}`;
-        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/test-utils/**', ':!**/stories/**', ':!**/chromatic/**']);
+        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/stories/**', ':!**/chromatic/**']);
         if (res.status !== 0) {
           this.changedPackages.add(name);
         }

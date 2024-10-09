@@ -65,7 +65,7 @@ then
 fi
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn workspaces foreach --all --no-private version minor --deferred
+yarn workspaces foreach --all --no-private version patch --deferred
 yarn version apply --all
 
 commit_to_revert="HEAD~0"
@@ -160,6 +160,12 @@ then
   yarn install --no-immutable
   yarn build
   mv dist ../../$verdaccio_path/s2-webpack-5-example
+
+  echo 'test icon builder'
+  cd ../../examples/s2-webpack-5-example
+  mkdir icon-test
+  cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
+  npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 
   cd ../..
 
