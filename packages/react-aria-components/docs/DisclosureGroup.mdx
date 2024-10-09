@@ -89,15 +89,16 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 ## Features
 
 
-Custom styled disclosure groups can be difficult to implement in an accessible way with the correct aria pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and handle other accessibility features while allowing for custom styling.
+Custom styled disclosure groups can be difficult to implement in an accessible way with the correct aria pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and other accessibility features while allowing for custom styling.
 
-* **Accessible** - Disclosure groups are exposed to assistive technology via ARIA 
+* **Accessible** - Disclosure group is exposed to assistive technology via ARIA 
+* **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
 
 ## Anatomy
 
 <Anatomy />
 
-A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to exapnd it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
+A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to expand it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
 
 ```tsx
 import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
@@ -134,10 +135,10 @@ import type {DisclosureProps} from 'react-aria-components';
 
 interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
   label?: string,
-  content?: string
+  children?: React.ReactNode
 }
 
-function MyDisclosure({label, content, ...props}: MyDisclosureProps) {
+function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
   return (
     <Disclosure {...props}>
       <h3>
@@ -149,15 +150,19 @@ function MyDisclosure({label, content, ...props}: MyDisclosureProps) {
         </Button>
       </h3>
       <DisclosurePanel>
-        <p>{content}</p>
+        <p>{children}</p>
       </DisclosurePanel>
     </Disclosure>
   )
 }
 
 <DisclosureGroup defaultExpandedKeys={["system"]}>
-  <MyDisclosure id="system" label="System Requirements" content="Details about system requirements here" />
-  <MyDisclosure id="personal" label="Personal Information" content="Details about system requirements here" />
+  <MyDisclosure id="system" label="System Requirements" >
+    Details about system requirements here
+  </MyDisclosure>
+  <MyDisclosure id="personal" label="Personal Information" >
+    Details about personal information here
+  </MyDisclosure>
 </DisclosureGroup>
 
 ```
@@ -173,8 +178,12 @@ function ControlledExpanded(){
   return (
     <>
     <DisclosureGroup expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
-      <MyDisclosure id="system" label="System Requirements" content="Details about system requirements here" />
-      <MyDisclosure id="personal" label="Personal Information" content="Details about system requirements here" />
+      <MyDisclosure id="system" label="System Requirements" >
+        Details about system requirements here
+      </MyDisclosure>
+      <MyDisclosure id="personal" label="Personal Information" >
+        Details about personal information here
+      </MyDisclosure>
     </DisclosureGroup>
     <div style={{ marginTop: '20px' }}>You have expanded: {expandedKeys}</div>
     </>
@@ -189,8 +198,12 @@ A DisclosureGroup can be disabled using the `isDisabled` prop.
 
 ```tsx example
 <DisclosureGroup isDisabled>
-  <MyDisclosure id="system" label="System Requirements" content="Details about system requirements here" />
-  <MyDisclosure id="personal" label="Personal Information" content="Details about system requirements here" />
+  <MyDisclosure id="system" label="System Requirements" >
+    Details about system requirements here
+  </MyDisclosure>
+  <MyDisclosure id="personal" label="Personal Information" >
+    Details about personal information here"
+  </MyDisclosure>
 </DisclosureGroup>
 ```
 

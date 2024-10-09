@@ -109,7 +109,7 @@ import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as D
 
 ## Features
 
-Custom styled disclosures can be difficult to build in an accessible way with the correct aria pattern. When implementing, you must manually ensure that the button and panel of content are semantically connected via ids for accessibility. `Disclosure` helps automate this, and hanle other accessibility features while allowing for custom styling.
+Custom styled disclosures can be difficult to build in an accessible way with the correct aria pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `Disclosure` helps with this and other accessibility features while allowing for custom styling.
 
 * **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
 * **Accessible** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate aria attributes are automatically applied.
@@ -119,7 +119,7 @@ Custom styled disclosures can be difficult to build in an accessible way with th
 
 <Anatomy />
 
-A disclosure consists of a button and panel of content. The button is wrapped in a heading element with the appropriate level based on the architecture of the page, and it contains the label representing the section of content that it controls the visibility for. The panel is the section of content that is associated with the button/header which is either expanded or collapsed.
+A disclosure consists of a button and panel of content. The button is wrapped in a heading element with the appropriate level based on the architecture of the page, and it contains the label representing content within the panel. The panel is the section of content that is associated with the button which is either expanded or collapsed.
 
 ```tsx
 import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
@@ -145,10 +145,10 @@ import type {DisclosureProps} from 'react-aria-components';
 
 interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
   label?: string,
-  content?: string
+  children?: React.ReactNode
 }
 
-function MyDisclosure({label, content, ...props}: MyDisclosureProps) {
+function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
   return (
     <Disclosure {...props}>
       <h3>
@@ -160,13 +160,15 @@ function MyDisclosure({label, content, ...props}: MyDisclosureProps) {
         </Button>
       </h3>
       <DisclosurePanel>
-        <p>{content}</p>
+        <p>{children}</p>
       </DisclosurePanel>
     </Disclosure>
   )
 }
 
-<MyDisclosure label="Manage your account" content="How to manage your account" />
+<MyDisclosure label="Manage your account">
+  Details on managing your account
+</MyDisclosure>
 ```
 
 ## Expanded
@@ -174,7 +176,9 @@ function MyDisclosure({label, content, ...props}: MyDisclosureProps) {
 An uncontrolled Disclosure can be expanded by default using the `defaultExpanded` prop.
 
 ```tsx example
-<MyDisclosure label="Download, Install, and Set Up" content="Instructions on how to download, install, and set up" defaultExpanded />
+<MyDisclosure label="Download, Install, and Set Up" defaultExpanded >
+  Instructions on how to download, install, and set up
+</MyDisclosure>
 ```
 
 A controlled Disclosure can be expanded and collapsed using `isExpanded` and `onExpandedChange`
@@ -184,7 +188,9 @@ function ControlledExpanded() {
   let [isExpanded, setIsExpanded] = React.useState(true);
 
   return (
-    <MyDisclosure label="Download, Install, and Set Up" content="Instructions on how to download, install, and set up" isExpanded={isExpanded} onExpandedChange={setIsExpanded} />
+    <MyDisclosure label="Download, Install, and Set Up" isExpanded={isExpanded} onExpandedChange={setIsExpanded} >
+      Instructions on how to download, install, and set up
+    </MyDisclosure>
   )
 }
 
@@ -197,7 +203,9 @@ function ControlledExpanded() {
 A Disclosure can be disabled using the `isDisabled` prop. 
 
 ```tsx example
-<MyDisclosure label="Introduction to Knitting" content="Details about knitting here" isDisabled />
+<MyDisclosure label="Introduction to Knitting" isDisabled >
+  Details about knitting here
+</MyDisclosure>
 ```
 
 ## Props
@@ -282,7 +290,7 @@ All React Aria Components export a corresponding context that can be used to sen
 
 <ContextTable components={['UNSTABLE_Disclosure']} docs={docs} />
 
-This example shows a `DisclosureGroup` component that renders a group of disclosures. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child disclosures via the `UNSTABLE_DisclosureContext` provider.
+This example shows a `DisclosureGroup` component that renders a group of disclosures. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child disclosures via the `DisclosureContext` provider.
 
 ```tsx example
 import {DisclosureContext} from 'react-aria-components';
@@ -303,8 +311,12 @@ function DisclosureGroup({children, isDisabled}: DisclosureGroupProps) {
 }
 
 <DisclosureGroup isDisabled>
-    <MyDisclosure label="How to make a return" content="Details about returning items" />
-    <MyDisclosure label="How to cancel an order" content="Details on canceling an order" />
+  <MyDisclosure label="How to make a return" >
+    Details about returning items
+  </MyDisclosure>
+  <MyDisclosure label="How to cancel an order" >
+    Details on canceling an order
+  </MyDisclosure>
 </DisclosureGroup>
 
 ```
