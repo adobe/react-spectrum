@@ -1,0 +1,25 @@
+name: PR Title Lint
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+permissions:
+  pull-requests: read
+jobs:
+  pr-title-lint:
+    runs-on: ubuntu-latest
+    name: Lint PR Title
+    steps:
+      - name: Check PR Title
+        env: 
+          TITLE: ${{ github.event.pull_request.title}}
+        run: |
+            if [[ "${TITLE,,}" =~ ^\[?\(?wip\]?\)? ]]; then
+            echo "PR is marked as a WIP. Skipping validation."
+            exit 0
+            elif (echo "${TITLE,,}" | grep -P "^(fix|feat|build|chore|docs|test|refactor|ci|localize|bump|revert)(\(([A-Za-z0-9])+\))?:"); then
+            echo "Success"
+            exit 0
+            else
+            echo "PR title validation failed. Please read our PR naming guide on our github wiki to see how to correctly name your PR: https://github.com/adobe/react-spectrum/wiki/Pull-Request-Naming-Guide"
+            exit 1
+            fi
