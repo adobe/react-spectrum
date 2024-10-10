@@ -37,6 +37,7 @@ describe('Checkbox', () => {
     let {getByRole} =  render(<Checkbox data-foo="bar">Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
     expect(checkbox).toHaveAttribute('data-foo', 'bar');
+    expect(getByRole('checkbox')).not.toHaveAttribute('data-foo', 'bar');
   });
 
   it('should support slot', () => {
