@@ -42,31 +42,31 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
+import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
-    <h3>
+    <Heading>
       <Button slot="trigger">
         <svg viewBox="0 0 24 24">
           <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
         Personal Information
       </Button>
-    </h3>
+    </Heading>
     <DisclosurePanel>
       <p>Personal information form here.</p>
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <h3>
+    <Heading>
       <Button slot="trigger">
         <svg viewBox="0 0 24 24">
           <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
         Billing Address
       </Button>
-    </h3>
+    </Heading>
     <DisclosurePanel>
       <p>Billing address form here.</p>
     </DisclosurePanel>
@@ -95,13 +95,13 @@ Custom styled disclosure groups can be difficult to implement in an accessible w
 A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to expand it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
 
 ```tsx
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
+import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup>
   <Disclosure>
-    <h3>
+    <Heading>
       <Button />
-    </h3>
+    </Heading>
     <DisclosurePanel />
   </Disclosure>
 </DisclosureGroup>
@@ -135,14 +135,14 @@ interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
 function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
   return (
     <Disclosure {...props}>
-      <h3>
+      <Heading>
         <Button slot="trigger">
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
           {label}
         </Button>
-      </h3>
+      </Heading>
       <DisclosurePanel>
         <p>{children}</p>
       </DisclosurePanel>

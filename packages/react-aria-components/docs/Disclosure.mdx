@@ -40,17 +40,17 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
+import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
-  <h3>
+  <Heading>
     <Button slot="trigger">
       <svg viewBox="0 0 24 24">
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
       </svg>
       System Requirements
     </Button>
-  </h3>
+  </Heading>
   <DisclosurePanel>
     <p>Details about system requirements here.</p>
   </DisclosurePanel>
@@ -113,7 +113,7 @@ Custom styled disclosures can be difficult to build in an accessible way with th
 
 <Anatomy />
 
-A disclosure consists of a button and panel of content. The button is wrapped in a heading element with the appropriate level based on the architecture of the page, and it contains the label representing content within the panel. The panel is the section of content that is associated with the button which is either expanded or collapsed.
+A disclosure consists of a button and panel of content. The button contains the label representing content within the panel, and the panel is the section of content that is associated with the button which is either expanded or collapsed.
 
 ```tsx
 import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
@@ -145,14 +145,14 @@ interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
 function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
   return (
     <Disclosure {...props}>
-      <h3>
+      <Heading>
         <Button slot="trigger">
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
           {label}
         </Button>
-      </h3>
+      </Heading>
       <DisclosurePanel>
         <p>{children}</p>
       </DisclosurePanel>
