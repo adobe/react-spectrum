@@ -12,7 +12,7 @@
 import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
 import {CheckboxContext} from './RSPContexts';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
-import {ContextValue, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -180,7 +180,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
-      ...props,
+      ...removeDataAttributes(props),
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
       // it's passed explicitly here to avoid typescript error (requires ignore).
       // @ts-ignore
@@ -190,7 +190,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
     }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox({
-      ...props,
+      ...removeDataAttributes(props),
       children: typeof props.children === 'function' ? true : props.children,
       validationBehavior
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -204,7 +204,6 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   });
 
   let renderProps = useRenderProps({
-    // TODO: should data attrs go on the label or on the <input>? useCheckbox passes them to the input...
     ...props,
     defaultClassName: 'react-aria-Checkbox',
     values: {
