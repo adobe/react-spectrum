@@ -11,19 +11,59 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
+import {MenuTesterOpts, UserOpts} from './types';
 import {triggerLongPress} from './events';
 
-export interface MenuOptions extends UserOpts, BaseTesterOpts {
-  user: any
+interface MenuOpenOpts {
+  /**
+   * Whether the menu needs to be long pressed to open.
+   */
+  needsLongPress?: boolean,
+  /**
+   * What interaction type to use when opening the menu. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
 }
+
+interface MenuSelectOpts extends MenuOpenOpts {
+  /**
+   * The option node to select. Option nodes can be sourced via `options()`.
+   */
+  option?: HTMLElement,
+  /**
+   * The text of the node to look for when selecting a option. Alternative to `option`.
+   */
+  optionText?: string,
+  /**
+   * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon option selection.
+   * @default 'single'
+   */
+  menuSelectionMode?: 'single' | 'multiple',
+  /**
+   * Whether or not the menu closes on select. Depends on menu implementation and configuration.
+   * @default true
+   */
+  closesOnSelect?: boolean
+}
+
+interface MenuOpenSubmenuOpts extends MenuOpenOpts {
+  /**
+   * The submenu trigger to open. Available submenu trigger nodes can be sourced via `submenuTriggers`.
+   */
+  submenuTrigger?: HTMLElement,
+  /**
+   * The text of submenu trigger to open. Alternative to `submenuTrigger`.
+   */
+  submenuTriggerText?: string
+}
+
 export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _trigger: HTMLElement;
 
-  constructor(opts: MenuOptions) {
+  constructor(opts: MenuTesterOpts) {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -43,13 +83,19 @@ export class MenuTester {
     }
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the menu tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Opens the menu. Defaults to using the interaction type set on the menu tester.
+   */
+  async open(opts: MenuOpenOpts = {}) {
     let {
       needsLongPress,
       interactionType = this._interactionType
@@ -91,11 +137,15 @@ export class MenuTester {
         }
       });
     }
-  };
+  }
 
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) => {
+  /**
+   * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
+   * The desired option can be targeted via the option's node or the option's text.
+   */
+  async selectOption(opts: MenuSelectOpts) {
     let {
       optionText,
       menuSelectionMode = 'single',
@@ -146,10 +196,13 @@ export class MenuTester {
     } else {
       throw new Error("Attempted to select a option in the menu, but menu wasn't found.");
     }
-  };
+  }
 
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
-  openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']}): Promise<MenuTester | null> => {
+  /**
+   * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
+   */
+  async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester | null> {
     let {
       submenuTrigger,
       submenuTriggerText,
@@ -179,9 +232,12 @@ export class MenuTester {
     }
 
     return null;
-  };
+  }
 
-  close = async () => {
+  /**
+   * Closes the menu.
+   */
+  async close() {
     let menu = this.menu;
     if (menu) {
       act(() => menu.focus());
@@ -199,34 +255,27 @@ export class MenuTester {
         throw new Error('Expected the menu to not be in the document after closing it.');
       }
     }
-  };
+  }
 
-  get trigger() {
+  /**
+   * Returns the menu's trigger.
+   */
+  get trigger(): HTMLElement {
     return this._trigger;
   }
 
-  get menu() {
+  /**
+   * Returns the menu if present.
+   */
+  get menu(): HTMLElement | null {
     let menuId = this.trigger.getAttribute('aria-controls');
-    return menuId ? document.getElementById(menuId) : undefined;
+    return menuId ? document.getElementById(menuId) : null;
   }
 
-  get options(): HTMLElement[] | never[] {
-    let menu = this.menu;
-    let options = [];
-    if (menu) {
-      options = within(menu).queryAllByRole('menuitem');
-      if (options.length === 0) {
-        options = within(menu).queryAllByRole('menuitemradio');
-        if (options.length === 0) {
-          options = within(menu).queryAllByRole('menuitemcheckbox');
-        }
-      }
-    }
-
-    return options;
-  }
-
-  get sections() {
+  /**
+   * Returns the menu's sections if any.
+   */
+  get sections(): HTMLElement[] {
     let menu = this.menu;
     if (menu) {
       return within(menu).queryAllByRole('group');
@@ -235,10 +284,32 @@ export class MenuTester {
     }
   }
 
-  get submenuTriggers() {
-    let options = this.options;
+  /**
+   * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided via `element`.
+   */
+  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.menu} = opts;
+    let options = [];
+    if (element) {
+      options = within(element).queryAllByRole('menuitem');
+      if (options.length === 0) {
+        options = within(element).queryAllByRole('menuitemradio');
+        if (options.length === 0) {
+          options = within(element).queryAllByRole('menuitemcheckbox');
+        }
+      }
+    }
+
+    return options;
+  }
+
+  /**
+   * Returns the menu's submenu triggers if any.
+   */
+  get submenuTriggers(): HTMLElement[] {
+    let options = this.options();
     if (options.length > 0) {
-      return this.options.filter(item => item.getAttribute('aria-haspopup') != null);
+      return options.filter(item => item.getAttribute('aria-haspopup') != null);
     }
 
     return [];

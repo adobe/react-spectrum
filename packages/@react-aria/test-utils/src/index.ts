@@ -15,4 +15,4 @@ export {installMouseEvent, installPointerEvent} from './testSetup';
 export {pointerMap} from './userEventMaps';
 export {User} from './user';
 
-export type {UserOpts} from './user';
+export type {UserOpts} from './types';

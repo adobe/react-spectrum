@@ -73,7 +73,7 @@ describe('Select', () => {
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
     expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
-    let options = selectTester.options;
+    let options = selectTester.options();
     expect(options).toHaveLength(3);
 
     await user.click(options[1]);
