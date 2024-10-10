@@ -13,7 +13,6 @@ export default Layout;
 import docs from 'docs:@react-spectrum/accordion';
 import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/accordion/package.json';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
 category: Navigation
@@ -32,11 +31,6 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
   packageData={packageData}
   componentNames={['Disclosure', 'DisclosureHeader', 'DisclosurePanel']} />
 
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
-
 ## Example
 
 ```tsx example
@@ -46,6 +40,38 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
     <p>Details about system requirements here.</p>
   </DisclosurePanel>
 </Disclosure>
+```
+
+## Content
+
+Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureHeader` and `DisclosurePanel`. The `DisclosureHeader` controls the expansion of the `DisclosurePanel` and the contents inside. 
+
+Disclosure can be used as a standalone collapsible section of content. However, multiple discosures can be combined to form an [Accordion](Accordion.html).
+
+### Internationalization
+
+In order to internationalize a disclosure, all text content within the disclosure should be localized.
+
+## Events
+
+Disclosure accepts an `onExpandedChange` prop which is triggered when it is expanded or collapsed. The example below uses `onExpandedChange` to programmatically control disclosure expansion.
+
+```tsx example
+function ControlledExpansion() {
+  let [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  
+  return (
+    <>
+      <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
+        <DisclosureHeader>System Requirements</DisclosureHeader>
+        <DisclosurePanel>
+          <p>Details about system requirements here.</p>
+        </DisclosurePanel>
+      </Disclosure>
+      <div style={{marginTop: '20px'}}>{isExpanded ? 'The disclosure is expanded' : 'The disclosure is collapsed'}</div>
+    </>
+  )
+}
 ```
 
 ## Props
@@ -61,3 +87,28 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
 ### DisclosurePanel
 
 <PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
+
+
+## Visual Options
+
+### Disabled
+
+```tsx example
+<Disclosure isDisabled>
+  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosurePanel>
+    <p>Details about system requirements here.</p>
+  </DisclosurePanel>
+</Disclosure>
+```
+
+### Expanded
+
+```tsx example
+<Disclosure defaultExpanded>
+  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosurePanel>
+    <p>Details about system requirements here.</p>
+  </DisclosurePanel>
+</Disclosure>
+```
