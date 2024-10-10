@@ -13,6 +13,7 @@ const attributes = {
 
     // States
     'open',
+    'expanded',
     'entering',
     'exiting',
     'indeterminate',
