@@ -117,6 +117,7 @@
           "./packages/@react-stately/calendar",
           "./packages/@react-stately/checkbox",
           "./packages/@react-stately/color",
+          "./packages/@react-stately/collection",
           "./packages/@react-stately/combobox",
           "./packages/@react-stately/disclosure",
           "./packages/@react-stately/list",
