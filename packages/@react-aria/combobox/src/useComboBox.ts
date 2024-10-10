@@ -79,7 +79,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     // completionMode = 'suggest',
     shouldFocusWrap,
     isReadOnly,
-    isDisabled
+    isDisabled,
+    shouldFocusOnHover = true
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
@@ -368,7 +369,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       autoFocus: state.focusStrategy,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
-      shouldFocusOnHover: true,
+      shouldFocusOnHover: shouldFocusOnHover,
       linkBehavior: 'selection' as const
     }),
     descriptionProps,
