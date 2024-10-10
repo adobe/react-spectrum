@@ -27,7 +27,7 @@ import {FocusScope} from '@react-aria/focus';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressProvider, useHover} from '@react-aria/interactions';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {forwardRef, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
@@ -301,7 +301,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
-    <PressResponder {...mergeProps(buttonProps, hoverProps, domProps)}>
+    <PressProvider {...mergeProps(buttonProps, hoverProps, domProps)}>
       <ClearSlots>
         <SlotProvider
           slots={{
@@ -341,7 +341,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
           </ActionButton>
         </SlotProvider>
       </ClearSlots>
-    </PressResponder>
+    </PressProvider>
   );
 
   if (hideButtonText && textContent) {
@@ -438,7 +438,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
             UNSAFE_className: classNames(styles, 'spectrum-ActionGroup-menu-text')
           }
         }}>
-        <PressResponder {...mergeProps(buttonProps, hoverProps)}>
+        <PressProvider {...mergeProps(buttonProps, hoverProps)}>
           <ActionButton
             {...otherProps}
             id={id}
@@ -466,7 +466,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
             staticColor={staticColor}>
             {summaryIcon || <More />}
           </ActionButton>
-        </PressResponder>
+        </PressProvider>
       </SlotProvider>
       <Menu
         items={items}
