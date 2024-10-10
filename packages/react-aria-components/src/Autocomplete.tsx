@@ -9,32 +9,25 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useFilter} from 'react-aria';
-import {ButtonContext} from './Button';
-import {Collection, ComboBoxState, Node} from 'react-stately';
+
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
+import {Collection, Node} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
-import {OverlayTriggerStateContext} from './Dialog';
-import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
-import { useAutocomplete } from '@react-aria/autocomplete';
-import { useAutocompleteState } from '@react-stately/autocomplete';
+import {useFilter} from 'react-aria';
 
 export interface AutocompleteRenderProps {
-  // /**
-  //  * Whether the combobox is currently open.
-  //  * @selector [data-open]
-  //  */
-  // isOpen: boolean,
   /**
    * Whether the autocomplete is disabled.
    * @selector [data-disabled]
@@ -52,8 +45,7 @@ export interface AutocompleteRenderProps {
   isRequired: boolean
 }
 
-// TODO get rid of any other combobox specific props here
-export interface AutocompleteProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<AutocompleteProps>, SlotProps {
+export interface AutocompleteProps<T extends object> extends Omit<AriaAutocompleteProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<AutocompleteRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the autocomplete list. */
   defaultFilter?: (textValue: string, inputValue: string) => boolean,
   /**
@@ -62,21 +54,19 @@ export interface AutocompleteProps<T extends object> extends Omit<AriaComboBoxPr
    * @default 'key'
    */
   formValue?: 'text' | 'key'
-  // /** Whether the combo box allows the menu to be open when the collection is empty. */
-  // allowsEmptyCollection?: boolean
 }
 
 export const AutocompleteContext = createContext<ContextValue<AutocompleteProps<any>, HTMLDivElement>>(null);
-export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
+export const AutocompleteStateContext = createContext<AutocompleteState<any> | null>(null);
 
 function Autocomplete<T extends object>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  // TODO will need to replace with menu (aka replicate Listbox's stuff in Menu)
   let content = useMemo(() => (
     <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
       {typeof children === 'function'
         ? children({
-          isOpen: false,
           isDisabled,
           isInvalid,
           isRequired,
@@ -121,17 +111,13 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
     collection,
     validationBehavior
   });
-  // console.log('state', state)
 
-  let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
-  let popoverRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
 
   // TODO: replace with useAutocomplete
   let {
-    buttonProps,
     inputProps,
     listBoxProps,
     labelProps,
@@ -142,39 +128,17 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
     ...removeDataAttributes(props),
     label,
     inputRef,
-    buttonRef,
     listBoxRef,
-    popoverRef,
     name: formValue === 'text' ? name : undefined,
     validationBehavior
   }, state);
 
-
-  // TODO: comment these out when you get Autocomplete working in the story
-  // Make menu width match input + button
-  // let [menuWidth, setMenuWidth] = useState<string | null>(null);
-  // let onResize = useCallback(() => {
-  //   if (inputRef.current) {
-  //     let buttonRect = buttonRef.current?.getBoundingClientRect();
-  //     let inputRect = inputRef.current.getBoundingClientRect();
-  //     let minX = buttonRect ? Math.min(buttonRect.left, inputRect.left) : inputRect.left;
-  //     let maxX = buttonRect ? Math.max(buttonRect.right, inputRect.right) : inputRect.right;
-  //     setMenuWidth((maxX - minX) + 'px');
-  //   }
-  // }, [buttonRef, inputRef, setMenuWidth]);
-
-  // useResizeObserver({
-  //   ref: inputRef,
-  //   onResize: onResize
-  // });
-
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
-    // isOpen: state.isOpen,
     isDisabled: props.isDisabled || false,
     isInvalid: validation.isInvalid || false,
     isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
+  }), [props.isDisabled, validation.isInvalid, props.isRequired]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -189,21 +153,9 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
   return (
     <Provider
       values={[
-        [ComboBoxStateContext, state],
+        [AutocompleteStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        // [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
-        // TODO: get rid of the popover stuff and trigger
-        // [OverlayTriggerStateContext, state],
-        // [PopoverContext, {
-        //   ref: popoverRef,
-        //   triggerRef: inputRef,
-        //   scrollRef: listBoxRef,
-        //   placement: 'bottom start',
-        //   isNonModal: true,
-        //   trigger: 'ComboBox',
-        //   // style: {'--trigger-width': menuWidth} as React.CSSProperties
-        // }],
         [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
         [ListStateContext, state],
         [TextContext, {
@@ -221,7 +173,6 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
         ref={ref}
         slot={props.slot || undefined}
         data-focused={state.isFocused || undefined}
-        // data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />

@@ -1,0 +1,6 @@
+{
+  "countAnnouncement": "Dostupno još: {optionCount, plural, one {# opcija} other {# opcije/a}}.",
+  "focusAnnouncement": "{isGroupChange, select, true {Unesena grupa {groupTitle}, s {groupCount, plural, one {# opcijom} other {# optione/a}}. } other {}}{optionText}{isSelected, select, true {, izabranih} other {}}",
+  "listboxLabel": "Predlozi",
+  "selectedAnnouncement": "{optionText}, izabrano"
+}

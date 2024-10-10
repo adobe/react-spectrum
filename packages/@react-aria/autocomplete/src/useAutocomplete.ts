@@ -11,33 +11,30 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps} from '@react-types/combobox';
-// import {ariaHideOutside} from '@react-aria/overlays';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
-import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
+import {chain, isAppleDevice, mergeProps, useId, useLabels, useRouter} from '@react-aria/utils';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
-// TODO: port over intl message
 // @ts-ignore
-import intlMessages from '../../combobox/intl/*.json';
+import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
+
+export interface AriaAutocompleteProps<T> extends AutocompleteProps<T>, DOMProps, InputDOMProps, AriaLabelingProps {
+  /** Whether keyboard navigation is circular. */
+  shouldFocusWrap?: boolean
+}
+
+export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>,
-  /** The ref for the list box popover. */
-  popoverRef: RefObject<Element | null>,
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement | null>,
-  /** The ref for the optional list box popup trigger button.  */
-  buttonRef?: RefObject<Element | null>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate,
   /**
@@ -47,55 +44,43 @@ export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'chil
    */
   layoutDelegate?: LayoutDelegate
 }
-
 export interface AutocompleteAria<T> extends ValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
-  /** Props for the combo box input element. */
+  /** Props for the autocomplete input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  // TODO change this menu props
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
   listBoxProps: AriaListBoxOptions<T>,
-  /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
-  buttonProps: AriaButtonProps,
-  /** Props for the combo box description element, if any. */
+  /** Props for the autocomplete description element, if any. */
   descriptionProps: DOMAttributes,
-  /** Props for the combo box error message element, if any. */
+  /** Props for the autocomplete error message element, if any. */
   errorMessageProps: DOMAttributes
 }
 
 /**
- * Provides the behavior and accessibility implementation for a combo box component.
- * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
- * @param props - Props for the combo box.
- * @param state - State for the select, as returned by `useComboBoxState`.
+ * Provides the behavior and accessibility implementation for a autocomplete component.
+ * A autocomplete combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * @param props - Props for the autocomplete.
+ * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBoxState<T>): AutocompleteAria<T> {
+export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: AutocompleteState<T>): AutocompleteAria<T> {
   let {
-    buttonRef,
-    // popoverRef,
     inputRef,
     listBoxRef,
     keyboardDelegate,
     layoutDelegate,
-    // completionMode = 'suggest',
     shouldFocusWrap,
     isReadOnly,
     isDisabled
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
-  // TODO: we will only need the menu props for the id for listData (might need a replacement aria-labelledby and autofocus?)
-  let {menuProps} = useMenuTrigger<T>(
-    {
-      type: 'listbox',
-      isDisabled: isDisabled || isReadOnly
-    },
-    state,
-    buttonRef
-  );
+  // TODO: we will only need the menu props for the id for listData (might need a replacement for aria-labelledby and autofocus?)
+  let menuId = useId();
 
   // Set listbox id so it can be used when calling getItemId later
-  listData.set(state, {id: menuProps.id});
+  listData.set(state, {id: menuId});
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -119,6 +104,7 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
     shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
+    // TODO: If we are using menu, then maybe we get rid of this?
     isVirtualized: true
   });
 
@@ -132,16 +118,11 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
     switch (e.key) {
       case 'Enter':
       case 'Tab':
-        // // Prevent form submission if menu is open since we may be selecting a option
-        // if (state.isOpen && e.key === 'Enter') {
-        //   e.preventDefault();
-        // }
         // TODO: Prevent form submission at all times?
         e.preventDefault();
 
-
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
+        if (state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
           if (e.key === 'Enter') {
             let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
@@ -150,8 +131,8 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
             }
           }
 
-          // TODO: for now keep close and commit? But perhaps this should always just be commit? Maybe need to replace useComboboxState since the open state tracking may prove problematic
-          state.close();
+          // TODO: previously used to call state.close here which would toggle selection for a link and set the input value to that link's input text
+          // I think that doens't make sense really so opting to do nothing here.
         } else {
           state.commit();
         }
@@ -168,17 +149,9 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
         // TODO: right now hitting escape multiple times will not clear the input field, perhaps only do that if the user provides a searchfiled to the autocomplete
         state.revert();
         break;
-      // TODO: replace up and down with setFocusStrategy eventually, but may need to rip out the open state stuff first
       case 'ArrowDown':
-        state.selectionManager.setFocused(true);
-        // state.open('first', 'manual');
-        // state.setFocusStrategy('first')
-
-        break;
       case 'ArrowUp':
         state.selectionManager.setFocused(true);
-        // state.open('last', 'manual');
-        // state.setFocusStrategy('last');
         break;
       case 'ArrowLeft':
       case 'ArrowRight':
@@ -188,14 +161,6 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
   };
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    // TODO: no more button or popover
-    // let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
-    // let blurIntoPopover = popoverRef.current?.contains(e.relatedTarget);
-    // // Ignore blur if focused moved to the button(if exists) or into the popover.
-    // if (blurFromButton || blurIntoPopover) {
-    //   return;
-    // }
-
     if (props.onBlur) {
       props.onBlur(e);
     }
@@ -219,8 +184,6 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
-    // TODO: no longer need isOpen logic since it is always technically open
-    // onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onKeyDown: !isReadOnly ? chain(collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
     value: state.inputValue,
@@ -230,30 +193,8 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
     [privateValidationStateProp]: state
   }, inputRef);
 
-  // Press handlers for the ComboBox button
-  // let onPress = (e: PressEvent) => {
-  //   if (e.pointerType === 'touch') {
-  //     // Focus the input field in case it isn't focused yet
-  //     inputRef.current.focus();
-  //     state.toggle(null, 'manual');
-  //   }
-  // };
-
-  // let onPressStart = (e: PressEvent) => {
-  //   if (e.pointerType !== 'touch') {
-  //     inputRef.current.focus();
-  //     state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
-  //   }
-  // };
-
-  // let triggerLabelProps = useLabels({
-  //   id: menuTriggerProps.id,
-  //   'aria-label': stringFormatter.format('buttonLabel'),
-  //   'aria-labelledby': props['aria-labelledby'] || labelProps.id
-  // });
-
   let listBoxProps = useLabels({
-    id: menuProps.id,
+    id: menuId,
     'aria-label': stringFormatter.format('listboxLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
@@ -281,8 +222,6 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
       inputRef.current.focus();
-      // TODO: don't need this because it is technically always open
-      // state.toggle(null, 'manual');
 
       lastEventTime.current = e.timeStamp;
     }
@@ -291,7 +230,7 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
   // VoiceOver has issues with announcing aria-activedescendant properly on change
   // (especially on iOS). We use a live region announcer to announce focus changes
   // manually. In addition, section titles are announced when navigating into a new section.
-  let focusedItem = state.selectionManager.focusedKey != null && state.isOpen
+  let focusedItem = state.selectionManager.focusedKey != null
     ? state.collection.getItem(state.selectionManager.focusedKey)
     : undefined;
   let sectionKey = focusedItem?.parentKey ?? null;
@@ -322,25 +261,23 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
   // Announce the number of available suggestions when it changes
   let optionCount = getItemCount(state.collection);
   let lastSize = useRef(optionCount);
-  // let lastOpen = useRef(state.isOpen);
-  // TODO: test this behavior below
+  let [announced, setAnnounced] = useState(false);
+
+  // TODO: test this behavior below, now that there isn't a open state this should just announce for the first render in which the field is focused?
   useEffect(() => {
-    // Only announce the number of options available when the menu opens if there is no
+    // Only announce the number of options available when the autocomplete first renders if there is no
     // focused item, otherwise screen readers will typically read e.g. "1 of 6".
     // The exception is VoiceOver since this isn't included in the message above.
-    let didOpenWithoutFocusedItem =
-      // state.isOpen !== lastOpen.current &&
-      (state.selectionManager.focusedKey == null || isAppleDevice());
+    let didRenderWithoutFocusedItem = !announced && (state.selectionManager.focusedKey == null || isAppleDevice());
 
-    // if (state.isOpen && (didOpenWithoutFocusedItem || optionCount !== lastSize.current)) {
-    if ((didOpenWithoutFocusedItem || optionCount !== lastSize.current)) {
+    if ((didRenderWithoutFocusedItem || optionCount !== lastSize.current)) {
       let announcement = stringFormatter.format('countAnnouncement', {optionCount});
       announce(announcement);
+      setAnnounced(true);
     }
 
     lastSize.current = optionCount;
-    // lastOpen.current = state.isOpen;
-  });
+  }, [announced, setAnnounced, optionCount, stringFormatter, state.selectionManager.focusedKey]);
 
   // Announce when a selection occurs for VoiceOver. Other screen readers typically do this automatically.
   let lastSelectedKey = useRef(state.selectedKey);
@@ -355,29 +292,10 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
     lastSelectedKey.current = state.selectedKey;
   });
 
-  // TODO: may need a replacement for this? Actually I don't think we do since we just hide everything outside the popover which will be external to this component
-  // useEffect(() => {
-  //   if (state.isOpen) {
-  //     return ariaHideOutside([inputRef.current, popoverRef.current]);
-  //   }
-  // }, [state.isOpen, inputRef, popoverRef]);
-
   return {
     labelProps,
-    // TODO get rid of
-    buttonProps: {
-    //   ...menuTriggerProps,
-    //   ...triggerLabelProps,
-    //   excludeFromTabOrder: true,
-    //   preventFocusOnPress: true,
-    //   onPress,
-    //   onPressStart,
-    //   isDisabled: isDisabled || isReadOnly
-    },
     inputProps: mergeProps(inputProps, {
-      // role: 'combobox',
-      // 'aria-expanded': menuTriggerProps['aria-expanded'],
-      'aria-controls': state.isOpen ? menuProps.id : undefined,
+      'aria-controls': menuId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
@@ -387,8 +305,7 @@ export function useAutocomplete<T>(props: AriaComboBoxOptions<T>, state: ComboBo
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
     }),
-    listBoxProps: mergeProps(menuProps, listBoxProps, {
-      autoFocus: state.focusStrategy,
+    listBoxProps: mergeProps(listBoxProps, {
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,

@@ -12,6 +12,6 @@
 export {useSearchAutocomplete} from './useSearchAutocomplete';
 export {useAutocomplete} from './useAutocomplete';
 
-// TODO: export types for the hook when done
 export type {AriaSearchAutocompleteOptions, SearchAutocompleteAria} from './useSearchAutocomplete';
 export type {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
+export type {AriaAutocompleteProps, AriaAutocompleteOptions, AutocompleteAria} from './useAutocomplete';

@@ -13,4 +13,4 @@
 export {useAutocompleteState} from './useAutocompleteState';
 
 // TODO export the types
-// export type {ComboBoxStateOptions, ComboBoxState} from './useComboBoxState';
+export type {AutocompleteProps, AutocompleteStateOptions, AutocompleteState} from './useAutocompleteState';
