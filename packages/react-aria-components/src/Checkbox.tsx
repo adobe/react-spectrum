@@ -180,7 +180,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
-      ...props,
+      ...removeDataAttributes(props),
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
       // it's passed explicitly here to avoid typescript error (requires ignore).
       // @ts-ignore
@@ -190,7 +190,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
     }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox({
-      ...props,
+      ...removeDataAttributes(props),
       children: typeof props.children === 'function' ? true : props.children,
       validationBehavior
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -239,10 +239,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
       data-invalid={isInvalid || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input
-          // data attribute should only go to the outermost dom
-          {...mergeProps(removeDataAttributes(inputProps), focusProps)}
-          ref={inputRef} />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
