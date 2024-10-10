@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Autocomplete, Button, Input, Label, ListBox, Popover} from 'react-aria-components';
+import {Autocomplete, Input, Label, ListBox} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -25,11 +25,7 @@ export const AutocompleteExample = () => (
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-      </Button>
     </div>
-    {/* <Popover placement="bottom end"> */}
     <ListBox
       data-testid="combo-box-list-box"
       className={styles.menu}>
@@ -38,7 +34,6 @@ export const AutocompleteExample = () => (
       <MyListBoxItem>Baz</MyListBoxItem>
       <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
     </ListBox>
-    {/* </Popover> */}
   </Autocomplete>
 );
 
@@ -50,22 +45,17 @@ interface AutocompleteItem {
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 export const AutocompleteRenderPropsStatic = () => (
   <Autocomplete data-testid="combo-box-render-props-static">
-    {({isOpen}) => (
+    {() => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
         <div style={{display: 'flex'}}>
           <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
         </div>
-        {/* <Popover placement="bottom end"> */}
-          <ListBox className={styles.menu}>
-            <MyListBoxItem>Foo</MyListBoxItem>
-            <MyListBoxItem>Bar</MyListBoxItem>
-            <MyListBoxItem>Baz</MyListBoxItem>
-          </ListBox>
-        {/* </Popover> */}
+        <ListBox className={styles.menu}>
+          <MyListBoxItem>Foo</MyListBoxItem>
+          <MyListBoxItem>Bar</MyListBoxItem>
+          <MyListBoxItem>Baz</MyListBoxItem>
+        </ListBox>
       </>
     )}
   </Autocomplete>
@@ -73,20 +63,15 @@ export const AutocompleteRenderPropsStatic = () => (
 
 export const AutocompleteRenderPropsDefaultItems = () => (
   <Autocomplete defaultItems={items}>
-    {({isOpen}) => (
+    {() => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
         <div style={{display: 'flex'}}>
           <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
         </div>
-        {/* <Popover placement="bottom end"> */}
-          <ListBox className={styles.menu}>
-            {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        {/* </Popover> */}
+        <ListBox className={styles.menu}>
+          {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+        </ListBox>
       </>
     )}
   </Autocomplete>
@@ -95,20 +80,15 @@ export const AutocompleteRenderPropsDefaultItems = () => (
 export const AutocompleteRenderPropsItems = {
   render: () => (
     <Autocomplete items={items}>
-      {({isOpen}) => (
+      {() => (
         <>
           <Label style={{display: 'block'}}>Test</Label>
           <div style={{display: 'flex'}}>
             <Input />
-            <Button>
-              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-            </Button>
           </div>
-          {/* <Popover placement="bottom end"> */}
-            <ListBox className={styles.menu}>
-              {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-            </ListBox>
-          {/* </Popover> */}
+          <ListBox className={styles.menu}>
+            {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+          </ListBox>
         </>
       )}
     </Autocomplete>
@@ -122,20 +102,15 @@ export const AutocompleteRenderPropsItems = {
 
 export const AutocompleteRenderPropsListBoxDynamic = () => (
   <Autocomplete>
-    {({isOpen}) => (
+    {() => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
         <div style={{display: 'flex'}}>
           <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
         </div>
-        {/* <Popover placement="bottom end"> */}
-          <ListBox className={styles.menu} items={items}>
-            {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        {/* </Popover> */}
+        <ListBox className={styles.menu} items={items}>
+          {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
+        </ListBox>
       </>
     )}
   </Autocomplete>
@@ -170,16 +145,11 @@ export const AutocompleteAsyncLoadingExample = () => {
       <Label style={{display: 'block'}}>Test</Label>
       <div style={{display: 'flex'}}>
         <Input />
-        <Button>
-          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-        </Button>
       </div>
-      {/* <Popover placement="bottom end"> */}
-        <ListBox<AutocompleteItem>
-          className={styles.menu}>
-          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-        </ListBox>
-      {/* </Popover> */}
+      <ListBox<AutocompleteItem>
+        className={styles.menu}>
+        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+      </ListBox>
     </Autocomplete>
   );
 };
