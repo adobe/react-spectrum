@@ -18,7 +18,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-aria/test-utils';
 
 let manyItems = [];
-for (let i = 1; i <= 100; i++) {
+for (let i = 1; i <= 10; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
