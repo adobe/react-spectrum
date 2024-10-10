@@ -16,7 +16,6 @@ import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTab
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 import {Keyboard} from '@react-spectrum/text';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Disclosure from '@react-spectrum/docs/pages/assets/component-illustrations/Disclosure.svg'
@@ -39,11 +38,6 @@ preRelease: alpha
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/accordion/examples/accordion/'}
   ]} />
-
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
 
 ## Example
 
@@ -89,7 +83,7 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 ## Features
 
 
-Custom styled disclosure groups can be difficult to implement in an accessible way with the correct aria pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and other accessibility features while allowing for custom styling.
+Custom styled disclosure groups can be difficult to implement in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and other accessibility features while allowing for custom styling.
 
 * **Accessible** - Disclosure group is exposed to assistive technology via ARIA 
 * **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
@@ -190,7 +184,6 @@ function ControlledExpanded(){
   )
 }
 ```
-
 
 ## Disabled
 

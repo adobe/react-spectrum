@@ -16,7 +16,6 @@ import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTab
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 import {Keyboard} from '@react-spectrum/text';
 import Anatomy from './DisclosureAnatomy.svg';
 
@@ -37,11 +36,6 @@ preRelease: alpha
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/'}
   ]} />
-
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
 
 ## Example
 
@@ -109,10 +103,10 @@ import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as D
 
 ## Features
 
-Custom styled disclosures can be difficult to build in an accessible way with the correct aria pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `Disclosure` helps with this and other accessibility features while allowing for custom styling.
+Custom styled disclosures can be difficult to build in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `Disclosure` helps with this and other accessibility features while allowing for custom styling.
 
 * **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
-* **Accessible** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate aria attributes are automatically applied.
+* **Accessible** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
 * **Styleable** - Keyboard focus, disabled and expanded states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 
 ## Anatomy
@@ -122,12 +116,12 @@ Custom styled disclosures can be difficult to build in an accessible way with th
 A disclosure consists of a button and panel of content. The button is wrapped in a heading element with the appropriate level based on the architecture of the page, and it contains the label representing content within the panel. The panel is the section of content that is associated with the button which is either expanded or collapsed.
 
 ```tsx
-import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
+import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
-  <h3>
+  <Heading>
     <Button />
-  </h3>
+  </Heading>
   <DisclosurePanel />
 </Disclosure>
 
