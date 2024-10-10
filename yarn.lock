@@ -9229,13 +9229,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@storybook/addon-a11y@npm:^7.6.19":
+"@storybook/addon-a11y@npm:7.6.19":
   version: 7.6.19
   resolution: "@storybook/addon-a11y@npm:7.6.19"
   dependencies:
     "@storybook/addon-highlight": "npm:7.6.19"
     axe-core: "npm:^4.2.0"
   checksum: 10c0/b82422caa26250ff3a753e02eb783c06c4974c3bda8c4cd955dafa1ec2cf9b0b6913665168799cd93190bf101382fdbe0ec0e4f5406e44d3f6eda3916c83e612
+  languageName: node
+  linkType: hard
+
+"@storybook/addon-a11y@patch:@storybook/addon-a11y@npm%3A7.6.19#~/.yarn/patches/@storybook-addon-a11y-npm-7.6.19-04b470eae0.patch":
+  version: 7.6.19
+  resolution: "@storybook/addon-a11y@patch:@storybook/addon-a11y@npm%3A7.6.19#~/.yarn/patches/@storybook-addon-a11y-npm-7.6.19-04b470eae0.patch::version=7.6.19&hash=793e5b"
+  dependencies:
+    "@storybook/addon-highlight": "npm:7.6.19"
+    axe-core: "npm:^4.2.0"
+  checksum: 10c0/a38fd2ec72d5ee4f77cfb5e81cce601be032734cf27e029da32fbfa130d5a7ddd7722974391e9fac1b5351a067b12579cc63d196cf670aacbc27091e653614e0
   languageName: node
   linkType: hard
 
@@ -29071,7 +29081,7 @@ __metadata:
     "@react-spectrum/s2-icon-builder": "npm:^0.1.0"
     "@spectrum-css/component-builder": "npm:1.0.1"
     "@spectrum-css/vars": "npm:^2.3.0"
-    "@storybook/addon-a11y": "npm:^7.6.19"
+    "@storybook/addon-a11y": "patch:@storybook/addon-a11y@npm%3A7.6.19#~/.yarn/patches/@storybook-addon-a11y-npm-7.6.19-04b470eae0.patch"
     "@storybook/addon-actions": "npm:^7.6.19"
     "@storybook/addon-controls": "npm:^7.6.19"
     "@storybook/addon-essentials": "npm:7.6.19"
