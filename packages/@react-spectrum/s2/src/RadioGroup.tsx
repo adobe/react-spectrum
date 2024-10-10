@@ -20,7 +20,7 @@ import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type:
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

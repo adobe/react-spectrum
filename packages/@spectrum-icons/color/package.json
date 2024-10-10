@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/color",
-  "version": "3.5.15",
+  "version": "3.5.16",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@adobe/react-spectrum-workflow-color": "1.1.1",
-    "@react-spectrum/icon": "^3.7.15",
+    "@react-spectrum/icon": "^3.7.16",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

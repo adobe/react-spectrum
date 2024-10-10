@@ -25,7 +25,7 @@ import {
   Provider,
   SectionProps
 } from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -63,7 +63,7 @@ export interface ComboboxStyleProps {
   /**
    * The size of the Combobox.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
@@ -80,13 +80,13 @@ export interface ComboBoxProps<T extends object> extends
     /**
      * Direction the menu will render relative to the Picker.
      *
-     * @default "bottom"
+     * @default 'bottom'
      */
     direction?: 'bottom' | 'top',
     /**
      * Alignment of the menu relative to the input target.
      *
-     * @default "start"
+     * @default 'start'
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
@@ -263,6 +263,9 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
               {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
               <Button
                 ref={buttonRef}
+                // Prevent press scale from sticking while ComboBox is open.
+                // @ts-ignore
+                isPressed={false}
                 style={renderProps => pressScale(buttonRef)(renderProps)}
                 className={renderProps => inputButton({
                   ...renderProps,

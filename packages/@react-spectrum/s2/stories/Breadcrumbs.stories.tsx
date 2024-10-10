@@ -17,7 +17,9 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    // TODO: remove this once we get intl strings for breadcrumbs and thus the story won't crash in ar-AE
+    chromaticProvider: {locales: ['en-US']}
   },
   argTypes: {
     size: {
@@ -31,7 +33,8 @@ const meta: Meta<typeof Breadcrumbs> = {
       table: {category: 'Events'}
     }
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'Breadcrumbs'
 };
 
 export default meta;

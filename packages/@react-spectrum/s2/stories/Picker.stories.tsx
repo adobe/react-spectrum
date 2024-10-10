@@ -28,7 +28,7 @@ import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -39,7 +39,8 @@ const meta: Meta<typeof Picker<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'Picker'
 };
 
 export default meta;
@@ -86,7 +87,6 @@ export const Sections: Story = {
   }
 };
 
-
 interface IExampleItem {
   id: string,
   label: string
@@ -109,7 +109,6 @@ export const Dynamic: Story = {
     items
   }
 };
-
 
 export const WithIcons: Story = {
   render: (args) => (

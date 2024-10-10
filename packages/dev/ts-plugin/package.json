@@ -1,0 +1,16 @@
+{
+  "name": "@react-spectrum/ts-plugin",
+  "version": "0.1.0",
+  "main": "./src/index.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "rsp": {
+    "type": "cli"
+  }
+}

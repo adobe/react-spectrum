@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/steplist",
-  "version": "3.0.0-alpha.9",
+  "version": "3.0.0-alpha.10",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,11 +22,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.2",
-    "@react-aria/selection": "^3.19.3",
-    "@react-aria/utils": "^3.25.2",
-    "@react-stately/steplist": "3.0.0-alpha.8",
-    "@react-types/shared": "^3.24.1",
+    "@react-aria/i18n": "^3.12.3",
+    "@react-aria/selection": "^3.20.0",
+    "@react-aria/utils": "^3.25.3",
+    "@react-stately/steplist": "3.0.0-alpha.9",
+    "@react-types/shared": "^3.25.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
