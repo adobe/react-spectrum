@@ -37,7 +37,7 @@ export const Example: Story = {
   render: (args) => {
     return (
       <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center', overflow: 'auto'}}>
-        <ActionButton {...args}><NewIcon /></ActionButton>
+        <ActionButton aria-label="Press me" {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
         <ActionButton {...args}><Text>Press me</Text><NewIcon /></ActionButton>
@@ -50,7 +50,7 @@ export const ResizingExample: Story = {
   render: (args) => {
     return (
       <div className={style({display: 'flex', gap: 8, justifyContent: 'center', resize: 'horizontal', overflow: 'auto'})}>
-        <ActionButton {...args}><NewIcon /></ActionButton>
+        <ActionButton aria-label="Press me" {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
         <ActionButton {...args}><Text>Press me</Text><NewIcon /></ActionButton>
