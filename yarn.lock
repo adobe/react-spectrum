@@ -5612,6 +5612,7 @@ __metadata:
     "@react-aria/selection": "npm:^3.20.0"
     "@react-aria/textfield": "npm:^3.14.9"
     "@react-aria/utils": "npm:^3.25.3"
+    "@react-stately/autocomplete": "npm:3.0.0-alpha.1"
     "@react-stately/collections": "npm:^3.11.0"
     "@react-stately/combobox": "npm:^3.10.0"
     "@react-stately/form": "npm:^3.0.6"

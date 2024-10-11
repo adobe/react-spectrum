@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Autocomplete, Input, Label, ListBox} from 'react-aria-components';
-import {MyListBoxItem} from './utils';
+import {Autocomplete, Header, Input, Keyboard, Label, Menu, Section, Separator, Text} from 'react-aria-components';
+import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
@@ -21,19 +21,38 @@ export default {
 };
 
 export const AutocompleteExample = () => (
-  <Autocomplete name="combo-box-example" data-testid="combo-box-example">
+  <Autocomplete name="autocomplete-example" data-testid="autocomplete-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
     </div>
-    <ListBox
-      data-testid="combo-box-list-box"
-      className={styles.menu}>
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-    </ListBox>
+    <Menu className={styles.menu}>
+      <Section className={styles.group} aria-label={'Section 1'}>
+        <MyMenuItem>Foo</MyMenuItem>
+        <MyMenuItem>Bar</MyMenuItem>
+        <MyMenuItem>Baz</MyMenuItem>
+        <MyMenuItem href="http://google.com">Google</MyMenuItem>
+      </Section>
+      <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+      <Section className={styles.group}>
+        <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+        <MyMenuItem textValue="Copy">
+          <Text slot="label">Copy</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘C</Keyboard>
+        </MyMenuItem>
+        <MyMenuItem textValue="Cut">
+          <Text slot="label">Cut</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘X</Keyboard>
+        </MyMenuItem>
+        <MyMenuItem textValue="Paste">
+          <Text slot="label">Paste</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘V</Keyboard>
+        </MyMenuItem>
+      </Section>
+    </Menu>
   </Autocomplete>
 );
 
@@ -44,18 +63,18 @@ interface AutocompleteItem {
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 export const AutocompleteRenderPropsStatic = () => (
-  <Autocomplete data-testid="combo-box-render-props-static">
+  <Autocomplete data-testid="autocomplete-render-props-static">
     {() => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
         <div style={{display: 'flex'}}>
           <Input />
         </div>
-        <ListBox className={styles.menu}>
-          <MyListBoxItem>Foo</MyListBoxItem>
-          <MyListBoxItem>Bar</MyListBoxItem>
-          <MyListBoxItem>Baz</MyListBoxItem>
-        </ListBox>
+        <Menu className={styles.menu}>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+        </Menu>
       </>
     )}
   </Autocomplete>
@@ -69,9 +88,9 @@ export const AutocompleteRenderPropsDefaultItems = () => (
         <div style={{display: 'flex'}}>
           <Input />
         </div>
-        <ListBox className={styles.menu}>
-          {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-        </ListBox>
+        <Menu className={styles.menu}>
+          {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+        </Menu>
       </>
     )}
   </Autocomplete>
@@ -86,21 +105,21 @@ export const AutocompleteRenderPropsItems = {
           <div style={{display: 'flex'}}>
             <Input />
           </div>
-          <ListBox className={styles.menu}>
-            {(item: AutocompleteItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
+          <Menu className={styles.menu}>
+            {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+          </Menu>
         </>
       )}
     </Autocomplete>
   ),
   parameters: {
     description: {
-      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
+      data: 'Note this won\'t filter the items in the Menu because it is fully controlled'
     }
   }
 };
 
-export const AutocompleteRenderPropsListBoxDynamic = () => (
+export const AutocompleteRenderPropsMenuDynamic = () => (
   <Autocomplete>
     {() => (
       <>
@@ -108,9 +127,9 @@ export const AutocompleteRenderPropsListBoxDynamic = () => (
         <div style={{display: 'flex'}}>
           <Input />
         </div>
-        <ListBox className={styles.menu} items={items}>
-          {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
-        </ListBox>
+        <Menu className={styles.menu} items={items}>
+          {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+        </Menu>
       </>
     )}
   </Autocomplete>
@@ -146,10 +165,10 @@ export const AutocompleteAsyncLoadingExample = () => {
       <div style={{display: 'flex'}}>
         <Input />
       </div>
-      <ListBox<AutocompleteItem>
+      <Menu<AutocompleteItem>
         className={styles.menu}>
-        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
-      </ListBox>
+        {item => <MyMenuItem>{item.name}</MyMenuItem>}
+      </Menu>
     </Autocomplete>
   );
 };

@@ -19,9 +19,9 @@ import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface AutocompleteState<T> extends Omit<SelectState<T>, 'focusStrategy' | 'open' | 'close' | 'toggle' | 'isOpen' | 'setOpen'>, FormValidationState{
-  /** The current value of the combo box input. */
+  /** The current value of the autocomplete input. */
   inputValue: string,
-  /** Sets the value of the combo box input. */
+  /** Sets the value of the autocomplete input. */
   setInputValue(value: string): void,
   /** Selects the currently focused item and updates the input value. */
   commit(): void,
@@ -33,9 +33,9 @@ type FilterFn = (textValue: string, inputValue: string) => boolean;
 
 // TODO the below interface and props are pretty much copied from combobox props but without onOpenChange and any other open related ones. See if we need to remove anymore
 interface AutocompleteValidationValue {
-  /** The selected key in the ComboBox. */
+  /** The selected key in the autocomplete. */
   selectedKey: Key | null,
-  /** The value of the ComboBox input. */
+  /** The value of the autocomplete input. */
   inputValue: string
 }
 

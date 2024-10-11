@@ -123,6 +123,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
   let data = menuData.get(state);
+
   let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
   let router = useRouter();
@@ -160,6 +161,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let labelId = useSlotId();
   let descriptionId = useSlotId();
   let keyboardId = useSlotId();
+
+  if (data.shouldUseVirtualFocus) {
+    // TODO: will need to normalize the key and stuff, but need to finalize if
+    // every component that Autocomplete will accept as a filterable child would need to follow this same
+    // logic when creating the id
+    id = `${data.id}-option-${key}`;
+  }
 
   let ariaProps = {
     id,
@@ -214,7 +222,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // because we handle it ourselves. The behavior of menus
     // is slightly different from other collections because
     // actions are performed on key down rather than key up.
-    linkBehavior: 'none'
+    linkBehavior: 'none',
+    shouldUseVirtualFocus: data.shouldUseVirtualFocus
   });
 
   let {pressProps, isPressed} = usePress({

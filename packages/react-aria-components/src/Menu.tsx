@@ -12,7 +12,7 @@
 
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
@@ -152,27 +152,45 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
+  let state = useContext(MenuStateContext);
+
+  // TODO: mimics Listbox so that the Menu content can be controlled by an external field
+  if (state) {
+    return <MenuInner state={state} props={props} menuRef={ref} />;
+  }
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
     <CollectionBuilder content={<Collection {...props} />}>
-      {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
+      {collection => collection.size > 0 && <StandaloneMenu props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );
 }
 
-interface MenuInnerProps<T> {
-  props: MenuProps<T>,
-  collection: ICollection<Node<object>>,
-  menuRef: RefObject<HTMLDivElement | null>
-}
-
-function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
+function StandaloneMenu({props, menuRef, collection}) {
+  props = {...props, collection, children: null, items: null};
+  // TODO: may need this later?
+  // let {layoutDelegate} = useContext(CollectionRendererContext);
+  // TODO: this state is different from the one set up by the autocomplete hooks meaning we won't be able to propagate
+  // the desired menuId and item id that useAutocomplete needs for aria-activedescendant (aka weak map tied to state that sets menu ID and then
+  // forces menu options to follow a certain pattern). To "fix" this, I split this to StandaloneMenu like it is done
+  // in ListBox but that means the case with Autocomplete wrapping Menu doesn't use tree state and thus doesn't have things like expanded keys and such.
+  // However, we need to use a useAutoComplete's state because we need the same selectionManager to be used by menu when checking if an item is focused.
   let state = useTreeState({
     ...props,
     collection,
     children: undefined
   });
+  return <MenuInner state={state} props={props} menuRef={menuRef} />;
+}
+
+interface MenuInnerProps<T> {
+  props: MenuProps<T>,
+  menuRef: RefObject<HTMLDivElement | null>,
+  state: TreeState<T>
+}
+
+function MenuInner<T extends object>({props, menuRef: ref, state}: MenuInnerProps<T>) {
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
@@ -226,7 +244,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuItemContext, null]
           ]}>
           <CollectionRoot
-            collection={collection}
+            collection={state.collection}
             persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
             scrollRef={ref} />
         </Provider>

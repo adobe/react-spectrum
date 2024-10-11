@@ -22,7 +22,7 @@ import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {ListBoxContext, ListStateContext} from './ListBox';
+import {MenuContext, MenuStateContext} from './Menu';
 import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria';
@@ -62,9 +62,13 @@ export const AutocompleteStateContext = createContext<AutocompleteState<any> | n
 function Autocomplete<T extends object>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
-  // TODO will need to replace with menu (aka replicate Listbox's stuff in Menu)
+
+  // TODO: not quite sure if we need to do the below or if I can just do something like  <CollectionBuilder content={<Collection {...props} />}>
+  // This approach is a 1:1 copy of ComboBox where this renders the Autocomplete's children (aka the Menu) in the fake DOM and constructs a collection which we can filter
+  // via useAutocomplete state. Said state then gets propagated Menu via AutocompleteInner's context provider so that the Menu's rendered items are mirrored/match the filtered collection
+  // I think we still have to do this, but geting a bit tripped up with thinking if we could simplify it somehow
   let content = useMemo(() => (
-    <ListBoxContext.Provider value={{items: props.items ?? props.defaultItems}}>
+    <MenuContext.Provider value={{items: props.items ?? props.defaultItems}}>
       {typeof children === 'function'
         ? children({
           isDisabled,
@@ -73,7 +77,7 @@ function Autocomplete<T extends object>(props: AutocompleteProps<T>, ref: Forwar
           defaultChildren: null
         })
         : children}
-    </ListBoxContext.Provider>
+    </MenuContext.Provider>
   ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
 
   return (
@@ -105,7 +109,7 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
   let state = useAutocompleteState({
     defaultFilter: props.defaultFilter || contains,
     ...props,
-    // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
+    // If props.items isn't provided, rely on collection filtering (aka menu.items is provided or defaultItems provided to Autocomplete)
     items: props.items,
     children: undefined,
     collection,
@@ -113,13 +117,12 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let listBoxRef = useRef<HTMLDivElement>(null);
+  let menuRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
 
-  // TODO: replace with useAutocomplete
   let {
     inputProps,
-    listBoxProps,
+    menuProps,
     labelProps,
     descriptionProps,
     errorMessageProps,
@@ -128,7 +131,7 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
     ...removeDataAttributes(props),
     label,
     inputRef,
-    listBoxRef,
+    menuRef,
     name: formValue === 'text' ? name : undefined,
     validationBehavior
   }, state);
@@ -143,8 +146,7 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
   let renderProps = useRenderProps({
     ...props,
     values: renderPropsState,
-    // TODO rename
-    defaultClassName: 'react-aria-ComboBox'
+    defaultClassName: 'react-aria-Autocomplete'
   });
 
   let DOMProps = filterDOMProps(props);
@@ -156,8 +158,13 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
         [AutocompleteStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
         [InputContext, {...inputProps, ref: inputRef}],
-        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
-        [ListStateContext, state],
+        [MenuContext, {...menuProps, ref: menuRef}],
+        // TODO: this would need to match the state type of whatever child component the autocomplete
+        // is filtering against... Ideally we'd somehow have the child component communicate its state upwards, upon which we we would filter it from here
+        // and send it back down but that feels circular. However we need a single SelectionManager to be used by the autocomplete and filtered collection's hooks
+        // so that the concepts of "selectedKey"/"focused"
+        // @ts-ignore
+        [MenuStateContext, state],
         [TextContext, {
           slots: {
             description: descriptionProps,
@@ -182,7 +189,7 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
 }
 
 /**
- * A autocomplete combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
 const _Autocomplete = /*#__PURE__*/ (forwardRef as forwardRefType)(Autocomplete);
 export {_Autocomplete as Autocomplete};

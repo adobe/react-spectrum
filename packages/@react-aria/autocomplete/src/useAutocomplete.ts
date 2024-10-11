@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
+import {AriaMenuOptions, menuData} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, isAppleDevice, mergeProps, useId, useLabels, useRouter} from '@react-aria/utils';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
@@ -24,17 +24,18 @@ import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-
 export interface AriaAutocompleteProps<T> extends AutocompleteProps<T>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean
 }
 
+// TODO: all of this is menu specific but will need to eventually be agnostic to what collection element is inside
+// Update all instances of menu then
 export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>,
-  /** The ref for the list box. */
-  listBoxRef: RefObject<HTMLElement | null>,
+  /** The ref for the menu. */
+  menuRef: RefObject<HTMLElement | null>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate,
   /**
@@ -50,8 +51,8 @@ export interface AutocompleteAria<T> extends ValidationResult {
   /** Props for the autocomplete input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   // TODO change this menu props
-  /** Props for the list box, to be passed to [useListBox](useListBox.html). */
-  listBoxProps: AriaListBoxOptions<T>,
+  /** Props for the menu, to be passed to [useMenu](useMenu.html). */
+  menuProps: AriaMenuOptions<T>,
   /** Props for the autocomplete description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the autocomplete error message element, if any. */
@@ -60,14 +61,14 @@ export interface AutocompleteAria<T> extends ValidationResult {
 
 /**
  * Provides the behavior and accessibility implementation for a autocomplete component.
- * A autocomplete combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
 export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: AutocompleteState<T>): AutocompleteAria<T> {
   let {
     inputRef,
-    listBoxRef,
+    menuRef,
     keyboardDelegate,
     layoutDelegate,
     shouldFocusWrap,
@@ -75,12 +76,13 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     isDisabled
   } = props;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   // TODO: we will only need the menu props for the id for listData (might need a replacement for aria-labelledby and autofocus?)
   let menuId = useId();
 
-  // Set listbox id so it can be used when calling getItemId later
-  listData.set(state, {id: menuId});
+  // TODO: this doesn't work because menu won't use the autocompletestate but rather its own tree state
+  // @ts-ignore
+  menuData.set(state, {id: menuId});
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -90,10 +92,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     keyboardDelegate || new ListKeyboardDelegate({
       collection,
       disabledKeys,
-      ref: listBoxRef,
+      ref: menuRef,
       layoutDelegate
     })
-  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, listBoxRef]);
+  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, menuRef]);
 
   // Use useSelectableCollection to get the keyboard handlers to apply to the textfield
   let {collectionProps} = useSelectableCollection({
@@ -102,10 +104,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     disallowTypeAhead: true,
     disallowEmptySelection: true,
     shouldFocusWrap,
-    ref: inputRef,
+    ref: inputRef
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
-    // TODO: If we are using menu, then maybe we get rid of this?
-    isVirtualized: true
+    // TODO: If we are using menu, then maybe we get rid of this? However will be applicable for other virtualized collection components
+    // isVirtualized: true
   });
 
   let router = useRouter();
@@ -124,10 +126,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
           if (e.key === 'Enter') {
-            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            let item = menuRef.current?.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
               let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
+              collectionItem && router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
           }
 
@@ -185,21 +187,25 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     ...props,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly ? chain(collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
+    // TODO: figure out how to fix these ts errors
+    // @ts-ignore
     onBlur,
     value: state.inputValue,
+    // @ts-ignore
     onFocus,
     autoComplete: 'off',
     validate: undefined,
     [privateValidationStateProp]: state
   }, inputRef);
 
-  let listBoxProps = useLabels({
+  let menuProps = useLabels({
     id: menuId,
+    // TODO: update this
     'aria-label': stringFormatter.format('listboxLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
-  // If a touch happens on direct center of ComboBox input, might be virtual click from iPad so open ComboBox menu
+  // If a touch happens on direct center of Autocomplete input, might be virtual click from iPad
   let lastEventTime = useRef(0);
   let onTouchEnd = (e: TouchEvent) => {
     if (isDisabled || isReadOnly) {
@@ -209,7 +215,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
     if (e.timeStamp - lastEventTime.current < 500) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       return;
     }
 
@@ -221,7 +227,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
 
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
 
       lastEventTime.current = e.timeStamp;
     }
@@ -244,7 +250,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
 
       let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: section && sectionKey !== lastSection.current,
+        isGroupChange: !!section && sectionKey !== lastSection.current,
         groupTitle: sectionTitle,
         groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
@@ -298,14 +304,17 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       'aria-controls': menuId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
-      'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
+      // TODO: will need a way to get the currently focused menuitem's id. This is currently difficult since the
+      // menu uses useTreeState which useAutocomplete state doesn't substitute for
+      // 'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
+      'aria-activedescendant': focusedItem ? `${menuId}-option-${focusedItem.key}` : undefined,
       onTouchEnd,
       // This disable's iOS's autocorrect suggestions, since the combo box provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
     }),
-    listBoxProps: mergeProps(listBoxProps, {
+    menuProps: mergeProps(menuProps, {
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
