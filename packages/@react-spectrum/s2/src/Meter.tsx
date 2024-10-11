@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {size, style} from '../style' with {type: 'macro'};
@@ -37,8 +37,15 @@ interface MeterStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
-  /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  /** 
+   * The static color style to apply. Useful when the button appears over a color background. 
+   */
+  staticColor?: 'white' | 'black',
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
+  labelPosition?: LabelPosition
 }
 
 export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style'>, MeterStyleProps, StyleProps {
@@ -106,6 +113,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
     UNSAFE_className = '',
     UNSAFE_style,
     variant = 'informative',
+    labelPosition = 'top',
     ...groupProps
   } = props;
 
@@ -118,11 +126,11 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
         size,
         variant,
         staticColor,
-        labelPosition: 'top'
+        labelPosition
       }, styles)}>
       {({percentage, valueText}) => (
         <>
-          {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
+          {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
           {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
           <SkeletonWrapper>
             <div className={trackStyles({staticColor, size})}>
