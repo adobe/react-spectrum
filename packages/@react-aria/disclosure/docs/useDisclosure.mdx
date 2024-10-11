@@ -71,7 +71,6 @@ This example displays a basic disclosure with a button that toggles the visibili
 ```tsx example export=true
 import {useDisclosureState} from '@react-stately/disclosure';
 import {useDisclosure} from '@react-aria/disclosure';
-import {useFocusRing} from '@react-aria/focus';
 import {useButton} from '@react-aria/button';
 
 function Disclosure(props) {
@@ -80,15 +79,11 @@ function Disclosure(props) {
   let triggerRef = React.useRef<HTMLButtonElement | null>(null);
   let {buttonProps: triggerProps, panelProps} = useDisclosure(props, state, panelRef);
   let {buttonProps} = useButton(triggerProps, triggerRef);
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
 
   return (
     <div className="disclosure">
       <h3>
-        <button className="trigger" {...buttonProps} {...focusWithinProps}>
+        <button className="trigger" {...buttonProps}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
@@ -195,7 +190,7 @@ A disclosure group (i.e. accordion) is a set of disclosures where only one discl
 import {useDisclosureGroupState} from '@react-stately/disclosure';
 import {useId} from '@react-aria/utils';
 
-const DisclosureGroupStateContext = React.createContext<DisclosureGroupState | null>(null);
+const DisclosureGroupStateContext = React.createContext(null);
 
 function DisclosureGroup(props) {
   let state = useDisclosureGroupState(props);
@@ -235,15 +230,11 @@ function DisclosureItem(props) {
     isDisabled
   }, state, panelRef);
   let {buttonProps} = useButton(triggerProps, triggerRef);
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
 
   return (
     <div className="disclosure">
       <h3>
-        <button className="trigger" {...buttonProps} {...focusWithinProps}>
+        <button className="trigger" {...buttonProps}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
