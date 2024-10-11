@@ -154,7 +154,7 @@ export const WithActionButton: Story = {
               <DisclosureTrigger>
                 Files
               </DisclosureTrigger>
-              <ActionButton><NewIcon/></ActionButton>
+              <ActionButton><NewIcon /></ActionButton>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -165,7 +165,7 @@ export const WithActionButton: Story = {
               <DisclosureTrigger>
                 People
               </DisclosureTrigger>
-              <ActionButton><NewIcon/></ActionButton>
+              <ActionButton><NewIcon /></ActionButton>
             </DisclosureHeader>
             <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />

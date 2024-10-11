@@ -12,9 +12,9 @@
 
 import {ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTrigger} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
-import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 
 
 const meta: Meta<typeof Disclosure> = {

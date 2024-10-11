@@ -206,7 +206,7 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
     UNSAFE_className,
     UNSAFE_style,
     children
-  } = props
+  } = props;
   let domRef = useDOMRef(ref);
   return (
     <div
@@ -215,7 +215,7 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
       ref={domRef}>
       {children}
     </div>
-  )
+  );
 }
 
 /**
