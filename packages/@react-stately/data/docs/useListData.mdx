@@ -75,7 +75,7 @@ let list = useListData({
   items={list.items}
   selectedKeys={list.selectedKeys}
   onSelectionChange={list.setSelectedKeys}>
-  {item => <Item key={item.name}>{item.name}</Item>}
+  {item => <ListBoxItem key={item.name}>{item.name}</Item>}
 </ListBox>
 ```
 
