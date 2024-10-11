@@ -57,26 +57,6 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
     return collator.compare(string.slice(-substring.length), substring) === 0;
   }, [collator]);
 
-  let contains = useCallback((string, substring) => {
-    if (substring.length === 0) {
-      return true;
-    }
-
-    string = string.normalize('NFC');
-    substring = substring.normalize('NFC');
-
-    let sliceLen = substring.length;
-    let strLen = string.length;
-    for (let scan = 0; scan + sliceLen <= strLen; scan++) {
-      let slice = string.slice(scan, scan + sliceLen);
-      if (collator.compare(substring, slice) === 0) {
-        return true;
-      }
-    }
-
-    return false;
-  }, [collator]);
-
   let indexOf = useCallback((string: string, substring: string) => {
     if (substring.length === 0) {
       return 0;
@@ -96,6 +76,10 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
 
     return -1;
   }, [collator]);
+
+  let contains = useCallback((string, substring) => {
+    return indexOf(string, substring) !== -1;
+  }, [indexOf]);
 
   return useMemo(() => ({
     startsWith,
