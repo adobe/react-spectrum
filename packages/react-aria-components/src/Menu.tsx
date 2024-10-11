@@ -43,6 +43,7 @@ import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
+export const ExternalMenuStateContext = createContext<TreeState<any> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
@@ -152,7 +153,7 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
-  let state = useContext(MenuStateContext);
+  let state = useContext(ExternalMenuStateContext);
 
   // TODO: mimics Listbox so that the Menu content can be controlled by an external field
   if (state) {

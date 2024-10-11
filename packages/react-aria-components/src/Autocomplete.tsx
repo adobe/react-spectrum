@@ -15,6 +15,7 @@ import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomple
 import {Collection, Node} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ExternalMenuStateContext, MenuContext} from './Menu';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -22,7 +23,6 @@ import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {MenuContext, MenuStateContext} from './Menu';
 import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria';
@@ -164,7 +164,7 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
         // and send it back down but that feels circular. However we need a single SelectionManager to be used by the autocomplete and filtered collection's hooks
         // so that the concepts of "selectedKey"/"focused"
         // @ts-ignore
-        [MenuStateContext, state],
+        [ExternalMenuStateContext, state],
         [TextContext, {
           slots: {
             description: descriptionProps,
