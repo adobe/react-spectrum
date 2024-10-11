@@ -138,11 +138,11 @@ This example wraps `Disclosure` and all of its children together into a single c
 import type {DisclosureProps} from 'react-aria-components';
 
 interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
-  label?: string,
+  title?: string,
   children?: React.ReactNode
 }
 
-function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
+function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
   return (
     <Disclosure {...props}>
       <Heading>
@@ -150,7 +150,7 @@ function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
-          {label}
+          {title}
         </Button>
       </Heading>
       <DisclosurePanel>
@@ -160,7 +160,7 @@ function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
   )
 }
 
-<MyDisclosure label="Manage your account">
+<MyDisclosure title="Manage your account">
   Details on managing your account
 </MyDisclosure>
 ```
@@ -170,7 +170,7 @@ function MyDisclosure({label, children, ...props}: MyDisclosureProps) {
 An uncontrolled Disclosure can be expanded by default using the `defaultExpanded` prop.
 
 ```tsx example
-<MyDisclosure label="Download, Install, and Set Up" defaultExpanded >
+<MyDisclosure title="Download, Install, and Set Up" defaultExpanded >
   Instructions on how to download, install, and set up
 </MyDisclosure>
 ```
@@ -182,7 +182,7 @@ function ControlledExpanded() {
   let [isExpanded, setIsExpanded] = React.useState(true);
 
   return (
-    <MyDisclosure label="Download, Install, and Set Up" isExpanded={isExpanded} onExpandedChange={setIsExpanded} >
+    <MyDisclosure title="Download, Install, and Set Up" isExpanded={isExpanded} onExpandedChange={setIsExpanded} >
       Instructions on how to download, install, and set up
     </MyDisclosure>
   )
@@ -197,7 +197,7 @@ function ControlledExpanded() {
 A Disclosure can be disabled using the `isDisabled` prop. 
 
 ```tsx example
-<MyDisclosure label="Introduction to Knitting" isDisabled >
+<MyDisclosure title="Introduction to Knitting" isDisabled >
   Details about knitting here
 </MyDisclosure>
 ```
@@ -305,10 +305,10 @@ function DisclosureGroup({children, isDisabled}: DisclosureGroupProps) {
 }
 
 <DisclosureGroup isDisabled>
-  <MyDisclosure label="How to make a return" >
+  <MyDisclosure title="How to make a return" >
     Details about returning items
   </MyDisclosure>
-  <MyDisclosure label="How to cancel an order" >
+  <MyDisclosure title="How to cancel an order" >
     Details on canceling an order
   </MyDisclosure>
 </DisclosureGroup>
@@ -321,4 +321,4 @@ DisclosureGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs
 
 ### Hooks
 
-If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See useDisclosure.
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDisclosure](useDisclosure.html).
