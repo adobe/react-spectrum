@@ -19,7 +19,9 @@ export interface Filter {
   /** Returns whether a string ends with a given substring. */
   endsWith(string: string, substring: string): boolean,
   /** Returns whether a string contains a given substring. */
-  contains(string: string, substring: string): boolean
+  contains(string: string, substring: string): boolean,
+  /** Returns the index of the first occurrence of a substring in a string, or -1 if not found. */
+  indexOf(string: string, substring: string): number
 }
 
 /**
@@ -63,9 +65,9 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
     string = string.normalize('NFC');
     substring = substring.normalize('NFC');
 
-    let scan = 0;
     let sliceLen = substring.length;
-    for (; scan + sliceLen <= string.length; scan++) {
+    let strLen = string.length;
+    for (let scan = 0; scan + sliceLen <= strLen; scan++) {
       let slice = string.slice(scan, scan + sliceLen);
       if (collator.compare(substring, slice) === 0) {
         return true;
@@ -75,9 +77,30 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
     return false;
   }, [collator]);
 
+  let indexOf = useCallback((string: string, substring: string) => {
+    if (substring.length === 0) {
+      return 0;
+    }
+
+    string = string.normalize('NFC');
+    substring = substring.normalize('NFC');
+
+    let sliceLen = substring.length;
+    let strLen = string.length;
+    for (let scan = 0; scan + sliceLen <= strLen; scan++) {
+      let slice = string.slice(scan, scan + sliceLen);
+      if (collator.compare(substring, slice) === 0) {
+        return scan;
+      }
+    }
+
+    return -1;
+  }, [collator]);
+
   return useMemo(() => ({
     startsWith,
     endsWith,
-    contains
-  }), [startsWith, endsWith, contains]);
+    contains,
+    indexOf
+  }), [startsWith, endsWith, contains, indexOf]);
 }
