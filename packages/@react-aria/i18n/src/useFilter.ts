@@ -18,10 +18,10 @@ export interface Filter {
   startsWith(string: string, substring: string): boolean,
   /** Returns whether a string ends with a given substring. */
   endsWith(string: string, substring: string): boolean,
-  /** Returns whether a string contains a given substring. */
-  contains(string: string, substring: string): boolean,
   /** Returns the index of the first occurrence of a substring in a string, or -1 if not found. */
-  indexOf(string: string, substring: string): number
+  indexOf(string: string, substring: string): number,
+  /** Returns whether a string contains a given substring. */
+  contains(string: string, substring: string): boolean
 }
 
 /**
@@ -84,7 +84,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
   return useMemo(() => ({
     startsWith,
     endsWith,
-    contains,
-    indexOf
-  }), [startsWith, endsWith, contains, indexOf]);
+    indexOf,
+    contains
+  }), [startsWith, endsWith, indexOf, contains]);
 }
