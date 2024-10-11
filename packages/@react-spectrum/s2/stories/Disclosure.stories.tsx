@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src';
+import {ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTrigger} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+
 
 const meta: Meta<typeof Disclosure> = {
   component: Disclosure,
@@ -49,7 +51,9 @@ export const Example: Story = {
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
           <DisclosureHeader>
-            Files
+            <DisclosureTrigger>
+              Files
+            </DisclosureTrigger>
           </DisclosureHeader>
           <DisclosurePanel>
             Files content
@@ -66,7 +70,9 @@ export const WithLongTitle: Story = {
       <div className={style({minHeight: 240})}>
         <Disclosure styles={style({maxWidth: 224})}  {...args}>
           <DisclosureHeader>
-            Very very very very very long title that wraps
+            <DisclosureTrigger>
+              Very very very very very long title that wraps
+            </DisclosureTrigger>
           </DisclosureHeader>
           <DisclosurePanel>
             Content
@@ -81,5 +87,25 @@ export const WithLongTitle: Story = {
 WithLongTitle.parameters = {
   docs: {
     disable: true
+  }
+};
+
+export const WithActionButton: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Disclosure {...args}>
+          <DisclosureHeader>
+            <DisclosureTrigger>
+              Files
+            </DisclosureTrigger>
+            <ActionButton><NewIcon /></ActionButton>
+          </DisclosureHeader>
+          <DisclosurePanel>
+            Files content
+          </DisclosurePanel>
+        </Disclosure>
+      </div>
+    );
   }
 };

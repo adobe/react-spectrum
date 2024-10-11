@@ -93,7 +93,7 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
 let _Disclosure = forwardRef(Disclosure);
 export {_Disclosure as Disclosure};
 
-export interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
+export interface DisclosureTriggerProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
    * 
    * @default 3
@@ -103,8 +103,13 @@ export interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
   children: React.ReactNode
 }
 
+interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
+  children?: React.ReactNode
+}
+
 const headingStyle = style({
-  margin: 0
+  margin: 0,
+  flexGrow: 1
 });
 
 const buttonStyles = style({
@@ -195,7 +200,31 @@ const chevronStyles = style({
   flexShrink: 0
 });
 
+
 function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    UNSAFE_className,
+    UNSAFE_style,
+    children
+  } = props
+  let domRef = useDOMRef(ref);
+  return (
+    <div
+      style={UNSAFE_style}
+      className={(UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})}
+      ref={domRef}>
+      {children}
+    </div>
+  )
+}
+
+/**
+ * A header for a disclosure. Contains a heading and a trigger button to expand/collapse the panel.
+ */
+let _DisclosureHeader = forwardRef(DisclosureHeader);
+export {_DisclosureHeader as DisclosureHeader};
+
+function DisclosureTrigger(props: DisclosureTriggerProps, ref: DOMRef<HTMLDivElement>) {
   let {
     level = 3,
     UNSAFE_style,
@@ -228,8 +257,8 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
 /**
  * A header for a disclosure. Contains a heading and a trigger button to expand/collapse the panel.
  */
-let _DisclosureHeader = forwardRef(DisclosureHeader);
-export {_DisclosureHeader as DisclosureHeader};
+let _DisclosureTrigger = forwardRef(DisclosureTrigger);
+export {_DisclosureTrigger as DisclosureTrigger};
 
 export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode

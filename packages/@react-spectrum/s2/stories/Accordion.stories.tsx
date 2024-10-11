@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, TextField} from '../src';
+import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTrigger, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
+
 
 const meta: Meta<typeof Accordion> = {
   component: Accordion,
@@ -34,7 +36,9 @@ export const Example: Story = {
         <Accordion {...args}>
           <Disclosure id="files">
             <DisclosureHeader>
-              Files
+              <DisclosureTrigger>
+                Files
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -42,7 +46,9 @@ export const Example: Story = {
           </Disclosure>
           <Disclosure id="people">
             <DisclosureHeader>
-              People
+              <DisclosureTrigger>
+                People
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
@@ -61,7 +67,9 @@ export const WithLongTitle: Story = {
         <Accordion styles={style({maxWidth: 224})} {...args}>
           <Disclosure>
             <DisclosureHeader>
-              Files
+              <DisclosureTrigger>
+                Files
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -69,7 +77,9 @@ export const WithLongTitle: Story = {
           </Disclosure>
           <Disclosure>
             <DisclosureHeader>
-              People
+              <DisclosureTrigger>
+                People
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               People content
@@ -77,7 +87,9 @@ export const WithLongTitle: Story = {
           </Disclosure>
           <Disclosure>
             <DisclosureHeader>
-              Very very very very very long title that wraps
+              <DisclosureTrigger>
+                Very very very very very long title that wraps
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               Accordion content
@@ -96,7 +108,9 @@ export const WithDisabledDisclosure: Story = {
         <Accordion {...args}>
           <Disclosure>
             <DisclosureHeader>
-              Files
+              <DisclosureTrigger>
+                Files
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -104,7 +118,9 @@ export const WithDisabledDisclosure: Story = {
           </Disclosure>
           <Disclosure isDisabled>
             <DisclosureHeader>
-              People
+              <DisclosureTrigger>
+                People
+              </DisclosureTrigger>
             </DisclosureHeader>
             <DisclosurePanel>
               <TextField label="Name" />
@@ -128,3 +144,35 @@ WithDisabledDisclosure.parameters = {
   }
 };
 
+export const WithActionButton: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Accordion {...args}>
+          <Disclosure id="files">
+            <DisclosureHeader>
+              <DisclosureTrigger>
+                Files
+              </DisclosureTrigger>
+              <ActionButton><NewIcon/></ActionButton>
+            </DisclosureHeader>
+            <DisclosurePanel>
+              Files content
+            </DisclosurePanel>
+          </Disclosure>
+          <Disclosure id="people">
+            <DisclosureHeader>
+              <DisclosureTrigger>
+                People
+              </DisclosureTrigger>
+              <ActionButton><NewIcon/></ActionButton>
+            </DisclosureHeader>
+            <DisclosurePanel>
+              <TextField label="Name" styles={style({maxWidth: 176})} />
+            </DisclosurePanel>
+          </Disclosure>
+        </Accordion>
+      </div>
+    );
+  }
+};
