@@ -6,27 +6,27 @@ let html = String.raw;
 let css = String.raw;
 
 function run({options, content, future = {}}) {
-    let {currentTestName} = expect.getState();
-    let config = {
-        plugins: [require('./index.js')(options)],
-        corePlugins: {preflight: false},
-        theme: {colors: {red: 'red'}},
-        content: [{raw: content}],
-        future
-    };
+  let {currentTestName} = expect.getState();
+  let config = {
+    plugins: [require('./index.js')(options)],
+    corePlugins: {preflight: false},
+    theme: {colors: {red: 'red'}},
+    content: [{raw: content}],
+    future
+  };
     
-    return postcss(tailwind(config)).process(
+  return postcss(tailwind(config)).process(
         ['@tailwind base;', '@tailwind components;', '@tailwind utilities'].join('\n'),
-        {
-            from: `${path.resolve(__filename)}?test=${currentTestName}`
-        }
+    {
+      from: `${path.resolve(__filename)}?test=${currentTestName}`
+    }
     );
 }
 
 test('variants', async () => {
-    let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red focus-within:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-dragging:bg-red allows-removing:bg-red allows-sorting:bg-red has-submenu:bg-red placeholder-shown:bg-red selected:bg-red indeterminate:bg-red read-only:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red expanded:bg-red unavailable:bg-red outside-month:bg-red outside-visible-range:bg-red selection-start:bg-red selection-end:bg-red current:bg-red invalid:bg-red resizing:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red selection-single:bg-red selection-multiple:bg-red resizable-right:bg-red resizable-left:bg-red resizable-both:bg-red sort-ascending:bg-red sort-descending:bg-red group-pressed:bg-red peer-pressed:bg-red group-hover:bg-red group/custom-name group-hover/custom-name:bg-red peer-pressed/custom-name:bg-red"></div>`;
-    return run({content}).then((result) => {
-        expect(result.css).toContain(css`
+  let content = html`<div data-rac className="hover:bg-red focus:bg-red focus-visible:bg-red focus-within:bg-red pressed:bg-red disabled:bg-red drop-target:bg-red dragging:bg-red empty:bg-red allows-dragging:bg-red allows-removing:bg-red allows-sorting:bg-red has-submenu:bg-red placeholder-shown:bg-red selected:bg-red indeterminate:bg-red read-only:bg-red required:bg-red entering:bg-red exiting:bg-red open:bg-red expanded:bg-red unavailable:bg-red outside-month:bg-red outside-visible-range:bg-red selection-start:bg-red selection-end:bg-red current:bg-red invalid:bg-red resizing:bg-red placement-left:bg-red placement-right:bg-red placement-top:bg-red placement-bottom:bg-red type-literal:bg-red type-year:bg-red type-month:bg-red type-day:bg-red layout-grid:bg-red layout-stack:bg-red orientation-horizontal:bg-red orientation-vertical:bg-red selection-single:bg-red selection-multiple:bg-red resizable-right:bg-red resizable-left:bg-red resizable-both:bg-red sort-ascending:bg-red sort-descending:bg-red group-pressed:bg-red peer-pressed:bg-red group-hover:bg-red group/custom-name group-hover/custom-name:bg-red peer-pressed/custom-name:bg-red"></div>`;
+  return run({content}).then((result) => {
+    expect(result.css).toContain(css`
 .placement-left\:bg-red[data-placement="left"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
@@ -304,13 +304,13 @@ test('variants', async () => {
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }`
         );
-    });
+  });
 });
 
 test('variants with prefix', async () => {
-    let content = html`<div data-rac className="rac-hover:bg-red rac-focus:bg-red rac-focus-visible:bg-red rac-focus-within:bg-red rac-pressed:bg-red rac-disabled:bg-red rac-drop-target:bg-red rac-dragging:bg-red rac-empty:bg-red rac-allows-dragging:bg-red rac-allows-removing:bg-red rac-allows-sorting:bg-red rac-has-submenu:bg-red rac-placeholder-shown:bg-red rac-selected:bg-red rac-indeterminate:bg-red rac-read-only:bg-red rac-required:bg-red rac-entering:bg-red rac-exiting:bg-red rac-open:bg-red rac-expanded:bg-red rac-unavailable:bg-red rac-outside-month:bg-red rac-outside-visible-range:bg-red rac-selection-start:bg-red rac-selection-end:bg-red rac-current:bg-red rac-invalid:bg-red rac-resizing:bg-red rac-placement-left:bg-red rac-placement-right:bg-red rac-placement-top:bg-red rac-placement-bottom:bg-red rac-type-literal:bg-red rac-type-year:bg-red rac-type-month:bg-red rac-type-day:bg-red rac-layout-grid:bg-red rac-layout-stack:bg-red rac-orientation-horizontal:bg-red rac-orientation-vertical:bg-red rac-selection-single:bg-red rac-selection-multiple:bg-red rac-resizable-right:bg-red rac-resizable-left:bg-red rac-resizable-both:bg-red rac-sort-ascending:bg-red rac-sort-descending:bg-red group-rac-pressed:bg-red group/custom-name group-rac-hover/custom-name:bg-red peer-rac-pressed:bg-red peer-rac-pressed/custom-name:bg-red"></div>`;
-    return run({content, options: {prefix: 'rac'}}).then((result) => {
-        expect(result.css).toContain(css`
+  let content = html`<div data-rac className="rac-hover:bg-red rac-focus:bg-red rac-focus-visible:bg-red rac-focus-within:bg-red rac-pressed:bg-red rac-disabled:bg-red rac-drop-target:bg-red rac-dragging:bg-red rac-empty:bg-red rac-allows-dragging:bg-red rac-allows-removing:bg-red rac-allows-sorting:bg-red rac-has-submenu:bg-red rac-placeholder-shown:bg-red rac-selected:bg-red rac-indeterminate:bg-red rac-read-only:bg-red rac-required:bg-red rac-entering:bg-red rac-exiting:bg-red rac-open:bg-red rac-expanded:bg-red rac-unavailable:bg-red rac-outside-month:bg-red rac-outside-visible-range:bg-red rac-selection-start:bg-red rac-selection-end:bg-red rac-current:bg-red rac-invalid:bg-red rac-resizing:bg-red rac-placement-left:bg-red rac-placement-right:bg-red rac-placement-top:bg-red rac-placement-bottom:bg-red rac-type-literal:bg-red rac-type-year:bg-red rac-type-month:bg-red rac-type-day:bg-red rac-layout-grid:bg-red rac-layout-stack:bg-red rac-orientation-horizontal:bg-red rac-orientation-vertical:bg-red rac-selection-single:bg-red rac-selection-multiple:bg-red rac-resizable-right:bg-red rac-resizable-left:bg-red rac-resizable-both:bg-red rac-sort-ascending:bg-red rac-sort-descending:bg-red group-rac-pressed:bg-red group/custom-name group-rac-hover/custom-name:bg-red peer-rac-pressed:bg-red peer-rac-pressed/custom-name:bg-red"></div>`;
+  return run({content, options: {prefix: 'rac'}}).then((result) => {
+    expect(result.css).toContain(css`
 .rac-placement-left\:bg-red[data-placement="left"] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
@@ -524,13 +524,13 @@ test('variants with prefix', async () => {
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }`
         );
-    });
+  });
 });
 
 test('hoverOnlyWhenSupported', () => {
-    let content = html`<div data-rac className="hover:bg-red"></div>`;
-    return run({content, future: {hoverOnlyWhenSupported: true}}).then((result) => {
-        expect(result.css).toContain(css`
+  let content = html`<div data-rac className="hover:bg-red"></div>`;
+  return run({content, future: {hoverOnlyWhenSupported: true}}).then((result) => {
+    expect(result.css).toContain(css`
 .hover\:bg-red:where([data-rac])[data-hovered] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
@@ -541,6 +541,6 @@ test('hoverOnlyWhenSupported', () => {
         background-color: rgb(255 0 0 / var(--tw-bg-opacity))
     }
 }`);
-        });
-    });
+  });
+});
     
