@@ -11,7 +11,7 @@
  */
 
 export {useMenuTrigger} from './useMenuTrigger';
-export {useMenu} from './useMenu';
+export {useMenu, menuData} from './useMenu';
 export {useMenuItem} from './useMenuItem';
 export {useMenuSection} from './useMenuSection';
 export {useSubmenuTrigger} from './useSubmenuTrigger';

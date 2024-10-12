@@ -12,7 +12,7 @@
 
 import {AriaMenuProps} from '@react-types/menu';
 import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -29,12 +29,18 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether the menu items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface MenuData {
   onClose?: () => void,
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  shouldUseVirtualFocus?: boolean,
+  id: string
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
@@ -68,15 +74,19 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     linkBehavior: 'override'
   });
 
+  let id = useId(props.id);
   menuData.set(state, {
     onClose: props.onClose,
-    onAction: props.onAction
+    onAction: props.onAction,
+    shouldUseVirtualFocus: props.shouldUseVirtualFocus,
+    id
   });
 
   return {
     menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
       role: 'menu',
       ...listProps,
+      id,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
         if (e.key !== 'Escape') {
