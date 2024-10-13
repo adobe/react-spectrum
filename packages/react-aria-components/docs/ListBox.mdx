@@ -284,7 +284,7 @@ as shown below, can be used when the options come from an external data source s
 
 As seen below, an iterable list of options is passed to the ListBox using the `items` prop. Each item accepts an `id` prop, which
 is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
-as shown in the example below, then this is used automatically and an `id` prop is not required.
+as shown in the example below, then this is used automatically and a `key` prop is not required.
 
 ```tsx example
 function Example() {
@@ -864,7 +864,7 @@ function Example() {
   ];
 
   return (
-    <ListBox 
+    <ListBox
       aria-label="Animals with disabledKeys"
       items={options}
       selectionMode="single"

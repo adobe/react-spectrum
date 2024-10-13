@@ -306,7 +306,7 @@ This example uses the same `Tabs` component from above. Try navigating from the 
 
 The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `TabList` component is called for each item in the list, and returns an `<Tab>`. A function passed as the children of the <TypeLink links={docs.links} type={docs.exports.Collection} /> component returns a corresponding `<TabPanel>` for each tab.
 
-Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](collections.html) for more details.
+Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required. See [Collection Components](collections.html) for more details.
 
 ```tsx example
 import {Collection, Button} from 'react-aria-components';
