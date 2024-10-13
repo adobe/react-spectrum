@@ -64,7 +64,7 @@ Menu follows the [Collection Components](../react-stately/collections.html) API,
 
 Dynamic collections, as shown below, can be used when the items come from an external data source such as an API call, or update over time. Providing the data in this way allows for Menu to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of items is passed to the Menu using the `items` prop. Each item accepts a `key` prop, which is passed to the event handler to identify the selected item. Alternatively, if the item objects contain an id property, this is then used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection and actions.
+As seen below, an iterable list of items is passed to the Menu using the `items` prop. Each item accepts a `key` prop, which is passed to the event handler to identify the selected item. Alternatively, if the item objects contain an id property, this is then used automatically and a `key` prop is not required. See the [Events](#events) section for more detail on selection and actions.
 
 ```tsx example
 function Example() {
