@@ -31,8 +31,8 @@ const disclosureButton = tv({
   variants: {
     isDisabled: {
       true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
-    },
-  },
+    }
+  }
 });
 
 const chevron = tv({
@@ -41,7 +41,10 @@ const chevron = tv({
     isExpanded: {
       true: "transform rotate-90",
     },
-  },
+    isDisabled: {
+      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
+    }
+  }
 });
 
 export interface DisclosureProps extends AriaDisclosureProps {
@@ -74,8 +77,12 @@ export function DisclosureHeader({ children }: DisclosureHeaderProps) {
         slot="trigger"
         className={(renderProps) => disclosureButton(renderProps)}
       >
-        <ChevronRight aria-hidden className={chevron({ isExpanded })} />
-        {children}
+        {({isDisabled}) => (
+          <>
+            <ChevronRight aria-hidden className={chevron({ isExpanded, isDisabled })} />
+            {children}
+          </>
+        )}
       </Button>
     </Heading>
   );
