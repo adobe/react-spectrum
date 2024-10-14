@@ -217,19 +217,20 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
     M: 'S',
     L: 'M',
     XL: 'L'
-  }
+  };
 
   // maps to one size smaller in the compact density to ensure there is space between the top and bottom of the action button and container
+  // @ts-ignore
   let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' = size;
   if (density === 'compact') {
-    newSize = mapSize[size] as 'XS' | 'S' | 'M' | 'L';
+    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L' | 'XL';
   }
 
   return (
     <Provider
-    values={[
-      [ActionButtonContext, {size: newSize, isQuiet, isDisabled}]
-    ]}>
+      values={[
+        [ActionButtonContext, {size: newSize, isQuiet, isDisabled}]
+      ]}>
       <div
         style={UNSAFE_style}
         className={(UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})}
@@ -261,19 +262,19 @@ function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement
   let isRTL = direction === 'rtl';
 
   return (
-      <Heading
-        {...domProps}
-        level={level}
-        ref={domRef}
-        style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + headingStyle}>
-        <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
-          <CenterBaseline>
-            <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
-          </CenterBaseline>
-          {props.children}
-        </Button>
-      </Heading>
+    <Heading
+      {...domProps}
+      level={level}
+      ref={domRef}
+      style={UNSAFE_style}
+      className={(UNSAFE_className ?? '') + headingStyle}>
+      <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
+        <CenterBaseline>
+          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+        </CenterBaseline>
+        {props.children}
+      </Button>
+    </Heading>
   );
 }
 
