@@ -220,10 +220,9 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
   };
 
   // maps to one size smaller in the compact density to ensure there is space between the top and bottom of the action button and container
-  // @ts-ignore
-  let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' = size;
+  let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = size;
   if (density === 'compact') {
-    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L' | 'XL';
+    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L';
   }
 
   return (
