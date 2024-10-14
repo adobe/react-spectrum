@@ -181,7 +181,6 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
-  console.log(props.size);
   return (
     <RACButton
       {...props}
