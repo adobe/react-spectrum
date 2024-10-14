@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/color",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,17 +36,17 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/color": "^3.0.0",
-    "@react-aria/focus": "^3.18.3",
+    "@react-aria/color": "^3.0.1",
+    "@react-aria/focus": "^3.18.4",
     "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.3",
+    "@react-aria/interactions": "^3.22.4",
     "@react-aria/utils": "^3.25.3",
-    "@react-spectrum/dialog": "^3.8.14",
+    "@react-spectrum/dialog": "^3.8.15",
     "@react-spectrum/form": "^3.7.9",
     "@react-spectrum/label": "^3.16.9",
-    "@react-spectrum/overlays": "^5.6.4",
-    "@react-spectrum/picker": "^3.15.2",
-    "@react-spectrum/textfield": "^3.12.5",
+    "@react-spectrum/overlays": "^5.6.5",
+    "@react-spectrum/picker": "^3.15.3",
+    "@react-spectrum/textfield": "^3.12.6",
     "@react-spectrum/utils": "^3.11.11",
     "@react-spectrum/view": "^3.6.13",
     "@react-stately/color": "^3.8.0",
@@ -54,7 +54,7 @@
     "@react-types/shared": "^3.25.0",
     "@react-types/textfield": "^3.9.7",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.4.0"
+    "react-aria-components": "^1.4.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

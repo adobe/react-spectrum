@@ -36,6 +36,9 @@
     "strict": false,
     "plugins": [
       {
+        "name": "@react-spectrum/ts-plugin"
+      },
+      {
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@internationalized",
