@@ -166,7 +166,7 @@ const badge = style<BadgeStyleProps>({
       outline: {
         variant: {
           accent: lightDark('accent-800', 'accent-900'), // accent-visual-color
-          informative: lightDark('accent-800', 'accent-900'), // informative-visual-color
+          informative: lightDark('informative-800', 'informative-900'), // informative-visual-color
           neutral: lightDark('gray-500', 'gray-600'), // neutral-visual-color
           positive: lightDark('positive-800', 'positive-900'), // positive-visual-color
           notice: lightDark('notice-800', 'notice-900'), // notice-visual-color
