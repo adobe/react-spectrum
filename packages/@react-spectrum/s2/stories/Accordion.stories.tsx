@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTrigger, TextField} from '../src';
+import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
@@ -36,9 +36,9 @@ export const Example: Story = {
         <Accordion {...args}>
           <Disclosure id="files">
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 Files
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -46,9 +46,9 @@ export const Example: Story = {
           </Disclosure>
           <Disclosure id="people">
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 People
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
@@ -67,9 +67,9 @@ export const WithLongTitle: Story = {
         <Accordion styles={style({maxWidth: 224})} {...args}>
           <Disclosure>
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 Files
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -77,9 +77,9 @@ export const WithLongTitle: Story = {
           </Disclosure>
           <Disclosure>
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 People
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               People content
@@ -87,9 +87,9 @@ export const WithLongTitle: Story = {
           </Disclosure>
           <Disclosure>
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 Very very very very very long title that wraps
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               Accordion content
@@ -108,9 +108,9 @@ export const WithDisabledDisclosure: Story = {
         <Accordion {...args}>
           <Disclosure>
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 Files
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -118,9 +118,9 @@ export const WithDisabledDisclosure: Story = {
           </Disclosure>
           <Disclosure isDisabled>
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 People
-              </DisclosureTrigger>
+              </DisclosureTitle>
             </DisclosureHeader>
             <DisclosurePanel>
               <TextField label="Name" />
@@ -151,10 +151,10 @@ export const WithActionButton: Story = {
         <Accordion {...args}>
           <Disclosure id="files">
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 Files
-              </DisclosureTrigger>
-              <ActionButton><NewIcon /></ActionButton>
+              </DisclosureTitle>
+              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
             </DisclosureHeader>
             <DisclosurePanel>
               Files content
@@ -162,10 +162,10 @@ export const WithActionButton: Story = {
           </Disclosure>
           <Disclosure id="people">
             <DisclosureHeader>
-              <DisclosureTrigger>
+              <DisclosureTitle>
                 People
-              </DisclosureTrigger>
-              <ActionButton><NewIcon /></ActionButton>
+              </DisclosureTitle>
+              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
             </DisclosureHeader>
             <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
