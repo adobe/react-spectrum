@@ -17,7 +17,7 @@ import { composeTailwindRenderProps, focusRing } from "./utils";
 import { DisclosureGroupStateContext } from "react-aria-components";
 
 const disclosure = tv({
-  base: "w-64 border rounded-lg bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:border-zinc-500 outline-none",
+  base: "group min-w-64 border dark:border-zinc-600 rounded-lg",
 });
 
 const disclosureInGroup = tv({
@@ -31,6 +31,9 @@ const disclosureButton = tv({
   variants: {
     isDisabled: {
       true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
+    },
+    isInGroup: {
+      true: "-outline-offset-2 rounded-none group-first:rounded-t-lg group-last:rounded-b-lg",
     }
   }
 });
@@ -71,11 +74,12 @@ export interface DisclosureHeaderProps {
 
 export function DisclosureHeader({ children }: DisclosureHeaderProps) {
   let { isExpanded } = useContext(DisclosureStateContext)!;
+  let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
     <Heading className="text-base font-medium">
       <Button
         slot="trigger"
-        className={(renderProps) => disclosureButton(renderProps)}
+        className={(renderProps) => disclosureButton({ ...renderProps, isInGroup })}
       >
         {({isDisabled}) => (
           <>
@@ -106,7 +110,7 @@ export interface DisclosureGroupProps extends AriaDisclosureGroupProps {
 
 export function DisclosureGroup({ children, ...props }: DisclosureGroupProps) {
   return (
-    <AriaDisclosureGroup {...props} className={composeTailwindRenderProps(props.className, 'border border-gray-200 dark:border-zinc-600 bg-gray-100 dark:bg-zinc-700 rounded-lg')}>
+    <AriaDisclosureGroup {...props} className={composeTailwindRenderProps(props.className, 'border dark:border-zinc-600 rounded-lg')}>
       {children}
     </AriaDisclosureGroup>
   );

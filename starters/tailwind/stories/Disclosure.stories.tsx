@@ -34,5 +34,9 @@ export const Group = (args: any) => (
       <DisclosureHeader>Images</DisclosureHeader>
       <DisclosurePanel>Images content</DisclosurePanel>
     </Disclosure>
+    <Disclosure>
+      <DisclosureHeader>Documents</DisclosureHeader>
+      <DisclosurePanel>Documents content</DisclosurePanel>
+    </Disclosure>
   </DisclosureGroup>
 );
