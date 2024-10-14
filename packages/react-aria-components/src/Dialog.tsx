@@ -102,9 +102,7 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
       {...dialogProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot || undefined}
-      style={props.style}
-      className={props.className ?? 'react-aria-Dialog'}>
+      slot={props.slot || undefined}>
       <Provider
         values={[
           [HeadingContext, {
