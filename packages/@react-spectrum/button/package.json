@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/button",
-  "version": "3.16.7",
+  "version": "3.16.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,13 +36,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.10.0",
-    "@react-aria/focus": "^3.18.3",
+    "@react-aria/button": "^3.10.1",
+    "@react-aria/focus": "^3.18.4",
     "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.3",
+    "@react-aria/interactions": "^3.22.4",
     "@react-aria/utils": "^3.25.3",
     "@react-spectrum/progress": "^3.7.10",
-    "@react-spectrum/text": "^3.5.8",
+    "@react-spectrum/text": "^3.5.9",
     "@react-spectrum/utils": "^3.11.11",
     "@react-stately/toggle": "^3.7.8",
     "@react-types/button": "^3.10.0",
