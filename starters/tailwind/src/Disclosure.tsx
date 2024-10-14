@@ -18,11 +18,11 @@ import { DisclosureGroupStateContext } from "react-aria-components";
 
 const disclosure = tv({
   base: "group min-w-64 border dark:border-zinc-600 rounded-lg",
-});
-
-const disclosureInGroup = tv({
-  extend: disclosure,
-  base: "border-0 border-b last:border-b-0 rounded-b-none last:rounded-b-lg",
+  variants: {
+    isInGroup: {
+      true: "border-0 border-b last:border-b-0 rounded-b-none last:rounded-b-lg",
+    }
+  }
 });
 
 const disclosureButton = tv({
@@ -59,9 +59,7 @@ export function Disclosure({ children, ...props }: DisclosureProps) {
   return (
     <AriaDisclosure
       {...props}
-      className={composeRenderProps(props.className, (className, renderProps) =>
-        isInGroup ? disclosureInGroup({ ...renderProps, className }) : disclosure({ ...renderProps, className })
-      )}
+      className={composeRenderProps(props.className, (className, renderProps) => disclosure({ ...renderProps, isInGroup, className }))}
     >
       {children}
     </AriaDisclosure>
@@ -76,7 +74,7 @@ export function DisclosureHeader({ children }: DisclosureHeaderProps) {
   let { isExpanded } = useContext(DisclosureStateContext)!;
   let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
-    <Heading className="text-base font-medium">
+    <Heading className="text-lg font-semibold">
       <Button
         slot="trigger"
         className={(renderProps) => disclosureButton({ ...renderProps, isInGroup })}
