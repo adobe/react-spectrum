@@ -27,7 +27,7 @@ const disclosureInGroup = tv({
 
 const disclosureButton = tv({
   extend: focusRing,
-  base: "rounded flex gap-2 items-center w-full text-start p-2 cursor-default",
+  base: "rounded-lg flex gap-2 items-center w-full text-start p-2 cursor-default",
   variants: {
     isDisabled: {
       true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
