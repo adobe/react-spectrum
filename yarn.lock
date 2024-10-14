@@ -8028,6 +8028,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/ts-plugin@workspace:packages/dev/ts-plugin":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/ts-plugin@workspace:packages/dev/ts-plugin"
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/utils@npm:^3.1.0, @react-spectrum/utils@npm:^3.11.11, @react-spectrum/utils@npm:^3.8.1, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/utils@workspace:packages/@react-spectrum/utils"
