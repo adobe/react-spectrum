@@ -104,7 +104,7 @@ export class CollectionBuilder<T extends object> {
         children.push(child);
       });
 
-      let index = partialNode.index;
+      let index = partialNode.index ?? 0;
 
       for (const child of children) {
         yield* this.getFullNode({
