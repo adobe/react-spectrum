@@ -168,7 +168,7 @@ Here are a few examples:
 Yes, [that's normal](https://github.com/adobe/react-spectrum/issues/6937#issuecomment-2311492647).
 It will complete successfully at the end.
 
-> `yarn build` fails with scary errors.
+> `yarn build` fails.
 
 ```
 parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
@@ -178,9 +178,9 @@ parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationali
 make: *** [build] Segmentation fault: 11
 ```
 
-It's likely that you are using a different version of Node.js. Please use Node.js 18.
+It's likely that you are using a different version of Node.js. Please use Node.js 18. When changing the node version, delete `node_modules` and re-run `yarn install`
 
-> `yarn start` fails with some errors.
+> `yarn start` fails.
 
 For example:
 
@@ -189,6 +189,8 @@ For example:
 ```
 
 You may have run `yarn build` before. Please run `make clean_all && yarn` to clean up the build artifacts.
+
+It may also just be a stale cache, you can try deleting the `.parcel-cache`
 
 ## Contributor to committer
 
