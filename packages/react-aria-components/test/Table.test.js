@@ -1830,5 +1830,5 @@ describe('Table', () => {
       let checkbox = tree.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
     });
-  })
+  });
 });
