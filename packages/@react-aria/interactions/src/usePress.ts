@@ -787,7 +787,7 @@ export function usePress(props: PressHookProps): PressResult {
   ]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       if (!allowTextSelectionOnPress) {

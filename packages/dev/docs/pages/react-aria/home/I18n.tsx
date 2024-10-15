@@ -91,7 +91,7 @@ function matchLocale(defaultLocale: string) {
   let parsed: Intl.Locale;
   try {
     parsed = new Intl.Locale(defaultLocale);
-  } catch (err) {
+  } catch {
     return 'en-US';
   }
 
