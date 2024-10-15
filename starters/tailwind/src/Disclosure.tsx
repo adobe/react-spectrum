@@ -17,7 +17,7 @@ import { composeTailwindRenderProps, focusRing } from "./utils";
 import { DisclosureGroupStateContext } from "react-aria-components";
 
 const disclosure = tv({
-  base: "group min-w-64 border dark:border-zinc-600 rounded-lg",
+  base: "group min-w-64 border dark:border-zinc-600 rounded-lg text-gray-900 dark:text-zinc-200",
   variants: {
     isInGroup: {
       true: "border-0 border-b last:border-b-0 rounded-b-none last:rounded-b-lg",
