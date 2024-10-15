@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/filetrigger",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.4.0"
+    "react-aria-components": "^1.4.1"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

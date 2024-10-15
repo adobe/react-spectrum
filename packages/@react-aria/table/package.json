@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/table",
-  "version": "3.15.4",
+  "version": "3.15.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,13 +22,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.18.3",
-    "@react-aria/grid": "^3.10.4",
+    "@react-aria/focus": "^3.18.4",
+    "@react-aria/grid": "^3.10.5",
     "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.3",
+    "@react-aria/interactions": "^3.22.4",
     "@react-aria/live-announcer": "^3.4.0",
     "@react-aria/utils": "^3.25.3",
-    "@react-aria/visually-hidden": "^3.8.16",
+    "@react-aria/visually-hidden": "^3.8.17",
     "@react-stately/collections": "^3.11.0",
     "@react-stately/flags": "^3.0.4",
     "@react-stately/table": "^3.12.3",

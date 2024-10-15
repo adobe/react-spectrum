@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/autocomplete",
-  "version": "3.0.0-alpha.34",
+  "version": "3.0.0-alpha.35",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,9 +22,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/combobox": "^3.10.4",
-    "@react-aria/listbox": "^3.13.4",
-    "@react-aria/searchfield": "^3.7.9",
+    "@react-aria/combobox": "^3.10.5",
+    "@react-aria/listbox": "^3.13.5",
+    "@react-aria/searchfield": "^3.7.10",
     "@react-aria/utils": "^3.25.3",
     "@react-stately/combobox": "^3.10.0",
     "@react-types/autocomplete": "3.0.0-alpha.26",
