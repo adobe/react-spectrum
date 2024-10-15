@@ -212,7 +212,6 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
   let domRef = useDOMRef(ref);
   let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
 
-
   let mapSize = {
     S: 'XS',
     M: 'S',
@@ -261,40 +260,29 @@ function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement
   let {size, density, isQuiet} = useSlottedContext(DisclosureContext)!;
   let isRTL = direction === 'rtl';
 
+  let buttonTrigger = (
+    <Heading
+      {...domProps}
+      level={level}
+      ref={domRef}
+      style={UNSAFE_style}
+      className={(UNSAFE_className ?? '') + headingStyle}>
+      <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
+        <CenterBaseline>
+          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+        </CenterBaseline>
+        {props.children}
+      </Button>
+    </Heading>
+  )
   let ctx = useContext(InternalDisclosureHeader);
   if (ctx) {
-    return (
-      <Heading
-        {...domProps}
-        level={level}
-        ref={domRef}
-        style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + headingStyle}>
-        <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
-          <CenterBaseline>
-            <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
-          </CenterBaseline>
-          {props.children}
-        </Button>
-      </Heading>
-    );
+    return buttonTrigger;
   }
 
   return (
     <DisclosureHeader>
-      <Heading
-        {...domProps}
-        level={level}
-        ref={domRef}
-        style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + headingStyle}>
-        <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
-          <CenterBaseline>
-            <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
-          </CenterBaseline>
-          {props.children}
-        </Button>
-      </Heading>
+      {buttonTrigger}
     </DisclosureHeader>
   );
 }
