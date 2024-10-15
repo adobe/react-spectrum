@@ -29,7 +29,7 @@ fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
 for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
-  if (!/^[A-Z]/.test(basename(file))) {
+  if (!/^[A-Z]/.test(basename(file)) || /^Tree/.test(basename(file))) {
     continue;
   }
 
@@ -482,6 +482,16 @@ function generateWrapper(name) {
   if (name === 'Breadcrumbs') {
     typeParams = '<T extends object>';
     generic = '<T>';
+  }
+
+  if (name === 'Disclosure' || name === 'DisclosureGroup' || name === 'DisclosurePanel') {
+    return `import {UNSTABLE_${name} as RAC${name}, ${typeName}} from 'react-aria-components';
+import './${name}.css';
+
+export function ${name}${typeParams}(props: ${typeName}${generic}) {
+  return <RAC${name} {...props} />;
+}
+`
   }
 
   return `import {${name} as RAC${name}, ${typeName}} from 'react-aria-components';

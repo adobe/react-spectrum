@@ -23,7 +23,8 @@ const meta: Meta<typeof ColorSlider> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
-  }
+  },
+  title: 'ColorSlider'
 };
 
 export default meta;

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Item} from '../src';
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../src';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -20,18 +20,19 @@ import userEvent from '@testing-library/user-event';
 let items = [
   {key: 'one', title: 'one title', children: 'one children'},
   {key: 'two', title: 'two title', children: 'two children'},
-  {key: 'three', title: 'three title', children: <input type="text" />, hasChildItems: false}
+  {key: 'three', title: 'three title', children: <input type="text" />}
 ];
 
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
-        {item => (
-          <Item key={item.key} title={item.title} hasChildItems={item.hasChildItems}>
-            {item.children}
-          </Item>
-        )}
+      <Accordion {...props}>
+        {items.map(item => (
+          <Disclosure key={item.key}>
+            <DisclosureHeader>{item.title}</DisclosureHeader>
+            <DisclosurePanel>{item.children}</DisclosurePanel>
+          </Disclosure>
+        ))}
       </Accordion>
     </Provider>
   );
@@ -67,45 +68,26 @@ describe('Accordion', function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-    await user.click(selectedItem);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
     await user.click(selectedItem);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    await user.click(selectedItem);
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('allows users to open and close accordion item with enter / space key', async function () {
+  it('allows users to open and close disclosure with enter / space key', async function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
     act(() => {selectedItem.focus();});
     expect(document.activeElement).toBe(selectedItem);
 
     await user.keyboard('{Enter}');
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
 
     await user.keyboard('{Enter}');
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  it('allows users to naviagte accordion headers through arrow keys', async function () {
-    let tree = renderComponent();
-    let buttons = tree.getAllByRole('button');
-    let [firstItem, secondItem, thirdItem] = buttons;
-    act(() => {firstItem.focus();});
-
-    expect(document.activeElement).toBe(firstItem);
-    await user.keyboard('{ArrowUp}');
-    expect(document.activeElement).toBe(firstItem);
-    await user.keyboard('{ArrowDown}');
-    expect(document.activeElement).toBe(secondItem);
-    await user.keyboard('{ArrowDown}');
-    expect(document.activeElement).toBe(thirdItem);
-    await user.keyboard('{ArrowDown}');
-    expect(document.activeElement).toBe(thirdItem);
-    await user.keyboard('{ArrowUp}');
-    expect(document.activeElement).toBe(secondItem);
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('allows users to navigate accordion headers through the tab key', async function () {
@@ -130,7 +112,7 @@ describe('Accordion', function () {
     expect(document.activeElement).toBe(thirdItem);
   });
 
-  it('allows users to type inside accordion items', async function () {
+  it('allows users to type inside disclosures', async function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let itemWithInputHeader = buttons[2];
@@ -143,3 +125,5 @@ describe('Accordion', function () {
     expect(input.value).toEqual('Type example');
   });
 });
+
+

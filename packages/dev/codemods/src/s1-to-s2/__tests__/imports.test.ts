@@ -119,8 +119,7 @@ test('should preserve leading comment if first line is removed', `
 /*
  * Some comment
  */
-import {StatusLight} from '@adobe/react-spectrum';
-import {Button} from "@react-spectrum/s2";
+import {Button, StatusLight} from '@adobe/react-spectrum';
 
 <>
   <Button>Test</Button>

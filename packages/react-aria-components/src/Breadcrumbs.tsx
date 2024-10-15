@@ -65,7 +65,7 @@ export interface BreadcrumbRenderProps {
   isCurrent: boolean,
   /**
    * Whether the breadcrumb is disabled.
-   * @selector [data-current]
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
