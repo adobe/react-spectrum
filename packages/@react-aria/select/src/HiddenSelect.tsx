@@ -16,7 +16,6 @@ import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
 import {useFormValidation} from '@react-aria/form';
-import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface AriaHiddenSelectProps {
@@ -125,7 +124,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
 export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   let {state, triggerRef, label, name, isDisabled} = props;
   let selectRef = useRef(null);
-  let {containerProps, inputProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
+  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
