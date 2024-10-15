@@ -79,9 +79,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   // TODO: we will only need the menu props for the id for listData (might need a replacement for aria-labelledby and autofocus?)
   let menuId = useId();
-
-  // TODO: this doesn't work because menu won't use the autocompletestate but rather its own tree state
-  // @ts-ignore
   menuData.set(state, {id: menuId});
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).

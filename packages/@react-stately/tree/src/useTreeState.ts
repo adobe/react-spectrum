@@ -62,7 +62,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   , [props.disabledKeys]);
 
   let tree = useCollection(props, useCallback(nodes => new TreeCollection(nodes, {expandedKeys}), [expandedKeys]), null);
-
+  // console.log('tree', tree)
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {

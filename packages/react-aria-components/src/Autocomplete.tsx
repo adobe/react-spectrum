@@ -67,6 +67,8 @@ function Autocomplete<T extends object>(props: AutocompleteProps<T>, ref: Forwar
   // This approach is a 1:1 copy of ComboBox where this renders the Autocomplete's children (aka the Menu) in the fake DOM and constructs a collection which we can filter
   // via useAutocomplete state. Said state then gets propagated Menu via AutocompleteInner's context provider so that the Menu's rendered items are mirrored/match the filtered collection
   // I think we still have to do this, but geting a bit tripped up with thinking if we could simplify it somehow
+  // Perhaps the component could accept the wrapped collection's Collection type (e.g. TableCollection, etc) and thus just generate the desired collection at the top level instead of making
+  // a basecollection? Not sure if that would make the filtering any easier tbh
   let content = useMemo(() => (
     <MenuContext.Provider value={{items: props.items ?? props.defaultItems}}>
       {typeof children === 'function'
@@ -163,7 +165,6 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
         // is filtering against... Ideally we'd somehow have the child component communicate its state upwards, upon which we we would filter it from here
         // and send it back down but that feels circular. However we need a single SelectionManager to be used by the autocomplete and filtered collection's hooks
         // so that the concepts of "selectedKey"/"focused"
-        // @ts-ignore
         [ExternalMenuStateContext, state],
         [TextContext, {
           slots: {

@@ -150,6 +150,7 @@ function useCollectionRender(
   parent: Node<unknown> | null,
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 ) {
+  // console.log('trying to call', collection, parent)
   return useCachedChildren({
     items: parent ? collection.getChildren!(parent.key) : collection,
     dependencies: [renderDropIndicator],

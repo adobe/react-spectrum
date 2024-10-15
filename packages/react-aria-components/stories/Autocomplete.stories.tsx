@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Autocomplete, Header, Input, Keyboard, Label, Menu, Section, Separator, Text} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {Autocomplete, Header, Input, Keyboard, Label, Menu, Popover, Section, Separator, SubmenuTrigger, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -172,3 +173,32 @@ export const AutocompleteAsyncLoadingExample = () => {
     </Autocomplete>
   );
 };
+
+
+export const AutocompleteSubmenu = () => (
+  <Autocomplete data-testid="autocomplete-submenu">
+    {() => (
+      <>
+        <Label style={{display: 'block'}}>Test</Label>
+        <div style={{display: 'flex'}}>
+          <Input />
+        </div>
+        <Menu className={styles.menu} onAction={action('onAction')}>
+          <MyMenuItem id="Foo">Foo</MyMenuItem>
+          <SubmenuTrigger>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem id="Baz">Baz</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+        </Menu>
+      </>
+    )}
+  </Autocomplete>
+);

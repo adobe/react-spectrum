@@ -99,4 +99,12 @@ export class TreeCollection<T> implements Collection<Node<T>> {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }
+
+  // TODO: this is iffy since RSP submenu doesn't have two node for the submenu trigger and the actual node within it...
+  // but this is needed for the RAC autocomplete since RAC menu makes the submenutrigger node a branch component and thus needs
+  // collection.getChildren
+  getChildren(key: Key): Iterable<Node<T>> {
+    let node = this.keyMap.get(key);
+    return node?.childNodes || [];
+  }
 }

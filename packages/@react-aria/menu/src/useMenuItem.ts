@@ -125,6 +125,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let data = menuData.get(state);
 
   let item = state.collection.getItem(key);
+  // console.log('item', item, key)
   let onClose = props.onClose || data.onClose;
   let router = useRouter();
   let performAction = (e: PressEvent) => {

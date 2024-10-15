@@ -22,11 +22,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-aria/collections": "3.0.0-alpha.5",
     "@react-stately/collections": "^3.11.0",
     "@react-stately/form": "^3.0.6",
     "@react-stately/list": "^3.11.0",
     "@react-stately/overlays": "^3.6.11",
     "@react-stately/select": "^3.6.8",
+    "@react-stately/tree": "^3.8.5",
     "@react-stately/utils": "^3.10.4",
     "@react-types/combobox": "^3.13.0",
     "@react-types/shared": "^3.25.0",

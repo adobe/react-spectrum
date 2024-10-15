@@ -195,7 +195,13 @@ function MenuInner<T extends object>({props, menuRef: ref, state}: MenuInnerProp
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext);
+  // TODO: root menu trigger state if one doesn't exist (aka menu is used in a autocomplete). Needs to be controlled open (aka since it shouldn't ever close if in a autocomplete)?
+  let fakeRootState = useMenuTriggerState({isOpen: true});
+  if (!rootMenuTriggerState) {
+    rootMenuTriggerState = fakeRootState;
+  }
+  // console.log('state', state)
   let popoverContext = useContext(PopoverContext)!;
 
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
@@ -242,7 +248,9 @@ function MenuInner<T extends object>({props, menuRef: ref, state}: MenuInnerProp
             [PopoverContext, {UNSTABLE_portalContainer: popoverContainer || undefined}],
             [SectionContext, {render: MenuSection}],
             [SubmenuTriggerContext, {parentMenuRef: ref}],
-            [MenuItemContext, null]
+            [RootMenuTriggerStateContext, rootMenuTriggerState],
+            [MenuItemContext, null],
+            [ExternalMenuStateContext, null]
           ]}>
           <CollectionRoot
             collection={state.collection}

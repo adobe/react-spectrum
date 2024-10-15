@@ -13,12 +13,14 @@
 import {Collection, CollectionBase, CollectionStateBase, FocusableProps, HelpTextProps, InputBase, Key, LabelableProps, Node, SingleSelection, TextInputBase, Validation} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
-import {ListCollection, useSingleSelectListState} from '@react-stately/list';
-import {SelectState} from '@react-stately/select';
+import {ListCollection} from '@react-stately/list';
+import {TreeCollection, TreeState, useTreeState} from '@react-stately/tree';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
+import { BaseCollection } from '@react-aria/collections';
 
-export interface AutocompleteState<T> extends Omit<SelectState<T>, 'focusStrategy' | 'open' | 'close' | 'toggle' | 'isOpen' | 'setOpen'>, FormValidationState{
+// TODO: for now provide expandedKeys and stuff, omit later if needed
+export interface AutocompleteState<T> extends TreeState<T>, FormValidationState{
   /** The current value of the autocomplete input. */
   inputValue: string,
   /** Sets the value of the autocomplete input. */
@@ -26,7 +28,15 @@ export interface AutocompleteState<T> extends Omit<SelectState<T>, 'focusStrateg
   /** Selects the currently focused item and updates the input value. */
   commit(): void,
   /** Resets the input value to the previously selected item's text if any.  */
-  revert(): void
+  revert(): void,
+  selectedKey: Key,
+  setSelectedKey: (Key) => void,
+  /** Whether the autocomplete is currently focused. */
+  readonly isFocused: boolean,
+  /** Sets whether the autocomplete is focused. */
+  setFocused(isFocused: boolean): void,
+  /** The value of the currently selected item. */
+  readonly selectedItem: Node<T> | null
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
@@ -61,6 +71,7 @@ export interface AutocompleteStateOptions<T> extends Omit<AutocompleteProps<T>, 
   defaultFilter?: FilterFn
 }
 
+// TODO: double check the types
 /**
  * Provides state management for a autocomplete component. Handles building a collection
  * of items from props and manages the option selection state of the autocomplete component. In addition, it tracks the input value,
@@ -86,17 +97,39 @@ export function useAutocompleteState<T extends object>(props: AutocompleteStateO
     }
   };
 
+  // let {collection,
+  //   selectionManager,
+  //   selectedKey,
+  //   setSelectedKey,
+  //   selectedItem,
+  //   disabledKeys
+  // } = useSingleSelectListState({
+  //   ...props,
+  //   onSelectionChange,
+  //   items: props.items ?? props.defaultItems
+  // });
+
   let {collection,
     selectionManager,
-    selectedKey,
-    setSelectedKey,
-    selectedItem,
-    disabledKeys
-  } = useSingleSelectListState({
+    disabledKeys,
+    expandedKeys,
+    setExpandedKeys,
+    toggleKey
+  } = useTreeState({
     ...props,
     onSelectionChange,
-    items: props.items ?? props.defaultItems
+    items: props.items ?? props.defaultItems,
+    selectionMode: 'single'
   });
+
+  // TODO: ideally would be memoized, but selectionManager is a new instance everytime already...
+  let selectedKey = selectionManager.firstSelectedKey;
+  let selectedItem = selectedKey != null
+    ? collection.getItem(selectedKey)
+    : null;
+  let setSelectedKey = (key) => selectionManager.setSelectedKeys([key]);
+
+
   let defaultInputValue: string | null | undefined = props.defaultInputValue;
   if (defaultInputValue == null) {
     if (selectedKey == null) {
@@ -241,6 +274,9 @@ export function useAutocompleteState<T extends object>(props: AutocompleteStateO
 
   return {
     ...validation,
+    expandedKeys,
+    setExpandedKeys,
+    toggleKey,
     selectionManager,
     selectedKey,
     setSelectedKey,
@@ -257,17 +293,47 @@ export function useAutocompleteState<T extends object>(props: AutocompleteStateO
 }
 
 function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
-  return new ListCollection(filterNodes(collection, collection, inputValue, filter));
+
+  // let filteredCollection = collection.clone();
+  // filterNodesRAC(filteredCollection, collection, inputValue, filter);
+  // console.log('before and after', collection, filteredCollection)
+  // return filteredCollection
+
+
+  // TODO maybe need to replace with tree colelctioon
+  let nodes = filterNodes(collection, collection, inputValue, filter);
+  // let filtered = new ListCollection(nodes);
+  let filtered = new TreeCollection(nodes);
+  // console.log('nodes', nodes, collection);
+  // console.log('tree', filtered)
+  console.log('before and after', collection, filtered)
+  return filtered;
+  // return collection;
+
 }
 
 function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
   let filteredNode: Node<T>[] = [];
   for (let node of nodes) {
+    console.log('in filter', node)
     if (node.type === 'section' && node.hasChildNodes) {
       let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
       if ([...filtered].some(node => node.type === 'item')) {
         filteredNode.push({...node, childNodes: filtered});
       }
+    } else if (node.type === 'submenutrigger') {
+      let triggerNode = [...collection.getChildren(node.key)][0];
+      if (filter(triggerNode.textValue, inputValue)) {
+        // TODO: this is pretty wonky since the RAC implementation of submenu has bother the "submenu trigger" node and its wrapped item node in the key map
+        filteredNode.push({...triggerNode});
+        filteredNode.push({...node, childNodes: [triggerNode]});
+      }
+      // let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
+      // if ([...filtered].some(node => node.type === 'item')) {
+      //   console.log('pushingKGBEKJGBKEJBG')
+      //   filteredNode.push({...node, childNodes: filtered});
+      // }
+
     } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
       filteredNode.push({...node});
     } else if (node.type !== 'item') {
@@ -275,4 +341,36 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
     }
   }
   return filteredNode;
+}
+
+
+function filterNodesRAC<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn) {
+  // TODO: this is base collection so it has clone, redo types after
+  for (let node of nodes) {
+    if (node.type === 'section' && node.hasChildNodes) {
+      filterNodesRAC(collection, getChildNodes(node, collection), inputValue, filter);
+      if (!collection.getItem(node.key).hasChildNodes) {
+        collection.removeNode(node.key);
+      }
+      // let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
+      // if ([...filtered].some(node => node.type === 'item')) {
+      //   filteredNode.push({...node, childNodes: filtered});
+      // }
+    } else if (node.type === 'submenutrigger') {
+      let triggerNode = [...collection.getChildren(node.key)][0];
+      if (!filter(triggerNode.textValue, inputValue)) {
+        collection.removeNode(triggerNode.key);
+        collection.removeNode(node.key)
+      }
+      // let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
+      // if ([...filtered].some(node => node.type === 'item')) {
+      //   console.log('pushingKGBEKJGBKEJBG')
+      //   filteredNode.push({...node, childNodes: filtered});
+      // }
+
+    } else if (node.type === 'item' && !filter(node.textValue, inputValue)) {
+      // filteredNode.push({...node});
+      collection.removeNode(node.key)
+    }
+  }
 }
