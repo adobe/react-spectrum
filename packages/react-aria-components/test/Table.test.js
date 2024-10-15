@@ -214,7 +214,7 @@ describe('Table', () => {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of tableTester.cells) {
+    for (let cell of tableTester.cells()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
