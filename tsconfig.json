@@ -170,6 +170,5 @@
     "packages/dev/optimize-locales-plugin",
     "packages/@react-spectrum/s2/s2wf-icons",
     "packages/@react-spectrum/s2/icon.d.ts"
-    "packages/dev/optimize-locales-plugin"
   ]
 }
