@@ -68,7 +68,6 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let data = selectData.get(state) || {};
   let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
-  let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
@@ -105,11 +104,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {
-      type: 'text',
-      tabIndex: modality == null || state.isFocused || state.isOpen ? -1 : 0,
-      style: {fontSize: 16},
-      onFocus: () => triggerRef.current.focus(),
-      disabled: isDisabled
+      style: {display: 'none'},
     },
     selectProps: {
       tabIndex: -1,
@@ -138,7 +133,6 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   if (state.collection.size <= 300) {
     return (
       <div {...containerProps} data-testid="hidden-select-container">
-        <input {...inputProps} />
         <label>
           {label}
           <select {...selectProps} ref={selectRef}>
