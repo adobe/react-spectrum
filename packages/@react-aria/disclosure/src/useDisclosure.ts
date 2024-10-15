@@ -59,7 +59,7 @@ export function useDisclosure(
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
   let handleBeforeMatch = useCallback((e: Event) => {
-    if (groupState && id !== null) {
+    if (groupState && id !== undefined) {
       if (groupState.allowsMultipleExpanded) {
         groupState.toggleKey(id);
       } else {
