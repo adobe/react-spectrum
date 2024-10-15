@@ -274,7 +274,7 @@ function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement
         {props.children}
       </Button>
     </Heading>
-  )
+  );
   let ctx = useContext(InternalDisclosureHeader);
   if (ctx) {
     return buttonTrigger;
