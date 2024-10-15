@@ -44,12 +44,12 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {VirtualizedListBoxExample} from './VirtualizedListBox';
 
-interface Iitem {
+interface ItemValue {
   id: string,
   type: string,
   text: string
 }
-let manyItems: Array<Iitem> = [];
+let manyItems: Array<ItemValue> = [];
 for (let i = 0; i < 20; i++) {
   manyItems.push({id: '' + i, type: 'item', text: 'Item ' + i});
 }
@@ -391,7 +391,7 @@ function DraggableCollection(props) {
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection<Iitem>({
+    collection: React.useMemo(() => new GridCollection<ItemValue>({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -417,10 +417,7 @@ function DraggableCollection(props) {
     selectionManager: gridState.selectionManager,
     getItems(keys) {
       return [...keys].map(key => {
-        let item = gridState.collection.getItem(key);
-        if (item == null || item.value == null) {
-          return null;
-        }
+        let item = gridState.collection.getItem(key)!;
 
         // TODO why doesn't this work like DraggableCollection example?
         return {

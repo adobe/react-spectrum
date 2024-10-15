@@ -475,22 +475,22 @@ export const FocusableCells: TableStory = {
   name: 'focusable cells'
 };
 
-interface Iitem {
+interface ItemValue {
   name: string,
   key: string
 }
 
-let manyColunns: Array<Iitem> = [];
+let manyColunns: Array<ItemValue> = [];
 for (let i = 0; i < 100; i++) {
   manyColunns.push({name: 'Column ' + i, key: 'C' + i});
 }
 
-interface Irow {
+interface RowValue {
   key: string,
   [key: string]: string
 }
 
-let manyRows: Array<Irow> = [];
+let manyRows: Array<RowValue> = [];
 for (let i = 0; i < 1000; i++) {
   let row = {key: 'R' + i};
   for (let j = 0; j < 100; j++) {
@@ -961,7 +961,7 @@ function AsyncLoadingExample(props) {
     sort({items, sortDescriptor}) {
       return {
         items: items.slice().sort((a, b) => {
-          let cmp = a.data[sortDescriptor.column!] < b.data[sortDescriptor.column!] ? -1 : 1;
+          let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
           if (sortDescriptor.direction === 'descending') {
             cmp *= -1;
           }

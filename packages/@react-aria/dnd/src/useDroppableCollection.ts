@@ -653,16 +653,19 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 target = nextValidTarget(null, types, drag.allowedDropOperations, getNextTarget);
               } else {
                 // If on the root, go to the item a page below the top. Otherwise a page below the current item.
-                let nextKey: Key | null | undefined = keyboardDelegate.getKeyPageBelow(
-                  target.type === 'item'
-                    ? target.key
-                    : keyboardDelegate.getFirstKey?.() ?? null
-                );
+                let targetKey = keyboardDelegate.getFirstKey?.();
+                if (target.type === 'item') {
+                  targetKey = target.key;
+                }
+                let nextKey: Key | null = null;
+                if (targetKey != null) {
+                  nextKey = keyboardDelegate.getKeyPageBelow(targetKey);
+                }
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.
                 if (nextKey == null || (target.type === 'item' && target.key === keyboardDelegate.getLastKey?.())) {
-                  nextKey = keyboardDelegate.getLastKey?.();
+                  nextKey = keyboardDelegate.getLastKey?.() ?? null;
                   dropPosition = 'after';
                 }
 

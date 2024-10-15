@@ -29,7 +29,7 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface Iitem {
+interface ItemValue {
   id: string,
   type: string,
   text: string
@@ -49,7 +49,7 @@ export function DroppableListBoxExample(props) {
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items: Array<Iitem> = [];
+      let items: Array<ItemValue> = [];
       for (let item of e.items) {
         let type: string | undefined;
         if (item.kind === 'text') {

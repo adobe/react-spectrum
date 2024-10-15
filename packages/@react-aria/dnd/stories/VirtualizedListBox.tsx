@@ -30,7 +30,7 @@ import {useListData} from '@react-stately/data';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 import {Virtualizer} from '@react-aria/virtualizer';
 
-interface Iitem {
+interface ItemValue {
   id: string,
   type: string,
   text: string
@@ -50,7 +50,7 @@ export function VirtualizedListBoxExample(props) {
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items: Array<Iitem> = [];
+      let items: Array<ItemValue> = [];
       for (let item of e.items) {
         if (item.kind === 'text') {
           let type: string | undefined;
@@ -202,17 +202,17 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
 });
 
 function CollectionItem({item}) {
-  let {state, dropState} = React.useContext(Context) ?? {};
+  let {state, dropState} = React.useContext(Context)!;
   let ref = React.useRef(null);
   let {optionProps} = useOption({
     key: item.key,
-    isSelected: state!.selectionManager.isSelected(item.key),
+    isSelected: state.selectionManager.isSelected(item.key),
     isVirtualized: true
-  }, state!, ref);
+  }, state, ref);
 
   let {dropProps} = useDroppableItem({
     target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState!, ref);
+  }, dropState, ref);
 
   return (
     <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
@@ -231,14 +231,14 @@ function CollectionItem({item}) {
 }
 
 function InsertionIndicator(props) {
-  let {dropState} = React.useContext(Context) ?? {};
+  let {dropState} = React.useContext(Context)!;
   let ref = React.useRef(null);
-  let {dropIndicatorProps} = useDropIndicator(props, dropState!, ref);
+  let {dropIndicatorProps} = useDropIndicator(props, dropState, ref);
 
   // If aria-hidden, we are either not in a drag session or the drop target is invalid.
   // In that case, there's no need to render anything at all unless we need to show the indicator visually.
   // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
-  if (!dropState!.isDropTarget(props.target) && dropIndicatorProps['aria-hidden']) {
+  if (!dropState.isDropTarget(props.target) && dropIndicatorProps['aria-hidden']) {
     return null;
   }
 
@@ -248,7 +248,7 @@ function InsertionIndicator(props) {
       aria-selected="false"
       {...dropIndicatorProps}
       ref={ref}
-      className={dropState!.isDropTarget(props.target)
+      className={dropState.isDropTarget(props.target)
         ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
         : undefined
       }
@@ -263,11 +263,11 @@ function InsertionIndicator(props) {
 }
 
 function RootDropIndicator() {
-  let {dropState} = React.useContext(Context) ?? {};
+  let {dropState} = React.useContext(Context)!;
   let dropRef = React.useRef(null);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
-  }, dropState!, dropRef);
+  }, dropState, dropRef);
 
   let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropIndicatorProps['aria-hidden']) {

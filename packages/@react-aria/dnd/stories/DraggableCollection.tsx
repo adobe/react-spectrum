@@ -26,7 +26,7 @@ import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 
-interface Iitems {
+interface ItemValue {
   id: string,
   type: string,
   text: string
@@ -64,7 +64,7 @@ function DraggableCollection(props) {
   let state = useListState(props);
   let gridState = useGridState({
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection<Iitems>({
+    collection: React.useMemo(() => new GridCollection<ItemValue>({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -89,13 +89,10 @@ function DraggableCollection(props) {
     selectionManager: gridState.selectionManager,
     getItems(keys) {
       return [...keys].map(key => {
-        let item = gridState.collection.getItem(key);
-        if (item == null || item.value == null) {
-          return null;
-        }
+        let item = gridState.collection.getItem(key)!;
 
         return {
-          [item.value.type]: item.textValue,
+          [item.value!.type]: item.textValue,
           'text/plain': item.textValue
         };
       }).filter(item => item != null);
@@ -130,7 +127,7 @@ function DraggableCollection(props) {
       ))}
       <DragPreview ref={preview}>
         {() => {
-          let item = state.collection.getItem(dragState.draggedKey);
+          let item = dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
           return (
             <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
               <div className={classNames(dndStyles, 'drag-handle')}>

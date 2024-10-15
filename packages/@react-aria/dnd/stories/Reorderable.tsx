@@ -46,9 +46,6 @@ export function ReorderableGridExample(props) {
   });
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
-    if (target.key == null) {
-      return;
-    }
     if (target.dropPosition === 'before') {
       list.moveBefore(target.key, keys);
     } else {
@@ -195,7 +192,7 @@ function ReorderableGrid(props) {
       ))}
       <DragPreview ref={preview}>
         {() => {
-          let item = state.collection.getItem(dragState.draggedKey);
+          let item = dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
           return (
             <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
               <div className={classNames(dndStyles, 'drag-handle')}>

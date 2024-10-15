@@ -262,7 +262,9 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
   let onFocus = () => {
     enteredKeys.current = '';
-    scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+    if (ref.current) {
+      scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+    }
 
     // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();

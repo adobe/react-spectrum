@@ -49,7 +49,13 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
-  let getText = (key: Key | null) => collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue ?? '';
+  let getText = (key: Key | null) => {
+    if (key == null) {
+      return '';
+    } else {
+      return collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue ?? '';
+    }
+  };
 
   let label = '';
   let labelledBy: string | undefined;
