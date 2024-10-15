@@ -96,7 +96,7 @@ export interface DisclosurePanelProps extends AriaDisclosurePanelProps {
 
 export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
   return (
-    <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'px-4 py-2')}>
+    <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'group-data-[expanded]:px-4 group-data-[expanded]:py-2')}>
       {children}
     </AriaDisclosurePanel>
   );
