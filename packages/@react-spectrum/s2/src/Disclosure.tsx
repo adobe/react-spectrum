@@ -210,7 +210,7 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
     children
   } = props;
   let domRef = useDOMRef(ref);
-  let {size, isQuiet, isDisabled, density} = useSlottedContext(DisclosureContext)!;
+  let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
 
 
   let mapSize = {
@@ -229,7 +229,7 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
   return (
     <Provider
       values={[
-        [ActionButtonContext, {size: newSize, isQuiet, isDisabled}],
+        [ActionButtonContext, {size: newSize, isQuiet}],
         [InternalDisclosureHeader, {}]
       ]}>
       <div
