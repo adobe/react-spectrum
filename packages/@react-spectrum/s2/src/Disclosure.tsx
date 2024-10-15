@@ -11,7 +11,7 @@
  */
 
 import {ActionButtonContext} from './ActionButton';
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
@@ -201,8 +201,9 @@ const chevronStyles = style({
   flexShrink: 0
 });
 
+const InternalDisclosureHeader = createContext<{} | null>(null);
 
-function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
+function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_className,
     UNSAFE_style,
@@ -228,7 +229,8 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
   return (
     <Provider
       values={[
-        [ActionButtonContext, {size: newSize, isQuiet, isDisabled}]
+        [ActionButtonContext, {size: newSize, isQuiet, isDisabled}],
+        [InternalDisclosureHeader, {}]
       ]}>
       <div
         style={UNSAFE_style}
@@ -243,8 +245,7 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
 /**
  * A wrapper element for the disclosure title that can contain other elements not part of the trigger.
  */
-let _DisclosureHeader = forwardRef(DisclosureHeader);
-export {_DisclosureHeader as DisclosureHeader};
+export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeaderWithForwardRef);
 
 function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -260,20 +261,41 @@ function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement
   let {size, density, isQuiet} = useSlottedContext(DisclosureContext)!;
   let isRTL = direction === 'rtl';
 
+  let ctx = useContext(InternalDisclosureHeader);
+  if (ctx) {
+    return (
+      <Heading
+        {...domProps}
+        level={level}
+        ref={domRef}
+        style={UNSAFE_style}
+        className={(UNSAFE_className ?? '') + headingStyle}>
+        <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
+          <CenterBaseline>
+            <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+          </CenterBaseline>
+          {props.children}
+        </Button>
+      </Heading>
+    );
+  }
+
   return (
-    <Heading
-      {...domProps}
-      level={level}
-      ref={domRef}
-      style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + headingStyle}>
-      <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
-        <CenterBaseline>
-          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
-        </CenterBaseline>
-        {props.children}
-      </Button>
-    </Heading>
+    <DisclosureHeader>
+      <Heading
+        {...domProps}
+        level={level}
+        ref={domRef}
+        style={UNSAFE_style}
+        className={(UNSAFE_className ?? '') + headingStyle}>
+        <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
+          <CenterBaseline>
+            <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
+          </CenterBaseline>
+          {props.children}
+        </Button>
+      </Heading>
+    </DisclosureHeader>
   );
 }
 

@@ -50,11 +50,9 @@ export const Example: Story = {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
-          <DisclosureHeader>
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
-          </DisclosureHeader>
+          <DisclosureTitle>
+            Files
+          </DisclosureTitle>
           <DisclosurePanel>
             Files content
           </DisclosurePanel>
@@ -69,11 +67,9 @@ export const WithLongTitle: Story = {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure styles={style({maxWidth: 224})}  {...args}>
-          <DisclosureHeader>
-            <DisclosureTitle>
-              Very very very very very long title that wraps
-            </DisclosureTitle>
-          </DisclosureHeader>
+          <DisclosureTitle>
+            Very very very very very long title that wraps
+          </DisclosureTitle>
           <DisclosurePanel>
             Content
           </DisclosurePanel>

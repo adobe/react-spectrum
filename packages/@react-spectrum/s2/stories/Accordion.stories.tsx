@@ -35,21 +35,17 @@ export const Example: Story = {
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <Disclosure id="files">
-            <DisclosureHeader>
-              <DisclosureTitle>
-                Files
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              Files
+            </DisclosureTitle>
             <DisclosurePanel>
               Files content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure id="people">
-            <DisclosureHeader>
-              <DisclosureTitle>
-                People
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              People
+            </DisclosureTitle>
             <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
             </DisclosurePanel>
@@ -66,31 +62,25 @@ export const WithLongTitle: Story = {
       <div className={style({minHeight: 224})}>
         <Accordion styles={style({maxWidth: 224})} {...args}>
           <Disclosure>
-            <DisclosureHeader>
-              <DisclosureTitle>
-                Files
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              Files
+            </DisclosureTitle>
             <DisclosurePanel>
               Files content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure>
-            <DisclosureHeader>
-              <DisclosureTitle>
-                People
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              People
+            </DisclosureTitle>
             <DisclosurePanel>
               People content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure>
-            <DisclosureHeader>
-              <DisclosureTitle>
-                Very very very very very long title that wraps
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              Very very very very very long title that wraps
+            </DisclosureTitle>
             <DisclosurePanel>
               Accordion content
             </DisclosurePanel>
@@ -107,21 +97,17 @@ export const WithDisabledDisclosure: Story = {
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <Disclosure>
-            <DisclosureHeader>
-              <DisclosureTitle>
-                Files
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              Files
+            </DisclosureTitle>
             <DisclosurePanel>
               Files content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure isDisabled>
-            <DisclosureHeader>
-              <DisclosureTitle>
-                People
-              </DisclosureTitle>
-            </DisclosureHeader>
+            <DisclosureTitle>
+              People
+            </DisclosureTitle>
             <DisclosurePanel>
               <TextField label="Name" />
             </DisclosurePanel>
