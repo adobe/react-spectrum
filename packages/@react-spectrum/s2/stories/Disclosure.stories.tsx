@@ -83,3 +83,46 @@ WithLongTitle.parameters = {
     disable: true
   }
 };
+
+function ControlledDisclosure(props) {
+  let [isExpanded, setExpanded] = React.useState(false);
+  return (
+    <Disclosure isExpanded={isExpanded} onExpandedChange={setExpanded} {...props}>
+      <DisclosureHeader>
+        Files
+      </DisclosureHeader>
+      <DisclosurePanel>
+        Files content
+      </DisclosurePanel>
+    </Disclosure>
+  );
+}
+
+export const Controlled: Story = {
+  render: (args) => <ControlledDisclosure {...args} />
+};
+
+Controlled.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const ControlledClosed: Story = {
+  render: (args) => (
+    <Disclosure isExpanded={false} {...args}>
+      <DisclosureHeader>
+        Files
+      </DisclosureHeader>
+      <DisclosurePanel>
+        Files content
+      </DisclosurePanel>
+    </Disclosure>
+  )
+};
+
+ControlledClosed.parameters = {
+  docs: {
+    disable: true
+  }
+};

@@ -11,8 +11,9 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DisclosureState} from '@react-stately/disclosure';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {DisclosureGroupState, DisclosureState} from '@react-stately/disclosure';
+import {HTMLAttributes, RefObject, useCallback, useEffect} from 'react';
+import {Key} from '@react-types/shared';
 import {useEvent, useId} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -24,7 +25,9 @@ export interface AriaDisclosureProps {
   /** Whether the disclosure is expanded (controlled). */
   isExpanded?: boolean,
   /** Whether the disclosure is expanded by default (uncontrolled). */
-  defaultExpanded?: boolean
+  defaultExpanded?: boolean,
+  /** Unique id for the disclosure. Useful if used in a disclosure group. */
+  id?: Key
 }
 
 export interface DisclosureAria {
@@ -40,29 +43,53 @@ export interface DisclosureAria {
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
  * @param ref - A ref for the disclosure content.
  */
-export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref?: RefObject<Element | null>): DisclosureAria {
+export function useDisclosure(
+  props: AriaDisclosureProps,
+  state: DisclosureState,
+  ref: RefObject<Element | null>,
+  groupState?: DisclosureGroupState
+): DisclosureAria {
   let {
-    isDisabled
+    isDisabled,
+    id
   } = props;
   let triggerId = useId();
   let contentId = useId();
-  let isControlled = props.isExpanded !== undefined;
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
+  let handleBeforeMatch = useCallback((e: Event) => {
+    if (groupState && id !== null) {
+      if (groupState.allowsMultipleExpanded) {
+        groupState.toggleKey(id);
+      } else {
+        groupState.setExpandedKeys(new Set([id]));
+      }
+    } else {
+      state.toggle();
+    }
+    requestAnimationFrame(() => {
+      if (props.isExpanded) {
+        (e.target as Element).removeAttribute('hidden');
+      } else if (!props.isExpanded) {
+        (e.target as Element).setAttribute('hidden', 'until-found');
+      }
+    });
+  }, [groupState, id, props.isExpanded, state]);
+
   // @ts-ignore https://github.com/facebook/react/pull/24741
-  useEvent(ref, 'beforematch', supportsBeforeMatch && !isControlled ? () => state.expand() : null);
+  useEvent(ref, 'beforematch', supportsBeforeMatch ? handleBeforeMatch : null);
 
   useEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && ref?.current && !isControlled && !isDisabled) {
+    if (supportsBeforeMatch && ref?.current && !isDisabled) {
       if (state.isExpanded) {
         ref.current.removeAttribute('hidden');
       } else {
         ref.current.setAttribute('hidden', 'until-found');
       }
     }
-  }, [isControlled, ref, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
+  }, [ref, props.isExpanded, state.isExpanded, supportsBeforeMatch, isDisabled]);
 
   return {
     buttonProps: {
@@ -87,7 +114,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       // This can be overridden at the panel element level.
       role: 'group',
       'aria-labelledby': triggerId,
-      hidden: (!supportsBeforeMatch || isControlled) ? !state.isExpanded : true
+      hidden: (!supportsBeforeMatch) ? !state.isExpanded : true
     }
   };
 }
