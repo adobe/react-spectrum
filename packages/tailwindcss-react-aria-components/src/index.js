@@ -13,6 +13,7 @@ const attributes = {
 
     // States
     'open',
+    'expanded',
     'entering',
     'exiting',
     'indeterminate',
@@ -67,7 +68,8 @@ const nativeVariantSelectors = new Map([
   ['hovered', ':hover'],
   ['focused', ':focus'],
   ['readonly', ':read-only'],
-  ['open', '[open]']
+  ['open', '[open]'],
+  ['expanded', '[expanded]']
 ]);
 
 // Variants where both native and RAC attributes should apply. We don't override these.
