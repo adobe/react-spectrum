@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/inlinealert",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.18.3",
+    "@react-aria/focus": "^3.18.4",
     "@react-aria/i18n": "^3.12.3",
     "@react-aria/utils": "^3.25.3",
     "@react-spectrum/layout": "^3.6.9",
