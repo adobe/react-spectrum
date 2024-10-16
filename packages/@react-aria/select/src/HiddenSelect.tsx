@@ -91,7 +91,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {
-      style: {display: 'none'},
+      style: {display: 'none'}
     },
     selectProps: {
       tabIndex: -1,
