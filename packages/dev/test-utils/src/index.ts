@@ -17,4 +17,5 @@ export * from './renderOverride';
 export * from './StrictModeWrapper';
 export * from './mockImplementation';
 export * from './events';
+export * from './shadowDOM';
 export * from '@react-spectrum/test-utils';
