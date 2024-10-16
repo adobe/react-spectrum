@@ -297,7 +297,6 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
   return (
     (<FocusRing
       within
-      isTextInput
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
