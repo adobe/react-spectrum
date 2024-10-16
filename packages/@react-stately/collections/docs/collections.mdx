@@ -145,7 +145,7 @@ let [animals, setAnimals] = useState([
 ]);
 
 <ListBox items={animals}>
-  {item => <Item key={item.name}>{item.name}</Item>}
+  {item => <Item>{item.name}</Item>}
 </ListBox>
 ```
 
@@ -168,7 +168,7 @@ let [animals, setAnimals] = useState([
 
 <ListBox>
   {animals.map(item =>
-    <Item key={item.name}>{item.name}</Item>
+    <Item>{item.name}</Item>
   )}
 </ListBox>
 ```
@@ -208,7 +208,7 @@ function addAnimal(name) {
 }
 
 <ListBox items={list.items}>
-  {item => <Item key={item.name}>{item.name}</Item>}
+  {item => <Item>{item.name}</Item>}
 </ListBox>
 ```
 
@@ -240,8 +240,8 @@ let [sections, setSections] = useState([
 
 <Picker items={sections}>
   {section =>
-    <Section key={section.name} title={section.name} items={section.items}>
-      {item => <Item key={item.name}>{item.name}</Item>}
+    <Section title={section.name} items={section.items}>
+      {item => <Item>{item.name}</Item>}
     </Section>
   }
 </Picker>
@@ -339,7 +339,7 @@ let [items, setItems] = useState([
 
 <Tree items={items}>
   {item =>
-    <Item key={item.name} childItems={item.children}>{item.name}</Item>
+    <Item childItems={item.children}>{item.name}</Item>
   }
 </Tree>
 ```
@@ -374,7 +374,7 @@ let list = useAsyncList({
   label="Pick a Pokemon"
   items={list.items}
   isLoading={list.isLoading}>
-  {item => <Item key={item.name}>{item.name}</Item>}
+  {item => <Item>{item.name}</Item>}
 </Picker>
 ```
 
@@ -409,7 +409,7 @@ let list = useAsyncList({
   items={list.items}
   isLoading={list.isLoading}
   onLoadMore={list.loadMore}>
-  {item => <Item key={item.name}>{item.name}</Item>}
+  {item => <Item>{item.name}</Item>}
 </Picker>
 ```
 
