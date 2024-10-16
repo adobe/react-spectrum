@@ -1,7 +1,7 @@
-diff --git a/node_modules/eslint-plugin-monorepo/lib/rules/no-relative-import.js b/node_modules/eslint-plugin-monorepo/lib/rules/no-relative-import.js
-index 1298280..5a2b425 100644
---- a/node_modules/eslint-plugin-monorepo/lib/rules/no-relative-import.js
-+++ b/node_modules/eslint-plugin-monorepo/lib/rules/no-relative-import.js
+diff --git a/lib/rules/no-relative-import.js b/lib/rules/no-relative-import.js
+index 1298280d1e67e7753fc8bc7d9fc8dcbf1d8477dd..069e1a8fd771bd91f796fa5ec830e6d0ede4a709 100644
+--- a/lib/rules/no-relative-import.js
++++ b/lib/rules/no-relative-import.js
 @@ -19,10 +19,6 @@ var _pathIsInside = require('path-is-inside');
  
  var _pathIsInside2 = _interopRequireDefault(_pathIsInside);

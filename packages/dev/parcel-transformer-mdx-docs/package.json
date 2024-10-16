@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@mdx-js/mdx": "next",
-    "@mdx-js/react": "next",
-    "@parcel/core": "2.0.0-dev.1599",
+    "@mdx-js/react": "patch:@mdx-js/react@npm%3A2.0.0-rc.2#~/.yarn/patches/@mdx-js-react-npm-2.0.0-rc.2-c2f79f46aa.patch",
+    "@parcel/core": "patch:@parcel/core@npm%3A2.0.0-dev.1599#~/.yarn/patches/@parcel-core-npm-2.0.0-dev.1599-d62d699a7e.patch",
     "@parcel/plugin": "2.0.0-dev.1601",
     "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
