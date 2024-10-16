@@ -23,7 +23,7 @@ import {createContext, forwardRef, useRef} from 'react';
 import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -41,7 +41,7 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
   let {locale} = useLocale();
 
   return (
-    <AriaColorSlider 
+    <AriaColorSlider
       {...props}
       ref={containerRef}
       style={UNSAFE_style}
@@ -81,7 +81,7 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
             {props.label || state.value.getChannelName(props.channel, locale)}
           </FieldLabel>
         )}
-        {orientation === 'horizontal' && 
+        {orientation === 'horizontal' &&
           <SliderOutput
             className={style({
               gridArea: 'output',
@@ -127,7 +127,7 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
               isDisabled: 'disabled'
             }
           })}>
-          <ColorHandle 
+          <ColorHandle
             containerRef={trackRef}
             getPosition={() => {
               let x = state.orientation === 'horizontal' ? state.getThumbPercent(0) : 0.5;

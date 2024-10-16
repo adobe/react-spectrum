@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ArbitraryValue} from './types';
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
-import {createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -87,8 +88,26 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: keyof typeof color, dark: keyof typeof color): `[${string}]` {
-  return `[light-dark(${color[light]}, ${color[dark]})]`;
+type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
+function parseColor(value: SpectrumColor) {
+  let arbitrary = parseArbitraryValue(value);
+  if (arbitrary) {
+    return arbitrary[0];
+  }
+  let [colorValue, opacity] = value.split('/');
+  colorValue = color[colorValue];
+  if (opacity) {
+    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
+  }
+  return colorValue;
+}
+
+export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
+  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+}
+
+export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
+  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
@@ -101,7 +120,7 @@ function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} 
 
 const baseSpacing = generateSpacing([
   0,
-  // 2, // spacing-50 !! TODO: should we support this?
+  2, // spacing-50
   4, // spacing-75
   8, // spacing-100
   12, // spacing-200
@@ -215,7 +234,6 @@ const sizing = {
   ...scaledSpacing,
   auto: 'auto',
   full: '100%',
-  screen: '100vh',
   min: 'min-content',
   max: 'max-content',
   fit: 'fit-content',
@@ -239,6 +257,16 @@ const sizing = {
       XL: size(20)
     }
   }
+};
+
+const height = {
+  ...sizing,
+  screen: '100vh'
+};
+
+const width = {
+  ...sizing,
+  screen: '100vw'
 };
 
 const margin = {
@@ -447,6 +475,7 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
         isPressed: weirdColorToken('accent-background-color-down')
       },
+      'accent-subtle': weirdColorToken('accent-subtle-background-color-default'),
       neutral: {
         default: colorToken('neutral-background-color-default'),
         isHovered: colorToken('neutral-background-color-hover'),
@@ -459,61 +488,74 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
         isPressed: weirdColorToken('neutral-subdued-background-color-down')
       },
-      'neutral-subtle': colorToken('neutral-subtle-background-color-default'),
+      'neutral-subtle': weirdColorToken('neutral-subtle-background-color-default'),
       negative: {
         default: weirdColorToken('negative-background-color-default'),
         isHovered: weirdColorToken('negative-background-color-hover'),
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
-      'negative-subdued': {
-        default: colorToken('negative-subdued-background-color-default'),
-        isHovered: colorToken('negative-subdued-background-color-hover'),
-        isFocusVisible: colorToken('negative-subdued-background-color-key-focus'),
-        isPressed: colorToken('negative-subdued-background-color-down')
-      },
-      // Sort of weird to have both subdued and subtle that map to the same color...
-      'negative-subtle': colorToken('negative-subtle-background-color-default'),
+      'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
         isHovered: weirdColorToken('informative-background-color-hover'),
         isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
         isPressed: weirdColorToken('informative-background-color-down')
       },
-      'informative-subtle': colorToken('informative-subtle-background-color-default'),
+      'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
       positive: {
         default: weirdColorToken('positive-background-color-default'),
         isHovered: weirdColorToken('positive-background-color-hover'),
         isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
         isPressed: weirdColorToken('positive-background-color-down')
       },
-      'positive-subtle': colorToken('positive-subtle-background-color-default'),
+      'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
-      'notice-subtle': colorToken('notice-subtle-background-color-default'),
+      'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
       gray: weirdColorToken('gray-background-color-default'),
+      'gray-subtle': weirdColorToken('gray-subtle-background-color-default'),
       red: weirdColorToken('red-background-color-default'),
+      'red-subtle': weirdColorToken('red-subtle-background-color-default'),
       orange: weirdColorToken('orange-background-color-default'),
+      'orange-subtle': weirdColorToken('orange-subtle-background-color-default'),
       yellow: weirdColorToken('yellow-background-color-default'),
+      'yellow-subtle': weirdColorToken('yellow-subtle-background-color-default'),
       chartreuse: weirdColorToken('chartreuse-background-color-default'),
+      'chartreuse-subtle': weirdColorToken('chartreuse-subtle-background-color-default'),
       celery: weirdColorToken('celery-background-color-default'),
+      'celery-subtle': weirdColorToken('celery-subtle-background-color-default'),
       green: weirdColorToken('green-background-color-default'),
+      'green-subtle': weirdColorToken('green-subtle-background-color-default'),
       seafoam: weirdColorToken('seafoam-background-color-default'),
+      'seafoam-subtle': weirdColorToken('seafoam-subtle-background-color-default'),
       cyan: weirdColorToken('cyan-background-color-default'),
+      'cyan-subtle': weirdColorToken('cyan-subtle-background-color-default'),
       blue: weirdColorToken('blue-background-color-default'),
+      'blue-subtle': weirdColorToken('blue-subtle-background-color-default'),
       indigo: weirdColorToken('indigo-background-color-default'),
+      'indigo-subtle': weirdColorToken('indigo-subtle-background-color-default'),
       purple: weirdColorToken('purple-background-color-default'),
+      'purple-subtle': weirdColorToken('purple-subtle-background-color-default'),
       fuchsia: weirdColorToken('fuchsia-background-color-default'),
+      'fuchsia-subtle': weirdColorToken('fuchsia-subtle-background-color-default'),
       magenta: weirdColorToken('magenta-background-color-default'),
+      'magenta-subtle': weirdColorToken('magenta-subtle-background-color-default'),
       pink: weirdColorToken('pink-background-color-default'),
+      'pink-subtle': weirdColorToken('pink-subtle-background-color-default'),
       turquoise: weirdColorToken('turquoise-background-color-default'),
+      'turquoise-subtle': weirdColorToken('turquoise-subtle-background-color-default'),
       cinnamon: weirdColorToken('cinnamon-background-color-default'),
+      'cinnamon-subtle': weirdColorToken('cinnamon-subtle-background-color-default'),
       brown: weirdColorToken('brown-background-color-default'),
+      'brown-subtle': weirdColorToken('brown-subtle-background-color-default'),
       silver: weirdColorToken('silver-background-color-default'),
+      'silver-subtle': weirdColorToken('silver-subtle-background-color-default'),
       disabled: colorToken('disabled-background-color'),
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color')
+      pasteboard: weirdColorToken('background-pasteboard-color'),
+      elevated: weirdColorToken('background-elevated-color')
     }),
     borderColor: createColorProperty({
       ...color,
@@ -582,18 +624,18 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height: sizing,
-    width: sizing,
-    containIntrinsicWidth: sizing,
-    containIntrinsicHeight: sizing,
-    minHeight: sizing,
+    height,
+    width,
+    containIntrinsicWidth: width,
+    containIntrinsicHeight: height,
+    minHeight: height,
     maxHeight: {
-      ...sizing,
+      ...height,
       none: 'none'
     },
-    minWidth: sizing,
+    minWidth: width,
     maxWidth: {
-      ...sizing,
+      ...width,
       none: 'none'
     },
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
@@ -739,11 +781,13 @@ export const style = createTheme({
     boxShadow: {
       emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
       elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
+      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
       emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
       elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
+      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     borderTopStartRadius: createRenamedProperty('borderStartStartRadius', radius),

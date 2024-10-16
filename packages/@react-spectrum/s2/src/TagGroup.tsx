@@ -32,17 +32,18 @@ import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
-import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {flushSync} from 'react-dom';
-import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
-import {ImageContext, Text, TextContext} from './Content';
+import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -338,7 +339,6 @@ function TagGroupInner<T>({
                 })}>
                 {allItems.map(item => {
                   // pull off individual props as an allow list, don't want refs or other props getting through
-                  // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
                   return (
                     <div
                       style={item.props.UNSAFE_style}
@@ -443,6 +443,8 @@ function ActionGroup(props) {
 const tagStyles = style({
   ...focusRing(),
   display: 'inline-flex',
+  boxSizing: 'border-box',
+  maxWidth: 'full',
   verticalAlign: 'middle',
   alignItems: 'center',
   justifyContent: 'center',
@@ -572,7 +574,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
               styles: style({order: 0})
             }],
             [ImageContext, {
-              className: style({
+              styles: style({
                 size: fontRelative(20),
                 flexShrink: 0,
                 order: 0,

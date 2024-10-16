@@ -1,0 +1,87 @@
+<svg style="background:var(--anatomy-gray-100); width: 100%" height="152" viewBox="0 0 185.999 160.002">
+  <defs>
+    <filter id="Union_46" x="0" y="0" width="168" height="160.002" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient" y1="1" x2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="var(--anatomy-gray-500)"/>
+      <stop offset="1" stop-color="var(--anatomy-gray-300)"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" y1="1" x1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="var(--anatomy-gray-500)"/>
+      <stop offset="1" stop-color="var(--anatomy-gray-300)"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_142307" data-name="Rectangle 142307" width="20" height="20" fill="var(--anatomy-gray-50)"/>
+    </clipPath>
+  </defs>
+  <g id="Group_156773" data-name="Group 156773" transform="translate(-357.001 -830.999)">
+    <g transform="matrix(1, 0, 0, 1, 357, 831)" filter="url(#Union_46)">
+      <g id="Union_46-2" data-name="Union 46" transform="translate(-1511 -7410)" fill="var(--anatomy-gray-50)">
+        <path d="M 1660.999145507812 7562.5009765625 L 1520.999877929688 7562.5009765625 C 1519.070434570312 7562.5009765625 1517.500610351562 7560.93017578125 1517.500610351562 7558.99951171875 L 1517.500610351562 7419.00048828125 C 1517.500610351562 7417.06982421875 1519.070434570312 7415.4990234375 1520.999877929688 7415.4990234375 L 1660.999145507812 7415.4990234375 C 1662.9296875 7415.4990234375 1664.500244140625 7417.06982421875 1664.500244140625 7419.00048828125 L 1664.500244140625 7481.00048828125 L 1664.500244140625 7481.20751953125 L 1664.646728515625 7481.35400390625 L 1672.29345703125 7488.9990234375 L 1664.646728515625 7496.64599609375 L 1664.500244140625 7496.79248046875 L 1664.500244140625 7496.99951171875 L 1664.500244140625 7558.99951171875 C 1664.500244140625 7560.93017578125 1662.9296875 7562.5009765625 1660.999145507812 7562.5009765625 Z" stroke="none"/>
+        <path d="M 1660.999145507812 7562.0009765625 C 1662.653930664062 7562.0009765625 1664.000244140625 7560.654296875 1664.000244140625 7558.99951171875 L 1664.000244140625 7496.58544921875 L 1671.586303710938 7488.9990234375 L 1664.000244140625 7481.41455078125 L 1664.000244140625 7419.00048828125 C 1664.000244140625 7417.345703125 1662.653930664062 7415.9990234375 1660.999145507812 7415.9990234375 L 1520.999877929688 7415.9990234375 C 1519.346069335938 7415.9990234375 1518.000610351562 7417.345703125 1518.000610351562 7419.00048828125 L 1518.000610351562 7558.99951171875 C 1518.000610351562 7560.654296875 1519.346069335938 7562.0009765625 1520.999877929688 7562.0009765625 L 1660.999145507812 7562.0009765625 M 1660.999145507812 7563.0009765625 L 1520.999877929688 7563.0009765625 C 1518.79052734375 7563.0009765625 1517.000610351562 7561.208984375 1517.000610351562 7558.99951171875 L 1517.000610351562 7419.00048828125 C 1517.000610351562 7416.791015625 1518.79052734375 7414.9990234375 1520.999877929688 7414.9990234375 L 1660.999145507812 7414.9990234375 C 1663.20849609375 7414.9990234375 1665.000244140625 7416.791015625 1665.000244140625 7419.00048828125 L 1665.000244140625 7481.00048828125 L 1673.000610351562 7488.9990234375 L 1665.000244140625 7496.99951171875 L 1665.000244140625 7558.99951171875 C 1665.000244140625 7561.208984375 1663.20849609375 7563.0009765625 1660.999145507812 7563.0009765625 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+      </g>
+    </g>
+    <g id="Color_area" data-name="Color area" transform="translate(371 844)">
+      <g id="Area" fill="url(#linear-gradient-2)" stroke="var(--anatomy-gray-900)" stroke-opacity="0.1" stroke-width="1">
+        <rect width="102" height="102" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="101" height="101" rx="3.5" fill="none"/>
+      </g>
+      <g id="Handle">
+        <g id="Handle_Ring" data-name="Handle Ring" transform="translate(70 32)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-50)" stroke-width="2">
+          <circle cx="8" cy="8" r="8" stroke="none"/>
+          <circle cx="8" cy="8" r="7" fill="none"/>
+        </g>
+        <g id="Handle_Border_Outside" data-name="Handle Border Outside" transform="translate(69 31)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-900)" stroke-opacity="0.42" stroke-width="1">
+          <circle cx="9" cy="9" r="9" stroke="none"/>
+          <circle cx="9" cy="9" r="8.5" fill="none"/>
+        </g>
+        <circle id="Handle_Fill" data-name="Handle Fill" cx="6" cy="6" r="6" transform="translate(72 34)" fill="var(--anatomy-gray-400)"/>
+        <g id="Handle_Border_Inside" data-name="Handle Border Inside" transform="translate(72 34)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-900)" stroke-opacity="0.42" stroke-width="1">
+          <circle cx="6" cy="6" r="6" stroke="none"/>
+          <circle cx="6" cy="6" r="5.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="Color_slider" data-name="Color slider" transform="translate(479 844)">
+      <rect id="Rectangle_142308" data-name="Rectangle 142308" width="24" height="102" rx="4" fill="var(--anatomy-gray-50)"/>
+      <g id="Track" stroke="var(--anatomy-gray-900)" stroke-opacity="0.1" stroke-width="1" fill="url(#linear-gradient)">
+        <rect width="24" height="102" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="23" height="101" rx="3.5" fill="none"/>
+      </g>
+      <g id="Handle-2" data-name="Handle">
+        <rect id="Placement_Area-4" data-name="Placement Area" width="16" height="16" transform="translate(4 58)" fill="red" opacity="0"/>
+        <g id="Handle_Ring-2" data-name="Handle Ring" transform="translate(4 58)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-50)" stroke-width="2">
+          <circle cx="8" cy="8" r="8" stroke="none"/>
+          <circle cx="8" cy="8" r="7" fill="none"/>
+        </g>
+        <g id="Handle_Border_Outside-2" data-name="Handle Border Outside" transform="translate(3 57)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-900)" stroke-opacity="0.42" stroke-width="1">
+          <circle cx="9" cy="9" r="9" stroke="none"/>
+          <circle cx="9" cy="9" r="8.5" fill="none"/>
+        </g>
+        <circle id="Handle_Fill-2" data-name="Handle Fill" cx="6" cy="6" r="6" transform="translate(6 60)" fill="var(--anatomy-gray-400)"/>
+        <g id="Handle_Border_Inside-2" data-name="Handle Border Inside" transform="translate(6 60)" fill="var(--anatomy-gray-800)" fill-opacity="0" stroke="var(--anatomy-gray-900)" stroke-opacity="0.42" stroke-width="1">
+          <circle cx="6" cy="6" r="6" stroke="none"/>
+          <circle cx="6" cy="6" r="5.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="Group_156772" data-name="Group 156772" transform="translate(523 900)" clip-path="url(#clip-path)">
+      <rect id="Rectangle_142305" data-name="Rectangle 142305" width="20" height="20" rx="4" fill="var(--anatomy-gray-400)"/>
+      <g id="Group_156771" data-name="Group 156771" transform="translate(0.417 0.417)" opacity="0.51">
+        <rect id="Rectangle_142306" data-name="Rectangle 142306" width="19.167" height="19.167" rx="3.5" fill="none" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
+      </g>
+    </g>
+    <g id="Text_field" data-name="Text field" transform="translate(328 952)">
+      <g id="Field" transform="translate(43)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="132" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="131" height="23" rx="3.5" fill="none"/>
+      </g>
+      <text id="Text" transform="translate(50 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">#ABCDEF</tspan></text>
+    </g>
+  </g>
+</svg>

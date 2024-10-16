@@ -20,13 +20,13 @@ import {
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
+import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -148,7 +148,6 @@ const output = style({
 });
 
 export let track = style({
-  ...fieldInput(),
   gridArea: 'track',
   position: 'relative',
   width: 'full',
@@ -379,7 +378,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
               </FieldLabel>
               {labelPosition === 'top' && outputValue}
             </div>
-            <div className={style({gridArea: 'input', display: 'inline-flex', alignItems: 'center', gap: {default: 16, size: {L: 20, XL: 24}}})({size})}>
+            <div className={style({...fieldInput(), display: 'inline-flex', alignItems: 'center', gap: {default: 16, size: {L: 20, XL: 24}}})({size})}>
               {props.children}
               {labelPosition === 'side' && outputValue}
             </div>
@@ -416,7 +415,7 @@ function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
         className={track({size, labelPosition, isInForm: !!formContext})}>
         {({state, isDisabled}) => {
 
-          fillOffset = fillOffset !== undefined ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : 0;
+          fillOffset = fillOffset !== undefined ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : state.getThumbMinValue(0);
 
           let fillWidth = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
           let isRightOfOffset = fillWidth > 0;

@@ -13,14 +13,15 @@
 import {PopoverProps as AriaPopoverProps, composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
-import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
+import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
 import {createContext, forwardRef, RefObject, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
+import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
 import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -195,7 +196,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
           {/* Hero image */}
           <Provider
             values={[
-              [ImageContext, {className: image}],
+              [ImageContext, {styles: image}],
               [HeadingContext, {isHidden: true}],
               [HeaderContext, {isHidden: true}],
               [ContentContext, {isHidden: true}],

@@ -21,7 +21,7 @@ import {
   Text
 } from '../src';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {
   component: SearchField,
@@ -31,7 +31,8 @@ const meta: Meta<typeof SearchField> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
-  }
+  },
+  title: 'SearchField'
 };
 
 export default meta;
@@ -52,7 +53,6 @@ CustomWidth.parameters = {
     disable: true
   }
 };
-
 
 export const ContextualHelpExample = (args: any) => <SearchField {...args} />;
 
