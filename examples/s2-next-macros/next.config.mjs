@@ -5,7 +5,7 @@ let macrosWebpack = macrosPlugin.webpack();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack(config, {}) {
+  webpack(config) {
     config.plugins.push(macrosWebpack);
 
     config.module.rules.push({

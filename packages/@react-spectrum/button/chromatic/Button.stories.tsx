@@ -140,17 +140,17 @@ function render(props: any = {}) {
         if (!key) {
           key = 'default';
         }
-        let button = <Button key={key} {...props} {...c}>{key}</Button>;
+        let button = <Button {...props} {...c}>{key}</Button>;
         if (props.variant === 'overBackground' || c.staticColor === 'white') {
           return (
-            <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+            <View key={key} backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
               {button}
             </View>
           );
         }
         if (c.staticColor === 'black') {
           return (
-            <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+            <div key={key} style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
               {button}
             </div>
           );

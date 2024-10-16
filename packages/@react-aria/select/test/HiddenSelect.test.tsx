@@ -26,7 +26,7 @@ const HiddenSelectExample = (props: Partial<SelectProps<{ key: number, value: st
   );
 };
 
-const makeItems = (size: number) => (new Array(size).fill('')).map((__, index) => ({
+const makeItems = (size: number) => (Array.from({length: size}).fill('')).map((__, index) => ({
   key: index + 1,
   value: `${index + 1}`
 }));

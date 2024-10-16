@@ -16,10 +16,10 @@ const flatMap = require('unist-util-flatmap');
  * Takes example code blocks in mdx files that are just React Tags and wraps all of them into
  * a single Fragment shorthand node. This way syntax trees can parse them and return something meaningful.
  */
-const fragmentWrap = () => (tree, file) => (
+const fragmentWrap = () => (tree) => (
   flatMap(tree, node => {
     if (node.type === 'code') {
-      if (/^example/.test(node.meta)) {
+      if (node.meta.startsWith("example")) {
         if (/^<(.|\n)*>$/m.test(node.value)) {
           node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>\n$1\n</WRAPPER>');
         }
@@ -62,7 +62,7 @@ function match(children, i, ...texts) {
 /**
  * This undoes the above wrapping for display purposes.
  */
-const fragmentUnWrap = () => (tree, file) => (
+const fragmentUnWrap = () => (tree) => (
   flatMap(tree, node => {
     if (node.type === 'code') {
       if (/^example|^snippet/.test(node.meta) && node.data && node.data.hChildren) {

@@ -144,8 +144,8 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
           <Menu items={items} onAction={onAction}>
             {(item: Node<any>) => (
               <MenuItem
-                {...item.props.originalProps}
-                key={item.key}>
+                key={item.key}
+                {...item.props.originalProps}>
                 <Text slot="label">
                   {item.props.children({size, isCurrent: false, isMenu: true})}
                 </Text>

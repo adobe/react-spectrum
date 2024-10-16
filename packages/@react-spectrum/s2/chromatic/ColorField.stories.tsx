@@ -44,7 +44,7 @@ const Template = ({combos, ...args}) => {
           key = 'default';
         }
         return (
-          <ColorField data-testid={fullComboName} defaultValue="#e21" label={key} description="test description" errorMessage="test error" {...c} {...args}  />
+          <ColorField key={key} data-testid={fullComboName} defaultValue="#e21" label={key} description="test description" errorMessage="test error" {...c} {...args}  />
         );
       })}
     </div>

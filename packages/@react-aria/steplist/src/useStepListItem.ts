@@ -25,7 +25,7 @@ export interface StepListItemAria {
   /** Props for the visually hidden element indicating the step state. */
   stepStateProps?: HTMLAttributes<HTMLElement>,
   /** Text content for the visually hidden message indicating the status of the step state. */
-  stepStateText?: String
+  stepStateText?: string
 }
 
 export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement | null>): StepListItemAria {

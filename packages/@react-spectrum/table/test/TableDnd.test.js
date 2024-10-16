@@ -35,8 +35,6 @@ import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
-let isReact18 = parseInt(React.version, 10) >= 18;
-
 describe('TableView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();

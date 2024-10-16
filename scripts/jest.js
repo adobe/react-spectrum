@@ -12,7 +12,7 @@
 
 const {spawn} = require('child_process');
 
-let args = [...process.argv.slice(2)];
+let args = process.argv.slice(2);
 
 process.env.NODE_ICU_DATA = 'node_modules/full-icu';
 let jest = spawn('jest', args, {

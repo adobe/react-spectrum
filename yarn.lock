@@ -4057,6 +4057,62 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@oxlint/darwin-arm64@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/darwin-arm64@npm:0.9.10"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@oxlint/darwin-x64@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/darwin-x64@npm:0.9.10"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@oxlint/linux-arm64-gnu@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/linux-arm64-gnu@npm:0.9.10"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@oxlint/linux-arm64-musl@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/linux-arm64-musl@npm:0.9.10"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@oxlint/linux-x64-gnu@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/linux-x64-gnu@npm:0.9.10"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@oxlint/linux-x64-musl@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/linux-x64-musl@npm:0.9.10"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@oxlint/win32-arm64@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/win32-arm64@npm:0.9.10"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@oxlint/win32-x64@npm:0.9.10":
+  version: 0.9.10
+  resolution: "@oxlint/win32-x64@npm:0.9.10"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@parcel/bundler-default@npm:2.0.0-dev.1601+1f9adfe6b":
   version: 2.0.0-dev.1601
   resolution: "@parcel/bundler-default@npm:2.0.0-dev.1601"
@@ -17292,6 +17348,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-oxlint@npm:^0.9.10":
+  version: 0.9.10
+  resolution: "eslint-plugin-oxlint@npm:0.9.10"
+  dependencies:
+    scule: "npm:^1.3.0"
+  checksum: 10c0/7ed631b42b705cd2d815c1650f23e6336bb5f201a41205e064bbf5477e2894c381ea06ee3ea67d926203aa0d8029159a058e62a1da982a657b33de8190a9eaae
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react-hooks@npm:^5.0.0":
   version: 5.0.0
   resolution: "eslint-plugin-react-hooks@npm:5.0.0"
@@ -26937,6 +27002,42 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oxlint@npm:^0.9.10":
+  version: 0.9.10
+  resolution: "oxlint@npm:0.9.10"
+  dependencies:
+    "@oxlint/darwin-arm64": "npm:0.9.10"
+    "@oxlint/darwin-x64": "npm:0.9.10"
+    "@oxlint/linux-arm64-gnu": "npm:0.9.10"
+    "@oxlint/linux-arm64-musl": "npm:0.9.10"
+    "@oxlint/linux-x64-gnu": "npm:0.9.10"
+    "@oxlint/linux-x64-musl": "npm:0.9.10"
+    "@oxlint/win32-arm64": "npm:0.9.10"
+    "@oxlint/win32-x64": "npm:0.9.10"
+  dependenciesMeta:
+    "@oxlint/darwin-arm64":
+      optional: true
+    "@oxlint/darwin-x64":
+      optional: true
+    "@oxlint/linux-arm64-gnu":
+      optional: true
+    "@oxlint/linux-arm64-musl":
+      optional: true
+    "@oxlint/linux-x64-gnu":
+      optional: true
+    "@oxlint/linux-x64-musl":
+      optional: true
+    "@oxlint/win32-arm64":
+      optional: true
+    "@oxlint/win32-x64":
+      optional: true
+  bin:
+    oxc_language_server: bin/oxc_language_server
+    oxlint: bin/oxlint
+  checksum: 10c0/31d34fe944c227b56635eddbffde99cd3dc6ee5d3a28dc23172a3900919654408db099aaf36c4cbbe2f9c672e1fe83b381d5805735f212368d22fc43712402b4
+  languageName: node
+  linkType: hard
+
 "p-finally@npm:^1.0.0":
   version: 1.0.0
   resolution: "p-finally@npm:1.0.0"
@@ -29343,6 +29444,7 @@ __metadata:
     eslint-plugin-jsdoc: "npm:^50.4.1"
     eslint-plugin-jsx-a11y: "npm:^6.10.0"
     eslint-plugin-monorepo: "npm:^0.3.2"
+    eslint-plugin-oxlint: "npm:^0.9.10"
     eslint-plugin-react: "npm:^7.37.1"
     eslint-plugin-react-hooks: "npm:^5.0.0"
     eslint-plugin-rulesdir: "npm:^0.2.2"
@@ -29367,6 +29469,7 @@ __metadata:
     md5: "npm:^2.2.1"
     npm-cli-login: "npm:^1.0.0"
     nyc: "npm:^10.2.0"
+    oxlint: "npm:^0.9.10"
     p-queue: "npm:^6.2.1"
     parcel: "npm:2.0.0-dev.1599"
     parcel-resolver-storybook: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
@@ -30668,6 +30771,13 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
+  languageName: node
+  linkType: hard
+
+"scule@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "scule@npm:1.3.0"
+  checksum: 10c0/5d1736daa10622c420f2aa74e60d3c722e756bfb139fa784ae5c66669fdfe92932d30ed5072e4ce3107f9c3053e35ad73b2461cb18de45b867e1d4dea63f8823
   languageName: node
   linkType: hard
 

@@ -1,4 +1,3 @@
-const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   content: ["./src/*.{ts,tsx}", "./stories/*.{ts,tsx}"],

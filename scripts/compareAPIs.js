@@ -267,7 +267,7 @@ function getDiff(pair) {
     let lines = formattedPublishedInterfaces[index].split('\n');
     codeDiff.hunks.forEach(hunk => {
       if (hunk.oldStart > prevEnd) {
-        result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)];
+        result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item) => ` ${item}`)];
       }
       if (argv.isCI) {
         result = [...result, ...hunk.lines];
@@ -285,7 +285,7 @@ function getDiff(pair) {
     });
     let joinedResult = '';
     if (codeDiff.hunks.length > 0) {
-      joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+      joinedResult = [...result, ...lines.slice(prevEnd).map((item) => ` ${item}`)].join('\n');
     }
     if (argv.isCI && result.length > 0) {
       joinedResult = `\`\`\`diff

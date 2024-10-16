@@ -11,7 +11,7 @@
  */
 
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {Fragment} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import {StatusLight} from '../';
 import {View} from '@react-spectrum/view';
@@ -42,10 +42,10 @@ function render() {
   return (
     <Flex wrap>
       {variants.map((variant: SpectrumStatusLightProps['variant']) => (
-        <>
+        <Fragment key={variant}>
           <StatusLight variant={variant}>Status light {variant}</StatusLight>
           <StatusLight variant={variant} isDisabled>Disabled {variant}</StatusLight>
-        </>
+        </Fragment>
       ))}
     </Flex>
   );

@@ -48,7 +48,7 @@ const Template = ({combos, containerStyle, ...args}) => {
         }
 
         return (
-          <CheckboxGroup data-testid={fullComboName} label={key} description="test description" errorMessage="test error" {...c} {...args} value="soccer">
+          <CheckboxGroup key={key} data-testid={fullComboName} label={key} description="test description" errorMessage="test error" {...c} {...args} value="soccer">
             <Checkbox value="soccer">Soccer</Checkbox>
             <Checkbox value="baseball">Baseball</Checkbox>
             <Checkbox value="basketball">Basketball</Checkbox>

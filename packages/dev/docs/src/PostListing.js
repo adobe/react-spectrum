@@ -31,7 +31,7 @@ export function PostListing({type}) {
   );
 }
 
-function BlogPost({name, title, url, description, date, author}) {
+function BlogPost({title, url, description, date, author}) {
   let authorParts = (author || '').match(/^\[(.*?)\]\((.*?)\)$/) || [''];
 
   return (

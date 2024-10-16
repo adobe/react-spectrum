@@ -65,7 +65,7 @@ interface ArrowProps {
 }
 
 export function Arrow({href, children, textX, x1, x2, points, y, marker = 'markerEnd'}: ArrowProps) {
-  let markerProps = marker === 'none' ? {} : {...{[marker]: 'url(#arrow)'}};
+  let markerProps = marker === 'none' ? {} : {[marker]: 'url(#arrow)'};
   return (
     <>
       {points

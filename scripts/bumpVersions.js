@@ -58,7 +58,7 @@ class VersionManager {
           let result = JSON.parse(line);
           workspaceLookup[result.location] = result.name;
           return result;
-        } catch (e) {
+        } catch {
           // ignore empty lines
         }
       })
@@ -339,7 +339,7 @@ class VersionManager {
 
   getVersions() {
     let versions = new Map();
-    for (let [name, {location, status, bump}] of this.releasedPackages) {
+    for (let [name, {status, bump}] of this.releasedPackages) {
       let filePath = this.workspacePackages[name].location + '/package.json';
       let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 

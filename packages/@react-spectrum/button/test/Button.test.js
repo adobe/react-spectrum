@@ -340,7 +340,7 @@ describe('Button', function () {
       let [pending, setPending] = useState(false);
       return (
         <Button
-          onPress={(pending) => {
+          onPress={() => {
             setPending(true);
             onPressSpy();
           }}

@@ -61,7 +61,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
         </tr>
       </thead>
       <tbody>
-        {[...new Array(weeksInMonth).keys()].map(weekIndex => (
+        {[...Array.from({length: weeksInMonth}).keys()].map(weekIndex => (
           <tr key={weekIndex}>
             {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
               date ? (

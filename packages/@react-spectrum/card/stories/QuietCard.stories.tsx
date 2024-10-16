@@ -72,10 +72,10 @@ let CardGridDecorator = (props) => {
         gridAutoRows: '305px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <Story {...args} key={`${index}${url}`}>
+            <Story key={`${index}${url}`} {...args}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -114,10 +114,10 @@ const CardWaterfallDecorator = (props) => {
         alignItems: 'start'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+            <div key={`${index}${url}`} style={{width: '208px', margin: '10px'}}>
               <Story {...args}>
                 <Image src={url} />
                 <Heading>Title {index}</Heading>
@@ -155,10 +155,10 @@ const CardGalleryDecorator = (props) => {
         flexWrap: 'wrap'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <div style={{height: '339px', margin: '10px'}} key={`${index}${url}`}>
+            <div key={`${index}${url}`} style={{height: '339px', margin: '10px'}}>
               <Story {...args}>
                 <Image src={url} />
                 <Heading>Title {index}</Heading>
@@ -193,10 +193,10 @@ const CardFloatDecorator = (props) => {
         margin: '50px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
+            <div key={`${index}${url}`} style={{float: 'left', margin: '10px'}}>
               <Story {...args}>
                 <Image src={url} />
                 <Heading>Title {index}</Heading>
@@ -236,10 +236,10 @@ const CardGridNoDescriptionDecorator = (props) => {
         gridAutoRows: '274px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <Story {...args} key={`${index}${url}`}>
+            <Story key={`${index}${url}`} {...args}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -276,10 +276,10 @@ const CardGridIllustrationsDecorator = (props) => {
         gridAutoRows: '274px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <Story {...args} key={`${index}${url}`}>
+            <Story key={`${index}${url}`} {...args}>
               <File slot="illustration" alt="test illustration" />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -316,10 +316,10 @@ const CardGridLongTitleDecorator = (props) => {
         gridAutoRows: '305px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <Story {...args} key={`${index}${url}`}>
+            <Story key={`${index}${url}`} {...args}>
               <Image src={url} />
               <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -357,10 +357,10 @@ const CardGridTallRowsDecorator = (props) => {
         gridAutoRows: '400px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <Story {...args} key={`${index}${url}`}>
+            <Story key={`${index}${url}`} {...args}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
@@ -397,10 +397,10 @@ const CardGridMessyTextDecorator = (props) => {
         gridAutoRows: '305px'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <Story {...args} key={`${index}${url}`}>
+            <Story key={`${index}${url}`} {...args}>
               <Image src={url} />
               <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
               <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
@@ -438,7 +438,7 @@ const CardWaterfallMessyTextDecorator = (props) => {
         alignItems: 'start'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
             <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
@@ -480,7 +480,7 @@ const CardGalleryMessyTextDecorator = (props) => {
         flexWrap: 'wrap'
       }}>
       {
-        (new Array(15).fill(0)).map((_, index) => {
+        (Array.from({length: 15}).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
             <div style={{height: '339px', margin: '10px'}} key={`${index}${url}`}>

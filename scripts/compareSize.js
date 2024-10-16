@@ -72,13 +72,13 @@ async function compareBuildAppSize() {
     stream.end();
     console.log('Finished writing size-diff.txt');
   } else {
-    new Error('no commit found');
+    throw new Error('no commit found');
   }
 }
 
 // Resolve only so that we can attempt a hardcoded link download if the commit one fails. TODO: revert back to reject when we get some intial data from a publish.
 function download(url, dest) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // Check file does not exist yet before hitting network
     fs.access(dest, fs.constants.F_OK, (err) => {
       if (err === null) {

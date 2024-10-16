@@ -208,8 +208,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let trackInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
+  let trackInteractions = isDisabled ? {} : mergeProps((typeof PointerEvent !== 'undefined' ? {
       onPointerDown: (e: React.PointerEvent) => {
         if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
@@ -225,8 +224,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         onTouchStart: (e: React.TouchEvent) => {
           onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         }
-      })
-  }, movePropsContainer);
+      }), movePropsContainer);
 
   let thumbInteractions = isDisabled ? {} : mergeProps({
     onMouseDown: (e: React.MouseEvent) => {

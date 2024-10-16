@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
 import stylistic from "@stylistic/eslint-plugin-ts";
+import oxlint from 'eslint-plugin-oxlint';
 
 import rulesDirPlugin from "eslint-plugin-rulesdir";
 rulesDirPlugin.RULES_DIR = './bin';
@@ -54,7 +55,9 @@ export default [{
         "starters/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
     ],
-}, ...compat.extends("eslint:recommended"), {
+},
+...compat.extends("eslint:recommended"),
+{
     plugins: {
         react,
         rulesdir,
@@ -472,4 +475,5 @@ export default [{
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
-}];
+},
+oxlint.configs['flat/recommended']];

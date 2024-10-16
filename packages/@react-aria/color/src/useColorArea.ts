@@ -284,8 +284,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let colorAreaInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
+  let colorAreaInteractions = isDisabled ? {} : mergeProps((typeof PointerEvent !== 'undefined' ? {
       onPointerDown: (e: React.PointerEvent) => {
         if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
@@ -301,11 +300,9 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         onTouchStart: (e: React.TouchEvent) => {
           onColorAreaDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         }
-      })
-  }, movePropsContainer);
+      }), movePropsContainer);
 
-  let thumbInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
+  let thumbInteractions = isDisabled ? {} : mergeProps((typeof PointerEvent !== 'undefined' ? {
       onPointerDown: (e: React.PointerEvent) => {
         if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
@@ -321,8 +318,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         onTouchStart: (e: React.TouchEvent) => {
           onThumbDown(e.changedTouches[0].identifier);
         }
-      })
-  }, focusWithinProps, keyboardProps, movePropsThumb);
+      }), focusWithinProps, keyboardProps, movePropsThumb);
 
   let {focusProps: xInputFocusProps} = useFocus({
     onFocus: () => {
