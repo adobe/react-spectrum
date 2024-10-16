@@ -18,6 +18,7 @@ import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useCon
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
+import { render } from '@testing-library/react';
 
 export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps {}
 
@@ -259,8 +260,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   });
 
   let renderProps = useRenderProps({
-    ...props,
+    ...props, // item.props? or is this correct and breadcrumbs are wrong?
     id: undefined,
+    children: item.rendered,
     defaultClassName: 'react-aria-Tab',
     values: {
       isSelected,
@@ -283,7 +285,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined} />
+      data-hovered={isHovered || undefined}>
+      {renderProps.children}
+    </ElementType>
   );
 });
 

@@ -22,19 +22,24 @@ import {
     TabList as RACTabList,
     Tabs as RACTabs,
     TabListStateContext,
-    useSlottedContext
+    useSlottedContext,
+    CollectionRenderer,
+    UNSTABLE_CollectionRendererContext,
+    UNSTABLE_DefaultCollectionRenderer
   } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
-import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
+import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {Picker, PickerItem} from './Picker';
+import { set } from '@internationalized/date/src/manipulation';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -53,9 +58,8 @@ export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'cla
   children?: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>, StyleProps {
-  /** The content to display in the tablist. */
-  children?: ReactNode
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className'>, StyleProps {
+  // why can't i omit the children and use ReactNode like other components which take items?
 }
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
@@ -66,6 +70,7 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
+const InternalTabsContext = createContext<TabsProps>({});
 
 const tabPanel = style({
   marginTop: 4,
@@ -193,7 +198,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   return (
     <div
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
+      className={(props.UNSAFE_className || '') + style({position: 'relative', width: 'full'}, getAllowedOverrides())(null, props.styles)}>
       {orientation === 'vertical' &&
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
       <RACTabList
@@ -344,18 +349,26 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
 
   return (
-    <RACTabs
-      {...props}
-      ref={domRef}
-      style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
-      <Provider
-        values={[
-          [TabsContext, {density, isDisabled, disabledKeys, orientation}]
-        ]}>
-        {props.children}
-      </Provider>
-    </RACTabs>
+
+    <Provider
+      values={[
+        [InternalTabsContext, {density, isDisabled}]
+      ]}>
+      <CollapsingCollection containerRef={domRef} onSelectionChange={undefined}>
+        <RACTabs
+          {...props}
+          ref={domRef}
+          style={props.UNSAFE_style}
+          className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
+          <Provider
+            values={[
+              [TabsContext, {density, isDisabled, disabledKeys, orientation}]
+            ]}>
+            {props.children}
+          </Provider>
+        </RACTabs>
+      </CollapsingCollection>
+    </Provider>
   );
 }
 
@@ -364,3 +377,144 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
  */
 const _Tabs = forwardRef(Tabs);
 export {_Tabs as Tabs};
+
+let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
+  let {items, onSelectionChange} = props;
+  let {direction} = useLocale();
+  let {density, isDisabled} = useContext(InternalTabsContext);
+
+  return (
+    <div />
+    // <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
+    //   <Picker items={items} onSelectionChange={onSelectionChange}>
+    //     {(item: Node<any>) => (
+    //       <PickerItem
+    //         {...item.props.originalProps}
+    //         key={item.key}>
+    //         <Text slot="label">
+    //           {item.props.children({density, isCurrent: false, isMenu: true})}
+    //         </Text>
+    //       </PickerItem>
+    //     )}
+    //   </Picker>
+    // </UNSTABLE_CollectionRendererContext.Provider>
+  );
+};
+
+let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, items: Array<Node<any>>, size?: string, density?: 'compact' | 'regular'}) {
+  let {listRef, items, size, density} = props;
+  return (
+    <div
+      // @ts-ignore
+      inert="true"
+      ref={listRef}
+      className={style({
+        display: '[inherit]',
+        gap: '[inherit]',
+        flexWrap: '[inherit]',
+        position: 'absolute',
+        inset: 0,
+        visibility: 'hidden',
+        overflow: 'hidden',
+        opacity: 0
+      })}>
+      {items.map((item) => {
+        console.log(item)
+        // why is item.props.children not a function like in breadcrumbs?
+        // pull off individual props as an allow list, don't want refs or other props getting through
+        return (
+          <div
+            data-hidden-tab
+            style={item.props.UNSAFE_style}
+            key={item.key}
+            className={item.props.className({size, density})}>
+            {item.rendered}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Context for passing the count for the custom renderer
+let CollapseContext = createContext<{
+  containerRef: RefObject<HTMLDivElement | null>,
+  onSelectionChange: TabsProps['onSelectionChange']
+} | null>(null);
+
+function CollapsingCollection({children, containerRef, onSelectionChange}) {
+  return (
+    <CollapseContext.Provider value={{containerRef, onSelectionChange}}>
+      <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
+        {children}
+      </UNSTABLE_CollectionRendererContext.Provider>
+    </CollapseContext.Provider>
+  );
+}
+
+let CollapsingCollectionRenderer: CollectionRenderer = {
+  CollectionRoot({collection}) {
+    return useCollectionRender(collection);
+  },
+  CollectionBranch({collection}) {
+    return useCollectionRender(collection);
+  }
+};
+
+
+let useCollectionRender = (collection: Collection<Node<unknown>>) => {
+  let {containerRef, onSelectionChange} = useContext(CollapseContext) ?? {};
+  let [showItems, setShowItems] = useState(true);
+  let {density = 'regular'} = useContext(InternalTabsContext);
+  let {direction} = useLocale();
+
+  let children = useMemo(() => {
+    let result: Node<any>[] = [];
+    for (let key of collection.getKeys()) {
+      result.push(collection.getItem(key)!);
+    }
+    return result;
+  }, [collection]);
+
+  let listRef = useRef<HTMLDivElement | null>(null);
+  let updateOverflow = useEffectEvent(() => {
+    let container = listRef.current;
+    let containerRect = container.getBoundingClientRect();
+    let tabs = container.querySelectorAll('[data-hidden-tab]');
+    let lastTab = tabs[tabs.length - 1];
+    let lastTabRect = lastTab.getBoundingClientRect();
+    if (direction === 'ltr') {
+      setShowItems(lastTabRect.right <= containerRect.right);
+    } else {
+      setShowItems(lastTabRect.left >= containerRect.left);
+    }
+  });
+
+  useResizeObserver({ref: containerRef, onResize: updateOverflow});
+
+  useLayoutEffect(() => {
+    if (collection.size > 0) {
+      queueMicrotask(updateOverflow);
+    }
+  }, [collection.size, updateOverflow]);
+
+  useEffect(() => {
+    // Recalculate visible tags when fonts are loaded.
+    document.fonts?.ready.then(() => updateOverflow());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  console.log(children)
+
+  return (
+    <>
+      <HiddenTabs items={children} density={density} listRef={listRef} />
+      {showItems ? (
+        children.map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment>)
+      ) : (
+        <>
+          <TabsMenu items={children} onSelectionChange={onSelectionChange} />
+        </>
+      )}
+    </>
+  );
+};
