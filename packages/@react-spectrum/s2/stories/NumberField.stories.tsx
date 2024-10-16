@@ -22,7 +22,7 @@ import {
   Text
 } from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {
   component: NumberField,
@@ -30,7 +30,7 @@ const meta: Meta<typeof NumberField> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2/NumberField'
+  title: 'NumberField'
 };
 
 export default meta;

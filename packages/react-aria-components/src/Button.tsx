@@ -59,10 +59,10 @@ export interface ButtonRenderProps {
    */
   isDisabled: boolean,
   /**
-   * If the button is currently in the `isPending` state.
+   * Whether the button is currently in a pending state.
    * @selector [data-pending]
    */
-  isPending?: boolean
+  isPending: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
@@ -89,7 +89,8 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
   /** The value associated with the button's name when it's submitted with the form data. */
   value?: string,
   /**
-   * Whether to disable events immediately and display the `ProgressBar`.
+   * Whether the button is in a pending state. This disables press and hover events
+   * while retaining focusability, and announces the pending state to screen readers.
    */
   isPending?: boolean
 }
@@ -119,7 +120,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
-    isPending
+    isPending: isPending ?? false
   };
 
   let renderProps = useRenderProps({

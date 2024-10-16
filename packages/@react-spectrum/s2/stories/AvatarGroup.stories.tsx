@@ -12,7 +12,7 @@
 
 import {Avatar, AvatarGroup, Provider} from '../src';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof AvatarGroup> = {
   component: AvatarGroup,
@@ -21,7 +21,7 @@ const meta: Meta<typeof AvatarGroup> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2/AvatarGroup'
+  title: 'AvatarGroup'
 };
 
 export default meta;

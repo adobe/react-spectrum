@@ -15,7 +15,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Many} from '../stories/Breadcrumbs.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {shortName} from './utils';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 import {userEvent, within} from '@storybook/testing-library';
 
 const meta: Meta<typeof Breadcrumbs> = {

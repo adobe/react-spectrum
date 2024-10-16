@@ -26,7 +26,7 @@ const meta: Meta<typeof RangeSlider> = {
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}}
   },
-  title: 'S2/RangeSlider'
+  title: 'RangeSlider'
 };
 
 export default meta;

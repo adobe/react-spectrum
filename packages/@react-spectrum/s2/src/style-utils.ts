@@ -13,16 +13,6 @@
 import {CSSProperties} from 'react';
 import {StyleString} from '../style/types';
 
-export const focusRing = () => ({
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: 'focus-ring',
-  outlineWidth: 2,
-  outlineOffset: 2
-} as const);
-
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
 }

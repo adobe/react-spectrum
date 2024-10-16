@@ -24,7 +24,7 @@ const meta: Meta<typeof ColorSlider> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
   },
-  title: 'S2/ColorSlider'
+  title: 'ColorSlider'
 };
 
 export default meta;

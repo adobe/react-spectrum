@@ -199,3 +199,10 @@ import {Button, Flex} from '@adobe/react-spectrum';
   <Button justifySelf="right">Test</Button>
 </>
 `);
+
+test('Should leave existing style macros unaffected', `  
+import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<TextField label="Name" styles={style({width: 160})} />
+`);

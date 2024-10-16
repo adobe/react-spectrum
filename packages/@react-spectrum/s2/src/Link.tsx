@@ -13,9 +13,9 @@
 import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {SkeletonContext, useSkeletonText} from './Skeleton';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

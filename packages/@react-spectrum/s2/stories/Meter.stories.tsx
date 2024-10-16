@@ -21,7 +21,7 @@ const meta: Meta<typeof Meter> = {
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
-  title: 'S2/Meter'
+  title: 'Meter'
 };
 
 export default meta;

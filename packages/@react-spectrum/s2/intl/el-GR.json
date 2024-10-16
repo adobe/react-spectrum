@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "σε εκκρεμότητα",
   "contextualhelp.help": "Βοήθεια",
   "contextualhelp.info": "Πληροφορίες",
@@ -12,7 +13,7 @@
   "label.(optional)": "(προαιρετικό)",
   "label.(required)": "(απαιτείται)",
   "menu.moreActions": "Περισσότερες ενέργειες",
-  "picker.placeholder": "Επιλέξτε…",
+  "picker.placeholder": "Επιλογή…",
   "slider.maximum": "Μέγιστο",
   "slider.minimum": "Ελάχιστο",
   "table.loading": "Φόρτωση...",

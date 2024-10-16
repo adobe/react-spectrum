@@ -14,24 +14,20 @@ import {ActionButton, Text} from '../src';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
   parameters: {
     layout: 'centered'
-    // TODO: uncomment when baseline for new S2 chromatic stories is accepted since these are resused in the chromatic stories
-    // chromatic: {
-    //   disableSnapshot: true
-    // }
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
   },
-  title: 'S2/ActionButton'
+  title: 'ActionButton'
 };
 
 export default meta;
@@ -41,7 +37,7 @@ export const Example: Story = {
   render: (args) => {
     return (
       <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center', overflow: 'auto'}}>
-        <ActionButton {...args}><NewIcon /></ActionButton>
+        <ActionButton aria-label="Press me" {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
         <ActionButton {...args}><Text>Press me</Text><NewIcon /></ActionButton>
@@ -54,7 +50,7 @@ export const ResizingExample: Story = {
   render: (args) => {
     return (
       <div className={style({display: 'flex', gap: 8, justifyContent: 'center', resize: 'horizontal', overflow: 'auto'})}>
-        <ActionButton {...args}><NewIcon /></ActionButton>
+        <ActionButton aria-label="Press me" {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
         <ActionButton {...args}><Text>Press me</Text><NewIcon /></ActionButton>

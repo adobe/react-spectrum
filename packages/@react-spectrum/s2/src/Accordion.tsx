@@ -26,12 +26,12 @@ export interface AccordionProps extends Omit<DisclosureGroupProps, 'className' |
   styles?: StylesPropWithHeight,
   /**
    * The size of the accordion.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The amount of space between the disclosure items.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the accordion should be displayed with a quiet style. */

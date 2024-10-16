@@ -21,11 +21,11 @@ import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'r
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, lightDark, size, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
-import {lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
@@ -37,7 +37,7 @@ interface CardRenderProps {
   size: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'>, StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
   /**
@@ -347,7 +347,7 @@ let footer = style({
   paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
 });
 
-export const CardViewContext = createContext<'div' | typeof GridListItem>('div');
+export const InternalCardViewContext = createContext<'div' | typeof GridListItem>('div');
 export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
@@ -414,7 +414,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
-  let ElementType = useContext(CardViewContext);
+  let ElementType = useContext(InternalCardViewContext);
   if (ElementType === 'div' || isSkeleton) {
     return (
       <div
@@ -438,9 +438,9 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
       {...props}
       ref={domRef}
       className={renderProps => UNSAFE_className + card({...renderProps, isCardView: true, isLink: !!props.href, size, density, variant}, styles)}
-      style={renderProps => 
+      style={renderProps =>
         // Only the preview in quiet cards scales down on press
-        variant === 'quiet' ? UNSAFE_style : press(renderProps) 
+        variant === 'quiet' ? UNSAFE_style : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle', isHovered, isFocusVisible, isSelected, isPressed}}>
@@ -466,7 +466,7 @@ function SelectionIndicator() {
       className={selectionIndicator({
         size,
         isSelected,
-        // Add an inner stroke only for quiet cards with no checkbox to 
+        // Add an inner stroke only for quiet cards with no checkbox to
         // help distinguish the selected state from the preview.
         isStrokeInner: isQuiet && !isCheckboxSelection
       })} />

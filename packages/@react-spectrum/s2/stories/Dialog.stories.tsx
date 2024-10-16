@@ -21,9 +21,6 @@ const meta: Meta<typeof Dialog> = {
     layout: 'centered',
     docs: {
       controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
-    },
-    chromatic: {
-      disableSnapshot: true
     }
   },
   argTypes: {
@@ -34,7 +31,7 @@ const meta: Meta<typeof Dialog> = {
     }
   },
   tags: ['autodocs'],
-  title: 'S2/Dialog'
+  title: 'Dialog'
 };
 
 export default meta;

@@ -547,7 +547,7 @@ export function usePress(props: PressHookProps): PressResult {
       // https://github.com/facebook/react/issues/9809
       let onTouchEnd = (e: TouchEvent) => {
         // Don't preventDefault if we actually want the default (e.g. submit/link click).
-        if (shouldPreventDefaultUp(e.target as Element)) {
+        if (shouldPreventDefaultUp(e.currentTarget as Element)) {
           e.preventDefault();
         }
       };

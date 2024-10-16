@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Fler alternativ",
   "button.pending": "väntande",
   "contextualhelp.help": "Hjälp",
   "contextualhelp.info": "Information",
@@ -12,7 +13,7 @@
   "label.(optional)": "(valfritt)",
   "label.(required)": "(krävs)",
   "menu.moreActions": "Fler åtgärder",
-  "picker.placeholder": "Välj ett alternativ...",
+  "picker.placeholder": "Välj…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Läser in...",

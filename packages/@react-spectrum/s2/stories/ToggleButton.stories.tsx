@@ -25,7 +25,7 @@ const meta: Meta<typeof ToggleButton> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
   },
-  title: 'S2/ToggleButton'
+  title: 'ToggleButton'
 };
 
 export default meta;
@@ -33,7 +33,7 @@ export default meta;
 export const Example: StoryFn<typeof ToggleButton> = (args) => {
   return (
     <div style={{display: 'flex', gap: 8}}>
-      <ToggleButton {...args}><NewIcon /></ToggleButton>
+      <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
       <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
     </div>
