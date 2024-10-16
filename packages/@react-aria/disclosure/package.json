@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/disclosure",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,8 +22,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.10.0",
-    "@react-aria/selection": "^3.20.0",
+    "@react-aria/button": "^3.10.1",
+    "@react-aria/selection": "^3.20.1",
     "@react-aria/ssr": "^3.9.6",
     "@react-aria/utils": "^3.25.3",
     "@react-stately/disclosure": "3.0.0-alpha.0",
