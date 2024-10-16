@@ -60,21 +60,15 @@ export function useDisclosure(
 
   let handleBeforeMatch = useCallback((e: Event) => {
     if (groupState && id !== undefined) {
-      if (groupState.allowsMultipleExpanded) {
-        groupState.toggleKey(id);
-      } else {
-        groupState.setExpandedKeys(new Set([id]));
-      }
+      groupState.toggleKey(id);
     } else {
       state.toggle();
     }
-    requestAnimationFrame(() => {
-      if (props.isExpanded) {
-        (e.target as Element).removeAttribute('hidden');
-      } else if (!props.isExpanded) {
-        (e.target as Element).setAttribute('hidden', 'until-found');
-      }
-    });
+    if (props.isExpanded) {
+      (e.target as Element).removeAttribute('hidden');
+    } else if (props.isExpanded === false) {
+      (e.target as Element).setAttribute('hidden', 'until-found');
+    }
   }, [groupState, id, props.isExpanded, state]);
 
   // @ts-ignore https://github.com/facebook/react/pull/24741
