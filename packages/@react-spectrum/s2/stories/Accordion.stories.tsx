@@ -11,6 +11,7 @@
  */
 
 import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, TextField} from '../src';
+import {Key} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '../style' with { type: 'macro' };
@@ -128,3 +129,64 @@ WithDisabledDisclosure.parameters = {
   }
 };
 
+function ControlledAccordion(props) {
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['people']));
+  return (
+    <div className={style({font: 'body', display: 'flex', flexDirection: 'column', gap: 8})}>
+      <Accordion
+        onExpandedChange={setExpandedKeys}
+        expandedKeys={expandedKeys}
+        {...props}>
+        <Disclosure id="files">
+          <DisclosureHeader>
+            Files
+          </DisclosureHeader>
+          <DisclosurePanel>
+            Files content
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="people">
+          <DisclosureHeader>
+            People
+          </DisclosureHeader>
+          <DisclosurePanel>
+            <TextField label="Name" />
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+      <div>Expanded keys: {expandedKeys.size ? Array.from(expandedKeys).join(', ') : 'none'}</div>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledAccordion />
+};
+
+function ControlledOpenAccordion() {
+  return (
+    <Accordion
+      expandedKeys={['people']}>
+      <Disclosure id="files">
+        <DisclosureHeader>
+          Files
+        </DisclosureHeader>
+        <DisclosurePanel>
+          Files content
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="people">
+        <DisclosureHeader>
+          People
+        </DisclosureHeader>
+        <DisclosurePanel>
+          <TextField label="Name" />
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>
+  );
+}
+
+export const ControlledOpen: Story = {
+  render: () => <ControlledOpenAccordion />
+};
