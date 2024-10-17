@@ -12,10 +12,6 @@
 
 let formatterCache = new Map<string, Intl.DateTimeFormat>();
 
-interface ResolvedDateTimeFormatOptions extends Intl.ResolvedDateTimeFormatOptions {
-  hourCycle?: Intl.DateTimeFormatOptions['hourCycle']
-}
-
 interface DateRangeFormatPart extends Intl.DateTimeFormatPart {
   source: 'startRange' | 'endRange' | 'shared'
 }
@@ -79,8 +75,8 @@ export class DateFormatter implements Intl.DateTimeFormat {
   }
 
   /** Returns the resolved formatting options based on the values passed to the constructor. */
-  resolvedOptions(): ResolvedDateTimeFormatOptions {
-    let resolvedOptions = this.formatter.resolvedOptions() as ResolvedDateTimeFormatOptions;
+  resolvedOptions(): Intl.ResolvedDateTimeFormatOptions {
+    let resolvedOptions = this.formatter.resolvedOptions();
     if (hasBuggyResolvedHourCycle()) {
       if (!this.resolvedHourCycle) {
         this.resolvedHourCycle = getResolvedHourCycle(resolvedOptions.locale, this.options);
@@ -156,10 +152,10 @@ function hasBuggyHour12Behavior() {
 let _hasBuggyResolvedHourCycle: boolean | null = null;
 function hasBuggyResolvedHourCycle() {
   if (_hasBuggyResolvedHourCycle == null) {
-    _hasBuggyResolvedHourCycle = (new Intl.DateTimeFormat('fr', {
+    _hasBuggyResolvedHourCycle = new Intl.DateTimeFormat('fr', {
       hour: 'numeric',
       hour12: false
-    }).resolvedOptions() as ResolvedDateTimeFormatOptions).hourCycle === 'h12';
+    }).resolvedOptions().hourCycle === 'h12';
   }
 
   return _hasBuggyResolvedHourCycle;
