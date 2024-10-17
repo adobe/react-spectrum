@@ -12,7 +12,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {Popover, PopoverProps} from './Popover';
-import {style, size as styleSize} from '../style/spectrum-theme' with {type: 'macro'};
+import {style, size as styleSize} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

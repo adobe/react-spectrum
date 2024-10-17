@@ -1,0 +1,61 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/accordion';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/accordion/package.json';
+import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+
+---
+category: Navigation
+keywords: [disclosure, accordion, collapse, expand]
+---
+
+```jsx import
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
+```
+
+# Accordion
+
+<PageDescription>{docs.exports.Accordion.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Accordion', 'Disclosure', 'DisclosureHeader', 'DisclosurePanel']} />
+
+<InlineAlert variant="notice" marginTop={60}>
+  <Heading>Under construction</Heading>
+  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
+</InlineAlert>
+
+## Example
+
+```tsx example
+<Accordion defaultExpandedKeys={['personal']}>
+  <Disclosure id="personal">
+    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosurePanel>
+      <p>Personal information form here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosurePanel>
+      <p>Billing address form here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
+
+## Props
+
+<PropTable component={docs.exports.Accordion} links={docs.links} />

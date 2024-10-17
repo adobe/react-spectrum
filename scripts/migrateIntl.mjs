@@ -11,6 +11,8 @@ let mapToNewKeys = {
 };
 
 let stringsToAllow = new Set([
+  'breadcrumbs.more',
+  'button.pending',
   'menu.moreActions',
   'dialog.alert',
   'contextualhelp.info',
@@ -26,6 +28,11 @@ let stringsToAllow = new Set([
   'picker.placeholder',
   'slider.minimum',
   'slider.maximum',
+  'table.loading',
+  'table.loadingMore',
+  'table.sortAscending',
+  'table.sortDescending',
+  'table.resizeColumn',
   'tag.actions',
   'tag.showAllButtonLabel',
   'tag.hideButtonLabel',
@@ -103,6 +110,14 @@ console.log(packs)
 
 for (let [key, value] of packs) {
   let dest = path.join(__dirname, '../packages/@react-spectrum/s2/intl', `${key}.json`);
+  if (fs.existsSync(dest)) {
+    let translations = fs.readJsonSync(dest);
+    for (let [name, message] of Object.entries(translations)) {
+      if (!value[name]) {
+        value[name] = message;
+      }
+    }
+  }
   fs.writeFile(dest, JSON.stringify(value, null, 2));
 }
 

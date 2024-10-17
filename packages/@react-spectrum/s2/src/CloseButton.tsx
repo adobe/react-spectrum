@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {forwardRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
