@@ -11,35 +11,34 @@
  */
 
 import {
-    TabListProps as AriaTabListProps,
-    TabPanel as AriaTabPanel,
-    TabPanelProps as AriaTabPanelProps,
-    TabProps as AriaTabProps,
-    TabsProps as AriaTabsProps,
-    ContextValue,
-    Provider,
-    Tab as RACTab,
-    TabList as RACTabList,
-    Tabs as RACTabs,
-    TabListStateContext,
-    useSlottedContext,
-    CollectionRenderer,
-    UNSTABLE_CollectionRendererContext,
-    UNSTABLE_DefaultCollectionRenderer
-  } from 'react-aria-components';
+  TabListProps as AriaTabListProps,
+  TabPanel as AriaTabPanel,
+  TabPanelProps as AriaTabPanelProps,
+  TabProps as AriaTabProps,
+  TabsProps as AriaTabsProps,
+  CollectionRenderer,
+  ContextValue,
+  Provider,
+  Tab as RACTab,
+  TabList as RACTabList,
+  Tabs as RACTabs,
+  TabListStateContext,
+  UNSTABLE_CollectionRendererContext,
+  UNSTABLE_DefaultCollectionRenderer
+} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
+import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {Picker, PickerItem} from './Picker';
-import { set } from '@internationalized/date/src/manipulation';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -72,81 +71,68 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
 const InternalTabsContext = createContext<TabsProps>({});
 
-const tabPanel = style({
-  marginTop: 4,
-  color: 'gray-800',
-  flexGrow: 1,
-  flexBasis: '[0%]',
-  minHeight: 0,
-  minWidth: 0
+const tabs = style({
+  display: 'flex',
+  flexShrink: 0,
+  font: 'ui',
+  flexDirection: {
+    orientation: {
+      horizontal: 'column'
+    }
+  }
 }, getAllowedOverrides({height: true}));
 
-export function TabPanel(props: TabPanelProps) {
+function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
+  let {
+    density = 'regular',
+    isDisabled,
+    disabledKeys,
+    orientation = 'horizontal'
+  } = props;
+  let domRef = useDOMRef(ref);
+  let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
+
   return (
-    <AriaTabPanel
-      {...props}
-      style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + tabPanel(null, props.styles)} />
+    <Provider
+      values={[
+        [InternalTabsContext, {
+          density,
+          isDisabled,
+          orientation,
+          disabledKeys,
+          selectedKey: value,
+          onSelectionChange: setValue
+        }]
+      ]}>
+      <CollapsingCollection containerRef={domRef}>
+        <RACTabs
+          {...props}
+          ref={domRef}
+          selectedKey={value}
+          onSelectionChange={(val) => {
+            console.log('tabs onSelectionChange', val);
+            setValue(val);
+          }}
+          style={props.UNSAFE_style}
+          className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
+          <Provider
+            values={[
+              [TabsContext, {density, isDisabled, disabledKeys, orientation}]
+            ]}>
+            {props.children}
+          </Provider>
+        </RACTabs>
+      </CollapsingCollection>
+    </Provider>
   );
 }
 
-const tab = style({
-  ...focusRing(),
-  display: 'flex',
-  color: {
-    default: 'neutral-subdued',
-    isSelected: 'neutral',
-    isHovered: 'neutral-subdued',
-    isDisabled: 'disabled',
-    forcedColors: {
-      isSelected: 'Highlight',
-      isDisabled: 'GrayText'
-    }
-  },
-  borderRadius: 'sm',
-  gap: 'text-to-visual',
-  height: {
-    density: {
-      compact: 32,
-      regular: 48
-    }
-  },
-  alignItems: 'center',
-  position: 'relative',
-  cursor: 'default',
-  flexShrink: 0,
-  transition: 'default'
-}, getAllowedOverrides());
-
-const icon = style({
-  flexShrink: 0,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
-export function Tab(props: TabProps) {
-  let {density} = useSlottedContext(TabsContext) ?? {};
-
-  return (
-    <RACTab
-      {...props}
-      style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
-      <Provider
-        values={[
-          [TextContext, {styles: style({order: 1})}],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: icon
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-      </Provider>
-    </RACTab>
-  );
-}
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ */
+const _Tabs = forwardRef(Tabs);
+export {_Tabs as Tabs};
 
 const tablist = style({
   display: 'flex',
@@ -180,55 +166,41 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useSlottedContext(TabsContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation} = useContext(InternalTabsContext) ?? {};
+  let {showItems} = useContext(CollapseContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (tablistRef?.current) {
+    if (tablistRef?.current && showItems) {
       let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
 
       if (tab != null) {
         setSelectedTab(tab);
       }
+    } else if (tablistRef?.current) {
+      let picker: HTMLElement | null = tablistRef.current.querySelector('button');
+      if (picker != null) {
+        setSelectedTab(picker);
+      }
     }
-  }, [tablistRef, state?.selectedItem?.key]);
+  }, [tablistRef, state?.selectedItem?.key, showItems]);
 
   return (
     <div
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + style({position: 'relative', width: 'full'}, getAllowedOverrides())(null, props.styles)}>
-      {orientation === 'vertical' &&
+      {showItems && orientation === 'vertical' &&
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
       <RACTabList
         {...props}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, density})} />
       {orientation === 'horizontal' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+        <TabLine showItems={showItems} disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
     </div>
   );
-}
-
-function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
-  let testKey: Key | null = null;
-  if (collection && collection.size > 0) {
-    testKey = collection.getFirstKey();
-
-    let index = 0;
-    while (testKey && index < collection.size) {
-      // We have to check if the item in the collection has a key in disabledKeys or has the isDisabled prop set directly on it
-      if (!disabledKeys.has(testKey) && !collection.getItem(testKey)?.props?.isDisabled) {
-        return false;
-      }
-
-      testKey = collection.getKeyAfter(testKey);
-      index++;
-    }
-    return true;
-  }
-  return false;
 }
 
 interface TabLineProps {
@@ -236,7 +208,8 @@ interface TabLineProps {
   isDisabled: boolean | undefined,
   selectedTab: HTMLElement | undefined,
   orientation?: Orientation,
-  density?: 'compact' | 'regular'
+  density?: 'compact' | 'regular',
+  showItems?: boolean
 }
 
 const selectedIndicator = style({
@@ -326,80 +299,114 @@ function TabLine(props: TabLineProps) {
   );
 }
 
-const tabs = style({
+const tab = style({
+  ...focusRing(),
   display: 'flex',
-  flexShrink: 0,
-  fontFamily: 'sans',
-  fontWeight: 'normal',
-  flexDirection: {
-    orientation: {
-      horizontal: 'column'
+  color: {
+    default: 'neutral-subdued',
+    isSelected: 'neutral',
+    isHovered: 'neutral-subdued',
+    isDisabled: 'disabled',
+    forcedColors: {
+      isSelected: 'Highlight',
+      isDisabled: 'GrayText'
     }
-  }
-}, getAllowedOverrides({height: true}));
+  },
+  borderRadius: 'sm',
+  gap: 'text-to-visual',
+  height: {
+    density: {
+      compact: 32,
+      regular: 48
+    }
+  },
+  alignItems: 'center',
+  position: 'relative',
+  cursor: 'default',
+  flexShrink: 0,
+  transition: 'default'
+}, getAllowedOverrides());
 
-function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
-  let {
-    density = 'regular',
-    isDisabled,
-    disabledKeys,
-    orientation = 'horizontal'
-  } = props;
-  let domRef = useDOMRef(ref);
+const icon = style({
+  flexShrink: 0,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+
+export function Tab(props: TabProps) {
+  let {density} = useContext(InternalTabsContext) ?? {};
 
   return (
-
-    <Provider
-      values={[
-        [InternalTabsContext, {density, isDisabled}]
-      ]}>
-      <CollapsingCollection containerRef={domRef} onSelectionChange={undefined}>
-        <RACTabs
-          {...props}
-          ref={domRef}
-          style={props.UNSAFE_style}
-          className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
-          <Provider
-            values={[
-              [TabsContext, {density, isDisabled, disabledKeys, orientation}]
-            ]}>
-            {props.children}
-          </Provider>
-        </RACTabs>
-      </CollapsingCollection>
-    </Provider>
+    <RACTab
+      {...props}
+      // @ts-ignore
+      originalProps={props}
+      style={props.UNSAFE_style}
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
+      {({
+          // @ts-ignore
+          isMenu
+        }) => {
+        if (isMenu) {
+          return props.children;
+        } else {
+          return (
+            <Provider
+              values={[
+                  [TextContext, {styles: style({order: 1})}],
+                [IconContext, {
+                  render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                  styles: icon
+                }]
+              ]}>
+              {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+            </Provider>
+          );
+        }
+      }}
+    </RACTab>
   );
 }
 
-/**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
- */
-const _Tabs = forwardRef(Tabs);
-export {_Tabs as Tabs};
+const tabPanel = style({
+  marginTop: 4,
+  color: 'gray-800',
+  flexGrow: 1,
+  flexBasis: '[0%]',
+  minHeight: 0,
+  minWidth: 0
+}, getAllowedOverrides({height: true}));
 
-let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
-  let {items, onSelectionChange} = props;
-  let {direction} = useLocale();
-  let {density, isDisabled} = useContext(InternalTabsContext);
-
+export function TabPanel(props: TabPanelProps) {
   return (
-    <div />
-    // <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
-    //   <Picker items={items} onSelectionChange={onSelectionChange}>
-    //     {(item: Node<any>) => (
-    //       <PickerItem
-    //         {...item.props.originalProps}
-    //         key={item.key}>
-    //         <Text slot="label">
-    //           {item.props.children({density, isCurrent: false, isMenu: true})}
-    //         </Text>
-    //       </PickerItem>
-    //     )}
-    //   </Picker>
-    // </UNSTABLE_CollectionRendererContext.Provider>
+    <AriaTabPanel
+      {...props}
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + tabPanel(null, props.styles)} />
   );
-};
+}
+
+function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
+  let testKey: Key | null = null;
+  if (collection && collection.size > 0) {
+    testKey = collection.getFirstKey();
+
+    let index = 0;
+    while (testKey && index < collection.size) {
+      // We have to check if the item in the collection has a key in disabledKeys or has the isDisabled prop set directly on it
+      if (!disabledKeys.has(testKey) && !collection.getItem(testKey)?.props?.isDisabled) {
+        return false;
+      }
+
+      testKey = collection.getKeyAfter(testKey);
+      index++;
+    }
+    return true;
+  }
+  return false;
+}
 
 let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, items: Array<Node<any>>, size?: string, density?: 'compact' | 'regular'}) {
   let {listRef, items, size, density} = props;
@@ -419,8 +426,6 @@ let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, it
         opacity: 0
       })}>
       {items.map((item) => {
-        console.log(item)
-        // why is item.props.children not a function like in breadcrumbs?
         // pull off individual props as an allow list, don't want refs or other props getting through
         return (
           <div
@@ -428,7 +433,7 @@ let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, it
             style={item.props.UNSAFE_style}
             key={item.key}
             className={item.props.className({size, density})}>
-            {item.rendered}
+            {item.props.children({size, density})}
           </div>
         );
       })}
@@ -436,15 +441,58 @@ let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, it
   );
 };
 
+let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
+  let {items} = props;
+  let {density, onSelectionChange, selectedKey} = useContext(InternalTabsContext);
+
+  // TODO label??
+  // how best to target the picker label to increase the font size? it doesn't scale with size in a meaningful way
+  return (
+    <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
+      <div
+        className={style({
+          display: 'flex',
+          alignItems: 'center',
+          height: {
+            density: {
+              compact: 32,
+              regular: 48
+            }
+          }})({density})}>
+        <Picker isQuiet density={density} items={items} selectedKey={selectedKey} onSelectionChange={onSelectionChange} aria-label={'Tab selector'}>
+          {(item: Node<any>) => (
+            <PickerItem
+              {...item.props.originalProps}
+              key={item.key}>
+              {item.props.children({density, isMenu: true})}
+            </PickerItem>
+          )}
+        </Picker>
+      </div>
+    </UNSTABLE_CollectionRendererContext.Provider>
+  );
+};
+
 // Context for passing the count for the custom renderer
 let CollapseContext = createContext<{
   containerRef: RefObject<HTMLDivElement | null>,
-  onSelectionChange: TabsProps['onSelectionChange']
+  showItems: boolean,
+  setShowItems:(value: boolean) => void
 } | null>(null);
 
-function CollapsingCollection({children, containerRef, onSelectionChange}) {
+function CollapsingCollection({children, containerRef}) {
+  let [showItems, _setShowItems] = useState(true);
+  let {orientation} = useContext(InternalTabsContext);
+  let setShowItems = useCallback((value: boolean) => {
+    if (orientation === 'vertical') {
+      // if orientation is vertical, we always show the items
+      _setShowItems(true);
+    } else {
+      _setShowItems(value);
+    }
+  }, [orientation]);
   return (
-    <CollapseContext.Provider value={{containerRef, onSelectionChange}}>
+    <CollapseContext.Provider value={{containerRef, showItems, setShowItems}}>
       <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </UNSTABLE_CollectionRendererContext.Provider>
@@ -463,9 +511,8 @@ let CollapsingCollectionRenderer: CollectionRenderer = {
 
 
 let useCollectionRender = (collection: Collection<Node<unknown>>) => {
-  let {containerRef, onSelectionChange} = useContext(CollapseContext) ?? {};
-  let [showItems, setShowItems] = useState(true);
-  let {density = 'regular'} = useContext(InternalTabsContext);
+  let {containerRef, showItems, setShowItems} = useContext(CollapseContext) ?? {};
+  let {density = 'regular', orientation = 'horizontal', onSelectionChange} = useContext(InternalTabsContext);
   let {direction} = useLocale();
 
   let children = useMemo(() => {
@@ -478,6 +525,9 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
 
   let listRef = useRef<HTMLDivElement | null>(null);
   let updateOverflow = useEffectEvent(() => {
+    if (orientation === 'vertical') {
+      return;
+    }
     let container = listRef.current;
     let containerRect = container.getBoundingClientRect();
     let tabs = container.querySelectorAll('[data-hidden-tab]');
@@ -503,7 +553,6 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
     document.fonts?.ready.then(() => updateOverflow());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(children)
 
   return (
     <>

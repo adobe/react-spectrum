@@ -129,6 +129,7 @@
     "@react-aria/utils": "^3.25.3",
     "@react-spectrum/utils": "^3.11.11",
     "@react-stately/layout": "^4.0.3",
+    "@react-stately/utils": "^3.10.4",
     "@react-stately/virtualizer": "^4.1.0",
     "@react-types/color": "^3.0.0",
     "@react-types/dialog": "^3.5.13",

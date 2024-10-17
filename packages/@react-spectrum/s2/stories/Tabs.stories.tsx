@@ -16,7 +16,7 @@ import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
-import {Collection} from '@react-spectrum/s2';
+import {Collection, Text} from '@react-spectrum/s2';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -30,10 +30,10 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <div className={style({width: '[450px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: '4px'})}>
+  <div className={style({width: '[450px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
-        <Tab id="FoR" data-tab><Edit />Founding of Rome</Tab>
+        <Tab id="FoR" data-tab><Edit /><Text>Founding of Rome</Text></Tab>
         <Tab id="MaR" data-tab>Monarchy and Republic</Tab>
         <Tab id="Emp" data-tab>Empire</Tab>
       </TabList>
@@ -60,7 +60,7 @@ export const Example = (args: any) => (
 export const Disabled = (args: any) => (
   <Tabs {...args} styles={style({width: '[450px]', height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
     <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR"><Edit />Founding of Rome</Tab>
+      <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
       <Tab id="MaR">Monarchy and Republic</Tab>
       <Tab id="Emp">Empire</Tab>
     </TabList>
