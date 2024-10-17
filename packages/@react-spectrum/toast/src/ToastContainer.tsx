@@ -84,7 +84,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // over the lifetime of the component.
   let ref = useRef(undefined);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     toastProviders.add(ref);
     triggerSubscriptions();

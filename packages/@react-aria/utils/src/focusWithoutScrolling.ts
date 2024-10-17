@@ -50,7 +50,7 @@ function supportsPreventScroll() {
           return true;
         }
       });
-    } catch (e) {
+    } catch {
       // Ignore
     }
   }

@@ -26,7 +26,7 @@ import util from 'util';
 let ReactDOMClient;
 try {
   ReactDOMClient = require('react-dom/client');
-} catch (err) {
+} catch {
   // ignore.
 }
 

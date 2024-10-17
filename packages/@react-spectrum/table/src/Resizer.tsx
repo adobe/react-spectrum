@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/role-supports-aria-props */
+ 
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';

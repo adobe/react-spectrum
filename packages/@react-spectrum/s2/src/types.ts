@@ -13,6 +13,7 @@
 import React from 'react';
 
 // Override forwardRef types so generics work.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare function forwardRef<T, P = {}>(
   render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
 ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;

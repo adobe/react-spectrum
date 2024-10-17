@@ -218,7 +218,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
   // In this case, we need to manually call onDragEnd on cleanup
-  // eslint-disable-next-line arrow-body-style
+   
   useLayoutEffect(() => {
     return () => {
       if (isDraggingRef.current) {

@@ -43,9 +43,9 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
     layout,
     collection,
     scrollDirection,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     isLoading,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     onLoadMore,
     persistedKeys,
     layoutOptions,

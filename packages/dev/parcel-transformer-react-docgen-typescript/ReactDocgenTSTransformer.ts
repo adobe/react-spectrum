@@ -78,7 +78,7 @@ export default new Transformer({
         return a.name.localeCompare(b.name);
       }));
     }
-    
+
     let code = await asset.getCode();
     code = generateDocgenCodeBlock({
       filename: asset.filePath,
@@ -88,7 +88,7 @@ export default new Transformer({
       typePropName: 'type',
       docgenCollectionName: 'STORYBOOK_REACT_CLASSES'
     });
-    
+
     asset.setCode(code);
     return [asset];
   }
@@ -108,7 +108,7 @@ function getTSConfigFile(tsconfigPath: string): ts.ParsedCommandLine {
       {},
       tsconfigPath
     );
-  } catch (error) {
+  } catch {
     return {} as ts.ParsedCommandLine;
   }
 }

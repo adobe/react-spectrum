@@ -583,7 +583,7 @@ describe('DatePicker', function () {
       let month = parts.find(p => p.type === 'month').value;
       let day = parts.find(p => p.type === 'day').value;
       let year = parts.find(p => p.type === 'year').value;
-      // eslint-disable-next-line no-irregular-whitespace
+       
       expectPlaceholder(combobox, `${month}/${day}/${year}, 12:00 AM`);
 
       await user.keyboard('{ArrowRight}');

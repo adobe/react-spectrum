@@ -626,9 +626,9 @@ describe('DateRangePicker', function () {
         } else {
           let localTime = today(getLocalTimeZone());
           expect(onChange).toHaveBeenCalledTimes(1);
-          // eslint-disable-next-line no-irregular-whitespace
+           
           expectPlaceholder(startDate, `${localTime.month}/1/${localTime.year}, 12:00 AM`);
-          // eslint-disable-next-line no-irregular-whitespace
+           
           expectPlaceholder(endDate, `${localTime.month}/2/${localTime.year}, 12:00 AM`);
         }
 

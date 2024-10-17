@@ -201,7 +201,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       : null
   }),
     // don't recompute when state.collection changes, only used for initial value
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     [props.overflowMode, scale, density]
   );
 
@@ -788,7 +788,7 @@ function TableColumnHeader(props) {
   );
 }
 
-let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+let ForwardTableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
   let {focusProps, alignment, ...otherProps} = props;
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
@@ -826,7 +826,7 @@ let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
     </div>
   );
 };
-let TableColumnHeaderButton = React.forwardRef(_TableColumnHeaderButton);
+let TableColumnHeaderButton = React.forwardRef(ForwardTableColumnHeaderButton);
 
 function ResizableTableColumnHeader(props) {
   let {column} = props;
@@ -1154,7 +1154,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
 
   let draggableItem: DraggableItemResult;
   if (isTableDraggable) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+     
     draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
@@ -1167,7 +1167,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
   if (isTableDroppable) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+     
     dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
@@ -1547,6 +1547,6 @@ function CenteredWrapper({children}) {
   );
 }
 
-const _TableViewBase = React.forwardRef(TableViewBase) as <T>(props: TableBaseProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const ForwardTableViewBase = React.forwardRef(TableViewBase) as <T>(props: TableBaseProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-export {_TableViewBase as TableViewBase};
+export {ForwardTableViewBase as TableViewBase};

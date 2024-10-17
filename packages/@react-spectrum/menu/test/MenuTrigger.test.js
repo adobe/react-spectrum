@@ -806,7 +806,7 @@ describe('MenuTrigger', function () {
         let menu = tree.getByRole('menu');
         expect(menu).toBeTruthy();
         expect(menu).toHaveAttribute('aria-labelledby', button.id);
-      } catch (e) {
+      } catch {
         throw ERROR_MENU_NOT_FOUND;
       }
     };

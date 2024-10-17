@@ -132,7 +132,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       clearTimeout(state.scrollTimeout);

@@ -12,7 +12,7 @@
 
 import {RefObject, useCallback, useRef} from 'react';
 import {useEvent} from './useEvent';
-// eslint-disable-next-line rulesdir/useLayoutEffectRule
+ 
 import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreProps {

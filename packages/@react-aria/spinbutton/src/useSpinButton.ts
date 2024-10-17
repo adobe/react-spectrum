@@ -59,7 +59,7 @@ export function useSpinButton(
 
   const clearAsync = () => clearTimeout(_async.current);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => clearAsync();
   }, []);

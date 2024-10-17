@@ -57,7 +57,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let onExiting = () => isExiting.current = true;
   let onExited = () => isExiting.current = false;
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray') {

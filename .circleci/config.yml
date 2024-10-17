@@ -290,7 +290,9 @@ jobs:
 
       - run:
           name: lint
-          command: yarn lint
+          command: |
+            yarn test:lint
+            yarn lint
 
   ts-build-branch:
     executor: rsp-large

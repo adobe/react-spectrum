@@ -31,7 +31,7 @@ export function useDisplayNames(): DisplayNames {
     try {
       // @ts-ignore
       return new Intl.DisplayNames(locale, {type: 'dateTimeField'});
-    } catch (err) {
+    } catch {
       return new DisplayNamesPolyfill(locale, dictionary);
     }
   }, [locale, dictionary]);

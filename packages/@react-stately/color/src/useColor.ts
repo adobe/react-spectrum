@@ -19,7 +19,7 @@ export function useColor(value: string | Color | undefined | null) {
     if (typeof value === 'string') {
       try {
         return parseColor(value);
-      } catch (err) {
+      } catch {
         return undefined;
       }
     }

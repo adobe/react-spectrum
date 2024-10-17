@@ -31,7 +31,7 @@ describe('numberFormatSignDisplayPolyfill', () => {
       for (let options of optionsValues) {
         for (let i = 0; i < numValues.length; i++) {
           let num = numValues[i];
-          // eslint-disable-next-line no-nested-ternary
+           
           it(`${locale} - ${signDisplay} - ${JSON.stringify(options)} - ${numValueNames[i]}`, () => {
             verify(locale, options, signDisplay, num);
           });
