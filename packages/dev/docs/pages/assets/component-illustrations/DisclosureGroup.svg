@@ -1,0 +1,10 @@
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px; max-height: 205px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266 163">
+  <rect id="Rectangle_136672" data-name="Rectangle 136672" width="266" height="163" fill="var(--anatomy-gray-100)"/>
+  <rect id="rectangle-34" width="164" height="1" transform="translate(48 36)" fill="var(--anatomy-gray-300)"/>
+  <rect id="rectangle-34-2" data-name="rectangle-34" width="164" height="1" transform="translate(48 85)" fill="var(--anatomy-gray-300)"/>
+  <rect id="rectangle-34-3" data-name="rectangle-34" width="164" height="1" transform="translate(48 134)" fill="var(--anatomy-gray-300)"/>
+  <path id="Path_929" data-name="Path 929" d="M6.1,5a.908.908,0,0,0-.3-.7l-4-4A.967.967,0,0,0,.4.3a.967.967,0,0,0,0,1.4L3.6,5,.3,8.3A.972.972,0,0,0,.2,9.7a.972.972,0,0,0,1.4.1l.1-.1,4-4A1.012,1.012,0,0,0,6.1,5Z" transform="translate(65.9 56)" fill="var(--anatomy-gray-600)"/>
+  <path id="Path_930" data-name="Path 930" d="M6.1,5a.908.908,0,0,0-.3-.7l-4-4A.967.967,0,0,0,.4.3a.967.967,0,0,0,0,1.4L3.6,5,.3,8.3A.972.972,0,0,0,.2,9.7a.972.972,0,0,0,1.4.1l.1-.1,4-4A1.012,1.012,0,0,0,6.1,5Z" transform="translate(65.9 105)" fill="var(--anatomy-gray-600)"/>
+  <text id="Recent" transform="translate(82 67)" fill="var(--anatomy-gray-900)" font-size="18" font-family="Adobe-Clean" font-weight="700"><tspan x="0" y="0">Recent</tspan></text>
+  <text id="Abstract" transform="translate(82 116)" fill="var(--anatomy-gray-900)" font-size="18" font-family="Adobe-Clean" font-weight="700"><tspan x="0" y="0">Abstract</tspan></text>
+</svg>

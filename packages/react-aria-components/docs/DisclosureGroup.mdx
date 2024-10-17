@@ -11,11 +11,15 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/disclosure';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import {Keyboard} from '@react-spectrum/text';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Disclosure from '@react-spectrum/docs/pages/assets/component-illustrations/Disclosure.svg'
+import Anatomy from './DisclosureGroupAnatomy.svg';
 
 ---
 category: Navigation
@@ -35,39 +39,34 @@ preRelease: alpha
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/accordion/examples/accordion/'}
   ]} />
 
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
-
 ## Example
 
 ```tsx example
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
+import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
-    <h3>
+    <Heading>
       <Button slot="trigger">
         <svg viewBox="0 0 24 24">
           <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
         Personal Information
       </Button>
-    </h3>
+    </Heading>
     <DisclosurePanel>
       <p>Personal information form here.</p>
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <h3>
+    <Heading>
       <Button slot="trigger">
         <svg viewBox="0 0 24 24">
           <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
         </svg>
         Billing Address
       </Button>
-    </h3>
+    </Heading>
     <DisclosurePanel>
       <p>Billing address form here.</p>
     </DisclosurePanel>
@@ -80,6 +79,145 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 @import './Button.mdx' layer(button);
 @import './Disclosure.mdx' layer(disclosure);
 ```
+
+## Features
+
+
+Custom styled disclosure groups can be difficult to implement in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and other accessibility features while allowing for custom styling.
+
+* **Accessible** - Disclosure group is exposed to assistive technology via ARIA 
+* **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
+
+## Anatomy
+
+<Anatomy />
+
+A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to expand it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
+
+```tsx
+import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+
+<DisclosureGroup>
+  <Disclosure>
+    <Heading>
+      <Button />
+    </Heading>
+    <DisclosurePanel />
+  </Disclosure>
+</DisclosureGroup>
+```
+
+### Composed Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Disclosure.html"
+  title="Disclosure"
+  description="A disclosure is a collapsible section of content.">
+  <Disclosure />
+</ExampleCard>
+
+</section>
+
+## Expanded
+
+### Default expanded
+
+An uncontrolled DisclosureGroup can be expanded by default using the `defaultExpandedKeys` prop.
+
+```tsx example export=true
+import type {DisclosureProps} from 'react-aria-components';
+
+interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
+  title?: string,
+  children?: React.ReactNode
+}
+
+function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
+  return (
+    <Disclosure {...props}>
+      <Heading>
+        <Button slot="trigger">
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          {title}
+        </Button>
+      </Heading>
+      <DisclosurePanel>
+        <p>{children}</p>
+      </DisclosurePanel>
+    </Disclosure>
+  )
+}
+
+<DisclosureGroup defaultExpandedKeys={["system"]}>
+  <MyDisclosure id="system" title="System Requirements" >
+    Details about system requirements here
+  </MyDisclosure>
+  <MyDisclosure id="personal" title="Personal Information" >
+    Details about personal information here
+  </MyDisclosure>
+</DisclosureGroup>
+
+```
+
+### Controlled expanded
+
+A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `defaultExpandedKeys`
+
+```tsx example
+import {Key} from "@react-types/shared";
+
+function ControlledExpanded(){
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(["system"]));
+
+  return (
+    <>
+    <DisclosureGroup expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
+      <MyDisclosure id="system" title="System Requirements" >
+        Details about system requirements here
+      </MyDisclosure>
+      <MyDisclosure id="personal" title="Personal Information" >
+        Details about personal information here
+      </MyDisclosure>
+    </DisclosureGroup>
+    <div style={{ marginTop: '20px' }}>You have expanded: {expandedKeys}</div>
+    </>
+  )
+}
+```
+### Multiple expanded
+
+By default, only one disclosure will be open at a time. To allow multiple disclosures to expand, use the `allowsMultipleExpanded` prop. 
+
+```tsx example
+<DisclosureGroup defaultExpandedKeys={["system", "personal"]} allowsMultipleExpanded>
+  <MyDisclosure id="system" title="System Requirements" >
+    Details about system requirements here
+  </MyDisclosure>
+  <MyDisclosure id="personal" title="Personal Information" >
+    Details about personal information here
+  </MyDisclosure>
+</DisclosureGroup>
+```
+
+## Disabled
+
+A DisclosureGroup can be disabled using the `isDisabled` prop. 
+
+```tsx example
+<DisclosureGroup isDisabled>
+  <MyDisclosure id="system" title="System Requirements" >
+    Details about system requirements here
+  </MyDisclosure>
+  <MyDisclosure id="personal" title="Personal Information" >
+    Details about personal information here"
+  </MyDisclosure>
+</DisclosureGroup>
+```
+
 
 ## Props
 
@@ -171,3 +309,13 @@ A `Button` can be targeted with the `.react-aria-Button` CSS selector, or by ove
 ### DisclosurePanel
 
 A `DisclosurePanel` can be targeted with the `.react-aria-DisclosurePanel` CSS selector, or by overriding with a custom `className`.
+
+## Advanced Customization
+
+### State
+
+DisclosureGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DisclosureGroupState} /> object to its children via `DisclosureGroupStateContext`. This can be used to access and manipulate the disclosure group's state.
+
+### Hook
+
+If you need to customize things even further, such as accessing internal state, you can drop down to the lower level Hook-based API. See [useDisclosureGroupState](useDisclosureGroupState.html) for more details.

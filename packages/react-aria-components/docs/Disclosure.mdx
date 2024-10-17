@@ -11,11 +11,13 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/disclosure';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import {Keyboard} from '@react-spectrum/text';
+import Anatomy from './DisclosureAnatomy.svg';
 
 ---
 category: Navigation
@@ -35,25 +37,20 @@ preRelease: alpha
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/'}
   ]} />
 
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
-
 ## Example
 
 ```tsx example
-import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel} from 'react-aria-components';
+import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
-  <h3>
+  <Heading>
     <Button slot="trigger">
       <svg viewBox="0 0 24 24">
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
       </svg>
       System Requirements
     </Button>
-  </h3>
+  </Heading>
   <DisclosurePanel>
     <p>Details about system requirements here.</p>
   </DisclosurePanel>
@@ -102,6 +99,108 @@ import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as D
 ```
 
 </details>
+
+
+## Features
+
+Custom styled disclosures can be difficult to build in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `Disclosure` helps with this and other accessibility features while allowing for custom styling.
+
+* **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
+* **Accessible** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
+* **Styleable** - Keyboard focus, disabled and expanded states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+
+## Anatomy
+
+<Anatomy />
+
+A disclosure consists of a button and panel of content. The button contains the label representing content within the panel, and the panel is the section of content that is associated with the button which is either expanded or collapsed.
+
+```tsx
+import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+
+<Disclosure>
+  <Heading>
+    <Button />
+  </Heading>
+  <DisclosurePanel />
+</Disclosure>
+
+```
+
+## Reusable wrappers
+
+If you will use a Disclosure in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Disclosure` and all of its children together into a single component.
+
+```tsx example export=true
+
+import type {DisclosureProps} from 'react-aria-components';
+
+interface MyDisclosureProps extends Omit<DisclosureProps, 'children'> {
+  title?: string,
+  children?: React.ReactNode
+}
+
+function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
+  return (
+    <Disclosure {...props}>
+      <Heading>
+        <Button slot="trigger">
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          {title}
+        </Button>
+      </Heading>
+      <DisclosurePanel>
+        <p>{children}</p>
+      </DisclosurePanel>
+    </Disclosure>
+  )
+}
+
+<MyDisclosure title="Manage your account">
+  Details on managing your account
+</MyDisclosure>
+```
+
+## Expanded
+
+An uncontrolled Disclosure can be expanded by default using the `defaultExpanded` prop.
+
+```tsx example
+<MyDisclosure title="Download, Install, and Set Up" defaultExpanded >
+  Instructions on how to download, install, and set up
+</MyDisclosure>
+```
+
+A controlled Disclosure can be expanded and collapsed using `isExpanded` and `onExpandedChange`
+
+```tsx example
+function ControlledExpanded() {
+  let [isExpanded, setIsExpanded] = React.useState(true);
+
+  return (
+    <MyDisclosure title="Download, Install, and Set Up" isExpanded={isExpanded} onExpandedChange={setIsExpanded} >
+      Instructions on how to download, install, and set up
+    </MyDisclosure>
+  )
+}
+
+<ControlledExpanded />
+
+```
+
+## Disabled
+
+A Disclosure can be disabled using the `isDisabled` prop. 
+
+```tsx example
+<MyDisclosure title="Introduction to Knitting" isDisabled >
+  Details about knitting here
+</MyDisclosure>
+```
 
 ## Props
 
@@ -176,3 +275,50 @@ A `Button` can be targeted with the `.react-aria-Button` CSS selector, or by ove
 ### DisclosurePanel
 
 A `DisclosurePanel` can be targeted with the `.react-aria-DisclosurePanel` CSS selector, or by overriding with a custom `className`.
+
+## Advanced Customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['UNSTABLE_Disclosure']} docs={docs} />
+
+This example shows a `DisclosureGroup` component that renders a group of disclosures. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child disclosures via the `DisclosureContext` provider.
+
+```tsx example
+import {DisclosureContext} from 'react-aria-components';
+
+interface DisclosureGroupProps {
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function DisclosureGroup({children, isDisabled}: DisclosureGroupProps) {
+  return (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <DisclosureContext.Provider value={{isDisabled}}>
+        {children}
+      </DisclosureContext.Provider>
+    </div>
+  )
+}
+
+<DisclosureGroup isDisabled>
+  <MyDisclosure title="How to make a return" >
+    Details about returning items
+  </MyDisclosure>
+  <MyDisclosure title="How to cancel an order" >
+    Details on canceling an order
+  </MyDisclosure>
+</DisclosureGroup>
+
+```
+
+### State
+
+DisclosureGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DisclosureState} /> object to its children via `DisclosureStateContext`. This can be used to access and manipulate the disclosure group's state.
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDisclosure](useDisclosure.html).
