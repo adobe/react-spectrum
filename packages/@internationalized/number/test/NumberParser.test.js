@@ -424,6 +424,14 @@ describe('NumberParser', function () {
 
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('一二')).toBe('hanidec');
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('一二.五')).toBe('hanidec');
+
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('१२३४')).toBe('deva');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('१२४,२')).toBe('deva');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('२.३५१')).toBe('deva');
+
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১২৩')).toBe('beng');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১.২৫৩')).toBe('beng');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১২৮,৪')).toBe('beng');
     });
   });
 });
