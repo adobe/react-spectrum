@@ -122,6 +122,8 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 
 ## Expanded
 
+### Default expanded
+
 An uncontrolled DisclosureGroup can be expanded by default using the `defaultExpandedKeys` prop.
 
 ```tsx example export=true
@@ -161,9 +163,11 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
 
 ```
 
+### Controlled expanded
+
 A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `defaultExpandedKeys`
 
-```tsx example export=true
+```tsx example
 import {Key} from "@react-types/shared";
 
 function ControlledExpanded(){
@@ -183,6 +187,20 @@ function ControlledExpanded(){
     </>
   )
 }
+```
+### Multiple expanded
+
+By default, only one disclosure will be open at a time. To allow multiple disclosures to expand, use the `allowsMultipleExpanded` prop. 
+
+```tsx example
+<DisclosureGroup defaultExpandedKeys={["system", "personal"]} allowsMultipleExpanded>
+  <MyDisclosure id="system" title="System Requirements" >
+    Details about system requirements here
+  </MyDisclosure>
+  <MyDisclosure id="personal" title="Personal Information" >
+    Details about personal information here
+  </MyDisclosure>
+</DisclosureGroup>
 ```
 
 ## Disabled
