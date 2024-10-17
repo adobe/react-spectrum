@@ -11,12 +11,12 @@
  */
 
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
+import {Collection, Text} from '@react-spectrum/s2';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
-import {Collection, Text} from '@react-spectrum/s2';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,

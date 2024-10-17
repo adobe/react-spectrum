@@ -91,7 +91,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
     orientation = 'horizontal'
   } = props;
   let domRef = useDOMRef(ref);
-  let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
+  let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null!, props.onSelectionChange);
 
   return (
     <Provider
@@ -459,7 +459,13 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
               regular: 48
             }
           }})({density})}>
-        <Picker isQuiet density={density} items={items} selectedKey={selectedKey} onSelectionChange={onSelectionChange} aria-label={'Tab selector'}>
+        <Picker
+          isQuiet
+          density={density!}
+          items={items}
+          selectedKey={selectedKey}
+          onSelectionChange={onSelectionChange}
+          aria-label={'Tab selector'}>
           {(item: Node<any>) => (
             <PickerItem
               {...item.props.originalProps}
@@ -525,7 +531,7 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
 
   let listRef = useRef<HTMLDivElement | null>(null);
   let updateOverflow = useEffectEvent(() => {
-    if (orientation === 'vertical') {
+    if (orientation === 'vertical' || !listRef.current || !containerRef?.current) {
       return;
     }
     let container = listRef.current;
@@ -534,9 +540,9 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
     let lastTab = tabs[tabs.length - 1];
     let lastTabRect = lastTab.getBoundingClientRect();
     if (direction === 'ltr') {
-      setShowItems(lastTabRect.right <= containerRect.right);
+      setShowItems?.(lastTabRect.right <= containerRect.right);
     } else {
-      setShowItems(lastTabRect.left >= containerRect.left);
+      setShowItems?.(lastTabRect.left >= containerRect.left);
     }
   });
 

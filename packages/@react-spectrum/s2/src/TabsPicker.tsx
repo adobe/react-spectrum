@@ -44,14 +44,13 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
   HelpText
 } from './Field';
+import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
@@ -63,6 +62,7 @@ import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -104,7 +104,8 @@ export interface PickerProps<T extends object> extends
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-    menuWidth?: number
+    menuWidth?: number,
+    density: 'compact' | 'regular'
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {
