@@ -4,7 +4,6 @@ import {
   Disclosure,
   DisclosureHeader,
   DisclosurePanel,
-  DisclosureGroup,
 } from "../src/Disclosure";
 
 const meta: Meta<typeof Disclosure> = {
@@ -22,21 +21,4 @@ export const Example = (args: any) => (
     <DisclosureHeader>Files</DisclosureHeader>
     <DisclosurePanel>Files content</DisclosurePanel>
   </Disclosure>
-);
-
-export const Group = (args: any) => (
-  <DisclosureGroup {...args}>
-    <Disclosure>
-      <DisclosureHeader>Files</DisclosureHeader>
-      <DisclosurePanel>Files content</DisclosurePanel>
-    </Disclosure>
-    <Disclosure>
-      <DisclosureHeader>Images</DisclosureHeader>
-      <DisclosurePanel>Images content</DisclosurePanel>
-    </Disclosure>
-    <Disclosure>
-      <DisclosureHeader>Documents</DisclosureHeader>
-      <DisclosurePanel>Documents content</DisclosurePanel>
-    </Disclosure>
-  </DisclosureGroup>
 );
