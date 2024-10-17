@@ -183,6 +183,152 @@ A disclosure can be disabled with the `isDisabled` prop. This will disable the t
 </Disclosure>
 ```
 
-## Disclosure Group (Accordion)
+## Disclosure Group
 
-See the docs for [useDisclosureGroupState](../react-stately/useDisclosureGroupState.html) in react-stately for an example of a disclosure group.
+A disclosure group (i.e. accordion) is a set of disclosures where only one disclosure can be expanded at a time. The following example shows how to create a `DisclosureGroup` component with the `useDisclosureGroupState` hook. We'll also create a `DisclosureItem` component that uses the `DisclosureGroupState` context for managing its state.
+
+```tsx example export=true
+import {useDisclosureGroupState} from '@react-stately/disclosure';
+import {useId} from '@react-aria/utils';
+
+const DisclosureGroupStateContext = React.createContext(null);
+
+function DisclosureGroup(props) {
+  let state = useDisclosureGroupState(props);
+
+  return (
+    <div className="group">
+      <DisclosureGroupStateContext.Provider value={state}>
+        {props.children}
+      </DisclosureGroupStateContext.Provider>
+    </div>
+  );
+}
+
+function DisclosureItem(props) {
+  let defaultId = useId();
+  let id = props.id || defaultId;
+  let groupState = React.useContext(DisclosureGroupStateContext);
+  let isExpanded = groupState ? groupState.expandedKeys.has(id) : props.isExpanded;
+  let state = useDisclosureState({
+    ...props,
+    isExpanded,
+    onExpandedChange(isExpanded) {
+      if (groupState) {
+        groupState.toggleKey(id);
+      }
+
+      props.onExpandedChange?.(isExpanded);
+    }
+  });
+
+  let panelRef = React.useRef<HTMLDivElement | null>(null);
+  let triggerRef = React.useRef<HTMLButtonElement | null>(null);
+  let isDisabled = props.isDisabled || groupState?.isDisabled || false;
+  let {buttonProps: triggerProps, panelProps} = useDisclosure({
+    ...props,
+    isExpanded,
+    isDisabled
+  }, state, panelRef);
+  let {buttonProps} = useButton(triggerProps, triggerRef);
+
+  return (
+    <div className="disclosure">
+      <h3>
+        <button className="trigger" ref={triggerRef} {...buttonProps}>
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          {props.title}
+        </button>
+      </h3>
+      <div className="panel" ref={panelRef} {...panelProps}>
+        <p>
+          {props.children}
+        </p>
+      </div>
+    </div>
+  );
+};
+```
+
+### Usage
+
+The following examples show how to use the `DisclosureGroup` component created in the above example.
+
+```tsx example
+<DisclosureGroup>
+  <DisclosureItem title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
+
+#### Default expansion
+
+Which disclosure is expanded by default can be set with the `defaultExpandedKeys` prop.
+
+```tsx example
+<DisclosureGroup defaultExpandedKeys={['billing']}>
+  <DisclosureItem id="personal" title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem id="billing" title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
+
+#### Controlled expansion
+
+Expansion can be controlled using the `expandedKeys` prop, paired with the `onExpandedChange` event. The `onExpandedChange` event is fired when one of the disclosures is expanded or collapsed.
+
+```tsx example
+function ControlledDisclosureGroup(props) {
+  let [expandedKeys, setExpandedKeys] = React.useState(['personal']);
+
+  return (
+    <DisclosureGroup expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
+      <DisclosureItem id="personal" title="Personal Information">
+        Personal information form here.
+      </DisclosureItem>
+      <DisclosureItem id="billing" title="Billing Address">
+        Billing address form here.
+      </DisclosureItem>
+    </DisclosureGroup>
+  );
+}
+```
+
+#### Multiple expanded
+
+Multiple disclosures can be expanded at the same time by setting the `allowsMultipleExpanded` prop to `true`.
+
+```tsx example
+<DisclosureGroup allowsMultipleExpanded>
+  <DisclosureItem title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
+
+#### Disabled
+
+An entire disclosure group can be disabled with the `isDisabled` prop. This will disable all trigger buttons and prevent the panels from being opened or closed.
+
+```tsx example
+<DisclosureGroup isDisabled>
+  <DisclosureItem title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
