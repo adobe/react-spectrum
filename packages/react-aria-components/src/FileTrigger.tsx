@@ -12,7 +12,7 @@
 
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Input} from './Input';
-import {PressResponder} from '@react-aria/interactions';
+import {PressProvider} from '@react-aria/interactions';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
 
 export interface FileTriggerProps {
@@ -49,7 +49,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
 
   return (
     <>
-      <PressResponder
+      <PressProvider
         onPress={() => {
           if (inputRef.current?.value) {
             inputRef.current.value = '';
@@ -57,7 +57,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
           inputRef.current?.click();
         }}>
         {children}
-      </PressResponder>
+      </PressProvider>
       <Input
         {...domProps}
         type="file"
