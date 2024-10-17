@@ -534,6 +534,32 @@ describe('string conversion', function () {
       });
     });
 
+    it('parses an ISO 8601 duration string that contains years, months, hours, and seconds including hours exceeding 23 and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P18Y7MT30H15S');
+      expect(duration).toStrictEqual({
+        years: 18,
+        months: 7,
+        weeks: 0,
+        days: 0,
+        hours: 30,
+        minutes: 0,
+        seconds: 15
+      });
+    });
+
+    it('parses an ISO 8601 duration string that contains years, months, hours, and seconds including hours exceeding 23 and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('PT36H');
+      expect(duration).toStrictEqual({
+        years: 0,
+        months: 0,
+        weeks: 0,
+        days: 0,
+        hours: 36,
+        minutes: 0,
+        seconds: 0
+      });
+    });
+
     it('throws an error when passed an improperly formatted ISO 8601 duration string', function () {
       expect(() => {
         parseDuration('+-P18Y7MT20H15S');
@@ -550,9 +576,6 @@ describe('string conversion', function () {
       expect(() => {
         parseDuration('P18Y7MT');
       }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT');
-      expect(() => {
-        parseDuration('P18Y7MT30H15S');
-      }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT30H15S');
       expect(() => {
         parseDuration('7Y6D85');
       }).toThrow('Invalid ISO 8601 Duration string: 7Y6D85');
