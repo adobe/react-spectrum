@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@internationalized/number": "^3.5.4",
+    "@react-aria/live-announcer": "^3.4.0",
     "@react-stately/form": "^3.0.6",
     "@react-stately/utils": "^3.10.4",
     "@react-types/numberfield": "^3.8.6",
