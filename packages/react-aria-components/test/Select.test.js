@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectValue, Text} from '../';
+import {Button, FieldError, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -277,5 +277,80 @@ describe('Select', () => {
     await user.click(options[0]);
 
     expect(button).toHaveTextContent('0');
+  });
+
+  it('should support extra children for use with the state', async () => {
+    let onChangeSpy = jest.fn();
+
+    function SelectClearButton() {
+      let state = React.useContext(SelectStateContext);
+      return (
+        <Button
+          data-testid="clear"
+          // Don't inherit behavior from Select.
+          slot={null}
+          style={{fontSize: 'small', marginTop: 6, padding: 4}}
+          onPress={() => state?.setSelectedKey(null)}>
+          Clear
+        </Button>
+      );
+    }
+
+    let {getByTestId} = render(
+      <>
+        <input data-testid="before" />
+        <Select onSelectionChange={onChangeSpy}>
+          <Label>Favorite Animal</Label>
+          <Button data-testid="select">
+            <SelectValue />
+            <span aria-hidden="true">▼</span>
+          </Button>
+          <SelectClearButton />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="cat">Cat</ListBoxItem>
+              <ListBoxItem id="dog">Dog</ListBoxItem>
+              <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+        <input data-testid="after" />
+      </>
+    );
+
+    let beforeInput = getByTestId('before');
+    let afterInput = getByTestId('after');
+    let wrapper = getByTestId('select');
+    let clearButton = getByTestId('clear');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
+
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(selectTester.trigger);
+
+    await user.tab();
+    expect(document.activeElement).toBe(clearButton);
+
+    await user.tab();
+    expect(document.activeElement).toBe(afterInput);
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(clearButton);
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(selectTester.trigger);
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(beforeInput);
+
+    await user.tab();
+    await selectTester.selectOption({optionText: 'Dog'});
+
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenLastCalledWith('dog');
+
+    await user.click(clearButton);
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenLastCalledWith(null);
   });
 });
