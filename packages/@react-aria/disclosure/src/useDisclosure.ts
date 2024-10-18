@@ -41,11 +41,7 @@ export interface DisclosureAria {
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
  * @param ref - A ref for the disclosure content.
  */
-export function useDisclosure(
-  props: AriaDisclosureProps,
-  state: DisclosureState,
-  ref: RefObject<Element | null>
-): DisclosureAria {
+export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref: RefObject<Element | null>): DisclosureAria {
   let {
     isDisabled
   } = props;
