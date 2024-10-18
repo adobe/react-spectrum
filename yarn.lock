@@ -7574,6 +7574,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.25.3"
     "@react-spectrum/utils": "npm:^3.11.11"
     "@react-stately/layout": "npm:^4.0.3"
+    "@react-stately/utils": "npm:^3.10.4"
     "@react-stately/virtualizer": "npm:^4.1.0"
     "@react-types/color": "npm:^3.0.0"
     "@react-types/dialog": "npm:^3.5.13"
