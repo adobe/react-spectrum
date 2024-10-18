@@ -12,7 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DisclosureGroupState, DisclosureState} from '@react-stately/disclosure';
-import {HTMLAttributes, RefObject, useCallback} from 'react';
+import {flushSync} from 'react-dom';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {Key} from '@react-types/shared';
 import {useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
@@ -25,9 +26,7 @@ export interface AriaDisclosureProps {
   /** Whether the disclosure is expanded (controlled). */
   isExpanded?: boolean,
   /** Whether the disclosure is expanded by default (uncontrolled). */
-  defaultExpanded?: boolean,
-  /** Unique id for the disclosure. Useful if used in a disclosure group. */
-  id?: Key
+  defaultExpanded?: boolean
 }
 
 export interface DisclosureAria {
@@ -46,37 +45,32 @@ export interface DisclosureAria {
 export function useDisclosure(
   props: AriaDisclosureProps,
   state: DisclosureState,
-  ref: RefObject<Element | null>,
-  groupState?: DisclosureGroupState
+  ref: RefObject<Element | null>
 ): DisclosureAria {
   let {
-    isDisabled,
-    id
+    isDisabled
   } = props;
   let triggerId = useId();
   let contentId = useId();
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
+  let raf = useRef<number | null>(null);
+
   let handleBeforeMatch = useCallback(() => {
-    if (groupState && id !== undefined) {
-      groupState.toggleKey(id);
-    } else {
-      state.toggle();
-    }
-    requestAnimationFrame(() => {
-      if (props.isExpanded) {
-        ref.current.removeAttribute('hidden');
-      } else {
-        ref.current.setAttribute('hidden', 'until-found');
-      }
+    raf.current = requestAnimationFrame(() => {
+      ref.current.setAttribute('hidden', 'until-found');
     });
-  }, [groupState, id, props, ref, state]);
+    flushSync(() => {
+      state.toggle();
+    });
+  }, [ref, state]);
 
   // @ts-ignore https://github.com/facebook/react/pull/24741
   useEvent(ref, 'beforematch', supportsBeforeMatch ? handleBeforeMatch : null);
 
   useLayoutEffect(() => {
+    cancelAnimationFrame(raf.current);
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && ref.current && !isDisabled) {
       if (state.isExpanded) {
@@ -86,6 +80,12 @@ export function useDisclosure(
       }
     }
   }, [isDisabled, ref, state.isExpanded, supportsBeforeMatch]);
+
+  useEffect(() => {
+    return () => {
+      cancelAnimationFrame(raf.current);
+    };
+  }, []);
 
   return {
     buttonProps: {

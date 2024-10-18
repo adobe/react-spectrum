@@ -87,7 +87,7 @@ WithLongTitle.parameters = {
 function ControlledDisclosure(props) {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
-    <Disclosure isExpanded={isExpanded} onExpandedChange={setExpanded} {...props}>
+    <Disclosure {...props} isExpanded={isExpanded} onExpandedChange={setExpanded}>
       <DisclosureHeader>
         Files
       </DisclosureHeader>

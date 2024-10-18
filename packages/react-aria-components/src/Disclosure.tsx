@@ -136,9 +136,8 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   let {buttonProps, panelProps} = useDisclosure({
     ...props,
     isExpanded,
-    isDisabled,
-    id
-  }, state, panelRef, groupState);
+    isDisabled
+  }, state, panelRef);
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
