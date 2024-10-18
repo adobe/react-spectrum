@@ -12,9 +12,9 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DisclosureGroupState, DisclosureState} from '@react-stately/disclosure';
-import {HTMLAttributes, RefObject, useCallback, useEffect} from 'react';
+import {HTMLAttributes, RefObject, useCallback} from 'react';
 import {Key} from '@react-types/shared';
-import {useEvent, useId} from '@react-aria/utils';
+import {useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
 
 export interface AriaDisclosureProps {
@@ -58,32 +58,34 @@ export function useDisclosure(
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
-  let handleBeforeMatch = useCallback((e: Event) => {
+  let handleBeforeMatch = useCallback(() => {
     if (groupState && id !== undefined) {
       groupState.toggleKey(id);
     } else {
       state.toggle();
     }
-    if (props.isExpanded) {
-      (e.target as Element).removeAttribute('hidden');
-    } else if (props.isExpanded === false) {
-      (e.target as Element).setAttribute('hidden', 'until-found');
-    }
-  }, [groupState, id, props.isExpanded, state]);
+    requestAnimationFrame(() => {
+      if (props.isExpanded) {
+        ref.current.removeAttribute('hidden');
+      } else {
+        ref.current.setAttribute('hidden', 'until-found');
+      }
+    });
+  }, [groupState, id, props, ref, state]);
 
   // @ts-ignore https://github.com/facebook/react/pull/24741
   useEvent(ref, 'beforematch', supportsBeforeMatch ? handleBeforeMatch : null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && ref?.current && !isDisabled) {
+    if (supportsBeforeMatch && ref.current && !isDisabled) {
       if (state.isExpanded) {
         ref.current.removeAttribute('hidden');
       } else {
         ref.current.setAttribute('hidden', 'until-found');
       }
     }
-  }, [ref, props.isExpanded, state.isExpanded, supportsBeforeMatch, isDisabled]);
+  }, [isDisabled, ref, state.isExpanded, supportsBeforeMatch]);
 
   return {
     buttonProps: {
@@ -108,7 +110,7 @@ export function useDisclosure(
       // This can be overridden at the panel element level.
       role: 'group',
       'aria-labelledby': triggerId,
-      hidden: (!supportsBeforeMatch) ? !state.isExpanded : true
+      hidden: supportsBeforeMatch ? true : !state.isExpanded
     }
   };
 }
