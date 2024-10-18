@@ -49,10 +49,16 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
-  let getText = (key: Key) => collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue;
+  let getText = (key: Key | null) => {
+    if (key == null) {
+      return '';
+    } else {
+      return collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue ?? '';
+    }
+  };
 
   let label = '';
-  let labelledBy: string;
+  let labelledBy: string | undefined;
   if (target.type === 'root') {
     label = stringFormatter.format('dropOnRoot');
     labelledBy = `${id} ${getDroppableCollectionId(state)}`;
@@ -61,8 +67,8 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       itemText: getText(target.key)
     });
   } else {
-    let before: Key | null;
-    let after: Key | null;
+    let before: Key | null | undefined;
+    let after: Key | null | undefined;
     if (collection.getFirstKey() === target.key && target.dropPosition === 'before') {
       before = null;
     } else {

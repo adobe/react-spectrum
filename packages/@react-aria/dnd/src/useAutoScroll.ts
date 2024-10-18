@@ -29,8 +29,8 @@ export function useAutoScroll(ref: RefObject<Element | null>) {
     }
   }, [ref]);
 
-  let state = useRef({
-    timer: null,
+  let state = useRef<{timer: ReturnType<typeof requestAnimationFrame> | undefined, dx: number, dy: number}>({
+    timer: undefined,
     dx: 0,
     dy: 0
   }).current;
@@ -39,17 +39,17 @@ export function useAutoScroll(ref: RefObject<Element | null>) {
     return () => {
       if (state.timer) {
         cancelAnimationFrame(state.timer);
-        state.timer = null;
+        state.timer = undefined;
       }
     };
   // state will become a new object, so it's ok to use in the dependency array for unmount
   }, [state]);
 
   let scroll = useCallback(() => {
-    if (scrollableX.current) {
+    if (scrollableX.current && scrollableRef.current) {
       scrollableRef.current.scrollLeft += state.dx;
     }
-    if (scrollableY.current) {
+    if (scrollableY.current && scrollableRef.current) {
       scrollableRef.current.scrollTop += state.dy;
     }
 
@@ -93,7 +93,7 @@ export function useAutoScroll(ref: RefObject<Element | null>) {
     stop() {
       if (state.timer) {
         cancelAnimationFrame(state.timer);
-        state.timer = null;
+        state.timer = undefined;
       }
     }
   };

@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export function isScrollable(node: Element, checkForOverflow?: boolean): boolean {
+export function isScrollable(node: Element | null, checkForOverflow?: boolean): boolean {
+  if (!node) {
+    return false;
+  }
   let style = window.getComputedStyle(node);
   let isScrollable = /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
 
