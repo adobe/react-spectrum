@@ -11,10 +11,9 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DisclosureGroupState, DisclosureState} from '@react-stately/disclosure';
+import {DisclosureState} from '@react-stately/disclosure';
 import {flushSync} from 'react-dom';
 import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
-import {Key} from '@react-types/shared';
 import {useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
 
