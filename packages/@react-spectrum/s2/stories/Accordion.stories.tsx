@@ -226,8 +226,3 @@ export const WithActionButton: Story = {
   }
 };
 
-WithActionButton.parameters = {
-  docs: {
-    disable: true
-  }
-};
