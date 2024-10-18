@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/badge",
-  "version": "3.1.16",
+  "version": "3.1.17",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@react-aria/utils": "^3.25.3",
-    "@react-spectrum/text": "^3.5.8",
+    "@react-spectrum/text": "^3.5.9",
     "@react-spectrum/utils": "^3.11.11",
     "@react-types/badge": "^3.1.12",
     "@react-types/shared": "^3.25.0",
