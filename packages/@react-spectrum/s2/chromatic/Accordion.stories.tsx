@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, TextField} from '../src';
+import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
+import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
@@ -32,17 +33,17 @@ export const Example: Story = {
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <Disclosure id="files">
-            <DisclosureHeader>
+            <DisclosureTitle>
               Files
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               Files content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure id="people">
-            <DisclosureHeader>
+            <DisclosureTitle>
               People
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               <TextField label="Name" styles={style({maxWidth: 176})} />
             </DisclosurePanel>
@@ -59,25 +60,25 @@ export const WithLongTitle: Story = {
       <div className={style({minHeight: 224})}>
         <Accordion styles={style({maxWidth: 224})} {...args}>
           <Disclosure>
-            <DisclosureHeader>
+            <DisclosureTitle>
               Files
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               Files content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure>
-            <DisclosureHeader>
+            <DisclosureTitle>
               People
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               People content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure>
-            <DisclosureHeader>
+            <DisclosureTitle>
               Very very very very very long title that wraps
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               Accordion content
             </DisclosurePanel>
@@ -94,17 +95,17 @@ export const WithDisabledDisclosure: Story = {
       <div className={style({minHeight: 240})}>
         <Accordion {...args}>
           <Disclosure>
-            <DisclosureHeader>
+            <DisclosureTitle>
               Files
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               Files content
             </DisclosurePanel>
           </Disclosure>
           <Disclosure isDisabled>
-            <DisclosureHeader>
+            <DisclosureTitle>
               People
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               <TextField label="Name" />
             </DisclosurePanel>
@@ -127,3 +128,35 @@ WithDisabledDisclosure.parameters = {
   }
 };
 
+export const WithActionButton: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Accordion {...args}>
+          <Disclosure id="files">
+            <DisclosureHeader>
+              <DisclosureTitle>
+                Files
+              </DisclosureTitle>
+              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
+            </DisclosureHeader>
+            <DisclosurePanel>
+              Files content
+            </DisclosurePanel>
+          </Disclosure>
+          <Disclosure id="people">
+            <DisclosureHeader>
+              <DisclosureTitle>
+                People
+              </DisclosureTitle>
+              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
+            </DisclosureHeader>
+            <DisclosurePanel>
+              <TextField label="Name" styles={style({maxWidth: 176})} />
+            </DisclosurePanel>
+          </Disclosure>
+        </Accordion>
+      </div>
+    );
+  }
+};

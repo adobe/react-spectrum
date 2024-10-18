@@ -1022,7 +1022,7 @@ const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900'
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
-    isQuiet: 'transparent'
+    isQuiet: '--s2-container-bg'
   },
   isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
   isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color

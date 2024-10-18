@@ -1,4 +1,4 @@
-{/* Copyright 2023 Adobe. All rights reserved.
+{/* Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,32 +10,32 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-stately/steplist';
+import docs from 'docs:@react-stately/disclosure';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-stately/steplist/package.json';
+import packageData from '@react-stately/disclosure/package.json';
 
 ---
-category: Collections
-keywords: []
-after_version: 3.0.0
+category: Navigation
+keywords: [disclosure, state]
+preRelease: alpha
 ---
 
-# useStepListState
+# useDisclosureState
 
-<PageDescription>{docs.exports.useStepListState.description}</PageDescription>
+<PageDescription>{docs.exports.useDisclosureState.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useStepListState']} />
+  componentNames={['useDisclosureState']} />
 
 ## API
 
-<FunctionAPI function={docs.exports.useStepListState} links={docs.links} />
+<FunctionAPI function={docs.exports.useDisclosureState} links={docs.links} />
 
 ## Interface
 
-<ClassAPI links={docs.links} class={docs.links[docs.exports.useStepListState.return.base.id]} />
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useDisclosureState.return.id]} />
 
 ## Example
 
-See the docs for [useStepList](../react-aria/useStepList.html) in react-aria for an example of `useStepListState`.
+See the docs for [useDisclosure](../react-aria/useDisclosure.html) in react-aria for an example of `useDisclosureState`.
