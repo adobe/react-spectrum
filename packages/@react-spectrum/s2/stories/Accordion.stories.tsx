@@ -140,17 +140,17 @@ function ControlledAccordion(props) {
         expandedKeys={expandedKeys}
         {...props}>
         <Disclosure id="files">
-          <DisclosureHeader>
+          <DisclosureTitle>
             Files
-          </DisclosureHeader>
+          </DisclosureTitle>
           <DisclosurePanel>
             Files content
           </DisclosurePanel>
         </Disclosure>
         <Disclosure id="people">
-          <DisclosureHeader>
+          <DisclosureTitle>
             People
-          </DisclosureHeader>
+          </DisclosureTitle>
           <DisclosurePanel>
             <TextField label="Name" />
           </DisclosurePanel>
@@ -170,17 +170,17 @@ function ControlledOpenAccordion() {
     <Accordion
       expandedKeys={['people']}>
       <Disclosure id="files">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Files
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           Files content
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="people">
-        <DisclosureHeader>
+        <DisclosureTitle>
           People
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           <TextField label="Name" />
         </DisclosurePanel>

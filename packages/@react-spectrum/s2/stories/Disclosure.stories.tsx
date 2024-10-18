@@ -90,9 +90,9 @@ function ControlledDisclosure(props) {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
     <Disclosure {...props} isExpanded={isExpanded} onExpandedChange={setExpanded}>
-      <DisclosureHeader>
+      <DisclosureTitle>
         Files
-      </DisclosureHeader>
+      </DisclosureTitle>
       <DisclosurePanel>
         Files content
       </DisclosurePanel>
@@ -113,9 +113,9 @@ Controlled.parameters = {
 export const ControlledClosed: Story = {
   render: (args) => (
     <Disclosure isExpanded={false} {...args}>
-      <DisclosureHeader>
+      <DisclosureTitle>
         Files
-      </DisclosureHeader>
+      </DisclosureTitle>
       <DisclosurePanel>
         Files content
       </DisclosurePanel>
