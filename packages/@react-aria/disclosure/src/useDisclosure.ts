@@ -57,9 +57,11 @@ export function useDisclosure(
   let raf = useRef<number | null>(null);
 
   let handleBeforeMatch = useCallback(() => {
+    // Wait a frame to revert browser's removal of hidden attribute
     raf.current = requestAnimationFrame(() => {
       ref.current.setAttribute('hidden', 'until-found');
     });
+    // Force sync state update
     flushSync(() => {
       state.toggle();
     });
@@ -69,6 +71,7 @@ export function useDisclosure(
   useEvent(ref, 'beforematch', supportsBeforeMatch ? handleBeforeMatch : null);
 
   useLayoutEffect(() => {
+    // Cancel any pending RAF to prevent stale updates
     cancelAnimationFrame(raf.current);
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && ref.current && !isDisabled) {
