@@ -12,12 +12,12 @@
 
 import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps, PopoverProps as AriaPopoverProps} from 'react-aria-components';
 import {DialogContext} from './Dialog';
-import {PressResponder} from '@react-aria/interactions';
+import {PressProvider} from '@react-aria/interactions';
 
 export interface DialogTriggerProps extends AriaDialogTriggerProps, Pick<AriaPopoverProps, 'placement' | 'shouldFlip' | 'isKeyboardDismissDisabled' | 'containerPadding' | 'offset' | 'crossOffset' > {
   /**
-   * The type of Dialog that should be rendered. 
-   * 
+   * The type of Dialog that should be rendered.
+   *
    * @default 'modal'
    */
   type?: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
@@ -53,9 +53,9 @@ export function DialogTrigger(props: DialogTriggerProps) {
         }}>
         {/* RAC sets isPressed via PressResponder when the dialog is open.
             We don't want press scaling to appear to get "stuck", so override this. */}
-        <PressResponder isPressed={false}>
+        <PressProvider isPressed={false}>
           {props.children}
-        </PressResponder>
+        </PressProvider>
       </DialogContext.Provider>
     </AriaDialogTrigger>
   );
