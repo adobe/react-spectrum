@@ -32,7 +32,7 @@ export {ColorSwatchPicker, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorWheel, ColorWheelContext} from './ColorWheel';
 export {ComboBox, ComboBoxItem, ComboBoxSection, ComboBoxContext} from './ComboBox';
 export {ContextualHelp, ContextualHelpContext} from './ContextualHelp';
-export {DisclosureHeader, Disclosure, DisclosurePanel, DisclosureContext} from './Disclosure';
+export {DisclosureHeader, Disclosure, DisclosurePanel, DisclosureContext, DisclosureTitle} from './Disclosure';
 export {Heading, HeadingContext, Header, HeaderContext, Content, ContentContext, Footer, FooterContext, Text, TextContext, Keyboard, KeyboardContext} from './Content';
 export {Dialog} from './Dialog';
 export {DialogTrigger} from './DialogTrigger';
