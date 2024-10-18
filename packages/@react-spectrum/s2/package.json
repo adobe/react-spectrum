@@ -120,7 +120,8 @@
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.48",
-    "@parcel/macros": "2.12.1-canary.3165"
+    "@parcel/macros": "2.12.1-canary.3165",
+    "@react-aria/test-utils": "1.0.0-alpha.1"
   },
   "dependencies": {
     "@react-aria/collections": "3.0.0-alpha.5",
@@ -142,6 +143,9 @@
     "react-aria-components": "^1.4.1"
   },
   "peerDependencies": {
+    "@testing-library/react": "^15.0.7",
+    "@testing-library/user-event": "^13.0.0 || ^14.0.0",
+    "jest": "^29.5.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },

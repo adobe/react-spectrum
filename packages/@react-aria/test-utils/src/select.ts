@@ -15,7 +15,7 @@ import {BaseTesterOpts, UserOpts} from './user';
 
 export interface SelectOptions extends UserOpts, BaseTesterOpts {
   // TODO: I think the type grabbed from the testing library dist for UserEvent is breaking the build, will need to figure out a better place to grab from
-  user: any
+  user?: any
 }
 export class SelectTester {
   private user;
