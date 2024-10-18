@@ -163,7 +163,7 @@ describe('useDisclosure', () => {
     });
   
     expect(result.current.state.isExpanded).toBe(false);
-    expect(ref.current.getAttribute('hidden')).toBeNull();
+    expect(ref.current.getAttribute('hidden')).toBe('until-found');
   
     // Simulate the 'beforematch' event
     act(() => {
@@ -172,8 +172,9 @@ describe('useDisclosure', () => {
     });
   
     expect(result.current.state.isExpanded).toBe(false);
-    expect(ref.current.getAttribute('hidden')).toBeNull();
-    expect(onExpandedChange).not.toHaveBeenCalled();
+    expect(ref.current.getAttribute('hidden')).toBe('until-found');
+    expect(onExpandedChange).toHaveBeenCalledTimes(1);
+    expect(onExpandedChange).toHaveBeenCalledWith(true);
   
     Object.defineProperty(document.body, 'onbeforematch', {
       value: originalOnBeforeMatch,

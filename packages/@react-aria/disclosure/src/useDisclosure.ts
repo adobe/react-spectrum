@@ -12,8 +12,9 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DisclosureState} from '@react-stately/disclosure';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
-import {useEvent, useId} from '@react-aria/utils';
+import {flushSync} from 'react-dom';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import {useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
 
 export interface AriaDisclosureProps {
@@ -40,29 +41,55 @@ export interface DisclosureAria {
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
  * @param ref - A ref for the disclosure content.
  */
-export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref?: RefObject<Element | null>): DisclosureAria {
+export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref: RefObject<Element | null>): DisclosureAria {
   let {
     isDisabled
   } = props;
   let triggerId = useId();
   let contentId = useId();
-  let isControlled = props.isExpanded !== undefined;
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
-  // @ts-ignore https://github.com/facebook/react/pull/24741
-  useEvent(ref, 'beforematch', supportsBeforeMatch && !isControlled ? () => state.expand() : null);
+  let raf = useRef<number | null>(null);
 
-  useEffect(() => {
+  let handleBeforeMatch = useCallback(() => {
+    // Wait a frame to revert browser's removal of hidden attribute
+    raf.current = requestAnimationFrame(() => {
+      if (ref.current) {
+        ref.current.setAttribute('hidden', 'until-found');
+      }
+    });
+    // Force sync state update
+    flushSync(() => {
+      state.toggle();
+    });
+  }, [ref, state]);
+
+  // @ts-ignore https://github.com/facebook/react/pull/24741
+  useEvent(ref, 'beforematch', supportsBeforeMatch ? handleBeforeMatch : null);
+
+  useLayoutEffect(() => {
+    // Cancel any pending RAF to prevent stale updates
+    if (raf.current) {
+      cancelAnimationFrame(raf.current);
+    }
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
-    if (supportsBeforeMatch && ref?.current && !isControlled && !isDisabled) {
+    if (supportsBeforeMatch && ref.current && !isDisabled) {
       if (state.isExpanded) {
         ref.current.removeAttribute('hidden');
       } else {
         ref.current.setAttribute('hidden', 'until-found');
       }
     }
-  }, [isControlled, ref, props.isExpanded, state, supportsBeforeMatch, isDisabled]);
+  }, [isDisabled, ref, state.isExpanded, supportsBeforeMatch]);
+
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   return {
     buttonProps: {
@@ -87,7 +114,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       // This can be overridden at the panel element level.
       role: 'group',
       'aria-labelledby': triggerId,
-      hidden: (!supportsBeforeMatch || isControlled) ? !state.isExpanded : true
+      hidden: supportsBeforeMatch ? true : !state.isExpanded
     }
   };
 }
