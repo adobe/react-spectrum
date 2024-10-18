@@ -70,7 +70,9 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
 
   useLayoutEffect(() => {
     // Cancel any pending RAF to prevent stale updates
-    cancelAnimationFrame(raf.current);
+    if (raf.current) {
+      cancelAnimationFrame(raf.current);
+    }
     // Until React supports hidden="until-found": https://github.com/facebook/react/pull/24741
     if (supportsBeforeMatch && ref.current && !isDisabled) {
       if (state.isExpanded) {
