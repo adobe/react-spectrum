@@ -50,6 +50,9 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.
   let focusLast = () => {
+    if (!ref.current) {
+      return;
+    }
     // Try to find the segment prior to the element that was clicked on.
     let target = window.event?.target as FocusableElement;
     let walker = getFocusableTreeWalker(ref.current, {tabbable: true});

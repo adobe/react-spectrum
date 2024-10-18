@@ -16,19 +16,25 @@ import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
+import {DroppableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {ListLayout} from '@react-stately/layout';
+import {ListState, useListState} from '@react-stately/list';
 import React, {useMemo} from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
-import {useDroppableCollectionState} from '@react-stately/dnd';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListData} from '@react-stately/data';
-import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 import {Virtualizer} from '@react-aria/virtualizer';
+
+interface ItemValue {
+  id: string,
+  type: string,
+  text: string
+}
 
 export function VirtualizedListBoxExample(props) {
   let id = React.useRef(props.items?.length || 3);
@@ -44,10 +50,10 @@ export function VirtualizedListBoxExample(props) {
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items = [];
+      let items: Array<ItemValue> = [];
       for (let item of e.items) {
         if (item.kind === 'text') {
-          let type: string;
+          let type: string | undefined;
           if (props.accept && item.types.has(props.accept)) {
             type = props.accept;
           } else if (item.types.has('folder')) {
@@ -90,7 +96,7 @@ export function VirtualizedListBoxExample(props) {
   );
 }
 
-const Context = React.createContext(null);
+const Context = React.createContext<{state: ListState<object>, dropState: DroppableCollectionState} | null>(null);
 const acceptedTypes = ['item', 'folder'];
 
 export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
@@ -196,8 +202,8 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
 });
 
 function CollectionItem({item}) {
-  let {state, dropState} = React.useContext(Context);
-  let ref = React.useRef(undefined);
+  let {state, dropState} = React.useContext(Context)!;
+  let ref = React.useRef(null);
   let {optionProps} = useOption({
     key: item.key,
     isSelected: state.selectionManager.isSelected(item.key),
@@ -214,8 +220,8 @@ function CollectionItem({item}) {
         {...mergeProps(optionProps, dropProps)}
         ref={ref}
         className={classNames(dndStyles, 'droppable', {
-          'is-drop-target': dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
-          'is-selected': state.selectionManager.isSelected(item.key)
+          'is-drop-target': dropState!.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
+          'is-selected': state!.selectionManager.isSelected(item.key)
         })}
         style={{margin: '4px 12px'}}>
         {item.rendered}
@@ -225,8 +231,8 @@ function CollectionItem({item}) {
 }
 
 function InsertionIndicator(props) {
-  let {dropState} = React.useContext(Context);
-  let ref = React.useRef(undefined);
+  let {dropState} = React.useContext(Context)!;
+  let ref = React.useRef(null);
   let {dropIndicatorProps} = useDropIndicator(props, dropState, ref);
 
   // If aria-hidden, we are either not in a drag session or the drop target is invalid.
@@ -244,7 +250,7 @@ function InsertionIndicator(props) {
       ref={ref}
       className={dropState.isDropTarget(props.target)
         ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
-        : null
+        : undefined
       }
       style={{
         width: 'calc(100% - 24px)',
@@ -257,8 +263,8 @@ function InsertionIndicator(props) {
 }
 
 function RootDropIndicator() {
-  let {dropState} = React.useContext(Context);
-  let dropRef = React.useRef(undefined);
+  let {dropState} = React.useContext(Context)!;
+  let dropRef = React.useRef(null);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);

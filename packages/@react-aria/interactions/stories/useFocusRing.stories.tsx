@@ -24,7 +24,7 @@ interface IColumn {
   name: string,
   key: string
 }
-interface IRow {
+interface RowValue {
   key: string
 }
 
@@ -37,7 +37,7 @@ for (let i = 0; i < 100; i++) {
   );
 }
 
-let manyRows: IRow[] = [];
+let manyRows: RowValue[] = [];
 for (let i = 0; i < 1000; i++) {
   let row = {key: 'R' + i};
   for (let j = 0; j < 100; j++) {

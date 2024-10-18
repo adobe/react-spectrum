@@ -129,12 +129,12 @@ export class GridCollection<T> implements IGridCollection<T> {
 
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.prevKey : null;
+    return node ? node.prevKey ?? null : null;
   }
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.nextKey : null;
+    return node ? node.nextKey ?? null : null;
   }
 
   getFirstKey() {
@@ -147,7 +147,7 @@ export class GridCollection<T> implements IGridCollection<T> {
   }
 
   getItem(key: Key) {
-    return this.keyMap.get(key);
+    return this.keyMap.get(key) ?? null;
   }
 
   at(idx: number) {

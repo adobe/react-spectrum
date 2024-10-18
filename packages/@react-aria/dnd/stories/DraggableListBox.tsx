@@ -10,7 +10,7 @@ import {useListState} from '@react-stately/list';
 
 export function DraggableListBox(props) {
   let state = useListState(props);
-  let ref = React.useRef(undefined);
+  let ref = React.useRef<HTMLUListElement | null>(null);
   let {listBoxProps} = useListBox(
     {
       ...props,
@@ -27,6 +27,9 @@ export function DraggableListBox(props) {
     getItems: props.getItems || ((keys) => (
       [...keys].map((key) => {
         let item = state.collection.getItem(key);
+        if (!item) {
+          return null;
+        }
 
         return {
           'text/plain': item.textValue
@@ -50,7 +53,7 @@ export function DraggableListBox(props) {
 }
 
 function Option({item, state, dragState}) {
-  let ref = React.useRef(undefined);
+  let ref = React.useRef<HTMLLIElement | null>(null);
   let {optionProps, isPressed, hasAction} = useOption(
     {key: item.key},
     state,

@@ -268,7 +268,7 @@ export interface DraggableCollectionEndEvent extends DragEndEvent {
   isInternal: boolean
 }
 
-export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement | null) => void) => void;
 
 export interface DraggableCollectionProps {
   /** Handler that is called when a drag operation is started. */

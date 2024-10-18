@@ -87,8 +87,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    writeToDataTransfer(e.clipboardData, options.getItems());
-    options.onCopy?.();
+    if (e.clipboardData) {
+      writeToDataTransfer(e.clipboardData, options.getItems());
+      options.onCopy?.();
+    }
   });
 
   let onBeforeCut = useEffectEvent((e: ClipboardEvent) => {
@@ -103,8 +105,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    writeToDataTransfer(e.clipboardData, options.getItems());
-    options.onCut();
+    if (e.clipboardData) {
+      writeToDataTransfer(e.clipboardData, options.getItems());
+      options.onCut();
+    }
   });
 
   let onBeforePaste = useEffectEvent((e: ClipboardEvent) => {
@@ -121,8 +125,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    let items = readFromDataTransfer(e.clipboardData);
-    options.onPaste(items);
+    if (e.clipboardData) {
+      let items = readFromDataTransfer(e.clipboardData);
+      options.onPaste(items);
+    }
   });
 
   useEffect(() => {
