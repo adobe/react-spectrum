@@ -11,15 +11,14 @@
  */
 
 import {RuleTester} from 'eslint';
-import sortImportsRule from '../rules/sort-imports';
+import sortImportsRule from '../rules/sort-imports.js';
 
 
 const ruleTester = new RuleTester({
   // Must use at least ecmaVersion 2015 because
   // that's when `const` variables were introduced.
-  parserOptions: {
-    ecmaVersion: 2015,
-    'sourceType': 'module'
+  languageOptions: {
+    ecmaVersion: 2015
   }
 });
 

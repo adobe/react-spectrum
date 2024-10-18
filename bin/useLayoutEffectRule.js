@@ -10,23 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-module.exports = function (context) {
-  return {
-    ImportDeclaration(node) {
-      const source = node.source.value;
-      if (source === '@react-aria/utils' || source === './useLayoutEffect' || source === './') {
-        return;
-      }
-      const importSpecifiers = node.specifiers.filter(specifier => specifier.type === 'ImportSpecifier');
-      const getName = specifier => specifier.local.name;
-      importSpecifiers.map(
-        (item) => {
-          let itemName = getName(item);
-          if (itemName === 'useLayoutEffect') {
-            context.report(node, 'Please use useLayoutEffect from @react-aria/utils instead.');
-          }
+module.exports = {
+  create: function (context) {
+    return {
+      ImportDeclaration(node) {
+        const source = node.source.value;
+        if (source === '@react-aria/utils' || source === './useLayoutEffect' || source === './') {
+          return;
         }
-      );
-    }
-  };
+        const importSpecifiers = node.specifiers.filter(specifier => specifier.type === 'ImportSpecifier');
+        const getName = specifier => specifier.local.name;
+        importSpecifiers.map(
+          (item) => {
+            let itemName = getName(item);
+            if (itemName === 'useLayoutEffect') {
+              context.report(node, 'Please use useLayoutEffect from @react-aria/utils instead.');
+            }
+          }
+        );
+      }
+    };
+  }
 };

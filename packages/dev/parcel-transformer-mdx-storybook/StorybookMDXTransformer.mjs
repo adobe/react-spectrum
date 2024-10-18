@@ -1,5 +1,5 @@
-import {Transformer} from '@parcel/plugin';
 import {compile} from '@mdx-js/mdx';
+import {Transformer} from '@parcel/plugin';
 
 export default (new Transformer({
   async transform({asset}) {
@@ -13,5 +13,5 @@ export default (new Transformer({
     asset.setCode(compiled.value);
 
     return [asset];
-  },
+  }
 }));
