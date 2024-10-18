@@ -55,7 +55,9 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
   let handleBeforeMatch = useCallback(() => {
     // Wait a frame to revert browser's removal of hidden attribute
     raf.current = requestAnimationFrame(() => {
-      ref.current.setAttribute('hidden', 'until-found');
+      if (ref.current) {
+        ref.current.setAttribute('hidden', 'until-found');
+      }
     });
     // Force sync state update
     flushSync(() => {
@@ -81,7 +83,9 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
 
   useEffect(() => {
     return () => {
-      cancelAnimationFrame(raf.current);
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
     };
   }, []);
 
