@@ -307,8 +307,8 @@ function filterCollection<T extends object>(collection: Collection<Node<T>>, inp
   // console.log('nodes', nodes, collection);
   // console.log('tree', filtered)
   console.log('before and after', collection, filtered)
-  return filtered;
-  // return collection;
+  // return filtered;
+  return collection;
 
 }
 

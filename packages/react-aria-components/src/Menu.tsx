@@ -192,6 +192,7 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, menuRef: ref, state}: MenuInnerProps<T>) {
+  // console.log('state', state, state.selectionManager.focusedKey)
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu({...props, isVirtualized}, state, ref);

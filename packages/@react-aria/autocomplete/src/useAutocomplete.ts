@@ -15,7 +15,7 @@ import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, Ke
 import {AriaMenuOptions, menuData} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, isAppleDevice, mergeProps, useId, useLabels, useRouter} from '@react-aria/utils';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -110,7 +110,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let router = useRouter();
 
   // For textfield specific keydown operations
-  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
+  let onKeyDown = (e: BaseEvent<ReactKeyboardEvent<any>>) => {
     if (e.nativeEvent.isComposing) {
       return;
     }
@@ -135,6 +135,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         } else {
           state.commit();
         }
+        // TODO: would also need to make this only happen if we aren't in a submenu. Additionally would need to have submenus have a onAction that would call
+        // state.setValue or something since state.commit is once again only applicable for the original menu
+        collectionProps.onKeyDown(e);
         break;
       case 'Escape':
         if (
@@ -150,12 +153,47 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         break;
       case 'ArrowDown':
       case 'ArrowUp':
+
         state.selectionManager.setFocused(true);
+        if (state.selectionManager.focusedKey != null) {
+          let item = menuRef.current?.querySelectorAll(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`)[0];
+          // TODO: uncomment below when we filter the collection
+          // let item = menuRef.current?.querySelectorAll(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`)[1];
+          if (item && item.hasAttribute('aria-controls')) {
+            // TODO: here we would want to keep digging until we go to the final submenu and then dispatch the event there. For now only do a single level to test
+            let submenuId = item.getAttribute('aria-controls');
+            let submenu = submenuId && document.querySelector(`#${CSS.escape(submenuId.toString())}`);
+            if (submenu) {
+              submenu.dispatchEvent(
+                new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+              );
+              break;
+            }
+          }
+        }
+        collectionProps.onKeyDown(e);
         break;
       case 'ArrowLeft':
-      case 'ArrowRight':
-        state.selectionManager.setFocusedKey(null);
+      case 'ArrowRight': {
+        // TODO removed state.selectionManager.setFocused(false); for now so the focused key no longer gets removed when moving the cursor
+        // and instead the event is dispatched to the currently focused item. Bit problematic though since that means the user won't be able to move the cursor if
+        // virtual focus is in the menu and thus can't edit the field as freely as they may want. In addition, focus moves out of the input when this happens since the newly opened
+        // sub menu
+        if (state.selectionManager.focusedKey != null) {
+          let item = menuRef.current?.querySelectorAll(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`)[0];
+          // let item = menuRef.current?.querySelectorAll(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`)[1];
+          if (item) {
+            item.dispatchEvent(
+              new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+            );
+          }
+        }
+        collectionProps.onKeyDown(e);
         break;
+      }
+
+      default:
+        collectionProps.onKeyDown(e);
     }
   };
 
@@ -183,7 +221,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly ? chain(collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
+    // TODO: would want to fire keydown first and then only fire collectionProps.onKeyDown if we aren't currently in a submenu
+    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
     // TODO: figure out how to fix these ts errors
     // @ts-ignore
     onBlur,

@@ -118,6 +118,7 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
     validationBehavior
   });
 
+  // console.log('state for autocompltet', state)
   let inputRef = useRef<HTMLInputElement>(null);
   let menuRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();

@@ -224,7 +224,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // is slightly different from other collections because
     // actions are performed on key down rather than key up.
     linkBehavior: 'none',
-    shouldUseVirtualFocus: data.shouldUseVirtualFocus
+    // TODO: testing if the focus behavior is fixed for submenus with virtual focus
+    shouldUseVirtualFocus: true
+    // shouldUseVirtualFocus: data.shouldUseVirtualFocus
   });
 
   let {pressProps, isPressed} = usePress({

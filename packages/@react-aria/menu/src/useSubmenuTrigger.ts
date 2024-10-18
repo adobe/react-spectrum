@@ -130,6 +130,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   };
 
   let submenuTriggerKeyDown = (e: KeyboardEvent) => {
+    console.log('in submenutrigger keydown', e);
     switch (e.key) {
       case 'ArrowRight':
         if (!isDisabled) {
