@@ -49,7 +49,6 @@ yarn verdaccio --listen $port &>${output}&
 grep -q 'http address' <(tail -f $output)
 
 # Login as test user
-yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
 yarn config set npmPublishRegistry $registry
 yarn config set npmRegistryServer $registry
 yarn config set unsafeHttpWhitelist localhost
