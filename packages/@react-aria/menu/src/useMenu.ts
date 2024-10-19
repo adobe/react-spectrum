@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
+import {DOMAttributes, HoverEvent, Key, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
@@ -24,7 +24,6 @@ export interface MenuAria {
 export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, KeyboardEvents {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
-
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -33,12 +32,17 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
   /**
    * Whether the menu items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  /**
+   * Handler that is called when a hover interaction starts on a menu item.
+   */
+  onHoverStart?: (e: HoverEvent) => void
 }
 
 interface MenuData {
   onClose?: () => void,
   onAction?: (key: Key) => void,
+  onHoverStart?: (e: HoverEvent) => void,
   shouldUseVirtualFocus?: boolean,
   id: string
 }
@@ -56,6 +60,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     shouldFocusWrap = true,
     onKeyDown,
     onKeyUp,
+    onHoverStart,
     ...otherProps
   } = props;
 
@@ -79,6 +84,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onClose: props.onClose,
     onAction: props.onAction,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
+    onHoverStart,
     id
   });
 

@@ -23,7 +23,7 @@ import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria';
 
@@ -32,116 +32,82 @@ export interface AutocompleteRenderProps {
    * Whether the autocomplete is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
-  /**
-   * Whether the autocomplete is invalid.
-   * @selector [data-invalid]
-   */
-  isInvalid: boolean,
-  /**
-   * Whether the autocomplete is required.
-   * @selector [data-required]
-   */
-  isRequired: boolean
+  isDisabled: boolean
 }
 
-export interface AutocompleteProps<T extends object> extends Omit<AriaAutocompleteProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<AutocompleteRenderProps>, SlotProps {
+export interface AutocompleteProps<T extends object> extends Omit<AriaAutocompleteProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>,  RenderProps<AutocompleteRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the autocomplete list. */
-  defaultFilter?: (textValue: string, inputValue: string) => boolean,
-  /**
-   * Whether the text or key of the selected item is submitted as part of an HTML form.
-   * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
-   * @default 'key'
-   */
-  formValue?: 'text' | 'key'
+  defaultFilter?: (textValue: string, inputValue: string) => boolean
+}
+
+interface InternalAutocompleteContextValue {
+  register: (callback: (string: any) => string) => void,
+  filterFn: (nodeTextValue: string) => boolean
 }
 
 export const AutocompleteContext = createContext<ContextValue<AutocompleteProps<any>, HTMLDivElement>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState<any> | null>(null);
+// This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
+export const InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 function Autocomplete<T extends object>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
-  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  let {children, isDisabled = false, defaultFilter} = props;
 
   // TODO: not quite sure if we need to do the below or if I can just do something like  <CollectionBuilder content={<Collection {...props} />}>
   // This approach is a 1:1 copy of ComboBox where this renders the Autocomplete's children (aka the Menu) in the fake DOM and constructs a collection which we can filter
   // via useAutocomplete state. Said state then gets propagated Menu via AutocompleteInner's context provider so that the Menu's rendered items are mirrored/match the filtered collection
   // I think we still have to do this, but geting a bit tripped up with thinking if we could simplify it somehow
-  let content = useMemo(() => (
-    <MenuContext.Provider value={{items: props.items ?? props.defaultItems}}>
-      {typeof children === 'function'
-        ? children({
-          isDisabled,
-          isInvalid,
-          isRequired,
-          defaultChildren: null
-        })
-        : children}
-    </MenuContext.Provider>
-  ), [children, isDisabled, isInvalid, isRequired, props.items, props.defaultItems]);
+  // let content = useMemo(() => (
+  //   <MenuContext.Provider value={{items: props.items ?? props.defaultItems}}>
+  //     {typeof children === 'function'
+  //       ? children({
+  //         isDisabled,
+  //         defaultChildren: null
+  //       })
+  //       : children}
+  //   </MenuContext.Provider>
+  // ), [children, isDisabled, props.items, props.defaultItems]);
+
+  // return (
+  //   <CollectionBuilder content={content}>
+  //     {collection => <AutocompleteInner props={props} collection={collection} autocompleteRef={ref} />}
+  //   </CollectionBuilder>
+  // );
 
   return (
-    <CollectionBuilder content={content}>
-      {collection => <AutocompleteInner props={props} collection={collection} autocompleteRef={ref} />}
-    </CollectionBuilder>
+    <AutocompleteInner autocompleteRef={ref} props={props} />
   );
 }
 
 interface AutocompleteInnerProps<T extends object> {
   props: AutocompleteProps<T>,
-  collection: Collection<Node<T>>,
+  // collection: Collection<Node<T>>,
   autocompleteRef: RefObject<HTMLDivElement | null>
 }
 
-function AutocompleteInner<T extends object>({props, collection, autocompleteRef: ref}: AutocompleteInnerProps<T>) {
-  let {
-    name,
-    formValue = 'key',
-    allowsCustomValue
-  } = props;
-  if (allowsCustomValue) {
-    formValue = 'text';
-  }
-
-  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
-  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let {contains} = useFilter({sensitivity: 'base'});
-  let state = useAutocompleteState({
-    defaultFilter: props.defaultFilter || contains,
-    ...props,
-    // If props.items isn't provided, rely on collection filtering (aka menu.items is provided or defaultItems provided to Autocomplete)
-    items: props.items,
-    children: undefined,
-    collection,
-    validationBehavior
-  });
-
+// TODO: maybe we don't need inner anymore
+function AutocompleteInner<T extends object>({props, autocompleteRef: ref}: AutocompleteInnerProps<T>) {
+  let {defaultFilter} = props;
+  let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement>(null);
-  let menuRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
-
+  let {contains} = useFilter({sensitivity: 'base'});
   let {
     inputProps,
     menuProps,
     labelProps,
     descriptionProps,
-    errorMessageProps,
-    ...validation
+    register
   } = useAutocomplete({
     ...removeDataAttributes(props),
     label,
-    inputRef,
-    menuRef,
-    name: formValue === 'text' ? name : undefined,
-    validationBehavior
+    inputRef
   }, state);
 
-  // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
-    isDisabled: props.isDisabled || false,
-    isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [props.isDisabled, validation.isInvalid, props.isRequired]);
+    isDisabled: props.isDisabled || false
+  }), [props.isDisabled]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -152,38 +118,34 @@ function AutocompleteInner<T extends object>({props, collection, autocompleteRef
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
+  let filterFn = useCallback((nodeTextValue: string) => {
+    if (defaultFilter) {
+      return defaultFilter(nodeTextValue, state.inputValue);
+    }
+    return contains(nodeTextValue, state.inputValue);
+  }, [state.inputValue, defaultFilter, contains]) ;
+
   return (
     <Provider
       values={[
         [AutocompleteStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
         [InputContext, {...inputProps, ref: inputRef}],
-        [MenuContext, {...menuProps, ref: menuRef}],
-        // TODO: this would need to match the state type of whatever child component the autocomplete
-        // is filtering against... Ideally we'd somehow have the child component communicate its state upwards, upon which we we would filter it from here
-        // and send it back down but that feels circular. However we need a single SelectionManager to be used by the autocomplete and filtered collection's hooks
-        // so that the concepts of "selectedKey"/"focused"
-        // @ts-ignore
-        [ExternalMenuStateContext, state],
+        [MenuContext, {...menuProps}],
         [TextContext, {
           slots: {
-            description: descriptionProps,
-            errorMessage: errorMessageProps
+            description: descriptionProps
           }
         }],
-        [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
-        [FieldErrorContext, validation]
+        [GroupContext, {isDisabled: props.isDisabled || false}],
+        [InternalAutocompleteContext, {register, filterFn}]
       ]}>
       <div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-focused={state.isFocused || undefined}
-        data-disabled={props.isDisabled || undefined}
-        data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
+        data-disabled={props.isDisabled || undefined} />
     </Provider>
   );
 }

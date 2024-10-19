@@ -80,44 +80,46 @@ export const AutocompleteRenderPropsStatic = () => (
   </Autocomplete>
 );
 
-export const AutocompleteRenderPropsDefaultItems = () => (
-  <Autocomplete defaultItems={items}>
-    {() => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-        </div>
-        <Menu className={styles.menu}>
-          {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-        </Menu>
-      </>
-    )}
-  </Autocomplete>
-);
+// TODO: I don't this we'll want these anymore, should always favor putting items directly onto the wrapped collection component
+// since w
+// export const AutocompleteRenderPropsDefaultItems = () => (
+//   <Autocomplete defaultItems={items}>
+//     {() => (
+//       <>
+//         <Label style={{display: 'block'}}>Test</Label>
+//         <div style={{display: 'flex'}}>
+//           <Input />
+//         </div>
+//         <Menu className={styles.menu}>
+//           {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+//         </Menu>
+//       </>
+//     )}
+//   </Autocomplete>
+// );
 
-export const AutocompleteRenderPropsItems = {
-  render: () => (
-    <Autocomplete items={items}>
-      {() => (
-        <>
-          <Label style={{display: 'block'}}>Test</Label>
-          <div style={{display: 'flex'}}>
-            <Input />
-          </div>
-          <Menu className={styles.menu}>
-            {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-          </Menu>
-        </>
-      )}
-    </Autocomplete>
-  ),
-  parameters: {
-    description: {
-      data: 'Note this won\'t filter the items in the Menu because it is fully controlled'
-    }
-  }
-};
+// export const AutocompleteRenderPropsItems = {
+//   render: () => (
+//     <Autocomplete items={items}>
+//       {() => (
+//         <>
+//           <Label style={{display: 'block'}}>Test</Label>
+//           <div style={{display: 'flex'}}>
+//             <Input />
+//           </div>
+//           <Menu className={styles.menu}>
+//             {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+//           </Menu>
+//         </>
+//       )}
+//     </Autocomplete>
+//   ),
+//   parameters: {
+//     description: {
+//       data: 'Note this won\'t filter the items in the Menu because it is fully controlled'
+//     }
+//   }
+// };
 
 export const AutocompleteRenderPropsMenuDynamic = () => (
   <Autocomplete>

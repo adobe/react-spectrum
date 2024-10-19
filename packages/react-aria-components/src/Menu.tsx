@@ -12,8 +12,8 @@
 
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -33,6 +33,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from 'react';
@@ -40,10 +41,10 @@ import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu'
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {useSubmenuTrigger} from '@react-aria/menu';
+import { InternalAutocompleteContext } from './Autocomplete';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
-export const ExternalMenuStateContext = createContext<TreeState<any> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
@@ -153,51 +154,71 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
-  let state = useContext(ExternalMenuStateContext);
-
-  // TODO: mimics Listbox so that the Menu content can be controlled by an external field
-  if (state) {
-    return <MenuInner state={state} props={props} menuRef={ref} />;
-  }
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
     <CollectionBuilder content={<Collection {...props} />}>
-      {collection => collection.size > 0 && <StandaloneMenu props={props} collection={collection} menuRef={ref} />}
+      {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );
 }
 
-function StandaloneMenu({props, menuRef, collection}) {
-  props = {...props, collection, children: null, items: null};
-  // TODO: may need this later?
-  // let {layoutDelegate} = useContext(CollectionRendererContext);
-  // TODO: this state is different from the one set up by the autocomplete hooks meaning we won't be able to propagate
-  // the desired menuId and item id that useAutocomplete needs for aria-activedescendant (aka weak map tied to state that sets menu ID and then
-  // forces menu options to follow a certain pattern). To "fix" this, I split this to StandaloneMenu like it is done
-  // in ListBox but that means the case with Autocomplete wrapping Menu doesn't use tree state and thus doesn't have things like expanded keys and such.
-  // However, we need to use a useAutoComplete's state because we need the same selectionManager to be used by menu when checking if an item is focused.
-  let state = useTreeState({
-    ...props,
-    collection,
-    children: undefined
-  });
-  return <MenuInner state={state} props={props} menuRef={menuRef} />;
-}
-
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
-  menuRef: RefObject<HTMLDivElement | null>,
-  state: TreeState<T>
+  collection: BaseCollection<object>,
+  menuRef: RefObject<HTMLDivElement | null>
 }
 
-function MenuInner<T extends object>({props, menuRef: ref, state}: MenuInnerProps<T>) {
+function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
+  let {register, filterFn} = useContext(InternalAutocompleteContext) || {};
+  // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
+  // we always perform the filtering for them
+  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
+  let state = useTreeState({
+    ...props,
+    collection: filteredCollection as ICollection<Node<object>>,
+    children: undefined
+  });
+
+  // TODO: this might be problematic since the collection is going to change everytime something gets filtered,
+  // meaning we want focused key to be reset
+  // This also feels a bit iffy since it is essentially recreating the logic in useSelectableList/Collection
+  // will need to handle Home/PgUp/PgDown/End. Would be best if we could just hook into that logics
+  useEffect(() => {
+    if (register) {
+      register(event => {
+        switch (event.key) {
+          case 'ArrowDown': {
+            let keyToFocus;
+            if (!state.selectionManager.isFocused) {
+              keyToFocus = state.collection.getFirstKey();
+            } else {
+              keyToFocus = state.collection.getKeyAfter(state.selectionManager.focusedKey)
+            }
+            state.selectionManager.setFocusedKey(keyToFocus)
+            return keyToFocus;
+          }
+          case 'ArrowUp': {
+            let keyToFocus;
+            if (!state.selectionManager.isFocused) {
+              keyToFocus = state.collection.getFirstKey();
+            } else {
+              keyToFocus = state.collection.getKeyAfter(state.selectionManager.focusedKey)
+            }
+            state.selectionManager.setFocusedKey(keyToFocus)
+            return keyToFocus;
+          }
+        }
+      });
+    }
+  }, [register, state.selectionManager, state.collection])
+
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContext = useContext(PopoverContext)!;
-
+  console.log('state', state)
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
   useInteractOutside({
     ref,
