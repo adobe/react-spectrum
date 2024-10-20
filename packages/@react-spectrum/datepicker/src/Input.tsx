@@ -79,7 +79,6 @@ function Input(props, ref) {
   useEvent(useRef(typeof window !== 'undefined' ? window : null), 'resize', onResize);
 
   let {focusProps, isFocusVisible, isFocused} = useFocusRing({
-    isTextInput: true,
     within: true
   });
 
