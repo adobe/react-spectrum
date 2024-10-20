@@ -124,7 +124,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
     closeCallback.current = close;
   }, [close]);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       clearTimeout(closeTimeout.current);

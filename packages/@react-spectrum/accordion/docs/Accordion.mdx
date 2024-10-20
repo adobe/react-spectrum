@@ -13,7 +13,6 @@ export default Layout;
 import docs from 'docs:@react-spectrum/accordion';
 import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/accordion/package.json';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
 category: Navigation
@@ -31,11 +30,6 @@ import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-s
 <HeaderInfo
   packageData={packageData}
   componentNames={['Accordion', 'Disclosure', 'DisclosureHeader', 'DisclosurePanel']} />
-
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
 
 ## Example
 
@@ -56,6 +50,87 @@ import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-s
 </Accordion>
 ```
 
+
+## Content
+
+Accordion accepts multiple [Disclosure](Disclosure.html) elements as children. Each disclosure accepts an `id` prop which is passed to the `onExpandedChange` handler to identify the expanded disclosure within the accordion. See the [Events](#events) section for more details about expansion.
+
+### Internationalization
+In order to internationalize an Accordion, all text content within the accordion should be localized.
+
+## Events
+
+Accordion accepts an `onExpandedChange` prop which is triggered when a disclosure is expanded or collapsed. The example below uses `onExpandedChange` to programmatically control disclosure expansion.
+
+```tsx example
+import {Key} from "@react-types/shared";
+
+function ControlledExpansion() {
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['personal']))
+  
+  return (
+    <>
+      <Accordion expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
+        <Disclosure id="personal">
+          <DisclosureHeader>Personal Information</DisclosureHeader>
+          <DisclosurePanel>
+            <p>Personal information form here.</p>
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="billing">
+          <DisclosureHeader>Billing Address</DisclosureHeader>
+          <DisclosurePanel>
+            <p>Billing address form here.</p>
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+      <div style={{marginTop: '20px'}}>You have expanded: {expandedKeys}</div>
+    </>
+  )
+}
+```
+
+## Expansion
+
+By default, only one disclosure will be expanded at a time. To expand multiple disclosures, apply the `allowsMultipleExpanded` prop to Accordion.
+
+```tsx example
+<Accordion allowsMultipleExpanded defaultExpandedKeys={['personal', 'billing']}>
+  <Disclosure id="personal">
+    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosurePanel>
+      <p>Personal information form here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosurePanel>
+      <p>Billing address form here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
 ## Props
 
 <PropTable component={docs.exports.Accordion} links={docs.links} />
+
+## Visual Options
+
+### Disabled
+
+```tsx example
+<Accordion isDisabled>
+  <Disclosure id="personal">
+    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosurePanel>
+      <p>Personal information form here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosurePanel>
+      <p>Billing address form here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
