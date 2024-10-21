@@ -106,9 +106,10 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Accordion-itemContent {
-  padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
-  display: none;
+.spectrum-Accordion-item.is-expanded {
+  .spectrum-Accordion-itemContent {
+    padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
+  }
 }
 
 .spectrum-Accordion-item {
