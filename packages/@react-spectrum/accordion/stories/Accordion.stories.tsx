@@ -20,6 +20,9 @@ const meta: Meta<SpectrumAccordionProps> = {
   argTypes: {
     isDisabled: {
       control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
     }
   }
 };

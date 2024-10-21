@@ -89,3 +89,13 @@ export const WithDisabledDisclosure = {
       </Disclosure>
     </Accordion>)
 };
+
+export const Disabled = {
+  render: Template,
+  args: {isDisabled: true}
+};
+
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
+};
