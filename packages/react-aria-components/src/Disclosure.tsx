@@ -108,7 +108,7 @@ const InternalDisclosureContext = createContext<InternalDisclosureContextValue |
 
 function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
-  let groupState = useContext(DisclosureGroupStateContext);
+  let groupState = useContext(DisclosureGroupStateContext)!;
   let {id, ...otherProps} = props;
 
   // Generate an id if one wasn't provided.
