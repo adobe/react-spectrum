@@ -28,7 +28,7 @@ preRelease: alpha
 
 # Disclosure
 
-<PageDescription>{docs.exports.UNSTABLE_Disclosure.description}</PageDescription>
+<PageDescription>{docs.exports.Disclosure.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -40,7 +40,7 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {Disclosure as Disclosure, Button, DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
   <Heading>
@@ -116,7 +116,7 @@ Custom styled disclosures can be difficult to build in an accessible way with th
 A disclosure consists of a button and panel of content. The button contains the label representing content within the panel, and the panel is the section of content that is associated with the button which is either expanded or collapsed.
 
 ```tsx
-import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {Button, Disclosure as Disclosure, DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
   <Heading>
@@ -206,7 +206,7 @@ A Disclosure can be disabled using the `isDisabled` prop.
 
 ### Disclosure
 
-<PropTable component={docs.exports.UNSTABLE_Disclosure} links={docs.links} />
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
 
 ### Button
 
@@ -222,7 +222,7 @@ A Disclosure can be disabled using the `isDisabled` prop.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.UNSTABLE_DisclosurePanel} links={docs.links} />
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
 
 </details>
 
@@ -284,7 +284,7 @@ A `DisclosurePanel` can be targeted with the `.react-aria-DisclosurePanel` CSS s
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['UNSTABLE_Disclosure']} docs={docs} />
+<ContextTable components={['Disclosure']} docs={docs} />
 
 This example shows a `DisclosureGroup` component that renders a group of disclosures. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child disclosures via the `DisclosureContext` provider.
 

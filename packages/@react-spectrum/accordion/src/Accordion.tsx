@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {Button, UNSTABLE_DisclosureGroup as DisclosureGroup, DisclosureGroupProps, DisclosurePanelProps, DisclosureProps, Heading, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
+import {Button, DisclosureGroup as DisclosureGroup, DisclosureGroupProps, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';

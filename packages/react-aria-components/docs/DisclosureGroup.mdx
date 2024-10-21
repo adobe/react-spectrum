@@ -30,7 +30,7 @@ preRelease: alpha
 
 # DisclosureGroup
 
-<PageDescription>{docs.exports.UNSTABLE_DisclosureGroup.description}</PageDescription>
+<PageDescription>{docs.exports.DisclosureGroup.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -42,7 +42,7 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {DisclosureGroup as DisclosureGroup, Disclosure as Disclosure, Button, DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
@@ -95,7 +95,7 @@ Custom styled disclosure groups can be difficult to implement in an accessible w
 A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to expand it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
 
 ```tsx
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {DisclosureGroup as DisclosureGroup, Disclosure as Disclosure, Button, DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup>
   <Disclosure>
@@ -223,7 +223,7 @@ A DisclosureGroup can be disabled using the `isDisabled` prop.
 
 ### DisclosureGroup
 
-<PropTable component={docs.exports.UNSTABLE_DisclosureGroup} links={docs.links} />
+<PropTable component={docs.exports.DisclosureGroup} links={docs.links} />
 
 ### Disclosure
 
@@ -232,7 +232,7 @@ Within a `<DisclosureGroup>`, most `<Disclosure>` props are set automatically. T
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.UNSTABLE_Disclosure} links={docs.links} />
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
 
 </details>
 
@@ -250,7 +250,7 @@ Within a `<DisclosureGroup>`, most `<Disclosure>` props are set automatically. T
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.UNSTABLE_DisclosurePanel} links={docs.links} />
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
 
 </details>
 

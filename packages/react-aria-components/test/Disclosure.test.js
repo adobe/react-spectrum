@@ -12,9 +12,9 @@
 
 import {
   Button,
-  UNSTABLE_Disclosure as Disclosure,
-  UNSTABLE_DisclosureGroup as DisclosureGroup,
-  UNSTABLE_DisclosurePanel as DisclosurePanel,
+  Disclosure,
+  DisclosureGroup,
+  DisclosurePanel,
   Heading,
   Menu,
   MenuItem,
