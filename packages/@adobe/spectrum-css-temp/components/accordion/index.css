@@ -64,6 +64,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-itemHeader {
+  outline: none;
   position: relative;
 
   display: flex;
