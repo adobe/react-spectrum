@@ -174,7 +174,7 @@ const buttonStyles = style({
     default: 'transparent',
     isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
     isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
-    isPressed: lightDark('transparent-black-100', 'transparent-white-100')
+    isPressed: lightDark('transparent-black-300', 'transparent-white-300')
   },
   transition: 'default',
   borderWidth: 0,
