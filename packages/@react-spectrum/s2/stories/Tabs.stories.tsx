@@ -59,43 +59,43 @@ export const Example = (args: any) => (
 
 export const Disabled = (args: any) => (
   <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-  <Tabs {...args} styles={style({width: 'full'})} disabledKeys={['FoR', 'MaR', 'Emp']}>
-    <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
-      <Tab id="MaR">Monarchy and Republic</Tab>
-      <Tab id="Emp">Empire</Tab>
-    </TabList>
-    <TabPanel id="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </TabPanel>
-    <TabPanel id="MaR">
-      Senatus Populusque Romanus.
-    </TabPanel>
-    <TabPanel id="Emp">
-      Alea jacta est.
-    </TabPanel>
-  </Tabs>
+    <Tabs {...args} styles={style({width: 'full'})} disabledKeys={['FoR', 'MaR', 'Emp']}>
+      <TabList aria-label="History of Ancient Rome">
+        <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
+        <Tab id="MaR">Monarchy and Republic</Tab>
+        <Tab id="Emp">Empire</Tab>
+      </TabList>
+      <TabPanel id="FoR">
+        Arma virumque cano, Troiae qui primus ab oris.
+      </TabPanel>
+      <TabPanel id="MaR">
+        Senatus Populusque Romanus.
+      </TabPanel>
+      <TabPanel id="Emp">
+        Alea jacta est.
+      </TabPanel>
+    </Tabs>
   </div>
 );
 
 export const Icons = (args: any) => (
   <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-  <Tabs {...args} styles={style({width: 'full'})}>
-    <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR" aria-label="Edit"><Edit /></Tab>
-      <Tab id="MaR" aria-label="Notifications"><Bell /></Tab>
-      <Tab id="Emp" aria-label="Likes"><Heart /></Tab>
-    </TabList>
-    <TabPanel id="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </TabPanel>
-    <TabPanel id="MaR">
-      Senatus Populusque Romanus.
-    </TabPanel>
-    <TabPanel id="Emp">
-      Alea jacta est.
-    </TabPanel>
-  </Tabs>
+    <Tabs {...args} styles={style({width: 'full'})}>
+      <TabList aria-label="History of Ancient Rome">
+        <Tab id="FoR" aria-label="Edit"><Edit /></Tab>
+        <Tab id="MaR" aria-label="Notifications"><Bell /></Tab>
+        <Tab id="Emp" aria-label="Likes"><Heart /></Tab>
+      </TabList>
+      <TabPanel id="FoR">
+        Arma virumque cano, Troiae qui primus ab oris.
+      </TabPanel>
+      <TabPanel id="MaR">
+        Senatus Populusque Romanus.
+      </TabPanel>
+      <TabPanel id="Emp">
+        Alea jacta est.
+      </TabPanel>
+    </Tabs>
   </div>
 );
 
@@ -112,17 +112,17 @@ let items: Item[] = [
 
 export const Dynamic = (args: any) => (
   <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-  <Tabs {...args} styles={style({width: 'full'})}>
-    <TabList aria-label="History of Ancient Rome" items={items}>
-      {item => <Tab>{item.title}</Tab>}
-    </TabList>
-    <Collection items={items}>
-      {item => (
-        <TabPanel>
-          {item.description}
-        </TabPanel>
+    <Tabs {...args} styles={style({width: 'full'})}>
+      <TabList aria-label="History of Ancient Rome" items={items}>
+        {item => <Tab>{item.title}</Tab>}
+      </TabList>
+      <Collection items={items}>
+        {item => (
+          <TabPanel>
+            {item.description}
+          </TabPanel>
       )}
-    </Collection>
-  </Tabs>
+      </Collection>
+    </Tabs>
   </div>
 );

@@ -44,10 +44,10 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
-import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -155,7 +155,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
       compact: 32
     }
   },
-  boxSizing: 'border-box',
+  boxSizing: 'border-box'
 });
 
 export let menu = style({
@@ -224,13 +224,9 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     align = 'start',
     shouldFlip = true,
     menuWidth,
-    errorMessage,
     children,
     items,
     size = 'M',
-    labelPosition = 'top',
-    labelAlign = 'start',
-    necessityIndicator,
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
     density,

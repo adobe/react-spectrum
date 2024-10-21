@@ -29,7 +29,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {Picker, PickerItem} from './TabsPicker';
@@ -451,7 +451,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
   let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
-    return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
+    return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
   }, [state?.collection, disabledKeys]);
 
   return (
