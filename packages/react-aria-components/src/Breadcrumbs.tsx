@@ -9,17 +9,35 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {AriaBreadcrumbsProps, mergeProps, useBreadcrumbs, useFocusRing} from 'react-aria';
+import {BaseCollection, Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
-import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
+import {
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext} from 'react';
 
-export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
+/**
+ * 1. Should I expose collection interface?
+ * 2. Maybe there's a possibility of unwanted props?
+ */
+export interface BreadCrumbsRenderProps {
+  isDisabled: boolean,
+  isFocusWithin: boolean,
+  isFocusVisible: boolean
+}
+
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleRenderProps<BreadCrumbsRenderProps>, SlotProps {
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a breadcrumb is clicked. */
@@ -30,24 +48,48 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
-  let {CollectionRoot} = useContext(CollectionRendererContext);
-  let {navProps} = useBreadcrumbs(props);
-
   return (
     <CollectionBuilder content={<Collection {...props} />}>
-      {collection => (
-        <ol
-          ref={ref}
-          {...navProps}
-          slot={props.slot || undefined}
-          style={props.style}
-          className={props.className ?? 'react-aria-Breadcrumbs'}>
-          <BreadcrumbsContext.Provider value={props}>
-            <CollectionRoot collection={collection} />
-          </BreadcrumbsContext.Provider>
-        </ol>
-      )}
+      {(collection) => <BreadCrumbsInner breadCrumbsRef={ref} props={props} collection={collection} />}
     </CollectionBuilder>
+  );
+};
+
+interface BreadCrumbsInnerProps<T> {
+  props: BreadcrumbsProps<T>,
+  collection: BaseCollection<unknown>,
+  breadCrumbsRef: RefObject<HTMLOListElement | null>
+}
+
+function BreadCrumbsInner<T extends object>({props, collection, breadCrumbsRef}: BreadCrumbsInnerProps<T>) {
+  let {CollectionRoot} = useContext(CollectionRendererContext);
+  let {navProps} = useBreadcrumbs(props);
+  const {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
+
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-Breadcrumbs',
+    className: props.className,
+    style: props.style,
+    values: {
+      isDisabled: props.isDisabled || false,
+      isFocusWithin: isFocused,
+      isFocusVisible
+    }
+  });
+
+  return (
+    <ol
+      {...mergeProps(navProps, focusProps)}
+      {...renderProps}
+      ref={breadCrumbsRef}
+      slot={props.slot || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-focus-within={isFocused || undefined}
+      data-disabled={props.isDisabled || undefined}>
+      <BreadcrumbsContext.Provider value={props}>
+        <CollectionRoot collection={collection} />
+      </BreadcrumbsContext.Provider>
+    </ol>
   );
 }
 
