@@ -34,7 +34,7 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   return (
-    <InternalAccordionContext.Provider value={{isQuiet: props.isQuiet}}>
+    <InternalAccordionContext.Provider value={{isQuiet: props.isQuiet || false}}>
       <DisclosureGroup
         {...props}
         {...styleProps}
