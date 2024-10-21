@@ -55,6 +55,7 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-Accordion-item--quiet, &.spectrum-Accordion-item--quiet:first-of-type {
+    border-radius: var(--spectrum-global-dimension-static-size-100);
     border-color: transparent;
   }
 }
@@ -97,9 +98,9 @@ governing permissions and limitations under the License.
   width: 100%;
   border-style: solid;
   border-color: transparent;
-  border-radius: var(--spectrum-global-dimension-static-size-100);
 
   &.focus-ring {
+    border-radius: var(--spectrum-global-dimension-static-size-100);
     outline: solid 2px var(--spectrum-accordion-item-focus-ring-color);
     outline-offset: -4px;
   }
