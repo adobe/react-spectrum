@@ -149,7 +149,7 @@ describe('Accordion', function () {
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
-  if('supports isDisabled on Accordion', function () {
+  it('supports isDisabled on Accordion', function () {
     let tree = renderComponent({isDisabled: true});
     let buttons = tree.getAllByRole('button');
     for (let item of buttons) {
@@ -169,7 +169,7 @@ describe('Accordion', function () {
           ))}
         </Accordion>
       </Provider>
-    )
+    );
     let buttons = tree.getAllByRole('button');
     for (let item of buttons) {
       if (item.textContent === 'two title') {
@@ -180,5 +180,3 @@ describe('Accordion', function () {
     }
   });
 });
-
-
