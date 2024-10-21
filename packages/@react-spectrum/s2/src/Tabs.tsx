@@ -251,12 +251,9 @@ function TabLine(props: TabLineProps) {
   let {direction} = useLocale();
   let state = useContext(TabListStateContext);
 
-  // We want to add disabled styling to the selection indicator only if all the Tabs are disabled
-  let [isDisabled, setIsDisabled] = useState<boolean>(false);
-  useEffect(() => {
-    let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection || null, disabledKeys ? new Set(disabledKeys) : new Set(null));
-    setIsDisabled(isDisabled);
-  }, [state?.collection, disabledKeys, isTabsDisabled, setIsDisabled]);
+  let isDisabled = useMemo(() => {
+    return isTabsDisabled || isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
+  }, [state?.collection, disabledKeys, isTabsDisabled]);
 
   let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
     transform: undefined,
@@ -386,7 +383,7 @@ export function TabPanel(props: TabPanelProps) {
   );
 }
 
-function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
+function isAllTabsDisabled<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
   let testKey: Key | null = null;
   if (collection && collection.size > 0) {
     testKey = collection.getFirstKey();
