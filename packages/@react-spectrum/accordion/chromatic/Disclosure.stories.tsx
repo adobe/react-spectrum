@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../';
+import {Disclosure, DisclosureHeader, DisclosurePanel} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
