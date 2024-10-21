@@ -11,6 +11,7 @@
  */
 
 import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
+import {Key} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
@@ -130,6 +131,68 @@ WithDisabledDisclosure.parameters = {
   }
 };
 
+function ControlledAccordion(props) {
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['people']));
+  return (
+    <div className={style({font: 'body', display: 'flex', flexDirection: 'column', gap: 8})}>
+      <Accordion
+        onExpandedChange={setExpandedKeys}
+        expandedKeys={expandedKeys}
+        {...props}>
+        <Disclosure id="files">
+          <DisclosureTitle>
+            Files
+          </DisclosureTitle>
+          <DisclosurePanel>
+            Files content
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="people">
+          <DisclosureTitle>
+            People
+          </DisclosureTitle>
+          <DisclosurePanel>
+            <TextField label="Name" />
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+      <div>Expanded keys: {expandedKeys.size ? Array.from(expandedKeys).join(', ') : 'none'}</div>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledAccordion />
+};
+
+function ControlledOpenAccordion() {
+  return (
+    <Accordion
+      expandedKeys={['people']}>
+      <Disclosure id="files">
+        <DisclosureTitle>
+          Files
+        </DisclosureTitle>
+        <DisclosurePanel>
+          Files content
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="people">
+        <DisclosureTitle>
+          People
+        </DisclosureTitle>
+        <DisclosurePanel>
+          <TextField label="Name" />
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>
+  );
+}
+
+export const ControlledOpen: Story = {
+  render: () => <ControlledOpenAccordion />
+};
+
 export const WithActionButton: Story = {
   render: (args) => {
     return (
@@ -162,3 +225,4 @@ export const WithActionButton: Story = {
     );
   }
 };
+
