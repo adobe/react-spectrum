@@ -1,3 +1,4 @@
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
 import {Flex, Divider, Breadcrumbs, Item, Link, Tabs, TabList, TabPanels} from '@adobe/react-spectrum';
 
 export default function NavigationExamples() {
@@ -32,6 +33,32 @@ export default function NavigationExamples() {
             </Item>
           </TabPanels>
         </Tabs>
+        <Accordion>
+          <Disclosure id="files">
+            <DisclosureHeader>
+              Files
+            </DisclosureHeader>
+            <DisclosurePanel>
+              <p>Files content</p>
+            </DisclosurePanel>
+          </Disclosure>
+          <Disclosure id="people">
+            <DisclosureHeader>
+              People
+            </DisclosureHeader>
+            <DisclosurePanel>
+              <p>People content</p>
+            </DisclosurePanel>
+          </Disclosure>
+        </Accordion>
+        <Disclosure>
+          <DisclosureHeader>
+            System information
+          </DisclosureHeader>
+          <DisclosurePanel>
+            <p>Details about system information</p>
+          </DisclosurePanel>
+        </Disclosure>
       </Flex>
     </>
   );

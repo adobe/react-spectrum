@@ -84,7 +84,8 @@ import {
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
-import { SubmenuTrigger } from "@react-spectrum/menu";
+import {SubmenuTrigger} from "@react-spectrum/menu";
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
 
 let nestedItems = [
   {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
@@ -308,6 +309,33 @@ export default function Home() {
                 <Item key="Emp">Alea jacta est.</Item>
               </TabPanels>
             </Tabs>
+
+            <Accordion>
+              <Disclosure id="files">
+                <DisclosureHeader>
+                  Files
+                </DisclosureHeader>
+                <DisclosurePanel>
+                  <p>Files content</p>
+                </DisclosurePanel>
+              </Disclosure>
+              <Disclosure id="people">
+                <DisclosureHeader>
+                  People
+                </DisclosureHeader>
+                <DisclosurePanel>
+                  <p>People content</p>
+                </DisclosurePanel>
+              </Disclosure>
+            </Accordion>
+            <Disclosure>
+              <DisclosureHeader>
+                System information
+              </DisclosureHeader>
+              <DisclosurePanel>
+                <p>Details about system information</p>
+              </DisclosurePanel>
+            </Disclosure>
           </Section>
 
           <Section title="Overlays">
