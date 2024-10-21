@@ -45,9 +45,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {
-  FieldErrorIcon,
-  FieldLabel,
-  HelpText
+  FieldLabel
 } from './Field';
 import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -156,7 +154,8 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     density: {
       compact: 32
     }
-  }
+  },
+  boxSizing: 'border-box',
 });
 
 export let menu = style({
@@ -199,7 +198,8 @@ const valueStyles = style({
   },
   truncate: true,
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  height: 'full'
 });
 
 const iconStyles = style({
@@ -224,8 +224,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     align = 'start',
     shouldFlip = true,
     menuWidth,
-    label,
-    description: descriptionMessage,
     errorMessage,
     children,
     items,
@@ -255,20 +253,10 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     <AriaSelect
       {...pickerProps}
       placeholder={placeholder}>
-      {({isDisabled, isOpen, isInvalid, isRequired}) => (
+      {({isDisabled, isOpen, isInvalid}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
-            <FieldLabel
-              isDisabled={isDisabled}
-              isRequired={isRequired}
-              size={size}
-              labelPosition={labelPosition}
-              labelAlign={labelAlign}
-              isQuiet={isQuiet}
-              necessityIndicator={necessityIndicator}
-              contextualHelp={props.contextualHelp}>
-              {label}
-            </FieldLabel>
+            <FieldLabel isQuiet={isQuiet} />
             <Button
               ref={domRef}
               style={renderProps => pressScale(domRef)(renderProps)}
@@ -314,9 +302,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                       );
                     }}
                   </SelectValue>
-                  {isInvalid && (
-                    <FieldErrorIcon isDisabled={isDisabled} />
-                  )}
                   <ChevronIcon
                     size={size}
                     className={iconStyles} />
@@ -327,13 +312,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 </>
               )}
             </Button>
-            <HelpText
-              size={size}
-              isDisabled={isDisabled}
-              isInvalid={isInvalid}
-              description={descriptionMessage}>
-              {errorMessage}
-            </HelpText>
             <Popover
               hideArrow
               offset={menuOffset}

@@ -29,7 +29,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, style} from '../style' with {type: 'macro'};
+import {focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {Picker, PickerItem} from './TabsPicker';
@@ -110,10 +110,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
           {...props}
           ref={domRef}
           selectedKey={value}
-          onSelectionChange={(val) => {
-            console.log('tabs onSelectionChange', val);
-            setValue(val);
-          }}
+          onSelectionChange={setValue}
           style={props.UNSAFE_style}
           className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
           <Provider
@@ -190,7 +187,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   return (
     <div
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({position: 'relative', width: 'full'}, getAllowedOverrides())(null, props.styles)}>
+      className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
       {showItems && orientation === 'vertical' &&
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
       <RACTabList
@@ -328,6 +325,7 @@ const tab = style({
 }, getAllowedOverrides());
 
 const icon = style({
+  display: 'block',
   flexShrink: 0,
   '--iconPrimary': {
     type: 'fill',
@@ -355,7 +353,7 @@ export function Tab(props: TabProps) {
           return (
             <Provider
               values={[
-                  [TextContext, {styles: style({order: 1})}],
+                [TextContext, {styles: style({order: 1})}],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: icon
@@ -408,8 +406,14 @@ function isAllTabsDisabled<T>(collection: Collection<Node<T>> | null, disabledKe
   return false;
 }
 
-let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, items: Array<Node<any>>, size?: string, density?: 'compact' | 'regular'}) {
+let HiddenTabs = function (props: {
+  listRef: RefObject<HTMLDivElement | null>,
+  items: Array<Node<any>>,
+  size?: string,
+  density?: 'compact' | 'regular'
+}) {
   let {listRef, items, size, density} = props;
+
   return (
     <div
       // @ts-ignore
@@ -417,6 +421,7 @@ let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, it
       ref={listRef}
       className={style({
         display: '[inherit]',
+        flexDirection: '[inherit]',
         gap: '[inherit]',
         flexWrap: '[inherit]',
         position: 'absolute',
@@ -443,10 +448,12 @@ let HiddenTabs = function (props: {listRef: RefObject<HTMLDivElement | null>, it
 
 let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
   let {items} = props;
-  let {density, onSelectionChange, selectedKey} = useContext(InternalTabsContext);
+  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys} = useContext(InternalTabsContext);
+  let state = useContext(TabListStateContext);
+  let allKeysDisabled = useMemo(() => {
+    return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
+  }, [state?.collection, disabledKeys]);
 
-  // TODO label??
-  // how best to target the picker label to increase the font size? it doesn't scale with size in a meaningful way
   return (
     <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
       <div
@@ -461,18 +468,24 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
           }})({density})}>
         <Picker
           isQuiet
+          isDisabled={isDisabled || allKeysDisabled}
           density={density!}
           items={items}
           selectedKey={selectedKey}
           onSelectionChange={onSelectionChange}
           aria-label={'Tab selector'}>
-          {(item: Node<any>) => (
-            <PickerItem
-              {...item.props.originalProps}
-              key={item.key}>
-              {item.props.children({density, isMenu: true})}
-            </PickerItem>
-          )}
+          {(item: Node<any>) => {
+            // need to determine the best way to handle icon only -> icon and text
+            // good enough to aria-label the picker item?
+            return (
+              <PickerItem
+                {...item.props.originalProps}
+                isDisabled={isDisabled || allKeysDisabled}
+                key={item.key}>
+                {item.props.children({density, isMenu: true})}
+              </PickerItem>
+            );
+          }}
         </Picker>
       </div>
     </UNSTABLE_CollectionRendererContext.Provider>
@@ -498,7 +511,7 @@ function CollapsingCollection({children, containerRef}) {
     }
   }, [orientation]);
   return (
-    <CollapseContext.Provider value={{containerRef, showItems, setShowItems}}>
+    <CollapseContext.Provider value={{containerRef, showItems: orientation === 'vertical' ? true : showItems, setShowItems}}>
       <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </UNSTABLE_CollectionRendererContext.Provider>

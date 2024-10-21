@@ -30,7 +30,7 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <div className={style({width: '[450px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
         <Tab id="FoR" data-tab><Edit /><Text>Founding of Rome</Text></Tab>
@@ -58,7 +58,8 @@ export const Example = (args: any) => (
 );
 
 export const Disabled = (args: any) => (
-  <Tabs {...args} styles={style({width: '[450px]', height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
+  <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <Tabs {...args} styles={style({width: 'full'})} disabledKeys={['FoR', 'MaR', 'Emp']}>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
       <Tab id="MaR">Monarchy and Republic</Tab>
@@ -74,10 +75,12 @@ export const Disabled = (args: any) => (
       Alea jacta est.
     </TabPanel>
   </Tabs>
+  </div>
 );
 
 export const Icons = (args: any) => (
-  <Tabs {...args} styles={style({width: 208, height: 144})}>
+  <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <Tabs {...args} styles={style({width: 'full'})}>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR" aria-label="Edit"><Edit /></Tab>
       <Tab id="MaR" aria-label="Notifications"><Bell /></Tab>
@@ -93,6 +96,7 @@ export const Icons = (args: any) => (
       Alea jacta est.
     </TabPanel>
   </Tabs>
+  </div>
 );
 
 interface Item {
@@ -107,7 +111,8 @@ let items: Item[] = [
 ];
 
 export const Dynamic = (args: any) => (
-  <Tabs {...args} styles={style({width: '[450px]', height: 256})}>
+  <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <Tabs {...args} styles={style({width: 'full'})}>
     <TabList aria-label="History of Ancient Rome" items={items}>
       {item => <Tab>{item.title}</Tab>}
     </TabList>
@@ -119,4 +124,5 @@ export const Dynamic = (args: any) => (
       )}
     </Collection>
   </Tabs>
+  </div>
 );
