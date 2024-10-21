@@ -32,6 +32,7 @@ describe('useDisclosure', () => {
 
     expect(buttonProps['aria-expanded']).toBe(false);
     expect(panelProps.hidden).toBe(true);
+    expect(panelProps['aria-hidden']).toBe(true);
   });
 
   it('should return correct aria attributes when expanded', () => {

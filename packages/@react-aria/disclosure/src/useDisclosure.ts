@@ -114,6 +114,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       // This can be overridden at the panel element level.
       role: 'group',
       'aria-labelledby': triggerId,
+      "aria-hidden": !state.isExpanded,
       hidden: supportsBeforeMatch ? true : !state.isExpanded
     }
   };
