@@ -33,7 +33,8 @@ export default function NavigationExamples() {
             </Item>
           </TabPanels>
         </Tabs>
-        <Accordion>
+        <h3>Accordion</h3>
+        <Accordion maxWidth="size-3600">
           <Disclosure id="files">
             <DisclosureHeader>
               Files
@@ -51,12 +52,11 @@ export default function NavigationExamples() {
             </DisclosurePanel>
           </Disclosure>
         </Accordion>
+        <h3>Disclosure</h3>
         <Disclosure>
-          <DisclosureHeader>
-            System information
-          </DisclosureHeader>
+          <DisclosureHeader>System Requirements</DisclosureHeader>
           <DisclosurePanel>
-            <p>Details about system information</p>
+            <p>Details about system requirements here.</p>
           </DisclosurePanel>
         </Disclosure>
       </Flex>
