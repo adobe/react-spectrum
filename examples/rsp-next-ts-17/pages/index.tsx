@@ -328,14 +328,6 @@ export default function Home() {
                 </DisclosurePanel>
               </Disclosure>
             </Accordion>
-            <Disclosure>
-              <DisclosureHeader>
-                System information
-              </DisclosureHeader>
-              <DisclosurePanel>
-                <p>Details about system information</p>
-              </DisclosurePanel>
-            </Disclosure>
           </Section>
 
           <Section title="Overlays">

@@ -319,7 +319,7 @@ export default function Home() {
                 <Item key="Emp">Alea jacta est.</Item>
               </TabPanels>
             </Tabs>
-            <Accordion>
+            <Accordion maxWidth="size-3600">
               <Disclosure id="files">
                 <DisclosureHeader>
                   Files
@@ -337,14 +337,6 @@ export default function Home() {
                 </DisclosurePanel>
               </Disclosure>
             </Accordion>
-            <Disclosure>
-              <DisclosureHeader>
-                System information
-              </DisclosureHeader>
-              <DisclosurePanel>
-                <p>Details about system information</p>
-              </DisclosurePanel>
-            </Disclosure>
           </Section>
 
           <Section title="Overlays">
