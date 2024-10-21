@@ -10,15 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Expandable, Key} from '@react-types/shared';
+import {Key} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo} from 'react';
 
-export interface DisclosureGroupProps extends Expandable {
+export interface DisclosureGroupProps {
   /** Whether multiple items can be expanded at the same time. */
   allowsMultipleExpanded?: boolean,
   /** Whether all items are disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** The currently expanded keys in the group (controlled). */
+  expandedKeys?: Iterable<Key>,
+  /** The initial expanded keys in the group (uncontrolled). */
+  defaultExpandedKeys?: Iterable<Key>,
+  /** Handler that is called when items are expanded or collapsed. */
+  onExpandedChange?: (keys: Set<Key>) => any
 }
 
 export interface DisclosureGroupState {
