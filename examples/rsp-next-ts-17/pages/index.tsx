@@ -310,6 +310,7 @@ export default function Home() {
               </TabPanels>
             </Tabs>
 
+            <h3>Accordion</h3>
             <Accordion>
               <Disclosure id="files">
                 <DisclosureHeader>
@@ -328,6 +329,14 @@ export default function Home() {
                 </DisclosurePanel>
               </Disclosure>
             </Accordion>
+
+            <h3>Disclosure</h3>
+            <Disclosure>
+              <DisclosureHeader>System Requirements</DisclosureHeader>
+              <DisclosurePanel>
+                <p>Details about system requirements here.</p>
+              </DisclosurePanel>
+            </Disclosure>
           </Section>
 
           <Section title="Overlays">
