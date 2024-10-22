@@ -92,6 +92,9 @@ describe('useDisclosure', () => {
 
     act(() => {
       result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
+    });
+
+    act(() => {
       result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault, repeat: true}) as KeyboardEvent);
     });
 
@@ -101,6 +104,9 @@ describe('useDisclosure', () => {
 
     act(() => {
       result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
+    });
+
+    act(() => {
       result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault, repeat: true}) as KeyboardEvent);
     });
 
