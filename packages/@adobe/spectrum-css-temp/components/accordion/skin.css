@@ -30,12 +30,6 @@ governing permissions and limitations under the License.
 
     background-color: var(--spectrum-accordion-background-color-hover);
   }
-
-  &:focus-visible {
-    &:after  {
-      background-color: var(--spectrum-accordion-border-left-color-key-focus);
-    }
-  }
 }
 
 .spectrum-Accordion-item {

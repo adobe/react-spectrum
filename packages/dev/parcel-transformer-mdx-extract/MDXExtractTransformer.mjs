@@ -1,8 +1,8 @@
-import {unified} from 'unified';
-import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
-import {visit} from 'unist-util-visit';
+import remarkParse from 'remark-parse';
 import {Transformer} from '@parcel/plugin';
+import {unified} from 'unified';
+import {visit} from 'unist-util-visit';
 
 export default new Transformer({
   async transform({asset}) {
