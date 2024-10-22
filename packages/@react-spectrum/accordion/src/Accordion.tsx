@@ -66,7 +66,8 @@ function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>)
       className={({isExpanded, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
         'spectrum-Accordion-item--quiet': accordionContext?.isQuiet ?? props.isQuiet,
         'is-expanded': isExpanded,
-        'is-disabled': isDisabled
+        'is-disabled': isDisabled,
+        'in-accordion': accordionContext != null
       }, styleProps.className)}>
       {props.children}
     </RACDisclosure>

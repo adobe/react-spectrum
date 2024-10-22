@@ -50,7 +50,9 @@ governing permissions and limitations under the License.
 
   border-bottom: var(--spectrum-accordion-item-border-size) solid transparent;
 
-  &:first-of-type {
+  border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-alias-border-color);
+
+  &.in-accordion, &:first-of-type {
     border-top: var(--spectrum-accordion-item-border-size) solid transparent;
   }
 
