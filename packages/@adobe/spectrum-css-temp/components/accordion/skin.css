@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-accordion-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-accordion-background-color-down: var(--spectrum-global-color-gray-300);
 }
 
 .spectrum-Accordion-item {
@@ -25,10 +26,14 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-itemHeader {
   color: var(--spectrum-alias-text-color);
 
-  &:hover {
+  &:hover, &:focus-visible {
     color: var(--spectrum-alias-text-color-hover);
-
     background-color: var(--spectrum-accordion-background-color-hover);
+  }
+
+  &.is-pressed {
+    color: var(--spectrum-accordion-text-color-down);
+    background-color: var(--spectrum-accordion-background-color-down);
   }
 }
 

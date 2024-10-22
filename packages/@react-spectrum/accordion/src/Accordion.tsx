@@ -103,8 +103,9 @@ function DisclosureHeader(props: SpectrumDisclosureHeaderProps, ref: DOMRef<HTML
     <Heading ref={domRef} level={level} className={classNames(styles, 'spectrum-Accordion-itemHeading')}>
       <Button
         slot="trigger"
-        className={({isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
+        className={({isHovered, isFocusVisible, isPressed}) => classNames(styles, 'spectrum-Accordion-itemHeader', {
           'is-hovered': isHovered,
+          'is-pressed': isPressed,
           'focus-ring': isFocusVisible
         })}>
         {direction === 'ltr' ? (
