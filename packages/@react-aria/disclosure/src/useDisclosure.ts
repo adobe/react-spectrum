@@ -103,7 +103,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       },
       isDisabled,
       onKeyDown(e) {
-        if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
+        if (!isDisabled && !e.repeat && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
           state.toggle();
         }
