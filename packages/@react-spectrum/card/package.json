@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/card",
-  "version": "3.0.0-alpha.36",
+  "version": "3.0.0-alpha.37",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,13 +36,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.18.3",
-    "@react-aria/grid": "^3.10.4",
+    "@react-aria/focus": "^3.18.4",
+    "@react-aria/grid": "^3.10.5",
     "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.3",
+    "@react-aria/interactions": "^3.22.4",
     "@react-aria/utils": "^3.25.3",
-    "@react-aria/virtualizer": "^4.0.3",
-    "@react-spectrum/checkbox": "^3.9.9",
+    "@react-aria/virtualizer": "^4.0.4",
+    "@react-spectrum/checkbox": "^3.9.10",
     "@react-spectrum/progress": "^3.7.10",
     "@react-spectrum/utils": "^3.11.11",
     "@react-stately/collections": "^3.11.0",

@@ -527,7 +527,7 @@ export function usePress(props: PressHookProps): PressResult {
       // https://github.com/facebook/react/issues/9809
       let onTouchEnd = (e: TouchEvent) => {
         // Don't preventDefault if we actually want the default (e.g. submit/link click).
-        if (shouldPreventDefaultUp(e.target as Element)) {
+        if (shouldPreventDefaultUp(e.currentTarget as Element)) {
           e.preventDefault();
         }
       };
@@ -787,7 +787,7 @@ export function usePress(props: PressHookProps): PressResult {
   ]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       if (!allowTextSelectionOnPress) {
