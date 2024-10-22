@@ -162,12 +162,13 @@ export const AutocompleteAsyncLoadingExample = () => {
   });
 
   return (
-    <Autocomplete items={list.items} inputValue={list.filterText} onInputChange={list.setFilterText}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
       <Label style={{display: 'block'}}>Test</Label>
       <div style={{display: 'flex'}}>
         <Input />
       </div>
       <Menu<AutocompleteItem>
+        items={list.items}
         className={styles.menu}>
         {item => <MyMenuItem>{item.name}</MyMenuItem>}
       </Menu>

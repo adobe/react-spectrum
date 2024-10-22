@@ -942,7 +942,7 @@ function shouldPreventDefaultUp(target: Element) {
   if (target instanceof HTMLInputElement) {
     return false;
   }
-  
+
   if (target instanceof HTMLButtonElement) {
     return target.type !== 'submit' && target.type !== 'reset';
   }

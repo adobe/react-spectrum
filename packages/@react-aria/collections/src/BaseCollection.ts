@@ -215,15 +215,13 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
   filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
     let newCollection = new BaseCollection<T>();
-    // console.log('new', newCollection,);
-    // This tracks the last non-section item
+    // This tracks the last non-section item, used to track the prevKey for non-sections items as we traverse the collection
     let lastItem: Mutable<CollectionNode<T>>;
-    // This tracks the absolute last item in the collection
+    // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
+    // for attaching the next/prevKey for sections/separators.
     let lastNode: Mutable<CollectionNode<T>>;
-    let lastSeparator: Mutable<CollectionNode<T>>;
 
     for (let node of this) {
-      // console.log('node', node)
       if (node.type === 'section' && node.hasChildNodes) {
         let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
         let lastChildInSection: Mutable<CollectionNode<T>>;
@@ -276,7 +274,6 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
           lastNode.nextKey = clonedSeparator.key;
           clonedSeparator.prevKey = lastNode.key;
           lastNode = clonedSeparator;
-          lastSeparator = clonedSeparator;
           newCollection.addNode(clonedSeparator);
         }
       } else if (filterFn(node.textValue)) {
@@ -299,72 +296,17 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       }
     }
 
-    if (lastSeparator && lastSeparator.nextKey === null) {
-      if (lastSeparator.prevKey != null) {
-        let lastSection = newCollection.getItem(lastSeparator.prevKey) as Mutable<CollectionNode<T>>;
+    if (lastNode.type === 'separator' && lastNode.nextKey === null) {
+      let lastSection;
+      if (lastNode.prevKey != null) {
+        lastSection = newCollection.getItem(lastNode.prevKey) as Mutable<CollectionNode<T>>;
         lastSection.nextKey = null;
-
-        if (lastNode.key === lastSeparator.key) {
-          // TODO: If the last node was the last tracked separator, then we can say the last node was the
-          // last section because the separator can only have a section as its previous node, not a menu item
-          // Is this a reasonable assumption?
-          lastNode = lastSection;
-        }
-
       }
-      newCollection.removeNode(lastSeparator.key);
+      newCollection.removeNode(lastNode.key);
+      lastNode = lastSection;
     }
 
     newCollection.lastKey = lastNode?.key;
-
-    // for (let node of this) {
-    //   // console.log('node', node)
-    //   if (node.type === 'section' && node.hasChildNodes && lastNodeWithParent?.parentKey === node.key) {
-    //     let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-    //     clonedSection.firstChildKey = lastNodeWithParent.key;
-    //     // TODO: This makes use of the assumption that if we encountered a section with a matching key as our lastNodeWithParent that the last node added to the cloned BaseCollection
-    //     // Will need to double check if valid
-    //     clonedSection.lastChildKey = newCollection.lastKey;
-
-    //     // If the prev section was filtered out, will need to attach to whatever came before
-    //     if (lastSectionOrSeparator == null) {
-    //       clonedSection.prevKey = null;
-    //     } else {
-    //       lastSectionOrSeparator.nextKey = clonedSection.key;
-    //       clonedSection.prevKey = lastSectionOrSeparator.key;
-    //     }
-    //     clonedSection.nextKey = null;
-    //     lastSectionOrSeparator = clonedSection;
-    //     newCollection.addNode(clonedSection);
-    //   } else if (node.type === 'separator') {
-    //     // will need to check if previous section key exists, if it does then we add. After the full collection is created
-    //     let clonedSeparator: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-    //     clonedSeparator.nextKey = null;
-    //     if (lastSectionOrSeparator?.type === 'section') {
-    //       lastSectionOrSeparator.nextKey = clonedSeparator.key;
-    //       clonedSeparator.prevKey = lastSectionOrSeparator.key;
-    //       lastSectionOrSeparator = clonedSeparator;
-    //       newCollection.addNode(clonedSeparator);
-    //     }
-    //   } else if (filterFn(node.textValue)) {
-    //     let clonedNode: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
-    //     let parentKey = node.parentKey;
-
-    //     if (lastNode && lastNode.parentKey === clonedNode.parentKey) {
-    //       lastNode.nextKey = clonedNode.key;
-    //       clonedNode.prevKey = lastNode.key;
-    //     } else {
-    //       clonedNode.prevKey = null;
-    //     }
-
-    //     clonedNode.nextKey = null;
-    //     newCollection.addNode(clonedNode);
-    //     lastNode = clonedNode;
-    //     if (parentKey != null) {
-    //       lastNodeWithParent = clonedNode;
-    //     }
-    //   }
-    // }
 
     return newCollection;
   }

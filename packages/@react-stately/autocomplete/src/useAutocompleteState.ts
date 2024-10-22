@@ -14,7 +14,7 @@ import {FocusableProps, HelpTextProps, InputBase, LabelableProps, TextInputBase}
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
-export interface AutocompleteState<T> {
+export interface AutocompleteState {
   /** The current value of the autocomplete input. */
   inputValue: string,
   /** Sets the value of the autocomplete input. */
@@ -28,28 +28,30 @@ export interface AutocompleteState<T> {
 
 // TODO: vet these props, maybe move out of here since most of these are the component's props rather than the state option
 // TODO: clean up the packge json here
-export interface AutocompleteProps<T> extends InputBase, TextInputBase, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface AutocompleteProps extends InputBase, TextInputBase, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The value of the autocomplete input (controlled). */
   inputValue?: string,
   /** The default value of the autocomplete input (uncontrolled). */
   defaultInputValue?: string,
   /** Handler that is called when the autocomplete input value changes. */
-  onInputChange?: (value: string) => void,
+  onInputChange?: (value: string) => void
 }
 
-export interface AutocompleteStateOptions<T> extends Omit<AutocompleteProps<T>, 'children'> {}
+// TODO: get rid of this if we don't have any extra things to omit from the options
+export interface AutocompleteStateOptions extends Omit<AutocompleteProps, 'children'> {}
 
 /**
  * Provides state management for a autocomplete component.
  */
-export function useAutocompleteState<T extends object>(props: AutocompleteStateOptions<T>): AutocompleteState<T> {
+export function useAutocompleteState(props: AutocompleteStateOptions): AutocompleteState {
   let onInputChange = (value) => {
     if (props.onInputChange) {
-      props.onInputChange(value)
+      props.onInputChange(value);
     }
 
+    // TODO: weird that this is handled here?
     setFocusedNodeId(null);
-  }
+  };
 
   let [focusedNodeId, setFocusedNodeId] = useState(null);
   let [inputValue, setInputValue] = useControlledState(

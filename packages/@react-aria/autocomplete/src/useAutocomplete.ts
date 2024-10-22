@@ -10,26 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
-import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {AriaMenuItemProps, AriaMenuOptions, menuData} from '@react-aria/menu';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {chain, isAppleDevice, mergeProps, useId, useLabels, useRouter} from '@react-aria/utils';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
-import {getChildNodes, getItemCount} from '@react-stately/collections';
+import {chain, mergeProps, useId, useLabels} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/focus';
+import {InputHTMLAttributes, KeyboardEvent, useEffect, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
-import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
-import { focusSafely } from '@react-aria/focus';
 
-export interface AriaAutocompleteProps<T> extends AutocompleteProps<T>, DOMProps, InputDOMProps, AriaLabelingProps {}
+export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, InputDOMProps, AriaLabelingProps {}
 
 // TODO: all of this is menu specific but will need to eventually be agnostic to what collection element is inside
 // Update all instances of menu then
-export interface AriaAutocompleteOptions<T> extends Omit<AriaAutocompleteProps<T>, 'children'>, DOMProps, InputDOMProps, AriaLabelingProps {
+export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'>, DOMProps, InputDOMProps, AriaLabelingProps {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>
 }
@@ -45,7 +41,7 @@ export interface AutocompleteAria<T> {
   descriptionProps: DOMAttributes,
   // TODO: fairly non-standard thing to return from a hook, discuss how best to share this with hook only users
   // This is for the user to register a callback that upon recieving a keyboard event key returns the expected virtually focused node id
-  register: (callback: (string) => string) => void
+  register: (callback: (e: KeyboardEvent) => string) => void
 }
 
 /**
@@ -54,19 +50,18 @@ export interface AutocompleteAria<T> {
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: AutocompleteState<T>): AutocompleteAria<T> {
+export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria<T> {
   let {
     inputRef,
     isReadOnly
   } = props;
 
-  // let router = useRouter();
   let menuId = useId();
 
   // TODO: may need to move this into Autocomplete? Kinda odd to return this from the hook? Maybe the callback should be considered
   // external to the hook, and the onus is on the user to pass in a onKeydown to this hook that updates state.focusedNodeId in response to a key
   // stroke
-  let callbackRef = useRef<(string) => string>(null);
+  let callbackRef = useRef<(e: KeyboardEvent) => string>(null);
   let register = (callback) => {
     callbackRef.current = callback;
   };
@@ -78,26 +73,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
     switch (e.key) {
       case 'Enter':
-        // TODO: how best to trigger the focused element's action? I guess I could dispatch an event
+        // TODO: how best to trigger the focused element's action? Currently having the registered callback handle dispatching a
+        // keyboard event
         // Also, we might want to add popoverRef so we can bring in MobileCombobox's additional handling for Enter
         // to close virtual keyboard, depends if we think this experience is only for in a tray/popover
-
-
-        // // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        // if (state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
-        //   if (e.key === 'Enter') {
-        //     let item = menuRef.current?.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-        //     if (item instanceof HTMLAnchorElement) {
-        //       let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-        //       collectionItem && router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
-        //     }
-        //   }
-
-        //   // TODO: previously used to call state.close here which would toggle selection for a link and set the input value to that link's input text
-        //   // I think that doens't make sense really so opting to do nothing here.
-        // } else {
-        //   state.commit();
-        // }
         break;
       case 'Escape':
         if (state.inputValue !== '') {
@@ -105,12 +84,17 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         }
 
         break;
-    }
-    if (callbackRef.current) {
-      let focusedNodeId = callbackRef.current(e.key);
-      state.setFocusedNodeId(focusedNodeId);
+      case 'Home':
+      case 'End':
+        // Prevent Fn + left/right from moving the text cursor in the input
+        e.preventDefault();
+        break;
     }
 
+    if (callbackRef.current) {
+      let focusedNodeId = callbackRef.current(e);
+      state.setFocusedNodeId(focusedNodeId);
+    }
   };
 
   // let onBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -150,7 +134,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let menuProps = useLabels({
     id: menuId,
-    // TODO: update this
+    // TODO: update this naming from listboxLabel
     'aria-label': stringFormatter.format('listboxLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
@@ -160,7 +144,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   useEffect(() => {
     focusSafely(inputRef.current);
   }, []);
-
 
   // TODO: decide where the announcements should go, pehaps make a separate hook so that the collection component can call it
   // // VoiceOver has issues with announcing aria-activedescendant properly on change
@@ -235,23 +218,18 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       'aria-controls': menuId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
-      // TODO: will need a way to get the currently focused menuitem's id. This is currently difficult since the
-      // menu uses useTreeState which useAutocomplete state doesn't substitute for
-      // 'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
       'aria-activedescendant': state.focusedNodeId ?? undefined,
       role: 'searchbox',
-      // This disable's iOS's autocorrect suggestions, since the combo box provides its own suggestions.
+      // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
     }),
     menuProps: mergeProps(menuProps, {
       shouldUseVirtualFocus: true,
-      //
       onHoverStart: (e) => {
-        // TODO: another thing to thing about, what is the best way to past this to menu so that hovering on
-        // a item also updates the focusedNode
-        console.log('e', e.target)
+        // TODO: another thing to think about, what is the best way to past this to menu/wrapped collection component so that hovering on
+        // a item also updates the focusedNode. Perhaps we should just pass down setFocusedNodeId instead
         state.setFocusedNodeId(e.target.id);
       }
     }),

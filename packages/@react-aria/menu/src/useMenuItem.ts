@@ -242,6 +242,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         state.selectionManager.setFocusedKey(key);
       }
       hoverStartProp?.(e);
+
+      if (data.onHoverStart) {
+        data.onHoverStart(e);
+      }
     },
     onHoverChange,
     onHoverEnd
