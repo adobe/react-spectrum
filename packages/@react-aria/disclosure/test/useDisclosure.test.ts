@@ -47,7 +47,7 @@ describe('useDisclosure', () => {
     expect(panelProps.hidden).toBe(false);
   });
 
-  it('should handle expanding on press event', () => {
+  it('should handle expanding on press event (with mouse)', () => {
     let {result} = renderHook(() => {
       let state = useDisclosureState({});
       let disclosure = useDisclosure({}, state, ref);
@@ -61,58 +61,20 @@ describe('useDisclosure', () => {
     expect(result.current.state.isExpanded).toBe(true);
   });
 
-  it('should handle expanding on keydown event', () => {
+  it('should handle expanding on press start event (with keyboard)', () => {
     let {result} = renderHook(() => {
       let state = useDisclosureState({});
       let disclosure = useDisclosure({}, state, ref);
       return {state, disclosure};
     });
 
-    let preventDefault = jest.fn();
-    let event = (e: Partial<KeyboardEvent>) => ({...e, preventDefault} as KeyboardEvent);
+    let event = (e: Partial<PressEvent>) => (e as PressEvent);
 
     act(() => {
-      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
+      result.current.disclosure.buttonProps.onPressStart?.(event({pointerType: 'keyboard'}) as PressEvent);
     });
-
-    expect(preventDefault).toHaveBeenCalledTimes(1);
 
     expect(result.current.state.isExpanded).toBe(true);
-  });
-
-  it('should not expand or collapse on repeat keydown event', () => {
-    let {result} = renderHook(() => {
-      let state = useDisclosureState({});
-      let disclosure = useDisclosure({}, state, ref);
-      return {state, disclosure};
-    });
-
-    let preventDefault = jest.fn();
-    let event = (e: Partial<KeyboardEvent>) => ({...e, preventDefault} as KeyboardEvent);
-
-    act(() => {
-      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
-    });
-
-    act(() => {
-      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault, repeat: true}) as KeyboardEvent);
-    });
-
-    expect(preventDefault).toHaveBeenCalledTimes(1);
-
-    expect(result.current.state.isExpanded).toBe(true);
-
-    act(() => {
-      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
-    });
-
-    act(() => {
-      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault, repeat: true}) as KeyboardEvent);
-    });
-
-    expect(preventDefault).toHaveBeenCalledTimes(2);
-
-    expect(result.current.state.isExpanded).toBe(false);
   });
 
   it('should not toggle when disabled', () => {

@@ -102,9 +102,8 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
         }
       },
       isDisabled,
-      onKeyDown(e) {
-        if (!isDisabled && !e.repeat && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
+      onPressStart(e) {
+        if (e.pointerType === 'keyboard' && !isDisabled) {
           state.toggle();
         }
       }
