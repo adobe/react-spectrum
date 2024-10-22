@@ -248,7 +248,8 @@
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
     "recast": "0.23.6",
-    "ast-types": "0.16.1"
+    "ast-types": "0.16.1",
+    "get-monorepo-packages@npm:^1.1.0": "patch:get-monorepo-packages@npm%3A1.2.0#~/.yarn/patches/get-monorepo-packages-npm-1.2.0-614afc3d49.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {

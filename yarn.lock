@@ -18938,13 +18938,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-monorepo-packages@npm:^1.1.0":
+"get-monorepo-packages@npm:1.2.0":
   version: 1.2.0
   resolution: "get-monorepo-packages@npm:1.2.0"
   dependencies:
     globby: "npm:^7.1.1"
     load-json-file: "npm:^4.0.0"
   checksum: 10c0/ee04b32862b475ea8a4cdea4587913cce1f5ac65178e9b575a7b91f746852951b84161550f120c2512f3498e8fa2a5b7ab5af7264aff8deb4dc04d2902508e69
+  languageName: node
+  linkType: hard
+
+"get-monorepo-packages@patch:get-monorepo-packages@npm%3A1.2.0#~/.yarn/patches/get-monorepo-packages-npm-1.2.0-614afc3d49.patch":
+  version: 1.2.0
+  resolution: "get-monorepo-packages@patch:get-monorepo-packages@npm%3A1.2.0#~/.yarn/patches/get-monorepo-packages-npm-1.2.0-614afc3d49.patch::version=1.2.0&hash=006b7d"
+  dependencies:
+    globby: "npm:^7.1.1"
+    load-json-file: "npm:^4.0.0"
+  checksum: 10c0/98c71bcf5b664b020cc7a61293664c26b05e08377ee3bfee98f969f19119e16900d352cc24dfc240594975c6fb38d824f141497afa357de8f618039f2e4f0ff5
   languageName: node
   linkType: hard
 
