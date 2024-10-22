@@ -89,7 +89,7 @@ export interface SortDescriptor {
   /** The key of the column to sort by. */
   column: Key,
   /** The direction to sort by. */
-  direction?: SortDirection
+  direction: SortDirection
 }
 
 export type SortDirection = 'ascending' | 'descending';
