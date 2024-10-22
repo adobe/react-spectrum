@@ -291,7 +291,7 @@ function App() {
           <DialogTrigger>
             <ActionButton>Check connectivity</ActionButton>
             <Dialog>
-              {(close) => (
+              {({close}) => (
                 <>
                   <Heading>Internet Speed Test</Heading>
                   <Header>Connection status: Connected</Header>
