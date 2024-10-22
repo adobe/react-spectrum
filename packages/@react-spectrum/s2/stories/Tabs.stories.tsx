@@ -80,11 +80,11 @@ export const Disabled = (args: any) => (
 
 export const Icons = (args: any) => (
   <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-    <Tabs {...args} styles={style({width: 'full'})}>
+    <Tabs {...args} styles={style({width: 'full'})} iconOnly>
       <TabList aria-label="History of Ancient Rome">
-        <Tab id="FoR" aria-label="Edit"><Edit /></Tab>
-        <Tab id="MaR" aria-label="Notifications"><Bell /></Tab>
-        <Tab id="Emp" aria-label="Likes"><Heart /></Tab>
+        <Tab id="FoR" aria-label="Edit"><Edit /><Text>Founding of Rome</Text></Tab>
+        <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Monarchy and Republic</Text></Tab>
+        <Tab id="Emp" aria-label="Likes"><Heart /><Text>Empire</Text></Tab>
       </TabList>
       <TabPanel id="FoR">
         Arma virumque cano, Troiae qui primus ab oris.

@@ -49,7 +49,11 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
    * The amount of space between the tabs.
    * @default 'regular'
    */
-  density?: 'compact' | 'regular'
+  density?: 'compact' | 'regular',
+  /**
+   * If the tabs should only display icons and no text.
+   */
+  iconOnly?: boolean,
 }
 
 export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
@@ -88,7 +92,8 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
     density = 'regular',
     isDisabled,
     disabledKeys,
-    orientation = 'horizontal'
+    orientation = 'horizontal',
+    iconOnly = false
   } = props;
   let domRef = useDOMRef(ref);
   let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null!, props.onSelectionChange);
@@ -102,7 +107,8 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
           orientation,
           disabledKeys,
           selectedKey: value,
-          onSelectionChange: setValue
+          onSelectionChange: setValue,
+          iconOnly
         }]
       ]}>
       <CollapsingCollection containerRef={domRef}>
@@ -331,7 +337,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density} = useContext(InternalTabsContext) ?? {};
+  let {density, iconOnly} = useContext(InternalTabsContext) ?? {};
 
   return (
     <RACTab
@@ -350,7 +356,15 @@ export function Tab(props: TabProps) {
           return (
             <Provider
               values={[
-                [TextContext, {styles: style({order: 1})}],
+                [TextContext, {
+                  styles:
+                    style({
+                      order: 1,
+                      display: {
+                        isIconOnly: 'none'
+                      }
+                    })({isIconOnly: iconOnly})
+                }],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
                   styles: icon
