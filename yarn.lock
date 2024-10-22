@@ -8084,13 +8084,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/autocomplete@workspace:packages/@react-stately/autocomplete"
   dependencies:
-    "@react-stately/collections": "npm:^3.11.0"
-    "@react-stately/form": "npm:^3.0.6"
-    "@react-stately/list": "npm:^3.11.0"
-    "@react-stately/overlays": "npm:^3.6.11"
-    "@react-stately/select": "npm:^3.6.8"
     "@react-stately/utils": "npm:^3.10.4"
-    "@react-types/combobox": "npm:^3.13.0"
     "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -28797,7 +28791,6 @@ __metadata:
     "@react-aria/virtualizer": "npm:^4.0.3"
     "@react-stately/autocomplete": "npm:3.0.0-alpha.1"
     "@react-stately/color": "npm:^3.8.0"
-    "@react-stately/combobox": "npm:^3.10.0"
     "@react-stately/disclosure": "npm:3.0.0-alpha.0"
     "@react-stately/layout": "npm:^4.0.3"
     "@react-stately/menu": "npm:^3.8.3"
