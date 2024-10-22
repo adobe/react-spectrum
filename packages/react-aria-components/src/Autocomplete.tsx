@@ -19,7 +19,7 @@ import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {MenuContext} from './Menu';
-import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, useCallback, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, useCallback, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria';
 
@@ -80,7 +80,7 @@ function AutocompleteInner({props, autocompleteRef: ref}: AutocompleteInnerProps
   }, state);
 
   let renderValues = {
-    isDisabled: props.isDisabled || false,
+    isDisabled: props.isDisabled || false
   };
 
   let renderProps = useRenderProps({

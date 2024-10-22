@@ -18,6 +18,7 @@ import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionCont
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {getItemId, useSubmenuTrigger} from '@react-aria/menu';
 import {HeaderContext} from './Header';
 import {InternalAutocompleteContext} from './Autocomplete';
 import {KeyboardContext} from './Keyboard';
@@ -42,7 +43,6 @@ import React, {
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -243,17 +243,17 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         } else {
           // If there is a focused key, dispatch an event to the menu item in question. This allows us to excute any existing onAction or link navigations
           // that would have happen in a non-virtual focus case.
-          focusedId = `${menuId}-option-${state.selectionManager.focusedKey}`;
+          focusedId = getItemId(state, state.selectionManager.focusedKey);
           let item = ref.current?.querySelector(`#${CSS.escape(focusedId)}`);
           item?.dispatchEvent(
             new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
           );
         }
-        focusedId = `${menuId}-option-${state.selectionManager.focusedKey}`;
+        focusedId = getItemId(state, state.selectionManager.focusedKey);
         return focusedId;
       });
     }
-  }, [register, state.selectionManager, menuId, ref]);
+  }, [register, state, menuId, ref]);
 
   useEffect(() => {
     // TODO: retested in NVDA. It seems like NVDA properly announces what new letter you are typing even if we maintain virtual focus on

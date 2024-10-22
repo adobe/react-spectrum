@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "{optionCount, plural, one {# опция} other {# опции}} на разположение.",
-  "focusAnnouncement": "{isGroupChange, select, true {Въведена група {groupTitle}, с {groupCount, plural, one {# опция} other {# опции}}. } other {}}{optionText}{isSelected, select, true {, избрани} other {}}",
-  "menuLabel": "Предложения",
-  "selectedAnnouncement": "{optionText}, избрани"
+  "menuLabel": "Предложения"
 }

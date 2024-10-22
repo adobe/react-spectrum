@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "K dispozici {optionCount, plural, one {je # možnost} other {jsou/je # možnosti/-í}}.",
-  "focusAnnouncement": "{isGroupChange, select, true {Zadaná skupina „{groupTitle}“ {groupCount, plural, one {s # možností} other {se # možnostmi}}. } other {}}{optionText}{isSelected, select, true { (vybráno)} other {}}",
-  "menuLabel": "Návrhy",
-  "selectedAnnouncement": "{optionText}, vybráno"
+  "menuLabel": "Návrhy"
 }

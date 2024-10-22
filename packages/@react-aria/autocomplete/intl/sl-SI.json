@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "Na voljo je {optionCount, plural, one {# opcija} other {# opcije}}.",
-  "focusAnnouncement": "{isGroupChange, select, true {Vnesena skupina {groupTitle}, z {groupCount, plural, one {# opcija} other {# opcije}}. } other {}}{optionText}{isSelected, select, true {, izbrano} other {}}",
-  "menuLabel": "Predlogi",
-  "selectedAnnouncement": "{optionText}, izbrano"
+  "menuLabel": "Predlogi"
 }

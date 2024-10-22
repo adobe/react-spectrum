@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "{optionCount, plural, one {# seçenek} other {# seçenekler}} kullanılabilir.",
-  "focusAnnouncement": "{isGroupChange, select, true {Girilen grup {groupTitle}, ile {groupCount, plural, one {# seçenek} other {# seçenekler}}. } other {}}{optionText}{isSelected, select, true {, seçildi} other {}}",
-  "menuLabel": "Öneriler",
-  "selectedAnnouncement": "{optionText}, seçildi"
+  "menuLabel": "Öneriler"
 }

@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "{optionCount, plural, one {# επιλογή} other {# επιλογές }} διαθέσιμες.",
-  "focusAnnouncement": "{isGroupChange, select, true {Εισαγμένη ομάδα {groupTitle}, με {groupCount, plural, one {# επιλογή} other {# επιλογές}}. } other {}}{optionText}{isSelected, select, true {, επιλεγμένο} other {}}",
-  "menuLabel": "Προτάσεις",
-  "selectedAnnouncement": "{optionText}, επιλέχθηκε"
+  "menuLabel": "Προτάσεις"
 }

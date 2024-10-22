@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, FocusableElement, InputDOMProps, RefObject} from '@react-types/shared';
-import {AriaMenuOptions} from '@react-aria/menu';
+import type {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, mergeProps, useId, useLabels} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
@@ -80,12 +80,16 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
       case 'Escape':
         if (state.inputValue !== '') {
           state.setInputValue('');
+        } else {
+          e.continuePropagation();
         }
 
         break;
       case 'Home':
       case 'End':
-        // Prevent Fn + left/right from moving the text cursor in the input
+      case 'ArrowUp':
+      case 'ArrowDown':
+        // Prevent these keys from moving the text cursor in the input
         e.preventDefault();
         break;
     }
@@ -118,62 +122,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     focusSafely(inputRef.current as FocusableElement);
   }, [inputRef]);
 
-  // TODO: decide where the announcements should go, pehaps make a separate hook so that the collection component can call it
-  // // VoiceOver has issues with announcing aria-activedescendant properly on change
-  // // (especially on iOS). We use a live region announcer to announce focus changes
-  // // manually. In addition, section titles are announced when navigating into a new section.
-  // let focusedItem = state.selectionManager.focusedKey != null
-  //   ? state.collection.getItem(state.selectionManager.focusedKey)
-  //   : undefined;
-  // let sectionKey = focusedItem?.parentKey ?? null;
-  // let itemKey = state.selectionManager.focusedKey ?? null;
-  // let lastSection = useRef(sectionKey);
-  // let lastItem = useRef(itemKey);
-  // useEffect(() => {
-  //   if (isAppleDevice() && focusedItem != null && itemKey !== lastItem.current) {
-  //     let isSelected = state.selectionManager.isSelected(itemKey);
-  //     let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
-  //     let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
-
-  //     let announcement = stringFormatter.format('focusAnnouncement', {
-  //       isGroupChange: !!section && sectionKey !== lastSection.current,
-  //       groupTitle: sectionTitle,
-  //       groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
-  //       optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
-  //       isSelected
-  //     });
-
-  //     announce(announcement);
-  //   }
-
-  //   lastSection.current = sectionKey;
-  //   lastItem.current = itemKey;
-  // });
-
-  // // Announce the number of available suggestions when it changes
-  // let optionCount = getItemCount(state.collection);
-  // let lastSize = useRef(optionCount);
-  // let [announced, setAnnounced] = useState(false);
-
-  // // TODO: test this behavior below, now that there isn't a open state this should just announce for the first render in which the field is focused?
-  // useEffect(() => {
-  //   // Only announce the number of options available when the autocomplete first renders if there is no
-  //   // focused item, otherwise screen readers will typically read e.g. "1 of 6".
-  //   // The exception is VoiceOver since this isn't included in the message above.
-  //   let didRenderWithoutFocusedItem = !announced && (state.selectionManager.focusedKey == null || isAppleDevice());
-
-  //   if ((didRenderWithoutFocusedItem || optionCount !== lastSize.current)) {
-  //     let announcement = stringFormatter.format('countAnnouncement', {optionCount});
-  //     announce(announcement);
-  //     setAnnounced(true);
-  //   }
-
-  //   lastSize.current = optionCount;
-  // }, [announced, setAnnounced, optionCount, stringFormatter, state.selectionManager.focusedKey]);
-
-
-  // TODO: Omitted the custom announcement for selection because we expect to only trigger onActions for Autocomplete, selected key isn't a thing
-
   return {
     labelProps,
     inputProps: mergeProps(inputProps, {
@@ -182,6 +130,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': state.focusedNodeId ?? undefined,
+      // TODO: note that the searchbox role causes newly typed letters to interrupt the announcement of the number of available options in Safari.
+      // I tested on iPad/Android/etc and the combobox role doesn't seem to do that but it will announce that there is a listbox which isn't true
+      // and it will say press Control Option Space to display a list of options which is also incorrect. To be fair though, our combobox doesn't open with
+      // that combination of buttons
       role: 'searchbox',
       // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
       autoCorrect: 'off',

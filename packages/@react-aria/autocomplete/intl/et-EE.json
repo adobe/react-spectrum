@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "{optionCount, plural, one {# valik} other {# valikud}} saadaval.",
-  "focusAnnouncement": "{isGroupChange, select, true {Sisestatud rühm {groupTitle}, valikuga {groupCount, plural, one {# valik} other {# valikud}}. } other {}}{optionText}{isSelected, select, true {, valitud} other {}}",
-  "menuLabel": "Soovitused",
-  "selectedAnnouncement": "{optionText}, valitud"
+  "menuLabel": "Soovitused"
 }

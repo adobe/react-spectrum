@@ -13,8 +13,8 @@
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject, RouterOptions} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
+import {getItemId, menuData} from './utils';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {menuData} from './useMenu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -163,10 +163,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   if (data.shouldUseVirtualFocus) {
-    // TODO: will need to normalize the key and stuff, but need to finalize if
-    // every component that Autocomplete will accept as a filterable child would need to follow this same
+    // TODO: finalize if every component that Autocomplete will accept as a filterable child would need to follow this same
     // logic when creating the id
     id = `${data.id}-option-${key}`;
+    id = getItemId(state, key);
   }
 
   let ariaProps = {

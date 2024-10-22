@@ -1,3 +1,5 @@
 {
-  "longPressMessage": "اضغط مطولاً أو اضغط على Alt + السهم لأسفل لفتح القائمة"
+  "longPressMessage": "اضغط مطولاً أو اضغط على Alt + السهم لأسفل لفتح القائمة",
+  "countAnnouncement": "{optionCount, plural, one {# خيار} other {# خيارات}} متاحة.",
+  "focusAnnouncement": "{isGroupChange, select, true {المجموعة المدخلة {groupTitle}, مع {groupCount, plural, one {# خيار} other {# خيارات}}. } other {}}{optionText}{isSelected, select, true {, محدد} other {}}"
 }

@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "{optionCount, plural, one {# option} other {# options}} disponible(s).",
-  "focusAnnouncement": "{isGroupChange, select, true {Groupe {groupTitle} rejoint, avec {groupCount, plural, one {# option} other {# options}}. } other {}}{optionText}{isSelected, select, true {, sélectionné(s)} other {}}",
-  "menuLabel": "Suggestions",
-  "selectedAnnouncement": "{optionText}, sélectionné"
+  "menuLabel": "Suggestions"
 }

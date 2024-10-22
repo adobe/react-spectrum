@@ -1,6 +1,3 @@
 {
-  "countAnnouncement": "Yra {optionCount, plural, one {# parinktis} other {# parinktys (-ių)}}.",
-  "focusAnnouncement": "{isGroupChange, select, true {Įvesta grupė {groupTitle}, su {groupCount, plural, one {# parinktimi} other {# parinktimis (-ių)}}. } other {}}{optionText}{isSelected, select, true {, pasirinkta} other {}}",
-  "menuLabel": "Pasiūlymai",
-  "selectedAnnouncement": "{optionText}, pasirinkta"
+  "menuLabel": "Pasiūlymai"
 }
