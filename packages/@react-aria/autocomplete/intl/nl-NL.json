@@ -1,6 +1,6 @@
 {
   "countAnnouncement": "{optionCount, plural, one {# optie} other {# opties}} beschikbaar.",
   "focusAnnouncement": "{isGroupChange, select, true {Groep {groupTitle} ingevoerd met {groupCount, plural, one {# optie} other {# opties}}. } other {}}{optionText}{isSelected, select, true {, geselecteerd} other {}}",
-  "listboxLabel": "Suggesties",
+  "menuLabel": "Suggesties",
   "selectedAnnouncement": "{optionText}, geselecteerd"
 }

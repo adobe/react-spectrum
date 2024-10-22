@@ -1,6 +1,6 @@
 {
   "countAnnouncement": "Pieejamo opciju skaits: {optionCount, plural, one {# opcija} other {# opcijas}}.",
   "focusAnnouncement": "{isGroupChange, select, true {Ievadīta grupa {groupTitle}, ar {groupCount, plural, one {# opciju} other {# opcijām}}. } other {}}{optionText}{isSelected, select, true {, atlasīta} other {}}",
-  "listboxLabel": "Ieteikumi",
+  "menuLabel": "Ieteikumi",
   "selectedAnnouncement": "{optionText}, atlasīta"
 }

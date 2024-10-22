@@ -2,5 +2,5 @@
   "focusAnnouncement": "{isGroupChange, select, true {Entered group {groupTitle}, with {groupCount, plural, one {# option} other {# options}}. } other {}}{optionText}{isSelected, select, true {, selected} other {}}",
   "countAnnouncement": "{optionCount, plural, one {# option} other {# options}} available.",
   "selectedAnnouncement": "{optionText}, selected",
-  "listboxLabel": "Suggestions"
+  "menuLabel": "Suggestions"
 }

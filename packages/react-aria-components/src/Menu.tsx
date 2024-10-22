@@ -173,7 +173,7 @@ interface MenuInnerProps<T> {
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
   let {register, filterFn, inputValue} = useContext(InternalAutocompleteContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
-  // we always perform the filtering for them
+  // we always perform the filtering for them.
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
   let state = useTreeState({
     ...props,
@@ -264,7 +264,11 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     // item, would be nice if it was all centralized. Maybe a reason to go back to having the autocomplete hooks create and manage
     // the collection/selection manager but then it might cause issues when we need to wrap a Table which won't use BaseCollection but rather has
     // its own collection
-    state.selectionManager.setFocused(false);
+    // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
+    if (inputValue != null) {
+      state.selectionManager.setFocused(false);
+      state.selectionManager.setFocusedKey(null);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
 

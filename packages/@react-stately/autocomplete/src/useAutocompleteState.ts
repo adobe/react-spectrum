@@ -26,8 +26,6 @@ export interface AutocompleteState {
   setFocusedNodeId(value: string): void
 }
 
-// TODO: vet these props, maybe move out of here since most of these are the component's props rather than the state option
-// TODO: clean up the packge json here
 export interface AutocompleteProps extends InputBase, TextInputBase, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The value of the autocomplete input (controlled). */
   inputValue?: string,
@@ -37,16 +35,22 @@ export interface AutocompleteProps extends InputBase, TextInputBase, FocusablePr
   onInputChange?: (value: string) => void
 }
 
-// TODO: get rid of this if we don't have any extra things to omit from the options
+// Emulate our other stately hooks which accept all "base" props even if not used
 export interface AutocompleteStateOptions extends Omit<AutocompleteProps, 'children'> {}
 
 /**
  * Provides state management for a autocomplete component.
  */
 export function useAutocompleteState(props: AutocompleteStateOptions): AutocompleteState {
+  let {
+    onInputChange: propsOnInputChange,
+    inputValue: propsInputValue,
+    defaultInputValue: propsDefaultInputValue = ''
+  } = props;
+
   let onInputChange = (value) => {
-    if (props.onInputChange) {
-      props.onInputChange(value);
+    if (propsOnInputChange) {
+      propsOnInputChange(value);
     }
 
     // TODO: weird that this is handled here?
@@ -55,8 +59,8 @@ export function useAutocompleteState(props: AutocompleteStateOptions): Autocompl
 
   let [focusedNodeId, setFocusedNodeId] = useState(null);
   let [inputValue, setInputValue] = useControlledState(
-    props.inputValue,
-    '',
+    propsInputValue,
+    propsDefaultInputValue!,
     onInputChange
   );
 

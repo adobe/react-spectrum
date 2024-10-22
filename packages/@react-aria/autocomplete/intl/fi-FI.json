@@ -1,6 +1,6 @@
 {
   "countAnnouncement": "{optionCount, plural, one {# vaihtoehto} other {# vaihtoehdot}} saatavilla.",
   "focusAnnouncement": "{isGroupChange, select, true {Mentiin ryhmään {groupTitle}, {groupCount, plural, one {# vaihtoehdon} other {# vaihtoehdon}} kanssa.} other {}}{optionText}{isSelected, select, true {, valittu} other {}}",
-  "listboxLabel": "Ehdotukset",
+  "menuLabel": "Ehdotukset",
   "selectedAnnouncement": "{optionText}, valittu"
 }

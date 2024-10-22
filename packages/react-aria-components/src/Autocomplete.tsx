@@ -79,13 +79,13 @@ function AutocompleteInner({props, autocompleteRef: ref}: AutocompleteInnerProps
     inputRef
   }, state);
 
-  let renderPropsState = useMemo(() => ({
-    isDisabled: props.isDisabled || false
-  }), [props.isDisabled]);
+  let renderValues = {
+    isDisabled: props.isDisabled || false,
+  };
 
   let renderProps = useRenderProps({
     ...props,
-    values: renderPropsState,
+    values: renderValues,
     defaultClassName: 'react-aria-Autocomplete'
   });
 

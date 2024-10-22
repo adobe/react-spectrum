@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, FocusableElement, InputDOMProps, RefObject} from '@react-types/shared';
 import {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, mergeProps, useId, useLabels} from '@react-aria/utils';
@@ -24,8 +24,8 @@ import {useTextField} from '@react-aria/textfield';
 export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, InputDOMProps, AriaLabelingProps {}
 
 // TODO: all of this is menu specific but will need to eventually be agnostic to what collection element is inside
-// Update all instances of menu then
-export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'>, DOMProps, InputDOMProps, AriaLabelingProps {
+// Update all instances of "menu" then
+export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>
 }
@@ -34,13 +34,13 @@ export interface AutocompleteAria<T> {
   labelProps: DOMAttributes,
   /** Props for the autocomplete input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  // TODO change this menu props
   /** Props for the menu, to be passed to [useMenu](useMenu.html). */
   menuProps: AriaMenuOptions<T>,
   /** Props for the autocomplete description element, if any. */
   descriptionProps: DOMAttributes,
   // TODO: fairly non-standard thing to return from a hook, discuss how best to share this with hook only users
   // This is for the user to register a callback that upon recieving a keyboard event key returns the expected virtually focused node id
+  /** Register function that expects a callback function that returns the newlly virtually focused menu option when provided with the keyboard action that occurs in the input field. */
   register: (callback: (e: KeyboardEvent) => string) => void
 }
 
@@ -71,13 +71,12 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     if (e.nativeEvent.isComposing) {
       return;
     }
+
+    // TODO: how best to trigger the focused element's action? Currently having the registered callback handle dispatching a
+    // keyboard event
+    // Also, we might want to add popoverRef so we can bring in MobileCombobox's additional handling for Enter
+    // to close virtual keyboard, depends if we think this experience is only for in a tray/popover
     switch (e.key) {
-      case 'Enter':
-        // TODO: how best to trigger the focused element's action? Currently having the registered callback handle dispatching a
-        // keyboard event
-        // Also, we might want to add popoverRef so we can bring in MobileCombobox's additional handling for Enter
-        // to close virtual keyboard, depends if we think this experience is only for in a tray/popover
-        break;
       case 'Escape':
         if (state.inputValue !== '') {
           state.setInputValue('');
@@ -97,35 +96,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     }
   };
 
-  // let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-  //   if (props.onBlur) {
-  //     props.onBlur(e);
-  //   }
-
-  //   state.setFocused(false);
-  // };
-
-  // let onFocus = (e: FocusEvent<HTMLInputElement>) => {
-  //   if (state.isFocused) {
-  //     return;
-  //   }
-
-  //   if (props.onFocus) {
-  //     props.onFocus(e);
-  //   }
-
-  //   state.setFocused(true);
-  // };
-
   let {labelProps, inputProps, descriptionProps} = useTextField({
-    ...props,
+    ...props as any,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
-    // TODO: will I still need the blur and stuff
-    // // @ts-ignore
-    // onBlur,
-    // // @ts-ignore
-    // onFocus,
     value: state.inputValue,
     autoComplete: 'off',
     validate: undefined
@@ -134,16 +108,15 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let menuProps = useLabels({
     id: menuId,
-    // TODO: update this naming from listboxLabel
-    'aria-label': stringFormatter.format('listboxLabel'),
+    'aria-label': stringFormatter.format('menuLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
-  // TODO: add the stuff from mobile combobox, check if I need the below
+  // TODO: add the stuff from mobile combobox, check if I need the below when testing in mobile devices
   // removed touch end since we did the same in MobileComboboxTray
   useEffect(() => {
-    focusSafely(inputRef.current);
-  }, []);
+    focusSafely(inputRef.current as FocusableElement);
+  }, [inputRef]);
 
   // TODO: decide where the announcements should go, pehaps make a separate hook so that the collection component can call it
   // // VoiceOver has issues with announcing aria-activedescendant properly on change
@@ -198,18 +171,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
   //   lastSize.current = optionCount;
   // }, [announced, setAnnounced, optionCount, stringFormatter, state.selectionManager.focusedKey]);
 
-  // // Announce when a selection occurs for VoiceOver. Other screen readers typically do this automatically.
-  // let lastSelectedKey = useRef(state.selectedKey);
-  // useEffect(() => {
 
-  //   if (isAppleDevice() && state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {
-  //     let optionText = state.selectedItem['aria-label'] || state.selectedItem.textValue || '';
-  //     let announcement = stringFormatter.format('selectedAnnouncement', {optionText});
-  //     announce(announcement);
-  //   }
-
-  //   lastSelectedKey.current = state.selectedKey;
-  // });
+  // TODO: Omitted the custom announcement for selection because we expect to only trigger onActions for Autocomplete, selected key isn't a thing
 
   return {
     labelProps,
