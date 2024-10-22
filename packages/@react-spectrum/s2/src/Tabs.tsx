@@ -53,7 +53,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   /**
    * If the tabs should only display icons and no text.
    */
-  iconOnly?: boolean,
+  iconOnly?: boolean
 }
 
 export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
