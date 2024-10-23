@@ -48,17 +48,14 @@ const disclosure = style({
     isQuiet: 0
   },
   borderBottomWidth: {
-    default: 0,
+    default: 1,
+    isQuiet: 0,
     isInGroup: {
       default: 0,
       ':last-child': {
         default: 1,
         isQuiet: 0
       }
-    },
-    isNotInGroup: {
-      default: 1,
-      isQuiet: 0
     }
   },
   borderStartWidth: 0,
@@ -90,7 +87,7 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
         {...props}
         ref={domRef}
         style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + disclosure({isQuiet, isInGroup, isNotInGroup: !isInGroup}, props.styles)}>
+        className={(UNSAFE_className ?? '') + disclosure({isQuiet, isInGroup}, props.styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
