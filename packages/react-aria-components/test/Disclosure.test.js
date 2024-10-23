@@ -318,12 +318,12 @@ describe('Disclosure', () => {
     expect(panel).not.toBeVisible();
     expect(button).toHaveFocus();
 
-    // press Enter without releasing it and trigger 4 keydown events
-    await user.keyboard('{Enter>4}');
+    // press Enter for 4 keydown events, then release it
+    await user.keyboard('{Enter>4/}');
     expect(panel).toBeVisible();
     expect(onExpandedChange).toHaveBeenCalledTimes(1);
 
-    await user.keyboard('{Enter>4}');
+    await user.keyboard('{Enter>4/}');
     expect(panel).not.toBeVisible();
     expect(onExpandedChange).toHaveBeenCalledTimes(2);
   });
