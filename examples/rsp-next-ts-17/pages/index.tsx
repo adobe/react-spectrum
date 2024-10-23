@@ -71,17 +71,15 @@ import {
   DialogContainer,
   Avatar,
   TagGroup,
-  InlineAlert
+  InlineAlert,
+  ColorArea,
+  ColorField,
+  ColorSlider,
+  ColorWheel
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
-import {
-  ColorArea,
-  ColorField,
-  ColorSlider,
-  ColorWheel,
-} from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
 import {SubmenuTrigger} from "@react-spectrum/menu";
