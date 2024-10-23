@@ -241,11 +241,17 @@ function DisclosureItem(props) {
     isDisabled
   }, state, panelRef);
   let {buttonProps} = useButton(triggerProps, triggerRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <div className="disclosure">
       <h3>
-        <button className="trigger" ref={triggerRef} {...buttonProps}>
+        <button 
+          className="trigger" 
+          ref={triggerRef} 
+          {...buttonProps}
+          {...focusProps}
+          style={{outline: isFocusVisible? '2px solid dodgerblue' : 'none'}}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
