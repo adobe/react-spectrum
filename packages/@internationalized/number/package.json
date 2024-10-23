@@ -1,6 +1,6 @@
 {
   "name": "@internationalized/number",
-  "version": "3.5.3",
+  "version": "3.5.4",
   "description": "Internationalized number formatting and parsing utilities",
   "license": "Apache-2.0",
   "main": "dist/main.js",

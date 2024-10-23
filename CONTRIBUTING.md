@@ -153,6 +153,45 @@ yarn start:docs
 ```
 Then, open [http://localhost:1234](http://localhost:1234) in your browser.
 
+### Q & A
+
+> `yarn build` emits a bunch of type errors?
+
+Here are a few examples:
+
+```
+@parcel/transformer-typescript-types: Property 'style' does not exist on type 'Element'.
+@parcel/transformer-typescript-types: Property 'type' does not exist on type 'EventTarget'.
+@parcel/transformer-typescript-types: Property 'isContentEditable' does not exist on type 'EventTarget'
+```
+
+Yes, [that's normal](https://github.com/adobe/react-spectrum/issues/6937#issuecomment-2311492647).
+It will complete successfully at the end.
+
+> `yarn build` fails.
+
+```
+parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
+libc++abi: terminating due to uncaught exception of type std::__1::system_error: mutex lock failed: Invalid argument
+make: *** [build] Abort trap: 6
+parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize --config .parcelrc-build
+make: *** [build] Segmentation fault: 11
+```
+
+It's likely that you are using a different version of Node.js. Please use Node.js 18. When changing the node version, delete `node_modules` and re-run `yarn install`
+
+> `yarn start` fails.
+
+For example:
+
+```
+@parcel/core: packages/@react-aria/virtualizer/src/index.ts does not export 'useVirtualizer'
+```
+
+You may have run `yarn build` before. Please run `make clean_all && yarn` to clean up the build artifacts.
+
+It may also just be a stale cache, you can try deleting the `.parcel-cache`
+
 ## Contributor to committer
 
 We love contributions from our community! If you'd like to go a step beyond contributor and become a committer with full write access and a say in the project, you must be invited. The existing committers employ an internal nomination process that must reach lazy consensus (silence is approval) before invitations are issued. If you feel you are qualified and want to get more deeply involved, feel free to reach out to existing committers to have a conversation.

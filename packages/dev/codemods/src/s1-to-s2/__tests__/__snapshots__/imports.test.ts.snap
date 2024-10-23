@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`leaves a comment on dynamic imports 1`] = `
+"const LazyButton = React.lazy(() => // TODO(S2-upgrade): check this dynamic import
+import('@react-spectrum/button'))"
+`;
+
+exports[`should keep import aliases 1`] = `
+"import { Button as RSPButton } from "@react-spectrum/s2";
+
+<RSPButton>Test</RSPButton>"
+`;
+
+exports[`should keep namespace imports 1`] = `
+"import * as RSP from "@react-spectrum/s2";
+
+<RSP.Button>Test</RSP.Button>"
+`;
+
+exports[`should leave unimplemented components untouched 1`] = `
+"import { Fake } from '@adobe/react-spectrum';
+
+import { Button } from "@react-spectrum/s2";
+
+<>
+  <Button>Test</Button>
+  <Fake>Foo</Fake>
+</>"
+`;
+
+exports[`should leave unimplemented components untouched in namespace imports 1`] = `
+"import * as RSP from '@adobe/react-spectrum';
+
+import * as RSP1 from "@react-spectrum/s2";
+
+<>
+  <RSP.Button>Test</RSP.Button>
+  <RSP.Fake>Foo</RSP.Fake>
+</>"
+`;
+
+exports[`should not import Item from S2 1`] = `
+"import { MenuItem, Menu } from "@react-spectrum/s2";
+import { ListView, Item } from '@adobe/react-spectrum';
+
+<div>
+  <Menu aria-label="Alignment">
+    <MenuItem>Left</MenuItem>
+    <MenuItem>Middle</MenuItem>
+    <MenuItem>Right</MenuItem>
+  </Menu>
+  <ListView aria-label="Alignment">
+    <Item>Left</Item>
+    <Item>Middle</Item>
+    <Item>Right</Item>
+  </ListView>
+</div>"
+`;
+
+exports[`should not import Section from S2 1`] = `
+"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+import { Section, Item, ListBox } from '@adobe/react-spectrum';
+
+<div>
+  <Menu aria-label="Text">
+    <MenuSection><Header>Styles</Header>
+      <MenuItem id="bold">Bold</MenuItem>
+      <MenuItem id="underline">Underline</MenuItem>
+    </MenuSection>
+  </Menu>
+  <ListBox aria-label="Text">
+    <Section title="Styles">
+      <Item key="bold">Bold</Item>
+      <Item key="underline">Underline</Item>
+    </Section>
+  </ListBox>
+</div>"
+`;
+
+exports[`should not replace shadowed imports 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+function Test() {
+  let Button = 'button';
+  return <Button>Test</Button>;
+}
+
+<Button>Foo</Button>"
+`;
+
+exports[`should preserve leading comment if first line is removed 1`] = `
+"/*
+ * Some comment
+ */
+import { Button, StatusLight } from "@react-spectrum/s2";
+
+<>
+  <Button>Test</Button>
+  <StatusLight variant="positive">Test</StatusLight>
+</>"
+`;
+
+exports[`should remove unused Item/Section import even if name taken in different scope 1`] = `
+"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+
+function foo() {
+  let Item = 'something else';
+  let Section = 'something else';
+}
+
+<div>
+  <Menu aria-label="Text">
+    <MenuSection><Header>Styles</Header>
+      <MenuItem id="bold">Bold</MenuItem>
+      <MenuItem id="underline">Underline</MenuItem>
+    </MenuSection>
+  </Menu>
+</div>"
+`;
+
+exports[`should remove unused Item/Section import if aliased 1`] = `
+"import { MenuSection, MenuItem, Menu } from "@react-spectrum/s2";
+import {Section, Item} from 'elsewhere';
+
+<div>
+  <Section>
+    <Item>Test</Item>
+  </Section>
+  <Menu aria-label="Text">
+    <MenuSection><Header>Styles</Header>
+      <MenuItem id="bold"></MenuItem>
+      <MenuItem id="underline">Underline</MenuItem>
+    </MenuSection>
+  </Menu>
+</div>"
+`;
+
+exports[`should replace named imports 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+<Button>Test</Button>"
+`;
+
+exports[`should replace named imports from individual packages 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+<Button>Test</Button>"
+`;
+
+exports[`should use unique alias if newly imported component name is already in scope 1`] = `
+"import { Tag as Tag1, TagGroup } from "@react-spectrum/s2";
+
+const Tag = 'something else';
+
+<div>
+  <TagGroup aria-label="TagGroup items">
+    <Tag1>News</Tag1>
+    <Tag1>Travel</Tag1>
+    <Tag1>Gaming</Tag1>
+    <Tag1>Shopping</Tag1>
+  </TagGroup>
+</div>"
+`;

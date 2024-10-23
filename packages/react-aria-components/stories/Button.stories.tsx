@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from 'react-aria-components';
+import {action} from '@storybook/addon-actions';
+import {Button, ProgressBar, Text} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
+import * as styles2 from './button-pending.css';
 
 export default {
   title: 'React Aria Components'
@@ -24,6 +26,58 @@ export const ButtonExample = () => {
     <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
   );
 };
+
+export const PendingButton = {
+  render: (args) => <PendingButtonExample {...args} />,
+  args: {
+    children: 'Press me'
+  }
+};
+
+function PendingButtonExample(props) {
+  let [isPending, setPending] = useState(false);
+
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let handlePress = (e) => {
+    action('pressed')(e);
+    setPending(true);
+    timeout.current = setTimeout(() => {
+      setPending(false);
+      timeout.current = undefined;
+    }, 5000);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}
+      className={styles2['button']}>
+      {({isPending}) => (
+        <>
+          <Text className={isPending ? styles2['pending'] : undefined}>{props.children}</Text>
+          <ProgressBar
+            aria-label="loading"
+            isIndeterminate
+            className={[styles2['spinner'], (isPending ? styles2['spinner-pending'] : '')].join(' ')}>
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+              <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+                <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </ProgressBar>
+        </>
+      )}
+    </Button>
+  );
+}
 
 export const RippleButtonExample = () => {
   return (

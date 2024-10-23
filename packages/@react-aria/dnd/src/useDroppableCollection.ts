@@ -325,7 +325,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     }, 50);
   }, [localState, defaultOnDrop, ref, updateFocusAfterDrop]);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       if (droppingState.current) {

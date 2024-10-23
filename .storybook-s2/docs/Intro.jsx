@@ -1,5 +1,5 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Button, LinkButton, ButtonGroup, Checkbox, Content, Dialog, DialogTrigger, Footer, Header, Heading, Image, InlineAlert, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Switch, Link, Text} from '@react-spectrum/s2';
+import {Button, LinkButton, ButtonGroup, Checkbox, Content, Dialog, DialogTrigger, Footer, Header, Heading, Image, InlineAlert, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Switch, Text} from '@react-spectrum/s2';
 import NewIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_New_20_N.svg';
 import ImgIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Image_20_N.svg';
 import CopyIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Copy_20_N.svg';
@@ -9,11 +9,11 @@ import CommunityIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_Community_20_N.
 import DeviceTabletIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import DeviceDesktopIcon from '@react-spectrum/s2/s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import {highlight} from './highlight' with {type: 'macro'};
-import {H2, H3, H4, P, Pre, Code} from './typography';
+import {H2, H3, H4, P, Pre, Code, Strong, Link} from './typography';
 
 export function Docs() {
   return (
-    <div className={style({maxWidth: 'lg', marginX: 'auto', marginY: 48, fontFamily: 'sans'})}>
+    <div className={style({maxWidth: 'lg', marginX: 'auto', marginY: 48})}>
       <header
         style={{
           backgroundImage: `url(${new URL('wallpaper_collaborative_S2_desktop.webp', import.meta.url).toString()})`,
@@ -25,12 +25,12 @@ export function Docs() {
           marginBottom: 48,
           borderRadius: 'xl'
         })}>
-        <h1 className={style({fontSize: 'heading-2xl', color: 'white'})}>
+        <h1 className={style({font: 'heading-2xl', color: 'white'})}>
           Spectrum 2 in React Spectrum
         </h1>
       </header>
       <main className={style({marginX: 48})}>
-        <P><strong>Introducing <Link href="https://s2.spectrum.adobe.com" target="_blank">Spectrum 2</Link></strong> – a new update to Adobe's design system, now in pre-release! Designed to support our growing suite of products, Spectrum 2 aims to work seamlessly across experiences by balancing personality and function.</P>
+        <P><Strong>Introducing <Link href="https://s2.spectrum.adobe.com" target="_blank">Spectrum 2</Link></Strong> – a new update to Adobe's design system, now in pre-release! Designed to support our growing suite of products, Spectrum 2 aims to work seamlessly across experiences by balancing personality and function.</P>
         <P>The React Spectrum team has been hard at work to bring the Spectrum 2 design to our components. Spectrum 2 in React Spectrum is built on <Link href="https://react-spectrum.adobe.com/react-aria/" target="_blank">React Aria Components</Link> and a new styling foundation powered by <Link href="https://github.com/adobe/spectrum-tokens" target="_blank">Spectrum Tokens</Link>. This gives you access to Spectrum design fundamentals such as colors, spacing, sizing, and typography in your own applications and custom components. Spectrum 2 also brings new features such as t-shirt sizing, improved form layout, dynamic new press interactions, and more.</P>
         <P>Check out the new Button design, with fresh new colors and icons, a fun new press scaling interaction, and support for t-shirt sizes.</P>
         <Example>
@@ -156,7 +156,7 @@ function App() {
         <Example>
           <Button variant="accent" onPress={() => alert('Hey there!')}>Hello Spectrum 2!</Button>
         </Example>
-        <P><strong>Note</strong>: If you’re embedding Spectrum 2 as a section of a larger page rather than taking over the whole window, follow the <Link href="#embedded-sections" target="_self">directions below</Link> instead of using <Code>page.css</Code>.</P>
+        <P><Strong>Note</Strong>: If you’re embedding Spectrum 2 as a section of a larger page rather than taking over the whole window, follow the <Link href="#embedded-sections" target="_self">directions below</Link> instead of using <Code>page.css</Code>.</P>
         <H3>Overriding the color scheme</H3>
         <P>By default, the page follows the user’s operating system color scheme setting, supporting both light and dark mode. The page background is set to the <Code>base</Code> Spectrum background layer by default. This can be configured by setting the <Code>data-color-scheme</Code> and <Code>data-background</Code> attributes on the <Code>{'<html>'}</Code> element. For example, to force the application to only render in light mode, set <Code>data-color-scheme="light"</Code>.</P>
         <Pre>{highlight(`<html data-color-scheme="light">
@@ -165,12 +165,14 @@ function App() {
         <H3>Overriding the locale</H3>
         <P>By default, React Spectrum uses the browser/operating system language setting for localized strings, date and number formatting, and to determine the layout direction (left-to-right or right-to-left). This can be overridden by rendering a <Code>{'<Provider>'}</Code> component at the root of your app, and setting the <Code>locale</Code> prop.</P>
         <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
+
 <Provider locale="en-US">
   {/* your app */}
 </Provider>`)}</Pre>
         <H3>Embedded sections</H3>
         <P>If you’re building an embedded section of a larger page using Spectrum 2, use the <Code>{'<Provider>'}</Code> component to set the background instead of importing <Code>page.css</Code>. The <Code>background</Code> prop should be set to the Spectrum background layer appropriate for your app, and the <Code>colorScheme</Code> can be overridden as well.</P>
         <Pre>{highlight(`import {Provider} from '@react-spectrum/s2';
+
 <Provider background="base">
   {/* your app */}
 </Provider>`)}</Pre>
@@ -186,7 +188,7 @@ import {ActionButton} from '@react-spectrum/s2';
         <P>The <Code>styles</Code> prop accepts a limited set of CSS properties, including layout, spacing, sizing, and positioning. Other styles such as colors and internal padding cannot be customized within Spectrum components.</P>
         <InlineAlert variant="informative" fillStyle="subtleFill" styles={style({marginBottom: 16})}>
           <Heading>Learn more about styling</Heading>
-          <Content>See the <Link href="/?path=/docs/style-macro--docs" variant="secondary" target="_top">full docs</Link> to learn about using the style macro to build custom components.</Content>
+          <Content>See the <Link href="?path=/docs/style-macro--docs" variant="secondary" target="_top">full docs</Link> to learn about using the style macro to build custom components.</Content>
         </InlineAlert>
         <H3>Supported CSS properties on Spectrum components</H3>
         <ul className={'sb-unstyled' + style({fontSize: 'body-lg', lineHeight: 'body', color: 'body', columns: 3, padding: 0, listStyleType: 'none'})}>
@@ -225,7 +227,7 @@ import {ActionButton} from '@react-spectrum/s2';
           <li><Code>insetEnd</Code></li>
         </ul>
         <H3>UNSAFE Style Overrides</H3>
-        <P>We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using <Link href="https://react-spectrum.adobe.com/react-aria/" target="_blank">React Aria Components</Link> with our <Link href="/?path=/docs/style-macro--docs" target="_top">style macro</Link> to build a custom component with Spectrum styles instead.</P>
+        <P>We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using <Link href="https://react-spectrum.adobe.com/react-aria/" target="_blank">React Aria Components</Link> with our <Link href="?path=/docs/style-macro--docs" target="_top">style macro</Link> to build a custom component with Spectrum styles instead.</P>
         <P>That said, just like in React Spectrum v3, the <Code>UNSAFE_className</Code> and <Code>UNSAFE_style</Code> props are supported on Spectrum 2 components as last-resort escape hatches. However, unlike in v3, UNSAFE_classNames must be placed in a special <Code>UNSAFE_overrides</Code> <Link href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers" target="_blank">CSS cascade layer</Link>. This guarentees that your overrides will always win over other styles on the page, no matter the order or specificity of the selector.</P>
         <Pre>{highlight(`/* YourComponent.tsx */
 import {Button} from '@react-spectrum/s2';

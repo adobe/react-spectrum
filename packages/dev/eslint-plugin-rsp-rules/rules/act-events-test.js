@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-const path = require('path');
+import path from 'path';
 
-function inTestcaseWithoutAct(context, actLocalName) {
+function inTestcaseWithoutAct(context, node, actLocalName) {
   let foundAct = false;
-  for (let n of context.getAncestors().reverse()) {
+  for (let n of context.sourceCode.getAncestors(node).reverse()) {
     if (
       n.type === 'ArrowFunctionExpression' ||
       n.type === 'FunctionExpression'
@@ -55,11 +55,11 @@ function report(node, context, actLocalName) {
     node,
     message: 'Should be wrapped in an act() call',
     fix(fixer) {
-      let parent = context.getAncestors();
+      let parent = context.sourceCode.getAncestors(node);
       parent = parent[parent.length - 1];
       let source = context
-        .getSourceCode()
-        .text.slice(parent.range[0], parent.range[1]);
+        .sourceCode
+        .getText().slice(parent.range[0], parent.range[1]);
       return fixer.replaceTextRange(parent.range, `${actLocalName}(() => {${source}});`);
     }
   });
@@ -75,7 +75,7 @@ const JEST_TIMER_FUNCTIONS = [
   'advanceTimersToNextTimer'
 ];
 
-let rule = {
+let plugin = {
   meta: {
     type: 'problem',
     docs: {
@@ -112,7 +112,7 @@ let rule = {
           if (
             node.callee.type === 'MemberExpression' &&
             actLocalName &&
-            inTestcaseWithoutAct(context, actLocalName)
+            inTestcaseWithoutAct(context, node, actLocalName)
           ) {
             if (
               node.arguments.length === 0 &&
@@ -138,4 +138,4 @@ let rule = {
   }
 };
 
-module.exports = rule;
+export default plugin;

@@ -1,6 +1,6 @@
 {
   "name": "@react-types/shared",
-  "version": "3.24.1",
+  "version": "3.25.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",

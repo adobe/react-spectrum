@@ -114,8 +114,8 @@ export class Virtualizer<T extends object, V> {
   }
 
   private _renderView(reusableView: ReusableView<T, V>) {
-    let {type, key} = reusableView.layoutInfo;
-    reusableView.content = this.collection.getItem(key);
+    let {type, key, content} = reusableView.layoutInfo;
+    reusableView.content = content || this.collection.getItem(key);
     reusableView.rendered = this._renderContent(type, reusableView.content);
   }
 

@@ -20,29 +20,32 @@ import {
   Section as AriaSection,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
+  ContextValue,
   Provider,
   SectionProps,
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, fontRelative, size, space, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 import {divider} from './Divider';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {forwardRefType} from './types';
-import {HeaderContext, HeadingContext, ImageContext, KeyboardContext, Text, TextContext} from './Content';
+import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
+import {ImageContext} from './Image';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria';
+import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 
@@ -79,6 +82,8 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
    */
   children?: ReactNode | ((item: T) => ReactNode)
 }
+
+export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
 export let menu = style({
   outlineStyle: 'none',
@@ -122,6 +127,7 @@ export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
 });
 
 export let sectionHeading = style({
+  font: 'ui',
   fontWeight: 'bold',
   margin: 0
 });
@@ -130,6 +136,7 @@ export let menuitem = style({
   ...focusRing(),
   boxSizing: 'border-box',
   borderRadius: 'control',
+  font: 'control',
   '--labelPadding': {
     type: 'paddingTop',
     value: centerPadding()
@@ -222,6 +229,7 @@ let image = style({
   marginEnd: 'text-to-visual',
   marginTop: fontRelative(6), // made up, need feedback
   alignSelf: 'center',
+  borderRadius: 'sm',
   size: {
     default: 40,
     size: {
@@ -235,8 +243,10 @@ let image = style({
   objectFit: 'contain'
 });
 
-export let label = style({
+export let label = style<{size: string}>({
   gridArea: 'label',
+  font: 'control',
+  color: '[inherit]',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding'
@@ -244,16 +254,7 @@ export let label = style({
 
 export let description = style({
   gridArea: 'description',
-  fontFamily: 'sans',
-  color: {
-    default: 'neutral-subdued',
-    // Ideally this would use the same token as hover, but we don't have access to that here.
-    // TODO: should we always consider isHovered and isFocused to be the same thing?
-    isFocused: 'gray-800',
-    isDisabled: 'disabled'
-  },
-  transition: 'default',
-  fontSize: {
+  font: {
     default: 'ui-sm',
     size: {
       S: 'ui-xs',
@@ -261,7 +262,15 @@ export let description = style({
       L: 'ui',
       XL: 'ui-lg'
     }
-  }
+  },
+  color: {
+    default: 'neutral-subdued',
+    // Ideally this would use the same token as hover, but we don't have access to that here.
+    // TODO: should we always consider isHovered and isFocused to be the same thing?
+    isFocused: 'gray-800',
+    isDisabled: 'disabled'
+  },
+  transition: 'default'
 });
 
 let value = style({
@@ -272,6 +281,8 @@ let value = style({
 let keyboard = style({
   gridArea: 'keyboard',
   marginStart: 8,
+  font: 'ui',
+  fontWeight: 'light',
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',
@@ -279,9 +290,7 @@ let keyboard = style({
       isDisabled: 'GrayText'
     }
   },
-  fontFamily: 'sans',
   background: 'gray-25',
-  fontWeight: 'light',
   unicodeBidi: 'plaintext'
 });
 
@@ -298,6 +307,7 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'>>({});
 
 function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
     children,
@@ -344,11 +354,11 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
       <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
         <Provider
           values={[
-            [HeaderContext, {className: sectionHeader({size})}],
-            [HeadingContext, {className: sectionHeading}],
+            [HeaderContext, {styles: sectionHeader({size})}],
+            [HeadingContext, {styles: sectionHeading}],
             [TextContext, {
               slots: {
-                'description': {className: description({size})}
+                'description': {styles: description({size})}
               }
             }]
           ]}>
@@ -413,11 +423,27 @@ export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'sty
   children: ReactNode
 }
 
+const checkmarkIconSize = {
+  S: 'XS',
+  M: 'M',
+  L: 'L',
+  XL: 'XL'
+} as const;
+
+const linkIconSize = {
+  S: 'M',
+  M: 'L',
+  L: 'XL',
+  XL: 'XL'
+} as const;
+
 export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
+  let isLinkOut = isLink && props.target === '_blank';
   let {size} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {direction} = useLocale();
   return (
     <AriaMenuItem
       {...props}
@@ -434,29 +460,41 @@ export function MenuItem(props: MenuItemProps) {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}, // fix className to css?
-                    descriptor: {render: centerBaseline({slot: 'descriptor', className: descriptor})} // TODO: remove once we have default?
+                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon},
+                    descriptor: {render: centerBaseline({slot: 'descriptor', styles: descriptor})} // TODO: remove once we have default?
                   }
                 }],
                 [TextContext, {
                   slots: {
-                    label: {className: label},
-                    description: {className: description({...renderProps, size})},
-                    value: {className: value}
+                    label: {styles: label({size})},
+                    description: {styles: description({...renderProps, size})},
+                    value: {styles: value}
                   }
                 }],
-                [KeyboardContext, {className: keyboard({size, isDisabled: renderProps.isDisabled})}],
-                [ImageContext, {className: image({size})}]
+                [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
+                [ImageContext, {styles: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLink && <LinkOutIcon size={size} className={descriptor} />}
-              {renderProps.hasSubmenu && <div slot="descriptor" className={descriptor}><ChevronRightIcon size={size} /></div>}
+              {isLinkOut && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
+              {renderProps.hasSubmenu && (
+                <div slot="descriptor" className={descriptor}>
+                  <ChevronRightIcon
+                    size={size}
+                    className={style({
+                      scale: {
+                        direction: {
+                          rtl: -1
+                        }
+                      }
+                    })({direction})} />
+                </div>
+              )}
             </Provider>
           </>
         );

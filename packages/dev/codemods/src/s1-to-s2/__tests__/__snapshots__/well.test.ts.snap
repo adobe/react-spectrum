@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Updates Well to be div with style macro 1`] = `
+"import { Well } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div>
+  <div
+    className={style({
+      display: "block",
+      textAlign: "start",
+      minWidth: 160,
+      padding: 16,
+      marginTop: 4,
+      borderWidth: 1,
+      borderRadius: "sm",
+      backgroundColor: "layer-1",
+      borderStyle: "solid",
+      borderColor: "transparent-black-75",
+      font: "body-sm"
+    })}>
+    Well content
+  </div>
+  <div
+    role="region"
+    aria-labelledby="wellLabel"
+    className={style({
+      display: "block",
+      textAlign: "start",
+      minWidth: 160,
+      padding: 16,
+      marginTop: 4,
+      borderWidth: 1,
+      borderRadius: "sm",
+      backgroundColor: "layer-1",
+      borderStyle: "solid",
+      borderColor: "transparent-black-75",
+      font: "body-sm"
+    })}>
+    <h3 id="wellLabel">Shipping Address</h3>
+    <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
+  </div>
+</div>"
+`;

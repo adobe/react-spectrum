@@ -1,18 +1,21 @@
 import {ActionButton} from './ActionButton';
-import {AriaLabelingProps, DOMProps, FocusableRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {ContentContext, FooterContext, HeadingContext} from './Content';
-import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext, useContextProps} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {Popover, PopoverProps} from './Popover';
-import {style, size as styleSize} from '../style/spectrum-theme' with {type: 'macro'};
+import {style, size as styleSize} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ContextualHelpStyleProps {
   /**
@@ -43,11 +46,11 @@ const popover = style({
   padding: 24
 });
 
-export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, HTMLButtonElement>>({});
+export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
-  let domRef = useFocusableRef(ref);
-  [props, domRef] = useContextProps(props, domRef, ContextualHelpContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
     children,
     defaultOpen,
@@ -61,6 +64,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
     shouldFlip,
     UNSAFE_className,
     UNSAFE_style,
+    styles,
     variant = 'help'
   } = props;
 
@@ -68,8 +72,8 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
   // manually set the aria-label after useLabels() to keep the order of label
   // then ContextualHelp variant
   let labelProps = useLabels(props);
-  // Translate variant
-  labelProps['aria-label'] = labelProps['aria-label'] ? labelProps['aria-label'] + ' ' + variant : variant;
+  let label = stringFormatter.format(`contextualhelp.${variant}`);
+  labelProps['aria-label'] = labelProps['aria-label'] ? labelProps['aria-label'] + ' ' + label : label;
 
   let buttonProps = filterDOMProps(props, {labelable: true});
 
@@ -85,6 +89,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         {...mergeProps(buttonProps, labelProps)}
         UNSAFE_style={UNSAFE_style}
         UNSAFE_className={UNSAFE_className}
+        styles={styles}
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
@@ -104,24 +109,16 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
                   [DEFAULT_SLOT]: {}
                 }
               }],
-              [HeadingContext, {className: style({
-                fontSize: 'heading-xs',
-                fontWeight: 'heading',
-                lineHeight: 'heading',
-                color: 'heading',
+              [HeadingContext, {styles: style({
+                font: 'heading-xs',
                 margin: 0,
                 marginBottom: styleSize(8) // This only makes it 10px on mobile and should be 12px
               })}],
-              [ContentContext, {className: style({
-                fontSize: 'ui',
-                fontWeight: 'normal',
-                lineHeight: 'body',
-                color: 'body'
+              [ContentContext, {styles: style({
+                font: 'body-sm'
               })}],
-              [FooterContext, {className: style({
-                fontSize: 'ui',
-                lineHeight: 'body',
-                color: 'body',
+              [FooterContext, {styles: style({
+                font: 'body-sm',
                 marginTop: 16
               })}]
             ]}>

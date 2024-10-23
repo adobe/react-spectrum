@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 port=4000
+# usually defaults to https://registry.npmjs.com/
 original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
@@ -25,6 +26,8 @@ function cleanup {
       git fetch
       git reset --hard $commit_to_revert
       npm set registry $original_registry
+      yarn config set npmPublishRegistry $original_registry
+      yarn config set npmRegistryServer $original_registry
     fi
   else
     # lsof doesn't work in circleci
@@ -46,11 +49,14 @@ yarn verdaccio --config "./.verdaccio-ci.config.yml" --listen $port &>${output}&
 grep -q 'http address' <(tail -f $output)
 
 # Login as test user
+yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
 yarn config set npmPublishRegistry $registry
 yarn config set npmRegistryServer $registry
+yarn config set unsafeHttpWhitelist localhost
 yarn config set npmAlwaysAuth true
-yarn config set npmAuthIdent abc
-yarn config set npmAuthToken blah
+npm set registry $registry
+# Pause is important so that the username isn't interpreted as both username and password
+(echo "abc"; sleep 2; echo "abc") | yarn npm login
 
 if [ "$ci" = true ];
 then
@@ -59,16 +65,13 @@ then
 fi
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn workspaces foreach --all --no-private version minor --deferred
+yarn workspaces foreach --all --no-private version patch --deferred
 yarn version apply --all
+
 commit_to_revert="HEAD~0"
 
 # Publish packages to verdaccio
 yarn workspaces foreach --all --no-private -pt npm publish
-
-# set the npm registry because that will set it at a higher level, making local testing easier
-npm set registry $registry
-yarn config set npmRegistryServer $registry
 
 if [ "$ci" = true ];
 then
@@ -83,7 +86,7 @@ then
 
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
-  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~0`/verdaccio
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
@@ -143,6 +146,26 @@ then
   yarn install --no-immutable
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
+
+  echo 'build Spectrum 2 + Parcel test app'
+  cd ../../examples/s2-parcel-example
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
+  yarn build --public-url ./
+  mv dist ../../$verdaccio_path/s2-parcel-example
+
+  echo 'build Spectrum 2 + Webpack test app'
+  cd ../../examples/s2-webpack-5-example
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
+  yarn build
+  mv dist ../../$verdaccio_path/s2-webpack-5-example
+
+  echo 'test icon builder'
+  cd ../../examples/s2-webpack-5-example
+  mkdir icon-test
+  cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
+  npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 
   cd ../..
 

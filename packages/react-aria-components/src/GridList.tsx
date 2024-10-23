@@ -96,7 +96,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let state = useListState({
     ...props,
     collection,
-    children: undefined
+    children: undefined,
+    layoutDelegate
   });
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -374,6 +375,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
             values={[
               [CheckboxContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   selection: checkboxProps
                 }
               }],
@@ -391,6 +393,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
               }],
               [TextContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   description: descriptionProps
                 }
               }],

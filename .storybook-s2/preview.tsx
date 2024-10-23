@@ -5,6 +5,7 @@ import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
+import {withProviderSwitcher} from './custom-addons/provider';
 import './global.css';
 
 const channel = addons.getChannel();
@@ -26,7 +27,8 @@ const preview = {
           channel.on(DARK_MODE_EVENT_NAME, setDark);
           return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
         }, []);
-        return <DocsContainer {...props} theme={dark ? themes.dark : themes.light} />;
+        var style = getComputedStyle(document.body)
+        return <DocsContainer {...props} theme={{...(dark ? themes.dark : themes.light), appContentBg: style.getPropertyValue('--s2-container-bg').trim()}} />;
       },
       source: {
         // code: null, // Will disable code button, and show "No code available"
@@ -62,6 +64,12 @@ const preview = {
         brandTitle: 'React Spectrum - Spectrum 2 Preview',
         brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
       }
+    },
+    options: {
+      storySort: {
+        order: ['Intro', 'Style Macro', 'Workflow Icons', 'Illustrations', 'Migrating', 'Release Notes'],
+        method: 'alphabetical'
+      }
     }
   },
   argTypes: {
@@ -81,9 +89,6 @@ const preview = {
 };
 
 export const parameters = {
-  options: {
-    storySort: (a: any, b: any) => a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
-  },
   a11y: {
     config: {
       rules: [
@@ -96,5 +101,11 @@ export const parameters = {
   },
   layout: 'fullscreen',
 };
+
+
+
+export const decorators = [
+  withProviderSwitcher
+];
 
 export default preview;

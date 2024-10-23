@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ArbitraryValue} from './types';
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
-import {createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -87,8 +88,26 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: keyof typeof color, dark: keyof typeof color): `[${string}]` {
-  return `[light-dark(${color[light]}, ${color[dark]})]`;
+type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
+function parseColor(value: SpectrumColor) {
+  let arbitrary = parseArbitraryValue(value);
+  if (arbitrary) {
+    return arbitrary[0];
+  }
+  let [colorValue, opacity] = value.split('/');
+  colorValue = color[colorValue];
+  if (opacity) {
+    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
+  }
+  return colorValue;
+}
+
+export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
+  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+}
+
+export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
+  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
@@ -101,7 +120,7 @@ function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} 
 
 const baseSpacing = generateSpacing([
   0,
-  // 2, // spacing-50 !! TODO: should we support this?
+  2, // spacing-50
   4, // spacing-75
   8, // spacing-100
   12, // spacing-200
@@ -215,7 +234,6 @@ const sizing = {
   ...scaledSpacing,
   auto: 'auto',
   full: '100%',
-  screen: '100vh',
   min: 'min-content',
   max: 'max-content',
   fit: 'fit-content',
@@ -239,6 +257,16 @@ const sizing = {
       XL: size(20)
     }
   }
+};
+
+const height = {
+  ...sizing,
+  screen: '100vh'
+};
+
+const width = {
+  ...sizing,
+  screen: '100vw'
 };
 
 const margin = {
@@ -338,6 +366,65 @@ const i18nFonts = {
   ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
 } as const;
 
+const fontSize = {
+  // The default font size scale is for use within UI components.
+  'ui-xs': fontSizeToken('font-size-50'),
+  'ui-sm': fontSizeToken('font-size-75'),
+  ui: fontSizeToken('font-size-100'),
+  'ui-lg': fontSizeToken('font-size-200'),
+  'ui-xl': fontSizeToken('font-size-300'),
+  'ui-2xl': fontSizeToken('font-size-400'),
+  'ui-3xl': fontSizeToken('font-size-500'),
+
+  control: {
+    default: fontSizeToken('font-size-100'),
+    size: {
+      XS: fontSizeToken('font-size-50'),
+      S: fontSizeToken('font-size-75'),
+      L: fontSizeToken('font-size-200'),
+      XL: fontSizeToken('font-size-300')
+    }
+  },
+
+  'heading-2xs': fontSizeToken('heading-size-xxs'),
+  'heading-xs': fontSizeToken('heading-size-xs'),
+  'heading-sm': fontSizeToken('heading-size-s'),
+  heading: fontSizeToken('heading-size-m'),
+  'heading-lg': fontSizeToken('heading-size-l'),
+  'heading-xl': fontSizeToken('heading-size-xl'),
+  'heading-2xl': fontSizeToken('heading-size-xxl'),
+  'heading-3xl': fontSizeToken('heading-size-xxxl'),
+
+  'title-xs': fontSizeToken('title-size-xs'),
+  'title-sm': fontSizeToken('title-size-s'),
+  title: fontSizeToken('title-size-m'),
+  'title-lg': fontSizeToken('title-size-l'),
+  'title-xl': fontSizeToken('title-size-xl'),
+  'title-2xl': fontSizeToken('title-size-xxl'),
+  'title-3xl': fontSizeToken('title-size-xxxl'),
+
+  // Body is for large blocks of text, e.g. paragraphs, not in UI components.
+  'body-2xs': fontSizeToken('font-size-50'), // TODO: seems like there is no token for this
+  'body-xs': fontSizeToken('body-size-xs'),
+  'body-sm': fontSizeToken('body-size-s'),
+  body: fontSizeToken('body-size-m'),
+  'body-lg': fontSizeToken('body-size-l'),
+  'body-xl': fontSizeToken('body-size-xl'),
+  'body-2xl': fontSizeToken('body-size-xxl'),
+  'body-3xl': fontSizeToken('body-size-xxxl'),
+
+  'detail-sm': fontSizeToken('detail-size-s'),
+  detail: fontSizeToken('detail-size-m'),
+  'detail-lg': fontSizeToken('detail-size-l'),
+  'detail-xl': fontSizeToken('detail-size-xl'),
+
+  'code-xs': fontSizeToken('code-size-xs'),
+  'code-sm': fontSizeToken('code-size-s'),
+  code: fontSizeToken('code-size-m'),
+  'code-lg': fontSizeToken('code-size-l'),
+  'code-xl': fontSizeToken('code-size-xl')
+} as const;
+
 export const style = createTheme({
   properties: {
     // colors
@@ -375,6 +462,7 @@ export const style = createTheme({
         // forcedColors: 'GrayText'
       },
       heading: colorToken('heading-color'),
+      title: colorToken('title-color'),
       body: colorToken('body-color'),
       detail: colorToken('detail-color'),
       code: colorToken('code-color')
@@ -387,6 +475,7 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
         isPressed: weirdColorToken('accent-background-color-down')
       },
+      'accent-subtle': weirdColorToken('accent-subtle-background-color-default'),
       neutral: {
         default: colorToken('neutral-background-color-default'),
         isHovered: colorToken('neutral-background-color-hover'),
@@ -399,61 +488,74 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
         isPressed: weirdColorToken('neutral-subdued-background-color-down')
       },
-      'neutral-subtle': colorToken('neutral-subtle-background-color-default'),
+      'neutral-subtle': weirdColorToken('neutral-subtle-background-color-default'),
       negative: {
         default: weirdColorToken('negative-background-color-default'),
         isHovered: weirdColorToken('negative-background-color-hover'),
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
-      'negative-subdued': {
-        default: colorToken('negative-subdued-background-color-default'),
-        isHovered: colorToken('negative-subdued-background-color-hover'),
-        isFocusVisible: colorToken('negative-subdued-background-color-key-focus'),
-        isPressed: colorToken('negative-subdued-background-color-down')
-      },
-      // Sort of weird to have both subdued and subtle that map to the same color...
-      'negative-subtle': colorToken('negative-subtle-background-color-default'),
+      'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
         isHovered: weirdColorToken('informative-background-color-hover'),
         isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
         isPressed: weirdColorToken('informative-background-color-down')
       },
-      'informative-subtle': colorToken('informative-subtle-background-color-default'),
+      'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
       positive: {
         default: weirdColorToken('positive-background-color-default'),
         isHovered: weirdColorToken('positive-background-color-hover'),
         isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
         isPressed: weirdColorToken('positive-background-color-down')
       },
-      'positive-subtle': colorToken('positive-subtle-background-color-default'),
+      'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
-      'notice-subtle': colorToken('notice-subtle-background-color-default'),
+      'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
       gray: weirdColorToken('gray-background-color-default'),
+      'gray-subtle': weirdColorToken('gray-subtle-background-color-default'),
       red: weirdColorToken('red-background-color-default'),
+      'red-subtle': weirdColorToken('red-subtle-background-color-default'),
       orange: weirdColorToken('orange-background-color-default'),
+      'orange-subtle': weirdColorToken('orange-subtle-background-color-default'),
       yellow: weirdColorToken('yellow-background-color-default'),
+      'yellow-subtle': weirdColorToken('yellow-subtle-background-color-default'),
       chartreuse: weirdColorToken('chartreuse-background-color-default'),
+      'chartreuse-subtle': weirdColorToken('chartreuse-subtle-background-color-default'),
       celery: weirdColorToken('celery-background-color-default'),
+      'celery-subtle': weirdColorToken('celery-subtle-background-color-default'),
       green: weirdColorToken('green-background-color-default'),
+      'green-subtle': weirdColorToken('green-subtle-background-color-default'),
       seafoam: weirdColorToken('seafoam-background-color-default'),
+      'seafoam-subtle': weirdColorToken('seafoam-subtle-background-color-default'),
       cyan: weirdColorToken('cyan-background-color-default'),
+      'cyan-subtle': weirdColorToken('cyan-subtle-background-color-default'),
       blue: weirdColorToken('blue-background-color-default'),
+      'blue-subtle': weirdColorToken('blue-subtle-background-color-default'),
       indigo: weirdColorToken('indigo-background-color-default'),
+      'indigo-subtle': weirdColorToken('indigo-subtle-background-color-default'),
       purple: weirdColorToken('purple-background-color-default'),
+      'purple-subtle': weirdColorToken('purple-subtle-background-color-default'),
       fuchsia: weirdColorToken('fuchsia-background-color-default'),
+      'fuchsia-subtle': weirdColorToken('fuchsia-subtle-background-color-default'),
       magenta: weirdColorToken('magenta-background-color-default'),
+      'magenta-subtle': weirdColorToken('magenta-subtle-background-color-default'),
       pink: weirdColorToken('pink-background-color-default'),
+      'pink-subtle': weirdColorToken('pink-subtle-background-color-default'),
       turquoise: weirdColorToken('turquoise-background-color-default'),
+      'turquoise-subtle': weirdColorToken('turquoise-subtle-background-color-default'),
       cinnamon: weirdColorToken('cinnamon-background-color-default'),
+      'cinnamon-subtle': weirdColorToken('cinnamon-subtle-background-color-default'),
       brown: weirdColorToken('brown-background-color-default'),
+      'brown-subtle': weirdColorToken('brown-subtle-background-color-default'),
       silver: weirdColorToken('silver-background-color-default'),
+      'silver-subtle': weirdColorToken('silver-subtle-background-color-default'),
       disabled: colorToken('disabled-background-color'),
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color')
+      pasteboard: weirdColorToken('background-pasteboard-color'),
+      elevated: weirdColorToken('background-elevated-color')
     }),
     borderColor: createColorProperty({
       ...color,
@@ -522,18 +624,18 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height: sizing,
-    width: sizing,
-    containIntrinsicWidth: sizing,
-    containIntrinsicHeight: sizing,
-    minHeight: sizing,
+    height,
+    width,
+    containIntrinsicWidth: width,
+    containIntrinsicHeight: height,
+    minHeight: height,
     maxHeight: {
-      ...sizing,
+      ...height,
       none: 'none'
     },
-    minWidth: sizing,
+    minWidth: width,
     maxWidth: {
-      ...sizing,
+      ...width,
       none: 'none'
     },
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
@@ -590,7 +692,7 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'Adobe Colin VF, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: 'adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
@@ -599,65 +701,33 @@ export const style = createTheme({
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize: {
-      // The default font size scale is for use within UI components.
-      'ui-xs': fontSizeToken('font-size-50'),
-      'ui-sm': fontSizeToken('font-size-75'),
-      ui: fontSizeToken('font-size-100'),
-      'ui-lg': fontSizeToken('font-size-200'),
-      'ui-xl': fontSizeToken('font-size-300'),
-      'ui-2xl': fontSizeToken('font-size-400'),
-      'ui-3xl': fontSizeToken('font-size-500'),
+    fontSize,
+    fontWeight: createMappedProperty((value, property) => {
+      if (property === 'fontWeight') {
+        return {
+          // Set font-variation-settings in addition to font-weight to work around typekit issue.
+          fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
+          fontWeight: value as any,
+          fontSynthesisWeight: 'none'
+        };
+      }
 
-      control: {
-        default: fontSizeToken('font-size-100'),
-        size: {
-          XS: fontSizeToken('font-size-50'),
-          S: fontSizeToken('font-size-75'),
-          L: fontSizeToken('font-size-200'),
-          XL: fontSizeToken('font-size-300')
-        }
-      },
-
-      'heading-xs': fontSizeToken('heading-size-xs'),
-      'heading-sm': fontSizeToken('heading-size-s'),
-      heading: fontSizeToken('heading-size-m'),
-      'heading-lg': fontSizeToken('heading-size-l'),
-      'heading-xl': fontSizeToken('heading-size-xl'),
-      'heading-2xl': fontSizeToken('heading-size-xxl'),
-      'heading-3xl': fontSizeToken('heading-size-xxxl'),
-
-      // Body is for large blocks of text, e.g. paragraphs, not in UI components.
-      'body-xs': fontSizeToken('body-size-xs'),
-      'body-sm': fontSizeToken('body-size-s'),
-      body: fontSizeToken('body-size-m'),
-      'body-lg': fontSizeToken('body-size-l'),
-      'body-xl': fontSizeToken('body-size-xl'),
-      'body-2xl': fontSizeToken('body-size-xxl'),
-      'body-3xl': fontSizeToken('body-size-xxxl'),
-
-      'detail-sm': fontSizeToken('detail-size-s'),
-      detail: fontSizeToken('detail-size-m'),
-      'detail-lg': fontSizeToken('detail-size-l'),
-      'detail-xl': fontSizeToken('detail-size-xl'),
-
-      'code-xs': fontSizeToken('code-size-xs'),
-      'code-sm': fontSizeToken('code-size-s'),
-      code: fontSizeToken('code-size-m'),
-      'code-lg': fontSizeToken('code-size-l'),
-      'code-xl': fontSizeToken('code-size-xl')
-    },
-    fontWeight: {
+      return {[property]: value};
+    }, {
       ...fontWeightBase,
       heading: {
         default: fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
       },
+      title: {
+        default: fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
+      },
       detail: {
         default: fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
       }
-    },
+    }),
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
@@ -667,6 +737,10 @@ export const style = createTheme({
       heading: {
         default: getToken('heading-line-height'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('heading-cjk-line-height')
+      },
+      title: {
+        default: getToken('title-line-height'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('title-cjk-line-height')
       },
       body: {
         default: getToken('body-line-height'),
@@ -707,11 +781,13 @@ export const style = createTheme({
     boxShadow: {
       emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
       elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
+      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
       emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
       elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
+      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     borderTopStartRadius: createRenamedProperty('borderStartStartRadius', radius),
@@ -888,7 +964,20 @@ export const style = createTheme({
       overflowY: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap'
-    })
+    }),
+    font: (value: keyof typeof fontSize) => {
+      let type = value.split('-')[0];
+      if (type === 'control') {
+        type = 'ui';
+      }
+      return {
+        fontFamily: type === 'code' ? 'code' : 'sans',
+        fontSize: value,
+        fontWeight: type === 'heading' || type === 'title' || type === 'detail' ? type : 'normal',
+        lineHeight: type,
+        color: type === 'ui' ? 'body' : type
+      };
+    }
   },
   conditions: {
     forcedColors: '@media (forced-colors: active)',

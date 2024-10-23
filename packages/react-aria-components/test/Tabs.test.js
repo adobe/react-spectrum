@@ -116,7 +116,10 @@ describe('Tabs', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-hovered');
@@ -125,10 +128,35 @@ describe('Tabs', () => {
     await user.hover(tab);
     expect(tab).toHaveAttribute('data-hovered', 'true');
     expect(tab).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
 
     await user.unhover(tab);
     expect(tab).not.toHaveAttribute('data-hovered');
     expect(tab).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not show hover state when item is not interactive', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTabs({disabledKeys: ['a', 'b', 'c']}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let tab = getAllByRole('tab')[0];
+
+    expect(tab).not.toHaveAttribute('data-hovered');
+    expect(tab).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
+
+    await user.hover(tab);
+    expect(tab).not.toHaveAttribute('data-hovered');
+    expect(tab).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {

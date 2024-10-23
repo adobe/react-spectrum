@@ -11,9 +11,17 @@
  */
 
 import {categorizeArgTypes} from './utils';
+import {
+  Content,
+  ContextualHelp,
+  Footer,
+  Heading,
+  Link,
+  SearchField,
+  Text
+} from '../src';
 import type {Meta} from '@storybook/react';
-import {SearchField} from '../src';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof SearchField> = {
   component: SearchField,
@@ -23,7 +31,8 @@ const meta: Meta<typeof SearchField> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
-  }
+  },
+  title: 'SearchField'
 };
 
 export default meta;
@@ -42,5 +51,56 @@ CustomWidth.args = {
 CustomWidth.parameters = {
   docs: {
     disable: true
+  }
+};
+
+export const ContextualHelpExample = (args: any) => <SearchField {...args} />;
+
+ContextualHelpExample.args = {
+  label: 'Search',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>Search tips</Heading>
+      <Content>
+        <Text>
+          You can use modifiers like "date:" and "from:" to search by specific attributes.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://react-spectrum.adobe.com/"
+          target="_blank">React Spectrum</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<SearchField
+  label="Search"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Search tips</Heading>
+      <Content>
+        <Text>
+          You can use modifiers like "date:" and "from:" to search by specific attributes.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://react-spectrum.adobe.com/"
+          target="_blank">React Spectrum</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+/>`;
+      }
+    }
   }
 };

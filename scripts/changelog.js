@@ -8,7 +8,7 @@ const octokit = new Octokit();
 run();
 
 async function run() {
-  let packages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+  let packages = exec('yarn workspaces list --json').toString().split(require('os').EOL).filter(Boolean).map((x) => JSON.parse(x));
   let commits = new Map();
 
   // Diff each package individually. Some packages might have been skipped during last release,

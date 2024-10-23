@@ -15,7 +15,7 @@ import {CombinedTooltip} from '../src/Tooltip';
 import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
@@ -25,7 +25,9 @@ const meta: Meta<typeof CombinedTooltip> = {
   tags: ['autodocs'],
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
-  }
+  },
+  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>],
+  title: 'Tooltip'
 };
 
 export default meta;
@@ -78,6 +80,15 @@ export const Example = (args: any) => {
   );
 };
 
+Example.story = {
+  argTypes: {
+    isOpen: {
+      control: 'select',
+      options: [true, false, undefined]
+    }
+  }
+};
+
 export const LongLabel = (args: any) => {
   let {
     trigger,
@@ -114,8 +125,26 @@ export const LongLabel = (args: any) => {
   );
 };
 
+LongLabel.story = {
+  argTypes: {
+    isOpen: {
+      control: 'select',
+      options: [true, false, undefined]
+    }
+  }
+};
+
 export const ColorScheme = (args: any) => (
   <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
     <Example {...args} />
   </Provider>
 );
+
+ColorScheme.story = {
+  argTypes: {
+    isOpen: {
+      control: 'select',
+      options: [true, false, undefined]
+    }
+  }
+};
