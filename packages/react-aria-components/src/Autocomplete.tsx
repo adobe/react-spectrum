@@ -13,20 +13,20 @@
 import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {ContextValue, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType, RefObject} from '@react-types/shared';
-import {GroupContext} from './Group';
+import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {MenuContext} from './Menu';
-import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, useCallback, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, useCallback} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria';
+import {useObjectRef} from '@react-aria/utils';
 
+// TODO: I've kept isDisabled because it might be useful to a user for changing what the menu renders if the autocomplete is disabled,
+// but what about isReadOnly. TBH is isReadOnly useful in the first place? What would a readonly Autocomplete do?
 export interface AutocompleteRenderProps {
   /**
    * Whether the autocomplete is disabled.
-   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
@@ -42,29 +42,16 @@ interface InternalAutocompleteContextValue {
   inputValue: string
 }
 
-export const AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLDivElement>>(null);
+export const AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 export const InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
-function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLDivElement>) {
+function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
-
-  return (
-    <AutocompleteInner autocompleteRef={ref} props={props} />
-  );
-}
-interface AutocompleteInnerProps {
-  props: AutocompleteProps,
-  // collection: Collection<Node<T>>,
-  autocompleteRef: RefObject<HTMLDivElement | null>
-}
-
-// TODO: maybe we don't need inner anymore
-function AutocompleteInner({props, autocompleteRef: ref}: AutocompleteInnerProps) {
   let {defaultFilter} = props;
   let state = useAutocompleteState(props);
-  let inputRef = useRef<HTMLInputElement>(null);
+  let inputRef = useObjectRef<HTMLInputElement>(ref);
   let [labelRef, label] = useSlot();
   let {contains} = useFilter({sensitivity: 'base'});
   let {
@@ -85,12 +72,8 @@ function AutocompleteInner({props, autocompleteRef: ref}: AutocompleteInnerProps
 
   let renderProps = useRenderProps({
     ...props,
-    values: renderValues,
-    defaultClassName: 'react-aria-Autocomplete'
+    values: renderValues
   });
-
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
 
   let filterFn = useCallback((nodeTextValue: string) => {
     if (defaultFilter) {
@@ -111,15 +94,9 @@ function AutocompleteInner({props, autocompleteRef: ref}: AutocompleteInnerProps
             description: descriptionProps
           }
         }],
-        [GroupContext, {isDisabled: props.isDisabled || false}],
         [InternalAutocompleteContext, {register, filterFn, inputValue: state.inputValue}]
       ]}>
-      <div
-        {...DOMProps}
-        {...renderProps}
-        ref={ref}
-        slot={props.slot || undefined}
-        data-disabled={props.isDisabled || undefined} />
+      {renderProps.children}
     </Provider>
   );
 }

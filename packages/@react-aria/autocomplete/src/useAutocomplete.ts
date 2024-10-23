@@ -15,13 +15,15 @@ import type {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, mergeProps, useId, useLabels} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {InputHTMLAttributes, KeyboardEvent, useEffect, useRef} from 'react';
+import {InputHTMLAttributes, KeyboardEvent, ReactNode, useEffect, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, InputDOMProps, AriaLabelingProps {}
+export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, InputDOMProps, AriaLabelingProps {
+  children: ReactNode
+}
 
 // TODO: all of this is menu specific but will need to eventually be agnostic to what collection element is inside
 // Update all instances of "menu" then
@@ -78,7 +80,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     // to close virtual keyboard, depends if we think this experience is only for in a tray/popover
     switch (e.key) {
       case 'Escape':
-        if (state.inputValue !== '') {
+        if (state.inputValue !== '' && !isReadOnly) {
           state.setInputValue('');
         } else {
           e.continuePropagation();
@@ -103,7 +105,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
   let {labelProps, inputProps, descriptionProps} = useTextField({
     ...props as any,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
+    onKeyDown: chain(onKeyDown, props.onKeyDown),
     value: state.inputValue,
     autoComplete: 'off',
     validate: undefined
