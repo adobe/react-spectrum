@@ -10,17 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../src';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, SpectrumAccordionProps} from '../src';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
-export default {
+const meta: Meta<SpectrumAccordionProps> = {
   title: 'Accordion',
   component: Accordion,
-  argTypes: {}
-} as ComponentMeta<typeof Accordion>;
+  argTypes: {
+    isDisabled: {
+      control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
+    }
+  }
+};
 
-export type AccordionStory = ComponentStoryObj<typeof Accordion>;
+export default meta;
+type AccordionStory = StoryObj<typeof Accordion>;
 
 export const Default: AccordionStory = {
   render: (args) => (
@@ -39,6 +47,42 @@ export const Default: AccordionStory = {
         </DisclosureHeader>
         <DisclosurePanel>
           <p>People content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>
+  )
+};
+
+export const WithExpandedKeys: AccordionStory = {
+  ...Default,
+  args: {defaultExpandedKeys: ['files']}
+};
+
+export const WithDisabledDisclosure: AccordionStory = {
+  render: (args) => (
+    <Accordion {...args}>
+      <Disclosure id="files">
+        <DisclosureHeader>
+          Your files
+        </DisclosureHeader>
+        <DisclosurePanel>
+          files
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="shared">
+        <DisclosureHeader>
+          Shared with you
+        </DisclosureHeader>
+        <DisclosurePanel>
+          shared
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="last" isDisabled>
+        <DisclosureHeader>
+          Last item
+        </DisclosureHeader>
+        <DisclosurePanel>
+          last
         </DisclosurePanel>
       </Disclosure>
     </Accordion>
