@@ -230,6 +230,10 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
               state.selectionManager.setFocused(false);
             }
             break;
+          case 'Escape':
+            // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
+            // to continuePropagation to the overlay depending on the inputValue
+            return;
         }
 
         let focusedId;

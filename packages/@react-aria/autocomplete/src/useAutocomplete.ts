@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, FocusableElement, InputDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
 import type {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, mergeProps, useId, useLabels} from '@react-aria/utils';
-import {focusSafely} from '@react-aria/focus';
-import {InputHTMLAttributes, KeyboardEvent, ReactNode, useEffect, useRef} from 'react';
+import {InputHTMLAttributes, KeyboardEvent, ReactNode, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -76,8 +75,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
 
     // TODO: how best to trigger the focused element's action? Currently having the registered callback handle dispatching a
     // keyboard event
-    // Also, we might want to add popoverRef so we can bring in MobileCombobox's additional handling for Enter
-    // to close virtual keyboard, depends if we think this experience is only for in a tray/popover
     switch (e.key) {
       case 'Escape':
         if (state.inputValue !== '' && !isReadOnly) {
@@ -107,8 +104,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     onChange: state.setInputValue,
     onKeyDown: chain(onKeyDown, props.onKeyDown),
     value: state.inputValue,
-    autoComplete: 'off',
-    validate: undefined
+    autoComplete: 'off'
   }, inputRef);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
@@ -117,12 +113,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     'aria-label': stringFormatter.format('menuLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
-
-  // TODO: add the stuff from mobile combobox, check if I need the below when testing in mobile devices
-  // removed touch end since we did the same in MobileComboboxTray
-  useEffect(() => {
-    focusSafely(inputRef.current as FocusableElement);
-  }, [inputRef]);
 
   return {
     labelProps,

@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Header, Input, Keyboard, Label, Menu, Section, Separator, Text} from 'react-aria-components';
+import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Keyboard, Label, Menu, Popover, Section, Separator, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -218,4 +218,39 @@ export const AutocompleteCaseSensitive = {
     return <CaseSensitiveFilter {...args} />;
   },
   name: 'Autocomplete, case sensitive filter'
+};
+
+export const AutocompleteInPopover = {
+  render: ({onAction, isDisabled, isReadOnly}) => {
+    return (
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20
+          }}>
+          <Dialog>
+            <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
+              <div>
+                <Label style={{display: 'block'}}>Test</Label>
+                <Input autoFocus />
+                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                <Menu className={styles.menu} items={items} onAction={onAction}>
+                  {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+                </Menu>
+              </div>
+            </Autocomplete>
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+
+    );
+  },
+  name: 'Autocomplete in popover'
 };
