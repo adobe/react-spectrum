@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import React  from "react";
 import { ActionMenu, Avatar, Card, CardPreview, CardView, Collection, CollectionCardPreview, Content, Image, MenuItem, SkeletonCollection, Text } from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';

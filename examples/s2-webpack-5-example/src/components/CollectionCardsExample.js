@@ -11,6 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
+import React from "react";
 import { Card, CardView, Collection, CollectionCardPreview, Content, Image, SkeletonCollection, Text } from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
