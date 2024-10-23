@@ -48,6 +48,7 @@ const tagStyles = tv({
   },
   compoundVariants: (Object.keys(colors) as Color[]).map((color) => ({
     isSelected: false,
+    isDisabled: false,
     color,
     class: colors[color]
   }))
