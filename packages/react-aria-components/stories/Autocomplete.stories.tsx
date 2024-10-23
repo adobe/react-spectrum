@@ -220,6 +220,7 @@ export const AutocompleteCaseSensitive = {
   name: 'Autocomplete, case sensitive filter'
 };
 
+// TODO: make it close when selecting an option
 export const AutocompleteInPopover = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
