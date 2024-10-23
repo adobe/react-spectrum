@@ -62,12 +62,12 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
 
-function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+function Select<T extends object = {}>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (

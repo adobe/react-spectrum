@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useRef, useState} from 'react';
@@ -1796,6 +1796,39 @@ describe('Table', () => {
         let checkbox = within(row).queryByRole('checkbox');
         expect(checkbox).toBeInTheDocument();
       }
+    });
+  });
+
+  describe('contexts', () => {
+    it('should not propagate the checkbox context from selection into other cells', async () => {
+      let tree = render(
+        <Table aria-label="Files" selectionMode="multiple">
+          <MyTableHeader>
+            <MyColumn id="name" isRowHeader>Name</MyColumn>
+            <MyColumn>Type</MyColumn>
+            <MyColumn>Date Modified</MyColumn>
+          </MyTableHeader>
+          <TableBody>
+            <MyRow id="1" textValue="Games">
+              <Cell>Games</Cell>
+              <Cell>File folder</Cell>
+              <Cell>
+                <DialogTrigger>
+                  <Button>Open</Button>
+                  <Modal>
+                    <Dialog>
+                      <Checkbox><Label>Agree</Label></Checkbox>
+                    </Dialog>
+                  </Modal>
+                </DialogTrigger>
+              </Cell>
+            </MyRow>
+          </TableBody>
+        </Table>
+      );
+      await user.click(tree.getByRole('button'));
+      let checkbox = tree.getByRole('checkbox');
+      expect(checkbox).toBeInTheDocument();
     });
   });
 });

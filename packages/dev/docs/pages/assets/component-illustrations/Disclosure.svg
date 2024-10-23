@@ -1,0 +1,5 @@
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px; max-height: 205px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266 163">
+  <rect id="Rectangle_136671" data-name="Rectangle 136671" width="266" height="163" fill="var(--anatomy-gray-100)"/>
+  <path id="Path_934" data-name="Path 934" d="M6.155,5a.908.908,0,0,0-.3-.7l-4-4a.967.967,0,0,0-1.4,0,.967.967,0,0,0,0,1.4L3.655,5,.355,8.3a.972.972,0,0,0-.1,1.4.972.972,0,0,0,1.4.1l.1-.1,4-4A1.012,1.012,0,0,0,6.155,5Z" transform="translate(89.937 79.198)" fill="var(--anatomy-gray-600)"/>
+  <text id="Recent" transform="translate(107.015 88.67)" fill="var(--anatomy-gray-900)" font-size="18" font-family="Adobe-Clean" font-weight="700"><tspan x="0" y="0">Recent</tspan></text>
+</svg>

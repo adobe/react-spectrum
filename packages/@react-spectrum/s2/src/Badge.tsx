@@ -15,7 +15,7 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
-import {fontRelative, style} from '../style' with {type: 'macro'};
+import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {SkeletonWrapper} from './Skeleton';
@@ -26,13 +26,13 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface BadgeStyleProps {
   /**
    * The size of the badge.
-   * 
+   *
    * @default 'S'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The variant changes the background color of the badge. When badge has a semantic meaning, they should use the variant for semantic colors.
-   * 
+   *
    * @default 'neutral'
    */
   variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
@@ -127,34 +127,34 @@ const badge = style<BadgeStyleProps>({
       },
       subtle: {
         variant: {
-          accent: 'accent-200',
+          accent: 'accent-subtle',
           informative: 'informative-subtle',
           neutral: 'neutral-subtle',
           positive: 'positive-subtle',
           notice: 'notice-subtle',
           negative: 'negative-subtle',
-          gray: 'gray-100',
-          red: 'red-200',
-          orange: 'orange-200',
-          yellow: 'yellow-200',
-          charteuse: 'chartreuse-200',
-          celery: 'celery-200',
-          green: 'green-200',
-          seafoam: 'seafoam-200',
-          cyan: 'cyan-200',
-          blue: 'blue-200',
-          indigo: 'indigo-200',
-          purple: 'purple-200',
-          fuchsia: 'fuchsia-200',
-          magenta: 'magenta-200',
-          pink: 'pink-200',
-          turquoise: 'turquoise-200',
-          brown: 'brown-200',
-          cinnamon: 'cinnamon-200',
-          silver: 'silver-200'
+          gray: 'gray-subtle',
+          red: 'red-subtle',
+          orange: 'orange-subtle',
+          yellow: 'yellow-subtle',
+          charteuse: 'chartreuse-subtle',
+          celery: 'celery-subtle',
+          green: 'green-subtle',
+          seafoam: 'seafoam-subtle',
+          cyan: 'cyan-subtle',
+          blue: 'blue-subtle',
+          indigo: 'indigo-subtle',
+          purple: 'purple-subtle',
+          fuchsia: 'fuchsia-subtle',
+          magenta: 'magenta-subtle',
+          pink: 'pink-subtle',
+          turquoise: 'turquoise-subtle',
+          brown: 'brown-subtle',
+          cinnamon: 'cinnamon-subtle',
+          silver: 'silver-subtle'
         }
       },
-      outline: 'gray-25'
+      outline: 'layer-2'
     }
   },
   borderStyle: 'solid',
@@ -165,12 +165,12 @@ const badge = style<BadgeStyleProps>({
     fillStyle: {
       outline: {
         variant: {
-          accent: 'accent-800',
-          informative: 'informative-800',
-          neutral: 'gray-700',
-          positive: 'positive-700',
-          notice: 'notice-700',
-          negative: 'negative-800'
+          accent: lightDark('accent-800', 'accent-900'), // accent-visual-color
+          informative: lightDark('informative-800', 'informative-900'), // informative-visual-color
+          neutral: lightDark('gray-500', 'gray-600'), // neutral-visual-color
+          positive: lightDark('positive-800', 'positive-900'), // positive-visual-color
+          notice: lightDark('notice-800', 'notice-900'), // notice-visual-color
+          negative: lightDark('negative-800', 'negative-900') // negative-visual-color
         }
       }
     }
