@@ -23,7 +23,7 @@ import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -86,11 +86,11 @@ const slideLeftKeyframes = keyframes(`
 
 let popover = style({
   ...colorScheme(),
-  '--popoverBackground': {
+  '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'
   },
-  backgroundColor: '--popoverBackground',
+  backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',
   filter: {
     isArrowShown: 'elevated'
@@ -168,13 +168,16 @@ let popover = style({
   },
   transition: '[opacity, transform]',
   willChange: '[opacity, transform]',
-  isolation: 'isolate'
+  isolation: 'isolate',
+  pointerEvents: {
+    isExiting: 'none'
+  }
 }, getAllowedOverrides());
 // TODO: animations and real Popover Arrow
 
 let arrow = style({
   display: 'block',
-  fill: '--popoverBackground',
+  fill: '--s2-container-bg',
   rotate: {
     default: 180,
     placement: {

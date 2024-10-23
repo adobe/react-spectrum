@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps} from 'react-aria';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
@@ -17,7 +17,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -31,13 +31,14 @@ export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<an
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
+  let {navProps} = useBreadcrumbs(props);
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => (
         <ol
           ref={ref}
-          {...filterDOMProps(props, {labelable: true})}
+          {...navProps}
           slot={props.slot || undefined}
           style={props.style}
           className={props.className ?? 'react-aria-Breadcrumbs'}>
@@ -61,14 +62,17 @@ export interface BreadcrumbRenderProps {
    * Whether the breadcrumb is for the current page.
    * @selector [data-current]
    */
-  isCurrent: boolean
+  isCurrent: boolean,
+  /**
+   * Whether the breadcrumb is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean
 }
 
 export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {
   /** A unique id for the breadcrumb, which will be passed to `onAction` when the breadcrumb is pressed. */
-  id?: Key,
-  /** The children of the breadcrumb, typically a `<Link>`. */
-  children: ReactNode
+  id?: Key
 }
 
 /**

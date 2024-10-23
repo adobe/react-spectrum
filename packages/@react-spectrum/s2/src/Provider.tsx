@@ -13,9 +13,10 @@
 import type {ColorScheme, Router} from '@react-types/provider';
 import {colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {createContext, JSX, ReactNode, useContext} from 'react';
+import {generateDefaultColorSchemeStyles} from './page.macro' with {type: 'macro'};
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
 import {mergeStyles} from '../style/runtime';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
 export interface ProviderProps extends UnsafeStyles {
@@ -52,7 +53,7 @@ export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | nul
 export function Provider(props: ProviderProps) {
   let result = <ProviderInner {...props} />;
   let parentColorScheme = useContext(ColorSchemeContext);
-  let colorScheme = props.colorScheme || parentColorScheme || 'light dark';
+  let colorScheme = props.colorScheme || parentColorScheme;
   if (colorScheme !== parentColorScheme) {
     result = <ColorSchemeContext.Provider value={colorScheme}>{result}</ColorSchemeContext.Provider>;
   }
@@ -68,13 +69,26 @@ export function Provider(props: ProviderProps) {
   return result;
 }
 
+generateDefaultColorSchemeStyles();
+
 let providerStyles = style({
   ...colorScheme(),
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: {
+      background: {
+        base: 'base',
+        'layer-1': 'layer-1',
+        'layer-2': 'layer-2'
+      }
+    }
+  },
   backgroundColor: {
+    // Don't set a background unless one is requested.
     background: {
-      base: 'base',
-      'layer-1': 'layer-1',
-      'layer-2': 'layer-2'
+      base: '--s2-container-bg',
+      'layer-1': '--s2-container-bg',
+      'layer-2': '--s2-container-bg'
     }
   }
 });

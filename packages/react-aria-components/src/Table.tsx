@@ -1118,6 +1118,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             values={[
               [CheckboxContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   selection: checkboxProps
                 }
               }],

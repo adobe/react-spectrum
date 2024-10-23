@@ -36,13 +36,16 @@ import {StyleString} from './types';
 //   };
 // }
 
-export function mergeStyles(...styles: (StyleString<string> | null | undefined)[]): string {
+export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {
+  let definedStyles = styles.filter(Boolean) as StyleString[];
+  if (definedStyles.length === 1) {
+    return definedStyles[0];
+  }
+
   let map = new Map();
-  for (let style of styles) {
-    if (style) {
-      for (let [k, v] of parse(style)) {
-        map.set(k, v);
-      }
+  for (let style of definedStyles) {
+    for (let [k, v] of parse(style)) {
+      map.set(k, v);
     }
   }
   
@@ -50,7 +53,7 @@ export function mergeStyles(...styles: (StyleString<string> | null | undefined)[
   for (let value of map.values()) {
     res += value;
   }
-  return res;
+  return res as StyleString;
 }
 
 function parse(s: string) {

@@ -13,17 +13,20 @@
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Alignment, DOMRef, NecessityIndicator} from '@react-types/shared';
 import AsteriskIcon from '../ui-icons/Asterisk';
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
-import {fieldInput, fieldLabel, focusRing, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useId} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
   isDisabled?: boolean,
@@ -35,10 +38,12 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   includeNecessityIndicatorInAccessibilityName?: boolean,
   staticColor?: 'white' | 'black',
   contextualHelp?: ReactNode,
+  isQuiet?: boolean,
   children?: ReactNode
 }
 
 function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isDisabled,
     isRequired,
@@ -49,6 +54,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelPosition,
     staticColor,
     contextualHelp,
+    isQuiet,
     UNSAFE_style,
     UNSAFE_className = '',
     ...labelProps
@@ -59,6 +65,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let fallbackLabelPropsId = useId();
   if (contextualHelp && !labelProps.id) {
     labelProps.id = fallbackLabelPropsId;
+  }
+
+  if (!props.children) {
+    return null;
   }
 
   return (
@@ -80,9 +90,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         contain: {
           labelPosition: {
             top: 'inline-size'
-          }
+          },
+          isQuiet: 'none'
         }
-      })({labelAlign, labelPosition})}>
+      })({labelAlign, labelPosition, isQuiet})}>
       <Label
         {...labelProps}
         ref={domRef}
@@ -94,14 +105,14 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
             &nbsp;
             {necessityIndicator === 'icon' &&
               <AsteriskIcon
-                size={size}
+                size={size === 'S' ? 'M' : size}
                 className={style({
                   '--iconPrimary': {
                     type: 'fill',
                     value: 'currentColor'
                   }
                 })}
-                aria-label={includeNecessityIndicatorInAccessibilityName ? '(required)' : undefined} />
+                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined} />
             }
             {necessityIndicator === 'label' &&
               /* The necessity label is hidden to screen readers if the field is required because
@@ -109,7 +120,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
               * so no need to duplicate it here. If optional, we do want it to be announced here.
               */
               <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
-                {isRequired ? '(required)' : '(optional)' /* TODO translate */}
+                {isRequired ? stringFormatter.format('label.(required)') : stringFormatter.format('label.(optional)')}
               </span>
             }
           </span>
@@ -117,7 +128,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
       </Label>
       {contextualHelp && (
         <CenterBaseline
-          className={style({
+          styles={style({
             display: 'inline-flex',
             height: 0,
             marginStart: 4
@@ -153,8 +164,7 @@ const fieldGroupStyles = style({
   height: 'control',
   boxSizing: 'border-box',
   paddingX: 'edge-to-text',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   borderRadius: 'control',
   borderWidth: 2,
   borderStyle: 'solid',
@@ -227,6 +237,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         color: '[inherit]',
         fontFamily: '[inherit]',
         fontSize: '[inherit]',
+        fontWeight: '[inherit]',
         flexGrow: 1,
         flexShrink: 1,
         minWidth: 0,
@@ -253,10 +264,8 @@ const helpTextStyles = style({
   gridArea: 'helptext',
   display: 'flex',
   alignItems: 'baseline',
-  lineHeight: 'ui',
   gap: 'text-to-visual',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   color: {
     default: 'neutral-subdued',
     isInvalid: 'negative',
@@ -313,7 +322,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}) {
         [IconContext, {
           render: centerBaseline({
             slot: 'icon',
-            className: style({
+            styles: style({
               order: 0,
               flexShrink: 0,
               '--iconPrimary': {

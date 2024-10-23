@@ -1,0 +1,226 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dynamic - Renames Item to ComboBoxItem 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let options = [
+  {id: 1, name: 'Aerospace'},
+  {id: 2, name: 'Mechanical'}
+];
+<div>
+  <ComboBox
+    defaultItems={options}
+    label="Pick an engineering major">
+    {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
+  </ComboBox>
+</div>"
+`;
+
+exports[`Dynamic - Renames key to id 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+const items = [
+  {id: 1, name: 'News'},
+  {id: 2, name: 'Travel'},
+  {id: 3, name: 'Gaming'},
+  {id: 4, name: 'Shopping'}
+];
+<div>
+  <ComboBox
+    defaultItems={options}
+    label="Pick an engineering major">
+    {item => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}
+  </ComboBox>
+  <ComboBox
+    defaultItems={options}
+    label="Pick an engineering major">
+    {item => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}
+  </ComboBox>
+  <ComboBox
+    defaultItems={options}
+    label="Pick an engineering major">
+    {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
+  </ComboBox>
+</div>"
+`;
+
+exports[`Removes isQuiet 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`Removes placeholder 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let placeholder = 'is this actually removed?';
+let props = {placeholder: 'is this actually removed?'};
+<div>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`Static - Converts menuWidth to px value 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let menuWidth = 'size-10';
+let props = {menuWidth: 'size-10'};
+<div>
+  <ComboBox label="Favorite Animal" menuWidth={1}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Favorite Animal" menuWidth={4}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Favorite Animal" menuWidth={480}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Favorite Animal" // TODO(S2-upgrade): Unable to convert CSS unit to a pixel value
+  menuWidth="50%">
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Favorite Animal" // TODO(S2-upgrade): Prop menuWidth could not be automatically updated because menuWidth could not be followed.
+  menuWidth={menuWidth}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Favorite Animal" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`Static - Renames Item to ComboBoxItem 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+<div>
+  <ComboBox label="Favorite Animal">
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`Static - Renames key to id 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let externalKey = 'travel';
+<div>
+  <ComboBox label="Favorite Animal">
+    <ComboBoxItem id="red panda">Red Panda</ComboBoxItem>
+    <ComboBoxItem id="cat">Cat</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <ComboBox
+    label="Static ComboBox items example"
+    isInvalid>
+    <ComboBoxItem>News</ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Static ComboBox items example">
+    <ComboBoxItem>News</ComboBoxItem>
+  </ComboBox>
+  <ComboBox
+    label="Static ComboBox items example"
+    isInvalid>
+    <ComboBoxItem>News</ComboBoxItem>
+  </ComboBox>
+  <ComboBox
+    label="Static ComboBox items example"
+    // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+    validationState={validationState}>
+    <ComboBoxItem>News</ComboBoxItem>
+  </ComboBox>
+  <ComboBox
+    label="Static ComboBox items example"
+    // TODO(S2-upgrade): check this spread for style props
+    {...props}>
+    <ComboBoxItem>News</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 2`] = `
+"import { ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <ComboBox isInvalid>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+  <ComboBox // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <ComboBoxItem>Red Panda</ComboBoxItem>
+    <ComboBoxItem>Cat</ComboBoxItem>
+  </ComboBox>
+</div>"
+`;
+
+exports[`handles sections 1`] = `
+"import { ComboBoxSection, ComboBoxItem, ComboBox } from "@react-spectrum/s2";
+<ComboBox>
+  <ComboBoxSection><Header>Section title</Header>
+    <ComboBoxItem>Item one</ComboBoxItem>
+    <ComboBoxItem>Item two</ComboBoxItem>
+  </ComboBoxSection>
+</ComboBox>"
+`;

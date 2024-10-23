@@ -23,7 +23,8 @@ const meta: Meta<typeof ActionMenu> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onOpenChange'])
-  }
+  },
+  title: 'ActionMenu'
 };
 
 export default meta;
@@ -40,6 +41,7 @@ export const Example: Story = {
     );
   }
 };
+
 interface IExampleItem {
   id: string,
   label: string

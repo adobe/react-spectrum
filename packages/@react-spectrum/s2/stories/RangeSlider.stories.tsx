@@ -25,7 +25,8 @@ const meta: Meta<typeof RangeSlider> = {
   tags: ['autodocs'],
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}}
-  }
+  },
+  title: 'RangeSlider'
 };
 
 export default meta;

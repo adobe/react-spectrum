@@ -15,12 +15,12 @@ import {
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {FocusableRef} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
@@ -52,8 +52,7 @@ const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   transition: 'colors',
   color: {
     default: 'neutral',
@@ -106,7 +105,8 @@ const circle = style<RenderProps>({
 function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
-  let domRef = useFocusableRef(ref);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let domRef = useFocusableRef(ref, inputRef);
   let isInForm = !!useContext(FormContext);
   let {
     size = 'M',
@@ -117,6 +117,7 @@ function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
     <AriaRadio
       {...allProps}
       ref={domRef}
+      inputRef={inputRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.styles)}>
       {renderProps => (

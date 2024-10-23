@@ -16,6 +16,7 @@ import {
   PopoverProps as AriaPopoverProps,
   Section as AriaSection,
   Button,
+  ContextValue,
   InputContext,
   ListBox,
   ListBoxItem,
@@ -24,7 +25,7 @@ import {
   Provider,
   SectionProps
 } from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -40,27 +41,29 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, forwardRef, ReactNode, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
-import {createFocusableRef, useFocusableRef} from '@react-spectrum/utils';
+import {createContext, CSSProperties, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
+import {createFocusableRef} from '@react-spectrum/utils';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {FocusableRef, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
+import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {menu} from './Picker';
 import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {Placement} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
+import {TextFieldRef} from '@react-types/textfield';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface ComboboxStyleProps {
   /**
    * The size of the Combobox.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
@@ -77,18 +80,20 @@ export interface ComboBoxProps<T extends object> extends
     /**
      * Direction the menu will render relative to the Picker.
      *
-     * @default "bottom"
+     * @default 'bottom'
      */
     direction?: 'bottom' | 'top',
     /**
      * Alignment of the menu relative to the input target.
      *
-     * @default "start"
+     * @default 'start'
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number
 }
+
+export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
 const inputButton = style({
   display: 'flex',
@@ -144,9 +149,10 @@ const iconStyles = style({
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
-function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: FocusableRef<HTMLDivElement>) {
-  let domRef = useFocusableRef(ref);
+function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+  [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
   let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useRef<HTMLDivElement>(null);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -257,6 +263,9 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: FocusableRef<H
               {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
               <Button
                 ref={buttonRef}
+                // Prevent press scale from sticking while ComboBox is open.
+                // @ts-ignore
+                isPressed={false}
                 style={renderProps => pressScale(buttonRef)(renderProps)}
                 className={renderProps => inputButton({
                   ...renderProps,
@@ -292,11 +301,11 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: FocusableRef<H
               })}>
               <Provider
                 values={[
-                  [HeaderContext, {className: sectionHeader({size})}],
-                  [HeadingContext, {className: sectionHeading}],
+                  [HeaderContext, {styles: sectionHeader({size})}],
+                  [HeadingContext, {styles: sectionHeading}],
                   [TextContext, {
                     slots: {
-                      'description': {className: description({size})}
+                      'description': {styles: description({size})}
                     }
                   }]
                 ]}>
@@ -325,6 +334,13 @@ export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | '
   children: ReactNode
 }
 
+const checkmarkIconSize = {
+  S: 'XS',
+  M: 'M',
+  L: 'L',
+  XL: 'XL'
+} as const;
+
 export function ComboBoxItem(props: ComboBoxItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -344,17 +360,17 @@ export function ComboBoxItem(props: ComboBoxItemProps) {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}
+                    icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
                   }
                 }],
                 [TextContext, {
                   slots: {
-                    label: {className: label},
-                    description: {className: description({...renderProps, size})}
+                    label: {styles: label({size})},
+                    description: {styles: description({...renderProps, size})}
                   }
                 }]
               ]}>
-              {!isLink && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
+              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>

@@ -16,7 +16,7 @@ import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -26,7 +26,8 @@ const meta: Meta<typeof ComboBox<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'ComboBox'
 };
 
 export default meta;
@@ -72,7 +73,6 @@ export const Sections: Story = {
     label: 'Ice cream flavor'
   }
 };
-
 
 interface IExampleItem {
   id: string,
@@ -132,36 +132,37 @@ Validation.args = {
   isRequired: true
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <ComboBox {...args}>
-    <ComboBoxItem>Chocolate</ComboBoxItem>
-    <ComboBoxItem>Mint</ComboBoxItem>
-    <ComboBoxItem>Strawberry</ComboBoxItem>
-    <ComboBoxItem>Vanilla</ComboBoxItem>
-    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-  </ComboBox>
-);
-
-ContextualHelpExample.args = {
-  label: 'Ice cream flavor',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Ice cream flavor',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };
 
 ContextualHelpExample.parameters = {

@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useContextProps} from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useSlottedContext} from 'react-aria-components';
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
-import {FocusableRef} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CheckboxStyleProps {
   /**
@@ -40,17 +41,14 @@ export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'st
   children?: ReactNode
 }
 
-interface CheckboxContextValue extends CheckboxProps, CheckboxStyleProps {}
-
-export const CheckboxContext = createContext<ContextValue<CheckboxContextValue, HTMLLabelElement>>(null);
+export const CheckboxContext = createContext<ContextValue<CheckboxProps, FocusableRefValue<HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
-  fontFamily: 'sans',
-  fontSize: 'control',
+  font: 'control',
   transition: 'colors',
   color: {
     default: 'neutral',
@@ -80,6 +78,7 @@ export const box = style<RenderProps>({
   forcedColorAdjust: 'none',
   backgroundColor: {
     default: 'gray-25',
+    forcedColors: 'Background',
     isSelected: {
       default: 'neutral',
       isEmphasized: baseColor('accent-900'),
@@ -119,44 +118,65 @@ export const iconStyles = style({
   }
 });
 
+const iconSize = {
+  S: 'XS',
+  M: 'S',
+  L: 'M',
+  XL: 'L'
+} as const;
+
 function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, CheckboxContext);
   let boxRef = useRef(null);
-  let domRef = useFocusableRef(ref);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let domRef = useFocusableRef(ref, inputRef);
   let isInForm = !!useContext(FormContext);
-  [props, domRef] = useContextProps(props, domRef, CheckboxContext);
   props = useFormProps(props);
   let isInCheckboxGroup = !!useContext(CheckboxGroupStateContext);
-  let ctx = useContext(CheckboxContext) as CheckboxContextValue;
+  let ctx = useSlottedContext(CheckboxContext, props.slot);
 
   return (
     <AriaCheckbox
       {...props}
       ref={domRef}
+      inputRef={inputRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
-      {renderProps => (
-        <>
-          <CenterBaseline>
-            <div
-              ref={boxRef}
-              style={pressScale(boxRef)(renderProps)}
-              className={box({
-                ...renderProps,
-                isSelected: renderProps.isSelected || renderProps.isIndeterminate,
-                size: props.size || 'M',
-                isEmphasized: isInCheckboxGroup ? ctx.isEmphasized : props.isEmphasized
-              })}>
-              {renderProps.isIndeterminate &&
-                <DashIcon size={props.size || 'M'} className={iconStyles} />
-              }
-              {renderProps.isSelected && !renderProps.isIndeterminate &&
-                <CheckmarkIcon size={props.size || 'M'} className={iconStyles} />
-              }
-            </div>
-          </CenterBaseline>
-          {children}
-        </>
-      )}
+      {renderProps => {
+        let checkbox = (
+          <div
+            ref={boxRef}
+            style={pressScale(boxRef)(renderProps)}
+            className={box({
+              ...renderProps,
+              isSelected: renderProps.isSelected || renderProps.isIndeterminate,
+              size: props.size || 'M',
+              isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
+            })}>
+            {renderProps.isIndeterminate &&
+              <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+            }
+            {renderProps.isSelected && !renderProps.isIndeterminate &&
+              <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+            }
+          </div>
+        );
+
+        // Only render checkbox without center baseline if no label.
+        // This avoids expanding the checkbox height to the font's line height.
+        if (!children) {
+          return checkbox;
+        }
+
+        return (
+          <>
+            <CenterBaseline>
+              {checkbox}
+            </CenterBaseline>
+            {children}
+          </>
+        );
+      }}
     </AriaCheckbox>
   );
 }

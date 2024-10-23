@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
+import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
 
 let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
 export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
@@ -44,7 +44,7 @@ export function createRenamedProperty<T extends CSSValue>(name: string, values: 
   return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values);
 }
 
-type Color<C extends string> = C | `${string}/${number}`;
+export type Color<C extends string> = C | `${string}/${number}`;
 export function createColorProperty<C extends string>(colors: PropertyValueMap<C>, property?: keyof CSSProperties): PropertyFunction<Color<C>> {
   let valueMap = createValueLookup(Object.values(colors).flatMap((v: any) => typeof v === 'object' ? Object.values(v) : [v]));
   return (value: Color<C>, key: string) => {
@@ -76,6 +76,22 @@ function mapConditionalValue<T, U>(value: PropertyValueDefinition<T>, fn: (value
   }
 }
 
+function mapConditionalShorthand<T, C extends string, R extends RenderProps<string>>(value: PropertyValueDefinition<T>, fn: ShorthandProperty<T>): {[property: string]: StyleValue<Value, C, R>} {
+  if (typeof value === 'object') {
+    let res = {};
+    for (let condition in value) {
+      let properties = mapConditionalShorthand(value[condition], fn);
+      for (let property in properties) {
+        res[property] ??= {};
+        res[property][condition] = properties[property];
+      }
+    }
+    return res;
+  } else {
+    return fn(value);
+  }
+}
+
 function createValueLookup(values: Array<CSSValue>, atStart = false) {
   let map = new Map<CSSValue, string>();
   for (let value of values) {
@@ -86,7 +102,7 @@ function createValueLookup(values: Array<CSSValue>, atStart = false) {
   return map;
 }
 
-function parseArbitraryValue(value: any) {
+export function parseArbitraryValue(value: any) {
   if (typeof value === 'string' && value.startsWith('--')) {
     return [`var(${value})`, generateArbitraryValueSelector(value)];
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
@@ -147,7 +163,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       if (theme.shorthands[key]) {
         let shorthand = theme.shorthands[key];
         if (typeof shorthand === 'function') {
-          let expanded = shorthand(value);
+          let expanded = mapConditionalShorthand(value, shorthand);
           for (let k in expanded) {
             let v = expanded[k];
             values.set(k, v);
@@ -591,9 +607,9 @@ function getStaticClassName(rules: Rule[]): string {
   return rules.map(rule => (rule.prelude.startsWith('.') ? ' ' + rule.prelude.slice(1) : '') + (Array.isArray(rule.body) ? getStaticClassName(rule.body) : '')).join('');
 }
 
-export function raw(this: MacroContext | void, css: string) {
+export function raw(this: MacroContext | void, css: string, layer = '_.a') {
   let className = generateArbitraryValueSelector(css, true);
-  css = `@layer _.a {
+  css = `@layer ${layer} {
   .${className} {
   ${css}
   }

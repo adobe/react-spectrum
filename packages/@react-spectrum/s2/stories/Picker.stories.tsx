@@ -10,13 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Form, Header, Heading, Picker, PickerItem, PickerSection, Text} from '../src';
-
+import {
+  Button,
+  Content,
+  ContextualHelp,
+  Footer,
+  Form,
+  Header,
+  Heading,
+  Link,
+  Picker,
+  PickerItem,
+  PickerSection,
+  Text
+} from '../src';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -27,7 +39,8 @@ const meta: Meta<typeof Picker<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'Picker'
 };
 
 export default meta;
@@ -74,7 +87,6 @@ export const Sections: Story = {
   }
 };
 
-
 interface IExampleItem {
   id: string,
   label: string
@@ -97,7 +109,6 @@ export const Dynamic: Story = {
     items
   }
 };
-
 
 export const WithIcons: Story = {
   render: (args) => (
@@ -138,5 +149,74 @@ CustomWidth.args = Example.args;
 CustomWidth.parameters = {
   docs: {
     disable: true
+  }
+};
+
+export const ContextualHelpExample = (args: any) => (
+  <Picker {...args}>
+    <PickerItem>Chocolate</PickerItem>
+    <PickerItem>Mint</PickerItem>
+    <PickerItem>Strawberry</PickerItem>
+    <PickerItem>Vanilla</PickerItem>
+    <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+  </Picker>
+);
+
+ContextualHelpExample.args = {
+  label: 'Ice cream flavor',
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a ice cream?</Heading>
+      <Content>
+        <Text>
+          A combination of sugar, eggs, milk, and cream is cooked to make
+          a custard base. Then, flavorings are added, and this flavored
+          mixture is carefully churned and frozen to make ice cream.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Ice_cream"
+          target="_blank">Learn more about ice cream</Link>
+      </Footer>
+    </ContextualHelp>
+  )
+};
+
+ContextualHelpExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<Picker
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is a ice cream?</Heading>
+      <Content>
+        <Text>
+          A combination of sugar, eggs, milk, and cream is cooked to make
+          a custard base. Then, flavorings are added, and this flavored
+          mixture is carefully churned and frozen to make ice cream.
+        </Text>
+      </Content>
+      <Footer>
+        <Link
+          isStandalone
+          href="https://en.wikipedia.org/wiki/Ice_cream"
+          target="_blank">Learn more about ice cream</Link>
+      </Footer>
+    </ContextualHelp>
+  }
+  label="Ice cream flavor"
+/>
+  <PickerItem>Chocolate</PickerItem>
+  <PickerItem>Mint</PickerItem>
+  <PickerItem>Strawberry</PickerItem>
+  <PickerItem>Vanilla</PickerItem>
+  <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+</Picker>`;
+      }
+    }
   }
 };
