@@ -73,7 +73,7 @@ This example displays a basic disclosure with a button that toggles the visibili
 import {useDisclosureState} from '@react-stately/disclosure';
 import {useDisclosure} from '@react-aria/disclosure';
 import {useButton} from '@react-aria/button';
-import {useFocusRing} from 'react-aria';
+import {mergeProps, useFocusRing} from 'react-aria';
 
 function Disclosure(props) {
   let state = useDisclosureState(props);
@@ -88,9 +88,8 @@ function Disclosure(props) {
       <h3>
         <button 
           className="trigger" 
-          ref={triggerRef} 
-          {...buttonProps} 
-          {...focusProps} 
+          ref={triggerRef}
+          {...mergeProps(buttonProps, focusProps)}
           style={{outline: isFocusVisible? '2px solid dodgerblue' : 'none'}}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -248,9 +247,8 @@ function DisclosureItem(props) {
       <h3>
         <button 
           className="trigger" 
-          ref={triggerRef} 
-          {...buttonProps}
-          {...focusProps}
+          ref={triggerRef}
+          {...mergeProps(buttonProps, focusProps)}
           style={{outline: isFocusVisible? '2px solid dodgerblue' : 'none'}}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
