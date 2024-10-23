@@ -54,4 +54,8 @@ governing permissions and limitations under the License.
       outline: 2px solid CanvasText;
     }
   }
+
+  .spectrum-Accordion-item.spectrum-Accordion-item--quiet {
+    border: none
+  }
 }
