@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Link} from 'react-aria-components';
 import React from 'react';
 import styles from './usePress-stories.css';
 import {usePress} from '@react-aria/interactions';
@@ -84,3 +85,30 @@ function OnPress(props) {
     </div>
   );
 }
+
+export const linkOnPress = {
+  render: () => (
+    <div className={styles['outer-div']}>
+      {/* Note that the svg needs to not have pointer-events: none */}
+      <Link href="http://adobe.com" target="_blank">
+        <svg
+          role="img"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{
+            height: '2rem',
+            width: '2rem',
+            fill: 'red'
+          }}>
+          <title>Adobe</title>
+          <path d="M13.966 22.624l-1.69-4.281H8.122l3.892-9.144 5.662 13.425zM8.884 1.376H0v21.248zm15.116 0h-8.884L24 22.624Z" />
+        </svg>
+      </Link>
+    </div>
+  ),
+  parameters: {
+    description: {
+      data: 'Pressing on the link should always open a new tab. This tests specifically that usePress doesnt erroneously prevent default, especially on mobile'
+    }
+  }
+};

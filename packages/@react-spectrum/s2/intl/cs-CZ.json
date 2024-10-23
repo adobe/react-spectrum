@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Více položek",
   "button.pending": "čeká na vyřízení",
   "contextualhelp.help": "Nápověda",
   "contextualhelp.info": "Informace",
@@ -12,7 +13,7 @@
   "label.(optional)": "(volitelně)",
   "label.(required)": "(požadováno)",
   "menu.moreActions": "Další akce",
-  "picker.placeholder": "Vyberte vhodnou možnost...",
+  "picker.placeholder": "Vybrat…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Načítání...",

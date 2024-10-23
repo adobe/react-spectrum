@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "gaida",
   "contextualhelp.help": "Palīdzība",
   "contextualhelp.info": "Informācija",
@@ -12,10 +13,10 @@
   "label.(optional)": "(neobligāti)",
   "label.(required)": "(obligāti)",
   "menu.moreActions": "Citas darbības",
-  "picker.placeholder": "Atlasiet opciju...",
+  "picker.placeholder": "Izvēlēties…",
   "slider.maximum": "Maksimālā vērtība",
   "slider.minimum": "Minimālā vērtība",
-  "table.loading": "Notiek ielāde...",
+  "table.loading": "Notiek ielāde…",
   "table.loadingMore": "Tiek ielādēts vēl...",
   "table.resizeColumn": "Mainīt kolonnas lielumu",
   "table.sortAscending": "Kārtot augošā secībā",

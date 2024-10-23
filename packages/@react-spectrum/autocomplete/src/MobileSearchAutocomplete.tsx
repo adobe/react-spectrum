@@ -52,7 +52,7 @@ import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
-function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -167,7 +167,7 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
   );
 }
 
-export let MobileSearchAutocomplete = React.forwardRef(_MobileSearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+export let MobileSearchAutocomplete = React.forwardRef(ForwardMobileSearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 
 
 interface SearchAutocompleteButtonProps extends AriaButtonProps {

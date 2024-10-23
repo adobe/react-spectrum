@@ -1,7 +1,8 @@
 {
+  "breadcrumbs.more": "More items",
   "button.pending": "în așteptare",
   "contextualhelp.help": "Ajutor",
-  "contextualhelp.info": "Informaţii",
+  "contextualhelp.info": "Informații",
   "dialog.alert": "Alertă",
   "dialog.dismiss": "Revocare",
   "dropzone.replaceMessage": "Plasați fișierul pentru a înlocui",
@@ -12,7 +13,7 @@
   "label.(optional)": "(opţional)",
   "label.(required)": "(obligatoriu)",
   "menu.moreActions": "Mai multe acțiuni",
-  "picker.placeholder": "Selectați o opțiune",
+  "picker.placeholder": "Selectați…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Se încarcă...",

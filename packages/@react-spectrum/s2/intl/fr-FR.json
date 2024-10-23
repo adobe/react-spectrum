@@ -1,4 +1,5 @@
 {
+  "breadcrumbs.more": "Plus d'éléments",
   "button.pending": "En attente",
   "contextualhelp.help": "Aide",
   "contextualhelp.info": "Informations",
@@ -12,7 +13,7 @@
   "label.(optional)": "(facultatif)",
   "label.(required)": "(requis)",
   "menu.moreActions": "Autres actions",
-  "picker.placeholder": "Sélectionnez une option...",
+  "picker.placeholder": "Sélectionner…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Chargement...",
