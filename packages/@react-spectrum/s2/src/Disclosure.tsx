@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {ActionButtonContext} from './ActionButton';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
@@ -93,7 +94,7 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
 let _Disclosure = forwardRef(Disclosure);
 export {_Disclosure as Disclosure};
 
-export interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
+export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
    * 
    * @default 3
@@ -103,8 +104,13 @@ export interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
   children: React.ReactNode
 }
 
+interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
+  children: React.ReactNode
+}
+
 const headingStyle = style({
-  margin: 0
+  margin: 0,
+  flexGrow: 1
 });
 
 const buttonStyles = style({
@@ -195,7 +201,52 @@ const chevronStyles = style({
   flexShrink: 0
 });
 
-function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
+const InternalDisclosureHeader = createContext<{} | null>(null);
+
+function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    UNSAFE_className,
+    UNSAFE_style,
+    children
+  } = props;
+  let domRef = useDOMRef(ref);
+  let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
+
+  let mapSize = {
+    S: 'XS',
+    M: 'S',
+    L: 'M',
+    XL: 'L'
+  };
+
+  // maps to one size smaller in the compact density to ensure there is space between the top and bottom of the action button and container
+  let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = size;
+  if (density === 'compact') {
+    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L';
+  }
+
+  return (
+    <Provider
+      values={[
+        [ActionButtonContext, {size: newSize, isQuiet}],
+        [InternalDisclosureHeader, {}]
+      ]}>
+      <div
+        style={UNSAFE_style}
+        className={(UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})}
+        ref={domRef}>
+        {children}
+      </div>
+    </Provider>
+  );
+}
+
+/**
+ * A wrapper element for the disclosure title that can contain other elements not part of the trigger.
+ */
+export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeaderWithForwardRef);
+
+function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     level = 3,
     UNSAFE_style,
@@ -208,7 +259,8 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {size, density, isQuiet} = useSlottedContext(DisclosureContext)!;
   let isRTL = direction === 'rtl';
-  return (
+
+  let buttonTrigger = (
     <Heading
       {...domProps}
       level={level}
@@ -223,13 +275,23 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
       </Button>
     </Heading>
   );
+  let ctx = useContext(InternalDisclosureHeader);
+  if (ctx) {
+    return buttonTrigger;
+  }
+
+  return (
+    <DisclosureHeader>
+      {buttonTrigger}
+    </DisclosureHeader>
+  );
 }
 
 /**
- * A header for a disclosure. Contains a heading and a trigger button to expand/collapse the panel.
+ * A disclosure title consisting of a heading and a trigger button to expand/collapse the panel.
  */
-let _DisclosureHeader = forwardRef(DisclosureHeader);
-export {_DisclosureHeader as DisclosureHeader};
+let _DisclosureTitle = forwardRef(DisclosureTitle);
+export {_DisclosureTitle as DisclosureTitle};
 
 export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode

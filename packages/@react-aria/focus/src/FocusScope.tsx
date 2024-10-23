@@ -407,7 +407,7 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
   }, [scopeRef, contain]);
 
   // This is a useLayoutEffect so it is guaranteed to run before our async synthetic blur
-  // eslint-disable-next-line arrow-body-style
+
   useLayoutEffect(() => {
     return () => {
       if (raf.current) {
@@ -468,13 +468,13 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   if (element != null && !scroll) {
     try {
       focusSafely(element);
-    } catch (err) {
+    } catch {
       // ignore
     }
   } else if (element != null) {
     try {
       element.focus();
-    } catch (err) {
+    } catch {
       // ignore
     }
   }

@@ -55,7 +55,7 @@ export const Default = {
   render: Template
 };
 
-export const WithExpanedKeys = {
+export const WithExpandedKeys = {
   render: Template,
   args: {defaultExpandedKeys: ['shared']}
 };
@@ -90,4 +90,12 @@ export const WithDisabledDisclosure = {
     </Accordion>)
 };
 
-// TODO: more stories
+export const Disabled = {
+  render: Template,
+  args: {isDisabled: true}
+};
+
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
+};
