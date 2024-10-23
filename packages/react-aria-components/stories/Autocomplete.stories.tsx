@@ -38,7 +38,6 @@ export default {
   }
 };
 
-// TODO: get rid of flex aroun input and bring back render props and add isReadOnly and make sure they both get propagted to the input
 export const AutocompleteExample = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (

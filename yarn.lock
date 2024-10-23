@@ -5657,26 +5657,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/autocomplete@npm:3.0.0-alpha.34":
-  version: 3.0.0-alpha.34
-  resolution: "@react-aria/autocomplete@npm:3.0.0-alpha.34"
-  dependencies:
-    "@react-aria/combobox": "npm:^3.10.4"
-    "@react-aria/listbox": "npm:^3.13.4"
-    "@react-aria/searchfield": "npm:^3.7.9"
-    "@react-aria/utils": "npm:^3.25.3"
-    "@react-stately/combobox": "npm:^3.10.0"
-    "@react-types/autocomplete": "npm:3.0.0-alpha.26"
-    "@react-types/button": "npm:^3.10.0"
-    "@react-types/shared": "npm:^3.25.0"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/122be5e6e0085e3c6e847a48fd179820da60700954e46aab6f5a0a5f3d9f0d8cb21730ca2c3765c66fcb89408dc2afbd884cd99efa01ac4b3805d24328405a49
-  languageName: node
-  linkType: hard
-
 "@react-aria/autocomplete@npm:3.0.0-alpha.35, @react-aria/autocomplete@workspace:packages/@react-aria/autocomplete":
   version: 0.0.0-use.local
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
@@ -5809,7 +5789,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/combobox@npm:^3.10.4, @react-aria/combobox@npm:^3.10.5, @react-aria/combobox@workspace:packages/@react-aria/combobox":
+"@react-aria/combobox@npm:^3.10.5, @react-aria/combobox@workspace:packages/@react-aria/combobox":
   version: 0.0.0-use.local
   resolution: "@react-aria/combobox@workspace:packages/@react-aria/combobox"
   dependencies:
@@ -6066,7 +6046,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/listbox@npm:^3.13.4, @react-aria/listbox@npm:^3.13.5, @react-aria/listbox@workspace:packages/@react-aria/listbox":
+"@react-aria/listbox@npm:^3.13.5, @react-aria/listbox@workspace:packages/@react-aria/listbox":
   version: 0.0.0-use.local
   resolution: "@react-aria/listbox@workspace:packages/@react-aria/listbox"
   dependencies:
@@ -6235,7 +6215,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/searchfield@npm:^3.7.10, @react-aria/searchfield@npm:^3.7.9, @react-aria/searchfield@workspace:packages/@react-aria/searchfield":
+"@react-aria/searchfield@npm:^3.7.10, @react-aria/searchfield@workspace:packages/@react-aria/searchfield":
   version: 0.0.0-use.local
   resolution: "@react-aria/searchfield@workspace:packages/@react-aria/searchfield"
   dependencies:
@@ -29005,7 +28985,7 @@ __metadata:
     "@internationalized/date": "npm:^3.5.6"
     "@internationalized/string": "npm:^3.2.4"
     "@react-aria/accordion": "npm:3.0.0-alpha.35"
-    "@react-aria/autocomplete": "npm:3.0.0-alpha.34"
+    "@react-aria/autocomplete": "npm:3.0.0-alpha.35"
     "@react-aria/collections": "npm:3.0.0-alpha.5"
     "@react-aria/color": "npm:^3.0.1"
     "@react-aria/disclosure": "npm:3.0.0-alpha.1"
