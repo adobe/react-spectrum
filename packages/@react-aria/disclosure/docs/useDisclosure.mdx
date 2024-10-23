@@ -73,6 +73,7 @@ This example displays a basic disclosure with a button that toggles the visibili
 import {useDisclosureState} from '@react-stately/disclosure';
 import {useDisclosure} from '@react-aria/disclosure';
 import {useButton} from '@react-aria/button';
+import {useFocusRing} from 'react-aria';
 
 function Disclosure(props) {
   let state = useDisclosureState(props);
@@ -80,11 +81,17 @@ function Disclosure(props) {
   let triggerRef = React.useRef<HTMLButtonElement | null>(null);
   let {buttonProps: triggerProps, panelProps} = useDisclosure(props, state, panelRef);
   let {buttonProps} = useButton(triggerProps, triggerRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <div className="disclosure">
       <h3>
-        <button className="trigger" ref={triggerRef} {...buttonProps}>
+        <button 
+          className="trigger" 
+          ref={triggerRef} 
+          {...buttonProps} 
+          {...focusProps} 
+          style={{outline: isFocusVisible? '2px solid dodgerblue' : 'none'}}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
@@ -121,7 +128,6 @@ function Disclosure(props) {
     display: flex;
     align-items: center;
     gap: 8px;
-    outline: none;
     color: var(--text-color);
 
     svg {
