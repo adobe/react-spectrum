@@ -11,10 +11,10 @@
  */
 
 import {Meta} from '@storybook/react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
+import {SpectrumAccordionProps} from '../src/Accordion';
 import {Template} from '../chromatic/Accordion.stories';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
+const meta: Meta<SpectrumAccordionProps> = {
   title: 'Accordion'
 };
 
@@ -22,5 +22,5 @@ export default meta;
 
 export const Default = {
   render: Template,
-  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
+  args: {defaultExpandedKeys: ['shared']}
 };

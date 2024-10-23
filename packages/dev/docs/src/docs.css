@@ -213,6 +213,11 @@ html, body {
   border: none;
   margin: 0;
   padding: 0;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--spectrum-alias-focus-ring-color);
+  }
 }
 
 .video {

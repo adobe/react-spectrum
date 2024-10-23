@@ -12,7 +12,7 @@
 
 import {RefObject, useCallback, useRef} from 'react';
 import {useEvent} from './useEvent';
-// eslint-disable-next-line rulesdir/useLayoutEffectRule
+ 
 import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreProps {
@@ -73,7 +73,7 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     }
 
     lastItems.current = items;
-  }, [isLoading, onLoadMore, props, ref]);
+  }, [isLoading, onLoadMore, props, ref, items]);
 
   // TODO: maybe this should still just return scroll props?
   // Test against case where the ref isn't defined when this is called

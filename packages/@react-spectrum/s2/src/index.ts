@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+export {Accordion, AccordionContext} from './Accordion';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
@@ -20,7 +21,7 @@ export {Breadcrumbs, Breadcrumb, BreadcrumbsContext} from './Breadcrumbs';
 export {Button, LinkButton, ButtonContext, LinkButtonContext} from './Button';
 export {ButtonGroup, ButtonGroupContext} from './ButtonGroup';
 export {Card, CardPreview, CollectionCardPreview, AssetCard, UserCard, ProductCard, CardContext} from './Card';
-export {CardView} from './CardView';
+export {CardView, CardViewContext} from './CardView';
 export {Checkbox, CheckboxContext} from './Checkbox';
 export {CheckboxGroup, CheckboxGroupContext} from './CheckboxGroup';
 export {ColorArea, ColorAreaContext} from './ColorArea';
@@ -31,6 +32,7 @@ export {ColorSwatchPicker, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorWheel, ColorWheelContext} from './ColorWheel';
 export {ComboBox, ComboBoxItem, ComboBoxSection, ComboBoxContext} from './ComboBox';
 export {ContextualHelp, ContextualHelpContext} from './ContextualHelp';
+export {DisclosureHeader, Disclosure, DisclosurePanel, DisclosureContext, DisclosureTitle} from './Disclosure';
 export {Heading, HeadingContext, Header, HeaderContext, Content, ContentContext, Footer, FooterContext, Text, TextContext, Keyboard, KeyboardContext} from './Content';
 export {Dialog} from './Dialog';
 export {DialogTrigger} from './DialogTrigger';
@@ -38,7 +40,7 @@ export {DialogContainer, useDialogContainer} from './DialogContainer';
 export {Divider, DividerContext} from './Divider';
 export {DropZone, DropZoneContext} from './DropZone';
 export {Form} from './Form';
-export {IconContext, IllustrationContext} from './Icon';
+export {createIcon, IconContext, IllustrationContext} from './Icon';
 export {IllustratedMessage, IllustratedMessageContext} from './IllustratedMessage';
 export {Image, ImageContext} from './Image';
 export {ImageCoordinator} from './ImageCoordinator';
@@ -61,15 +63,19 @@ export {Skeleton, useIsSkeleton} from './Skeleton';
 export {SkeletonCollection} from './SkeletonCollection';
 export {StatusLight, StatusLightContext} from './StatusLight';
 export {Switch, SwitchContext} from './Switch';
+export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from './TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Tooltip, TooltipTrigger} from './Tooltip';
 
+export {pressScale} from './pressScale';
+
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
+export type {AccordionProps} from './Accordion';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionMenuProps} from './ActionMenu';
 export type {AlertDialogProps} from './AlertDialog';
@@ -93,6 +99,7 @@ export type {ComboBoxProps, ComboBoxItemProps, ComboBoxSectionProps} from './Com
 export type {DialogProps} from './Dialog';
 export type {DialogContainerProps, DialogContainerValue} from './DialogContainer';
 export type {DialogTriggerProps} from './DialogTrigger';
+export type {DisclosureProps, DisclosurePanelProps} from './Disclosure';
 export type {DividerProps} from './Divider';
 export type {DropZoneProps} from './DropZone';
 export type {FormProps} from './Form';
@@ -117,6 +124,7 @@ export type {SkeletonProps} from './Skeleton';
 export type {SkeletonCollectionProps} from './SkeletonCollection';
 export type {StatusLightProps} from './StatusLight';
 export type {SwitchProps} from './Switch';
+export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps} from './TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
