@@ -109,6 +109,8 @@ function Disclosure(props) {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .disclosure {
   .trigger {
     background: none;
@@ -120,6 +122,7 @@ function Disclosure(props) {
     align-items: center;
     gap: 8px;
     outline: none;
+    color: var(--text-color);
 
     svg {
       rotate: 0deg;
