@@ -82,8 +82,7 @@ import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'rea
 
 ## Features
 
-
-Custom styled disclosure groups can be difficult to implement in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and other accessibility features while allowing for custom styling.
+Accordions can be built by combing multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML element, but this can be difficult to style especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Accordion` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
 
 * **Accessible** - Disclosure group is exposed to assistive technology via ARIA 
 * **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
@@ -124,7 +123,7 @@ import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'rea
 
 ### Default expanded
 
-An uncontrolled DisclosureGroup can be expanded by default using the `defaultExpandedKeys` prop.
+An uncontrolled DisclosureGroup can be expanded by default using the `defaultExpandedKeys` prop. The `defaultExpandedKeys` must match the `id` on the disclosure(s) component that you wish to expand.
 
 ```tsx example export=true
 import type {DisclosureProps} from 'react-aria-components';
@@ -165,7 +164,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
 
 ### Controlled expanded
 
-A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `defaultExpandedKeys`
+A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `onExpandedChange`. The `expandedKeys` must match the `id` on the disclosure component(s) that you wish to expand.
 
 ```tsx example
 import {Key} from "@react-types/shared";
@@ -309,6 +308,8 @@ A `Button` can be targeted with the `.react-aria-Button` CSS selector, or by ove
 ### DisclosurePanel
 
 A `DisclosurePanel` can be targeted with the `.react-aria-DisclosurePanel` CSS selector, or by overriding with a custom `className`.
+
+<StateTable properties={docs.exports.DisclosurePanelRenderProps.properties} />
 
 ## Advanced Customization
 

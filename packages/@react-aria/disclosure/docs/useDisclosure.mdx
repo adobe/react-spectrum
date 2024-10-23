@@ -73,6 +73,7 @@ This example displays a basic disclosure with a button that toggles the visibili
 import {useDisclosureState} from '@react-stately/disclosure';
 import {useDisclosure} from '@react-aria/disclosure';
 import {useButton} from '@react-aria/button';
+import {mergeProps, useFocusRing} from 'react-aria';
 
 function Disclosure(props) {
   let state = useDisclosureState(props);
@@ -80,11 +81,16 @@ function Disclosure(props) {
   let triggerRef = React.useRef<HTMLButtonElement | null>(null);
   let {buttonProps: triggerProps, panelProps} = useDisclosure(props, state, panelRef);
   let {buttonProps} = useButton(triggerProps, triggerRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <div className="disclosure">
       <h3>
-        <button className="trigger" ref={triggerRef} {...buttonProps}>
+        <button 
+          className="trigger" 
+          ref={triggerRef}
+          {...mergeProps(buttonProps, focusProps)}
+          style={{outline: isFocusVisible? '2px solid dodgerblue' : 'none'}}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
@@ -109,6 +115,8 @@ function Disclosure(props) {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .disclosure {
   .trigger {
     background: none;
@@ -119,6 +127,7 @@ function Disclosure(props) {
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--text-color);
 
     svg {
       rotate: 0deg;
@@ -187,7 +196,7 @@ A disclosure can be disabled with the `isDisabled` prop. This will disable the t
 
 A disclosure group (i.e. accordion) is a set of disclosures where only one disclosure can be expanded at a time. The following example shows how to create a `DisclosureGroup` component with the `useDisclosureGroupState` hook. We'll also create a `DisclosureItem` component that uses the `DisclosureGroupState` context for managing its state.
 
-```tsx example export=true
+```tsx example export=true render=false
 import {useDisclosureGroupState} from '@react-stately/disclosure';
 import {useId} from '@react-aria/utils';
 
@@ -231,11 +240,16 @@ function DisclosureItem(props) {
     isDisabled
   }, state, panelRef);
   let {buttonProps} = useButton(triggerProps, triggerRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <div className="disclosure">
       <h3>
-        <button className="trigger" ref={triggerRef} {...buttonProps}>
+        <button 
+          className="trigger" 
+          ref={triggerRef}
+          {...mergeProps(buttonProps, focusProps)}
+          style={{outline: isFocusVisible? '2px solid dodgerblue' : 'none'}}>
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
