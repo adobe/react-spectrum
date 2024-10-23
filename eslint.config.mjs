@@ -227,7 +227,6 @@ export default [{
         "rsp-rules/sort-imports": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
-        "rulesdir/pure-render": [ERROR],
         "jsx-a11y/accessible-emoji": ERROR,
         "jsx-a11y/alt-text": ERROR,
         "jsx-a11y/anchor-has-content": ERROR,
