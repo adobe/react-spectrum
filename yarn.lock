@@ -2592,6 +2592,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jdb8/eslint-plugin-monorepo@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@jdb8/eslint-plugin-monorepo@npm:1.0.1"
+  dependencies:
+    eslint-module-utils: "npm:^2.1.1"
+    get-monorepo-packages: "npm:^1.1.0"
+    globby: "npm:^7.1.1"
+    load-json-file: "npm:^4.0.0"
+    minimatch: "npm:^3.0.4"
+    parse-package-name: "npm:^0.1.0"
+    path-is-inside: "npm:^1.0.2"
+  checksum: 10c0/fd0a95355a33bbfc3e14fbadd99641d6c7e3f77fa6c83d54dc5e98bb19b97a4470cb17ad634aea8392877bdd49033e15635b1607a424c7b76eb01694312c4ea1
+  languageName: node
+  linkType: hard
+
 "@jest/console@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/console@npm:29.7.0"
@@ -17271,21 +17286,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-monorepo@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "eslint-plugin-monorepo@npm:0.3.2"
-  dependencies:
-    eslint-module-utils: "npm:^2.1.1"
-    get-monorepo-packages: "npm:^1.1.0"
-    globby: "npm:^7.1.1"
-    load-json-file: "npm:^4.0.0"
-    minimatch: "npm:^3.0.4"
-    parse-package-name: "npm:^0.1.0"
-    path-is-inside: "npm:^1.0.2"
-  checksum: 10c0/9a3c49c0b998207c4c931aeb8f77a7c0930e298076989b2f073d4314ac785f4b72a4763b5b3a992754544bd7c34c44696c6e3561afb137e2f890f0c7db91e5a3
-  languageName: node
-  linkType: hard
-
 "eslint-plugin-react-hooks@npm:^5.0.0":
   version: 5.0.0
   resolution: "eslint-plugin-react-hooks@npm:5.0.0"
@@ -29270,6 +29270,7 @@ __metadata:
     "@eslint/eslintrc": "npm:^3.1.0"
     "@eslint/js": "npm:^9.12.0"
     "@faker-js/faker": "npm:^8.4.1"
+    "@jdb8/eslint-plugin-monorepo": "npm:^1.0.1"
     "@octokit/rest": "npm:*"
     "@parcel/bundler-library": "npm:2.11.1-dev.3224"
     "@parcel/config-default": "npm:2.0.0-dev.1601"
@@ -29336,7 +29337,6 @@ __metadata:
     eslint-plugin-jest: "npm:^28.8.3"
     eslint-plugin-jsdoc: "npm:^50.4.1"
     eslint-plugin-jsx-a11y: "npm:^6.10.0"
-    eslint-plugin-monorepo: "npm:^0.3.2"
     eslint-plugin-react: "npm:^7.37.1"
     eslint-plugin-react-hooks: "npm:^5.0.0"
     eslint-plugin-rulesdir: "npm:^0.2.2"
