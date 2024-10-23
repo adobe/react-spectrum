@@ -399,7 +399,7 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
       if ([...filtered].some(node => node.type === 'item')) {
         filteredNode.push({...node, childNodes: filtered});
       }
-    } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
+    } else if (node.type === 'item' && node.textValue && filter(node.textValue, inputValue)) {
       filteredNode.push({...node});
     } else if (node.type !== 'item') {
       filteredNode.push({...node});
