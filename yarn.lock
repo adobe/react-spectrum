@@ -31581,14 +31581,14 @@ __metadata:
 
 "storybook-builder-parcel@patch:storybook-builder-parcel@https%3A//gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#~/.yarn/patches/storybook-builder-parcel-https-7ea26540e8.patch":
   version: 0.0.0
-  resolution: "storybook-builder-parcel@patch:storybook-builder-parcel@https%3A//gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#~/.yarn/patches/storybook-builder-parcel-https-7ea26540e8.patch::version=0.0.0&hash=08ad7e"
+  resolution: "storybook-builder-parcel@patch:storybook-builder-parcel@https%3A//gitpkg.vercel.app/mischnic/storybook-parcel/packages/storybook-builder-parcel?master#~/.yarn/patches/storybook-builder-parcel-https-7ea26540e8.patch::version=0.0.0&hash=bc92d6"
   dependencies:
     "@storybook/core-common": "npm:7.6.4"
     http-proxy-middleware: "npm:^2.0.6"
   peerDependencies:
     "@parcel/core": ^2.0.0
     react: "*"
-  checksum: 10c0/565481429f72b5d9ab24bc5929c3fe048e44137125ae69fc5002f8c96bc5cefa736bff09450ed3aa37e165991742b44042ae150556cf66c6796066401f0696cb
+  checksum: 10c0/bacdd4bde18e07fa65b8fcd04a5d334895b5bfdad23a62b50039c8b01b4b384c500d32e465258f0546040120b0d0b88b632983dd318f5a45fc5eff1fb01ff0f7
   languageName: node
   linkType: hard
 
