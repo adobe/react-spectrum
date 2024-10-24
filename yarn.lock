@@ -5662,7 +5662,6 @@ __metadata:
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
   dependencies:
     "@react-aria/combobox": "npm:^3.10.5"
-    "@react-aria/focus": "npm:^3.18.3"
     "@react-aria/i18n": "npm:^3.12.3"
     "@react-aria/listbox": "npm:^3.13.5"
     "@react-aria/searchfield": "npm:^3.7.10"
@@ -5904,7 +5903,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/focus@npm:^3.18.3, @react-aria/focus@npm:^3.18.4, @react-aria/focus@workspace:packages/@react-aria/focus":
+"@react-aria/focus@npm:^3.18.4, @react-aria/focus@workspace:packages/@react-aria/focus":
   version: 0.0.0-use.local
   resolution: "@react-aria/focus@workspace:packages/@react-aria/focus"
   dependencies:
