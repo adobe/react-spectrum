@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
+import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useEffectEvent, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {getItemId, useSubmenuTrigger} from '@react-aria/menu';
 import {HeaderContext} from './Header';
+import {InternalAutocompleteContext} from './Autocomplete';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
@@ -28,18 +29,19 @@ import React, {
   ForwardedRef,
   forwardRef,
   ReactElement,
+  KeyboardEvent as ReactKeyboardEvent,
   ReactNode,
   RefObject,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from 'react';
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -162,22 +164,26 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
 
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
-  collection: ICollection<Node<object>>,
+  collection: BaseCollection<object>,
   menuRef: RefObject<HTMLDivElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
+  let {register, filterFn, inputValue, menuProps: autocompleteMenuProps} = useContext(InternalAutocompleteContext) || {};
+  // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
+  // we always perform the filtering for them.
+  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
   let state = useTreeState({
     ...props,
-    collection,
+    collection: filteredCollection as ICollection<Node<object>>,
     children: undefined
   });
+
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
+  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized}, state, ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContext = useContext(PopoverContext)!;
-
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
   useInteractOutside({
     ref,
@@ -198,6 +204,79 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       setLeftOffset({left: -1 * left});
     }
   }, [leftOffset, popoverContainer]);
+
+  let {id: menuId} = menuProps;
+  useEffect(() => {
+    if (register) {
+      register((e: ReactKeyboardEvent) => {
+        switch (e.key) {
+          case 'ArrowDown':
+          case 'ArrowUp':
+          case 'Home':
+          case 'End':
+          case 'PageDown':
+          case 'PageUp':
+            if (!state.selectionManager.isFocused) {
+              state.selectionManager.setFocused(true);
+            }
+            break;
+          case 'ArrowLeft':
+          case 'ArrowRight':
+            // TODO: will need to special case this so it doesn't clear the focused key if we are currently
+            // focused on a submenutrigger
+            if (state.selectionManager.isFocused) {
+              clearVirtualFocus();
+            }
+            break;
+          case 'Escape':
+            // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
+            // to continuePropagation to the overlay depending on the inputValue
+            return;
+        }
+
+        let focusedId;
+        if (state.selectionManager.focusedKey == null) {
+          // TODO: calling menuProps.onKeyDown as an alternative to this doesn't quite work because of the check we do to prevent events from bubbling down. Perhaps
+          // dispatch the event as well to the menu since I don't think we want tot change the check in useSelectableCollection
+          // since we wouldn't want events to bubble through to the table
+          ref.current?.dispatchEvent(
+            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+          );
+        } else {
+          // If there is a focused key, dispatch an event to the menu item in question. This allows us to excute any existing onAction or link navigations
+          // that would have happen in a non-virtual focus case.
+          focusedId = getItemId(state, state.selectionManager.focusedKey);
+          let item = ref.current?.querySelector(`#${CSS.escape(focusedId)}`);
+          item?.dispatchEvent(
+            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+          );
+        }
+        focusedId = state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null;
+        return focusedId;
+      });
+    }
+  }, [register, state, menuId, ref]);
+
+  let clearVirtualFocus = useEffectEvent(() => {
+    state.selectionManager.setFocused(false);
+    state.selectionManager.setFocusedKey(null);
+  });
+
+  useEffect(() => {
+    // TODO: retested in NVDA. It seems like NVDA properly announces what new letter you are typing even if we maintain virtual focus on
+    // a item in the list. However, it won't announce the letter your cursor is now on if you don't clear the virtual focus when using left/right
+    // arrows.
+    // Clear the focused key if the inputValue changed for NVDA
+    // Also feels a bit weird that we need to make sure that the focusedId AND the selection manager here need to both be cleared of the focused
+    // item, would be nice if it was all centralized. Maybe a reason to go back to having the autocomplete hooks create and manage
+    // the collection/selection manager but then it might cause issues when we need to wrap a Table which won't use BaseCollection but rather has
+    // its own collection
+    // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
+    if (inputValue != null) {
+      clearVirtualFocus();
+    }
+  }, [inputValue]);
+
 
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
@@ -225,7 +304,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuItemContext, null]
           ]}>
           <CollectionRoot
-            collection={collection}
+            collection={state.collection}
             persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
             scrollRef={ref} />
         </Provider>
