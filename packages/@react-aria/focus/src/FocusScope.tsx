@@ -747,8 +747,21 @@ function restoreFocusToElement(node: FocusableElement) {
  */
 export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusManagerOptions, scope?: Element[]) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
-  let doc = root instanceof ShadowRoot ? root :  (getRootNode(root) || getOwnerDocument(root));
-  let effectiveDocument = doc instanceof ShadowRoot ? doc.ownerDocument : doc;
+
+  // Ensure that root is an Element or fall back appropriately
+  let rootElement = root?.nodeType === Node.ELEMENT_NODE ? (root as Element) : null;
+
+  // Determine the document to use
+  let doc = root?.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in root
+    ? root
+    : (getRootNode(rootElement) || getOwnerDocument(rootElement));
+
+  // Ensure effectiveDocument is always a Document
+  let effectiveDocument = doc?.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in doc
+    ? (doc as ShadowRoot).ownerDocument
+    : (doc as Document);
+
+  // Create a TreeWalker, ensuring the root is an Element or Document
   let walker = effectiveDocument.createTreeWalker(
     root || doc,
     NodeFilter.SHOW_ELEMENT,
