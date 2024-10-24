@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/breadcrumbs",
-  "version": "3.5.17",
+  "version": "3.5.18",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.12.3",
-    "@react-aria/link": "^3.7.5",
+    "@react-aria/link": "^3.7.6",
     "@react-aria/utils": "^3.25.3",
     "@react-types/breadcrumbs": "^3.7.8",
     "@react-types/shared": "^3.25.0",

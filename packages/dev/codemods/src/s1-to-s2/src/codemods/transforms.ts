@@ -386,9 +386,23 @@ function moveRenderPropsToChild(
   ) {
     const dialogElement = renderFunction.expression.body;
 
+    const originalParam = renderFunction.expression.params[0];
+    if (!t.isIdentifier(originalParam)) {
+      addComment(path.node.children[renderFunctionIndex], ' TODO(S2-upgrade): Could not automatically move the render props. You\'ll need to update this manually.');
+      return;
+    }
+    const paramName = originalParam.name;
+    const objectPattern = t.objectPattern([
+      t.objectProperty(t.identifier(paramName),
+        t.identifier(paramName),
+        false,
+        true
+      )
+    ]);
+
     const newRenderFunction = t.jsxExpressionContainer(
       t.arrowFunctionExpression(
-        renderFunction.expression.params,
+        [objectPattern],
         t.jsxFragment(
           t.jsxOpeningFragment(),
           t.jsxClosingFragment(),

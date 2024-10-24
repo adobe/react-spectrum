@@ -198,7 +198,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
       }
 
       hasCustomType = true;
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

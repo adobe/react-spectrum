@@ -278,7 +278,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
           }
 
           return {start, end};
-        } catch (e) {
+        } catch {
           // ignore
         }
 

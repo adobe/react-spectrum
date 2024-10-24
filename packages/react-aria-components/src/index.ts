@@ -97,7 +97,7 @@ export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
-export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosureGroupProps, DisclosureGroupRenderProps} from './Disclosure';
+export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from './Disclosure';
 export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
 export type {FieldErrorProps, FieldErrorRenderProps} from './FieldError';
 export type {FileTriggerProps} from './FileTrigger';

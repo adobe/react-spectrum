@@ -30,7 +30,7 @@ export function useDisplayNames(): DisplayNames {
     // type as that was only added in v2. https://github.com/tc39/intl-displaynames-v2
     try {
       return new Intl.DisplayNames(locale, {type: 'dateTimeField'});
-    } catch (err) {
+    } catch {
       return new DisplayNamesPolyfill(locale, dictionary);
     }
   }, [locale, dictionary]);
