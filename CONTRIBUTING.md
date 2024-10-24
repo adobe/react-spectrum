@@ -153,6 +153,30 @@ yarn start:docs
 ```
 Then, open [http://localhost:1234](http://localhost:1234) in your browser.
 
+### Verdaccio
+We use [Verdaccio](https://verdaccio.org/) to set up a private registry for our packages to test our components in our example apps. 
+
+To run verdaccio, first ensure that your `git status` is clean. If your computer has an Intel chip, add the line `shopt -s globstar extglob` in the `verdaccio.sh` file after line 21. Save and commit these changes under a clear message like "Do not push". If you have an Apple silicon chip, you may skip this step.
+
+Then, run the following command:
+```bash
+./scripts/verdaccio.sh
+```
+
+Once that is finished, open up a new terminal and change your directory to the example app you would like to test. You may test it by first running the command:
+```bash
+yarn install
+```
+And then the appropriate command to run the development server. Check the project's `package.json` for the correct command.
+
+If you are running into issues with `yarn install` at this step, you may need to clear your yarn cache. To do this, run this following command:
+```
+rm -r ~/.yarn/berry/metadata/npm
+yarn cache clean --all
+```
+
+Once you are finished, open the terminal where verdaccio is running and press any key to close the server. If you have an Intel chip, you will need to reset the head of your branch to exclude the change made to the `verdaccio.sh` file.
+
 ### Q & A
 
 > `yarn build` emits a bunch of type errors?
