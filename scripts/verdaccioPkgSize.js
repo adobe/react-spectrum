@@ -8,10 +8,10 @@ verdaccioPkgSize();
 // Creates a file listing the tarball sizes of every Verdaccio published package
 // Assumes that the verdaccio db json exists and that the store for the packages is ~/.config/verdaccio/storage/
 function verdaccioPkgSize() {
-  let verdaccioStorePath = exec('echo ~/.config/storage/').toString().trim();
+  let verdaccioStorePath = exec('echo ~/.config/verdaccio/storage/').toString().trim();
 
   if (!fs.existsSync(verdaccioStorePath)) {
-    verdaccioStorePath = path.join(__dirname, '..', 'storage/');
+    verdaccioStorePath = path.join(__dirname, '..', 'verdaccio', 'storage/');
   }
 
   let json = {};
