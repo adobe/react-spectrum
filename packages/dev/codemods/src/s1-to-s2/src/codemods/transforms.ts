@@ -960,6 +960,123 @@ function updateLegacyLink(
   }
 }
 
+/**
+ * Copies the columns prop from the TableHeader to the Row component.
+ */
+function addColumnsPropToRow(
+  path: NodePath<t.JSXElement>
+) {
+
+  const tableHeaderPath = path.get('children').find((child) =>
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+    ) as NodePath<t.JSXElement> | undefined;
+
+  if (!tableHeaderPath) {
+    addComment(path.node, ' TODO(S2-upgrade): Could not find TableHeader within Table to retrieve columns prop.');
+    return;
+  }
+
+  const columnsProp = tableHeaderPath
+    .get('openingElement')
+    .get('attributes')
+    .find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'columns') as NodePath<t.JSXAttribute> | undefined;
+
+  if (columnsProp) {
+    path.traverse({
+      JSXElement(innerPath) {
+        if (
+          t.isJSXElement(innerPath.node) &&
+          t.isJSXIdentifier(innerPath.node.openingElement.name) &&
+          getName(innerPath as NodePath<t.JSXElement>, innerPath.node.openingElement.name) === 'Row'
+        ) {
+          let rowPath = innerPath as NodePath<t.JSXElement>;
+          rowPath.node.openingElement.attributes.push(columnsProp.node);
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Updates the function signature of the Row component.
+ */
+function updateRowFunctionArg(
+  path: NodePath<t.JSXElement>
+) {
+  // Find the function passed as a child
+  let functionChild = path.get('children').find(childPath => 
+    childPath.isJSXExpressionContainer() && 
+    childPath.get('expression').isArrowFunctionExpression()
+  );
+
+  if (functionChild && functionChild.isJSXExpressionContainer()) {
+    let arrowFuncPath = functionChild.get('expression');
+    if (arrowFuncPath.isArrowFunctionExpression()) {
+      let params = arrowFuncPath.node.params;
+      if (params.length === 1 && t.isIdentifier(params[0])) {
+        let paramName = params[0].name;
+
+        // Rename parameter to 'column'
+        params[0].name = 'column';
+
+        // Replace references to the old parameter name inside the function body
+        arrowFuncPath.get('body').traverse({
+          Identifier(innerPath) {
+            if (
+              innerPath.node.name === paramName &&
+              // Ensure we're not replacing the parameter declaration
+              innerPath.node !== params[0]
+            ) {
+              // Replace with 'column.id'
+              innerPath.replaceWith(
+                t.memberExpression(t.identifier('column'), t.identifier('id'))
+              );
+            }
+          }
+        });
+      }
+    }
+  }
+}
+
+/**
+ * Updates the key prop to id. Keeps the key prop if it's used in an array.map function.
+ */
+function updateKeyToId(
+  path: NodePath<t.JSXElement>
+) {
+  let attributes = path.node.openingElement.attributes;
+  let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
+  if (
+    keyProp &&
+    t.isJSXAttribute(keyProp)
+  ) {
+    // Update key prop to be id
+    keyProp.name = t.jsxIdentifier('id');
+  }
+
+  if (
+    t.isArrowFunctionExpression(path.parentPath.node) &&
+    path.parentPath.parentPath &&
+    t.isCallExpression(path.parentPath.parentPath.node) &&
+    path.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
+    path.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
+    path.parentPath.parentPath.node.callee.property.name === 'map'
+  ) {
+    // If Array.map is used, keep the key prop
+    if (
+      keyProp &&
+      t.isJSXAttribute(keyProp)
+    ) {
+      let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
+      attributes.push(newKeyProp);
+    }
+  }
+}
+
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -979,5 +1096,8 @@ export const functionMap = {
   updatePlacementToSingleValue,
   removeComponentIfWithinParent,
   updateAvatarSize,
-  updateLegacyLink
+  updateLegacyLink,
+  addColumnsPropToRow,
+  updateRowFunctionArg,
+  updateKeyToId
 };
