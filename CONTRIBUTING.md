@@ -170,7 +170,7 @@ yarn install
 And then the appropriate command to run the development server. Check the project's `package.json` for the correct command.
 
 If you are running into issues with `yarn install` at this step, you may need to clear your yarn cache. To do this, run this following command:
-```bash
+```
 rm -r ~/.yarn/berry/metadata/npm
 yarn cache clean --all
 ```
