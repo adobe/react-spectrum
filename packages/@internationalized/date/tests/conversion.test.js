@@ -136,6 +136,14 @@ describe('CalendarDate conversion', function () {
       date = fromAbsolute(new Date('2020-02-03T10:00Z').getTime(), 'America/New_York');
       expect(date).toEqual(new ZonedDateTime(2020, 2, 3, 'America/New_York', -18000000, 5));
     });
+
+    it('should convert a date from absolute in the BC era', function () {
+      let date = fromAbsolute(new Date('0000-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 0, 0, 0));
+
+      date = fromAbsolute(new Date('-000009-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('BC', 10, 1, 1, 'UTC', 0, 0, 0, 0));
+    });
   });
 
   describe('toCalendar', function () {
