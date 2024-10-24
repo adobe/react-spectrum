@@ -86,8 +86,8 @@ export interface DateFieldState extends FormValidationState {
    */
   decrementPage(type: SegmentType): void,
   /** Sets the value of the given segment. */
-  setSegment(type: 'era', value?: string): void,
-  setSegment(type: SegmentType, value?: number): void,
+  setSegment(type: 'era', value: string): void,
+  setSegment(type: SegmentType, value: number): void,
   /** Updates the remaining unfilled segments with the placeholder value. */
   confirmPlaceholder(): void,
   /** Clears the value of the given segment, reverting it to the placeholder. */
