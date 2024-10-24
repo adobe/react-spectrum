@@ -11,8 +11,9 @@
  */
 
 import {Breadcrumb, Breadcrumbs, BreadcrumbsContext, Link} from 'react-aria-components';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
+import userEvent from '@testing-library/user-event';
 
 let renderBreadcrumbs = (breadcrumbsProps, itemProps) => render(
   <Breadcrumbs {...breadcrumbsProps}>
@@ -23,6 +24,11 @@ let renderBreadcrumbs = (breadcrumbsProps, itemProps) => render(
 );
 
 describe('Breadcrumbs', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render with default class', () => {
     let {getByRole, getAllByRole} = renderBreadcrumbs();
     let breadcrumbs = getByRole('list');
@@ -104,7 +110,7 @@ describe('Breadcrumbs', () => {
     expect(breadcrumbRef.current).toBe(item);
   });
 
-  it('should support render props', () => {
+  it('should support isCurrent props', () => {
     let items = [
       {id: 1, name: 'Item 1'},
       {id: 2, name: 'Item 2'},
@@ -118,5 +124,50 @@ describe('Breadcrumbs', () => {
     );
 
     expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Current']);
+  });
+
+  it('should support isDisabled props', () => {
+    let {getByRole} = render(
+      <Breadcrumbs isDisabled className={({defaultClassName, isDisabled}) => `${defaultClassName}-${isDisabled}`}>
+        <Breadcrumb><Link>Item1</Link></Breadcrumb>
+      </Breadcrumbs>
+    );
+
+    const breadCrumbs = getByRole('list');
+    expect(breadCrumbs).toHaveAttribute('data-disabled', 'true');
+    expect(breadCrumbs).toHaveClass('react-aria-Breadcrumbs-true');
+  });
+
+  it('should support focus-ring', async () => {
+    let {getByRole} = render(
+      <Breadcrumbs className={({defaultClassName, isFocusVisible}) => `${defaultClassName}-${isFocusVisible}`}>
+        <Breadcrumb><Link href="/">Item1</Link></Breadcrumb>
+        <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
+      </Breadcrumbs>
+    );
+    let breadCrumbs = getByRole('list');
+
+    expect(breadCrumbs).not.toHaveAttribute('data-focus-visible');
+    expect(breadCrumbs).toHaveClass('react-aria-Breadcrumbs-false');
+
+    await user.tab();
+    expect(breadCrumbs).toHaveAttribute('data-focus-visible', 'true');
+    expect(breadCrumbs).toHaveClass('react-aria-Breadcrumbs-true');
+
+    await user.tab();
+    expect(breadCrumbs).not.toHaveAttribute('data-focus-visible');
+    expect(breadCrumbs).toHaveClass('react-aria-Breadcrumbs-false');
+  });
+
+  it('should have default data attributes', () => {
+    let {getByRole, getAllByRole} = renderBreadcrumbs();
+
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbs).toHaveAttribute('data-rac');
+    expect(breadcrumbs).not.toHaveAttribute('data-focus-within');
+    expect(breadcrumbs).not.toHaveAttribute('data-disabled');
+
+    let items = getAllByRole('listitem');
+    items.forEach((item) => expect(item).toHaveAttribute('data-rac'));
   });
 });
