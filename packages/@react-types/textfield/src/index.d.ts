@@ -30,9 +30,9 @@ import {
 } from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, Validation<string>, HelpTextProps, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
+export interface TextFieldProps<T = HTMLInputElement> extends InputBase, Validation<string>, HelpTextProps, FocusableProps<T>, TextInputBase, ValueBase<string>, LabelableProps {}
 
-export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
+export interface AriaTextFieldProps<T = HTMLInputElement> extends TextFieldProps<T>, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
   /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
   'aria-activedescendant'?: string,
@@ -45,14 +45,15 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
 }
 
-export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
+interface SpectrumTextFieldBaseProps {
   /** An icon to display at the start of the input. */
   icon?: ReactElement | null,
   /** Whether the input should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
-export interface SpectrumTextAreaProps extends Omit<SpectrumTextFieldProps, 'type' | 'pattern'> {}
+export interface SpectrumTextFieldProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
+export interface SpectrumTextAreaProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps<HTMLTextAreaElement>, 'isInvalid' | 'validationState' | 'type' | 'pattern'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,
