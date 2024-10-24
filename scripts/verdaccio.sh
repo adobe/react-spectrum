@@ -43,7 +43,7 @@ set -e
 make build
 
 # Start verdaccio and send it to the background
-yarn verdaccio --config "./.verdaccio-ci.config.yml" --listen $port &>${output}&
+yarn verdaccio --listen $port &>${output}&
 
 # Wait for verdaccio to start
 grep -q 'http address' <(tail -f $output)
