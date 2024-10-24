@@ -341,10 +341,10 @@ function App() {
           </Link>
           <Link href="/foo">Foo</Link>
           <SegmentedControl styles={style({width: 384})}>
-            <SegmentedControlItem value="day">Day</SegmentedControlItem>
-            <SegmentedControlItem value="week">Week</SegmentedControlItem>
-            <SegmentedControlItem value="month">Month</SegmentedControlItem>
-            <SegmentedControlItem value="year">Year</SegmentedControlItem>
+            <SegmentedControlItem id="day">Day</SegmentedControlItem>
+            <SegmentedControlItem id="week">Week</SegmentedControlItem>
+            <SegmentedControlItem id="month">Month</SegmentedControlItem>
+            <SegmentedControlItem id="year">Year</SegmentedControlItem>
           </SegmentedControl>
           <Tabs aria-label="History of Ancient Rome">
             <TabList>
