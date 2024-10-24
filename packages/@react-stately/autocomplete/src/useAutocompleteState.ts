@@ -21,9 +21,9 @@ export interface AutocompleteState {
   setInputValue(value: string): void,
   // TODO: debatable if this state hook needs to exist
   /** The id of the current aria-activedescendant of the autocomplete input. */
-  focusedNodeId: string,
+  focusedNodeId: string | null,
   /** Sets the id of the current aria-activedescendant of the autocomplete input. */
-  setFocusedNodeId(value: string): void
+  setFocusedNodeId(value: string | null): void
 }
 
 export interface AutocompleteProps extends InputBase, TextInputBase, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {

@@ -15,7 +15,7 @@ import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, cr
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useEffectEvent, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {getItemId, useSubmenuTrigger} from '@react-aria/menu';
 import {HeaderContext} from './Header';
@@ -170,7 +170,7 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {register, filterFn, inputValue} = useContext(InternalAutocompleteContext) || {};
+  let {register, filterFn, inputValue, menuProps: autocompleteMenuProps} = useContext(InternalAutocompleteContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
   // we always perform the filtering for them.
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
@@ -182,7 +182,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
+  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized}, state, ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContext = useContext(PopoverContext)!;
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
@@ -226,7 +226,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             // TODO: will need to special case this so it doesn't clear the focused key if we are currently
             // focused on a submenutrigger
             if (state.selectionManager.isFocused) {
-              state.selectionManager.setFocused(false);
+              clearVirtualFocus();
             }
             break;
           case 'Escape':
@@ -252,11 +252,16 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
           );
         }
-        focusedId = getItemId(state, state.selectionManager.focusedKey);
+        focusedId = state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null;
         return focusedId;
       });
     }
   }, [register, state, menuId, ref]);
+
+  let clearVirtualFocus = useEffectEvent(() => {
+    state.selectionManager.setFocused(false);
+    state.selectionManager.setFocusedKey(null);
+  });
 
   useEffect(() => {
     // TODO: retested in NVDA. It seems like NVDA properly announces what new letter you are typing even if we maintain virtual focus on
@@ -269,10 +274,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     // its own collection
     // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
     if (inputValue != null) {
-      state.selectionManager.setFocused(false);
-      state.selectionManager.setFocusedKey(null);
+      clearVirtualFocus();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
 
 
