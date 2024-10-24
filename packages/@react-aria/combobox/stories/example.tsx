@@ -152,7 +152,7 @@ function ListBox(props) {
 }
 
 function Option({item, state}) {
-  let ref = React.useRef(undefined);
+  let ref = React.useRef<HTMLLIElement | null>(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
   let backgroundColor;

@@ -128,7 +128,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
 
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
-  let {ariaLabel, ariaLabelledBy} = hookData.get(state);
+  let {ariaLabel, ariaLabelledBy} = hookData.get(state)!;
   let labelProps = useLabels({
     'aria-label': [ariaLabel, visibleRangeDescription].filter(Boolean).join(', '),
     'aria-labelledby': ariaLabelledBy
@@ -148,8 +148,8 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   return {
     gridProps: mergeProps(labelProps, {
       role: 'grid',
-      'aria-readonly': state.isReadOnly || null,
-      'aria-disabled': state.isDisabled || null,
+      'aria-readonly': state.isReadOnly || undefined,
+      'aria-disabled': state.isDisabled || undefined,
       'aria-multiselectable': ('highlightedRange' in state) || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
