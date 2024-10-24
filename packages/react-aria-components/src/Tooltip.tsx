@@ -143,7 +143,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     isOpen: state.isOpen,
     arrowSize: arrowWidth,
     arrowBoundaryOffset: props.arrowBoundaryOffset,
-    shouldFlip: props.shouldFlip
+    shouldFlip: props.shouldFlip,
+    onClose: () => state.close(true)
   });
 
   let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
