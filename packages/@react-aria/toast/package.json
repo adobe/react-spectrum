@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/toast",
-  "version": "3.0.0-beta.16",
+  "version": "3.0.0-beta.17",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.3",
+    "@react-aria/interactions": "^3.22.4",
     "@react-aria/landmark": "3.0.0-beta.16",
     "@react-aria/utils": "^3.25.3",
     "@react-stately/toast": "3.0.0-beta.6",

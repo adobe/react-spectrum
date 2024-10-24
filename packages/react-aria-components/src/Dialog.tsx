@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
@@ -76,13 +76,6 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   }, ref);
   let state = useContext(OverlayTriggerStateContext);
 
-  let children = props.children;
-  if (typeof children === 'function') {
-    children = children({
-      close: state?.close || (() => {})
-    });
-  }
-
   if (!dialogProps['aria-label'] && !dialogProps['aria-labelledby']) {
     // If aria-labelledby exists on props, we know it came from context.
     // Use that as a fallback in case there is no title slot.
@@ -93,14 +86,23 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
     }
   }
 
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-Dialog',
+    className: props.className,
+    style: props.style,
+    children: props.children,
+    values: {
+      close: state?.close || (() => {})
+    }
+  });
+
   return (
     <section
       {...filterDOMProps(props)}
       {...dialogProps}
+      {...renderProps}
       ref={ref}
-      slot={props.slot || undefined}
-      style={props.style}
-      className={props.className ?? 'react-aria-Dialog'}>
+      slot={props.slot || undefined}>
       <Provider
         values={[
           [HeadingContext, {
@@ -110,7 +112,7 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
             }
           }]
         ]}>
-        {children}
+        {renderProps.children}
       </Provider>
     </section>
   );
