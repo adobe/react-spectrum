@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Keyboard, Label, Menu, Popover, Section, Separator, Text} from 'react-aria-components';
+import {Autocomplete, Button, Header, Input, Keyboard, Label, Menu, MenuTrigger, Popover, Section, Separator, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -220,10 +220,12 @@ export const AutocompleteCaseSensitive = {
   name: 'Autocomplete, case sensitive filter'
 };
 
+// TODO: how would we handle this for a DialogTrigger? I guess we could automatically grab the overlaytrigger state from context and send a onAction that gets chained by the one provided
+// to Menu
 export const AutocompleteInPopover = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
-      <DialogTrigger>
+      <MenuTrigger>
         <Button>
           Open popover
         </Button>
@@ -235,20 +237,18 @@ export const AutocompleteInPopover = {
             border: '1px solid gray',
             padding: 20
           }}>
-          <Dialog>
-            <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
-              <div>
-                <Label style={{display: 'block'}}>Test</Label>
-                <Input autoFocus />
-                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-                <Menu className={styles.menu} items={items} onAction={onAction}>
-                  {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-                </Menu>
-              </div>
-            </Autocomplete>
-          </Dialog>
+          <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
+            <div>
+              <Label style={{display: 'block'}}>Test</Label>
+              <Input autoFocus />
+              <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+              <Menu className={styles.menu} items={items} onAction={onAction}>
+                {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+              </Menu>
+            </div>
+          </Autocomplete>
         </Popover>
-      </DialogTrigger>
+      </MenuTrigger>
 
     );
   },

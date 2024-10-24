@@ -17,10 +17,10 @@ import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {MenuContext} from './Menu';
-import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, useCallback} from 'react';
+import {mergeProps, useObjectRef} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, useCallback, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFilter} from 'react-aria';
-import {useObjectRef} from '@react-aria/utils';
 
 // TODO: I've kept isDisabled because it might be useful to a user for changing what the menu renders if the autocomplete is disabled,
 // but what about isReadOnly. TBH is isReadOnly useful in the first place? What would a readonly Autocomplete do?
@@ -48,6 +48,14 @@ export const AutocompleteStateContext = createContext<AutocompleteState | null>(
 export const InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
+  // TODO: Needed for the onClose from MenuTrigger so that the menu is closed automatically. Probably won't have to do the same for other collection components,
+  // but its a bit annoying since we could potentially need to do the same for every collection component Autocomplete will support?
+  // Alternatively, this won't be a problem if we didn't use MenuContext below and instead used a generic autocomplete context so they don't collide.
+  // Might be better if we do that since then the supported collection components would access that generic context instead and we wouldn't pull into unrelated
+  // components when you are just using the Autocomplete and one other collection component
+  let menuRef = useRef(null);
+  let [contextMenuProps, contextMenuRef] = useContextProps({}, menuRef, MenuContext);
+
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
   let {defaultFilter} = props;
   let state = useAutocompleteState(props);
@@ -88,7 +96,8 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
         [AutocompleteStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
         [InputContext, {...inputProps, ref: inputRef}],
-        [MenuContext, {...menuProps}],
+        // TODO: as mentioned above, maybe don't use MenuContext and instead just move the menu props onto the internal context?
+        [MenuContext, {...mergeProps(contextMenuProps, menuProps), ref: contextMenuRef}],
         [TextContext, {
           slots: {
             description: descriptionProps
