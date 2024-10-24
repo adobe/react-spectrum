@@ -30,7 +30,7 @@ preRelease: alpha
 
 # DisclosureGroup
 
-<PageDescription>{docs.exports.UNSTABLE_DisclosureGroup.description}</PageDescription>
+<PageDescription>{docs.exports.DisclosureGroup.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -42,7 +42,7 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
@@ -82,8 +82,7 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 
 ## Features
 
-
-Custom styled disclosure groups can be difficult to implement in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `DisclosureGroup` helps with this and other accessibility features while allowing for custom styling.
+Accordions can be built by combing multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML element, but this can be difficult to style especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Accordion` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
 
 * **Accessible** - Disclosure group is exposed to assistive technology via ARIA 
 * **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
@@ -95,7 +94,7 @@ Custom styled disclosure groups can be difficult to implement in an accessible w
 A disclosure group consists of a set of disclosures. Each disclosure includes a button within a heading and panel of content that is either shown or hidden. Zero or more disclosures within a group can be expanded at the same time, however, by default, only one disclosure can be expanded at a time. Users may click or touch a disclosure to expand it, or use the <Keyboard>Tab</Keyboard> key to navigate between disclosures and the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key to toggle it.
 
 ```tsx
-import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-components';
 
 <DisclosureGroup>
   <Disclosure>
@@ -124,7 +123,7 @@ import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disc
 
 ### Default expanded
 
-An uncontrolled DisclosureGroup can be expanded by default using the `defaultExpandedKeys` prop.
+An uncontrolled DisclosureGroup can be expanded by default using the `defaultExpandedKeys` prop. The `defaultExpandedKeys` must match the `id` on the disclosure(s) component that you wish to expand.
 
 ```tsx example export=true
 import type {DisclosureProps} from 'react-aria-components';
@@ -165,7 +164,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
 
 ### Controlled expanded
 
-A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `defaultExpandedKeys`
+A controlled DisclosureGroup can be expanded and collapsed using `expandedKeys` and `onExpandedChange`. The `expandedKeys` must match the `id` on the disclosure component(s) that you wish to expand.
 
 ```tsx example
 import {Key} from "@react-types/shared";
@@ -223,7 +222,7 @@ A DisclosureGroup can be disabled using the `isDisabled` prop.
 
 ### DisclosureGroup
 
-<PropTable component={docs.exports.UNSTABLE_DisclosureGroup} links={docs.links} />
+<PropTable component={docs.exports.DisclosureGroup} links={docs.links} />
 
 ### Disclosure
 
@@ -232,7 +231,7 @@ Within a `<DisclosureGroup>`, most `<Disclosure>` props are set automatically. T
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.UNSTABLE_Disclosure} links={docs.links} />
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
 
 </details>
 
@@ -250,7 +249,7 @@ Within a `<DisclosureGroup>`, most `<Disclosure>` props are set automatically. T
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.UNSTABLE_DisclosurePanel} links={docs.links} />
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
 
 </details>
 
@@ -309,6 +308,8 @@ A `Button` can be targeted with the `.react-aria-Button` CSS selector, or by ove
 ### DisclosurePanel
 
 A `DisclosurePanel` can be targeted with the `.react-aria-DisclosurePanel` CSS selector, or by overriding with a custom `className`.
+
+<StateTable properties={docs.exports.DisclosurePanelRenderProps.properties} />
 
 ## Advanced Customization
 

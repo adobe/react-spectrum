@@ -50,11 +50,14 @@ governing permissions and limitations under the License.
 
   border-bottom: var(--spectrum-accordion-item-border-size) solid transparent;
 
-  &:first-of-type {
+  border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-alias-border-color);
+
+  &.in-accordion, &:first-of-type {
     border-top: var(--spectrum-accordion-item-border-size) solid transparent;
   }
 
   &.spectrum-Accordion-item--quiet, &.spectrum-Accordion-item--quiet:first-of-type {
+    border-radius: var(--spectrum-global-dimension-static-size-100);
     border-color: transparent;
   }
 }
@@ -97,17 +100,18 @@ governing permissions and limitations under the License.
   width: 100%;
   border-style: solid;
   border-color: transparent;
-  border-radius: var(--spectrum-global-dimension-static-size-100);
 
   &.focus-ring {
+    border-radius: var(--spectrum-global-dimension-static-size-100);
     outline: solid 2px var(--spectrum-accordion-item-focus-ring-color);
     outline-offset: -4px;
   }
 }
 
-.spectrum-Accordion-itemContent {
-  padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
-  display: none;
+.spectrum-Accordion-item.is-expanded {
+  .spectrum-Accordion-itemContent {
+    padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
+  }
 }
 
 .spectrum-Accordion-item {

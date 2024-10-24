@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
-import {KeyboardEvent, PressEvent} from '@react-types/shared';
+import {PressEvent} from '@react-types/shared';
 import {useDisclosure} from '../src/useDisclosure';
 import {useDisclosureState} from '@react-stately/disclosure';
 
@@ -32,6 +32,7 @@ describe('useDisclosure', () => {
 
     expect(buttonProps['aria-expanded']).toBe(false);
     expect(panelProps.hidden).toBe(true);
+    expect(panelProps['aria-hidden']).toBe(true);
   });
 
   it('should return correct aria attributes when expanded', () => {
@@ -46,7 +47,7 @@ describe('useDisclosure', () => {
     expect(panelProps.hidden).toBe(false);
   });
 
-  it('should handle expanding on press event', () => {
+  it('should handle expanding on press event (with mouse)', () => {
     let {result} = renderHook(() => {
       let state = useDisclosureState({});
       let disclosure = useDisclosure({}, state, ref);
@@ -60,21 +61,18 @@ describe('useDisclosure', () => {
     expect(result.current.state.isExpanded).toBe(true);
   });
 
-  it('should handle expanding on keydown event', () => {
+  it('should handle expanding on press start event (with keyboard)', () => {
     let {result} = renderHook(() => {
       let state = useDisclosureState({});
       let disclosure = useDisclosure({}, state, ref);
       return {state, disclosure};
     });
 
-    let preventDefault = jest.fn();
-    let event = (e: Partial<KeyboardEvent>) => ({...e, preventDefault} as KeyboardEvent);
+    let event = (e: Partial<PressEvent>) => (e as PressEvent);
 
     act(() => {
-      result.current.disclosure.buttonProps.onKeyDown?.(event({key: 'Enter', preventDefault}) as KeyboardEvent);
+      result.current.disclosure.buttonProps.onPressStart?.(event({pointerType: 'keyboard'}) as PressEvent);
     });
-
-    expect(preventDefault).toHaveBeenCalledTimes(1);
 
     expect(result.current.state.isExpanded).toBe(true);
   });

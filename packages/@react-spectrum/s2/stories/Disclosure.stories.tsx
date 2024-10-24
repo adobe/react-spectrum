@@ -106,7 +106,24 @@ export const Controlled: Story = {
 
 Controlled.parameters = {
   docs: {
-    disable: true
+    source: {
+      transform: () => {
+        return `
+function ControlledDisclosure(props) {
+  let [isExpanded, setExpanded] = React.useState(false);
+  return (
+    <Disclosure {...props} isExpanded={isExpanded} onExpandedChange={setExpanded}>
+      <DisclosureTitle>
+        Files
+      </DisclosureTitle>
+      <DisclosurePanel>
+        Files content
+      </DisclosurePanel>
+    </Disclosure>
+  );
+}`;
+      }
+    }
   }
 };
 

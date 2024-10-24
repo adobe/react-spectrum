@@ -15,7 +15,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 describe('Disclosure SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {UNSTABLE_DisclosureGroup as DisclosureGroup, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading, Button} from '../';
+      import {DisclosureGroup, Disclosure, DisclosurePanel, Heading, Button} from '../';
 
       <React.StrictMode>
         <DisclosureGroup>

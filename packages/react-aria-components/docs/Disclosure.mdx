@@ -28,7 +28,7 @@ preRelease: alpha
 
 # Disclosure
 
-<PageDescription>{docs.exports.UNSTABLE_Disclosure.description}</PageDescription>
+<PageDescription>{docs.exports.Disclosure.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -40,7 +40,7 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
   <Heading>
@@ -103,10 +103,11 @@ import {UNSTABLE_Disclosure as Disclosure, Button, UNSTABLE_DisclosurePanel as D
 
 ## Features
 
-Custom styled disclosures can be difficult to build in an accessible way with the correct ARIA pattern. When implementing, you must manually ensure that the button and panel are semantically connected via ids for accessibility. `Disclosure` helps with this and other accessibility features while allowing for custom styling.
+Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML element, but this can be difficult to style especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
 
 * **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
-* **Accessible** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
+* **Keyboard Interaction** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
+* **Accessible** - Uses hidden="until-found" in supported browsers, enabling find-in-page search support and improved search engine visibility for collapsed content
 * **Styleable** - Keyboard focus, disabled and expanded states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 
 ## Anatomy
@@ -116,7 +117,7 @@ Custom styled disclosures can be difficult to build in an accessible way with th
 A disclosure consists of a button and panel of content. The button contains the label representing content within the panel, and the panel is the section of content that is associated with the button which is either expanded or collapsed.
 
 ```tsx
-import {Button, UNSTABLE_Disclosure as Disclosure, UNSTABLE_DisclosurePanel as DisclosurePanel, Heading} from 'react-aria-components';
+import {Button, Disclosure, DisclosurePanel, Heading} from 'react-aria-components';
 
 <Disclosure>
   <Heading>
@@ -202,11 +203,34 @@ A Disclosure can be disabled using the `isDisabled` prop.
 </MyDisclosure>
 ```
 
+## Interactive elements
+
+In some use cases, you may want to add an interactive element, like a button, adjacent to the disclosure's heading.
+
+```tsx example
+<Disclosure>
+  <div style={{display: 'flex', alignItems: 'center'}}>
+    <Heading>
+      <Button slot="trigger">
+        <svg viewBox="0 0 24 24">
+          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+        System Requirements
+      </Button>
+    </Heading>
+    <Button>Click me</Button>
+  </div>
+  <DisclosurePanel>
+    <p>Details about system requirements here.</p>
+  </DisclosurePanel>
+</Disclosure>
+```
+
 ## Props
 
 ### Disclosure
 
-<PropTable component={docs.exports.UNSTABLE_Disclosure} links={docs.links} />
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
 
 ### Button
 
@@ -222,7 +246,7 @@ A Disclosure can be disabled using the `isDisabled` prop.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.UNSTABLE_DisclosurePanel} links={docs.links} />
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
 
 </details>
 
@@ -284,7 +308,7 @@ A `DisclosurePanel` can be targeted with the `.react-aria-DisclosurePanel` CSS s
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['UNSTABLE_Disclosure']} docs={docs} />
+<ContextTable components={['Disclosure']} docs={docs} />
 
 This example shows a `DisclosureGroup` component that renders a group of disclosures. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child disclosures via the `DisclosureContext` provider.
 
