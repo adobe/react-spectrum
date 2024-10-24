@@ -138,7 +138,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
         // TODO: another thing to think about, what is the best way to past this to menu/wrapped collection component so that hovering on
         // a item also updates the focusedNode. Perhaps we should just pass down setFocusedNodeId instead
         state.setFocusedNodeId(e.target.id);
-      }
+      },
+      disallowTypeAhead: true
     }),
     descriptionProps,
     register
