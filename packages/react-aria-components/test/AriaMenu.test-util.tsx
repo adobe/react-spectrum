@@ -42,7 +42,6 @@ describeInteractions.skip = ((name, tests) => describe.skip.each`
 
 let triggerText = 'Menu Button';
 
-let ariaRender = render;
 interface AriaBaseTestProps {
   setup?: () => void,
   prefix?: string
@@ -50,22 +49,22 @@ interface AriaBaseTestProps {
 interface AriaMenuTestProps extends AriaBaseTestProps {
   renderers: {
     // needs at least three child items, all enabled
-    standard: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    standard: (props?: {name: string}) => ReturnType<typeof render>,
     // trigger must be disabled
-    disabledTrigger?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    disabledTrigger?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs at least three child items, all enabled, with single selection
-    singleSelection?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    singleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs at least four child items, all enabled, with single selection
-    multipleSelection?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    multipleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs a focusable sibling after the trigger with the label 'after'
     // TODO: better to have tests return JSX and I call `render`? could allow me to inject elements in the DOM more easily
-    siblingFocusableElement?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    siblingFocusableElement?: (props?: {name: string}) => ReturnType<typeof render>,
     // needs two menus that are siblings
-    multipleMenus?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    multipleMenus?: (props?: {name: string}) => ReturnType<typeof render>,
     // Menu should only open on long press
-    longPress?: (props?: {name: string}) => ReturnType<typeof ariaRender>,
+    longPress?: (props?: {name: string}) => ReturnType<typeof render>,
     // Menu must have two levels of submenus
-    submenus?: (props?: {name: string}) => ReturnType<typeof ariaRender>
+    submenus?: (props?: {name: string}) => ReturnType<typeof render>
   }
 }
 export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => {
