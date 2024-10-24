@@ -23,6 +23,8 @@ import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import {Selection} from 'react-aria-components';
+import {useState} from 'react';
 
 const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
@@ -454,4 +456,58 @@ let items = [
       }
     }
   }
+};
+
+export const SelectionGroups = (args) => {
+  let {
+    trigger,
+    isOpen,
+    onOpenChange,
+    defaultOpen,
+    align,
+    direction,
+    shouldFlip,
+    ...menuProps
+  } = args;
+  let triggerProps = {
+    trigger,
+    isOpen,
+    onOpenChange,
+    defaultOpen,
+    align,
+    direction,
+    shouldFlip
+  };
+  let [group1, setGroup1] = useState<Selection>(new Set([1]));
+  let [group2, setGroup2] = useState<Selection>(new Set());
+  return (
+    <MenuTrigger {...triggerProps}>
+      <Button aria-label="Actions for selected resource"><NewIcon /></Button>
+      <Menu {...menuProps}>
+        <MenuSection>
+          <Header>
+            <Heading>Actions</Heading>
+          </Header>
+          <MenuItem>Action 1</MenuItem>
+          <MenuItem>Action 2</MenuItem>
+        </MenuSection>
+        <MenuSection selectionMode="single" selectedKeys={group1} onSelectionChange={setGroup1}>
+          <Header>
+            <Heading>Single-select</Heading>
+          </Header>
+          <MenuItem id={1}>One</MenuItem>
+          <MenuItem id={2}>Two</MenuItem>
+          <MenuItem id={3}>Three</MenuItem>
+        </MenuSection>
+        <MenuSection selectionMode="multiple" selectedKeys={group2} onSelectionChange={setGroup2}>
+          <Header>
+            <Heading>Multi-select</Heading>
+          </Header>
+          <MenuItem id={4}>Four</MenuItem>
+          <MenuItem id={5}>Five</MenuItem>
+          <MenuItem id={6}>Siz</MenuItem>
+        </MenuSection>
+      </Menu>
+    </MenuTrigger>
+  );
 };

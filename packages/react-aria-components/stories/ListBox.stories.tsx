@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Collection, DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -62,18 +62,18 @@ ListBoxExample.story = {
 // also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
-    <Section className={styles.group}>
+    <ListBoxSection className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
+    </ListBoxSection>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group} aria-label="Section 2">
+    <ListBoxSection className={styles.group} aria-label="Section 2">
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
+    </ListBoxSection>
   </ListBox>
 );
 
@@ -261,12 +261,12 @@ export function VirtualizedListBox({variableHeight}) {
     <Virtualizer layout={layout}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
-          <Section className={styles.group}>
+          <ListBoxSection className={styles.group}>
             <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
             <Collection items={section.children}>
               {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
             </Collection>
-          </Section>
+          </ListBoxSection>
         )}
       </ListBox>
     </Virtualizer>
