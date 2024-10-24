@@ -27,7 +27,7 @@ import macrosPlugin from 'unplugin-parcel-macros';
 export default defineConfig({
   plugins: [
     // ...
-    macros.vite()
+    macrosPlugin.vite()
     // ..
   ],
 })

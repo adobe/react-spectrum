@@ -33,7 +33,7 @@ export default {
     nodeResolve({
       extensions: ['.js', '.jsx', '.mjs']
     }), // from https://www.codeguage.com/blog/setup-rollup-for-react
-    macros.rollup(), // added for style macros, has to be before babel
+    macrosPlugin.rollup(), // added for style macros, has to be before babel
     babel({
       babelHelpers: 'bundled',
       presets: ['@babel/preset-react'],
