@@ -340,7 +340,7 @@ function App() {
             The missing link.
           </Link>
           <Link href="/foo">Foo</Link>
-          <SegmentedControl styles={style({width: 384})}>
+          <SegmentedControl aria-label="Time granularity" styles={style({width: 384})}>
             <SegmentedControlItem id="day">Day</SegmentedControlItem>
             <SegmentedControlItem id="week">Week</SegmentedControlItem>
             <SegmentedControlItem id="month">Month</SegmentedControlItem>
