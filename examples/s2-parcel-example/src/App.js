@@ -44,6 +44,7 @@ import {
   Disclosure,
   DisclosureHeader,
   DisclosurePanel,
+  DisclosureTitle,
   Divider,
   DropZone,
   Footer,
@@ -305,7 +306,10 @@ function App() {
             <Accordion>
               <Disclosure id="files">
                 <DisclosureHeader>
-                  Files
+                  <DisclosureTitle>
+                    Files
+                  </DisclosureTitle>
+                  <ActionButton><Edit aria-label="Edit" /></ActionButton>
                 </DisclosureHeader>
                 <DisclosurePanel>
                   Files content
@@ -313,7 +317,9 @@ function App() {
               </Disclosure>
               <Disclosure id="people">
                 <DisclosureHeader>
-                  People
+                  <DisclosureTitle>
+                    People
+                  </DisclosureTitle>
                 </DisclosureHeader>
                 <DisclosurePanel>
                   <TextField label="Name" styles={style({ maxWidth: 176 })} />
