@@ -15,7 +15,11 @@ import {
   UNSTABLE_Disclosure as Disclosure,
   UNSTABLE_DisclosureGroup as DisclosureGroup,
   UNSTABLE_DisclosurePanel as DisclosurePanel,
-  Heading
+  Heading,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover
 } from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
@@ -205,6 +209,92 @@ describe('Disclosure', () => {
     await user.tab();
     expect(disclosure).not.toHaveAttribute('data-focus-visible-within');
     expect(disclosure).not.toHaveClass('focus');
+  });
+
+  it('should support interactive elements adjacent to heading', async () => {
+    const {getByTestId, queryByText} = render(
+      <Disclosure data-testid="disclosure">
+        <Heading level={3}>
+          <Button slot="trigger" data-testid="disclosure-trigger">Trigger</Button>
+        </Heading>
+        <MenuTrigger>
+          <Button aria-label="Menu" data-testid="menu-trigger">☰</Button>
+          <Popover>
+            <Menu data-testid="menu">
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+        <DisclosurePanel>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const disclosure = getByTestId('disclosure');
+    const panel = queryByText('Content');
+    const menuTrigger = getByTestId('menu-trigger');
+    expect(disclosure).not.toHaveAttribute('data-expanded');
+    expect(panel).not.toBeVisible();
+    
+    await user.click(menuTrigger);
+    const menu = getByTestId('menu');
+    expect(menu).toBeVisible();
+    expect(disclosure).not.toHaveAttribute('data-expanded');
+    expect(panel).not.toBeVisible();
+    await user.click(document.body);
+    expect(menu).not.toBeVisible();
+
+    const button = getByTestId('disclosure-trigger');
+    await user.click(button);
+
+    expect(disclosure).toHaveAttribute('data-expanded', 'true');
+    expect(panel).toBeVisible();
+    expect(menu).not.toBeVisible();
+
+    await user.click(button);
+
+    expect(disclosure).not.toHaveAttribute('data-expanded');
+    expect(panel).not.toBeVisible();
+    expect(menu).not.toBeVisible();
+  });
+
+  it('should support nested Disclosures', async () => {
+    const {getByText, queryByText} = render(
+      <Disclosure>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger 1</Button>
+        </Heading>
+        <DisclosurePanel>
+          <Disclosure>
+            <Heading level={3}>
+              <Button slot="trigger">Trigger 2</Button>
+            </Heading>
+            <DisclosurePanel>
+              <p>Content 2</p>
+            </DisclosurePanel>
+          </Disclosure>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+
+    const trigger1 = getByText('Trigger 1');
+    const trigger2 = getByText('Trigger 2');
+    let panel2 = queryByText('Content 2');
+
+    expect(panel2).not.toBeVisible();
+
+    await user.click(trigger1);
+    expect(panel2).not.toBeVisible();
+
+    await user.click(trigger2);
+    expect(panel2).toBeVisible();
+
+    await user.click(trigger2);
+    expect(panel2).not.toBeVisible();
   });
 });
 
@@ -417,5 +507,44 @@ describe('DisclosureGroup', () => {
       expect(button).toHaveAttribute('data-disabled', 'true');
       expect(button).toHaveAttribute('disabled');
     });
+  });
+
+  it('should support nested DisclosureGroups', async () => {
+    const {getByText, queryByText} = render(
+      <DisclosureGroup>
+        <Disclosure id="item1">
+          <Heading level={3}>
+            <Button slot="trigger">Trigger 1</Button>
+          </Heading>
+          <DisclosurePanel>
+            <DisclosureGroup>
+              <Disclosure id="item2">
+                <Heading level={3}>
+                  <Button slot="trigger">Trigger 2</Button>
+                </Heading>
+                <DisclosurePanel>
+                  <p>Content 2</p>
+                </DisclosurePanel>
+              </Disclosure>
+            </DisclosureGroup>
+          </DisclosurePanel>
+        </Disclosure>
+      </DisclosureGroup>
+    );
+
+    const trigger1 = getByText('Trigger 1');
+    const trigger2 = getByText('Trigger 2');
+    let panel2 = queryByText('Content 2');
+
+    expect(panel2).not.toBeVisible();
+
+    await user.click(trigger1);
+    expect(panel2).not.toBeVisible();
+
+    await user.click(trigger2);
+    expect(panel2).toBeVisible();
+
+    await user.click(trigger2);
+    expect(panel2).not.toBeVisible();
   });
 });

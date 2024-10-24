@@ -15,13 +15,13 @@ import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
+import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, FocusableElement, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
 import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
   /** A ref for the droppable element. */
-  ref: RefObject<HTMLElement | null>,
+  ref: RefObject<FocusableElement | null>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
@@ -72,13 +72,20 @@ const DROP_ACTIVATE_TIMEOUT = 800;
 export function useDrop(options: DropOptions): DropResult {
   let {hasDropButton, isDisabled} = options;
   let [isDropTarget, setDropTarget] = useState(false);
-  let state = useRef({
+  let state = useRef<{
+    x: number,
+    y: number,
+    dragOverElements: Set<Element>,
+    dropEffect: DataTransfer['dropEffect'],
+    allowedOperations: DROP_OPERATION,
+    dropActivateTimer: ReturnType<typeof setTimeout> | undefined
+  }>({
     x: 0,
     y: 0,
     dragOverElements: new Set<Element>(),
-    dropEffect: 'none' as DataTransfer['dropEffect'],
+    dropEffect: 'none',
     allowedOperations: DROP_OPERATION.all,
-    dropActivateTimer: null
+    dropActivateTimer: undefined
   }).current;
 
   let fireDropEnter = (e: DragEvent) => {
@@ -164,10 +171,11 @@ export function useDrop(options: DropOptions): DropResult {
 
     clearTimeout(state.dropActivateTimer);
 
-    if (typeof options.onDropActivate === 'function' && state.dropEffect !== 'none') {
+    if (options.onDropActivate && typeof options.onDropActivate === 'function' && state.dropEffect !== 'none') {
+      let onDropActivateOptions = options.onDropActivate;
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       state.dropActivateTimer = setTimeout(() => {
-        options.onDropActivate({
+        onDropActivateOptions({
           type: 'dropactivate',
           x: state.x - rect.x,
           y: state.y - rect.y
@@ -315,7 +323,7 @@ export function useDrop(options: DropOptions): DropResult {
 
   let {ref} = options;
   useLayoutEffect(() => {
-    if (isDisabled) {
+    if (isDisabled || !ref.current) {
       return;
     }
     return DragManager.registerDropTarget({
@@ -415,7 +423,7 @@ function getAllowedOperations(e: DragEvent) {
 }
 
 function allowedOperationsToArray(allowedOperationsBits: DROP_OPERATION) {
-  let allowedOperations = [];
+  let allowedOperations: Array<DropOperation> = [];
   if (allowedOperationsBits & DROP_OPERATION.move) {
     allowedOperations.push('move');
   }

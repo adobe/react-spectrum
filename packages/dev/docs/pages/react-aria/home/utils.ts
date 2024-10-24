@@ -34,7 +34,7 @@ export function animate(steps: any[]) {
         let {promise, cancel} = sleep(step.time);
         cancelCurrentStep = cancel;
         await promise;
-      } catch (err) {
+      } catch {
         break;
       }
     }

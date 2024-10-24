@@ -1050,13 +1050,13 @@ export const WithAvatars = {
   )]
 };
 
-interface Iitem {
+interface ItemValue {
   name: string,
-  items?: Array<Iitem> | null
+  items?: Array<ItemValue> | null
 }
 
 export function WithTreeData() {
-  let tree = useTreeData<Iitem>({
+  let tree = useTreeData<ItemValue>({
     initialItems: [
       {
         name: 'People',

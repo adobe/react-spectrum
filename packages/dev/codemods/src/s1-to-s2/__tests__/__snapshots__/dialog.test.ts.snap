@@ -50,7 +50,11 @@ exports[`Moves close function from DialogTrigger to Dialog 1`] = `
 
 <DialogTrigger>
   <Button>Test</Button>
-  <Dialog>{close => <>
+  <Dialog>{(
+      {
+        close
+      }
+    ) => <>
       <Heading>Test</Heading>
 
       <Content>Content</Content>
@@ -74,7 +78,11 @@ exports[`Removes onDismiss and leaves a comment 1`] = `
 <DialogTrigger>
   <Button>Test</Button>
   // onDismiss was removed from Dialog. Use onOpenChange on the DialogTrigger, or onDismiss on the DialogContainer instead
-  <Dialog>{close => <>
+  <Dialog>{(
+      {
+        close
+      }
+    ) => <>
       <Heading>Test</Heading>
 
       <Content>Content</Content>

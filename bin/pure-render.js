@@ -65,7 +65,7 @@ module.exports = {
         }
 
         // Find the variable definition for the object.
-        const variable = getVariable(context.getScope(), member.object.name);
+        const variable = getVariable(context.sourceCode.getScope(node), member.object.name);
         if (!variable) {
           return;
         }
