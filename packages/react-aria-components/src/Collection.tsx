@@ -105,7 +105,7 @@ export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends
 
 export interface CollectionBranchProps {
   /** The collection of items to render. */
-  collection: ICollection<Node<unknown>>,
+  collection?: ICollection<Node<unknown>>,
   /** The parent node of the items to render. */
   parent: Node<unknown>,
   /** A function that renders a drop indicator between items. */
@@ -136,11 +136,18 @@ export interface CollectionRenderer {
   CollectionBranch: React.ComponentType<CollectionBranchProps>
 }
 
+let CollectionStateContext = createContext(null);
+
 export const DefaultCollectionRenderer: CollectionRenderer = {
   CollectionRoot({collection, renderDropIndicator}) {
-    return useCollectionRender(collection, null, renderDropIndicator);
+    let result = useCollectionRender(collection, null, renderDropIndicator);
+    return <CollectionStateContext.Provider value={collection}>{result}</CollectionStateContext.Provider>;
   },
   CollectionBranch({collection, parent, renderDropIndicator}) {
+    let parentCollection = useContext(CollectionStateContext);
+    if (collection == null) {
+      collection = parentCollection;
+    }
     return useCollectionRender(collection, parent, renderDropIndicator);
   }
 };

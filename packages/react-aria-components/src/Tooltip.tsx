@@ -12,12 +12,15 @@
 
 import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
+import {CollectionRendererContext} from './Collection';
 import {ContextValue, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {createBranchComponent} from '@react-aria/collections';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
+import { useObjectRef } from '../../@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
@@ -80,23 +83,25 @@ export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivEl
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerComponentProps) {
+export const TooltipTrigger = /*#__PURE__*/createBranchComponent('tooltiptrigger', (props: TooltipTriggerComponentProps, ref: ForwardedRef<FocusableElement>, item) => {
+  let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useTooltipTriggerState(props);
-  let ref = useRef<FocusableElement>(null);
+  let triggerRef = useObjectRef(ref);
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
 
   return (
     <Provider
       values={[
         [TooltipTriggerStateContext, state],
-        [TooltipContext, {...tooltipProps, triggerRef: ref}]
+        [TooltipContext, {...tooltipProps, triggerRef}]
       ]}>
-      <FocusableProvider {...triggerProps} ref={ref}>
-        {props.children}
+      <FocusableProvider {...triggerProps} ref={triggerRef}>
+        <CollectionBranch parent={item} />
+        {props.children[1]}
       </FocusableProvider>
     </Provider>
   );
-}
+}, props => props.children[0]);
 
 function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
