@@ -37,7 +37,7 @@ export interface ToolbarAria {
  * @param props - Props to be applied to the toolbar.
  * @param ref - A ref to a DOM element for the toolbar.
  */
-export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElement | null>): ToolbarAria {
+export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement | null>): ToolbarAria {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
