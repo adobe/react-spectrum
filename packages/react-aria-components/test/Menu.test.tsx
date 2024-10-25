@@ -335,8 +335,8 @@ describe('Menu', () => {
 
   it('should support section-level selection', async () => {
     function Example() {
-      let [veggies, setVeggies] = useState(new Set(['lettuce']));
-      let [protein, setProtein] = useState(new Set(['ham']));
+      let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
+      let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
           <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
