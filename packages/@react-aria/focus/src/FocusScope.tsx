@@ -12,7 +12,7 @@
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getOwnerDocument, getRootBody, getRootNode, useLayoutEffect} from '@react-aria/utils';
+import {getOwnerDocument, getRootBody, getRootNode, useLayoutEffect, isShadowRoot} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
@@ -752,12 +752,12 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
   let rootElement = root?.nodeType === Node.ELEMENT_NODE ? (root as Element) : null;
 
   // Determine the document to use
-  let doc = root?.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in root
+  let doc = isShadowRoot(rootElement)
     ? root
     : (getRootNode(rootElement) || getOwnerDocument(rootElement));
 
   // Ensure effectiveDocument is always a Document
-  let effectiveDocument = doc?.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in doc
+  let effectiveDocument = isShadowRoot(doc)
     ? (doc as ShadowRoot).ownerDocument
     : (doc as Document);
 
@@ -789,7 +789,7 @@ export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusM
     walker.currentNode = opts.from;
   }
 
-  if (doc instanceof ShadowRoot) {
+  if (isShadowRoot(doc)) {
     const originalNextNode = walker.nextNode.bind(walker);
     const originalPreviousNode = walker.previousNode.bind(walker);
     walker.nextNode = getNextShadowNode(originalNextNode, scope);
@@ -903,7 +903,7 @@ function getNextShadowNode(originalNextNode: () => Node | null, scope?: Element[
     let nextElement = originalNextNode();
     if (!nextElement && scope && scope.length > 0) {
       let currentShadowRoot = scope[0].getRootNode();
-      let nextShadowHost = currentShadowRoot instanceof ShadowRoot ? currentShadowRoot.host.nextElementSibling : null;
+      let nextShadowHost = isShadowRoot(currentShadowRoot) ? currentShadowRoot.host.nextElementSibling : null;
       while (nextShadowHost) {
         if (nextShadowHost.shadowRoot) {
           let nextShadowScope = Array.from(nextShadowHost.shadowRoot.querySelectorAll('*')).filter(isFocusable);
@@ -923,7 +923,7 @@ function getPreviousShadowNode(originalPreviousNode: () => Node | null, scope?: 
     let previousElement = originalPreviousNode();
     if (!previousElement && scope && scope.length > 0) {
       let currentShadowRoot = scope[0].getRootNode();
-      let previousShadowHost = currentShadowRoot instanceof ShadowRoot ? currentShadowRoot.host.previousElementSibling : null;
+      let previousShadowHost = isShadowRoot(currentShadowRoot) ? currentShadowRoot.host.previousElementSibling : null;
       while (previousShadowHost) {
         if (previousShadowHost.shadowRoot) {
           let previousShadowScope = Array.from(previousShadowHost.shadowRoot.querySelectorAll('*')).filter(isFocusable);

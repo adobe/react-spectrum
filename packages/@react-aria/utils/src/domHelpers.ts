@@ -34,15 +34,12 @@ export const getRootNode = (
   // contexts (e.g., iframes or windows), as each context has its own global objects and constructors.
   // nodeType is a primitive value and is consistent across different contexts, making it
   // reliable for cross-context type checking.
-
-  const nodeType = rootNode.nodeType;
-
-  if (nodeType === Node.DOCUMENT_NODE) {
+  if (isDocument(rootNode)) {
     // rootNode is a Document
     return rootNode as Document;
   }
 
-  if (nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in rootNode) {
+  if (isShadowRoot(rootNode)) {
     // rootNode is a ShadowRoot (a specialized type of DocumentFragment)
     // We check for the presence of the 'host' property to distinguish ShadowRoot from other DocumentFragments
     return rootNode as ShadowRoot;
@@ -63,7 +60,7 @@ export const getRootNode = (
  * @returns {HTMLElement} - The "body" element of the document, or the document's body associated with the shadow root.
  */
 export const getRootBody = (root: Document | ShadowRoot): HTMLElement => {
-  if (root instanceof ShadowRoot) {
+  if (isShadowRoot(root)) {
     return root.ownerDocument?.body;
   } else {
     return root.body;
@@ -78,3 +75,30 @@ export const getDeepActiveElement = () => {
   }
   return activeElement;
 };
+
+/**
+ * Type guard for checking if a value is a Node
+ */
+function isNode(value: unknown): value is Node {
+  return value !== null &&
+    typeof value === 'object' &&
+    'nodeType' in value &&
+    typeof (value as Node).nodeType === 'number';
+}
+
+/**
+ * Type guard for Document nodes
+ */
+export function isDocument(node: Node | null): node is Document {
+  return isNode(node) && node.nodeType === Node.DOCUMENT_NODE;
+}
+
+/**
+ * Type guard for ShadowRoot nodes
+ * Uses both nodeType and host property checks to distinguish ShadowRoot from other DocumentFragments
+ */
+export function isShadowRoot(node: Node | null): node is ShadowRoot {
+  return isNode(node) &&
+    node.nodeType === Node.DOCUMENT_FRAGMENT_NODE &&
+    'host' in node;
+}

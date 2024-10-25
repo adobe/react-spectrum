@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerWindow, getRootNode, isMac, isVirtualClick} from '@react-aria/utils';
+import {getOwnerWindow, getRootNode, isMac, isVirtualClick, isDocument, isShadowRoot} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -231,16 +231,16 @@ export function addWindowFocusTracking(element?: HTMLElement | null): () => void
   const rootNode = getRootNode(element);
   let loadListener;
 
-  const isDocument = rootNode?.nodeType === Node.DOCUMENT_NODE;
-  const isShadowRoot = rootNode?.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in rootNode;
+  const isRootNodeDocument = isDocument(rootNode);
+  const isRootNodeShadowRoot = isShadowRoot(rootNode);
   // Use nodeType to check if it's either a Document or a ShadowRoot
   if (
-    (isDocument && (rootNode as Document).readyState !== 'loading') ||
-    (isShadowRoot)
+    (isRootNodeDocument && (rootNode as Document).readyState !== 'loading') ||
+    (isRootNodeShadowRoot)
   ) {
     // If it's a Document that's ready or a ShadowRoot
     setupGlobalFocusEvents(element);
-  } else if (isDocument) {
+  } else if (isRootNodeDocument) {
     // If it's a Document that's still loading
     loadListener = () => {
       setupGlobalFocusEvents(element);
