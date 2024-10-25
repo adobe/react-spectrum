@@ -49,7 +49,6 @@ export const getRootNode = (
   return null;
 };
 
-
 /**
  * Retrieves a reference to the most appropriate "body" element for a given DOM context,
  * accommodating both traditional DOM and Shadow DOM environments. When used with a Shadow DOM,
@@ -77,7 +76,7 @@ export const getDeepActiveElement = () => {
 };
 
 /**
- * Type guard for checking if a value is a Node
+ * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType property.
  */
 function isNode(value: unknown): value is Node {
   return value !== null &&
@@ -87,15 +86,15 @@ function isNode(value: unknown): value is Node {
 }
 
 /**
- * Type guard for Document nodes
+ * Type guard that checks if a node is a Document node. Uses nodeType for cross-context compatibility.
  */
 export function isDocument(node: Node | null): node is Document {
   return isNode(node) && node.nodeType === Node.DOCUMENT_NODE;
 }
 
 /**
- * Type guard for ShadowRoot nodes
- * Uses both nodeType and host property checks to distinguish ShadowRoot from other DocumentFragments
+ * Type guard that checks if a node is a ShadowRoot. Uses nodeType and host property checks to
+ * distinguish ShadowRoot from other DocumentFragments.
  */
 export function isShadowRoot(node: Node | null): node is ShadowRoot {
   return isNode(node) &&
