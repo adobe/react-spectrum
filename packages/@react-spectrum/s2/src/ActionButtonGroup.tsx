@@ -88,8 +88,8 @@ function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTML
 
   return (
     <Toolbar
+      {...props}
       ref={ref}
-      data-id={props['data-id']}
       style={UNSAFE_style}
       className={UNSAFE_className + actionGroupStyle({size, density, orientation, isJustified}, styles)}>
       <ActionButtonGroupContext.Provider value={props}>

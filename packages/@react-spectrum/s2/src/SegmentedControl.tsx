@@ -12,14 +12,13 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleGroupStateContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
-import {ToggleGroupStateContext} from 'react-aria-components/src/ToggleButtonGroup';
 import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -85,8 +84,7 @@ const controlItem = style({
   },
   height: 32,
   alignItems: 'center',
-  // flexBasis: 0,
-  flexGrow: 0,
+  flexGrow: 1,
   flexShrink: 0,
   minWidth: 0,
   justifyContent: 'center',
