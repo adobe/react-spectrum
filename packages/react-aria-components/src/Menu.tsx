@@ -17,9 +17,10 @@ import {Collection, CollectionBuilder, createBranchComponent, createLeafComponen
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
+import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
+import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
@@ -44,6 +45,7 @@ import {useSubmenuTrigger} from '@react-aria/menu';
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
+const SelectionManagerContext = createContext<SelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children: ReactNode
@@ -220,9 +222,10 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
             [PopoverContext, {UNSTABLE_portalContainer: popoverContainer || undefined}],
-            [SectionContext, {render: MenuSection}],
+            [SectionContext, {name: 'MenuSection', render: MenuSection}],
             [SubmenuTriggerContext, {parentMenuRef: ref}],
-            [MenuItemContext, null]
+            [MenuItemContext, null],
+            [SelectionManagerContext, state.selectionManager]
           ]}>
           <CollectionRoot
             collection={collection}
@@ -241,7 +244,40 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
-function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
+export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {}
+
+// A subclass of SelectionManager that forwards focus-related properties to the parent,
+// but has its own local selection state.
+class GroupSelectionManager extends SelectionManager {
+  private parent: SelectionManager;
+
+  constructor(parent: SelectionManager, state: MultipleSelectionState) {
+    super(parent.collection, state);
+    this.parent = parent;
+  }
+
+  get focusedKey() {
+    return this.parent.focusedKey;
+  }
+
+  get isFocused() {
+    return this.parent.isFocused;
+  }
+
+  setFocusedKey(key: Key | null, childFocusStrategy?: FocusStrategy): void {
+    return this.parent.setFocusedKey(key, childFocusStrategy);
+  }
+
+  setFocused(isFocused: boolean): void {
+    this.parent.setFocused(isFocused);
+  }
+
+  get childFocusStrategy() {
+    return this.parent.childFocusStrategy;
+  }
+}
+
+function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
   let state = useContext(MenuStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -250,11 +286,15 @@ function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef
     'aria-label': section.props['aria-label'] ?? undefined
   });
   let renderProps = useRenderProps({
-    defaultClassName: 'react-aria-Section',
+    defaultClassName: className,
     className: section.props?.className,
     style: section.props?.style,
     values: {}
   });
+
+  let parent = useContext(SelectionManagerContext)!;
+  let selectionState = useMultipleSelectionState(props);
+  let manager = props.selectionMode != null ? new GroupSelectionManager(parent, selectionState) : parent;
 
   return (
     <section
@@ -262,12 +302,22 @@ function MenuSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef
       {...groupProps}
       {...renderProps}
       ref={ref}>
-      <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
+      <Provider
+        values={[
+          [HeaderContext, {...headingProps, ref: headingRef}],
+          [SelectionManagerContext, manager]
+        ]}>
         <CollectionBranch collection={state.collection} parent={section} />
-      </HeaderContext.Provider>
+      </Provider>
     </section>
   );
 }
+
+/**
+ * A MenuSection represents a section within a Menu.
+ */
+const _MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSection);
+export {_MenuSection as MenuSection};
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
@@ -309,8 +359,14 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
+  let selectionManager = useContext(SelectionManagerContext)!;
 
-  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({...props, id, key: item.key}, state, ref);
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
+    ...props,
+    id,
+    key: item.key,
+    selectionManager
+  }, state, ref);
 
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -325,8 +381,8 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
       ...states,
       isHovered,
       isFocusVisible,
-      selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior,
+      selectionMode: selectionManager.selectionMode,
+      selectionBehavior: selectionManager.selectionBehavior,
       hasSubmenu: !!props['aria-haspopup'],
       isOpen: props['aria-expanded'] === 'true'
     }
@@ -345,7 +401,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
       data-selected={states.isSelected || undefined}
-      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+      data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}
       data-has-submenu={!!props['aria-haspopup'] || undefined}
       data-open={props['aria-expanded'] === 'true' || undefined}>
       <Provider

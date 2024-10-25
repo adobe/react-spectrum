@@ -11,8 +11,8 @@
  */
 
 import {
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
@@ -460,11 +460,11 @@ export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
         className={section}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

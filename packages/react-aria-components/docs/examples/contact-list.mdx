@@ -107,7 +107,7 @@ const people = [
 ```
 
 ```tsx example standalone
-import {ListBox, ListBoxItem, Section, Header, Collection, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, ListBoxSection, Header, Collection, Text} from 'react-aria-components';
 
 function ContactListExample() {
   return (
@@ -126,12 +126,12 @@ function ContactListExample() {
 
 function ContactSection({title, children, items}) {
   return (
-    <Section>
+    <ListBoxSection>
       <Header className="sticky -top-2 bg-white z-10 font-bold font-serif px-2 mb-1 text-slate-700">{title}</Header>
       <Collection items={items}>
         {children}
       </Collection>
-    </Section>
+    </ListBoxSection>
   );
 }
 

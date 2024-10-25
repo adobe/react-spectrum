@@ -93,14 +93,17 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
 }
 
 interface SectionContextValue {
-  render: (props: SectionProps<any>, ref: ForwardedRef<HTMLElement>, section: Node<any>) => ReactElement
+  name: string,
+  render: (props: SectionProps<any>, ref: ForwardedRef<HTMLElement>, section: Node<any>, className?: string) => ReactElement
 }
 
 export const SectionContext = createContext<SectionContextValue | null>(null);
 
+/** @deprecated */
 export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
-  let {render} = useContext(SectionContext)!;
-  return render(props, ref, section);
+  let {name, render} = useContext(SectionContext)!;
+  console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  return render(props, ref, section, 'react-aria-Section');
 });
 
 export interface CollectionBranchProps {

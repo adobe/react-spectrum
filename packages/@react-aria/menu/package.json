@@ -30,6 +30,7 @@
     "@react-aria/utils": "^3.25.3",
     "@react-stately/collections": "^3.11.0",
     "@react-stately/menu": "^3.8.3",
+    "@react-stately/selection": "^3.17.0",
     "@react-stately/tree": "^3.8.5",
     "@react-types/button": "^3.10.0",
     "@react-types/menu": "^3.9.12",

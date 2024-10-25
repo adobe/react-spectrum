@@ -15,14 +15,14 @@ import {
   MenuItem as AriaMenuItem,
   MenuItemProps as AriaMenuItemProps,
   MenuProps as AriaMenuProps,
+  MenuSection as AriaMenuSection,
+  MenuSectionProps as AriaMenuSectionProps,
   MenuTrigger as AriaMenuTrigger,
   MenuTriggerProps as AriaMenuTriggerProps,
-  Section as AriaSection,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   ContextValue,
   Provider,
-  SectionProps,
   Separator,
   SeparatorProps
 } from 'react-aria-components';
@@ -401,16 +401,16 @@ export function Divider(props: SeparatorProps) {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends SectionProps<T> {}
+export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
 export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside
   return (
     <>
-      <AriaSection
+      <AriaMenuSection
         {...props}
         className={section}>
         {props.children}
-      </AriaSection>
+      </AriaMenuSection>
       <Divider />
     </>
   );

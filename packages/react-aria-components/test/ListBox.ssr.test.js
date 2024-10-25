@@ -54,22 +54,22 @@ describe('ListBox SSR', function () {
 
   it('should render with sections', async function () {
     await testSSR(__filename, `
-      import {ListBox, Section, ListBoxItem, Header} from '../';
+      import {ListBox, ListBoxSection, ListBoxItem, Header} from '../';
 
       <React.StrictMode>
         <ListBox aria-label="Listbox">
-          <Section>
+          <ListBoxSection>
             <Header>Veggies</Header>
             <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
             <ListBoxItem id="tomato">Tomato</ListBoxItem>
             <ListBoxItem id="onion">Onion</ListBoxItem>
-          </Section>
-          <Section>
+          </ListBoxSection>
+          <ListBoxSection>
             <Header>Protein</Header>
             <ListBoxItem id="ham">Ham</ListBoxItem>
             <ListBoxItem id="tuna">Tuna</ListBoxItem>
             <ListBoxItem id="tofu">Tofu</ListBoxItem>
-          </Section>
+          </ListBoxSection>
         </ListBox>
       </React.StrictMode>
     `, () => {

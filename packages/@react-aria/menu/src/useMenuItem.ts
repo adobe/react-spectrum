@@ -15,6 +15,7 @@ import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@r
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
+import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -88,7 +89,10 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
   'aria-expanded'?: boolean | 'true' | 'false',
 
   /** Identifies the menu item's popup element whose contents or presence is controlled by the menu item. */
-  'aria-controls'?: string
+  'aria-controls'?: string,
+
+  /** Override of the selection manager. By default, `state.selectionManager` is used. */
+  selectionManager?: SelectionManager
 }
 
 /**
@@ -116,12 +120,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onKeyUp,
     onFocus,
     onFocusChange,
-    onBlur
+    onBlur,
+    selectionManager = state.selectionManager
   } = props;
 
   let isTrigger = !!hasPopup;
-  let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
-  let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
+  let isDisabled = props.isDisabled ?? selectionManager.isDisabled(key);
+  let isSelected = props.isSelected ?? selectionManager.isSelected(key);
   let data = menuData.get(state);
   let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
@@ -150,9 +155,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let role = 'menuitem';
   if (!isTrigger) {
-    if (state.selectionManager.selectionMode === 'single') {
+    if (selectionManager.selectionMode === 'single') {
       role = 'menuitemradio';
-    } else if (state.selectionManager.selectionMode === 'multiple') {
+    } else if (selectionManager.selectionMode === 'multiple') {
       role = 'menuitemcheckbox';
     }
   }
@@ -173,7 +178,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-expanded': props['aria-expanded']
   };
 
-  if (state.selectionManager.selectionMode !== 'none' && !isTrigger) {
+  if (selectionManager.selectionMode !== 'none' && !isTrigger) {
     ariaProps['aria-checked'] = isSelected;
   }
 
@@ -196,7 +201,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
-      if (!isTrigger && onClose && (closeOnSelect ?? (state.selectionManager.selectionMode !== 'multiple' || state.selectionManager.isLink(key)))) {
+      if (!isTrigger && onClose && (closeOnSelect ?? (selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key)))) {
         onClose();
       }
     }
@@ -205,7 +210,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let {itemProps, isFocused} = useSelectableItem({
-    selectionManager: state.selectionManager,
+    selectionManager: selectionManager,
     key,
     ref,
     shouldSelectOnPressUp: true,
@@ -229,8 +234,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isDisabled,
     onHoverStart(e) {
       if (!isFocusVisible()) {
-        state.selectionManager.setFocused(true);
-        state.selectionManager.setFocusedKey(key);
+        selectionManager.setFocused(true);
+        selectionManager.setFocusedKey(key);
       }
       hoverStartProp?.(e);
     },
@@ -249,7 +254,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       switch (e.key) {
         case ' ':
-          if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isTrigger && closeOnSelect !== false && onClose) {
+          if (!isDisabled && selectionManager.selectionMode === 'none' && !isTrigger && closeOnSelect !== false && onClose) {
             onClose();
           }
           break;

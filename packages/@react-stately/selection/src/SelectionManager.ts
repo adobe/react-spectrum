@@ -35,7 +35,7 @@ interface SelectionManagerOptions {
  * An interface for reading and updating multiple selection state.
  */
 export class SelectionManager implements MultipleSelectionManager {
-  private collection: Collection<Node<unknown>>;
+  collection: Collection<Node<unknown>>;
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
