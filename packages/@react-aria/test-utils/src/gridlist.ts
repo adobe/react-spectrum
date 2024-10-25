@@ -15,7 +15,7 @@ import {BaseTesterOpts, UserOpts} from './user';
 import {pressElement} from './events';
 
 export interface GridListOptions extends UserOpts, BaseTesterOpts {
-  user: any
+  user?: any
 }
 export class GridListTester {
   private user;
