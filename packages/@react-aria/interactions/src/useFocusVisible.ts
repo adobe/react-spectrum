@@ -240,7 +240,7 @@ export function addWindowFocusTracking(element?: HTMLElement | null): () => void
   ) {
     // If it's a Document that's ready or a ShadowRoot
     setupGlobalFocusEvents(element);
-  } else if (rootNode?.nodeType === Node.DOCUMENT_NODE) {
+  } else if (isDocument) {
     // If it's a Document that's still loading
     loadListener = () => {
       setupGlobalFocusEvents(element);
