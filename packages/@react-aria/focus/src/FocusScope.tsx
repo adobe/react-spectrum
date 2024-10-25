@@ -12,7 +12,7 @@
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getOwnerDocument, getRootBody, getRootNode, useLayoutEffect, isShadowRoot} from '@react-aria/utils';
+import {getOwnerDocument, getRootBody, getRootNode, isShadowRoot, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
