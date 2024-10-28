@@ -54,8 +54,8 @@ export const Example: StoryFn<typeof ActionButtonGroup> = (args) => (
 
 export const IconOnly: StoryFn<typeof ActionButtonGroup> = (args) => (
   <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton><Cut /></ActionButton>
-    <ActionButton><Copy /></ActionButton>
-    <ActionButton><Paste /></ActionButton>
+    <ActionButton aria-label="Cut"><Cut /></ActionButton>
+    <ActionButton aria-label="Copy"><Copy /></ActionButton>
+    <ActionButton aria-label="Paste"><Paste /></ActionButton>
   </ActionButtonGroup>
 );

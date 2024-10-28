@@ -57,8 +57,8 @@ export const Example: StoryFn<typeof ToggleButtonGroup> = (args) => (
 
 export const IconOnly: StoryFn<typeof ToggleButtonGroup> = (args) => (
   <ToggleButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ToggleButton value={1}><Bold /></ToggleButton>
-    <ToggleButton value={2}><Italic /></ToggleButton>
-    <ToggleButton value={3}><Underline /></ToggleButton>
+    <ToggleButton value={1} aria-label="Bold"><Bold /></ToggleButton>
+    <ToggleButton value={2} aria-label="Italic"><Italic /></ToggleButton>
+    <ToggleButton value={3} aria-label="Underline"><Underline /></ToggleButton>
   </ToggleButtonGroup>
 );
