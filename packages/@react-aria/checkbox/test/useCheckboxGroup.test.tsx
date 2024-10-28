@@ -22,8 +22,8 @@ function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & {
   const ref = useRef<HTMLInputElement>(null);
   const {children} = props;
   const {labelProps, inputProps} = checkboxGroupState 
-  ? useCheckbox(props, useToggleState(props), ref) 
-  : useCheckboxGroupItem(props, checkboxGroupState, ref);
+  ? useCheckboxGroupItem(props, checkboxGroupState, ref)
+  : useCheckbox(props, useToggleState(props), ref);
   return <label {...labelProps}><input ref={ref} {...inputProps} />{children}</label>;
 }
 
