@@ -67,7 +67,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     // @ts-expect-error
     let {[privateValidationStateProp]: groupValidationState} = props;
 
-    let {displayValidation, commitValidation} = groupValidationState
+    let {commitValidation} = groupValidationState
     ? groupValidationState
     : validationState;
     
