@@ -13,10 +13,10 @@
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {chain} from '@react-aria/utils';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
-import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
+import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {useToggle} from '@react-aria/toggle';
 
 export interface CheckboxAria extends ValidationResult {
