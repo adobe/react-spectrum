@@ -58,7 +58,9 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     groupProps,
