@@ -126,7 +126,9 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTimeField({
     ...removeDataAttributes(props),
