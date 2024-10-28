@@ -120,7 +120,9 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
     ...props,
     validationBehavior
   });
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {groupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useCheckboxGroup({
     ...props,
     label,
