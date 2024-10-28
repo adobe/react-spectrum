@@ -42,7 +42,6 @@ export const AutocompleteExample = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
       <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
-        {/* TODO: would the expectation be that a user would render a Group here? Or maybe we could add a wrapper element provided by Autocomplete automatically? */}
         <div>
           <Label style={{display: 'block'}}>Test</Label>
           <Input />

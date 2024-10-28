@@ -12,5 +12,4 @@
 
 export {useAutocompleteState} from './useAutocompleteState';
 
-// TODO export the types
 export type {AutocompleteProps, AutocompleteStateOptions, AutocompleteState} from './useAutocompleteState';

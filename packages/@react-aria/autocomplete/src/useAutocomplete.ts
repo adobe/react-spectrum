@@ -42,7 +42,7 @@ export interface AutocompleteAria<T> {
   // TODO: fairly non-standard thing to return from a hook, discuss how best to share this with hook only users
   // This is for the user to register a callback that upon recieving a keyboard event key returns the expected virtually focused node id
   /** Register function that expects a callback function that returns the newlly virtually focused menu option when provided with the keyboard action that occurs in the input field. */
-  register: (callback: (e: KeyboardEvent) => string) => void
+  register: (callback: (e: KeyboardEvent) => string | null) => void
 }
 
 /**

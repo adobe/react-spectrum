@@ -54,7 +54,6 @@ export interface MenuTriggerProps extends BaseMenuTriggerProps {
 
 export function MenuTrigger(props: MenuTriggerProps) {
   let state = useMenuTriggerState(props);
-
   let ref = useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({
     ...props,
@@ -171,7 +170,7 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {register, filterFn, inputValue} = useContext(InternalAutocompleteContext) || {};
+  let {register, filterFn, inputValue, menuProps: autocompleteMenuProps} = useContext(InternalAutocompleteContext) || {};
   let {setFocusedNodeId} = useContext(AutocompleteStateContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
   // we always perform the filtering for them.
@@ -184,7 +183,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
+  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized}, state, ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContext = useContext(PopoverContext)!;
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';

@@ -123,7 +123,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
   let data = menuData.get(state);
-
   let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
   let router = useRouter();
@@ -163,9 +162,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   if (data.shouldUseVirtualFocus) {
-    // TODO: finalize if every component that Autocomplete will accept as a filterable child would need to follow this same
-    // logic when creating the id
-    id = `${data.id}-option-${key}`;
     id = getItemId(state, key);
   }
 

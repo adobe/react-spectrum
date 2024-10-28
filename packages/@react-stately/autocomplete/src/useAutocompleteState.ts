@@ -19,7 +19,6 @@ export interface AutocompleteState {
   inputValue: string,
   /** Sets the value of the autocomplete input. */
   setInputValue(value: string): void,
-  // TODO: debatable if this state hook needs to exist
   /** The id of the current aria-activedescendant of the autocomplete input. */
   focusedNodeId: string | null,
   /** Sets the id of the current aria-activedescendant of the autocomplete input. */

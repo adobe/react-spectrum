@@ -26,6 +26,12 @@ import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 
+interface ItemValue {
+  id: string,
+  type: string,
+  text: string
+}
+
 export function DraggableCollectionExample(props) {
   let list = useListData({
     initialItems: [
@@ -58,7 +64,7 @@ function DraggableCollection(props) {
   let state = useListState(props);
   let gridState = useGridState({
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection({
+    collection: React.useMemo(() => new GridCollection<ItemValue>({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -83,14 +89,13 @@ function DraggableCollection(props) {
     selectionManager: gridState.selectionManager,
     getItems(keys) {
       return [...keys].map(key => {
-        let item = gridState.collection.getItem(key);
+        let item = gridState.collection.getItem(key)!;
 
         return {
-          // @ts-ignore
-          [item.value.type]: item.textValue,
+          [item.value!.type]: item.textValue,
           'text/plain': item.textValue
         };
-      });
+      }).filter(item => item != null);
     },
     preview,
     onDragStart: props.onDragStart,
@@ -122,13 +127,13 @@ function DraggableCollection(props) {
       ))}
       <DragPreview ref={preview}>
         {() => {
-          let item = state.collection.getItem(dragState.draggedKey);
+          let item = dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
           return (
             <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
               </div>
-              <span>{item.rendered}</span>
+              {item && <span>{item.rendered}</span>}
               {dragState.draggingKeys.size > 1 &&
                 <div className={classNames(dndStyles, 'badge')}>{dragState.draggingKeys.size}</div>
               }
@@ -141,8 +146,8 @@ function DraggableCollection(props) {
 }
 
 function DraggableCollectionItem({item, state, dragState}) {
-  let rowRef = React.useRef(undefined);
-  let cellRef = React.useRef(undefined);
+  let rowRef = React.useRef<HTMLDivElement | null>(null);
+  let cellRef = React.useRef<HTMLDivElement | null>(null);
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
@@ -155,7 +160,7 @@ function DraggableCollectionItem({item, state, dragState}) {
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
-  let buttonRef = React.useRef(undefined);
+  let buttonRef = React.useRef<HTMLDivElement | null>(null);
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'

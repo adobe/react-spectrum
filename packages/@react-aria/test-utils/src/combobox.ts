@@ -14,7 +14,7 @@ import {act, waitFor, within} from '@testing-library/react';
 import {BaseTesterOpts, UserOpts} from './user';
 
 export interface ComboBoxOptions extends UserOpts, BaseTesterOpts {
-  user: any,
+  user?: any,
   trigger?: HTMLElement
 }
 
