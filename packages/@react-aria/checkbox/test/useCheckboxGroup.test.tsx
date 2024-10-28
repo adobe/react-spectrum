@@ -13,15 +13,18 @@
 import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {useToggleState} from '@react-stately/toggle';
 import React, {useRef} from 'react';
-import {useCheckboxGroup, useCheckboxGroupItem} from '../';
+import {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>(null);
   const {children} = props;
-  const {inputProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
-  return <label><input ref={ref} {...inputProps} />{children}</label>;
+  const {labelProps, inputProps} = checkboxGroupState 
+  ? useCheckbox(props, useToggleState(props), ref) 
+  : useCheckboxGroupItem(props, checkboxGroupState, ref);
+  return <label {...labelProps}><input ref={ref} {...inputProps} />{children}</label>;
 }
 
 function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxGroupItemProps[]}) {
