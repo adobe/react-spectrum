@@ -74,7 +74,9 @@ const circle = style<RenderProps>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'default', /* RSP v3 was 'all 200ms' */
+  transition: '[border-width]',
+  transitionDuration: 250,
+  transitionTimingFunction: 'in-out',
   borderRadius: 'full',
   borderStyle: 'solid',
   boxSizing: 'border-box',
