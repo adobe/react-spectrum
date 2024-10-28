@@ -11,7 +11,9 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
+import {chain} from '@react-aria/utils';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
+import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
@@ -61,8 +63,23 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     }
   });
 
+  // Reset validation state on label click for checkbox with a hidden input.
+  let dispatch = () => {
+    // @ts-expect-error
+    let {[privateValidationStateProp]: groupValidationState} = props;
+
+    let {displayValidation, commitValidation} = groupValidationState
+    ? groupValidationState
+    : validationState;
+    
+    commitValidation();
+  };
+
   return {
-    labelProps,
+    labelProps: {
+      ...labelProps,
+      onClick: chain(dispatch, labelProps.onClick)
+    },
     inputProps: {
       ...inputProps,
       checked: isSelected,
