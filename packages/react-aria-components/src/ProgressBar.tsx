@@ -47,7 +47,9 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
   } = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     progressBarProps,
     labelProps
