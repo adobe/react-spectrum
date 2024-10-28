@@ -281,4 +281,33 @@ describe('useCheckboxGroup', () => {
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxes[2].checked).toBeFalsy();
   });
+
+  it('should re-validate in realtime', async () => {
+    let {getByRole, getAllByRole, getByLabelText} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', isRequired: true}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />,
+        {}
+    );
+
+    let checkboxGroup = getByRole('group');
+    let dragons = getByLabelText('Dragons');
+    let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
+
+    await user.click(dragons);
+
+    expect(checkboxGroup).not.toHaveAttribute('data-invalid');
+
+    await user.click(dragons);
+
+    expect(checkboxGroup).toHaveAttribute('data-invalid', 'true');
+
+    await user.click(dragons);
+
+    expect(checkboxGroup).not.toHaveAttribute('data-invalid');
+  });
 });
