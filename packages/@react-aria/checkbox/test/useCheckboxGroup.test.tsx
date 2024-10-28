@@ -14,7 +14,7 @@ import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/c
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
-import {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '../';
+import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
