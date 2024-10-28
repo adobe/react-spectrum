@@ -210,9 +210,9 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
   return [mergedProps, mergedRef];
 }
 
-export function useSlot(): [RefCallback<Element>, boolean] {
+export function useSlot(initialState: boolean | (() => boolean) = true): [RefCallback<Element>, boolean] {
   // Assume we do have the slot in the initial render.
-  let [hasSlot, setHasSlot] = useState(true);
+  let [hasSlot, setHasSlot] = useState(initialState);
   let hasRun = useRef(false);
 
   // A callback ref which will run when the slotted element mounts.
