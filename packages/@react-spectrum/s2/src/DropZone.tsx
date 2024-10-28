@@ -30,7 +30,13 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
   /** Whether the drop zone has been filled. */
   isFilled?: boolean,
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
-  replaceMessage?: string
+  replaceMessage?: string,
+  /**
+   * The size of the DropZone.
+   *
+   * @default 'M'
+   */
+    size?: 'S' | 'M' | 'L'
 }
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, DOMRefValue<HTMLDivElement>>>(null);
@@ -68,7 +74,6 @@ const banner = style<DropZoneRenderProps>({
   alignItems: 'center',
   justifyContent: 'center',
   minHeight: 20,
-  maxWidth: 208,
   backgroundColor: 'accent',
   borderRadius: 'default',
   color: 'white',
@@ -89,7 +94,7 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + dropzone(renderProps, props.styles)}>
       {renderProps => (
         <>
-          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget}}>
+          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size: props.size}}>
             {props.children}
           </IllustratedMessageContext.Provider>
           {(renderProps.isDropTarget && props.isFilled) &&
