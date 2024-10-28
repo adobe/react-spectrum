@@ -42,7 +42,9 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   } = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     meterProps,
     labelProps
