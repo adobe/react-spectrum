@@ -302,10 +302,31 @@ describe('useCheckboxGroup', () => {
 
     await user.click(dragons);
 
+    await sleep(200).promise;
+
     expect(checkboxGroup).toHaveAttribute('data-invalid', 'true');
 
     await user.click(dragons);
 
+    await sleep(200).promise;
+
     expect(checkboxGroup).not.toHaveAttribute('data-invalid');
   });
 });
+
+function sleep(ms: number) {
+  let timeout;
+  let cancel;
+  let promise = new Promise((resolve, reject) => {
+    timeout = setTimeout(resolve, ms);
+    cancel = reject;
+  });
+
+  return {
+    promise,
+    cancel() {
+      clearTimeout(timeout);
+      cancel();
+    }
+  };
+}
