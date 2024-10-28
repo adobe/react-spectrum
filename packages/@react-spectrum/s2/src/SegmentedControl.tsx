@@ -52,8 +52,7 @@ export interface SegmentedControlItemProps extends AriaLabelingProps, StyleProps
 
 export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const segmentedControl = style<{size: string}>({
-  font: 'control',
+const segmentedControl = style({
   display: 'flex',
   gap: 4,
   backgroundColor: 'gray-100',
@@ -66,6 +65,7 @@ const controlItem = style({
   position: 'relative',
   display: 'flex',
   forcedColorAdjust: 'none',
+  font: 'control',
   color: {
     default: 'gray-700',
     isHovered: 'neutral-subdued',
@@ -174,7 +174,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       orientation="horizontal"
       style={props.UNSAFE_style}
       onSelectionChange={onChange}
-      className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
+      className={(props.UNSAFE_className || '') + segmentedControl(null, props.styles)}
       aria-label={props['aria-label']}>
       <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef}>
         {props.children}
