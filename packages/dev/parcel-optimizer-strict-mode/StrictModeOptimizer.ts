@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-const {Transformer} = require('@parcel/plugin');
+const {Optimizer} = require('@parcel/plugin');
+const {blobToString} = require('@parcel/utils');
 
-export default new Transformer({
-  async transform({asset}) {
-    if (asset.env.outputFormat === 'commonjs') {
-      let source = await asset.getCode();
-
-      if (!source.startsWith('"use strict";')) {
-        source = '"use strict";\n' + source;
-        asset.setCode(source);
-      }
+export default new Optimizer({
+  async optimize({contents, map, bundle}) {
+    let code = await blobToString(contents);
+    if (bundle.target.env.outputFormat === 'commonjs' && !code.startsWith('"use strict";')) {
+      code = '"use strict";\n' + code;
     }
-    return [asset];
+
+    return {
+      contents: code,
+      map
+    };
   }
 });

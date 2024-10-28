@@ -15,8 +15,7 @@
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",
       "@parcel/transformer-react-refresh-wrap"
-    ],
-    "packages/@react-spectrum/s2/style/spectrum-theme.ts": ["parcel-transformer-strict-mode"]
+    ]
   },
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {
@@ -24,6 +23,7 @@
     "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.js": ["@parcel/optimizer-terser"]
+    "*.js": ["@parcel/optimizer-terser"],
+    "packages/@react-spectrum/s2/style/spectrum-theme.ts": ["parcel-optimizer-strict-mode"]
   }
 }
