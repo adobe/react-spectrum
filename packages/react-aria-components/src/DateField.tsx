@@ -60,7 +60,9 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useDateField({
     ...removeDataAttributes(props),
