@@ -27334,6 +27334,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"parcel-transformer-strict-mode@workspace:packages/dev/parcel-transformer-strict-mode":
+  version: 0.0.0-use.local
+  resolution: "parcel-transformer-strict-mode@workspace:packages/dev/parcel-transformer-strict-mode"
+  dependencies:
+    "@parcel/plugin": "npm:2.0.0"
+  languageName: unknown
+  linkType: soft
+
 "parcel@npm:2.0.0-dev.1599":
   version: 2.0.0-dev.1599
   resolution: "parcel@npm:2.0.0-dev.1599"
