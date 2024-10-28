@@ -15,32 +15,40 @@ import {Button, UNSTABLE_DisclosureGroup as DisclosureGroup, DisclosureGroupProp
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import React, {forwardRef} from 'react';
+import React, {createContext, forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, StyleProps, DOMProps {
+  /** Whether the Accordion should be displayed with a quiet style. */
+  isQuiet?: boolean,
   /** The disclosures within the accordion group. */
   children: React.ReactNode
 }
+
+const InternalAccordionContext = createContext<{isQuiet: boolean} | null>(null);
 
 function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   return (
-    <DisclosureGroup
-      {...props}
-      {...styleProps}
-      ref={domRef}
-      className={classNames(styles, 'spectrum-Accordion', styleProps.className)}>
-      {props.children}
-    </DisclosureGroup>
+    <InternalAccordionContext.Provider value={{isQuiet: props.isQuiet || false}}>
+      <DisclosureGroup
+        {...props}
+        {...styleProps}
+        ref={domRef}
+        className={classNames(styles, 'spectrum-Accordion', styleProps.className)}>
+        {props.children}
+      </DisclosureGroup>
+    </InternalAccordionContext.Provider>
   );
 }
 
 export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'children'>, AriaLabelingProps  {
+  /** Whether the Disclosure should be displayed with a quiet style. */
+  isQuiet?: boolean,
   /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
   children: React.ReactNode
 }
@@ -48,11 +56,13 @@ export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'classNam
 function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let domRef = useDOMRef(ref);
+  let accordionContext = React.useContext(InternalAccordionContext)!;
   return (
     <RACDisclosure
       {...props}
       ref={domRef}
       className={({isExpanded, isDisabled}) => classNames(styles, 'spectrum-Accordion-item', {
+        'spectrum-Accordion-item--quiet': accordionContext?.isQuiet ?? props.isQuiet,
         'is-expanded': isExpanded,
         'is-disabled': isDisabled
       })}>

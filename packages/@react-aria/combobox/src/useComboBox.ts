@@ -81,6 +81,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isReadOnly,
     isDisabled
   } = props;
+  let backupBtnRef = useRef(null);
+  buttonRef = buttonRef ?? backupBtnRef;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
@@ -136,11 +138,11 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         }
 
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
-          if (e.key === 'Enter') {
-            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-            if (item instanceof HTMLAnchorElement) {
-              let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
+          let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+          if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
+            let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+            if (collectionItem) {
               router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
           }
@@ -217,14 +219,14 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle(null, 'manual');
     }
   };
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
     }
   };
@@ -251,7 +253,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
     if (e.timeStamp - lastEventTime.current < 500) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       return;
     }
 
@@ -263,7 +265,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle(null, 'manual');
 
       lastEventTime.current = e.timeStamp;
@@ -287,7 +289,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
 
       let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: section && sectionKey !== lastSection.current,
+        isGroupChange: (section && sectionKey !== lastSection.current) ?? false,
         groupTitle: sectionTitle,
         groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
@@ -336,7 +338,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   useEffect(() => {
     if (state.isOpen) {
-      return ariaHideOutside([inputRef.current, popoverRef.current]);
+      return ariaHideOutside([inputRef.current, popoverRef.current].filter(element => element != null));
     }
   }, [state.isOpen, inputRef, popoverRef]);
 

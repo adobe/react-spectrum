@@ -15,16 +15,18 @@ import {BaseTesterOpts, UserOpts} from './user';
 import {triggerLongPress} from './events';
 
 export interface MenuOptions extends UserOpts, BaseTesterOpts {
-  user: any
+  user?: any,
+  isSubmenu?: boolean
 }
 export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _trigger: HTMLElement;
+  private _trigger: HTMLElement | undefined;
+  private _isSubmenu: boolean = false;
 
   constructor(opts: MenuOptions) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, isSubmenu} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
@@ -41,6 +43,8 @@ export class MenuTester {
         this._trigger = root;
       }
     }
+
+    this._isSubmenu = isSubmenu || false;
   }
 
   setInteractionType = (type: UserOpts['interactionType']) => {
@@ -49,12 +53,12 @@ export class MenuTester {
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType'], direction?: 'up' | 'down'} = {}) => {
     let {
       needsLongPress,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      direction
     } = opts;
-
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (interactionType === 'mouse' || interactionType === 'touch') {
@@ -70,8 +74,16 @@ export class MenuTester {
         await this.user.pointer({target: trigger, keys: '[TouchA]'});
       }
     } else if (interactionType === 'keyboard' && !isDisabled) {
-      act(() => trigger.focus());
-      await this.user.keyboard('[Enter]');
+      if (direction === 'up') {
+        act(() => trigger.focus());
+        await this.user.keyboard('[ArrowUp]');
+      } else if (direction === 'down') {
+        act(() => trigger.focus());
+        await this.user.keyboard('[ArrowDown]');
+      } else {
+        act(() => trigger.focus());
+        await this.user.keyboard('[Enter]');
+      }
     }
 
     await waitFor(() => {
@@ -95,24 +107,38 @@ export class MenuTester {
 
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
-  selectOption = async (opts: {option?: HTMLElement, optionText?: string, menuSelectionMode?: 'single' | 'multiple', needsLongPress?: boolean, closesOnSelect?: boolean, interactionType?: UserOpts['interactionType']}) => {
+  selectOption = async (opts: {
+    option?: HTMLElement,
+    optionText?: string,
+    menuSelectionMode?: 'single' | 'multiple',
+    needsLongPress?: boolean,
+    closesOnSelect?: boolean,
+    interactionType?: UserOpts['interactionType'],
+    keyboardActivation?: 'Space' | 'Enter'
+  }) => {
     let {
       optionText,
       menuSelectionMode = 'single',
       needsLongPress,
       closesOnSelect = true,
       option,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      keyboardActivation = 'Enter'
     } = opts;
     let trigger = this.trigger;
-    if (!trigger.getAttribute('aria-controls')) {
+
+    if (!trigger.getAttribute('aria-controls') && !trigger.hasAttribute('aria-expanded')) {
       await this.open({needsLongPress});
     }
 
     let menu = this.menu;
     if (menu) {
       if (!option && optionText) {
-        option = within(menu).getByText(optionText);
+        // @ts-ignore
+        option = (within(menu!).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))!;
+      }
+      if (!option) {
+        throw new Error('No option found in the menu.');
       }
 
       if (interactionType === 'keyboard') {
@@ -120,8 +146,8 @@ export class MenuTester {
           act(() => menu.focus());
         }
 
-        await this.user.keyboard(optionText);
-        await this.user.keyboard('[Enter]');
+        await this.keyboardNavigateToOption({option});
+        await this.user.keyboard(`[${keyboardActivation}]`);
       } else {
         if (interactionType === 'mouse') {
           await this.user.click(option);
@@ -129,8 +155,9 @@ export class MenuTester {
           await this.user.pointer({target: option, keys: '[TouchA]'});
         }
       }
+      act(() => {jest.runAllTimers();});
 
-      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect) {
+      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space' && !this._isSubmenu) {
         await waitFor(() => {
           if (document.activeElement !== trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
@@ -156,6 +183,7 @@ export class MenuTester {
       needsLongPress,
       interactionType = this._interactionType
     } = opts;
+
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
     if (!trigger.getAttribute('aria-controls') && !isDisabled) {
@@ -171,8 +199,18 @@ export class MenuTester {
           submenu = within(menu).getByText(submenuTriggerText);
         }
 
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: interactionType, root: submenu});
-        await submenuTriggerTester.open();
+        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenu, isSubmenu: true});
+        if (interactionType === 'mouse') {
+          await this.user.pointer({target: submenu});
+          act(() => {jest.runAllTimers();});
+        } else if (interactionType === 'keyboard') {
+          await this.keyboardNavigateToOption({option: submenu});
+          await this.user.keyboard('[ArrowRight]');
+          act(() => {jest.runAllTimers();});
+        } else {
+          await submenuTriggerTester.open();
+        }
+
 
         return submenuTriggerTester;
       }
@@ -180,6 +218,28 @@ export class MenuTester {
 
     return null;
   };
+
+  keyboardNavigateToOption = async (opts: {option: HTMLElement}) => {
+    let {option} = opts;
+    let options = this.options;
+    let targetIndex = options.indexOf(option);
+    if (targetIndex === -1) {
+      throw new Error('Option provided is not in the menu');
+    }
+    if (document.activeElement === this.menu) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+    let currIndex = options.indexOf(document.activeElement as HTMLElement);
+    if (targetIndex === -1) {
+      throw new Error('ActiveElement is not in the menu');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+  };
+
 
   close = async () => {
     let menu = this.menu;
@@ -202,6 +262,9 @@ export class MenuTester {
   };
 
   get trigger() {
+    if (!this._trigger) {
+      throw new Error('No trigger element found for menu.');
+    }
     return this._trigger;
   }
 
@@ -210,9 +273,9 @@ export class MenuTester {
     return menuId ? document.getElementById(menuId) : undefined;
   }
 
-  get options(): HTMLElement[] | never[] {
+  get options(): HTMLElement[] {
     let menu = this.menu;
-    let options = [];
+    let options: HTMLElement[] = [];
     if (menu) {
       options = within(menu).queryAllByRole('menuitem');
       if (options.length === 0) {

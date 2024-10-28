@@ -2592,6 +2592,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jdb8/eslint-plugin-monorepo@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@jdb8/eslint-plugin-monorepo@npm:1.0.1"
+  dependencies:
+    eslint-module-utils: "npm:^2.1.1"
+    get-monorepo-packages: "npm:^1.1.0"
+    globby: "npm:^7.1.1"
+    load-json-file: "npm:^4.0.0"
+    minimatch: "npm:^3.0.4"
+    parse-package-name: "npm:^0.1.0"
+    path-is-inside: "npm:^1.0.2"
+  checksum: 10c0/fd0a95355a33bbfc3e14fbadd99641d6c7e3f77fa6c83d54dc5e98bb19b97a4470cb17ad634aea8392877bdd49033e15635b1607a424c7b76eb01694312c4ea1
+  languageName: node
+  linkType: hard
+
 "@jest/console@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/console@npm:29.7.0"
@@ -6416,6 +6431,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/test-utils@npm:1.0.0-alpha.1":
+  version: 1.0.0-alpha.1
+  resolution: "@react-aria/test-utils@npm:1.0.0-alpha.1"
+  dependencies:
+    "@swc/helpers": "npm:^0.5.0"
+  peerDependencies:
+    "@testing-library/react": ^13.0.0 || ^14.0.0
+    "@testing-library/user-event": ^13.0.0 || ^14.0.0
+    jest: ^27.0.0
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+  checksum: 10c0/d9dc6aea2c785b80ff6b3af6d4c933cb66d39c916c802d8b83b4292522670d13aed2af37d029d5e8276cc954e09e758d6e3df6590bd1cdaadff2d803cf7d2bc6
+  languageName: node
+  linkType: hard
+
 "@react-aria/test-utils@npm:1.0.0-alpha.2, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
@@ -6576,14 +6605,8 @@ __metadata:
   resolution: "@react-spectrum/accordion@workspace:packages/@react-spectrum/accordion"
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/accordion": "npm:3.0.0-alpha.35"
-    "@react-aria/focus": "npm:^3.18.4"
     "@react-aria/i18n": "npm:^3.12.3"
-    "@react-aria/interactions": "npm:^3.22.4"
-    "@react-aria/utils": "npm:^3.25.3"
     "@react-spectrum/utils": "npm:^3.11.11"
-    "@react-stately/collections": "npm:^3.11.0"
-    "@react-stately/tree": "npm:^3.8.5"
     "@react-types/shared": "npm:^3.25.0"
     "@spectrum-icons/ui": "npm:^3.6.10"
     "@swc/helpers": "npm:^0.5.0"
@@ -7630,6 +7653,7 @@ __metadata:
     "@react-aria/collections": "npm:3.0.0-alpha.5"
     "@react-aria/i18n": "npm:^3.12.3"
     "@react-aria/interactions": "npm:^3.22.4"
+    "@react-aria/test-utils": "npm:1.0.0-alpha.1"
     "@react-aria/utils": "npm:^3.25.3"
     "@react-spectrum/utils": "npm:^3.11.11"
     "@react-stately/layout": "npm:^4.0.3"
@@ -7645,6 +7669,9 @@ __metadata:
     react-aria: "npm:^3.35.1"
     react-aria-components: "npm:^1.4.1"
   peerDependencies:
+    "@testing-library/react": ^15.0.7
+    "@testing-library/user-event": ^13.0.0 || ^14.0.0
+    jest: ^29.5.0
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   languageName: unknown
@@ -17274,21 +17301,6 @@ __metadata:
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
   checksum: 10c0/9f8e29a3317fb6a82e2ecd333fe0fab3a69fff786d087eb65dc723d6e954473ab681d14a252d7cb2971f5e7f68816cb6f7731766558e1833a77bd73af1b5ab34
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-monorepo@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "eslint-plugin-monorepo@npm:0.3.2"
-  dependencies:
-    eslint-module-utils: "npm:^2.1.1"
-    get-monorepo-packages: "npm:^1.1.0"
-    globby: "npm:^7.1.1"
-    load-json-file: "npm:^4.0.0"
-    minimatch: "npm:^3.0.4"
-    parse-package-name: "npm:^0.1.0"
-    path-is-inside: "npm:^1.0.2"
-  checksum: 10c0/9a3c49c0b998207c4c931aeb8f77a7c0930e298076989b2f073d4314ac785f4b72a4763b5b3a992754544bd7c34c44696c6e3561afb137e2f890f0c7db91e5a3
   languageName: node
   linkType: hard
 
@@ -29276,6 +29288,7 @@ __metadata:
     "@eslint/eslintrc": "npm:^3.1.0"
     "@eslint/js": "npm:^9.12.0"
     "@faker-js/faker": "npm:^8.4.1"
+    "@jdb8/eslint-plugin-monorepo": "npm:^1.0.1"
     "@octokit/rest": "npm:*"
     "@parcel/bundler-library": "npm:2.11.1-dev.3224"
     "@parcel/config-default": "npm:2.0.0-dev.1601"
@@ -29342,7 +29355,6 @@ __metadata:
     eslint-plugin-jest: "npm:^28.8.3"
     eslint-plugin-jsdoc: "npm:^50.4.1"
     eslint-plugin-jsx-a11y: "npm:^6.10.0"
-    eslint-plugin-monorepo: "npm:^0.3.2"
     eslint-plugin-react: "npm:^7.37.1"
     eslint-plugin-react-hooks: "npm:^5.0.0"
     eslint-plugin-rulesdir: "npm:^0.2.2"
