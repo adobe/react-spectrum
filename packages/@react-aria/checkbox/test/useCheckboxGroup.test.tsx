@@ -295,7 +295,6 @@ describe('useCheckboxGroup', () => {
 
     let checkboxGroup = getByRole('group');
     let dragons = getByLabelText('Dragons');
-    let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
 
     await user.click(dragons);
 
