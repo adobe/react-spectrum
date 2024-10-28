@@ -38,7 +38,9 @@ function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>)
   let trackRef = React.useRef(null);
   let inputRef = React.useRef(null);
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     trackProps,
     thumbProps,
