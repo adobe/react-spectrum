@@ -82,7 +82,9 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
   });
 
   let groupRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     groupProps,
     labelProps,
@@ -185,7 +187,9 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   });
 
   let groupRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     groupProps,
     labelProps,
