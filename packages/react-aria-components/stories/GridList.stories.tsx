@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, Tag, TagGroup, TagList, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, Input, UNSTABLE_ListLayout as ListLayout, SearchField, Tag, TagGroup, TagList, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
@@ -196,6 +196,102 @@ export function TagGroupInsideGridList() {
       </MyGridListItem>
       <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
       <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+    </GridList>
+  );
+}
+
+export function MultiTabGridList() {
+  return (
+    <GridList
+      keyboardNavigationBehavior='tab'
+      className={styles.menu}
+      aria-label="Grid list with multiple tab stops"
+      style={{
+        width: 300,
+        height: 300
+      }}>
+      <MyGridListItem>
+        1,1
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,2
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,3
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+    </GridList>
+  );
+}
+
+export function MultiTabGridListWithNestedGrid() {
+  return (
+    <GridList
+      keyboardNavigationBehavior='tab'
+      className={styles.menu}
+      aria-label="Grid list with multiple tab stops and a nested collection"
+      style={{
+        width: 300,
+        height: 300
+      }}>
+      <MyGridListItem>
+        1,1
+        <TagGroup aria-label="Tag group">
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1</Tag>
+            <Tag key="2">Tag 2</Tag>
+            <Tag key="3">Tag 3</Tag>
+          </TagList>
+        </TagGroup>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,2
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,3
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+    </GridList>
+  );
+}
+
+export function MultiTabGridListWithNestedEscape() {
+  return (
+    <GridList
+      keyboardNavigationBehavior='tab'
+      className={styles.menu}
+      aria-label="Grid list with multiple tab stops and nested esc interaction"
+      style={{
+        width: 300,
+        height: 300
+      }}>
+      <MyGridListItem>
+        1,1
+        <SearchField>
+          <Input />
+          <Button>x</Button>
+        </SearchField>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,2
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,3
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
     </GridList>
   );
 }

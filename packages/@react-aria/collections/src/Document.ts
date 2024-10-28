@@ -11,7 +11,7 @@
  */
 
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
-import {ForwardedRef, ReactElement} from 'react';
+import {ForwardedRef, Key, ReactElement} from 'react';
 import {Node} from '@react-types/shared';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -226,7 +226,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
+    this.node = new CollectionNode(type, `react-aria-${ownerDocument.key}-${++ownerDocument.nodeId}`);
     // Start a transaction so that no updates are emitted from the collection
     // until the props for this node are set. We don't know the real id for the
     // node until then, so we need to avoid emitting collections in an inconsistent state.
@@ -299,11 +299,14 @@ export class ElementNode<T> extends BaseNode<T> {
   removeAttribute() {}
 }
 
+let documentId = 0;
+
 /**
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
  */
 export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
+  key: Key;
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
@@ -320,6 +323,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   constructor(collection: C) {
     // @ts-ignore
     super(null);
+    this.key = ++documentId;
     this.collection = collection;
     this.collectionMutated = true;
   }

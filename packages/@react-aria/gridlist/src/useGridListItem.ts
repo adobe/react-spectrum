@@ -51,6 +51,8 @@ const EXPANSION_KEYS = {
   }
 };
 
+const NAVIGATION_KEYS = new Set(['Home', 'End', 'PageUp', 'PageDown', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']);
+
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
  * @param props - Props for the row.
@@ -136,6 +138,14 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         return;
       }
     }
+ 
+    let isFocused = ref.current === document.activeElement;
+    let isNavigation = NAVIGATION_KEYS.has(e.key) || (e.altKey && e.key === 'Tab');
+
+    if(keyboardNavigationBehavior === 'tab' && isNavigation && !isFocused) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -203,7 +213,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as Element)) {
+        if (keyboardNavigationBehavior === 'arrow' && !e.altKey && ref.current.contains(e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement.dispatchEvent(
@@ -211,6 +221,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           );
         }
         break;
+      case 'Escape': {
+        if(keyboardNavigationBehavior === 'tab') {
+          focusSafely(ref.current);
+        }
+        break;
+      }
       case 'Tab': {
         if (keyboardNavigationBehavior === 'tab') {
           // If there is another focusable element within this item, stop propagation so the tab key
@@ -228,7 +244,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let onFocus = (e) => {
     keyWhenFocused.current = node.key;
-    if (e.target !== ref.current) {
+    if (keyboardNavigationBehavior === "arrow" && e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the row itself. We also want to
       // set the focused key when a child element receives focus.
@@ -239,6 +255,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         state.selectionManager.setFocusedKey(node.key);
       }
       return;
+    }
+
+    if (keyboardNavigationBehavior === "tab") {
+      let position = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
+
+      let isSibling = e.relatedTarget === ref.current.nextElementSibling;
+      let isShiftTab = Boolean(position & Node.DOCUMENT_POSITION_FOLLOWING);
+      let isFocusWithin = Boolean(position & Node.DOCUMENT_POSITION_CONTAINED_BY);
+
+      if(isShiftTab && !isFocusWithin && !isSibling){
+        let walker = getFocusableTreeWalker(ref.current);
+        walker.currentNode = ref.current;
+  
+        focusSafely(last(walker));
+      }
     }
   };
 
@@ -256,7 +287,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: onKeyDown,
+    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
+    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ? undefined : onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node.textValue || undefined,
