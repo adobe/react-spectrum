@@ -290,8 +290,7 @@ describe('useCheckboxGroup', () => {
           {value: 'dogs', children: 'Dogs'},
           {value: 'cats', children: 'Cats'},
           {value: 'dragons', children: 'Dragons'}
-        ]} />,
-        {}
+        ]} />
     );
 
     let checkboxGroup = getByRole('group');
