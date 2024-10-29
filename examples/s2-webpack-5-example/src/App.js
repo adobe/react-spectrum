@@ -17,24 +17,49 @@ import {
   ActionMenu,
   Button,
   ButtonGroup,
+  Cell,
+  Column,
   Divider,
   Heading,
   LinkButton,
   Menu,
   MenuItem,
   MenuTrigger,
+  Picker,
+  PickerItem,
+  Row,
   SubmenuTrigger,
+  TableBody,
+  TableHeader,
+  TableView,
   Text,
   ToggleButton,
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import { CardViewExample } from "./components/CardViewExample";
+import { CollectionCardsExample } from "./components/CollectionCardsExample";
 
 const Lazy = React.lazy(() => import('./Lazy'));
 
 function App() {
   let [isLazyLoaded, setLazyLoaded] = useState(false);
+  let [cardViewState, setCardViewState] = useState({
+    layout: 'grid',
+    loadingState: 'idle',
+  });
+  let cardViewLoadingOptions = [
+    {id: 'idle', label: 'Idle'},
+    {id: 'loading', label: 'Loading'},
+    {id: 'sorting', label: 'Sorting'},
+    {id: 'loadingMore', label: 'Loading More'},
+    {id: 'error', label: 'Error'},
+  ];
+  let cardViewLayoutOptions = [
+    {id: 'grid', label: 'Grid'},
+    {id: 'waterfall', label: 'Waterfall'}
+  ];
   return (
     <main>
       <Heading
@@ -84,6 +109,23 @@ function App() {
             <MenuItem>Action Menu Item 2</MenuItem>
             <MenuItem>Action Menu Item 3</MenuItem>
           </ActionMenu>
+          <Picker
+            label="CardView Loading State"
+            items={cardViewLoadingOptions}
+            selectedKey={cardViewState.loadingState}
+            onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState})}>
+            {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
+          </Picker>
+          <Picker
+            label="CardView Layout"
+            items={cardViewLayoutOptions}
+            selectedKey={cardViewState.layout}
+            onSelectionChange={layout => setCardViewState({...cardViewState, layout})}>
+            {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
+          </Picker>
+          <CardViewExample {...cardViewState} />
+          <Divider styles={style({maxWidth: 320, width: '100%', marginX: 'auto'})} />
+          <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
             <Menu onAction={(key) => alert(key.toString())}>
@@ -119,6 +161,38 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
+          <TableView aria-label="Files" styles={style({width: 320, height: 320})}>
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+              <Column>Date Modified</Column>
+              <Column>A</Column>
+              <Column>B</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+                <Cell>6/7/2020</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+                <Cell>4/7/2021</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+              <Row id="3">
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+                <Cell>11/20/2010</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
         </Section>
 
         {!isLazyLoaded && <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>}
