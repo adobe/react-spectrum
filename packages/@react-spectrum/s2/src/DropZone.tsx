@@ -65,7 +65,7 @@ const dropzone = style<DropZoneRenderProps>({
   padding: 24
 }, getAllowedOverrides({height: true}));
 
-const banner = style<DropZoneRenderProps>({
+const banner = style({
   position: 'absolute',
   left: 0,
   right: 0,
@@ -74,16 +74,27 @@ const banner = style<DropZoneRenderProps>({
   alignItems: 'center',
   justifyContent: 'center',
   minHeight: 20,
+  width: 'fit',
+  maxWidth: {
+    default: 192,
+    size: {
+      S: 160,
+      L: 208
+    }
+  },
   backgroundColor: 'accent',
   borderRadius: 'default',
   color: 'white',
   fontWeight: 'bold',
-  padding: '[calc((self(minHeight))/1.5)]'
+  padding: '[calc((self(minHeight))/1.5)]',
 });
 
 function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
+  let {
+    size = 'M'
+  } = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -94,11 +105,11 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + dropzone(renderProps, props.styles)}>
       {renderProps => (
         <>
-          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size: props.size}}>
+          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size}}>
             {props.children}
           </IllustratedMessageContext.Provider>
           {(renderProps.isDropTarget && props.isFilled) &&
-            <div className={banner(renderProps)}>
+            <div className={banner({size})}>
               <span>
                 {props.replaceMessage ? props.replaceMessage : stringFormatter.format('dropzone.replaceMessage')}
               </span>
