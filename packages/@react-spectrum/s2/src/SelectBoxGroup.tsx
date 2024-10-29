@@ -16,7 +16,7 @@
  **************************************************************************/
 
 import {CheckboxGroup, CheckboxGroupProps, GridListProps, Label, Provider, RadioGroup, RadioGroupProps, SelectionMode} from 'react-aria-components';
-import {IconContext, TextContext} from '@react-spectrum/s2';
+import {IconContext} from './Icon';
 import {Orientation} from 'react-aria';
 import React, {
   ForwardedRef,
@@ -28,6 +28,7 @@ import React, {
   useState
 } from 'react';
 import {style}  from '../style' with {type: 'macro'};
+import {TextContext} from './Content';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ValueBase} from '@react-types/shared';
 

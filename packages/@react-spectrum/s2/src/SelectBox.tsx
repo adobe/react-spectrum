@@ -22,12 +22,13 @@ import {
   Provider,
   TextContext
 } from 'react-aria-components';
-import {Checkbox, IconContext, Radio} from '@react-spectrum/s2';
+import {Checkbox} from './Checkbox';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, size, style}  from '../style' with {type: 'macro'};
+import {IconContext} from './Icon';
+import {Radio} from './Radio';
 import React, {forwardRef, ReactNode, useRef} from 'react';
 import {StyleProps}  from './style-utils' with {type: 'macro'};
-
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSelectBoxGroupProvider} from './SelectBoxGroup';
 
