@@ -14,7 +14,7 @@ import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, 
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useId, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -320,6 +320,9 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
+  //TODO: Maybe prettier to strip the prefix?
+  let id = useId();
+
   // Separate selection state so we have access to it from collection components via useTableOptions.
   let selectionState = useMultipleSelectionState(props);
   let {selectionBehavior, selectionMode, disallowEmptySelection} = selectionState;
@@ -338,7 +341,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   );
 
   return (
-    <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()}>
+    <CollectionBuilder content={content} createCollection={() => new TableCollection<any>(id)}>
       {collection => <TableInner props={props} forwardedRef={ref} selectionState={selectionState} collection={collection} />}
     </CollectionBuilder>
   );
