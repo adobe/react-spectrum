@@ -142,7 +142,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let isFocused = ref.current === document.activeElement;
     let isNavigation = NAVIGATION_KEYS.has(e.key) || (e.altKey && e.key === 'Tab');
 
-    if(keyboardNavigationBehavior === 'tab' && isNavigation && !isFocused) {
+    if (keyboardNavigationBehavior === 'tab' && isNavigation && !isFocused) {
       e.preventDefault();
       e.stopPropagation();
     }
@@ -222,7 +222,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         }
         break;
       case 'Escape': {
-        if(keyboardNavigationBehavior === 'tab') {
+        if (keyboardNavigationBehavior === 'tab') {
           focusSafely(ref.current);
         }
         break;
@@ -265,7 +265,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       let isShiftTab = Boolean(position & Node.DOCUMENT_POSITION_FOLLOWING);
       let isFocusWithin = Boolean(position & Node.DOCUMENT_POSITION_CONTAINED_BY);
 
-      if(isShiftTab && !isFocusWithin && !isSibling){
+      if (isShiftTab && !isFocusWithin && !isSibling) {
         let walker = getFocusableTreeWalker(ref.current);
         walker.currentNode = ref.current;
   

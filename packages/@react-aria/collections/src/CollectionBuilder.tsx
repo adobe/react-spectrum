@@ -14,9 +14,9 @@ import {BaseCollection} from './BaseCollection';
 import {BaseNode, Document, ElementNode} from './Document';
 import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
-import {forwardRefType, Node} from '@react-types/shared';
+import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
-import React, {createContext, ForwardedRef, forwardRef, JSX, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
@@ -53,7 +53,9 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let {collection, document} = useCollectionDocument(props.createCollection);
 
-  if(props.id) document.key = props.id;
+  if (props.id) {
+    document.key = props.id;
+  }
 
   return (
     <>
