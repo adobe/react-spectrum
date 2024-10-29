@@ -243,7 +243,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onFocus = (e) => {
-    console.log('onFocus', e);
     keyWhenFocused.current = node.key;
     if (keyboardNavigationBehavior === 'arrow' && e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
