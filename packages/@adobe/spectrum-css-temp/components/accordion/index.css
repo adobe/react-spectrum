@@ -51,8 +51,8 @@ governing permissions and limitations under the License.
   border-bottom: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
   border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
 
-  &.in-accordion:first-of-type {
-    border-bottom-width: 0;
+  &.in-accordion:not(:first-of-type) {
+    border-top-width: 0;
   }
 
   &.spectrum-Accordion-item--quiet {
