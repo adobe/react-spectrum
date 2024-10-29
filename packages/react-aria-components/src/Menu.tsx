@@ -222,11 +222,22 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
               state.selectionManager.setFocused(true);
             }
             break;
+
+          case 'ArrowLeft':
+          case 'ArrowRight':
+            // TODO: will need to special case this so it doesn't clear the focused key if we are currently
+            // focused on a submenutrigger
+            if (state.selectionManager.isFocused) {
+              state.selectionManager.setFocused(false);
+              state.selectionManager.setFocusedKey(null);
+            }
+            break;
           case 'Escape':
             // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
             // to continuePropagation to the overlay depending on the inputValue
             return;
         }
+
 
         let focusedId;
         if (state.selectionManager.focusedKey == null) {
@@ -246,7 +257,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           );
         }
 
-        focusedId = getItemId(state, state.selectionManager.focusedKey);
+        focusedId = state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null;
         return focusedId;
       });
     }
@@ -285,7 +296,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     if (inputValue != null) {
       updateFocusedKey();
     }
-  }, [inputValue]);
+  }, [inputValue, updateFocusedKey]);
 
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',

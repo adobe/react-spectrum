@@ -10,17 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
 import {AriaMenuProps} from '@react-types/menu';
 import {DOMAttributes, HoverEvent, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
-import {filterDOMProps, isAppleDevice, mergeProps, useId} from '@react-aria/utils';
-import {getChildNodes, getItemCount} from '@react-stately/collections';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {menuData} from './utils';
 import {TreeState} from '@react-stately/tree';
-import {useEffect, useRef, useState} from 'react';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface MenuAria {
@@ -84,64 +78,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onHoverStart,
     id
   });
-
-  // TODO: for now I'm putting these announcement into menu but would like to discuss where we may this these could go
-  // I was thinking perhaps in @react-aria/interactions (it is interaction specific aka virtualFocus) or @react-aria/collections (dependent on tracking a focused key in a collection)
-  // but those felt kinda iffy. A new package?
-  // TODO: port all other translations/remove stuff if not needed
-
-  // VoiceOver has issues with announcing aria-activedescendant properly on change
-  // (especially on iOS). We use a live region announcer to announce focus changes
-  // manually. In addition, section titles are announced when navigating into a new section.
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/menu');
-  let focusedItem = state.selectionManager.focusedKey != null
-    ? state.collection.getItem(state.selectionManager.focusedKey)
-    : undefined;
-  let sectionKey = focusedItem?.parentKey ?? null;
-  let itemKey = state.selectionManager.focusedKey ?? null;
-  let lastSection = useRef(sectionKey);
-  let lastItem = useRef(itemKey);
-  useEffect(() => {
-    if (isAppleDevice() && focusedItem != null && itemKey !== lastItem.current) {
-      let isSelected = state.selectionManager.isSelected(itemKey);
-      let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
-      let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
-      let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: !!section && sectionKey !== lastSection.current,
-        groupTitle: sectionTitle,
-        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
-        optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
-        isSelected
-      });
-
-      announce(announcement);
-    }
-
-    lastSection.current = sectionKey;
-    lastItem.current = itemKey;
-  });
-
-  // Announce the number of available suggestions when it changes
-  let optionCount = getItemCount(state.collection);
-  let lastSize = useRef(optionCount);
-  let [announced, setAnnounced] = useState(false);
-
-  // TODO: test this behavior below, now that there isn't a open state this should just announce for the first render in which the field is focused?
-  useEffect(() => {
-    // Only announce the number of options available when the autocomplete first renders if there is no
-    // focused item, otherwise screen readers will typically read e.g. "1 of 6".
-    // The exception is VoiceOver since this isn't included in the message above.
-    let didRenderWithoutFocusedItem = !announced && (state.selectionManager.focusedKey == null || isAppleDevice());
-    if (didRenderWithoutFocusedItem || optionCount !== lastSize.current) {
-      let announcement = stringFormatter.format('countAnnouncement', {optionCount});
-      announce(announcement);
-      setAnnounced(true);
-    }
-
-    lastSize.current = optionCount;
-  }, [announced, setAnnounced, optionCount, stringFormatter, state.selectionManager.focusedKey]);
-
-  // TODO: Omitted the custom announcement for selection because we expect to only trigger onActions for Autocomplete, selected key isn't a thing
 
   return {
     menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
