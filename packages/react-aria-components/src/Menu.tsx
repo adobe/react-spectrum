@@ -13,10 +13,10 @@
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useId, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -152,9 +152,12 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
 
+  //TODO: Maybe prettier to strip the prefix?
+  let id = useId(props.id);
+
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} />} createCollection={() => new BaseCollection<T>(id)}>
       {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );

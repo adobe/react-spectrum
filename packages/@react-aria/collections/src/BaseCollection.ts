@@ -71,10 +71,15 @@ export class CollectionNode<T> implements Node<T> {
  * custom collection behaviors.
  */
 export class BaseCollection<T> implements ICollection<Node<T>> {
+  readonly key: Key | null = null;
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
   private frozen = false;
+
+  constructor(key?: Key) {
+    if (key) this.key = key;
+  }
 
   get size() {
     return this.keyMap.size;

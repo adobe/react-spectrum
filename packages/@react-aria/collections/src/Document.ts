@@ -323,9 +323,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   constructor(collection: C) {
     // @ts-ignore
     super(null);
-    this.key = ++documentId;
     this.collection = collection;
     this.collectionMutated = true;
+    this.key = collection.key ?? ++documentId;
   }
 
   get isConnected() {

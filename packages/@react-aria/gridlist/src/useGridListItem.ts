@@ -244,7 +244,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let onFocus = (e) => {
     keyWhenFocused.current = node.key;
-    if (keyboardNavigationBehavior === "arrow" && e.target !== ref.current) {
+    if (keyboardNavigationBehavior === 'arrow' && e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the row itself. We also want to
       // set the focused key when a child element receives focus.
@@ -257,7 +257,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
-    if (keyboardNavigationBehavior === "tab") {
+    if (keyboardNavigationBehavior === 'tab') {
       let position = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
 
       let isSibling = e.relatedTarget === ref.current.nextElementSibling;
