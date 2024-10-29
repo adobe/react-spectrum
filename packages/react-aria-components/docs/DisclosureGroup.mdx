@@ -82,9 +82,9 @@ import {DisclosureGroup, Disclosure, Button, DisclosurePanel, Heading} from 'rea
 
 ## Features
 
-Accordions can be built by combing multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML element, but this can be difficult to style especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Accordion` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
+Disclosure groups can be built by combing multiple disclosures built in HTML with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML element, but this can be difficult to style especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `DisclosureGroup` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
 
-* **Accessible** - Disclosure group is exposed to assistive technology via ARIA 
+* **Accessible** - Disclosure group is exposed to assistive technology via ARIA. Uses hidden="until-found" in supported browsers, enabling find-in-page search support and improved search engine visibility for collapsed content.
 * **Styleable** - Disclosures include builtin states for styling such as keyboard focus, disabled, and expanded states.
 
 ## Anatomy
@@ -217,6 +217,46 @@ A DisclosureGroup can be disabled using the `isDisabled` prop.
 </DisclosureGroup>
 ```
 
+## Interactive elements
+
+In some use cases, you may want to add an interactive element, like a button, adjacent to the disclosure's heading. Please ensure that these elements are siblings of the Heading element and not children.
+
+```tsx example
+<DisclosureGroup>
+  <Disclosure id="system">
+    <div style={{display: 'flex', alignItems: 'center'}}>
+      <Heading>
+        <Button slot="trigger">
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          System Requirements
+        </Button>
+      </Heading>
+      <Button>Click me</Button>
+    </div>
+    <DisclosurePanel>
+      <p>Details about system requirements here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="personal">
+    <div style={{display: 'flex', alignItems: 'center'}}>
+      <Heading>
+        <Button slot="trigger">
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          Personal Information
+        </Button>
+      </Heading>
+      <Button>Click me</Button>
+    </div>
+    <DisclosurePanel>
+      <p>Details about personal information here.</p>
+    </DisclosurePanel>
+  </Disclosure>
+</DisclosureGroup>
+```
 
 ## Props
 
@@ -319,4 +359,4 @@ DisclosureGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs
 
 ### Hook
 
-If you need to customize things even further, such as accessing internal state, you can drop down to the lower level Hook-based API. See [useDisclosureGroupState](useDisclosureGroupState.html) for more details.
+If you need to customize things even further, such as accessing internal state, you can drop down to the lower level Hook-based API. See [useDisclosureGroupState](useDisclosure.html#disclosure-group) for more details.
