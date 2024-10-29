@@ -152,7 +152,6 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
 
-  //TODO: Maybe prettier to strip the prefix?
   let id = useId(props.id);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.

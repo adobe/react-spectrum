@@ -226,7 +226,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new CollectionNode(type, `react-aria-${ownerDocument.key}-${++ownerDocument.nodeId}`);
+    this.node = new CollectionNode(type, `${ownerDocument.key}-${++ownerDocument.nodeId}`);
     // Start a transaction so that no updates are emitted from the collection
     // until the props for this node are set. We don't know the real id for the
     // node until then, so we need to avoid emitting collections in an inconsistent state.
@@ -304,7 +304,7 @@ export class ElementNode<T> extends BaseNode<T> {
  * which is lazily copied on write during updates.
  */
 export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
-  key: Key = '';
+  key: Key = 'react-aria';
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();

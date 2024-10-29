@@ -320,7 +320,6 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
-  //TODO: Maybe prettier to strip the prefix?
   let id = useId();
 
   // Separate selection state so we have access to it from collection components via useTableOptions.

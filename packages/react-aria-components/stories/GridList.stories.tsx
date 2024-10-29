@@ -203,7 +203,7 @@ export function TagGroupInsideGridList() {
 export function MultiTabGridList() {
   return (
     <GridList
-      keyboardNavigationBehavior='tab'
+      keyboardNavigationBehavior="tab"
       className={styles.menu}
       aria-label="Grid list with multiple tab stops"
       style={{
@@ -232,7 +232,7 @@ export function MultiTabGridList() {
 export function MultiTabGridListWithNestedGrid() {
   return (
     <GridList
-      keyboardNavigationBehavior='tab'
+      keyboardNavigationBehavior="tab"
       className={styles.menu}
       aria-label="Grid list with multiple tab stops and a nested collection"
       style={{
@@ -267,7 +267,7 @@ export function MultiTabGridListWithNestedGrid() {
 export function MultiTabGridListWithNestedEscape() {
   return (
     <GridList
-      keyboardNavigationBehavior='tab'
+      keyboardNavigationBehavior="tab"
       className={styles.menu}
       aria-label="Grid list with multiple tab stops and nested esc interaction"
       style={{
