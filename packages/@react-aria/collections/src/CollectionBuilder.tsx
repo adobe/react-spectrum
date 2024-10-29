@@ -16,7 +16,7 @@ import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
 import {forwardRefType, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
@@ -25,6 +25,7 @@ const ShallowRenderContext = createContext(false);
 const CollectionDocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
 
 export interface CollectionBuilderProps<C extends BaseCollection<object>> {
+  id?: Key,
   content: ReactNode,
   children: (collection: C) => ReactNode,
   createCollection?: () => C
@@ -51,6 +52,9 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
   // This is fine. CollectionDocumentContext never changes after mounting.
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let {collection, document} = useCollectionDocument(props.createCollection);
+
+  if(props.id) document.key = props.id;
+
   return (
     <>
       <Hidden>

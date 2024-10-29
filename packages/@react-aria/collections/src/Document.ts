@@ -299,14 +299,12 @@ export class ElementNode<T> extends BaseNode<T> {
   removeAttribute() {}
 }
 
-let documentId = 0;
-
 /**
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
  */
 export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
-  key: Key;
+  key: Key = '';
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
@@ -325,7 +323,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     super(null);
     this.collection = collection;
     this.collectionMutated = true;
-    this.key = collection.key ?? ++documentId;
   }
 
   get isConnected() {

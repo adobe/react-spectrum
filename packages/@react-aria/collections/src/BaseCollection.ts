@@ -77,10 +77,6 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private lastKey: Key | null = null;
   private frozen = false;
 
-  constructor(key?: Key) {
-    if (key) this.key = key;
-  }
-
   get size() {
     return this.keyMap.size;
   }

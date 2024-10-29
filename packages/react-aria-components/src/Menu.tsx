@@ -157,7 +157,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
-    <CollectionBuilder content={<Collection {...props} />} createCollection={() => new BaseCollection<T>(id)}>
+    <CollectionBuilder id={id} content={<Collection {...props} />}>
       {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );
