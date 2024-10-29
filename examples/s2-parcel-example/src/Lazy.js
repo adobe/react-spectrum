@@ -26,10 +26,10 @@ import {
   Dialog,
   DialogContainer,
   DialogTrigger,
-  // Disclosure,
-  // DisclosureHeader,
-  // DisclosurePanel,
-  // DisclosureTitle,
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
+  DisclosureTitle,
   DropZone,
   Footer,
   Form,
@@ -128,7 +128,7 @@ export default function Lazy() {
 
       <Section title="Navigation">
         <div className={style({ minHeight: 176 })}>
-          {/* <Accordion>
+          <Accordion>
             <Disclosure id="files">
               <DisclosureHeader>
                 <DisclosureTitle>
@@ -150,7 +150,7 @@ export default function Lazy() {
                 <TextField label="Name" styles={style({ maxWidth: 176 })} />
               </DisclosurePanel>
             </Disclosure>
-          </Accordion> */}
+          </Accordion>
         </div>
         <Breadcrumbs>
           <Breadcrumb id="home">Home</Breadcrumb>
