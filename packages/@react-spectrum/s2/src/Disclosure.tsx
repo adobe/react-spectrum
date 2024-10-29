@@ -12,7 +12,7 @@
 
 import {ActionButtonContext} from './ActionButton';
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
-import {Button, ContextValue, DisclosureStateContext, Heading, Provider, UNSTABLE_Disclosure as RACDisclosure, UNSTABLE_DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
+import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
@@ -48,10 +48,14 @@ const disclosure = style({
     isQuiet: 0
   },
   borderBottomWidth: {
-    default: 0,
-    ':last-child': {
-      default: 1,
-      isQuiet: 0
+    default: 1,
+    isQuiet: 0,
+    isInGroup: {
+      default: 0,
+      ':last-child': {
+        default: 1,
+        isQuiet: 0
+      }
     }
   },
   borderStartWidth: 0,
@@ -72,6 +76,8 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   } = props;
   let domRef = useDOMRef(ref);
 
+  let isInGroup = useContext(DisclosureContext) !== null;
+
   return (
     <Provider
       values={[
@@ -81,7 +87,7 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
         {...props}
         ref={domRef}
         style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + disclosure({isQuiet}, props.styles)}>
+        className={(UNSAFE_className ?? '') + disclosure({isQuiet, isInGroup}, props.styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
@@ -174,7 +180,7 @@ const buttonStyles = style({
     default: 'transparent',
     isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
     isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
-    isPressed: lightDark('transparent-black-100', 'transparent-white-100')
+    isPressed: lightDark('transparent-black-300', 'transparent-white-300')
   },
   transition: 'default',
   borderWidth: 0,

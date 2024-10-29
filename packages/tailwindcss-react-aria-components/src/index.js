@@ -25,6 +25,7 @@ const attributes = {
     ['read-only', 'readonly'],
     'outside-month',
     'outside-visible-range',
+    'pending',
 
     // Content
     'empty',
