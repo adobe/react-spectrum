@@ -16,7 +16,6 @@ import {AriaMenuOptions} from './useMenu';
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
-import {} from 'react';
 import {RefObject} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';

@@ -117,6 +117,10 @@ export default {
     },
     disallowEmptySelection: {
       control: 'boolean'
+    },
+    disabledBehavior: {
+      control: 'select',
+      options: ['all', 'selection']
     }
   }
 } as ComponentMeta<typeof TableView>;
@@ -471,12 +475,22 @@ export const FocusableCells: TableStory = {
   name: 'focusable cells'
 };
 
-let manyColunns = [];
+interface ItemValue {
+  name: string,
+  key: string
+}
+
+let manyColunns: Array<ItemValue> = [];
 for (let i = 0; i < 100; i++) {
   manyColunns.push({name: 'Column ' + i, key: 'C' + i});
 }
 
-let manyRows = [];
+interface RowValue {
+  key: string,
+  [key: string]: string
+}
+
+let manyRows: Array<RowValue> = [];
 for (let i = 0; i < 1000; i++) {
   let row = {key: 'R' + i};
   for (let j = 0; j < 100; j++) {
@@ -756,7 +770,7 @@ function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
     ]
   });
   let onSelectionChange = useCallback((keys) => {
-    props.onSelectionChange(keys);
+    props.onSelectionChange?.(keys);
     list.setSelectedKeys(keys);
   }, [props, list]);
 
@@ -818,7 +832,7 @@ export const IsLoading: TableStory = {
           <Column minWidth={100}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={[]} loadingState="loading">
+      <TableBody items={[] as Array<{foo: string}>} loadingState="loading">
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -843,7 +857,7 @@ export const IsLoadingMore: TableStory = {
           <Column minWidth={100}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={[]} loadingState="loadingMore">
+      <TableBody items={[] as Array<{foo: string}>} loadingState="loadingMore">
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -1087,7 +1101,7 @@ function AsyncLoadingExampleQuarryTest(props) {
     async sort({items, sortDescriptor}) {
       return {
         items: items.slice().sort((a, b) => {
-          let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
+          let cmp = a[sortDescriptor.column!] < b[sortDescriptor.column!] ? -1 : 1;
 
           if (sortDescriptor.direction === 'descending') {
             cmp *= -1;
@@ -1546,6 +1560,7 @@ function TableWithBreadcrumbs(props) {
       </Breadcrumbs>
       <TableView
         width="400px"
+        height="300px"
         aria-label="table"
         {...props}
         selectedKeys={selection}

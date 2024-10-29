@@ -36,7 +36,7 @@ export class TableViewLayout<T> extends TableLayout<T> {
 
     if (this.isLoading) {
       // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
-      let rect = new Rect(40, Math.max(layoutInfo.rect.maxY, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
+      let rect = new Rect(40, children.length === 0 ? 40 : layoutInfo.rect.maxY, (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = layoutInfo.key;
       loader.isSticky = children.length === 0;
@@ -68,6 +68,14 @@ export class TableViewLayout<T> extends TableLayout<T> {
   protected buildRow(node: GridNode<T>, x: number, y: number): LayoutNode {
     let res = super.buildRow(node, x, y);
     res.layoutInfo.rect.height += 1; // for bottom border
+    return res;
+  }
+
+  protected buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
+    let res = super.buildCell(node, x, y);
+    if (node.column?.props.hideHeader) {
+      res.layoutInfo.allowOverflow = true;
+    }
     return res;
   }
 

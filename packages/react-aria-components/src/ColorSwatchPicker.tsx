@@ -10,7 +10,7 @@ import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, u
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
-export interface ColorSwatchPickerProps extends ValueBase<string | Color | null, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
   /** The children of the ColorSwatchPicker. */
   children?: ReactNode,
   /**
@@ -66,7 +66,7 @@ export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRender
 
 export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents {
   /** The color of the swatch. */
-  color: string | Color | null,
+  color: string | Color,
   /** Whether the color swatch is disabled. */
   isDisabled?: boolean
 }

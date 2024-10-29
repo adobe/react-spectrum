@@ -112,7 +112,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           ref={ref}
           persistedKeys={persistedKeys}
           autoFocus={!!props.autoFocus || undefined}
-          sizeToFit="height"
           scrollDirection="vertical"
           className={
             classNames(

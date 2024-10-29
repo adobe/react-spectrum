@@ -22,7 +22,7 @@ interface SlottedValue<T> {
 }
 
 export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
-export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
+export type ContextValue<T, E> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
@@ -73,7 +73,7 @@ export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: string | ((values: T & {defaultClassName: string | undefined}) => string),
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
-  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties)
+  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined)
 }
 
 export interface RenderProps<T> extends StyleRenderProps<T> {

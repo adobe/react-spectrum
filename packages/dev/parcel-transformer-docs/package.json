@@ -14,7 +14,7 @@
     "doctrine": "^3.0.0"
   },
   "devDependencies": {
-    "@parcel/fs": "2.0.0-dev.1601",
-    "@parcel/core": "2.0.0-dev.1599"
+    "@parcel/core": "2.0.0-dev.1599",
+    "@parcel/fs": "2.0.0-dev.1601"
   }
 }

@@ -165,6 +165,14 @@ describe('NumberParser', function () {
       });
     });
 
+    describe('NumberFormat options', function () {
+      it('supports roundingIncrement', function () {
+        expect(new NumberParser('en-US', {roundingIncrement: 2}).parse('10')).toBe(10);
+        // This doesn't fail in Node 18 because roundingIncrement isn't on the resolved options. Hopefully later versions of Node this test will be meaningful.
+        expect(new NumberParser('en-US', {roundingIncrement: 2, minimumFractionDigits: 2, maximumFractionDigits: 2}).parse('10.00')).toBe(10.00);
+      });
+    });
+
     describe('round trips', function () {
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
       // But for the moment they are not properly supported

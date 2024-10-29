@@ -255,7 +255,14 @@ const pluralNumbers = [
 
 function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
   // formatter needs access to all decimal places in order to generate the correct literal strings for the plural set
-  let symbolFormatter = new Intl.NumberFormat(locale, {...intlOptions, minimumSignificantDigits: 1, maximumSignificantDigits: 21});
+  let symbolFormatter = new Intl.NumberFormat(locale, {...intlOptions,
+    // Resets so we get the full range of symbols
+    minimumSignificantDigits: 1,
+    maximumSignificantDigits: 21,
+    roundingIncrement: 1,
+    roundingPriority: 'auto',
+    roundingMode: 'halfExpand'
+  });
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = symbolFormatter.formatToParts(-10000.111);
   let posAllParts = symbolFormatter.formatToParts(10000.111);

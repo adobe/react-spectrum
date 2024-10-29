@@ -1,4 +1,4 @@
 {
   "close": "Aizvērt",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{count, plural, one {# paziņojums} other {# paziņojumi}}."
 }

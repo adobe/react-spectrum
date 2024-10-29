@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseCollection, Mutable, NodeValue} from './BaseCollection';
+import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
 import {ForwardedRef, ReactElement} from 'react';
 import {Node} from '@react-types/shared';
 
@@ -220,13 +220,13 @@ export class BaseNode<T> {
  */
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
-  node: NodeValue<T>;
+  node: CollectionNode<T>;
   private _index: number = 0;
   hasSetProps = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new NodeValue(type, `react-aria-${++ownerDocument.nodeId}`);
+    this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
     // Start a transaction so that no updates are emitted from the collection
     // until the props for this node are set. We don't know the real id for the
     // node until then, so we need to avoid emitting collections in an inconsistent state.
@@ -336,7 +336,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
    * Lazily gets a mutable instance of a Node. If the node has already
    * been cloned during this update cycle, it just returns the existing one.
    */
-  getMutableNode(element: ElementNode<T>): Mutable<NodeValue<T>> {
+  getMutableNode(element: ElementNode<T>): Mutable<CollectionNode<T>> {
     let node = element.node;
     if (!this.mutatedNodes.has(element)) {
       node = element.node.clone();

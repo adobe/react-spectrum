@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
@@ -116,7 +116,10 @@ describe('Tabs', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-hovered');
@@ -125,10 +128,35 @@ describe('Tabs', () => {
     await user.hover(tab);
     expect(tab).toHaveAttribute('data-hovered', 'true');
     expect(tab).toHaveClass('hover');
+    expect(onHoverStart).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(1);
 
     await user.unhover(tab);
     expect(tab).not.toHaveAttribute('data-hovered');
     expect(tab).not.toHaveClass('hover');
+    expect(onHoverEnd).toHaveBeenCalledTimes(1);
+    expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not show hover state when item is not interactive', async () => {
+    let onHoverStart = jest.fn();
+    let onHoverChange = jest.fn();
+    let onHoverEnd = jest.fn();
+    let {getAllByRole} = renderTabs({disabledKeys: ['a', 'b', 'c']}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let tab = getAllByRole('tab')[0];
+
+    expect(tab).not.toHaveAttribute('data-hovered');
+    expect(tab).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
+
+    await user.hover(tab);
+    expect(tab).not.toHaveAttribute('data-hovered');
+    expect(tab).not.toHaveClass('hover');
+    expect(onHoverStart).not.toHaveBeenCalled();
+    expect(onHoverChange).not.toHaveBeenCalled();
+    expect(onHoverEnd).not.toHaveBeenCalled();
   });
 
   it('should support focus ring', async () => {
@@ -409,5 +437,41 @@ describe('Tabs', () => {
     expect(tabs[0]).toHaveAttribute('aria-label', 'Tab A');
     expect(tabs[1]).toHaveAttribute('aria-label', 'Tab B');
     expect(tabs[2]).toHaveAttribute('aria-label', 'Tab C');
+  });
+
+  it('supports nested tabs', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList>
+          <Tab id="foo">Foo</Tab>
+          <Tab id="bar">Bar</Tab>
+        </TabList>
+        <TabPanel id="foo">
+          <Tabs>
+            <TabList>
+              <Tab id="one">One</Tab>
+              <Tab id="two">Two</Tab>
+            </TabList>
+            <TabPanel id="one">One</TabPanel>
+            <TabPanel id="two">Two</TabPanel>
+          </Tabs>
+        </TabPanel>
+        <TabPanel id="bar">Bar</TabPanel>
+      </Tabs>
+    );
+
+    // Wait a tick for MutationObserver in useHasTabbableChild to fire.
+    // This avoids React's "update not wrapped in act" warning.
+    await waitFor(() => Promise.resolve());
+
+    let rootTabs = within(getAllByRole('tablist')[0]).getAllByRole('tab');
+    expect(rootTabs).toHaveLength(2);
+    expect(rootTabs[0]).toHaveTextContent('Foo');
+    expect(rootTabs[1]).toHaveTextContent('Bar');
+
+    let innerTabs = within(getAllByRole('tabpanel')[0]).getAllByRole('tab');
+    expect(innerTabs).toHaveLength(2);
+    expect(innerTabs[0]).toHaveTextContent('One');
+    expect(innerTabs[1]).toHaveTextContent('Two');
   });
 });

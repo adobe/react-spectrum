@@ -92,7 +92,7 @@ function Example() {
         <ColorField label="Saturation" value={color} onChange={setColor} colorSpace="hsl" channel="saturation" />
         <ColorField label="Lightness" value={color} onChange={setColor} colorSpace="hsl" channel="lightness" />
       </div>
-      <p>Current color value: {color.toString('hex')}</p>
+      <p>Current color value: {color?.toString('hex')}</p>
     </>
   );
 }

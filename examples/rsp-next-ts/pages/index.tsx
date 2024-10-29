@@ -70,7 +70,8 @@ import {
   Well,
   DialogContainer,
   Avatar,
-  TagGroup
+  TagGroup,
+  InlineAlert
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
@@ -79,11 +80,12 @@ import {
   ColorArea,
   ColorField,
   ColorSlider,
-  ColorWheel,
+  ColorSwatch,
+  ColorSwatchPicker,
+  ColorWheel
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
-import {InlineAlert} from '@react-spectrum/inlinealert'
 import {SubmenuTrigger} from "@react-spectrum/menu";
 
 let nestedItems = [
@@ -108,6 +110,7 @@ export default function Home() {
       <Head>
         <title>React Spectrum + NextJS</title>
         <meta name="description" content="React Spectrum + NextJS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -238,9 +241,17 @@ export default function Home() {
           </Section>
 
           <Section title="Color">
-            <ColorArea defaultValue="#7f0000" />
             <ColorField label="Primary Color" />
+            <ColorSwatchPicker>
+              <ColorSwatch color="#A00" />
+              <ColorSwatch color="#f80" />
+              <ColorSwatch color="#080" />
+              <ColorSwatch color="#08f" />
+              <ColorSwatch color="#088" />
+              <ColorSwatch color="#008" />
+            </ColorSwatchPicker>
             <ColorSlider defaultValue="#7f0000" channel="red" />
+            <ColorArea defaultValue="#7f0000" />
             <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
           </Section>
 

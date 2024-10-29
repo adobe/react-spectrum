@@ -14,16 +14,24 @@ import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@rea
 import {
   Button,
   Checkbox,
+  Dialog,
+  DialogTrigger,
   DropIndicator,
   GridList,
   GridListContext,
   GridListItem,
+  Label,
   UNSTABLE_ListLayout as ListLayout,
+  Modal,
   RouterProvider,
+  Tag,
+  TagGroup,
+  TagList,
   useDragAndDrop,
   UNSTABLE_Virtualizer as Virtualizer
 } from '../';
 import React from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -53,6 +61,8 @@ let renderGridList = (listBoxProps, itemProps) => render(<TestGridList {...{list
 
 describe('GridList', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -64,11 +74,12 @@ describe('GridList', () => {
   });
 
   it('should render with default classes', () => {
-    let {getByRole, getAllByRole} = renderGridList();
-    let grid = getByRole('grid');
-    expect(grid).toHaveAttribute('class', 'react-aria-GridList');
+    let {getByRole} = renderGridList();
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
 
-    for (let row of getAllByRole('row')) {
+    expect(gridListTester.gridlist).toHaveAttribute('class', 'react-aria-GridList');
+
+    for (let row of gridListTester.rows) {
       expect(row).toHaveAttribute('class', 'react-aria-GridListItem');
     }
   });
@@ -211,19 +222,20 @@ describe('GridList', () => {
   });
 
   it('should support selection state', async () => {
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
-    let row = getAllByRole('row')[0];
+    let {getByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
 
+    let row = gridListTester.rows[0];
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
 
-    await user.click(row);
+    await gridListTester.toggleRowSelection({index: 0});
     expect(row).toHaveAttribute('aria-selected', 'true');
     expect(row).toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).toBeChecked();
 
-    await user.click(row);
+    await gridListTester.toggleRowSelection({index: 0});
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
@@ -240,21 +252,23 @@ describe('GridList', () => {
   });
 
   it('should support isDisabled prop on items', async () => {
-    let {getAllByRole} = render(
+    let {getByRole} = render(
       <GridList aria-label="Test">
         <GridListItem id="cat">Cat</GridListItem>
         <GridListItem id="dog" textValue="Dog" isDisabled>Dog <Button aria-label="Info">ⓘ</Button></GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
-    let items = getAllByRole('row');
-    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
-    expect(within(items[1]).getByRole('button')).toBeDisabled();
+
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+    let rows = gridListTester.rows;
+    expect(rows[1]).toHaveAttribute('aria-disabled', 'true');
+    expect(within(rows[1]).getByRole('button')).toBeDisabled();
 
     await user.tab();
-    expect(document.activeElement).toBe(items[0]);
+    expect(document.activeElement).toBe(rows[0]);
     await user.keyboard('{ArrowDown}');
-    expect(document.activeElement).toBe(items[2]);
+    expect(document.activeElement).toBe(rows[2]);
   });
 
   it('should support onAction on items', async () => {
@@ -413,6 +427,69 @@ describe('GridList', () => {
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
     expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
+  });
+
+  it('should support rendering a TagGroup inside a GridListItem', async () => {
+    let buttonRef = React.createRef();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test">
+        <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
+          <TagGroup aria-label="Tag group">
+            <TagList>
+              <Tag key="1">Tag 1</Tag>
+              <Tag key="2">Tag 2</Tag>
+              <Tag key="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('grid')[0].children;
+    let tags = within(items[0]).getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(buttonRef.current);
+
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should not propagate the checkbox context from selection into other cells', async () => {
+    let tree = render(
+      <GridList aria-label="Test" selectionMode="multiple">
+        <GridListItem id="dialog" textValue="dialog">
+          <DialogTrigger>
+            <Button>Open</Button>
+            <Modal>
+              <Dialog>
+                <Checkbox><Label>Agree</Label></Checkbox>
+              </Dialog>
+            </Modal>
+          </DialogTrigger>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    await user.click(tree.getByRole('button'));
+    let checkbox = tree.getByRole('checkbox');
+    expect(checkbox).toBeInTheDocument();
   });
 
   describe('drag and drop', () => {
