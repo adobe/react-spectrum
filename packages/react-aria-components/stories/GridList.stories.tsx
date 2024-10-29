@@ -295,3 +295,24 @@ export function MultiTabGridListWithNestedEscape() {
     </GridList>
   );
 }
+
+export function VirtualizedGridListGridWithMultiTab() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let layout = useMemo(() => {
+    return new GridLayout({
+      minItemSize: new Size(40, 40)
+    });
+  }, []);
+
+  return (
+    <Virtualizer layout={layout}>
+      <GridList keyboardNavigationBehavior="tab" className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
+        {item => <MyGridListItem>{item.name}</MyGridListItem>}
+      </GridList>
+    </Virtualizer>
+  );
+}

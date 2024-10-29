@@ -267,8 +267,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       if (isShiftTab && !isFocusWithin && !isSibling) {
         let walker = getFocusableTreeWalker(ref.current);
         walker.currentNode = ref.current;
+
+        let focusable = last(walker);
         
-        focusSafely(last(walker));
+        if (focusable) {
+          focusSafely(focusable);
+        }
       }
     }
   };
