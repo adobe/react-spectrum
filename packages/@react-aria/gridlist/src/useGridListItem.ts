@@ -260,8 +260,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (keyboardNavigationBehavior === 'tab') {
       let position = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
 
-      let isSibling = e.relatedTarget === ref.current.nextElementSibling;
       let isFocusWithin = Boolean(position & Node.DOCUMENT_POSITION_CONTAINED_BY);
+      let isSibling = Boolean(e.relatedTarget?.getAttribute('data-key')) && !isFocusWithin;
       let isShiftTab = isFocusVisible() && Boolean(position & Node.DOCUMENT_POSITION_FOLLOWING);
 
       if (isShiftTab && !isFocusWithin && !isSibling) {
