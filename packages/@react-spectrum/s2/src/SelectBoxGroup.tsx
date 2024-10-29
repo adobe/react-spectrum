@@ -33,41 +33,27 @@ import {ValueBase} from '@react-types/shared';
 
 /**
  * Ensures the return value is a string.
- * @param { string | string[] | undefined } value Possible options for selection.
+ * @param { string[]} value Possible options for selection.
  * @returns { string }
  */
-function unwrapValue(value: string | string[] | undefined): string {
+function unwrapValue(value: string[]): string {
   if (Array.isArray(value)) {
     return value[0];
   }
   return value;
 }
 
-/**
- * Ensures the return value is an array or undefined.
- * @param {string | string[] | undefined} value Possible options for selection.
- * @returns { [] | undefined }
- */
-function ensureArray(value: string | string[]): string[] {
-  if (Array.isArray(value)) {
-    return value;
-  }
-  return value ? [value] : [];
-}
-
-export {unwrapValue, ensureArray};
-
-export interface SelectBoxGroupProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'onSelectionChange' | 'className' | 'style'>, UnsafeStyles, ValueBase<string | string[]> {
+export interface SelectBoxGroupProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'onSelectionChange' | 'className' | 'style'>, UnsafeStyles, ValueBase<string[]> {
   children?: ReactNode,
   label?: ReactNode,
   isDisabled?: boolean,
   isRequired?: boolean,
-  onChange?: (value: string | string[]) => void,
+  onChange?: (value: string[]) => void,
   orientation?: Orientation,
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export type SelectorGroupProps = (CheckboxGroupProps | RadioGroupProps) & { selectionMode: SelectionMode };
+export type SelectorGroupProps = (CheckboxGroupProps | Omit<RadioGroupProps, 'defaultValue' | 'value'>) & { defaultValue?: string[], selectionMode: SelectionMode, value?: string[] };
 
 export const SelectBoxContext = React.createContext<SelectBoxGroupProps<any>>({
   size: 'M',
@@ -101,9 +87,9 @@ const SelectorGroup = forwardRef(function SelectorGroupComponent(
   };
 
   return selectionMode === 'single' ? (
-    <RadioGroup {...props as RadioGroupProps} value={unwrapValue(value)} defaultValue={unwrapValue(defaultValue)} />
+    <RadioGroup {...props as RadioGroupProps} value={value && unwrapValue(value)} defaultValue={defaultValue && unwrapValue(defaultValue)} />
   ) : (
-    <CheckboxGroup {...props as CheckboxGroupProps} value={ensureArray(value)} defaultValue={ensureArray(defaultValue)} />
+    <CheckboxGroup {...props as CheckboxGroupProps} />
   );
 });
 
@@ -124,7 +110,7 @@ function SelectBoxGroup<T extends object>(
     value: valueProp
   } = props;
 
-  const [value, setValue] = useState<string | string[] | undefined>(defaultValue || valueProp);
+  const [value, setValue] = useState<string[] | undefined>(defaultValue || valueProp);
 
   useEffect(() => {
     if (value !== undefined && onChange) {
@@ -148,13 +134,13 @@ function SelectBoxGroup<T extends object>(
   return (
     <SelectorGroup
       className=""
-      defaultValue={ensureArray(defaultValue)}
+      defaultValue={defaultValue}
       onChange={setValue}
       isRequired={isRequired}
       isDisabled={isDisabled}
       ref={ref}
       selectionMode={selectionMode}
-      value={ensureArray(value)}>
+      value={value}>
       <Provider
         values={[
           [IconContext, {}],
