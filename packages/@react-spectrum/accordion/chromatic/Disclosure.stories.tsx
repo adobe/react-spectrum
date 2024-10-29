@@ -15,7 +15,7 @@ import {Meta} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta = {
-  title: 'Accordion',
+  title: 'Disclosure',
   component: Disclosure,
   excludeStories: ['Template']
 };
