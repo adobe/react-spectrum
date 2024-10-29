@@ -20,7 +20,7 @@ import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
-import { useObjectRef } from '../../@react-aria/utils';
+import {useObjectRef} from '../../@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
