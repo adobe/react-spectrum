@@ -18,6 +18,10 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private disabledKeys: Set<Key>;
   private tabDirection: boolean;
 
+  protected isTab(node: Node<T>) {
+    return node.type === 'item';
+  }
+
   constructor(collection: Collection<Node<T>>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
@@ -25,18 +29,48 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     this.tabDirection = orientation === 'horizontal';
   }
 
+  protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
+    let key = fromKey != null
+      ? this.collection.getKeyBefore(fromKey)
+      : this.collection.getLastKey();
+
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      if (!this.isDisabled(item) && (!pred || pred(item))) {
+        return key;
+      }
+
+      key = this.collection.getKeyBefore(key);
+    }
+  }
+
+  protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
+    let key = fromKey != null
+      ? this.collection.getKeyAfter(fromKey)
+      : this.collection.getFirstKey();
+
+    while (key != null) {
+      let item = this.collection.getItem(key);
+      if (!this.isDisabled(item) && (!pred || pred(item))) {
+        return key;
+      }
+
+      key = this.collection.getKeyAfter(key);
+    }
+  }
+
   getKeyLeftOf(key: Key) {
     if (this.flipDirection) {
-      return this.getNextKey(key);
+      return this.findNextKey(key, (item => item.type === 'item'));
     }
-    return this.getPreviousKey(key);
+    return this.findPreviousKey(key, (item => item.type === 'item'));
   }
 
   getKeyRightOf(key: Key) {
     if (this.flipDirection) {
-      return this.getPreviousKey(key);
+      return this.findPreviousKey(key, (item => item.type === 'item'));
     }
-    return this.getNextKey(key);
+    return this.findNextKey(key, (item => item.type === 'item'));
   }
 
 
@@ -46,32 +80,32 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    if (key != null && this.isDisabled(key)) {
-      key = this.getNextKey(key);
+    if (key != null && (this.isDisabled(key) || this.collection.getItem(key).type !== 'item')) {
+      key = this.findNextKey(key);
     }
     return key;
   }
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    if (key != null && this.isDisabled(key)) {
-      key = this.getPreviousKey(key);
+    if (key != null && (this.isDisabled(key) || this.collection.getItem(key).type !== 'item')) {
+      key = this.findPreviousKey(key);
     }
     return key;
   }
-  
+
   getKeyAbove(key: Key) {
     if (this.tabDirection) {
       return null;
     }
-    return this.getPreviousKey(key);
+    return this.findPreviousKey(key, (item => item.type === 'item'));
   }
 
   getKeyBelow(key: Key) {
     if (this.tabDirection) {
       return null;
     }
-    return this.getNextKey(key);
+    return this.findNextKey(key, (item => item.type === 'item'));
   }
 
   getNextKey(key) {
