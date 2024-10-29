@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Header, Input, Keyboard, Label, Menu, MenuTrigger, Popover, Section, Separator, Text} from 'react-aria-components';
+import {Autocomplete, Button, Dialog, Header, Input, Keyboard, Label, Menu, MenuTrigger, Popover, Section, Separator, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -236,16 +236,18 @@ export const AutocompleteInPopover = {
             border: '1px solid gray',
             padding: 20
           }}>
-          <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
-            <div>
-              <Label style={{display: 'block'}}>Test</Label>
-              <Input autoFocus />
-              <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-              <Menu className={styles.menu} items={items} onAction={onAction}>
-                {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-              </Menu>
-            </div>
-          </Autocomplete>
+          <Dialog>
+            <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
+              <div>
+                <Label style={{display: 'block'}}>Test</Label>
+                <Input autoFocus />
+                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                <Menu className={styles.menu} items={items} onAction={onAction}>
+                  {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+                </Menu>
+              </div>
+            </Autocomplete>
+          </Dialog>
         </Popover>
       </MenuTrigger>
 
