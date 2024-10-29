@@ -27,7 +27,7 @@ const meta: Meta<typeof SelectBoxGroup> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onSelectionChange: {table: {category: 'Events'}},
+    onChange: {table: {category: 'Events'}},
     orientation: {
       control: 'radio',
       options: ['horizontal', 'vertical']

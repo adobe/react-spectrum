@@ -18,20 +18,21 @@
 import {
   Checkbox as AriaCheckbox,
   Radio as AriaRadio,
+  GridListItemProps,
   Provider,
   TextContext
 } from 'react-aria-components';
 import {Checkbox, IconContext, Radio} from '@react-spectrum/s2';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, size, style}  from '../style' with {type: 'macro'};
-import React, {forwardRef, useRef} from 'react';
+import React, {forwardRef, ReactNode, useRef} from 'react';
+import {StyleProps}  from './style-utils' with {type: 'macro'};
 
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSelectBoxGroupProvider} from './SelectBoxGroup';
 
-export interface SelectBoxProps {
-  children?: React.ReactNode,
-  isDisabled?: boolean,
+export interface SelectBoxProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | 'value'>, StyleProps {
+  children: ReactNode | ((renderProps: SelectBoxProps) => ReactNode),
   value: string
 }
 
@@ -295,7 +296,7 @@ const SelectBox = (props: SelectBoxProps, ref: FocusableRef<HTMLLabelElement>) =
                 }
               ]
             ]}>
-            {props.children}
+            {typeof props.children === 'function' ? props.children(renderProps) : props.children}
           </Provider>
         </span>
       )}

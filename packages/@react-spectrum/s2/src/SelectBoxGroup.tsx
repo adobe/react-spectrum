@@ -15,8 +15,9 @@
  * from Adobe.
  **************************************************************************/
 
-import {CheckboxGroup, Label, Provider, RadioGroup} from 'react-aria-components';
+import {CheckboxGroup, CheckboxGroupProps, GridListProps, Label, Provider, RadioGroup, RadioGroupProps, SelectionMode} from 'react-aria-components';
 import {IconContext, TextContext} from '@react-spectrum/s2';
+import {Orientation} from 'react-aria';
 import React, {
   ForwardedRef,
   forwardRef,
@@ -27,6 +28,8 @@ import React, {
   useState
 } from 'react';
 import {style}  from '../style' with {type: 'macro'};
+import {UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {ValueBase} from '@react-types/shared';
 
 /**
  * Ensures the return value is a string.
@@ -54,47 +57,19 @@ function ensureArray(value: string | string[]): string[] {
 
 export {unwrapValue, ensureArray};
 
-export type SelectBoxValueType = string | string[];
-export interface SelectBoxGroupProps {
+export interface SelectBoxGroupProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'onSelectionChange' | 'className' | 'style'>, UnsafeStyles, ValueBase<string | string[]> {
   children?: ReactNode,
-  defaultValue?: SelectBoxValueType,
   label?: ReactNode,
   isDisabled?: boolean,
   isRequired?: boolean,
-  onSelectionChange: (val: SelectBoxValueType) => void,
-  orientation?: 'horizontal' | 'vertical',
-  selectionMode?: 'single' | 'multiple',
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
-  value?: SelectBoxValueType
+  onChange?: (value: string | string[]) => void,
+  orientation?: Orientation,
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface SelectorGroupProps {
-  children: ReactNode,
-  className: string,
-  defaultValue?: SelectBoxValueType,
-  isDisabled?: boolean,
-  isRequired?: boolean,
-  onChange: (val: SelectBoxValueType) => void,
-  selectionMode: 'single' | 'multiple',
-  value?: SelectBoxValueType
-}
-export interface SelectBoxProps {
-  value: string,
-  children?: ReactNode,
-  isDisabled?: boolean
-}
+export type SelectorGroupProps = (CheckboxGroupProps | RadioGroupProps) & { selectionMode: SelectionMode };
 
-interface SelectBoxGroupContext {
-  orientation?: 'horizontal' | 'vertical',
-  selectedValue?: SelectBoxValueType,
-  selectionMode?: 'single' | 'multiple',
-  validationState?: 'valid' | 'invalid',
-  value?: SelectBoxValueType,
-  size: 'XS' | 'S' | 'M' | 'L' | 'XL'
-}
-
-export const SelectBoxContext = React.createContext<SelectBoxGroupContext>({
-  value: undefined,
+export const SelectBoxContext = React.createContext<SelectBoxGroupProps<any>>({
   size: 'M',
   orientation: 'vertical'
 });
@@ -126,14 +101,14 @@ const SelectorGroup = forwardRef(function SelectorGroupComponent(
   };
 
   return selectionMode === 'single' ? (
-    <RadioGroup {...props} value={unwrapValue(value)} defaultValue={unwrapValue(defaultValue)} />
+    <RadioGroup {...props as RadioGroupProps} value={unwrapValue(value)} defaultValue={unwrapValue(defaultValue)} />
   ) : (
-    <CheckboxGroup {...props} value={ensureArray(value)} defaultValue={ensureArray(defaultValue)} />
+    <CheckboxGroup {...props as CheckboxGroupProps} value={ensureArray(value)} defaultValue={ensureArray(defaultValue)} />
   );
 });
 
-function SelectBoxGroup(
-  props: SelectBoxGroupProps,
+function SelectBoxGroup<T extends object>(
+  props: SelectBoxGroupProps<T>,
   ref: ForwardedRef<HTMLDivElement>
 ): React.ReactElement {
   const {
@@ -142,7 +117,7 @@ function SelectBoxGroup(
     isDisabled = false,
     isRequired = false,
     label,
-    onSelectionChange,
+    onChange,
     orientation = 'vertical',
     selectionMode = 'multiple',
     size = 'M',
@@ -152,10 +127,10 @@ function SelectBoxGroup(
   const [value, setValue] = useState<string | string[] | undefined>(defaultValue || valueProp);
 
   useEffect(() => {
-    if (value !== undefined) {
-      onSelectionChange(value);
+    if (value !== undefined && onChange) {
+      onChange(value);
     }
-  }, [onSelectionChange, value]);
+  }, [onChange, value]);
 
   const selectBoxContextValue = useMemo(
     () => ({
