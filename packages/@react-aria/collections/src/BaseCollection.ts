@@ -71,7 +71,6 @@ export class CollectionNode<T> implements Node<T> {
  * custom collection behaviors.
  */
 export class BaseCollection<T> implements ICollection<Node<T>> {
-  readonly key: Key | null = null;
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
