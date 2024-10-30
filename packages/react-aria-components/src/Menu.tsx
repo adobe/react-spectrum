@@ -152,11 +152,11 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
 
-  let id = useId(props.id);
+  props.id = useId(props.id);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
-    <CollectionBuilder id={id} content={<Collection {...props} />}>
+    <CollectionBuilder id={props.id} content={<Collection {...props} />}>
       {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );

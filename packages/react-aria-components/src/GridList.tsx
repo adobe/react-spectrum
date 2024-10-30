@@ -77,10 +77,10 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
 
-  let id = useId(props.id);
+  props.id = useId(props.id);
 
   return (
-    <CollectionBuilder id={id} content={<Collection {...props} />}>
+    <CollectionBuilder id={props.id} content={<Collection {...props} />}>
       {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
     </CollectionBuilder>
   );

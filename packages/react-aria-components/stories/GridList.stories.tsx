@@ -258,7 +258,13 @@ export function MultiTabGridListWithNestedGrid() {
       <MyGridListItem>
         1,3
         <Button>Action1</Button>
-        <Button>Action2</Button>
+        <TagGroup aria-label="Tag group">
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1</Tag>
+            <Tag key="2">Tag 2</Tag>
+            <Tag key="3">Tag 3</Tag>
+          </TagList>
+        </TagGroup>
       </MyGridListItem>
     </GridList>
   );
@@ -311,10 +317,16 @@ export function VirtualizedGridListGridWithMultiTab() {
   return (
     <Virtualizer layout={layout}>
       <GridList keyboardNavigationBehavior="tab" className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
-        {item => (<MyGridListItem>
+        {item => (<MyGridListItem id={`test-${item.id}`}>
           {item.name}
           <Button>Action1</Button>
-          <Button>Action2</Button>
+          <TagGroup aria-label="Tag group">
+            <TagList style={{display: 'flex', gap: 10}}>
+              <Tag key="1">Tag 1</Tag>
+              <Tag key="2">Tag 2</Tag>
+              <Tag key="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
         </MyGridListItem>)}
       </GridList>
     </Virtualizer>

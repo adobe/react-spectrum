@@ -14,9 +14,9 @@ import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSy
 import {DOMAttributes, FocusableElement, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
-import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
+import {getRowId, listMap, normalizeKey} from './utils';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import type {TreeState} from '@react-stately/tree';
@@ -69,7 +69,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state);
+  let {id, onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -257,14 +257,13 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
-    if (keyboardNavigationBehavior === 'tab') {
-      let position = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
+    if (e.relatedTarget && keyboardNavigationBehavior === 'tab') {
+      let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget);
+      
+      let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
+      let isShiftTab = isFocusVisible() && Boolean(comparedPosition & Node.DOCUMENT_POSITION_FOLLOWING);
 
-      let isFocusWithin = Boolean(position & Node.DOCUMENT_POSITION_CONTAINED_BY);
-      let isSibling = Boolean(e.relatedTarget?.getAttribute('data-key')) && !isFocusWithin;
-      let isShiftTab = isFocusVisible() && Boolean(position & Node.DOCUMENT_POSITION_FOLLOWING);
-
-      if (isShiftTab && !isFocusWithin && !isSibling) {
+      if (isShiftTab && !isFocusWithin && !e.relatedTarget.id.startsWith(id)) {
         let walker = getFocusableTreeWalker(ref.current);
         walker.currentNode = ref.current;
 
@@ -289,6 +288,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   //   });
   // }
 
+  let rowId = isVirtualized ? getRowId(state, node.key) : normalizeKey(node.key);
+
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
@@ -298,8 +299,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     'aria-label': node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
-    'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
-    id: getRowId(state, node.key)
+    'aria-labelledby': descriptionId && node.textValue ? `${rowId}` : undefined,
+    id: rowId
   });
 
   if (isVirtualized) {

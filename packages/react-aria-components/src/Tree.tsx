@@ -17,7 +17,7 @@ import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, cr
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, useId, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -140,8 +140,10 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
 
+  props.id = useId(props.id);
+
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder id={props.id} content={<Collection {...props} />}>
       {collection => <TreeInner props={props} collection={collection} treeRef={ref} />}
     </CollectionBuilder>
   );
