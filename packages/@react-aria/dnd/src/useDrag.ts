@@ -134,6 +134,9 @@ export function useDrag(options: DragOptions): DragResult {
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
     if (typeof options.preview?.current === 'function') {
       options.preview.current(items, node => {
+        if (!node) {
+          return;
+        }
         // Compute the offset that the preview will appear under the mouse.
         // If possible, this is based on the point the user clicked on the target.
         // If the preview is much smaller, then just use the center point of the preview.
@@ -218,7 +221,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
   // In this case, we need to manually call onDragEnd on cleanup
-  // eslint-disable-next-line arrow-body-style
+   
   useLayoutEffect(() => {
     return () => {
       if (isDraggingRef.current) {
@@ -279,7 +282,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   let descriptionProps = useDescription(stringFormatter.format(message));
 
-  let interactions: HTMLAttributes<HTMLElement>;
+  let interactions: HTMLAttributes<HTMLElement> = {};
   if (!hasDragButton) {
     // If there's no separate button to trigger accessible drag and drop mode,
     // then add event handlers to the draggable element itself to start dragging.

@@ -45,9 +45,9 @@ export interface DateFieldAria extends ValidationResult {
 
 // Data that is passed between useDateField and useDateSegment.
 interface HookData {
-  ariaLabel: string,
-  ariaLabelledBy: string,
-  ariaDescribedBy: string,
+  ariaLabel?: string,
+  ariaLabelledBy?: string,
+  ariaDescribedBy?: string,
   focusManager: FocusManager
 }
 

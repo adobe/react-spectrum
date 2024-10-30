@@ -43,11 +43,12 @@ const tagStyles = tv({
       true: 'bg-blue-600 text-white border-transparent forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-color-adjust-none'
     },
     isDisabled: {
-      true: 'bg-gray-100 text-gray-300 forced-colors:text-[GrayText]'
+      true: 'bg-gray-100 dark:bg-transparent dark:border-white/20 text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
     }
   },
   compoundVariants: (Object.keys(colors) as Color[]).map((color) => ({
     isSelected: false,
+    isDisabled: false,
     color,
     class: colors[color]
   }))

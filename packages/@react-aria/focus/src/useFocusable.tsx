@@ -16,7 +16,7 @@ import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
 import React, {ForwardedRef, MutableRefObject, ReactNode, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
-export interface FocusableOptions extends FocusableProps, FocusableDOMProps {
+export interface FocusableOptions<T = FocusableElement> extends FocusableProps<T>, FocusableDOMProps {
   /** Whether focus should be disabled. */
   isDisabled?: boolean
 }
@@ -70,7 +70,7 @@ export interface FocusableAria {
 /**
  * Used to make an element focusable and capable of auto focus.
  */
-export function useFocusable(props: FocusableOptions, domRef: RefObject<FocusableElement | null>): FocusableAria {
+export function useFocusable<T extends FocusableElement = FocusableElement>(props: FocusableOptions<T>, domRef: RefObject<FocusableElement | null>): FocusableAria {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);

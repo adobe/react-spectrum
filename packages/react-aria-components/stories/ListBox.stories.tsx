@@ -191,7 +191,7 @@ export const ListBoxHover = () => (
 export const ListBoxGrid = (args) => (
   <ListBox
     {...args}
-    className={styles.menu} 
+    className={styles.menu}
     aria-label="test listbox"
     style={{
       width: 300,
@@ -329,7 +329,7 @@ export function VirtualizedListBoxDnd() {
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
       <Virtualizer layout={layout}>
-        <ListBox 
+        <ListBox
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
