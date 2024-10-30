@@ -102,9 +102,8 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
         }
       },
       isDisabled,
-      onKeyDown(e) {
-        if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
+      onPressStart(e) {
+        if (e.pointerType === 'keyboard' && !isDisabled) {
           state.toggle();
         }
       }
@@ -114,6 +113,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       // This can be overridden at the panel element level.
       role: 'group',
       'aria-labelledby': triggerId,
+      'aria-hidden': !state.isExpanded,
       hidden: supportsBeforeMatch ? true : !state.isExpanded
     }
   };
