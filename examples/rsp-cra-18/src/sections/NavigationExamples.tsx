@@ -1,5 +1,4 @@
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
-import {Flex, Divider, Breadcrumbs, Item, Link, Tabs, TabList, TabPanels} from '@adobe/react-spectrum';
+import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, Flex, Divider, Breadcrumbs, Item, Link, Tabs, TabList, TabPanels} from '@adobe/react-spectrum';
 
 export default function NavigationExamples() {
   return (
