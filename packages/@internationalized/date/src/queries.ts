@@ -238,7 +238,7 @@ export function getWeeksInMonth(date: DateValue, locale: string): number {
 }
 
 /** Returns the lesser of the two provider dates. */
-export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
+export function minDate<A extends DateValue, B extends DateValue>(a?: A | null, b?: B | null): A | B | null | undefined {
   if (a && b) {
     return a.compare(b) <= 0 ? a : b;
   }
@@ -247,7 +247,7 @@ export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A
 }
 
 /** Returns the greater of the two provider dates. */
-export function maxDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
+export function maxDate<A extends DateValue, B extends DateValue>(a?: A | null, b?: B | null): A | B | null | undefined {
   if (a && b) {
     return a.compare(b) >= 0 ? a : b;
   }

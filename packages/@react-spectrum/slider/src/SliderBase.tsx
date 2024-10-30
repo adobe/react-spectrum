@@ -21,8 +21,8 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider} from '@react-aria/slider';
 
 export interface SliderBaseChildArguments {
-  inputRef: RefObject<HTMLInputElement>,
-  trackRef: RefObject<HTMLElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
+  trackRef: RefObject<HTMLElement | null>,
   state: SliderState
 }
 
@@ -74,7 +74,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     minValue,
     maxValue
   });
-  let trackRef = useRef();
+  let trackRef = useRef(undefined);
   let {
     groupProps,
     trackProps,
@@ -82,7 +82,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     outputProps
   } = useSlider(props, state, trackRef);
 
-  let inputRef = useRef();
+  let inputRef = useRef(undefined);
   let domRef = useFocusableRef(ref, inputRef);
 
   let displayValue = '';

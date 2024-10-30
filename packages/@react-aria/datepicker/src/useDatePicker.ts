@@ -51,7 +51,7 @@ export interface DatePickerAria extends ValidationResult {
  * Provides the behavior and accessibility implementation for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element>): DatePickerAria {
+export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element | null>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
   let fieldId = useId();

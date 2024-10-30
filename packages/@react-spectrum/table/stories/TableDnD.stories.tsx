@@ -76,7 +76,7 @@ export const CustomDragPreview: TableStory = {
         tableViewProps={args} />
     </Flex>
   ),
-  storyName: 'Custom drag preview'
+  name: 'Custom drag preview'
 };
 
 export const DragWithinTable: TableStory = {

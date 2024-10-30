@@ -18,7 +18,7 @@ import {RefObject} from 'react';
 
 interface DroppableCollectionMap {
   id: string,
-  ref: RefObject<HTMLElement>
+  ref: RefObject<HTMLElement | null>
 }
 
 export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
@@ -332,16 +332,16 @@ export function isDirectoryDropItem(dropItem: DropItem): dropItem is DirectoryDr
 // Global DnD collection state tracker.
 export interface DnDState {
   /** A ref for the  of the drag items in the current drag session if any. */
-  draggingCollectionRef?: RefObject<HTMLElement>,
+  draggingCollectionRef?: RefObject<HTMLElement | null>,
   /** The set of currently dragged keys. */
   draggingKeys: Set<Key>,
   /** A ref for the collection that is targeted for a drop operation, if any. */
-  dropCollectionRef?: RefObject<HTMLElement>
+  dropCollectionRef?: RefObject<HTMLElement | null>
 }
 
 export let globalDndState: DnDState = {draggingKeys: new Set()};
 
-export function setDraggingCollectionRef(ref: RefObject<HTMLElement>) {
+export function setDraggingCollectionRef(ref: RefObject<HTMLElement | null>) {
   globalDndState.draggingCollectionRef = ref;
 }
 
@@ -349,7 +349,7 @@ export function setDraggingKeys(keys: Set<Key>) {
   globalDndState.draggingKeys = keys;
 }
 
-export function setDropCollectionRef(ref: RefObject<HTMLElement>) {
+export function setDropCollectionRef(ref: RefObject<HTMLElement | null>) {
   globalDndState.dropCollectionRef = ref;
 }
 
@@ -363,7 +363,7 @@ export function setGlobalDnDState(state: DnDState) {
 
 // Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
 // Allows a droppable ref arg in case the global drop collection ref hasn't been set
-export function isInternalDropOperation(ref?: RefObject<HTMLElement>) {
+export function isInternalDropOperation(ref?: RefObject<HTMLElement | null>) {
   let {draggingCollectionRef, dropCollectionRef} = globalDndState;
   return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
 }

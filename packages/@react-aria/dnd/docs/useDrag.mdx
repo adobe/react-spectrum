@@ -375,3 +375,32 @@ function Draggable() {
 <Draggable />
 <DropTarget />
 ```
+
+## Disabling dragging
+
+If you need to temporarily disable dragging, you can pass the `isDisabled` option to `useDrag`. This will prevent dragging an element until it is re-enabled.
+
+```tsx example
+import {useDrag} from '@react-aria/dnd';
+
+function Draggable() {
+  let {dragProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': 'hello world'
+      }];
+    },
+    /*- begin highlight -*/
+    isDisabled: true
+    /*- end highlight -*/
+  });
+
+  return (
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+      Drag me
+    </div>
+  );
+}
+
+<Draggable />
+```

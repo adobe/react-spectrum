@@ -13,7 +13,7 @@
 import {ariaHideOutside} from '../src';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {render, waitFor} from '@react-spectrum/test-utils';
+import {render, waitFor} from '@react-spectrum/test-utils-internal';
 
 describe('ariaHideOutside', function () {
   it('should hide everything except the provided element [button]', function () {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
@@ -21,12 +21,12 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 
 describe('DialogTrigger', function () {
   let warnMock;
-  let windowSpy;
   let user;
 
   beforeAll(() => {
@@ -35,7 +35,7 @@ describe('DialogTrigger', function () {
   });
 
   beforeEach(() => {
-    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
     if (process.env.STRICT_MODE) {
       warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
     }
@@ -59,7 +59,7 @@ describe('DialogTrigger', function () {
     }
   });
 
-  it('should trigger a modal by default', function () {
+  it('should trigger a modal by default', async function () {
     let {queryByRole, getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger>
@@ -72,7 +72,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -85,7 +85,7 @@ describe('DialogTrigger', function () {
     expect(modal).toBeVisible();
   });
 
-  it('should trigger a tray', function () {
+  it('should trigger a tray', async function () {
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="tray">
@@ -98,7 +98,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -111,7 +111,7 @@ describe('DialogTrigger', function () {
     expect(tray).toBeVisible();
   });
 
-  it('should trigger a popover', function () {
+  it('should trigger a popover', async function () {
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -124,7 +124,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -138,7 +138,7 @@ describe('DialogTrigger', function () {
     expect(popover).toHaveAttribute('style');
   });
 
-  it('popovers should be closeable', function () {
+  it('popovers should be closeable', async function () {
     let {getByRole, getByText, queryByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -158,7 +158,7 @@ describe('DialogTrigger', function () {
     );
 
     let triggerButton = getByRole('button');
-    triggerPress(triggerButton);
+    await user.click(triggerButton);
 
     act(() => {
       jest.runAllTimers();
@@ -168,7 +168,7 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeVisible();
 
     let cancelButton = getByText('Cancel');
-    triggerPress(cancelButton);
+    await user.click(cancelButton);
 
     act(() => {
       jest.runAllTimers();
@@ -178,8 +178,8 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeNull();
   });
 
-  it('should trigger a modal instead of a popover on mobile', function () {
-    windowSpy.mockImplementation(() => 700);
+  it('should trigger a modal instead of a popover on mobile', async function () {
+    simulateMobile();
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -192,7 +192,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -205,8 +205,8 @@ describe('DialogTrigger', function () {
     expect(modal).toBeVisible();
   });
 
-  it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    windowSpy.mockImplementation(() => 700);
+  it('should trigger a tray instead of a popover on mobile if mobileType="tray"', async function () {
+    simulateMobile();
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
@@ -219,7 +219,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -232,7 +232,7 @@ describe('DialogTrigger', function () {
     expect(tray).toBeVisible();
   });
 
-  it.each(['modal', 'popover', 'tray'])('contains focus within the dialog when rendered as a %s', function (type) {
+  it.each(['modal', 'popover', 'tray'])('contains focus within the dialog when rendered as a %s', async function (type) {
     let {getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type={type}>
@@ -246,7 +246,7 @@ describe('DialogTrigger', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -324,7 +324,7 @@ describe('DialogTrigger', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -339,7 +339,7 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(dialog);
 
     let dismiss = getAllByRole('button')[0];
-    triggerPress(dismiss);
+    await user.click(dismiss);
 
     act(() => {
       jest.runAllTimers();
@@ -369,7 +369,7 @@ describe('DialogTrigger', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -384,7 +384,7 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(dialog);
     expect(onOpenChange).toHaveBeenCalledTimes(1);
 
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -417,7 +417,7 @@ describe('DialogTrigger', function () {
     expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -461,7 +461,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -564,7 +564,7 @@ describe('DialogTrigger', function () {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
-    triggerPress(closeBtn);
+    await user.click(closeBtn);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -603,7 +603,7 @@ describe('DialogTrigger', function () {
     }); // wait for animation
 
     let closeButton = getByLabelText('Dismiss');
-    triggerPress(closeButton);
+    await user.click(closeButton);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -641,7 +641,7 @@ describe('DialogTrigger', function () {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
-    triggerPress(document.body);
+    await user.click(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -679,7 +679,7 @@ describe('DialogTrigger', function () {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
-    triggerPress(document.body);
+    await user.click(document.body);
     act(() => {
       jest.runAllTimers();
     });
@@ -688,7 +688,7 @@ describe('DialogTrigger', function () {
   });
 
   it('mobile type modals should be closable by clicking outside the modal', async function () {
-    windowSpy.mockImplementation(() => 700);
+    simulateMobile();
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
@@ -712,7 +712,7 @@ describe('DialogTrigger', function () {
       expect(modal).toBeVisible();
     }); // wait for animation
 
-    triggerPress(document.body);
+    await user.click(document.body);
     expect(modal).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -750,7 +750,7 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).toBeVisible();
     }); // wait for animation
-    triggerPress(document.body);
+    await user.click(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -775,7 +775,7 @@ describe('DialogTrigger', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -804,7 +804,7 @@ describe('DialogTrigger', function () {
 
     // Close the dialog by clicking the button inside
     button = within(dialog).getByRole('button');
-    triggerPress(button);
+    await user.click(button);
     act(() => {
       jest.runAllTimers();
     });
@@ -812,7 +812,7 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
   });
 
-  it('should warn when unmounting a dialog trigger while a modal is open', function () {
+  it('should warn when unmounting a dialog trigger while a modal is open', async function () {
     let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
@@ -830,7 +830,7 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
 
-    triggerPress(button);
+    await user.click(button);
     act(() => {
       jest.runAllTimers();
     });
@@ -838,7 +838,7 @@ describe('DialogTrigger', function () {
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
 
-    triggerPress(menuitem);
+    await user.click(menuitem);
     act(() => {
       jest.runAllTimers();
     });
@@ -874,7 +874,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -889,7 +889,7 @@ describe('DialogTrigger', function () {
     let outerInput = getByRole('textbox');
 
     expect(document.activeElement).toBe(outerInput);
-    triggerPress(outerButton);
+    await user.click(outerButton);
 
     act(() => {
       jest.runAllTimers();
@@ -944,7 +944,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -958,7 +958,7 @@ describe('DialogTrigger', function () {
     let outerButton = getByText('Trigger2');
 
 
-    triggerPress(outerButton);
+    await user.click(outerButton);
 
     act(() => {
       jest.runAllTimers();
@@ -999,7 +999,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -1026,4 +1026,61 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(innerButton);
   });
 
+  describe('portalContainer', () => {
+    function InfoDialog(props) {
+      let {container} = props;
+      return (
+        <Provider theme={theme}>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <DialogTrigger type={props.type}>
+              <ActionButton>Trigger</ActionButton>
+              <Dialog>contents</Dialog>
+            </DialogTrigger>
+          </UNSTABLE_PortalProvider>
+        </Provider>
+      );
+    }
+    function App(props) {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoDialog type={props.type} container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    it('should render the dialog in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+
+    it('should render the tray in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App type="tray" />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+
+    it('should render the popover in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App type="popover" />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+  });
 });

@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
+import {DropZoneProps, HeadingContext, Provider, DropZone as RACDropZone} from 'react-aria-components';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -41,43 +41,50 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let messageId = useId();
+  let headingId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dropzone');
+  let ariaLabelledby = isFilled ? `${headingId} ${messageId}` : headingId;
 
   return (
-    <RACDropZone
-      {...mergeProps(filterProps(otherProps))}
-      {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
-      aria-labelledby={isFilled && messageId}
-      className={
-      classNames(
-        styles,
-        'spectrum-Dropzone',
-        styleProps.className,
-        {'spectrum-Dropzone--filled': isFilled}
-      )}
-      ref={domRef}>
-      <SlotProvider
-        slots={{
-          illustration: {UNSAFE_className: classNames(
-            styles,
-            'spectrum-Dropzone-illustratedMessage'
-            )}
-        }}>
-        {children}
-      </SlotProvider>
-      <div className={classNames(styles, 'spectrum-Dropzone-backdrop')} />
-      <div
-        id={messageId}
+    <Provider
+      values={[
+        [HeadingContext, {id: headingId}]
+      ]}>
+      <RACDropZone
+        {...mergeProps(filterProps(otherProps))}
+        {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
+        aria-labelledby={ariaLabelledby}
         className={
-          classNames(
-            styles,
-            'spectrum-Dropzone-banner',
-            styleProps.className
-          )
-        }>
-        {replaceMessage ? replaceMessage : stringFormatter.format('replaceMessage')}
-      </div>
-    </RACDropZone>
+        classNames(
+          styles,
+          'spectrum-Dropzone',
+          styleProps.className,
+          {'spectrum-Dropzone--filled': isFilled}
+        )}
+        ref={domRef}>
+        <SlotProvider
+          slots={{
+            illustration: {UNSAFE_className: classNames(
+              styles,
+              'spectrum-Dropzone-illustratedMessage'
+              )}
+          }}>
+          {children}
+        </SlotProvider>
+        <div className={classNames(styles, 'spectrum-Dropzone-backdrop')} />
+        <div
+          id={messageId}
+          className={
+            classNames(
+              styles,
+              'spectrum-Dropzone-banner',
+              styleProps.className
+            )
+          }>
+          {replaceMessage ? replaceMessage : stringFormatter.format('replaceMessage')}
+        </div>
+      </RACDropZone>
+    </Provider>
   );
 }
 

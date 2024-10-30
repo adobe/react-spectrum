@@ -22,7 +22,7 @@ interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void
 }
 
-export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement> | undefined) {
+export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined) {
   let {validationBehavior, focus} = props;
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.

@@ -34,7 +34,7 @@ function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>
     createCalendar
   });
 
-  let domRef = useRef();
+  let domRef = useRef(null);
   useImperativeHandle(ref, () => ({
     ...createDOMRef(domRef),
     focus() {

@@ -21,9 +21,8 @@ import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
-import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
-import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -44,11 +43,9 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
   let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
-  let triggerNode = state.collection.getItem(targetKey);
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
-  let {submenuTriggerProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
-    node: triggerNode,
+  let {submenuTriggerProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
     type: 'dialog',
@@ -106,15 +103,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       }
     }, 220); // Matches transition duration
   };
-  let [offset, setOffset] = useState(0);
-  useLayoutEffect(() => {
-    if (parentMenuRef.current) {
-      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance');
-      if (offset !== '') {
-        setOffset(-1 * parseInt(offset, 10));
-      }
-    }
-  }, [parentMenuRef]);
 
   if (isMobile) {
     delete submenuTriggerProps.onBlur;
@@ -161,8 +149,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         triggerRef={triggerRef}
         placement="end top"
         containerPadding={0}
-        crossOffset={offset}
-        offset={offset}
         hideArrow
         enableBothDismissButtons>
         <FocusScope restoreFocus>
@@ -193,7 +179,7 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   let [, content] = props.children as [ReactElement, ReactElement];
 
   yield {
-    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
+    element: React.cloneElement(trigger, {...trigger.props as any, hasChildItems: true, isTrigger: true}),
     wrapper: (element) => (
       <ContextualHelpTrigger key={element.key} targetKey={element.key} {...props}>
         {element}

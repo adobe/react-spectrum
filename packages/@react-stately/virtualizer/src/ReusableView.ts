@@ -17,20 +17,17 @@ import {Virtualizer} from './Virtualizer';
 let KEY = 0;
 
 /**
- * [CollectionView]{@link CollectionView} creates instances of the [ReusableView]{@link ReusableView} class to
- * represent views currently being displayed. ReusableViews manage a DOM node, handle
- * applying {@link LayoutInfo} objects to the view, and render content
- * as needed. Subclasses must implement the {@link render} method at a
- * minimum. Other methods can be overridden to customize behavior.
+ * [Virtualizer]{@link Virtualizer} creates instances of the [ReusableView]{@link ReusableView} class to
+ * represent views currently being displayed.
  */
 export class ReusableView<T extends object, V> {
-  /** The CollectionVirtualizer this view is a part of. */
+  /** The Virtualizer this view is a part of. */
   virtualizer: Virtualizer<T, V, unknown>;
 
   /** The LayoutInfo this view is currently representing. */
   layoutInfo: LayoutInfo | null;
 
-  /** The content currently being displayed by this view, set by the collection view. */
+  /** The content currently being displayed by this view, set by the virtualizer. */
   content: T;
 
   rendered: V;
@@ -38,9 +35,16 @@ export class ReusableView<T extends object, V> {
   viewType: string;
   key: Key;
 
+  parent: ReusableView<T, V> | null;
+  children: Set<ReusableView<T, V>>;
+  reusableViews: Map<string, ReusableView<T, V>[]>;
+
   constructor(virtualizer: Virtualizer<T, V, unknown>) {
     this.virtualizer = virtualizer;
     this.key = ++KEY;
+    this.parent = null;
+    this.children = new Set();
+    this.reusableViews = new Map();
   }
 
   /**
@@ -50,5 +54,30 @@ export class ReusableView<T extends object, V> {
     this.content = null;
     this.rendered = null;
     this.layoutInfo = null;
+  }
+
+  getReusableView(reuseType: string) {
+    // Reusable view queue should be FIFO so that DOM order remains consistent during scrolling.
+    // For example, cells within a row should remain in the same order even if the row changes contents.
+    // The cells within a row are removed from their parent in order. If the row is reused, the cells
+    // should be reused in the new row in the same order they were before.
+    let reusable = this.reusableViews.get(reuseType);
+    let view = reusable?.length > 0
+      ? reusable.shift()
+      : new ReusableView<T, V>(this.virtualizer);
+
+    view.viewType = reuseType;
+    view.parent = this;
+    return view;
+  }
+
+  reuseChild(child: ReusableView<T, V>) {
+    child.prepareForReuse();
+    let reusable = this.reusableViews.get(child.viewType);
+    if (!reusable) {
+      reusable = [];
+      this.reusableViews.set(child.viewType, reusable);
+    }
+    reusable.push(child);
   }
 }

@@ -16,7 +16,7 @@ import {composeStory} from '@storybook/react';
 import {I18nProvider} from '@react-aria/i18n';
 
 import Meta, {ToolbarExample as ToolbarExampleStory} from '../stories/Toolbar.stories';
-import {pointerMap} from '@react-spectrum/test-utils';
+import {pointerMap} from '@react-spectrum/test-utils-internal';
 import React, {createRef} from 'react';
 import userEvent from '@testing-library/user-event';
 

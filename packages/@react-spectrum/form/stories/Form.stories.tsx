@@ -24,7 +24,7 @@ import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
-import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
+import {FormTranslatedText} from './../chromatic/FormLanguages.stories';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';

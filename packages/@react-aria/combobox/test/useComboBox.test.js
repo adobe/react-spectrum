@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
@@ -24,6 +24,9 @@ describe('useComboBox', function () {
   let toggleSpy = jest.fn();
   let event = (e) => ({
     ...e,
+    nativeEvent: {
+      isComposing: false
+    },
     preventDefault,
     stopPropagation
   });

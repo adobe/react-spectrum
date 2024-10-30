@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils';
+import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('TagGroup SSR', function () {
   it('should render without errors', async function () {
@@ -42,6 +42,7 @@ describe('TagGroup SSR', function () {
       // Assert that server rendered stuff into the HTML.
       let options = screen.getAllByRole('row');
       expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
+      expect(screen.getByRole('grid')).toBeInTheDocument();
     });
 
     // Assert that hydrated UI matches what we expect.

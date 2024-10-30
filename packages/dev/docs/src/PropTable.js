@@ -64,8 +64,7 @@ const GROUPS = {
     'textAlign',
     'verticalAlign',
     'lineHeight',
-    'letterSpacing',
-    'color'
+    'letterSpacing'
   ],
   Accessibility: [
     'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/

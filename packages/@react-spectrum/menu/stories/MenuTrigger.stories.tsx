@@ -27,7 +27,7 @@ import {Link} from '@react-spectrum/link';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {ToggleButton} from '@adobe/react-spectrum';
-import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.chromatic';
+import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.stories';
 
 let iconMap = {
   AlignCenter,
@@ -84,6 +84,11 @@ let withSection = [
       ]}
     ]}
   ]}
+];
+
+let withSectionManyItems = [
+  {id: 'section1', name: 'Section 1', children: Array(50).fill({name: 'Item'}).map((item, i) => ({id: i.toString(), name: `Item ${i}`}))},
+  {id: 'section2', name: 'Section 2', children: Array(50).fill({name: 'Item'}).map((item, i) => ({id: (i + 50).toString(), name: `Item ${i + 50}`}))}
 ];
 
 let itemsWithFalsyId = [
@@ -155,6 +160,12 @@ export const DefaultMenuWSectionGenerative = () => render(defaultMenu);
 
 DefaultMenuWSectionGenerative.story = {
   name: 'default menu w/ section (generative)'
+};
+
+export const DefaultMenuWSectionGenerativeManyItems = () => render(manyItemsMenu);
+
+DefaultMenuWSectionGenerativeManyItems.story = {
+  name: 'default menu w/ section (generative), many items per section'
 };
 
 export const DefaultMenuWTitlelessSectionsStatic = () =>
@@ -697,6 +708,16 @@ export function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
 
 let defaultMenu = (
   <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
+    {(item: any) => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {(item: any) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+);
+
+let manyItemsMenu = (
+  <Menu items={withSectionManyItems} onAction={action('action')}>
     {(item: any) => (
       <Section key={item.name} items={item.children} title={item.name}>
         {(item: any) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}

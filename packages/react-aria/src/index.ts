@@ -25,7 +25,7 @@ export {useField, useLabel} from '@react-aria/label';
 export {useGridList, useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
 export {useLink} from '@react-aria/link';
 export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
-export {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from '@react-aria/menu';
+export {useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from '@react-aria/menu';
 export {useMeter} from '@react-aria/meter';
 export {useNumberField} from '@react-aria/numberfield';
 export {DismissButton, ModalProvider, Overlay, OverlayContainer, OverlayProvider, useModal, useModalOverlay, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePopover, usePreventScroll} from '@react-aria/overlays';
@@ -61,7 +61,7 @@ export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
 export type {AriaListBoxOptions, AriaListBoxProps, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
 export type {AriaGridListOptions, AriaGridListProps, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/gridlist';
-export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria} from '@react-aria/menu';
+export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria, SubmenuTriggerAria, AriaSubmenuTriggerProps} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
 export type {AriaModalOptions, AriaModalOverlayProps, AriaOverlayProps, AriaPopoverProps, AriaPositionProps, DismissButtonProps, ModalAria, ModalOverlayAria, ModalProviderAria, ModalProviderProps, OverlayAria, OverlayContainerProps, OverlayProps, OverlayTriggerAria, OverlayTriggerProps, PopoverAria, PositionAria, Placement, PlacementAxis, PositionProps} from '@react-aria/overlays';

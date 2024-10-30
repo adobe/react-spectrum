@@ -14,10 +14,20 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
+export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
+
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
-export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, CheckboxGroupStateContext} from './Checkbox';
+export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxGroupStateContext} from './Checkbox';
+export {ColorArea, ColorAreaStateContext} from './ColorArea';
+export {ColorField, ColorFieldStateContext} from './ColorField';
+export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from './ColorPicker';
+export {ColorSlider, ColorSliderStateContext} from './ColorSlider';
+export {ColorSwatch, ColorSwatchContext} from './ColorSwatch';
+export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from './ColorSwatchPicker';
+export {ColorThumb} from './ColorThumb';
+export {ColorWheel, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
 export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedContext} from './utils';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
@@ -26,13 +36,13 @@ export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from '
 export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
-export {Form} from './Form';
+export {Form, FormContext} from './Form';
 export {GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
-export {Heading, HeadingContext} from './Heading';
+export {Heading} from './Heading';
 export {Input, InputContext} from './Input';
-export {Section, Collection} from './Collection';
+export {Section, Collection, createLeafComponent as UNSTABLE_createLeafComponent, createBranchComponent as UNSTABLE_createBranchComponent, CollectionBuilder as UNSTABLE_CollectionBuilder, CollectionRendererContext as UNSTABLE_CollectionRendererContext, DefaultCollectionRenderer as UNSTABLE_DefaultCollectionRenderer} from './Collection';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
@@ -51,6 +61,7 @@ export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
 export {Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
+export {TableLayout as UNSTABLE_TableLayout} from './TableLayout';
 export {Tabs, TabList, TabPanel, Tab, TabsContext, TabListStateContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';
@@ -59,15 +70,26 @@ export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
+export {UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeContext, UNSTABLE_TreeItemContent, UNSTABLE_TreeStateContext} from './Tree';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
+export {Virtualizer as UNSTABLE_Virtualizer} from './Virtualizer';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
+export {parseColor, getColorChannels} from '@react-stately/color';
+export {ListLayout as UNSTABLE_ListLayout} from '@react-stately/layout';
 
-export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
+export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
+export type {ColorAreaProps, ColorAreaRenderProps} from './ColorArea';
+export type {ColorFieldProps, ColorFieldRenderProps} from './ColorField';
+export type {ColorSliderProps, ColorSliderRenderProps} from './ColorSlider';
+export type {ColorSwatchProps, ColorSwatchRenderProps} from './ColorSwatch';
+export type {ColorSwatchPickerProps, ColorSwatchPickerRenderProps, ColorSwatchPickerItemProps, ColorSwatchPickerItemRenderProps} from './ColorSwatchPicker';
+export type {ColorThumbProps, ColorThumbRenderProps} from './ColorThumb';
+export type {ColorPickerProps, ColorPickerRenderProps} from './ColorPicker';
+export type {ColorWheelProps, ColorWheelRenderProps, ColorWheelTrackProps, ColorWheelTrackRenderProps} from './ColorWheel';
 export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
@@ -80,7 +102,7 @@ export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItem
 export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
-export type {SectionProps} from './Collection';
+export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
@@ -110,8 +132,11 @@ export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} fro
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps} from './useDragAndDrop';
 export type {ContextValue, SlotProps} from './utils';
+export type {VirtualizerProps} from './Virtualizer';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
 export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {Color, ColorSpace, ColorFormat} from '@react-types/color';
+export type {ListLayoutOptions} from '@react-stately/layout';

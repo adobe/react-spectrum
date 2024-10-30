@@ -23,9 +23,9 @@ type MappedDateValue<T> =
 
 export interface CalendarPropsBase {
   /** The minimum allowed date that a user may select. */
-  minValue?: DateValue,
+  minValue?: DateValue | null,
   /** The maximum allowed date that a user may select. */
-  maxValue?: DateValue,
+  maxValue?: DateValue | null,
   /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
   isDateUnavailable?: (date: DateValue) => boolean,
   /**
@@ -65,9 +65,9 @@ export interface CalendarPropsBase {
   pageBehavior?: PageBehavior
 }
 
-export type DateRange = RangeValue<DateValue>;
-export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
-export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
+export type DateRange = RangeValue<DateValue> | null;
+export interface CalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
+export interface RangeCalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<RangeValue<T>> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.

@@ -71,9 +71,9 @@ export interface CollectionStateBase<T, C extends Collection<Node<T>> = Collecti
 
 export interface Expandable {
   /** The currently expanded keys in the collection (controlled). */
-  expandedKeys?:  'all' | Iterable<Key>,
+  expandedKeys?: Iterable<Key>,
   /** The initial expanded keys in the collection (uncontrolled). */
-  defaultExpandedKeys?: 'all' | Iterable<Key>,
+  defaultExpandedKeys?: Iterable<Key>,
   /** Handler that is called when items are expanded or collapsed. */
   onExpandedChange?: (keys: Set<Key>) => any
 }
@@ -121,6 +121,28 @@ export interface KeyboardDelegate {
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key | null
+}
+
+export interface Rect {
+  x: number,
+  y: number,
+  width: number,
+  height: number
+}
+
+export interface Size {
+  width: number,
+  height: number
+}
+
+/** A LayoutDelegate provides layout information for collection items. */
+export interface LayoutDelegate {
+  /** Returns a rectangle for the item with the given key. */
+  getItemRect(key: Key): Rect | null,
+  /** Returns the visible rectangle of the collection. */
+  getVisibleRect(): Rect,
+  /** Returns the size of the scrollable content in the collection. */
+  getContentSize(): Size
 }
 
 /**
@@ -194,5 +216,7 @@ export interface Node<T> {
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */
-  shouldInvalidate?: (context: unknown) => boolean
+  shouldInvalidate?: (context: unknown) => boolean,
+  /** A function that renders this node to a React Element in the DOM. */
+  render?: (node: Node<any>) => ReactElement
 }

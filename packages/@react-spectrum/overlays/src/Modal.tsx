@@ -52,7 +52,7 @@ let typeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
+let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement | null>) {
   let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = typeMap[type];
   let {styleProps} = useStyleProps(props);

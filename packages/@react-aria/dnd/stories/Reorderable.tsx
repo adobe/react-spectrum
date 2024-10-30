@@ -148,7 +148,7 @@ function ReorderableGrid(props) {
   }, gridState, ref);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let dropRef = React.useRef();
+  let dropRef = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);
@@ -211,8 +211,8 @@ function ReorderableGrid(props) {
 }
 
 function CollectionItem({item, state, dragState, dropState}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef(undefined);
+  let cellRef = React.useRef(undefined);
   let cellNode = [...item.childNodes][0];
 
   let {rowProps} = useGridRow({node: item}, state, rowRef);
@@ -224,13 +224,13 @@ function CollectionItem({item, state, dragState, dropState}) {
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
-  let dragButtonRef = React.useRef();
+  let dragButtonRef = React.useRef(undefined);
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'
   }, dragButtonRef);
 
-  let dropIndicatorRef = React.useRef();
+  let dropIndicatorRef = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'item', key: item.key, dropPosition: 'on'}
   }, dropState, dropIndicatorRef);
@@ -268,7 +268,7 @@ function CollectionItem({item, state, dragState, dropState}) {
 }
 
 function InsertionIndicator(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 

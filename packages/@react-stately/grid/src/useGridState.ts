@@ -1,7 +1,7 @@
 import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key} from '@react-types/shared';
-import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionState, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useEffect, useMemo, useRef} from 'react';
 
 export interface GridState<T, C extends GridCollection<T>> {
@@ -17,7 +17,9 @@ export interface GridState<T, C extends GridCollection<T>> {
 export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
   collection: C,
   disabledKeys?: Iterable<Key>,
-  focusMode?: 'row' | 'cell'
+  focusMode?: 'row' | 'cell',
+  /** @private - do not use unless you know what you're doing. */
+  UNSAFE_selectionState?: MultipleSelectionState
 }
 
 /**
@@ -25,7 +27,8 @@ export interface GridStateOptions<T, C extends GridCollection<T>> extends Multip
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
   let {collection, focusMode} = props;
-  let selectionState = useMultipleSelectionState(props);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
     , [props.disabledKeys]);

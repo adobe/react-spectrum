@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Farvevælger",
+  "colorSwatch": "farveprøve",
+  "transparent": "gennemsigtig",
   "twoDimensionalSlider": "2D-skyder"
 }

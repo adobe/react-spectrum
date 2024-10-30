@@ -63,7 +63,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     accessibilityDescription
   } = props;
 
-  const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let {pressProps} = usePress({

@@ -39,7 +39,7 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement | null>): LinkAria {
   let {
     elementType = 'a',
     onPress,

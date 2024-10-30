@@ -1,4 +1,4 @@
-import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {useModalOverlay} from '..';
@@ -34,7 +34,7 @@ describe('useModalOverlay', function () {
       ]}
     `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
       prepare();
-  
+
       it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
         let onOpenChange = jest.fn();
         render(<Example isOpen onOpenChange={onOpenChange} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
@@ -42,7 +42,7 @@ describe('useModalOverlay', function () {
         pressEnd(document.body);
         expect(onOpenChange).toHaveBeenCalledWith(false);
       });
-  
+
       it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
         let onOpenChange = jest.fn();
         render(<Example isOpen onOpenChange={onOpenChange} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);

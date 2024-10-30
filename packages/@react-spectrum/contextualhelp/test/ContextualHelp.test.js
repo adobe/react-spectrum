@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, simulateDesktop} from '@react-spectrum/test-utils-internal';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '../';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 describe('ContextualHelp', function () {
   beforeAll(() => {
     jest.useFakeTimers();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
   });
   afterAll(() => {
     jest.clearAllMocks();
@@ -48,7 +49,8 @@ describe('ContextualHelp', function () {
     expect(button).toHaveClass('spectrum-ActionButton--quiet');
   });
 
-  it('opens a popover', function () {
+  it('opens a popover', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole, getByTestId, getByText} = render(
       <Provider theme={theme}>
         <ContextualHelp>
@@ -60,7 +62,7 @@ describe('ContextualHelp', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -75,7 +77,8 @@ describe('ContextualHelp', function () {
     expect(getByText('Test title')).toBeVisible();
   });
 
-  it('renders content', function () {
+  it('renders content', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
         <ContextualHelp>
@@ -86,7 +89,7 @@ describe('ContextualHelp', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -99,7 +102,8 @@ describe('ContextualHelp', function () {
     expect(content).toBeVisible();
   });
 
-  it('renders a link', function () {
+  it('renders a link', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
         <ContextualHelp>
@@ -113,7 +117,7 @@ describe('ContextualHelp', function () {
     );
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();

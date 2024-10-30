@@ -11,15 +11,19 @@
  */
 
 import {AriaToastRegionProps} from '@react-aria/toast';
+import {classNames} from '@react-spectrum/utils';
+import {DOMProps} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
+import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
 
-export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
+export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
   /** A label for the action button within the toast. */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -78,7 +82,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
-  let ref = useRef();
+  let ref = useRef(undefined);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -103,15 +107,21 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // Only render if this is the active toast provider instance, and there are visible toasts.
   let activeToastContainer = useActiveToastContainer();
   let state = useToastQueue(getGlobalToastQueue());
+
   if (ref === activeToastContainer && state.visibleToasts.length > 0) {
     return (
       <Toaster state={state} {...props}>
-        {state.visibleToasts.map((toast) => (
-          <Toast
-            key={toast.key}
-            toast={toast}
-            state={state} />
-        ))}
+        <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
+          {state.visibleToasts.slice().reverse().map((toast) => (
+            <li
+              key={toast.key}
+              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}>
+              <Toast
+                toast={toast}
+                state={state} />
+            </li>
+          ))}
+        </ol>
       </Toaster>
     );
   }
@@ -143,7 +153,8 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
     variant,
     actionLabel: options.actionLabel,
     onAction: options.onAction,
-    shouldCloseOnAction: options.shouldCloseOnAction
+    shouldCloseOnAction: options.shouldCloseOnAction,
+    ...filterDOMProps(options)
   };
 
   // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible

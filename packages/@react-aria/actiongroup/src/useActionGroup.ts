@@ -28,7 +28,7 @@ export interface ActionGroupAria {
   actionGroupProps: DOMAttributes
 }
 
-export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): ActionGroupAria {
+export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): ActionGroupAria {
   let {
     isDisabled,
     orientation = 'horizontal' as Orientation

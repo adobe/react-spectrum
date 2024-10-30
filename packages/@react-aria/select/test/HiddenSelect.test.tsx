@@ -1,13 +1,13 @@
 import {HiddenSelect, HiddenSelectProps} from '../src';
 import {Item} from 'react-stately';
-import {pointerMap} from '@react-spectrum/test-utils';
+import {pointerMap} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {render, screen} from '@testing-library/react';
 import {SelectProps, useSelectState} from '@react-stately/select';
 import userEvent from '@testing-library/user-event';
 
 const HiddenSelectExample = (props: Partial<SelectProps<{ key: number, value: string }>> & { hiddenProps?: Partial<HiddenSelectProps<any>> }) => {
-  const triggerRef = useRef();
+  const triggerRef = useRef(undefined);
   const state = useSelectState({
     children: (item) => (
       <Item>{item.value}</Item>
@@ -75,11 +75,11 @@ describe('<HiddenSelect />', () => {
     expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
   });
 
-  it('should always add a data attribute data-hidden-select-ignore', () => {
+  it('should always add a data attribute data-react-aria-prevent-focus', () => {
     render(
       <HiddenSelectExample items={makeItems(5)} />
     );
 
-    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-hidden-select-ignore');
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-react-aria-prevent-focus');
   });
 });

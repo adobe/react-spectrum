@@ -1,19 +1,15 @@
+import {Collection, CollectionBuilder} from '../src/Collection';
 import {ListBoxItem} from '../src/ListBox';
 import React from 'react';
 import {render} from '@testing-library/react';
-import {useCollection} from '../src/Collection';
-
-
-const CollectionTest = (props) => {
-  const result = useCollection(props);
-  props.spyCollection.current = result.collection;
-  return <>{result.portal}</>;
-};
 
 const renderItems = (items, spyCollection) => (
-  <CollectionTest spyCollection={spyCollection}>
-    {items.map((item) => <ListBoxItem key={item} />)}
-  </CollectionTest>
+  <CollectionBuilder content={<Collection>{items.map((item) => <ListBoxItem key={item} />)}</Collection>}>
+    {collection => {
+      spyCollection.current = collection;
+      return null;
+    }}
+  </CollectionBuilder>
 );
 
 describe('Collection', () => {

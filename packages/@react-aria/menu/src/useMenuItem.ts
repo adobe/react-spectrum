@@ -98,8 +98,9 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
-export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement | null>): MenuItemAria {
   let {
+    id,
     key,
     closeOnSelect,
     isVirtualized,
@@ -160,6 +161,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   let ariaProps = {
+    id,
     'aria-disabled': isDisabled || undefined,
     role,
     'aria-label': props['aria-label'],
@@ -276,7 +278,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
+      ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
       tabIndex: itemProps.tabIndex != null ? -1 : undefined
     },
     labelProps: {

@@ -81,9 +81,9 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     isInvalid ||= validationState === 'invalid';
   }
 
-  // If the isInvalid prop is true, update validation result in realtime (controlled).
-  let controlledError: ValidationResult | null = isInvalid ? {
-    isInvalid: true,
+  // If the isInvalid prop is controlled, update validation result in realtime.
+  let controlledError: ValidationResult | null = isInvalid !== undefined ? {
+    isInvalid,
     validationErrors: [],
     validationDetails: CUSTOM_VALIDITY_STATE
   } : null;

@@ -24,11 +24,11 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
   /**
    * The ref for the element which the popover positions itself with respect to.
    */
-  triggerRef: RefObject<Element>,
+  triggerRef: RefObject<Element | null>,
   /**
    * The ref for the popover element.
    */
-  popoverRef: RefObject<Element>,
+  popoverRef: RefObject<Element | null>,
   /**
    * Whether the popover is non-modal, i.e. elements outside the popover may be
    * interacted with by assistive technologies.

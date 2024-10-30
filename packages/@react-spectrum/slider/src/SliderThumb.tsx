@@ -22,8 +22,8 @@ import {useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface SliderThumbProps extends AriaSliderThumbProps {
-  trackRef: RefObject<HTMLElement>,
-  inputRef?: RefObject<HTMLInputElement>,
+  trackRef: RefObject<HTMLElement | null>,
+  inputRef?: RefObject<HTMLInputElement | null>,
   state: SliderState
 }
 
@@ -32,7 +32,7 @@ export function SliderThumb(props: SliderThumbProps) {
     inputRef,
     state
   } = props;
-  let backupRef = useRef<HTMLInputElement>();
+  let backupRef = useRef<HTMLInputElement>(undefined);
   inputRef = inputRef || backupRef;
 
   let {thumbProps, inputProps, isDragging, isFocused} = useSliderThumb({

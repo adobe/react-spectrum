@@ -11,11 +11,11 @@
  */
 
 import fc from 'fast-check';
-import messages from '../../../@react-aria/numberfield/intl/*';
+import messages from '../../../@react-aria/numberfield/intl/*.json';
 import {NumberParser} from '../src/NumberParser';
 
 // for some reason hu-HU isn't supported in jsdom/node
-let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
+let locales = Object.keys(messages).filter(locale => locale !== 'hu-HU');
 
 describe('NumberParser', function () {
   describe('parse', function () {

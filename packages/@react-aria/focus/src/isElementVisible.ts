@@ -44,7 +44,7 @@ function isAttributeVisible(element: Element, childElement?: Element) {
   return (
     !element.hasAttribute('hidden') &&
     // Ignore HiddenSelect when tree walking.
-    !(element.hasAttribute('data-hidden-select-ignore') && element.getAttribute('aria-hidden') === 'true') &&
+    !element.hasAttribute('data-react-aria-prevent-focus') &&
     (element.nodeName === 'DETAILS' &&
       childElement &&
       childElement.nodeName !== 'SUMMARY'

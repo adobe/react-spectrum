@@ -24,7 +24,7 @@ export interface BreadcrumbItemAria {
  * Provides the behavior and accessibility implementation for an in a breadcrumbs component.
  * See `useBreadcrumbs` for details about breadcrumbs.
  */
-export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<FocusableElement>): BreadcrumbItemAria {
+export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<FocusableElement | null>): BreadcrumbItemAria {
   let {
     isCurrent,
     isDisabled,

@@ -30,7 +30,7 @@ export interface SelectableItemOptions {
   /**
    * Ref to the item.
    */
-  ref: RefObject<FocusableElement>,
+  ref: RefObject<FocusableElement | null>,
   /**
    * By default, selection occurs on pointer down. This can be strange if selecting an
    * item causes the UI to disappear immediately (e.g. menus).

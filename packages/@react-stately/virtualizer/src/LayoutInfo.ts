@@ -15,9 +15,9 @@ import {Rect} from './Rect';
 
 /**
  * Instances of this lightweight class are created by {@link Layout} subclasses
- * to represent each view in the {@link CollectionView}. LayoutInfo objects describe
+ * to represent each view in the {@link Virtualizer}. LayoutInfo objects describe
  * various properties of a view, such as its position and size, and style information.
- * The collection view uses this information when creating actual views to display.
+ * The virtualizer uses this information when creating actual views to display.
  */
 export class LayoutInfo {
   /**

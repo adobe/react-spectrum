@@ -82,7 +82,13 @@ export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  /**
+   * A slot name for the component. Slots allow the component to receive props from a parent component.
+   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * @private
+   */
+  slot?: string | null
 }
 
 export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation<string[]>, StyleProps, SpectrumHelpTextProps {

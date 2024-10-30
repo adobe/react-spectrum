@@ -89,14 +89,14 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let isAsync = loadingState != null;
-  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
-  let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>(undefined);
   let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
-  let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement>();
+  let listBoxRef = useRef(undefined);
+  let inputRef = useRef<HTMLInputElement>(undefined);
   // serve as the new popover `triggerRef` instead of `unwrappedButtonRef` before for better positioning.
-  let inputGroupRef = useRef<HTMLDivElement>();
+  let inputGroupRef = useRef<HTMLDivElement>(undefined);
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -107,12 +107,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       allowsEmptyCollection: isAsync
     }
   );
-  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
+  let layout = useListBoxLayout();
 
   let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useComboBox(
     {
       ...props,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       buttonRef: unwrappedButtonRef,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
@@ -193,6 +193,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           state={state}
           shouldUseVirtualFocus
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
+          showLoadingSpinner={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
@@ -206,15 +207,15 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
 interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   triggerProps: AriaButtonProps,
-  triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
+  triggerRef: RefObject<FocusableRefValue<HTMLElement> | null>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean
 }
 
-const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
+const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement | null>) {
   let {
     isQuiet,
     isDisabled,
@@ -286,7 +287,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   }, []);
 
   return (
-    <FocusRing
+    (<FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -294,7 +295,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref as RefObject<HTMLDivElement | null>}
         style={style}
         className={
           classNames(
@@ -354,7 +355,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           </FieldButton>
         </PressResponder>
       </div>
-    </FocusRing>
+    </FocusRing>)
   );
 });
 

@@ -50,7 +50,7 @@ export interface GridCellAria {
  * @param props - Props for the cell.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<FocusableElement>): GridCellAria {
+export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<FocusableElement | null>): GridCellAria {
   let {
     node,
     isVirtualized,

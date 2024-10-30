@@ -16,6 +16,11 @@ const fs = require('fs');
 const Module = require('module');
 const substrings = ['-', '+'];
 
+const devDependencies = new Set([
+  '@adobe/spectrum-css-temp',
+  '@react-spectrum/style-macro-s1'
+]);
+
 module.exports = {
   meta: {
     fixable: 'code'
@@ -45,7 +50,7 @@ module.exports = {
       let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
       // The only dev dependency should be spectrum-css.
-      if (exists(pkg.devDependencies, pkgName) && pkgName === '@adobe/spectrum-css-temp') {
+      if (exists(pkg.devDependencies, pkgName) && devDependencies.has(pkgName)) {
         return;
       }
 

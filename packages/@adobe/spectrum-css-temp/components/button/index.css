@@ -229,6 +229,10 @@ a.spectrum-ActionButton {
   .spectrum-ActionButton-hold + .spectrum-Icon:last-child {
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
+
+  .spectrum-ActionGroup-itemIcon.spectrum-ActionGroup-itemIcon {
+    padding-inline-end: 0;
+  }
 }
 
 .spectrum-ActionButton-hold {

@@ -25,8 +25,7 @@ export const MenuExample = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <Section className={styles.group}>
-          <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+        <Section className={styles.group} aria-label={'Section 1'}>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>

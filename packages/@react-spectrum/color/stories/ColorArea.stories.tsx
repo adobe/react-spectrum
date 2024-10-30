@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
+import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
 import {ComponentStoryObj, Meta, StoryFn} from '@storybook/react';
-import {Flex, Grid, View} from '@adobe/react-spectrum';
+import {Flex, Grid, useLocale, View} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
@@ -52,6 +52,7 @@ const Template: StoryFn<SpectrumColorAreaProps> = (args) => (
 );
 
 function ColorAreaExample(props: SpectrumColorAreaProps) {
+  let {locale} = useLocale();
   let {xChannel, yChannel, isDisabled, 'aria-label': ariaLabel} = props;
   let defaultValue = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
@@ -113,12 +114,8 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               isDisabled={isDisabled} />
           </Flex>
         )}
-        <Flex direction="column" alignItems="center" gap="size-100" minWidth="size-1200">
-          <div
-            role="img"
-            aria-label={`color swatch: ${color.toString('rgb')}`}
-            title={`${color.toString('hex')}`}
-            style={{width: '96px', height: '96px', background: color.toString('css')}} />
+        <Flex direction="column" alignItems="start" gap="size-100" minWidth="size-1200">
+          <ColorSwatch color={color} size="L" />
           <ColorField
             label="HEX Color"
             value={color}
@@ -129,6 +126,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             }
             isDisabled={isDisabled}
             width="size-1200" />
+          <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
     </div>

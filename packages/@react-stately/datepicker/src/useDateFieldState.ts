@@ -212,7 +212,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => props.value || props.defaultValue ? {...allSegments} : {}
   );
 
-  let clearedSegment = useRef<string>();
+  let clearedSegment = useRef<string>(undefined);
 
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);

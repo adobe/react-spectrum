@@ -28,7 +28,7 @@ function supportsNativeBeforeInputEvent() {
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
-export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement>): TextFieldAria {
+export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement | null>): TextFieldAria {
   // All browsers implement the 'beforeinput' event natively except Firefox
   // (currently behind a flag as of Firefox 84). React's polyfill does not
   // run in all cases that the native event fires, e.g. when deleting text.

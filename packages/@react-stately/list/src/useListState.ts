@@ -82,16 +82,18 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
         ),
         itemNodes.length - 1);
       let newNode:Node<T>;
+      let isReverseSearching = false;
       while (index >= 0) {
         if (!selectionManager.isDisabled(itemNodes[index].key)) {
           newNode = itemNodes[index];
           break;
         }
         // Find next, not disabled item.
-        if (index < itemNodes.length - 1) {
+        if (index < itemNodes.length - 1 && !isReverseSearching) {
           index++;
         // Otherwise, find previous, not disabled item.
         } else {
+          isReverseSearching = true;
           if (index > startItem.index) {
             index = startItem.index;
           }

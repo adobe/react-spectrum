@@ -16,7 +16,7 @@ import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarSta
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {DOMAttributes, FocusableElement, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HeadingContext} from './Heading';
+import {HeadingContext} from './RSPContexts';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 

@@ -17,7 +17,7 @@ export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerS
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
-export type {MenuTriggerProps, MenuTriggerState, RootMenuTriggerState} from '@react-stately/menu';
+export type {MenuTriggerProps, MenuTriggerState, RootMenuTriggerState, SubmenuTriggerState, SubmenuTriggerProps} from '@react-stately/menu';
 export type {OverlayTriggerProps, OverlayTriggerState} from '@react-stately/overlays';
 export type {RadioGroupProps, RadioGroupState} from '@react-stately/radio';
 export type {SearchFieldProps, SearchFieldState} from '@react-stately/searchfield';
@@ -40,7 +40,7 @@ export {useDraggableCollectionState, useDroppableCollectionState} from '@react-s
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {useListState, useSingleSelectListState} from '@react-stately/list';
-export {useMenuTriggerState} from '@react-stately/menu';
+export {useMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 export {useNumberFieldState} from '@react-stately/numberfield';
 export {useOverlayTriggerState} from '@react-stately/overlays';
 export {useRadioGroupState} from '@react-stately/radio';

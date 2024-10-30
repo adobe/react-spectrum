@@ -47,7 +47,7 @@ export interface SliderAria {
 export function useSlider<T extends number | number[]>(
   props: AriaSliderProps<T>,
   state: SliderState,
-  trackRef: RefObject<Element>
+  trackRef: RefObject<Element | null>
 ): SliderAria {
   let {labelProps, fieldProps} = useLabel(props);
 

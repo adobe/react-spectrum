@@ -39,7 +39,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   } = props;
 
   // Not using React.Children.toArray because it mutates the key prop.
-  let childArray: ReactElement[] = [];
+  let childArray: ReactElement<any>[] = [];
   React.Children.forEach(children, (child, index) => {
     if (React.isValidElement(child)) {
       if (child.key == null) {

@@ -158,17 +158,6 @@ async function build() {
   json.sideEffects = ['*.css'];
   fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
-  // TEMP HACK: Patch textfield css to workaround parcel bug
-  fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
-  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
-  let tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'import "./label.css";\n' + tf;
-  fs.writeFileSync(tfpath, tf);
-  tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
-  tf = fs.readFileSync(tfpath, 'utf8');
-  tf = 'require("./label.css");\n' + tf;
-  fs.writeFileSync(tfpath, tf);
-
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 

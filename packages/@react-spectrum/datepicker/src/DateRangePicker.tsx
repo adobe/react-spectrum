@@ -50,7 +50,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     pageBehavior
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let targetRef = useRef<HTMLDivElement>();
+  let targetRef = useRef<HTMLDivElement>(undefined);
   let state = useDateRangePickerState({
     ...props,
     shouldCloseOnSelect: () => !state.hasTime

@@ -51,7 +51,7 @@ function TreeExample(props = {}) {
 
 function Tree(props) {
   let state = useTreeState(props);
-  let ref = useRef();
+  let ref = useRef(undefined);
 
   let keyboardDelegate = useMemo(() => new TreeKeyboardDelegate(state.collection, state.disabledKeys), [state.collection, state.disabledKeys]);
 
@@ -81,7 +81,7 @@ function TreeNodes({nodes, state}) {
 }
 
 function TreeItem({node, state}) {
-  let ref = useRef();
+  let ref = useRef(undefined);
 
   let {itemProps} = useSelectableItem({
     key: node.key,

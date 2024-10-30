@@ -34,7 +34,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
     'aria-label': item['aria-label']
   });
 
-  let headerRef = useRef();
+  let headerRef = useRef(undefined);
   useVirtualizerItem({
     layoutInfo: headerLayoutInfo,
     virtualizer,
@@ -42,11 +42,11 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   });
 
   let {direction} = useLocale();
-  let state = useContext(ListBoxContext);
+  let {state} = useContext(ListBoxContext);
 
   return (
     <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
+      {headerLayoutInfo && <div role="presentation" ref={headerRef} style={layoutInfoToStyle(headerLayoutInfo, direction)}>
         {item.key !== state.collection.getFirstKey() &&
           <div
             role="presentation"
@@ -67,7 +67,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
             {item.rendered}
           </div>
         }
-      </div>
+      </div>}
       <div
         {...groupProps}
         style={layoutInfoToStyle(layoutInfo, direction)}

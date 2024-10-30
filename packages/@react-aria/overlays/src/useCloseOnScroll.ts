@@ -20,7 +20,7 @@ import {RefObject, useEffect} from 'react';
 export const onCloseMap: WeakMap<Element, () => void> = new WeakMap();
 
 interface CloseOnScrollOptions {
-  triggerRef: RefObject<Element>,
+  triggerRef: RefObject<Element | null>,
   isOpen?: boolean,
   onClose?: () => void
 }
@@ -39,6 +39,13 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions) {
       let target = e.target;
       // window is not a Node and doesn't have contain, but window contains everything
       if (!triggerRef.current || ((target instanceof Node) && !target.contains(triggerRef.current))) {
+        return;
+      }
+
+      // Ignore scroll events on any input or textarea as the cursor position can cause it to scroll
+      // such as in a combobox. Clicking the dropdown button places focus on the input, and if the
+      // text inside the input extends beyond the 'end', then it will scroll so the cursor is visible at the end.
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
 

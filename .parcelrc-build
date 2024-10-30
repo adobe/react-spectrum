@@ -1,6 +1,7 @@
 {
   "extends": "@parcel/config-default",
   "resolvers": ["@parcel/resolver-glob", "parcel-resolver-build", "..."],
+  "bundler": "@parcel/bundler-library",
   "transformers": {
     "packages/**/intl/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],

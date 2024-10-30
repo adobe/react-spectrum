@@ -84,6 +84,14 @@ Render props may also be used as children to alter what elements are rendered ba
 </ListBoxItem>
 ```
 
+Render props also let you modify the default values provided by React Aria via the `defaultClassName`, `defaultStyle`, and `defaultChildren` options. For example, you could wrap the default children of a `SelectValue` in an extra element, append an additional class name to React Aria's default, or merge default inline styles with your own.
+
+```jsx
+<SelectValue>
+  {({defaultChildren}) => <span>{defaultChildren}</span>}
+</SelectValue>
+```
+
 The render props exposed for each component are listed in the Styling section of their documentation.
 
 ## Slots

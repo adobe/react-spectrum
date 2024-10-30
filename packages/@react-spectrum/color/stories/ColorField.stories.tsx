@@ -90,6 +90,14 @@ export default {
     },
     width: {
       control: 'text'
+    },
+    colorSpace: {
+      control: 'select',
+      options: ['rgb', 'hsl', 'hsb']
+    },
+    channel: {
+      control: 'select',
+      options: [null, 'red', 'green', 'blue', 'hue', 'saturation', 'lightness', 'brightness']
     }
   }
 } as ComponentMeta<typeof ColorField>;

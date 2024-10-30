@@ -132,7 +132,7 @@ import {useGridList, useGridListItem} from '@react-aria/gridlist';
 
 function List(props) {
   let state = useListState(props);
-  let ref = useRef();
+  let ref = useRef<HTMLUListElement | null>(null);
   let { gridProps } = useGridList(props, state, ref);
 
   return (

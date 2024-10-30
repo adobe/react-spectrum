@@ -41,7 +41,7 @@ export interface CheckboxAria extends ValidationResult {
  * @param state - State for the checkbox, as returned by `useToggleState`.
  * @param inputRef - A ref for the HTML input element.
  */
-export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
+export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement | null>): CheckboxAria {
   // Create validation state here because it doesn't make sense to add to general useToggleState.
   let validationState = useFormValidationState({...props, value: state.isSelected});
   let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;

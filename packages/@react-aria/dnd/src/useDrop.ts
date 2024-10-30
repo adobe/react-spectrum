@@ -21,7 +21,7 @@ import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
   /** A ref for the droppable element. */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.

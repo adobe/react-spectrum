@@ -1,7 +1,6 @@
 {
+  "colorSwatchPicker": "تغييرات الألوان",
   "dropzoneLabel": "DropZone",
   "selectPlaceholder": "حدد عنصرًا",
-  "tableResizer": "أداة تغيير الحجم",
-  "expand": "Expand",
-  "collapse": "Collapse"
+  "tableResizer": "أداة تغيير الحجم"
 }

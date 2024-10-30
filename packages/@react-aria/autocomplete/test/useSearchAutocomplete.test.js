@@ -13,7 +13,7 @@
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
+import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useSearchAutocomplete} from '../';
 
@@ -22,6 +22,9 @@ describe('useSearchAutocomplete', function () {
   let stopPropagation = jest.fn();
   let event = (e) => ({
     ...e,
+    nativeEvent: {
+      isComposing: false
+    },
     preventDefault,
     stopPropagation
   });

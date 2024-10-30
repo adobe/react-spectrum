@@ -27,7 +27,7 @@ export interface TableHeaderRowAria {
  * @param state - State of the table, as returned by `useTableState`.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<Element>): TableHeaderRowAria {
+export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<Element | null>): TableHeaderRowAria {
   let {node, isVirtualized} = props;
   let rowProps = {
     role: 'row'

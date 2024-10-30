@@ -445,21 +445,46 @@ All tabs can be disabled using the `isDisabled` prop.
 
 ### Disabled items
 
-Individual tabs can be disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
-to the `items` prop. See the [Collections](collections.html) guide for more details.
+An individual `Tab` can be disabled with the `isDisabled` prop. Disabled tabs are not focusable, selectable, or keyboard navigable.
 
 ```tsx example
-<Tabs disabledKeys={['gamepad']}>
+<Tabs>
   <TabList aria-label="Input settings">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
-    <Tab id="gamepad">Gamepad Settings</Tab>
+    {/*- begin highlight -*/}
+    <Tab id="gamepad" isDisabled>Gamepad Settings</Tab>
+    {/*- end highlight -*/}
   </TabList>
   <TabPanel id="mouse">Mouse Settings</TabPanel>
   <TabPanel id="keyboard">Keyboard Settings</TabPanel>
   <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Tabs` level instead of `isDisabled` on individual tabs. Each key in this list
+corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). A tab is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {id: 1, title: 'Mouse settings'},
+    {id: 2, title: 'Keyboard settings'},
+    {id: 3, title: 'Gamepad settings'}
+  ];
+
+  return (
+    <Tabs disabledKeys={[2]}>
+      <TabList aria-label="Input settings" items={tabs}>
+        {item => <Tab>{item.title}</Tab>}
+      </TabList>
+      <Collection items={tabs}>
+        {item => <TabPanel>{item.title}</TabPanel>}
+      </Collection>
+    </Tabs>
+  );
+}
 ```
 
 ## Links

@@ -1,0 +1,120 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import SubmenuSafeArea from '../assets/submenu-safe-area.svg';
+import SubmenuAtan2 from '../assets/submenu-atan2.svg';
+import SubmenuAtan2FromPointer from '../assets/submenu-atan2-from-pointer.svg';
+
+import {BlogPostLayout} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+keywords: [react aria, react spectrum, react, spectrum, interactions, submenu, pointer]
+description: We are excited to announce support for submenus in the latest release of [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Menu.html#submenus) and [React Aria](https://react-spectrum.adobe.com/react-aria/Menu.html#submenus)! In the process of adding this feature, we found ourselves solving some unique challenges while working to make submenus user-friendly and accessible across an array of devices and input types. In doing so, we wanted to share our thought process in solving one of the challenges we faced along the way.
+date: 2024-05-01
+author: '[Reid Barber](https://github.com/reidbarber)'
+image: ../assets/submenu-safe-area.png
+---
+
+# Creating a pointer-friendly submenu experience
+
+We are excited to announce support of submenus in the latest release of [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Menu.html#submenus) and [React Aria](https://react-spectrum.adobe.com/react-aria/Menu.html#submenus)! In the process of adding this feature, we found ourselves solving some unique challenges while working to make submenus user-friendly and accessible across an array of devices and input types. In doing so, we wanted to share our thought process in solving one of the challenges we faced along the way.
+
+## The Shortest Path
+
+Submenus (or nested menus) enable multi-level exploration of menus, and even with a large number of options, users should be able to quickly find their desired option. A user should be able to hover over an item to see its submenu. Then, they should be able to move their pointer directly to any item in the newly opened submenu, following the shortest path. While doing so, the pointer may leave the original item entirely and hover an unrelated item in its path towards the submenu, causing the submenu to close. We need a way to know when they’re moving their pointer to that submenu, so we can keep it open until they reach the submenu.
+
+```tsx snippet
+import {SubmenuAnimation} from './SubmenuAnimation';
+<SubmenuAnimation />
+```
+
+## Predicting User Intent
+
+We can predict the user’s intent by tracking: 
+
+* Pointer movement **direction**
+* Pointer movement **speed**
+
+We can do this by listening for [pointermove](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointermove_event) events and analyzing the changes in the pointer’s position (also called delta).
+
+## Valid Movements
+
+Imagine two lines: one from the pointer to the top of the submenu, and one from the pointer to the bottom of the submenu. We now have an area where the user might move their pointer on its path to the submenu. Any movement outside of this range should be considered invalid and should close the submenu.  
+
+<SubmenuSafeArea
+  role="img"
+  aria-label="Diagram showing safe area triangle drawn between pointer and submenu" />
+
+## Pointer Direction
+
+We can measure the angle at which the pointer moved by using the 2-argument arctangent, or [atan2](https://en.wikipedia.org/wiki/Atan2). If we provide our pointer’s delta x and delta y values as arguments, we’ll get the angle (in radians) from the previous pointer position to the current pointer position in relation to the positive x-axis.
+
+<SubmenuAtan2
+  role="img"
+  aria-label="Diagram showing atan2 value as angle between the X axis and some line on a cartesian plane" />
+
+Now we can use the atan2 function to measure the angles formed by three separate lines:
+
+* **Θ<sub>top</sub>** : Angle formed by the line from the previous pointer position to the **top inside corner** of the submenu
+* **Θ<sub>bottom</sub>** : Angle formed by the line from the previous pointer position to the **bottom inside corner** of the submenu
+* **Θ<sub>pointer</sub>** : Angle formed by the line from the previous pointer position to the **current pointer** position (delta)
+
+<SubmenuAtan2FromPointer
+  role="img"
+  aria-label="Diagram showing triangles formed between pointer and various points on submenu" />
+
+If the pointer’s delta angle is **between** the top and bottom angles, we know the user is moving their pointer in the direction of the submenu.
+
+<p style={{textAlign: 'center', fontSize: 'xx-large'}}>Θ<sub>top</sub> > Θ<sub>pointer</sub> > Θ<sub>bottom</sub></p>
+
+## Pointer Speed
+
+In order to predict the user’s intent, we also need to know the pointer's speed. Here are some things we know about how users move their pointer:
+
+* Users typically accelerate their pointer when moving towards the submenu, then decelerate as they reach their target. 
+* Users sometimes stop or slow down their pointer to browse options in the submenu.
+* Users tend to move their pointer more quickly if they have a larger distance to cover (see [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law)).
+* Users tend to move their pointer more quickly if they have a larger "tunnel" to navigate through (see [Steering Law](https://en.wikipedia.org/wiki/Steering_law)).
+
+We could check the pointer’s speed continuously and use the above knowledge to predict the user’s intent.
+
+Alternatively, we could simply use a **timeout**; if the pointer hasn’t moved after a certain amount of time and is no longer over the submenu's parent menu item, we assume they are no longer intending to go to the submenu. This timeout can be reset after each pointer movement.
+Speed is about movement over time, so we use the timeout to detect if there is no movement over some specific time.   Since users with motor impairments may take more time to move their pointer to the destination, we should lean towards using a larger timeout value.
+
+Although the timeout solution is simpler than tracking the pointer’s speed, we found that it resulted in a good user experience, so we proceeded with this approach.
+
+## Fault Tolerance
+
+Since our users are human, we want to build in some fault tolerance, but not so much that we invalidate their intent. Here are some ways we did that:
+* **Widen our range of allowed angles**: We added 15 degrees of tolerance to the top and bottom angles. After testing different values, we found that this created the best experience.
+* **Allow invalid movements**: We require that two consecutive invalid pointer movements be made before closing the submenu. Users who experience [tremors](https://en.wikipedia.org/wiki/Tremor) may involuntarily move their pointer in other directions, so it is important to include this feature.  
+
+## Optimizations
+
+We can introduce a few performance optimizations:
+
+* **Throttle**: Most devices refresh their screens 60 times per second. This means that we don't need to do these measurements more frequently than every 16 ms (1 second / 60 = 16.66 ms). We can also experiment with doing checks even less frequently while still maintaining a good user experience. For instance, lowering the sample rate may provide more accurate predictions for users who experience tremors.
+* **Track movements only when necessary**: We can start tracking pointer movements when the submenu opens and stop tracking when the submenu closes, or the pointer reaches the submenu. 
+* **Calculate angles only when necessary**: If the pointer is moving in the opposite direction of the submenu, there's no need to calculate and compare angles. We can check this by comparing the pointer’s delta x to the submenu’s closest edge's x.
+* **Check the pointer event type**: We can check the pointer event's [pointerType](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/pointerType) property and ignore the event if it is type 'pen' or 'touch'.
+
+## Alternatives
+
+Let's compare our approach to a few other methods:
+
+* **Timeout only**: We could use just a timeout instead of incorporating the direction the pointer moves. The downside of this is that moving the pointer vertically between parent menu items would cause delayed interactions that could be unpleasant or unexpected for the user.
+* **Delay before opening submenus**: We could introduce a delay before opening each submenu, but that would introduce a similar negative user experience as the timeout-only method described above.
+* **Check if the point is within a triangle**: We could use one of the various [point-in-polygon](https://en.wikipedia.org/wiki/Point_in_polygon) algorithms to determine if the pointer is within the triangle shape we defined earlier. There are several methods described by Cédric Jules in [Accurate point in triangle test](https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html) that we could use to implement this.
+* **Compare the slopes of the various lines**: This method is very similar to the 2-argument arctangent method we used, and it is used by the [jQuery-menu-aim](https://github.com/kamens/jQuery-menu-aim) plugin. This was written by Ben Kamens and detailed in [Breaking down Amazon’s mega dropdown](https://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown).
+* **Render an invisible triangle over the parent menu**: We could use an absolute-positioned HTML element and use [clip-path](https://developer.mozilla.org/en-US/docs/Web/CSS/clip-path) to give it a triangle shape. There is an excellent post by Andreas Eldh called [Invisible Details](https://medium.com/linear-app/invisible-details-2ca718b41a44) that walks through how to implement this. Similarly, we could draw an [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG) instead, as outlined by Costa Alexoglou in [Better Context Menus With Safe Triangles](https://www.smashingmagazine.com/2023/08/better-context-menus-safe-triangles/). This method is also mentioned in [Building like it's 1984: A comprehensive guide to creating intuitive context menus](https://height.app/blog/guide-to-build-context-menus) by Michael Villar. We originally considered this approach but found it to be less reliable when moving your pointer more quickly than the triangle can get re-rendered. We also wanted to avoid the additional memory usage of rendering the extra element if possible.
+
+## Conclusion
+
+We hope this post has been helpful in understanding how we approached building a good submenu experience for mouse users. We are excited to see how you use submenus in your own projects. You can see this feature in action in the [React Spectrum Menu](https://react-spectrum.adobe.com/react-spectrum/Menu.html#submenus) and [React Aria Menu](https://react-spectrum.adobe.com/react-aria/Menu.html#submenus), including in the table on the [React Aria Home Page](https://react-spectrum.adobe.com/react-aria/).

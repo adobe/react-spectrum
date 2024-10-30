@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {StoryFn as _Story, Meta} from '@storybook/react';
 import {
   isAndroid,
   isAppleDevice,
@@ -21,20 +20,14 @@ import {
   isMac,
   isWebKit
 } from '../src';
+import {Meta} from '@storybook/react';
 import React from 'react';
-
-/**
- * Helper type so `bind` returns the actual Story type.
- */
-interface Story<T> extends _Story<T> {
-  bind: (this: ThisParameterType<typeof Function.bind>, thisArg: Parameters<typeof Function.bind>[0], ...argArray: Parameters<typeof Function.bind>[1][]) => _Story<T>
-}
 
 export default {
   title: 'platform'
 } as Meta<object>;
 
-const Template: Story<object> = (args) => (
+const Template = (args) => (
   <table {...args}>
     <tr>
       <th>Platform</th>

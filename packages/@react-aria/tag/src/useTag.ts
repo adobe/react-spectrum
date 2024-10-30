@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
-import {filterDOMProps, getSyntheticLinkProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps} from '@react-aria/utils';
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -46,7 +46,7 @@ export interface AriaTagProps<T> {
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): TagAria {
+export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): TagAria {
   let {item} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
   let buttonId = useId();
@@ -82,7 +82,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let isFocused = item.key === state.selectionManager.focusedKey;
   // @ts-ignore - data attributes are ok but TS doesn't know about them.
   let domProps = filterDOMProps(item.props);
-  let linkProps = getSyntheticLinkProps(item.props);
+  let linkProps = useSyntheticLinkProps(item.props);
   return {
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
