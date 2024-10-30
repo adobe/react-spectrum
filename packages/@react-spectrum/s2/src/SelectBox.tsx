@@ -21,7 +21,7 @@ import {
 import {Checkbox} from './Checkbox';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, size, style}  from '../style' with {type: 'macro'};
-import {IconContext} from './Icon';
+import {IllustrationContext} from './Icon';
 import {Radio} from './Radio';
 import React, {forwardRef, ReactNode, useRef} from 'react';
 import {StyleProps}  from './style-utils' with {type: 'macro'};
@@ -157,6 +157,9 @@ const selectBoxStyle = style({
   },
   padding: {
     orientation: {
+      vertical: {
+        size: size(24)
+      },
       horizontal: {
         size: {
           XS: 8,
@@ -178,18 +181,15 @@ const selectBoxContentStyle = style({
   gap: {
     orientation: {
       horizontal: {
-        size: {
-          S: 0,
-          M: size(2)
-        },
+        size: size(10),
         vertical: size(8)
       }
     }
   },
   gridTemplateAreas: {
     orientation: {
-      horizontal: ['icon label', 'icon description'],
-      vertical: ['. icon .', '. label .']
+      horizontal: ['illustration label', 'illustration description'],
+      vertical: ['illustration', 'label']
     }
   },
   gridTemplateColumns: {
@@ -230,34 +230,48 @@ const selectBoxContentStyle = style({
 });
 
 const selectBoxIconStyle = style({
-  fill: {
-    default: 'currentColor',
-    isDisabled: 'gray-400'
-  },
-  gridArea: 'icon',
+  gridArea: 'illustration',
   marginBottom: {
     orientation: {
       horizontal: 0,
       vertical: 8
     }
   },
-  flexShrink: 0
+  flexShrink: 0,
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      default: 'gray-800',
+      isDisabled: 'gray-400'
+    }
+  }
 });
 
 const selectBoxLabelStyle = style({
   gridArea: 'label',
+  font: 'control',
+  fontWeight: {
+    default: 'normal',
+    orientation: {
+      horizontal: 'bold'
+    }
+  },
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
-  },
-  fontSize: {
-    size: {
-      XS: 'body-sm',
-      M: 'body-lg',
-      L: 'body-xl',
-      XL: 'body-2xl'
-    }
   }
+});
+
+const selectBoxDescriptionStyle = style({
+  display: {
+    default: 'none',
+    orientation: {
+      horizontal: 'block',
+    }
+  },
+  color: 'gray-600',
+  font: 'control',
+  gridArea: 'description'
 });
 
 const selectorStyle = style({
@@ -305,9 +319,10 @@ const SelectBox = (props: SelectBoxProps, ref: FocusableRef<HTMLLabelElement>) =
           <Provider
             values={[
               [
-                IconContext,
+                IllustrationContext,
                 {
-                  styles: selectBoxIconStyle({...renderProps, orientation})
+                  styles: selectBoxIconStyle({...renderProps, orientation}),
+                  size: 'S'
                 }
               ],
               [
@@ -315,14 +330,10 @@ const SelectBox = (props: SelectBoxProps, ref: FocusableRef<HTMLLabelElement>) =
                 {
                   slots: {
                     description: {
-                      className: style({
-                        color: 'gray-600',
-                        fontSize: 'body-sm',
-                        gridArea: 'description'
-                      })
+                      className: selectBoxDescriptionStyle({orientation})
                     },
                     label: {
-                      className: selectBoxLabelStyle({...renderProps, size})
+                      className: selectBoxLabelStyle({...renderProps, orientation, size})
                     }
                   }
                 }
