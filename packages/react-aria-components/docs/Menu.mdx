@@ -125,7 +125,7 @@ A menu trigger consists of a button or other trigger element combined with a men
 with a list of menu items or sections inside. Users can click, touch, or use the keyboard on the button to open the menu.
 
 ```tsx
-import {MenuTrigger, Button, Popover, Menu, MenuItem, Separator, Section, Header, Text, Keyboard} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, Header, Text, Keyboard} from 'react-aria-components';
 
 <MenuTrigger>
   <Button />
@@ -137,10 +137,10 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem, Separator, Section, Header
         <Keyboard />
       </MenuItem>
       <Separator />
-      <Section>
+      <MenuSection>
         <Header />
         <MenuItem />
-      </Section>
+      </MenuSection>
     </Menu>
   </Popover>
 </MenuTrigger>
@@ -438,25 +438,25 @@ The `<MenuItem>` component works with frameworks and client side routers like [N
 
 ## Sections
 
-Menu supports sections with headings in order to group items. Sections can be used by wrapping groups of MenuItems in a `Section` component. A `<Header>` element may also be included to label the section.
+Menu supports sections with headings in order to group items. Sections can be used by wrapping groups of MenuItems in a `MenuSection` component. A `<Header>` element may also be included to label the section.
 
 ### Static items
 
 ```tsx example
-import {Section, Header} from 'react-aria-components';
+import {MenuSection, Header} from 'react-aria-components';
 
 <MyMenuButton label="Actions">
-  <Section>
+  <MenuSection>
     <Header>Styles</Header>
     <MenuItem>Bold</MenuItem>
     <MenuItem>Underline</MenuItem>
-  </Section>
-  <Section>
+  </MenuSection>
+  <MenuSection>
     <Header>Align</Header>
     <MenuItem>Left</MenuItem>
     <MenuItem>Middle</MenuItem>
     <MenuItem>Right</MenuItem>
-  </Section>
+  </MenuSection>
 </MyMenuButton>
 ```
 
@@ -465,7 +465,7 @@ import {Section, Header} from 'react-aria-components';
 
 ```css
 .react-aria-Menu {
-  .react-aria-Section:not(:first-child) {
+  .react-aria-MenuSection:not(:first-child) {
     margin-top: 12px;
   }
 
@@ -482,7 +482,7 @@ import {Section, Header} from 'react-aria-components';
 ### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a hierarchical data structure.
-Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+Similarly to the props on Menu, `<MenuSection>` takes an array of data using the `items` prop. If the section also has a header,
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
@@ -518,12 +518,12 @@ function Example() {
       selectedKeys={selected}
       onSelectionChange={setSelected}>
       {section => (
-        <Section>
+        <MenuSection>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
             {item => <MenuItem>{item.name}</MenuItem>}
           </Collection>
-        </Section>
+        </MenuSection>
       )}
     </MyMenuButton>
   );
@@ -564,6 +564,39 @@ import {Separator} from 'react-aria-components';
 ```
 
 </details>
+
+### Section-level selection
+
+Each section in a menu may have independent selection states. This works the same way as [described above](#selection) for the entire menu, but operates at the section level instead.
+
+```tsx example
+function Example() {
+  let [style, setStyle] = React.useState<Selection>(new Set(['bold']));
+  let [align, setAlign] = React.useState<Selection>(new Set(['left']));
+  return (
+    <MyMenuButton label="Edit">
+      <MenuSection>
+        <Header>Actions</Header>
+        <MenuItem>Cut</MenuItem>
+        <MenuItem>Copy</MenuItem>
+        <MenuItem>Paste</MenuItem>
+      </MenuSection>
+      <MenuSection selectionMode="multiple" selectedKeys={style} onSelectionChange={setStyle}>
+        <Header>Text style</Header>
+        <MenuItem id="bold">Bold</MenuItem>
+        <MenuItem id="italic">Italic</MenuItem>
+        <MenuItem id="underline">Underline</MenuItem>
+      </MenuSection>
+      <MenuSection selectionMode="single" selectedKeys={align} onSelectionChange={setAlign}>
+        <Header>Text alignment</Header>
+        <MenuItem id="left">Left</MenuItem>
+        <MenuItem id="center">Center</MenuItem>
+        <MenuItem id="right">Right</MenuItem>
+      </MenuSection>
+    </MyMenuButton>
+  );
+}
+```
 
 ### Accessibility
 
@@ -844,20 +877,20 @@ A `<Popover>` is a container to hold the `<Menu>`. By default, it has a `placeme
 
 <PropTable component={docs.exports.Menu} links={docs.links} />
 
-### Section
+### MenuSection
 
-A `<Section>` defines the child items for a section within a `<Menu>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
+A `<MenuSection>` defines the child items for a section within a `<Menu>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.Section} links={docs.links} />
+<PropTable component={docs.exports.MenuSection} links={docs.links} />
 
 </details>
 
 ### Header
 
-A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
+A `<Header>` defines the title for a `<MenuSection>`. It accepts all DOM attributes.
 
 ### MenuItem
 
@@ -982,13 +1015,13 @@ Within a SubmenuTrigger, the popover will have the `data-trigger="SubmenuTrigger
 
 A `Menu` can be targeted with the `.react-aria-Menu` CSS selector, or by overriding with a custom `className`.
 
-### Section
+### MenuSection
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+A `MenuSection` can be targeted with the `.react-aria-MenuSection` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Header
 
-A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+A `Header` within a `MenuSection` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### MenuItem
 

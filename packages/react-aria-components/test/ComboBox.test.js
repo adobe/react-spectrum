@@ -11,7 +11,7 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, Popover, Section, Text} from '../';
+import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Popover, Text} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
@@ -101,16 +101,16 @@ describe('ComboBox', () => {
         <Button />
         <Popover>
           <ListBox>
-            <Section>
+            <ListBoxSection>
               <Header>Fruit</Header>
               <ListBoxItem id="Apple">Apple</ListBoxItem>
               <ListBoxItem id="Banana">Banana</ListBoxItem>
-            </Section>
-            <Section>
+            </ListBoxSection>
+            <ListBoxSection>
               <Header>Vegetable</Header>
               <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
               <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
-            </Section>
+            </ListBoxSection>
           </ListBox>
         </Popover>
       </ComboBox>

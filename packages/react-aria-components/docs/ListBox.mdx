@@ -145,17 +145,17 @@ A listbox consists of a container element, with a list of items or sections insi
 Users can select one or more items by clicking, tapping, or navigating with the keyboard.
 
 ```tsx
-import {ListBox, ListBoxItem, Section, Header, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, ListBoxSection, Header, Text} from 'react-aria-components';
 
 <ListBox>
   <ListBoxItem>
     <Text slot="label" />
     <Text slot="description" />
   </ListBoxItem>
-  <Section>
+  <ListBoxSection>
     <Header />
     <ListBoxItem />
-  </Section>
+  </ListBoxSection>
 </ListBox>
 ```
 
@@ -406,32 +406,32 @@ The `<ListBoxItem>` component works with frameworks and client side routers like
 
 ## Sections
 
-ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
+ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `ListBoxSection` element. A `<Header>` element may also be included to label the section.
 
 ### Static items
 
 ```tsx example
-import {Section, Header} from 'react-aria-components';
+import {ListBoxSection, Header} from 'react-aria-components';
 
 <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-  <Section>
+  <ListBoxSection>
     <Header>Veggies</Header>
     <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
     <ListBoxItem id="tomato">Tomato</ListBoxItem>
     <ListBoxItem id="onion">Onion</ListBoxItem>
-  </Section>
-  <Section>
+  </ListBoxSection>
+  <ListBoxSection>
     <Header>Protein</Header>
     <ListBoxItem id="ham">Ham</ListBoxItem>
     <ListBoxItem id="tuna">Tuna</ListBoxItem>
     <ListBoxItem id="tofu">Tofu</ListBoxItem>
-  </Section>
-  <Section>
+  </ListBoxSection>
+  <ListBoxSection>
     <Header>Condiments</Header>
     <ListBoxItem id="mayo">Mayonaise</ListBoxItem>
     <ListBoxItem id="mustard">Mustard</ListBoxItem>
     <ListBoxItem id="ranch">Ranch</ListBoxItem>
-  </Section>
+  </ListBoxSection>
 </ListBox>
 ```
 
@@ -440,7 +440,7 @@ import {Section, Header} from 'react-aria-components';
 
 ```css
 .react-aria-ListBox {
-  .react-aria-Section:not(:first-child) {
+  .react-aria-ListBoxSection:not(:first-child) {
     margin-top: 12px;
   }
 
@@ -457,7 +457,7 @@ import {Section, Header} from 'react-aria-components';
 ### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a hierarchical data structure.
-Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop. If the section also has a header,
+Similarly to the props on ListBox, `<ListBoxSection>` takes an array of data using the `items` prop. If the section also has a header,
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
@@ -487,12 +487,12 @@ function Example() {
       selectionMode="single"
       onSelectionChange={setSelected}>
       {section => (
-        <Section id={section.name}>
+        <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
             {item => <ListBoxItem>{item.name}</ListBoxItem>}
           </Collection>
-        </Section>
+        </ListBoxSection>
       )}
     </ListBox>
   );
@@ -1884,20 +1884,20 @@ function DndListBox(props: DndListBoxProps) {
 
 <PropTable component={docs.exports.ListBox} links={docs.links} />
 
-### Section
+### ListBoxSection
 
-A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
+A `<ListBoxSection>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.Section} links={docs.links} />
+<PropTable component={docs.exports.ListBoxSection} links={docs.links} />
 
 </details>
 
 ### Header
 
-A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
+A `<Header>` defines the title for a `<ListBoxSection>`. It accepts all DOM attributes.
 
 ### ListBoxItem
 
@@ -1969,13 +1969,13 @@ A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by o
 
 <StateTable properties={docs.exports.ListBoxRenderProps.properties} />
 
-### Section
+### ListBoxSection
 
-A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+A `ListBoxSection` can be targeted with the `.react-aria-ListBoxSection` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### Header
 
-A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+A `Header` within a `ListBoxSection` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
 ### ListBoxItem
 
@@ -1991,7 +1991,7 @@ Note that items may not contain interactive children such as buttons, as screen 
 
 ### Composition
 
-If you need to customize one of the components within a `ListBox`, such as `ListBoxItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+If you need to customize one of the components within a `ListBox`, such as `ListBoxItem` or `ListBoxSection`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
 
 ```tsx
 function MyItem(props) {
