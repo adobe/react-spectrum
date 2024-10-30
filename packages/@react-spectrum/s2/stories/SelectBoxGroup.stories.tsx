@@ -58,3 +58,53 @@ export const Example: Story = {
     label: 'Select an icon'
   }
 };
+
+export const LongTitleManyItems: Story = {
+  render(args) {
+    return (
+      <SelectBoxGroup {...args}>
+        <SelectBox value="one">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="two">
+          <Server />
+          <Text slot="label">This is a long title that will wrap and shouldn't cause any issues</Text>
+          <Text slot="description">A description that explains more context and details, to supplement the message of the label. This shouldn't be very long like this or cause any wrapping or height issues.</Text>
+        </SelectBox>
+        <SelectBox value="three">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="four">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="five">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="size">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="seven">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="eight">
+          <Server />
+          <Text slot="label">Bells</Text>
+        </SelectBox>
+        <SelectBox value="nine">
+          <Server />
+          <Text slot="label">Select box label</Text>
+          <Text slot="description">A description that explains more context and details, to supplement the message of the label.</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+    );
+  },
+  args: {
+    label: 'Select an icon'
+  }
+};

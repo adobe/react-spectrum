@@ -22,6 +22,7 @@ import {Checkbox} from './Checkbox';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, size, style}  from '../style' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
+import {pressScale} from './pressScale';
 import {Radio} from './Radio';
 import React, {forwardRef, ReactNode, useRef} from 'react';
 import {StyleProps}  from './style-utils' with {type: 'macro'};
@@ -35,6 +36,7 @@ export interface SelectBoxProps extends Omit<GridListItemProps, 'className' | 's
 
 const selectBoxStyle = style({
   ...focusRing(),
+
   aspectRatio: {
     orientation: {
       vertical: 'square'
@@ -304,7 +306,7 @@ const SelectBox = (props: SelectBoxProps, ref: FocusableRef<HTMLLabelElement>) =
       className={renderProps => UNSAFE_className + selectBoxStyle({...renderProps, orientation, size})}
       inputRef={inputRef}
       ref={domRef}
-      style={UNSAFE_style}
+      style={renderProps => pressScale(domRef)(renderProps)} // TODO: this removed UNSAFE_style
       value={props.value}
       isDisabled={props.isDisabled}>
       {renderProps => (
