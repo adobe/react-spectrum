@@ -13,6 +13,7 @@
 import React, { useState } from "react";
 import "@react-spectrum/s2/page.css";
 import {
+  Accordion,
   ActionButton,
   ActionMenu,
   AlertDialog,
@@ -23,6 +24,7 @@ import {
   Breadcrumbs,
   Button,
   ButtonGroup,
+  Cell,
   Checkbox,
   CheckboxGroup,
   ColorArea,
@@ -31,6 +33,7 @@ import {
   ColorSwatch,
   ColorSwatchPicker,
   ColorWheel,
+  Column,
   ComboBox,
   ComboBoxItem,
   Content,
@@ -38,6 +41,10 @@ import {
   Dialog,
   DialogContainer,
   DialogTrigger,
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
+  DisclosureTitle,
   Divider,
   DropZone,
   Footer,
@@ -62,12 +69,18 @@ import {
   Radio,
   RadioGroup,
   RangeSlider,
+  Row,
   SearchField,
+  SegmentedControl,
+  SegmentedControlItem,
   Slider,
   StatusLight,
   SubmenuTrigger,
   Switch,
   Tab,
+  TableView,
+  TableBody,
+  TableHeader,
   TabList,
   TabPanel,
   Tabs,
@@ -85,9 +98,26 @@ import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+import { CardViewExample } from "./components/CardViewExample";
+import { CollectionCardsExample } from "./components/CollectionCardsExample";
 
 function App() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
+  let [cardViewState, setCardViewState] = useState({
+    layout: 'grid',
+    loadingState: 'idle',
+  });
+  let cardViewLoadingOptions = [
+    {id: 'idle', label: 'Idle'},
+    {id: 'loading', label: 'Loading'},
+    {id: 'sorting', label: 'Sorting'},
+    {id: 'loadingMore', label: 'Loading More'},
+    {id: 'error', label: 'Error'},
+  ];
+  let cardViewLayoutOptions = [
+    {id: 'grid', label: 'Grid'},
+    {id: 'waterfall', label: 'Waterfall'}
+  ];
   return (
     <main>
       <Heading
@@ -136,6 +166,23 @@ function App() {
             <MenuItem>Action Menu Item 2</MenuItem>
             <MenuItem>Action Menu Item 3</MenuItem>
           </ActionMenu>
+          <Picker
+            label="CardView Loading State"
+            items={cardViewLoadingOptions}
+            selectedKey={cardViewState.loadingState}
+            onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState})}>
+            {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
+          </Picker>
+          <Picker
+            label="CardView Layout"
+            items={cardViewLayoutOptions}
+            selectedKey={cardViewState.layout}
+            onSelectionChange={layout => setCardViewState({...cardViewState, layout})}>
+            {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
+          </Picker>
+          <CardViewExample {...cardViewState} />
+          <Divider styles={style({maxWidth: 320, width: '100%', marginX: 'auto'})} />
+          <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
             <Menu onAction={(key) => alert(key.toString())}>
@@ -171,6 +218,38 @@ function App() {
               <MenuItem>Paste</MenuItem>
             </Menu>
           </MenuTrigger>
+          <TableView aria-label="Files" styles={style({width: 320, height: 320})}>
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+              <Column>Date Modified</Column>
+              <Column>A</Column>
+              <Column>B</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+                <Cell>6/7/2020</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+                <Cell>4/7/2021</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+              <Row id="3">
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+                <Cell>11/20/2010</Cell>
+                <Cell>Dummy content</Cell>
+                <Cell>Long long long long long long long cell</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
         </Section>
 
         <Section title="Color">
@@ -223,6 +302,31 @@ function App() {
         </Section>
 
         <Section title="Navigation">
+          <div className={style({ minHeight: 176 })}>
+            <Accordion>
+              <Disclosure id="files">
+                <DisclosureHeader>
+                  <DisclosureTitle>
+                    Files
+                  </DisclosureTitle>
+                  <ActionButton><Edit aria-label="Edit" /></ActionButton>
+                </DisclosureHeader>
+                <DisclosurePanel>
+                  Files content
+                </DisclosurePanel>
+              </Disclosure>
+              <Disclosure id="people">
+                <DisclosureHeader>
+                  <DisclosureTitle>
+                    People
+                  </DisclosureTitle>
+                </DisclosureHeader>
+                <DisclosurePanel>
+                  <TextField label="Name" styles={style({ maxWidth: 176 })} />
+                </DisclosurePanel>
+              </Disclosure>
+            </Accordion>
+          </div>
           <Breadcrumbs>
             <Breadcrumb id="home">Home</Breadcrumb>
             <Breadcrumb id="trendy">Trendy</Breadcrumb>
@@ -236,6 +340,12 @@ function App() {
             The missing link.
           </Link>
           <Link href="/foo">Foo</Link>
+          <SegmentedControl aria-label="Time granularity" styles={style({width: 384})}>
+            <SegmentedControlItem id="day">Day</SegmentedControlItem>
+            <SegmentedControlItem id="week">Week</SegmentedControlItem>
+            <SegmentedControlItem id="month">Month</SegmentedControlItem>
+            <SegmentedControlItem id="year">Year</SegmentedControlItem>
+          </SegmentedControl>
           <Tabs aria-label="History of Ancient Rome">
             <TabList>
               <Tab id="FoR">Founding of Rome</Tab>

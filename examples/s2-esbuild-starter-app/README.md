@@ -24,7 +24,7 @@ Edit the settings.mjs to add an import for the plugin and add the plugin to `plu
 import macrosPlugin from 'unplugin-parcel-macros';
 ...
   plugins: [
-    macros.esbuild(),
+    macrosPlugin.esbuild(),
     esbuildPluginTsc({
       force: true
     }),
