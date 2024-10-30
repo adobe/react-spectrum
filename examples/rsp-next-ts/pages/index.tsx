@@ -76,6 +76,8 @@ import {
   ColorField,
   ColorSlider,
   ColorWheel,
+  ColorSwatchPicker,
+  ColorSwatch,
   Accordion,
   Disclosure,
   DisclosureHeader,
