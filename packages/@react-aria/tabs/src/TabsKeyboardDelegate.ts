@@ -42,6 +42,8 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyBefore(key);
     }
+    key = this.findPreviousKey(undefined, pred);
+    return key;
   }
 
   protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
@@ -57,6 +59,12 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyAfter(key);
     }
+    key = this.findNextKey(undefined, pred);
+    return key;
+  }
+
+  private isDisabled(item: Node<unknown>) {
+    return (item.props?.isDisabled || this.disabledKeys.has(item.key));
   }
 
   getKeyLeftOf(key: Key) {
@@ -73,23 +81,24 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     return this.findNextKey(key, (item => item.type === 'item'));
   }
 
-
-  private isDisabled(key: Key) {
-    return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;
-  }
-
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    if (key != null && (this.isDisabled(key) || this.collection.getItem(key).type !== 'item')) {
-      key = this.findNextKey(key);
+    if (key != null) {
+      let item = this.collection.getItem(key);
+      if (this.isDisabled(item) || item.type !== 'item') {
+        key = this.findNextKey(key);
+      }
     }
     return key;
   }
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    if (key != null && (this.isDisabled(key) || this.collection.getItem(key).type !== 'item')) {
-      key = this.findPreviousKey(key);
+    if (key != null) {
+      let item = this.collection.getItem(key);
+      if (this.isDisabled(item) || item.type !== 'item') {
+        key = this.findPreviousKey(key);
+      }
     }
     return key;
   }
