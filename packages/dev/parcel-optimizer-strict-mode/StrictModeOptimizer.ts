@@ -11,17 +11,21 @@
  */
 
 const {Optimizer} = require('@parcel/plugin');
-const {blobToString} = require('@parcel/utils');
 
 export default new Optimizer({
-  async optimize({contents, map, bundle}) {
-    let code = await blobToString(contents);
-    if (bundle.target.env.outputFormat === 'commonjs' && !code.startsWith('"use strict";')) {
-      code = '"use strict";\n' + code;
+  async optimize({bundle, contents, map}) {
+    if (bundle.target.env.outputFormat !== 'commonjs') {
+      return {contents, map};
+    }
+
+    let newContents = `"use strict";\n${contents}`;
+
+    if (map) {
+      map.offsetLines(1, 1);
     }
 
     return {
-      contents: code,
+      contents: newContents,
       map
     };
   }
