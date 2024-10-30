@@ -1,7 +1,8 @@
+import React from "react";
 import { Heading } from "@react-spectrum/s2";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
-export default function Section(props: any) {
+export default function Section(props) {
   let { title, children } = props;
   return (
     <div className={style({ marginY: 8 })}>
@@ -10,6 +11,7 @@ export default function Section(props: any) {
           textAlign: "center",
           font: "heading-lg",
         })}
+        id={title.toLowerCase()}
         level={2}
       >
         {title}

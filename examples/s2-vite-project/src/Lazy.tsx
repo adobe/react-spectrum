@@ -1,6 +1,7 @@
 import {useState} from "react";
 import "@react-spectrum/s2/page.css";
 import {
+  Accordion,
   ActionButton,
   AlertDialog,
   Avatar,
@@ -25,6 +26,10 @@ import {
   Dialog,
   DialogContainer,
   DialogTrigger,
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
+  DisclosureTitle,
   DropZone,
   Footer,
   Form,
@@ -45,6 +50,8 @@ import {
   RadioGroup,
   RangeSlider,
   SearchField,
+  SegmentedControl,
+  SegmentedControlItem,
   Slider,
   StatusLight,
   Switch,
@@ -63,7 +70,7 @@ import {
 import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
 import Edit from "@react-spectrum/s2/icons/Edit";
-import Section from "./Section";
+import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 export default function Lazy() {
@@ -120,6 +127,31 @@ export default function Lazy() {
       </Section>
 
       <Section title="Navigation">
+        <div className={style({ minHeight: 176 })}>
+          <Accordion>
+            <Disclosure id="files">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  Files
+                </DisclosureTitle>
+                <ActionButton><Edit aria-label="Edit" /></ActionButton>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Files content
+              </DisclosurePanel>
+            </Disclosure>
+            <Disclosure id="people">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  People
+                </DisclosureTitle>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                <TextField label="Name" styles={style({ maxWidth: 176 })} />
+              </DisclosurePanel>
+            </Disclosure>
+          </Accordion>
+        </div>
         <Breadcrumbs>
           <Breadcrumb id="home">Home</Breadcrumb>
           <Breadcrumb id="trendy">Trendy</Breadcrumb>
@@ -133,6 +165,12 @@ export default function Lazy() {
           The missing link.
         </Link>
         <Link href="/foo">Foo</Link>
+        <SegmentedControl aria-label="Time granularity" styles={style({width: 384})}>
+          <SegmentedControlItem id="day">Day</SegmentedControlItem>
+          <SegmentedControlItem id="week">Week</SegmentedControlItem>
+          <SegmentedControlItem id="month">Month</SegmentedControlItem>
+          <SegmentedControlItem id="year">Year</SegmentedControlItem>
+        </SegmentedControl>
         <Tabs aria-label="History of Ancient Rome">
           <TabList>
             <Tab id="FoR">Founding of Rome</Tab>
