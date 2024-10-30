@@ -252,7 +252,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   let ref = useObjectRef<any>(forwardedRef);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...props}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let {focusableProps} = useFocusable(props, ref);
+  let {focusableProps} = useFocusable({isDisabled: props.isDisabled}, ref);
   let {hoverProps, isHovered} = useHover({
     isDisabled,
     onHoverStart: props.onHoverStart,
