@@ -115,7 +115,6 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
     type: 'color',
     value: {
       default: 'neutral',
-      isInDropZone: 'neutral-visual',
       isDropTarget: 'accent'
     }
   }
