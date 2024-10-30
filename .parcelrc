@@ -24,6 +24,6 @@
   },
   "optimizers": {
     "*.js": ["@parcel/optimizer-terser"],
-    "packages/@react-spectrum/s2/style/spectrum-theme.ts": ["parcel-optimizer-strict-mode"]
+    "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
   }
 }

@@ -18,6 +18,6 @@
   },
   "namers": ["parcel-namer-s2", "parcel-namer-intl", "..."],
   "optimizers": {
-    "packages/@react-spectrum/s2/style/spectrum-theme.ts": ["parcel-optimizer-strict-mode"]
+    "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
   }
 }
