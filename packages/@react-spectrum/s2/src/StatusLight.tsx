@@ -98,7 +98,8 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
       silver: 'silver'
     },
     isSkeleton: 'gray-200'
-  }
+  },
+  overflow: 'visible' // prevents the light from getting clipped on iOS
 });
 
 function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
