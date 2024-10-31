@@ -11,6 +11,8 @@
  */
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
+// TODO: Doesn't this mean autocomplete will always be pulled in with menu?
+import {AutocompleteStateContext, InternalAutocompleteContext} from './Autocomplete';
 import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
@@ -19,7 +21,6 @@ import {filterDOMProps, useEffectEvent, useObjectRef, useResizeObserver} from '@
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {getItemId, useSubmenuTrigger} from '@react-aria/menu';
 import {HeaderContext} from './Header';
-import {InternalAutocompleteContext} from './Autocomplete';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext, PopoverProps} from './Popover';
@@ -170,6 +171,7 @@ interface MenuInnerProps<T> {
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
   let {register, filterFn, inputValue, menuProps: autocompleteMenuProps} = useContext(InternalAutocompleteContext) || {};
+  let {setFocusedNodeId} = useContext(AutocompleteStateContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
   // we always perform the filtering for them.
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
@@ -220,19 +222,23 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
               state.selectionManager.setFocused(true);
             }
             break;
+
           case 'ArrowLeft':
           case 'ArrowRight':
             // TODO: will need to special case this so it doesn't clear the focused key if we are currently
             // focused on a submenutrigger
             if (state.selectionManager.isFocused) {
-              clearVirtualFocus();
+              state.selectionManager.setFocused(false);
+              state.selectionManager.setFocusedKey(null);
             }
             break;
+
           case 'Escape':
             // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
             // to continuePropagation to the overlay depending on the inputValue
             return;
         }
+
 
         let focusedId;
         if (state.selectionManager.focusedKey == null) {
@@ -251,32 +257,59 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
           );
         }
+
         focusedId = state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null;
         return focusedId;
       });
     }
   }, [register, state, menuId, ref]);
 
-  let clearVirtualFocus = useEffectEvent(() => {
-    state.selectionManager.setFocused(false);
-    state.selectionManager.setFocusedKey(null);
+  // Update the focused key to be the first item in the menu only if the input value changes (aka match spotlight/other implementations).
+  let updateFocusedKey = useEffectEvent((opts: {clearFocus?: boolean} = {}) => {
+    if (!opts.clearFocus) {
+      // TODO: the below is pretty much what the listkeyboard delegate would do when finding the first key
+      state.selectionManager.setFocused(true);
+      let focusedNode = state.collection.getItem(state.selectionManager.focusedKey);
+      if (focusedNode == null || focusedNode.prevKey != null) {
+        let key = state.collection.getFirstKey();
+        while (key != null) {
+          let item = state.collection.getItem(key);
+          if (item?.type === 'item' && !state.selectionManager.isDisabled(key)) {
+            break;
+          }
+          key = state.collection.getKeyAfter(key);
+        }
+        state.selectionManager.setFocusedKey(key);
+        setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
+      }
+    } else {
+      state.selectionManager.setFocusedKey(null);
+      setFocusedNodeId && setFocusedNodeId(null);
+    }
   });
 
+  let lastInputValue = useRef<string | null>(null);
   useEffect(() => {
-    // TODO: retested in NVDA. It seems like NVDA properly announces what new letter you are typing even if we maintain virtual focus on
+    // TODO: retested in NVDA. It seems like NVDA properly announces what new letter you are typing/deleting even if we maintain virtual focus on
     // a item in the list. However, it won't announce the letter your cursor is now on if you don't clear the virtual focus when using left/right
-    // arrows.
-    // Clear the focused key if the inputValue changed for NVDA
-    // Also feels a bit weird that we need to make sure that the focusedId AND the selection manager here need to both be cleared of the focused
-    // item, would be nice if it was all centralized. Maybe a reason to go back to having the autocomplete hooks create and manage
-    // the collection/selection manager but then it might cause issues when we need to wrap a Table which won't use BaseCollection but rather has
-    // its own collection
+    // arrows because the NVDA blue focus indicator moves into the menu and is only restored back to the input when typing. In Voiceover it works just fine though,
+    // mobile screen readers don't suffer from this when using virtual keyboards either
+    // When adding the "auto focus the first item if no items are focused" behavior, the announcement of the letter typed gets cut off a bit in NVDA.
+    // Ariakit seems to announce a bit better, doesn't interrupt.
+    // Also it feels like we are pulling in more and more stuff/updating focused key in more places, might be nice if this was more centralized
+
     // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
     if (inputValue != null) {
-      clearVirtualFocus();
-    }
-  }, [inputValue]);
+      if (lastInputValue.current == null || lastInputValue.current?.length <= inputValue.length) {
+        updateFocusedKey();
+      } else {
+        state.selectionManager.setFocused(false);
+        updateFocusedKey({clearFocus: true});
+      }
 
+      lastInputValue.current = inputValue;
+    }
+  }, [inputValue, updateFocusedKey]);
 
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
