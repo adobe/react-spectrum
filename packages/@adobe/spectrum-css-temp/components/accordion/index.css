@@ -113,7 +113,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Accordion-item.is-expanded {
   .spectrum-Accordion-itemContent {
-    padding: var(--spectrum-accordion-item-content-padding);
+    padding: 8px 9px 16px 9px;
   }
 }
 
