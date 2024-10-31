@@ -12,7 +12,14 @@
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getOwnerDocument, getRootBody, getRootNode, isShadowRoot, useLayoutEffect} from '@react-aria/utils';
+import {
+  getDeepActiveElement,
+  getOwnerDocument,
+  getRootBody,
+  getRootNode,
+  isShadowRoot,
+  useLayoutEffect
+} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
@@ -561,7 +568,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: boolean, contain?: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   // eslint-disable-next-line no-restricted-globals
-  const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined).activeElement as FocusableElement : null);
+  const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getDeepActiveElement(getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)) as FocusableElement : null);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
   // restoring-non-containing scopes should only care if they become active so they can perform the restore
