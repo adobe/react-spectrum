@@ -16,7 +16,6 @@ import 'client-only';
 
 export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
 
-export {Disclosure, DisclosurePanel, DisclosureStateContext, DisclosureContext} from './Disclosure';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
@@ -34,6 +33,7 @@ export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedC
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
+export {Disclosure, DisclosureGroup, DisclosureGroupStateContext, DisclosurePanel, DisclosureStateContext, DisclosureContext} from './Disclosure';
 export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
@@ -48,8 +48,8 @@ export {Collection, createLeafComponent as UNSTABLE_createLeafComponent, createB
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
-export {ListBox, ListBoxItem, ListBoxContext, ListStateContext} from './ListBox';
-export {Menu, MenuItem, MenuTrigger, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
+export {ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
+export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from './NumberField';
@@ -81,7 +81,6 @@ export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
 export {ListLayout as UNSTABLE_ListLayout, GridLayout as UNSTABLE_GridLayout} from '@react-stately/layout';
 
-export type {DisclosureProps, DisclosurePanelProps} from './Disclosure';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
@@ -98,6 +97,7 @@ export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
+export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from './Disclosure';
 export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
 export type {FieldErrorProps, FieldErrorRenderProps} from './FieldError';
 export type {FileTriggerProps} from './FileTrigger';
@@ -110,8 +110,8 @@ export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
-export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps} from './ListBox';
-export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps} from './Menu';
+export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps} from './ListBox';
+export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps, MenuSectionProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
 export type {ModalOverlayProps, ModalRenderProps} from './Modal';
 export type {NumberFieldProps, NumberFieldRenderProps} from './NumberField';

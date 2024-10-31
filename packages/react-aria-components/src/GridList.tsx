@@ -375,6 +375,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
             values={[
               [CheckboxContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   selection: checkboxProps
                 }
               }],

@@ -21,7 +21,7 @@ import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type:
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

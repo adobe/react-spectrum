@@ -16,12 +16,12 @@ import {
   ContextValue,
   SwitchRenderProps
 } from 'react-aria-components';
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

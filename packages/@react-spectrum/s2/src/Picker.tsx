@@ -11,8 +11,8 @@
  */
 
 import {
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
@@ -27,7 +27,7 @@ import {
   SectionProps,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -43,7 +43,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -93,13 +93,13 @@ export interface PickerProps<T extends object> extends
     /**
      * Direction the menu will render relative to the Picker.
      *
-     * @default "bottom"
+     * @default 'bottom'
      */
     direction?: 'bottom' | 'top',
     /**
      * Alignment of the menu relative to the input target.
      *
-     * @default "start"
+     * @default 'start'
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
@@ -285,6 +285,9 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
             <Button
               ref={domRef}
               style={renderProps => pressScale(domRef)(renderProps)}
+              // Prevent press scale from sticking while Picker is open.
+              // @ts-ignore
+              isPressed={false}
               className={renderProps => inputButton({
                 ...renderProps,
                 size: size,
@@ -457,11 +460,11 @@ export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
         className={section}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

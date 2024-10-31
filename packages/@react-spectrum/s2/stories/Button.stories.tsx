@@ -27,7 +27,8 @@ const meta: Meta<typeof Button> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
-  }
+  },
+  title: 'Button'
 };
 
 export default meta;
@@ -40,7 +41,7 @@ export const Example: Story = {
         <Button {...args}>Press me</Button>
         <Button {...args}><NewIcon /><Text>Test</Text></Button>
         <Button {...args}><Text>Test</Text><NewIcon /></Button>
-        <Button {...args}><NewIcon /></Button>
+        <Button aria-label="Press me" {...args}><NewIcon /></Button>
         <Button {...args} styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
         <Button {...args} styles={style({maxWidth: 128})}>
           <NewIcon />

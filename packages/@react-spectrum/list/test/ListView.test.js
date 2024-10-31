@@ -24,6 +24,7 @@ import {renderEmptyState} from '../stories/ListView.stories';
 import {scrollIntoView} from '@react-aria/utils';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -45,6 +46,7 @@ describe('ListView', function () {
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();
   let user;
+  let testUtilUser = new User();
   let checkSelection = (onSelectionChange, selectedKeys) => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
@@ -149,7 +151,7 @@ describe('ListView', function () {
   let focusRow = (tree, text) => act(() => getRow(tree, text).focus());
 
   it('renders a static listview', function () {
-    let {getByRole, getAllByRole} = render(
+    let {getByRole} = render(
       <ListView aria-label="List" data-testid="test">
         <Item>Foo</Item>
         <Item>Bar</Item>
@@ -158,19 +160,21 @@ describe('ListView', function () {
     );
 
     let grid = getByRole('grid');
+    let gridListTester = testUtilUser.createTester('GridList', {root: grid});
+
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'List');
     expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '1');
 
-    let rows = getAllByRole('row');
+    let rows = gridListTester.rows;
     expect(rows).toHaveLength(3);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
     expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
-    let gridCells = within(rows[0]).getAllByRole('gridcell');
+    let gridCells = gridListTester.cells({element: rows[0]});
     expect(gridCells).toHaveLength(1);
     expect(gridCells[0]).toHaveTextContent('Foo');
     expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
@@ -835,13 +839,16 @@ describe('ListView', function () {
 
     it('should support select all and clear all via keyboard', async function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+      let grid = tree.getByRole('grid');
+      let gridListTester = testUtilUser.createTester('GridList', {root: grid});
+      let rows = gridListTester.rows;
 
-      let rows = tree.getAllByRole('row');
-      await user.click(rows[0]);
+      await gridListTester.toggleRowSelection({index: 0});
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('Foo selected.');
       expect(announce).toHaveBeenCalledTimes(1);
+      expect(gridListTester.selectedRows).toHaveLength(1);
 
       fireEvent.keyDown(rows[0], {key: 'a', ctrlKey: true});
       fireEvent.keyUp(rows[0], {key: 'a', ctrlKey: true});
@@ -849,6 +856,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('All items selected.');
       expect(announce).toHaveBeenCalledTimes(2);
+      expect(gridListTester.selectedRows).toHaveLength(3);
 
       fireEvent.keyDown(rows[0], {key: 'Escape'});
       fireEvent.keyUp(rows[0], {key: 'Escape'});
@@ -856,6 +864,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
       expect(announce).toHaveBeenCalledTimes(3);
+      expect(gridListTester.selectedRows).toHaveLength(0);
     });
 
     describe('onAction', function () {
@@ -863,20 +872,19 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
 
-        let rows = tree.getAllByRole('row');
-        await user.click(rows[1]);
+        await gridListTester.triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
-        let checkbox = within(rows[1]).getByRole('checkbox');
-        await user.click(checkbox);
+        await gridListTester.toggleRowSelection({index: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar']);
 
         onSelectionChange.mockReset();
-        await user.click(rows[2]);
+        await gridListTester.toggleRowSelection({index: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar', 'baz']);
       });
@@ -885,20 +893,20 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
 
-        let rows = tree.getAllByRole('row');
-        await user.pointer({target: rows[1], keys: '[TouchA]'});
+        await gridListTester.triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
-        let checkbox = within(rows[1]).getByRole('checkbox');
-        await user.click(checkbox);
+        await gridListTester.toggleRowSelection({index: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar']);
 
         onSelectionChange.mockReset();
-        await user.pointer({target: rows[2], keys: '[TouchA]'});
+        gridListTester.setInteractionType('touch');
+        await gridListTester.toggleRowSelection({index: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar', 'baz']);
       });
@@ -942,21 +950,20 @@ describe('ListView', function () {
         });
       });
 
-      it('should trigger onAction when pressing Enter', function () {
+      it('should trigger onAction when pressing Enter', async function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
-        let rows = tree.getAllByRole('row');
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        gridListTester.setInteractionType('keyboard');
 
-        fireEvent.keyDown(rows[1], {key: 'Enter'});
-        fireEvent.keyUp(rows[1], {key: 'Enter'});
+        await gridListTester.triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
         onAction.mockReset();
-        fireEvent.keyDown(rows[2], {key: ' '});
-        fireEvent.keyUp(rows[2], {key: ' '});
+        await gridListTester.toggleRowSelection({index: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).not.toHaveBeenCalled();
         checkSelection(onSelectionChange, ['baz']);

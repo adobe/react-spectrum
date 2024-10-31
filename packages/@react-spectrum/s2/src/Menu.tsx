@@ -15,21 +15,21 @@ import {
   MenuItem as AriaMenuItem,
   MenuItemProps as AriaMenuItemProps,
   MenuProps as AriaMenuProps,
+  MenuSection as AriaMenuSection,
+  MenuSectionProps as AriaMenuSectionProps,
   MenuTrigger as AriaMenuTrigger,
   MenuTriggerProps as AriaMenuTriggerProps,
-  Section as AriaSection,
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   ContextValue,
   Provider,
-  SectionProps,
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, fontRelative, size, space, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
@@ -401,16 +401,16 @@ export function Divider(props: SeparatorProps) {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends SectionProps<T> {}
+export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
 export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside
   return (
     <>
-      <AriaSection
+      <AriaMenuSection
         {...props}
         className={section}>
         {props.children}
-      </AriaSection>
+      </AriaMenuSection>
       <Divider />
     </>
   );

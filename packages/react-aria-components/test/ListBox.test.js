@@ -19,9 +19,9 @@ import {
   ListBox,
   ListBoxContext,
   ListBoxItem,
+  ListBoxSection,
   UNSTABLE_ListLayout as ListLayout,
   Modal,
-  Section,
   Text,
   useDragAndDrop,
   UNSTABLE_Virtualizer as Virtualizer
@@ -81,12 +81,12 @@ describe('ListBox', () => {
         <ListBoxItem id="cat">Cat</ListBoxItem>
         <ListBoxItem id="dog">Dog</ListBoxItem>
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
-        <Section>
+        <ListBoxSection>
           <Header>Fish</Header>
           <ListBoxItem id="salmon">Salmon</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="cod">Cod</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
     let menu = getByRole('listbox');
@@ -157,9 +157,9 @@ describe('ListBox', () => {
     let itemRef = React.createRef();
     render(
       <ListBox aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <ListBoxSection ref={sectionRef}>
           <ListBoxItem ref={itemRef}>Cat</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -187,25 +187,25 @@ describe('ListBox', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Section data-test-prop="test-section-1">
+        <ListBoxSection data-test-prop="test-section-1">
           <Header>Veggies</Header>
           <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
           <ListBoxItem id="tomato">Tomato</ListBoxItem>
           <ListBoxItem id="onion">Onion</ListBoxItem>
-        </Section>
-        <Section data-test-prop="test-section-2" aria-label="Protein">
+        </ListBoxSection>
+        <ListBoxSection data-test-prop="test-section-2" aria-label="Protein">
           <ListBoxItem id="ham">Ham</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="tofu">Tofu</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
 
     let groups = getAllByRole('group');
     expect(groups).toHaveLength(2);
 
-    expect(groups[0]).toHaveClass('react-aria-Section');
-    expect(groups[1]).toHaveClass('react-aria-Section');
+    expect(groups[0]).toHaveClass('react-aria-ListBoxSection');
+    expect(groups[1]).toHaveClass('react-aria-ListBoxSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
@@ -1067,6 +1067,96 @@ describe('ListBox', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
+  });
+
+  const FalsyExample = () => (
+    <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace">
+      <ListBoxItem id="0">Item 0</ListBoxItem>
+      <ListBoxItem id="1">Item 1</ListBoxItem>
+      <ListBoxItem id="2">Item 2</ListBoxItem>
+    </ListBox>
+  );
+
+  describe('selection with falsy keys', () => {
+    describe('keyboard', () => {
+      it('should deselect item 0 when navigating back in replace selection mode', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+  
+        // Hold Shift and press ArrowUp to select item 0
+        await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+  
+        // Hold Shift and press ArrowDown to navigate back to item 1
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+      });
+  
+      it('should correctly handle starting selection at item 0 and extending to item 2', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+  
+        // Hold Shift and press ArrowDown to select item 1
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+  
+        // Hold Shift and press ArrowDown to select item 2
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'true');
+      });
+    });
+  
+    describe('mouse', () => {
+      it('should deselect item 0 when clicking another item in replace selection mode', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+      });
+  
+      it('should correctly handle mouse selection starting at item 0 and extending to item 2', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+  
+        await user.click(items[2]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+        expect(items[2]).toHaveAttribute('aria-selected', 'true');
       });
     });
   });

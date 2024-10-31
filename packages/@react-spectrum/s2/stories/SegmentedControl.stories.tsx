@@ -18,7 +18,7 @@ import ListMultiSelect from '../s2wf-icons/S2_Icon_ListMultiSelect_20_N.svg';
 import ListNumbered from '../s2wf-icons/S2_Icon_ListNumbered_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {SegmentedControl, SegmentedControlItem, Text} from '../src';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 
 const meta: Meta<typeof SegmentedControl> = {
@@ -26,17 +26,18 @@ const meta: Meta<typeof SegmentedControl> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'SegmentedControl'
 };
 
 export default meta;
 
 export const Example = (args: any) => (
-  <SegmentedControl {...args}>
-    <SegmentedControlItem value="day">Day</SegmentedControlItem>
-    <SegmentedControlItem value="week">Week</SegmentedControlItem>
-    <SegmentedControlItem value="month">Month</SegmentedControlItem>
-    <SegmentedControlItem value="year">Year</SegmentedControlItem>
+  <SegmentedControl {...args} styles={style({width: '[250px]'})}>
+    <SegmentedControlItem id="day">Day</SegmentedControlItem>
+    <SegmentedControlItem id="week">Week</SegmentedControlItem>
+    <SegmentedControlItem id="month">Month</SegmentedControlItem>
+    <SegmentedControlItem id="year">Year</SegmentedControlItem>
   </SegmentedControl>
 );
 
@@ -45,10 +46,10 @@ Example.args = {
 };
 
 export const WithIcons = (args: any) => (
-  <SegmentedControl {...args}>
-    <SegmentedControlItem value="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
-    <SegmentedControlItem value="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
-    <SegmentedControlItem value="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
+  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+    <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
+    <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
+    <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
   </SegmentedControl>
 );
 
@@ -58,9 +59,9 @@ WithIcons.args = {
 
 export const OnlyIcons = (args: any) => (
   <SegmentedControl {...args}>
-    <SegmentedControlItem value="align bottom"><AlignBottom /></SegmentedControlItem>
-    <SegmentedControlItem value="align center"><AlignCenter /></SegmentedControlItem>
-    <SegmentedControlItem value="align left"><AlignLeft /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align bottom" id="align bottom"><AlignBottom /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align center" id="align center"><AlignCenter /></SegmentedControlItem>
+    <SegmentedControlItem aria-label="Align left" id="align left"><AlignLeft /></SegmentedControlItem>
   </SegmentedControl>
 );
 
@@ -70,10 +71,10 @@ OnlyIcons.args = {
 
 export const CustomWidth = (args: any) => (
   <SegmentedControl {...args} styles={style({width: '[400px]'})}>
-    <SegmentedControlItem value="overview">Overview</SegmentedControlItem>
-    <SegmentedControlItem value="specs">Specs</SegmentedControlItem>
-    <SegmentedControlItem value="guidelines">Guidelines</SegmentedControlItem>
-    <SegmentedControlItem value="accessibility">Accessibility</SegmentedControlItem>
+    <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
+    <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
+    <SegmentedControlItem id="guidelines">Guidelines</SegmentedControlItem>
+    <SegmentedControlItem id="accessibility">Accessibility</SegmentedControlItem>
   </SegmentedControl>
 );
 

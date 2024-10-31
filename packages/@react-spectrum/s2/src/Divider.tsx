@@ -14,7 +14,7 @@ import {ContextValue, Separator as RACSeparator, SeparatorProps as RACSeparatorP
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

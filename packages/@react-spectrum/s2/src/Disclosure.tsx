@@ -10,33 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonContext} from './ActionButton';
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
+import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, forwardRef, ReactElement, useContext} from 'react';
-import {size as sizeValue, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {focusRing, lightDark, size as sizeValue, style} from '../style' with { type: 'macro' };
+import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-
-export interface DisclosureProps extends RACDisclosureProps, StyleProps, DOMProps {
+export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
   /**
    * The size of the disclosure.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The amount of space between the disclosures.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the disclosure should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** The contents of the disclosure, consisting of an DisclosureHeader and DisclosurePanel. */
-  children: [ReactElement<DisclosureHeaderProps>, ReactElement<DisclosurePanelProps>]
+  children: ReactNode
 }
 
 export const DisclosureContext = createContext<ContextValue<Omit<DisclosureProps, 'children'>, DOMRefValue<HTMLDivElement>>>(null);
@@ -48,10 +48,14 @@ const disclosure = style({
     isQuiet: 0
   },
   borderBottomWidth: {
-    default: 0,
-    ':last-child': {
-      default: 1,
-      isQuiet: 0
+    default: 1,
+    isQuiet: 0,
+    isInGroup: {
+      default: 0,
+      ':last-child': {
+        default: 1,
+        isQuiet: 0
+      }
     }
   },
   borderStartWidth: 0,
@@ -66,27 +70,24 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   let {
     size = 'M',
     density = 'regular',
-    isQuiet, isDisabled
+    isQuiet,
+    UNSAFE_style,
+    UNSAFE_className = ''
   } = props;
   let domRef = useDOMRef(ref);
-  let {
-    UNSAFE_style,
-    UNSAFE_className = '',
-    ...otherProps
-  } = props;
-  const domProps = filterDOMProps(otherProps);
+
+  let isInGroup = useContext(DisclosureContext) !== null;
 
   return (
     <Provider
       values={[
-        [DisclosureContext, {size, isQuiet, density, isDisabled}]
+        [DisclosureContext, {size, isQuiet, density}]
       ]}>
       <RACDisclosure
-        {...domProps}
-        isDisabled={isDisabled}
+        {...props}
         ref={domRef}
         style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + disclosure({isQuiet}, props.styles)}>
+        className={(UNSAFE_className ?? '') + disclosure({isQuiet, isInGroup}, props.styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
@@ -96,20 +97,26 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
 /**
  * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-let _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
+let _Disclosure = forwardRef(Disclosure);
 export {_Disclosure as Disclosure};
 
-export interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
+export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
    * 
    * @default 3
    */
   level?: number,
+  /** The contents of the disclosure header. */
+  children: React.ReactNode
+}
+
+interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
   children: React.ReactNode
 }
 
 const headingStyle = style({
-  margin: 0
+  margin: 0,
+  flexGrow: 1
 });
 
 const buttonStyles = style({
@@ -171,18 +178,17 @@ const buttonStyles = style({
   width: 'full',
   backgroundColor: {
     default: 'transparent',
-    isFocusVisible: 'transparent-black-100',
-    isHovered: 'transparent-black-100'
+    isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
+    isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
+    isPressed: lightDark('transparent-black-300', 'transparent-white-300')
   },
+  transition: 'default',
   borderWidth: 0,
   borderRadius: {
-    // Only rounded for keyboard focus and quiet hover.
+    // Only rounded for keyboard focus and quiet.
     default: 'none',
     isFocusVisible: 'control',
-    isQuiet: {
-      isHovered: 'control',
-      isFocusVisible: 'control'
-    }
+    isQuiet: 'control'
   },
   textAlign: 'start',
   disableTapHighlight: true
@@ -193,8 +199,7 @@ const chevronStyles = style({
     isRTL: 180,
     isExpanded: 90
   },
-  transitionDuration: '100ms',
-  transitionProperty: 'rotate',
+  transition: 'default',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -202,7 +207,52 @@ const chevronStyles = style({
   flexShrink: 0
 });
 
-function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
+const InternalDisclosureHeader = createContext<{} | null>(null);
+
+function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    UNSAFE_className,
+    UNSAFE_style,
+    children
+  } = props;
+  let domRef = useDOMRef(ref);
+  let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
+
+  let mapSize = {
+    S: 'XS',
+    M: 'S',
+    L: 'M',
+    XL: 'L'
+  };
+
+  // maps to one size smaller in the compact density to ensure there is space between the top and bottom of the action button and container
+  let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = size;
+  if (density === 'compact') {
+    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L';
+  }
+
+  return (
+    <Provider
+      values={[
+        [ActionButtonContext, {size: newSize, isQuiet}],
+        [InternalDisclosureHeader, {}]
+      ]}>
+      <div
+        style={UNSAFE_style}
+        className={(UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})}
+        ref={domRef}>
+        {children}
+      </div>
+    </Provider>
+  );
+}
+
+/**
+ * A wrapper element for the disclosure title that can contain other elements not part of the trigger.
+ */
+export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeaderWithForwardRef);
+
+function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     level = 3,
     UNSAFE_style,
@@ -215,14 +265,15 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {size, density, isQuiet} = useSlottedContext(DisclosureContext)!;
   let isRTL = direction === 'rtl';
-  return (
+
+  let buttonTrigger = (
     <Heading
       {...domProps}
       level={level}
       ref={domRef}
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
-      <Button className={({isHovered, isFocused, isFocusVisible, isDisabled}) => buttonStyles({size, isHovered, isFocused, isFocusVisible, density, isQuiet, isDisabled})} slot="trigger">
+      <Button className={(renderProps) => buttonStyles({...renderProps, size, density, isQuiet})} slot="trigger">
         <CenterBaseline>
           <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
         </CenterBaseline>
@@ -230,15 +281,25 @@ function DisclosureHeader(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivEleme
       </Button>
     </Heading>
   );
+  let ctx = useContext(InternalDisclosureHeader);
+  if (ctx) {
+    return buttonTrigger;
+  }
+
+  return (
+    <DisclosureHeader>
+      {buttonTrigger}
+    </DisclosureHeader>
+  );
 }
 
 /**
- * A header for a disclosure. Contains a heading and a trigger button to expand/collapse the panel.
+ * A disclosure title consisting of a heading and a trigger button to expand/collapse the panel.
  */
-let _DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeader);
-export {_DisclosureHeader as DisclosureHeader};
+let _DisclosureTitle = forwardRef(DisclosureTitle);
+export {_DisclosureTitle as DisclosureTitle};
 
-export interface DisclosurePanelProps extends RACDisclosurePanelProps, UnsafeStyles, DOMProps, AriaLabelingProps {
+export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode
 }
 
@@ -286,6 +347,6 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement
 /**
  * A disclosure panel is a collapsible section of content that is hidden until the disclosure is expanded.
  */
-let _DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosurePanel);
+let _DisclosurePanel = forwardRef(DisclosurePanel);
 export {_DisclosurePanel as DisclosurePanel};
 

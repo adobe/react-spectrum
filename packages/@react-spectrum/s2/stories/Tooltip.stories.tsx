@@ -15,8 +15,7 @@ import {CombinedTooltip} from '../src/Tooltip';
 import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {userEvent, within} from '@storybook/testing-library';
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
@@ -27,7 +26,8 @@ const meta: Meta<typeof CombinedTooltip> = {
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
   },
-  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>]
+  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>],
+  title: 'Tooltip'
 };
 
 export default meta;
@@ -79,13 +79,6 @@ export const Example = (args: any) => {
     </div>
   );
 };
-
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
 
 Example.story = {
   argTypes: {
@@ -141,12 +134,6 @@ LongLabel.story = {
   }
 };
 
-LongLabel.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
 export const ColorScheme = (args: any) => (
   <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
     <Example {...args} />
@@ -160,10 +147,4 @@ ColorScheme.story = {
       options: [true, false, undefined]
     }
   }
-};
-
-ColorScheme.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
 };

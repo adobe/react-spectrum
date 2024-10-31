@@ -36,17 +36,17 @@
     "strict": false,
     "plugins": [
       {
+        "name": "@react-spectrum/ts-plugin"
+      },
+      {
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@internationalized",
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
-          "./packages/@react-aria/checkbox",
+          "./packages/@react-aria/c",
+          "./packages/@react-aria/d",
           "./packages/@react-aria/l",
-          "./packages/@react-aria/meter",
-          "./packages/@react-aria/color",
-          "./packages/@react-aria/collections",
-          "./packages/@react-aria/dialog",
           "./packages/@react-aria/disclosure",
           "./packages/@react-aria/e",
           "./packages/@react-aria/f",
@@ -69,6 +69,7 @@
           "./packages/@react-aria/switch",
           "./packages/@react-aria/tabs",
           "./packages/@react-aria/tag",
+          "./packages/@react-aria/test-utils",
           "./packages/@react-aria/toggle",
           "./packages/@react-aria/u",
           "./packages/@react-aria/visually-hidden",

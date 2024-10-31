@@ -24,7 +24,7 @@ export default meta;
 
 export const Template = (args) => (
   <Accordion {...args}>
-    <Disclosure key="files">
+    <Disclosure id="files">
       <DisclosureHeader>
         Your files
       </DisclosureHeader>
@@ -32,7 +32,7 @@ export const Template = (args) => (
         files
       </DisclosurePanel>
     </Disclosure>
-    <Disclosure key="shared">
+    <Disclosure id="shared">
       <DisclosureHeader>
         Shared with you
       </DisclosureHeader>
@@ -40,7 +40,7 @@ export const Template = (args) => (
         shared
       </DisclosurePanel>
     </Disclosure>
-    <Disclosure key="last">
+    <Disclosure id="last">
       <DisclosureHeader>
         Last item
       </DisclosureHeader>
@@ -55,4 +55,47 @@ export const Default = {
   render: Template
 };
 
-// TODO: more stories
+export const WithExpandedKeys = {
+  render: Template,
+  args: {defaultExpandedKeys: ['shared']}
+};
+
+export const WithDisabledDisclosure = {
+  render: (args) => (
+    <Accordion {...args}>
+      <Disclosure id="files">
+        <DisclosureHeader>
+          Your files
+        </DisclosureHeader>
+        <DisclosurePanel>
+          files
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="shared">
+        <DisclosureHeader>
+          Shared with you
+        </DisclosureHeader>
+        <DisclosurePanel>
+          shared
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="last" isDisabled>
+        <DisclosureHeader>
+          Last item
+        </DisclosureHeader>
+        <DisclosurePanel>
+          last
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>)
+};
+
+export const Disabled = {
+  render: Template,
+  args: {isDisabled: true}
+};
+
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
+};

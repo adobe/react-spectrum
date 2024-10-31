@@ -62,12 +62,12 @@ as the unique key for that item, and the `items` property as the children. In ad
 for the listbox, which will automatically be updated when items are removed from the tree.
 
 ```tsx
-interface Iitem {
+interface ItemValue {
   name: string;
-  items?: Array<Iitem>;
+  items?: Array<ItemValue>;
 }
 
-let tree = useTreeData<Iitem>({
+let tree = useTreeData<ItemValue>({
   initialItems: [
     {
       name: 'People',
