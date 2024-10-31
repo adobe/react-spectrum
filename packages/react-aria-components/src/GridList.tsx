@@ -297,7 +297,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
 
   let {isFocusVisible, focusProps} = useFocusRing();
   let {checkboxProps} = useGridListSelectionCheckbox(
-    {key: item.key, isVirtualized},
+    {key: item.key},
     state
   );
 

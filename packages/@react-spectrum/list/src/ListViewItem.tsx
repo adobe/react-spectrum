@@ -77,7 +77,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled: !allowsSelection && !hasAction});
 
-  let {checkboxProps} = useGridListSelectionCheckbox({key: item.key, isVirtualized: true}, state);
+  let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
   let hasDescription = useHasChild(`.${listStyles['react-spectrum-ListViewItem-description']}`, rowRef);
 
   let draggableItem: DraggableItemResult;
