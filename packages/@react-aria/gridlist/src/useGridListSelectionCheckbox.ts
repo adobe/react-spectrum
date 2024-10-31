@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaGridListOptions} from './useGridList';
 import {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria, useGridSelectionCheckbox} from '@react-aria/grid';
-import {getRowId, normalizeKey} from './utils';
+import {getRowId} from './utils';
 import type {ListState} from '@react-stately/list';
 
 /**
@@ -20,14 +19,14 @@ import type {ListState} from '@react-stately/list';
  * @param props - Props for the selection checkbox.
  * @param state - State of the list, as returned by `useListState`.
  */
-export function useGridListSelectionCheckbox<T>(props: AriaGridSelectionCheckboxProps & Pick<AriaGridListOptions<T>, 'isVirtualized'>, state: ListState<T>): GridSelectionCheckboxAria {
-  let {isVirtualized, key} = props;
+export function useGridListSelectionCheckbox<T>(props: AriaGridSelectionCheckboxProps, state: ListState<T>): GridSelectionCheckboxAria {
+  let {key} = props;
   const {checkboxProps} = useGridSelectionCheckbox(props, state as any);
 
   return {
     checkboxProps: {
       ...checkboxProps,
-      'aria-labelledby': `${checkboxProps.id} ${isVirtualized ? getRowId(state, key) : normalizeKey(key)}`
+      'aria-labelledby': `${checkboxProps.id} ${getRowId(state, key)}`
     }
   };
 }

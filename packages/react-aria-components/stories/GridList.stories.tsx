@@ -316,7 +316,16 @@ export function VirtualizedGridListGridWithMultiTab() {
 
   return (
     <Virtualizer layout={layout}>
-      <GridList keyboardNavigationBehavior="tab" className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
+      <GridList 
+        items={items}
+        keyboardNavigationBehavior="tab" 
+        className={styles.menu}
+        aria-label="virtualized grid list with multitab" 
+        layout="grid" 
+        style={{
+          width: 400,
+          height: 400
+        }}>
         {item => (
           <MyGridListItem>
             {item.name}

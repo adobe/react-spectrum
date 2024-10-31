@@ -30,12 +30,17 @@ export function getRowId<T>(state: ListState<T>, key: Key) {
     throw new Error('Unknown list');
   }
 
-  return `${id}-${normalizeKey(key)}`;
+  return `${id}-${normalizeKey(state, key)}`;
 }
 
-export function normalizeKey(key: Key): string {
+export function normalizeKey<T>(state: ListState<T>, key: Key): string {
+  let {id} = listMap.get(state);
+  if (!id) {
+    throw new Error('Unknown list');
+  }
+
   if (typeof key === 'string') {
-    return key.replace(/\s*/g, '');
+    return key.replace(/\s*/g, '').replace(id, '');
   }
 
   return '' + key;

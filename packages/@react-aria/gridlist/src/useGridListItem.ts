@@ -14,7 +14,7 @@ import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSy
 import {DOMAttributes, FocusableElement, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
-import {getRowId, listMap, normalizeKey} from './utils';
+import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
@@ -262,8 +262,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
       let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
       let isShiftTab = isFocusVisible() && Boolean(comparedPosition & Node.DOCUMENT_POSITION_FOLLOWING);
-      let isVirtualizedSibling = isVirtualized && e.relatedTarget.id.startsWith(id) && e.relatedTarget.role === 'row';
-      let isSibling = e.relatedTarget.parentElement === ref.current.parentElement || isVirtualizedSibling;
+      let isSibling = e.relatedTarget.role === 'row' && e.relatedTarget.id.startsWith(id);
 
       if (isShiftTab && !isFocusWithin && !isSibling) {
         let walker = getFocusableTreeWalker(ref.current);
@@ -290,8 +289,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   //   });
   // }
 
-  let rowId = isVirtualized ? getRowId(state, node.key) : normalizeKey(node.key);
-  
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
@@ -301,8 +298,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     'aria-label': node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
-    'aria-labelledby': descriptionId && node.textValue ? `${rowId} ${descriptionId}` : undefined,
-    id: rowId
+    'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
+    id: getRowId(state, node.key)
   });
 
   if (isVirtualized) {
