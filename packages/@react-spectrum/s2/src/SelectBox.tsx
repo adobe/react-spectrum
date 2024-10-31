@@ -268,7 +268,7 @@ const selectBoxDescriptionStyle = style({
   display: {
     default: 'none',
     orientation: {
-      horizontal: 'block',
+      horizontal: 'block'
     }
   },
   color: 'gray-600',
@@ -299,7 +299,8 @@ const SelectBox = (props: SelectBoxProps, ref: FocusableRef<HTMLLabelElement>) =
   const Selector = selectionMode === 'single' ? Radio : Checkbox;
   const domRef = useFocusableRef<HTMLLabelElement>(ref);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const {UNSAFE_className, UNSAFE_style} = props;
+  // TODO: readd UNSAFE_style
+  const {UNSAFE_className} = props;
 
   return (
     <AriaSelector
