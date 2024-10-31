@@ -262,7 +262,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
       let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
       let isShiftTab = isFocusVisible() && Boolean(comparedPosition & Node.DOCUMENT_POSITION_FOLLOWING);
-      let isSibling = e.relatedTarget.role === 'row' && e.relatedTarget.id.startsWith(id);
+      let isSibling = e.relatedTarget.getAttribute('role') === 'row' && e.relatedTarget.id.startsWith(id);
 
       if (isShiftTab && !isFocusWithin && !isSibling) {
         let walker = getFocusableTreeWalker(ref.current);
