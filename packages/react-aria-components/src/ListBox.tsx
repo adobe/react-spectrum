@@ -11,7 +11,7 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -246,7 +246,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
-            [SectionContext, {render: ListBoxSection}]
+            [SectionContext, {name: 'ListBoxSection', render: ListBoxSection}]
           ]}>
           <CollectionRoot
             collection={collection}
@@ -261,7 +261,9 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
   );
 }
 
-function ListBoxSection<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>) {
+export interface ListBoxSectionProps<T> extends SectionProps<T> {}
+
+function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
@@ -271,7 +273,7 @@ function ListBoxSection<T extends object>(props: SectionProps<T>, ref: Forwarded
     'aria-label': props['aria-label'] ?? undefined
   });
   let renderProps = useRenderProps({
-    defaultClassName: 'react-aria-Section',
+    defaultClassName: className,
     className: props.className,
     style: props.style,
     values: {}
@@ -292,6 +294,12 @@ function ListBoxSection<T extends object>(props: SectionProps<T>, ref: Forwarded
     </section>
   );
 }
+
+/**
+ * A ListBoxSection represents a section within a ListBox.
+ */
+const _ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSection);
+export {_ListBoxSection as ListBoxSection};
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 

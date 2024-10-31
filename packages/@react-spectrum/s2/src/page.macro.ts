@@ -29,6 +29,11 @@ export function generatePageStyles(this: MacroContext | void) {
         color-scheme: light dark;
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
+        --s2-scale: 1;
+
+        @media not ((hover: hover) and (pointer: fine)) {
+          --s2-scale: 1.25;
+        }
 
         &[data-color-scheme=light] {
           color-scheme: light;
@@ -55,6 +60,7 @@ export function generatePageStyles(this: MacroContext | void) {
 // a <Provider> without setting a colorScheme prop, and when page.css is not present.
 // It is equivalent to setting `color-scheme: light dark`, but without overriding
 // the browser default for content outside the provider.
+// Also set defaults for --s2-scale here.
 export function generateDefaultColorSchemeStyles(this: MacroContext | void) {
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
@@ -63,10 +69,15 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void) {
         :where(html) {
           --lightningcss-light: initial;
           --lightningcss-dark: ;
+          --s2-scale: 1;
 
           @media (prefers-color-scheme: dark) {
             --lightningcss-light: ;
             --lightningcss-dark: initial;
+          }
+
+          @media not ((hover: hover) and (pointer: fine)) {
+            --s2-scale: 1.25;
           }
         }
       }`
