@@ -245,8 +245,6 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
   return (
     <ToggleButton 
       {...props}
-      id={undefined}
-      value={props.id}
       ref={domRef} 
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + controlItem(renderProps, props.styles)} >

@@ -12,7 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, Text, useSlottedContext} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';

@@ -18,8 +18,8 @@ import userEvent from '@testing-library/user-event';
 function renderGroup(props) {
   return render(
     <ToggleButtonGroup {...props}>
-      <ToggleButton value="foo">Foo</ToggleButton>
-      <ToggleButton value="bar">Bar</ToggleButton>
+      <ToggleButton id="foo">Foo</ToggleButton>
+      <ToggleButton id="bar">Bar</ToggleButton>
     </ToggleButtonGroup>
   );
 }

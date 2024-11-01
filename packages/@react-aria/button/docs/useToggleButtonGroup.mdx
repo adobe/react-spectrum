@@ -37,7 +37,7 @@ keywords: [button, toggle button, aria, form]
 ## API
 
 <FunctionAPI function={docs.exports.useToggleButtonGroup} links={docs.links} />
-<FunctionAPI function={docs.exports.useToggleButton} links={docs.links} />
+<FunctionAPI function={docs.exports.useToggleButtonGroupItem} links={docs.links} />
 
 ## Features
 
@@ -118,9 +118,9 @@ function ToggleButton(props: AriaToggleButtonGroupItemProps) {
 }
 
 <ToggleButtonGroup>
-  <ToggleButton value="left">Left</ToggleButton>
-  <ToggleButton value="center">Center</ToggleButton>
-  <ToggleButton value="right">Right</ToggleButton>
+  <ToggleButton id="left">Left</ToggleButton>
+  <ToggleButton id="center">Center</ToggleButton>
+  <ToggleButton id="right">Right</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -169,7 +169,7 @@ function ToggleButton(props: AriaToggleButtonGroupItemProps) {
 
 ## Selection
 
-ToggleButtonGroup supports both single and multiple selection modes. Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `value` prop of the items.
+ToggleButtonGroup supports both single and multiple selection modes. Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
 
 ### Single selection
 
@@ -177,9 +177,9 @@ By default, the `selectionMode` of a `ToggleButtonGroup` is `"single"`.
 
 ```tsx example
 <ToggleButtonGroup defaultSelectedKeys={['list']}>
-  <ToggleButton value="grid">Grid view</ToggleButton>
-  <ToggleButton value="list">List view</ToggleButton>
-  <ToggleButton value="gallery">Gallery view</ToggleButton>
+  <ToggleButton id="grid">Grid view</ToggleButton>
+  <ToggleButton id="list">List view</ToggleButton>
+  <ToggleButton id="gallery">Gallery view</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -189,9 +189,9 @@ Set `selectionMode` prop to `multiple` to allow more than one selection.
 
 ```tsx example
 <ToggleButtonGroup selectionMode="multiple">
-  <ToggleButton value="bold">Bold</ToggleButton>
-  <ToggleButton value="italic">Italic</ToggleButton>
-  <ToggleButton value="underline">Underline</ToggleButton>
+  <ToggleButton id="bold">Bold</ToggleButton>
+  <ToggleButton id="italic">Italic</ToggleButton>
+  <ToggleButton id="underline">Underline</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -208,9 +208,9 @@ function Example() {
   return (
     <>
       <ToggleButtonGroup selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
-        <ToggleButton value="bold">Bold</ToggleButton>
-        <ToggleButton value="italic">Italic</ToggleButton>
-        <ToggleButton value="underline">Underline</ToggleButton>
+        <ToggleButton id="bold">Bold</ToggleButton>
+        <ToggleButton id="italic">Italic</ToggleButton>
+        <ToggleButton id="underline">Underline</ToggleButton>
       </ToggleButtonGroup>
       <p>Current selections (controlled): {[...selected].join(', ')}</p>
     </>
@@ -224,9 +224,9 @@ All buttons within a `ToggleButtonGroup` can be disabled using the `isDisabled` 
 
 ```tsx example
 <ToggleButtonGroup isDisabled>
-  <ToggleButton value="grid">Grid view</ToggleButton>
-  <ToggleButton value="list">List view</ToggleButton>
-  <ToggleButton value="gallery">Gallery view</ToggleButton>
+  <ToggleButton id="grid">Grid view</ToggleButton>
+  <ToggleButton id="list">List view</ToggleButton>
+  <ToggleButton id="gallery">Gallery view</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -234,9 +234,9 @@ Individual items can be disabled using the `isDisabled` prop on each `ToggleButt
 
 ```tsx example
 <ToggleButtonGroup>
-  <ToggleButton value="grid">Grid view</ToggleButton>
-  <ToggleButton value="list" isDisabled>List view</ToggleButton>
-  <ToggleButton value="gallery">Gallery view</ToggleButton>
+  <ToggleButton id="grid">Grid view</ToggleButton>
+  <ToggleButton id="list" isDisabled>List view</ToggleButton>
+  <ToggleButton id="gallery">Gallery view</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -246,9 +246,9 @@ By default, toggle button groups are horizontally oriented. The orientation prop
 
 ```tsx example
 <ToggleButtonGroup orientation="vertical">
-  <ToggleButton value="grid">Grid</ToggleButton>
-  <ToggleButton value="list">List</ToggleButton>
-  <ToggleButton value="gallery">Gallery</ToggleButton>
+  <ToggleButton id="grid">Grid</ToggleButton>
+  <ToggleButton id="list">List</ToggleButton>
+  <ToggleButton id="gallery">Gallery</ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -258,8 +258,8 @@ A `ToggleButtonGroup` can be labeled using the `aria-label` or `aria-labelledby`
 
 ```tsx example
 <ToggleButtonGroup aria-label="Text style">
-  <ToggleButton value="bold">Bold</ToggleButton>
-  <ToggleButton value="italic">Italic</ToggleButton>
-  <ToggleButton value="underline">Underline</ToggleButton>
+  <ToggleButton id="bold">Bold</ToggleButton>
+  <ToggleButton id="italic">Italic</ToggleButton>
+  <ToggleButton id="underline">Underline</ToggleButton>
 </ToggleButtonGroup>
 ```

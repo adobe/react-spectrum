@@ -71,9 +71,9 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
 export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
-export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends AriaToggleButtonProps<E> {
+export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id'> {
   /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
-  value: Key
+  id: Key
 }
 
 /** @deprecated */
