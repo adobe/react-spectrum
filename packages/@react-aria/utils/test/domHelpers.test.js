@@ -217,4 +217,18 @@ describe('getDeepActiveElement', () => {
     document.body.removeChild(hostDiv);
     document.body.removeChild(bodyInput);
   });
+
+  it('returns the active element within an iframe', () => {
+    const iframe = document.createElement('iframe');
+    const input = document.createElement('input');
+    window.document.body.appendChild(iframe);
+    iframe.contentWindow.document.body.appendChild(input);
+
+    act(() => {input.focus();});
+
+    expect(getDeepActiveElement(iframe.contentWindow.document)).toBe(input);
+
+    // Teardown
+    iframe.remove();
+  });
 });
