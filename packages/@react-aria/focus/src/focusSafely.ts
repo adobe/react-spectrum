@@ -14,10 +14,10 @@ import {FocusableElement} from '@react-types/shared';
 import {
   focusWithoutScrolling,
   getDeepActiveElement,
+  getRootNode,
   runAfterTransition
 } from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
-import {getRootNode} from '@react-aria/utils/src';
 
 /**
  * A utility function that focuses an element while avoiding undesired side effects such
