@@ -17,6 +17,7 @@ export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox'
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
+export type {GroupProps, GroupState} from '@react-stately/group';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
 export type {MenuTriggerProps, MenuTriggerState, RootMenuTriggerState, SubmenuTriggerState, SubmenuTriggerProps} from '@react-stately/menu';
 export type {OverlayTriggerProps, OverlayTriggerState} from '@react-stately/overlays';
@@ -41,6 +42,7 @@ export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeF
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
+export {useGroupState, GroupStateContext} from '@react-stately/group';
 export {useListState, useSingleSelectListState} from '@react-stately/list';
 export {useMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 export {useNumberFieldState} from '@react-stately/numberfield';

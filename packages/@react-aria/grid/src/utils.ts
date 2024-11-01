@@ -15,7 +15,9 @@ import type {GridState} from '@react-stately/grid';
 import type {Key, KeyboardDelegate} from '@react-types/shared';
 
 interface GridMapShared {
+  id: string,
   keyboardDelegate: KeyboardDelegate,
+  keyboardNavigationBehavior: 'arrow' | 'tab',
   actions: {
     onRowAction: (key: Key) => void,
     onCellAction: (key: Key) => void
@@ -26,3 +28,34 @@ interface GridMapShared {
 // keyboard delegate between useGrid and useGridCell
 // onRowAction/onCellAction across hooks
 export const gridMap = new WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared>();
+
+export function getColumnHeaderId<T, C extends GridCollection<T>>(state: GridState<T, C>, columnKey: Key): string {
+  let gridId = gridMap.get(state);
+  if (!gridId) {
+    throw new Error('Unknown grid');
+  }
+
+  return `${gridId}-${normalizeKey(state, columnKey)}`;
+}
+
+export function getCellId<T, C extends GridCollection<T>>(state: GridState<T, C>, rowKey: Key, columnKey: Key) {
+  let {id} = gridMap.get(state);
+  if (!id) {
+    throw new Error('Unknown grid');
+  }
+
+  return `${id}-${normalizeKey(state, rowKey)}-${normalizeKey(state, columnKey)}`;
+}
+
+export function normalizeKey<T, C extends GridCollection<T>>(state: GridState<T, C>, key: Key): string {
+  let {id} = gridMap.get(state);
+  if (!id) {
+    throw new Error('Unknown grid');
+  }
+
+  if (typeof key === 'string') {
+    return key.replace(/\s*/g, '').replace(id, '');
+  }
+
+  return '' + key;
+}

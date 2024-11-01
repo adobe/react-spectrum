@@ -16,9 +16,10 @@ import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
+import {GroupStateContext} from '@react-stately/group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useContext, useRef, useState} from 'react';
 import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 
@@ -53,6 +54,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'plac
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  let groupState = useContext(GroupStateContext);
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -61,6 +63,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   let [inputElementType, setInputElementType] = useState('input');
   let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField<any>({
     ...removeDataAttributes(props),
+    ...groupState,
     inputElementType,
     label,
     validationBehavior

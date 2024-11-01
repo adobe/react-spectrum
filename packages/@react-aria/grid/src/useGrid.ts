@@ -42,6 +42,12 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    */
   getRowText?: (key: Key) => string,
   /**
+   * Whether keyboard navigation to focusable elements within the grid is
+   * via the left/right arrow keys or the tab key.
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab',
+  /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
   scrollRef?: RefObject<HTMLElement | null>,
@@ -71,7 +77,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     scrollRef,
     getRowText,
     onRowAction,
-    onCellAction
+    onCellAction,
+    keyboardNavigationBehavior = 'arrow'
   } = props;
   let {selectionManager: manager} = state;
 
@@ -103,7 +110,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let id = useId(props.id);
-  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+  gridMap.set(state, {id, keyboardDelegate: delegate, keyboardNavigationBehavior, actions: {onRowAction, onCellAction}});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,

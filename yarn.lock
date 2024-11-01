@@ -5987,6 +5987,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/group@npm:3.0.0-alpha.1, @react-aria/group@workspace:packages/@react-aria/group":
+  version: 0.0.0-use.local
+  resolution: "@react-aria/group@workspace:packages/@react-aria/group"
+  dependencies:
+    "@react-aria/label": "npm:^3.7.12"
+    "@react-types/shared": "npm:^3.25.0"
+    "@swc/helpers": "npm:^0.5.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@react-aria/i18n@npm:^3.1.0, @react-aria/i18n@npm:^3.12.3, @react-aria/i18n@npm:^3.6.3, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
@@ -8327,6 +8339,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-stately/group@npm:3.0.0-alpha.1, @react-stately/group@workspace:packages/@react-stately/group":
+  version: 0.0.0-use.local
+  resolution: "@react-stately/group@workspace:packages/@react-stately/group"
+  dependencies:
+    "@react-stately/utils": "npm:^3.0.0"
+    "@react-types/shared": "npm:^3.25.0"
+    "@swc/helpers": "npm:^0.5.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@react-stately/layout@npm:^4.0.3, @react-stately/layout@workspace:packages/@react-stately/layout":
   version: 0.0.0-use.local
   resolution: "@react-stately/layout@workspace:packages/@react-stately/layout"
@@ -8569,7 +8593,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/utils@npm:^3.1.0, @react-stately/utils@npm:^3.10.4, @react-stately/utils@workspace:packages/@react-stately/utils":
+"@react-stately/utils@npm:^3.0.0, @react-stately/utils@npm:^3.1.0, @react-stately/utils@npm:^3.10.4, @react-stately/utils@workspace:packages/@react-stately/utils":
   version: 0.0.0-use.local
   resolution: "@react-stately/utils@workspace:packages/@react-stately/utils"
   dependencies:
@@ -28990,6 +29014,7 @@ __metadata:
     "@react-aria/disclosure": "npm:3.0.0-alpha.1"
     "@react-aria/dnd": "npm:^3.7.4"
     "@react-aria/focus": "npm:^3.18.4"
+    "@react-aria/group": "npm:3.0.0-alpha.1"
     "@react-aria/interactions": "npm:^3.22.4"
     "@react-aria/live-announcer": "npm:^3.4.0"
     "@react-aria/menu": "npm:^3.15.5"
@@ -29038,6 +29063,7 @@ __metadata:
     "@react-aria/dnd": "npm:^3.7.4"
     "@react-aria/focus": "npm:^3.18.4"
     "@react-aria/gridlist": "npm:^3.9.5"
+    "@react-aria/group": "npm:3.0.0-alpha.1"
     "@react-aria/i18n": "npm:^3.12.3"
     "@react-aria/interactions": "npm:^3.22.4"
     "@react-aria/label": "npm:^3.7.12"
@@ -29434,6 +29460,7 @@ __metadata:
     "@react-stately/datepicker": "npm:^3.10.3"
     "@react-stately/dnd": "npm:^3.4.3"
     "@react-stately/form": "npm:^3.0.6"
+    "@react-stately/group": "npm:3.0.0-alpha.1"
     "@react-stately/list": "npm:^3.11.0"
     "@react-stately/menu": "npm:^3.8.3"
     "@react-stately/numberfield": "npm:^3.9.7"

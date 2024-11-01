@@ -257,24 +257,26 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
-    if (e.relatedTarget && keyboardNavigationBehavior === 'tab') {
-      let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget);
+    requestAnimationFrame(() => {
+      if (e.relatedTarget && keyboardNavigationBehavior === 'tab') {
+        let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget);
 
-      let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
-      let isShiftTab = isFocusVisible() && Boolean(comparedPosition & Node.DOCUMENT_POSITION_FOLLOWING);
-      let isSibling = e.relatedTarget.getAttribute('role') === 'row' && e.relatedTarget.id.startsWith(id);
+        let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
+        let isShiftTab = isFocusVisible() && Boolean(comparedPosition & Node.DOCUMENT_POSITION_FOLLOWING);
+        let isSibling = e.relatedTarget.getAttribute('role') === 'row' && e.relatedTarget.id.startsWith(id);
 
-      if (isShiftTab && !isFocusWithin && !isSibling) {
-        let walker = getFocusableTreeWalker(ref.current);
-        walker.currentNode = ref.current;
+        if (isShiftTab && !isFocusWithin && !isSibling) {
+          let walker = getFocusableTreeWalker(ref.current);
+          walker.currentNode = ref.current;
 
-        let focusable = last(walker);
-        
-        if (focusable) {
-          focusSafely(focusable);
+          let focusable = last(walker);
+          
+          if (focusable) {
+            focusSafely(focusable);
+          }
         }
       }
-    }
+    });
   };
 
   let syntheticLinkProps = useSyntheticLinkProps(node.props);

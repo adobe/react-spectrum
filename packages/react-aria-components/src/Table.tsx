@@ -6,7 +6,7 @@ import {CheckboxContext} from './RSPContexts';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
+import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, GroupStateContext, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -293,6 +293,11 @@ export interface TableRenderProps {
    */
   isDropTarget: boolean,
   /**
+   * Whether the table is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
    * State of the table.
    */
   state: TableState<unknown>
@@ -314,7 +319,15 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks,
+  /** Whether the content can be selected but not changed by the user. */
+  isReadOnly?: boolean,
+  /**
+   * Whether keyboard navigation to focusable elements within the cell is
+   * via the left/right arrow keys or the tab key.
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab'
 }
 
 function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
@@ -437,6 +450,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       isDropTarget: isRootDropTarget,
       isFocused,
       isFocusVisible,
+      isReadOnly: state.isReadOnly,
       state
     }
   });
@@ -480,7 +494,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-allows-dragging={isListDraggable || undefined}
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}>
+          data-focus-visible={isFocusVisible || undefined}
+          data-readonly={state.isReadOnly || undefined}>
           <CollectionRoot
             collection={collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}
@@ -1159,6 +1174,11 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
 export interface CellRenderProps {
   /**
+   * Whether the cell content is being edited.
+   * @selector [data-editing]
+   */
+  isEditing: boolean,
+  /**
    * Whether the cell is currently in a pressed state.
    * @selector [data-pressed]
    */
@@ -1177,14 +1197,21 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean,
+  /**
+   * Whether the cell is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
-  /** The unique id of the cell. */
-  id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the cell is editable. */
+  isEditable?: boolean,
+  /** Whether the content can be selected but not changed by the user. */
+  isReadOnly?: boolean
 }
 
 /**
@@ -1199,10 +1226,12 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
-  let {gridCellProps, isPressed} = useTableCell({
+  let {gridCellProps, isPressed, isEditing, isReadOnly} = useTableCell({
     node: cell,
     shouldSelectOnPressUp: !!dragState,
-    isVirtualized
+    isVirtualized,
+    isEditable: props.isEditable,
+    isReadOnly: props.isReadOnly
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
@@ -1215,23 +1244,28 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      isEditing,
+      isReadOnly
     }
   });
 
   let TD = useElementType('td');
+  let groupState = useMemo(() => ({isReadOnly}), [isReadOnly]);
 
   return (
     <TD
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-editing={isEditing || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}>
-      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+      data-pressed={isPressed || undefined}
+      data-readonly={isReadOnly || undefined}>
+      <Provider values={[[GroupStateContext, groupState], [CollectionRendererContext, DefaultCollectionRenderer]]}>
         {renderProps.children}
-      </CollectionRendererContext.Provider>
+      </Provider>
     </TD>
   );
 });

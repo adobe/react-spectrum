@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Input, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, TextField, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
 import React, {useMemo, useRef} from 'react';
@@ -889,4 +889,125 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
   name: 'Virtualized Table with async loading, resizable table container wrapper'
+};
+
+export const TableEditModeExample = () => {
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row columns={columns}>
+            <Cell>{item.name}</Cell>
+            <Cell isEditable>
+              <TextField defaultValue={item.type}>
+                <Input />
+              </TextField>
+              <TextField defaultValue={'test'}>
+                <Input />
+              </TextField>
+            </Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const TableEditModeReadOnlyExample = () => {
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row columns={columns}>
+            <Cell>{item.name}</Cell>
+            <Cell isEditable isReadOnly>
+              <TextField defaultValue={item.type}>
+                <Input />
+              </TextField>
+            </Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const TableEditModeWithArrowNavigationExample = () => {
+  let interactiveColumns = [...columns, {name: 'Actions', id: 'actions'}];
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={interactiveColumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row columns={interactiveColumns}>
+            <Cell>{item.name}</Cell>
+            <Cell isEditable>
+              <Button>Action1</Button>
+              <TextField defaultValue={item.type}>
+                <Input />
+              </TextField>
+              <TextField defaultValue={'test'}>
+                <Input />
+              </TextField>
+            </Cell>
+            <Cell>{item.date}</Cell>
+            <Cell>
+              <Button>Action1</Button>
+              <Button>Action2</Button>
+            </Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const TableEditModeWithTabNavigationExample = () => {
+  let interactiveColumns = [...columns, {name: 'Actions', id: 'actions'}];
+  return (
+    <Table aria-label="Files" keyboardNavigationBehavior="tab">
+      <TableHeader columns={interactiveColumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row columns={interactiveColumns}>
+            <Cell>{item.name}</Cell>
+            <Cell isEditable>
+              <Button>Action1</Button>
+              <TextField defaultValue={item.type}>
+                <Input />
+              </TextField>
+              <TextField defaultValue={'test'}>
+                <Input />
+              </TextField>
+            </Cell>
+            <Cell>{item.date}</Cell>
+            <Cell>
+              <Button>Action1</Button>
+              <Button>Action2</Button>
+            </Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
 };
