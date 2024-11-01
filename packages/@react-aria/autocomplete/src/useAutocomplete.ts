@@ -121,7 +121,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
       'aria-controls': menuId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
-      // 'aria-activedescendant': state.focusedNodeId ?? undefined,
+      'aria-activedescendant': state.focusedNodeId ?? undefined,
       // TODO: note that the searchbox role causes newly typed letters to interrupt the announcement of the number of available options in Safari.
       // I tested on iPad/Android/etc and the combobox role doesn't seem to do that but it will announce that there is a listbox which isn't true
       // and it will say press Control Option Space to display a list of options which is also incorrect. To be fair though, our combobox doesn't open with
