@@ -66,7 +66,7 @@ function App() {
         styles={style({ font: "heading-xl", textAlign: "center" })}
         level={1}
       >
-        Spectrum 2 + Webpack
+        Spectrum 2 + Vite
       </Heading>
       <div
         className={style({
