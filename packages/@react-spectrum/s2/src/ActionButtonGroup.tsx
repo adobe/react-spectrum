@@ -33,7 +33,7 @@ export interface ActionButtonGroupProps extends UnsafeStyles, SlotProps {
   density?: 'compact' | 'regular',
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
-   /** Whether the buttons should be justified in their container. */
+  /** Whether the buttons should divide the container width equally. */
   isJustified?: boolean,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   staticColor?: 'white' | 'black',

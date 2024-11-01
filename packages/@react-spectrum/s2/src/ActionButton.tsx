@@ -68,6 +68,9 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   flexGrow: {
     isJustified: 1
   },
+  flexBasis: {
+    isJustified: 0
+  },
   font: 'control',
   fontWeight: 'medium',
   userSelect: 'none',

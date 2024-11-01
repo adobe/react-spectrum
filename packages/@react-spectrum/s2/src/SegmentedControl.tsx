@@ -32,6 +32,8 @@ export interface SegmentedControlProps extends AriaLabelingProps, StyleProps, Sl
    * Whether the segmented control is disabled.
    */
   isDisabled?: boolean,
+  /** Whether the items should divide the container width equally. */
+  isJustified?: boolean,
   /** The id of the currently selected item (controlled). */
   selectedKey?: Key | null,
   /** The id of the initial selected item (uncontrolled). */
@@ -84,7 +86,12 @@ const controlItem = style({
   },
   height: 32,
   alignItems: 'center',
-  flexGrow: 1,
+  flexGrow: {
+    isJustified: 1
+  },
+  flexBasis: {
+    isJustified: 0
+  },
   flexShrink: 0,
   minWidth: 0,
   justifyContent: 'center',
@@ -129,7 +136,8 @@ const slider = style({
 interface InternalSegmentedControlContextProps {
   register?: (value: Key, isDisabled?: boolean) => void,
   prevRef?: RefObject<DOMRect | null>,
-  currentSelectedRef?: RefObject<HTMLDivElement | null>
+  currentSelectedRef?: RefObject<HTMLDivElement | null>,
+  isJustified?: boolean
 }
 
 interface DefaultSelectionTrackProps {
@@ -137,7 +145,8 @@ interface DefaultSelectionTrackProps {
   value?: Key | null,
   children?: ReactNode,
   prevRef: RefObject<DOMRect | null>,
-  currentSelectedRef: RefObject<HTMLDivElement | null>
+  currentSelectedRef: RefObject<HTMLDivElement | null>,
+  isJustified?: boolean
 }
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
@@ -176,7 +185,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       onSelectionChange={onChange}
       className={(props.UNSAFE_className || '') + segmentedControl(null, props.styles)}
       aria-label={props['aria-label']}>
-      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef}>
+      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef} isJustified={props.isJustified}>
         {props.children}
       </DefaultSelectionTracker>
     </ToggleButtonGroup>
@@ -198,7 +207,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   return (
     <Provider
       values={[
-        [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef}]
+        [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef, isJustified: props.isJustified}]
       ]}> 
       {props.children}
     </Provider>
@@ -208,7 +217,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let divRef = useRef<HTMLDivElement>(null);
-  let {register, prevRef, currentSelectedRef} = useContext(InternalSegmentedControlContext);
+  let {register, prevRef, currentSelectedRef, isJustified} = useContext(InternalSegmentedControlContext);
   let state = useContext(ToggleGroupStateContext);
   let isSelected = state?.selectedKeys.has(props.id);
   // do not apply animation if a user has the prefers-reduced-motion setting
@@ -247,7 +256,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
       {...props}
       ref={domRef} 
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + controlItem(renderProps, props.styles)} >
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isJustified}, props.styles)} >
       {({isSelected, isPressed, isDisabled}) => (
         <>
           {isSelected && <div className={slider({isDisabled})} ref={currentSelectedRef} />}
