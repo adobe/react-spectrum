@@ -1,5 +1,3 @@
 {
-  "longPressMessage": "Long press or press Alt + ArrowDown to open menu",
-  "focusAnnouncement": "{isGroupChange, select, true {Entered group {groupTitle}, with {groupCount, plural, one {# option} other {# options}}. } other {}}{optionText}{isSelected, select, true {, selected} other {}}",
-  "countAnnouncement": "{optionCount, plural, one {# option} other {# options}} available."
+  "longPressMessage": "Long press or press Alt + ArrowDown to open menu"
 }

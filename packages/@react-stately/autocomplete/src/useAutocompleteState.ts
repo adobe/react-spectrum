@@ -51,9 +51,6 @@ export function useAutocompleteState(props: AutocompleteStateOptions): Autocompl
     if (propsOnInputChange) {
       propsOnInputChange(value);
     }
-
-    // TODO: weird that this is handled here?
-    setFocusedNodeId(null);
   };
 
   let [focusedNodeId, setFocusedNodeId] = useState(null);
