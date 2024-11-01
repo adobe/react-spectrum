@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -31,7 +31,7 @@ function getTextValue(el) {
     return '';
   }
 
-  return [...el.childNodes].map(el => el.nodeType === 3 ? el.textContent : getTextValue(el)).join('');
+  return el.textContent;
 }
 
 function expectPlaceholder(el, placeholder) {
@@ -1889,6 +1889,115 @@ describe('DatePicker', function () {
       expect(segments[5]).toHaveFocus();
       act(() => {segments[5].blur();});
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2022, 4, 5, 5, 45));
+    });
+  });
+
+  describe('timeZone', function () {
+    it('should keep timeZone from defaultValue when date and time are cleared', async function () {
+      let {getAllByRole} = render(
+        <DatePicker
+          label="Date"
+          defaultValue={parseZonedDateTime(
+            '2024-09-21T00:00:00[America/Los_Angeles]'
+          )} />
+      );
+      let combobox = getAllByRole('group')[0];
+
+      expectPlaceholder(combobox, '9/21/2024, 12:00 AM PDT');
+
+      await user.tab();
+      await user.keyboard('{Backspace}');
+      await user.tab();
+      let i;
+      for (i = 0; i < 2; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      for (i = 0; i < 4; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      for (i = 0; i < 2; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      for (i = 0; i < 2; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      await user.keyboard('{Backspace}');
+
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM PDT');
+    });
+
+    it('should keep timeZone from defaultValue when date and time are cleared then set', async function () {
+      let {getAllByRole, getByRole} = render(
+        <DatePicker
+          label="Date"
+          defaultValue={parseZonedDateTime('2024-09-21T00:00:00[Greenwich]')} />
+      );
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      });
+
+      expectPlaceholder(combobox, '9/21/2024, 12:00 AM GMT');
+
+      await user.tab();
+      await user.keyboard('{Backspace}');
+      await user.tab();
+      let i;
+      for (i = 0; i < 2; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      for (i = 0; i < 4; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      for (i = 0; i < 2; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      for (i = 0; i < 2; i++) {
+        await user.keyboard('{Backspace}');
+      }
+      await user.tab();
+      await user.keyboard('{Backspace}');
+
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM GMT');
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let selected = cells.find(
+        (cell) => cell.getAttribute('aria-selected') === 'true'
+      );
+      expect(selected).toBeUndefined();
+
+      let todayCell = cells.find((cell) =>
+        cell.firstChild.getAttribute('aria-label')?.startsWith('Today')
+      );
+      await user.click(todayCell.firstChild);
+
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+      expect(dialog).toBeVisible();
+      await user.click(document.body);
+      act(() => jest.runAllTimers());
+      expect(dialog).not.toBeInTheDocument();
+      let value = toCalendarDateTime(today('Greenwich'));
+      expectPlaceholder(
+        combobox,
+        `${formatter.format(value.toDate())} GMT`
+      );
     });
   });
 
