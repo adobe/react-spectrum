@@ -65,7 +65,7 @@ export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, drop
 export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState) {
   // Persist the focused key and the drop target key.
   let focusedKey = selectionManager.focusedKey;
-  let dropTargetKey: Key | null = null;
+  let dropTargetKey: Key | null | undefined = null;
   if (dragAndDropHooks?.isVirtualDragging?.() && dropState?.target?.type === 'item') {
     dropTargetKey = dropState.target.key;
     if (dropState.target.dropPosition === 'after') {
@@ -75,6 +75,6 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
   }
 
   return useMemo(() => {
-    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+    return new Set([focusedKey, dropTargetKey].filter(k => k != null));
   }, [focusedKey, dropTargetKey]);
 }

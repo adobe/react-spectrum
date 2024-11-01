@@ -23,6 +23,7 @@
     "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.js": ["@parcel/optimizer-terser"]
+    "*.js": ["@parcel/optimizer-terser"],
+    "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
   }
 }

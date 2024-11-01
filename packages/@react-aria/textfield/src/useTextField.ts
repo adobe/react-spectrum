@@ -69,7 +69,7 @@ type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrin
  */
 type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
 
-export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
+export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps<TextFieldHTMLElementType[T]> {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
@@ -118,9 +118,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isReadOnly = false,
     type = 'text',
     validationBehavior = 'aria'
-  }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
+  } = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
-  let {focusableProps} = useFocusable(props, ref);
+  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
   let validationState = useFormValidationState({
     ...props,
     value

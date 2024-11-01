@@ -71,9 +71,7 @@ export {_DisclosureGroup as DisclosureGroup};
 
 export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps {
   /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
-  id?: Key,
-  /** The children of the component. A function may be provided to alter the children based on component state. */
-  children: ReactNode | ((values: DisclosureRenderProps & {defaultChildren: ReactNode | undefined}) => ReactNode)
+  id?: Key
 }
 
 export interface DisclosureRenderProps {
@@ -110,7 +108,7 @@ const InternalDisclosureContext = createContext<InternalDisclosureContextValue |
 
 function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
-  let groupState = useContext(DisclosureGroupStateContext);
+  let groupState = useContext(DisclosureGroupStateContext)!;
   let {id, ...otherProps} = props;
 
   // Generate an id if one wasn't provided.
@@ -183,7 +181,15 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
-export interface DisclosurePanelProps extends RenderProps<{}> {
+export interface DisclosurePanelRenderProps {
+  /**
+   * Whether keyboard focus is within the disclosure panel.
+   * @selector [data-focus-visible-within]
+   */
+  isFocusVisibleWithin: boolean
+}
+
+export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps {
   /**
    * The accessibility role for the disclosure's panel.
    * @default 'group'
@@ -209,8 +215,10 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivE
       isFocusVisibleWithin
     }
   });
+  let DOMProps = filterDOMProps(props);
   return (
     <div
+      {...DOMProps}
       ref={mergeRefs(ref, panelRef)}
       {...mergeProps(panelProps, focusWithinProps)}
       {...renderProps}

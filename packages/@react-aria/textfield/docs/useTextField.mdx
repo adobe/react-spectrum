@@ -104,7 +104,7 @@ function TextField(props: AriaTextFieldProps) {
 import type {AriaTextFieldProps} from '@react-aria/textfield';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: AriaTextFieldProps) {
+function TextArea(props: AriaTextFieldProps<HTMLTextAreaElement>) {
   let {label} = props;
   let ref = React.useRef(null);
   let {labelProps, inputProps} = useTextField({...props, inputElementType: 'textarea'}, ref);

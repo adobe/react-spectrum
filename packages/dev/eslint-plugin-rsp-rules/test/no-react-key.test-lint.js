@@ -10,16 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import noReactKeyRule from '../rules/no-react-key';
+import noReactKeyRule from '../rules/no-react-key.js';
 import {RuleTester} from 'eslint';
 
 
 const ruleTester = new RuleTester({
   // Must use at least ecmaVersion 2015 because
   // that's when `const` variables were introduced.
-  parserOptions: {
-    ecmaVersion: 2015,
-    'sourceType': 'module'
+  languageOptions: {
+    ecmaVersion: 2015
   }
 });
 

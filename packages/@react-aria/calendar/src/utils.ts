@@ -19,26 +19,26 @@ import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
 interface HookData {
-  ariaLabel: string,
-  ariaLabelledBy: string,
+  ariaLabel?: string,
+  ariaLabelledBy?: string,
   errorMessageId: string,
   selectedDateDescription: string
 }
 
 export const hookData = new WeakMap<CalendarState | RangeCalendarState, HookData>();
 
-export function getEraFormat(date: CalendarDate): 'short' | undefined {
+export function getEraFormat(date: CalendarDate | undefined): 'short' | undefined {
   return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;
 }
 
 export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
 
-  let start: CalendarDate, end: CalendarDate;
+  let start: CalendarDate | undefined, end: CalendarDate | undefined;
   if ('highlightedRange' in state) {
     ({start, end} = state.highlightedRange || {});
   } else {
-    start = end = state.value;
+    start = end = state.value ?? undefined;
   }
 
   let dateFormatter = useDateFormatter({

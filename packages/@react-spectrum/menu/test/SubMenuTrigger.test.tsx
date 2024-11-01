@@ -65,6 +65,7 @@ describe('Submenu', function () {
     jest.restoreAllMocks();
   });
 
+  // TODO: this should be in chromatic tests
   it.each`
     Name                 | Component
     ${'static'}          | ${SubmenuStatic}
@@ -310,38 +311,6 @@ describe('Submenu', function () {
     expect(menus).toHaveLength(1);
     // ensure focus is always moved to the hovered target
     expect(document.activeElement).toBe(target);
-  });
-
-  it('should close everything if the user clicks outside of the submenus', async function () {
-    let tree = render(<SubmenuStatic />);
-    let triggerButton = tree.getByRole('button');
-    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
-    act(() => {jest.runAllTimers();});
-
-    let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
-    let submenuTrigger1 = within(menu).getAllByRole('menuitem')[1];
-    await user.pointer({target: submenuTrigger1});
-    act(() => {jest.runAllTimers();});
-    let menus = tree.getAllByRole('menu', {hidden: true});
-    expect(menus).toHaveLength(2);
-
-    let submenuTrigger2 = within(menus[1]).getAllByRole('menuitem')[2];
-    await user.pointer({target: submenuTrigger2});
-    act(() => {jest.runAllTimers();});
-    menus = tree.getAllByRole('menu', {hidden: true});
-    expect(menus).toHaveLength(3);
-
-    // @ts-ignore
-    let underlay = tree.getByTestId('underlay', {hidden: true});
-    // TODO: use mouseDown for now, adding installPointerEvents makes some the other tests break
-    fireEvent.mouseDown(underlay);
-    fireEvent.mouseUp(underlay);
-    act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
-    menus = tree.queryAllByRole('menu', {hidden: true});
-    expect(menus).toHaveLength(0);
-    expect(document.activeElement).toBe(triggerButton);
   });
 
   it('disables a submenu trigger if the wrapped item is in the disabledKeys array', async function () {

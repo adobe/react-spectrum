@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+export {useAccordionItem, useAccordion} from '@react-aria/accordion';
 export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
 export {useButton, useToggleButton} from '@react-aria/button';
 export {useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from '@react-aria/calendar';
@@ -18,6 +19,7 @@ export {useColorArea, useColorChannelField, useColorField, useColorSlider, useCo
 export {useComboBox} from '@react-aria/combobox';
 export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
+export {useDisclosure} from '@react-aria/disclosure';
 export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from '@react-aria/dnd';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
@@ -47,6 +49,7 @@ export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 export {chain, mergeProps, useId, useObjectRef, RouterProvider} from '@react-aria/utils';
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
+export type {AriaAccordionProps, AccordionAria, AccordionItemAria, AccordionItemAriaProps} from '@react-aria/accordion';
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
 export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
@@ -55,6 +58,7 @@ export type {AriaColorAreaOptions, AriaColorChannelFieldProps, AriaColorFieldPro
 export type {AriaComboBoxOptions, AriaComboBoxProps, ComboBoxAria} from '@react-aria/combobox';
 export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, AriaTimeFieldProps, DateFieldAria, DatePickerAria, DateRangePickerAria, DateSegmentAria, DateRange, DateValue, TimeValue} from '@react-aria/datepicker';
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
+export type {DisclosureAria, AriaDisclosureProps} from '@react-aria/disclosure';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nProviderProps, Locale, LocalizedStringFormatter, LocalizedStrings} from '@react-aria/i18n';
 export type {ClipboardProps, ClipboardResult, DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionOptions, DraggableCollectionStartEvent, DraggableItemProps, DraggableItemResult, DragItem, DragMoveEvent, DragOptions, DragPreviewProps, DragPreviewRenderer, DragResult, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropIndicatorAria, DropIndicatorProps, DropItem, DropMoveEvent, DropOperation, DropOptions, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionOptions, DroppableCollectionReorderEvent, DroppableCollectionResult, DroppableCollectionRootDropEvent, DroppableItemOptions, DroppableItemResult, DropPosition, DropResult, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-aria/dnd';
