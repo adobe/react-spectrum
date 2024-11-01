@@ -11,8 +11,13 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getDeepActiveElement, runAfterTransition} from '@react-aria/utils';
+import {
+  focusWithoutScrolling,
+  getDeepActiveElement,
+  runAfterTransition
+} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
+import {getRootNode} from '@react-aria/utils/src';
 
 /**
  * A utility function that focuses an element while avoiding undesired side effects such
@@ -24,7 +29,8 @@ export function focusSafely(element: FocusableElement) {
   // the page before shifting focus. This avoids issues with VoiceOver on iOS
   // causing the page to scroll when moving focus if the element is transitioning
   // from off the screen.
-  const activeElement = getDeepActiveElement();
+  const rootNode = getRootNode(element);
+  const activeElement = rootNode ? getDeepActiveElement(rootNode) : getDeepActiveElement();
   if (getInteractionModality() === 'virtual') {
     let lastFocusedElement = activeElement;
     runAfterTransition(() => {

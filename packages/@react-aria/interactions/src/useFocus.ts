@@ -17,7 +17,7 @@
 
 import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
 import {FocusEvent, useCallback} from 'react';
-import {getDeepActiveElement, getRootNode, isShadowRoot} from '@react-aria/utils';
+import {getDeepActiveElement, getRootNode} from '@react-aria/utils';
 import {useSyntheticBlurEvent} from './utils';
 
 export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {
@@ -64,7 +64,7 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
     // focus handler already moved focus somewhere else.
 
     const ownerDocument = getRootNode(e.target);
-    const activeElement = isShadowRoot(ownerDocument) ? getDeepActiveElement() : ownerDocument?.activeElement;
+    const activeElement = ownerDocument ? getDeepActiveElement(ownerDocument) : getDeepActiveElement();
     if (e.target === e.currentTarget && activeElement === e.target) {
       if (onFocusProp) {
         onFocusProp(e);
