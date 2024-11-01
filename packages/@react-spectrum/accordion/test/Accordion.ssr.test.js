@@ -22,7 +22,7 @@ describe('Accordion SSR', function () {
             Files
           </DisclosureHeader>
           <DisclosurePanel>
-            <p>Files content</p>
+            Files content
           </DisclosurePanel>
         </Disclosure>
         <Disclosure id="people">
@@ -30,7 +30,7 @@ describe('Accordion SSR', function () {
             People
           </DisclosureHeader>
           <DisclosurePanel>
-            <p>People content</p>
+            People content
           </DisclosurePanel>
         </Disclosure>
       </Accordion>

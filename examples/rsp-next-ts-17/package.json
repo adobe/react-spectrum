@@ -13,9 +13,8 @@
   },
   "dependencies": {
     "@adobe/react-spectrum": "^3.26.0",
-    "@react-spectrum/color": "^3.0.0-beta.16",
     "@react-spectrum/provider": "^3.9.7",
-    "@react-spectrum/toast": "^3.0.0-alpha.0",
+    "@react-spectrum/toast": "^3.0.0-alpha.16",
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.2.12",
     "glob": "^10.3.12",
