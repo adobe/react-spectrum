@@ -13,9 +13,9 @@
 import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
 
 let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
-export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
+export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty, prefix = ''): PropertyFunction<T> {
   return (value, property) => {
-    let selector = Array.isArray(value) ? generateArbitraryValueSelector(value.map(v => String(v)).join('')) : generateArbitraryValueSelector(String(value));
+    let selector = Array.isArray(value) ? generateArbitraryValueSelector(value.map(v => String(v)).join(''), false, prefix) : generateArbitraryValueSelector(String(value), false, prefix);
     return {default: [fn(value, property), selector]};
   };
 }
@@ -24,10 +24,10 @@ function recursiveValues(obj: object): string[] {
   return Object.values(obj).flatMap(v => typeof v === 'object' ? recursiveValues(v) : [v]);
 }
 
-export function createMappedProperty<T extends CSSValue>(fn: (value: string, property: string) => CSSProperties, values: PropertyValueMap<T> | string[]): PropertyFunction<T> {
-  let valueMap = createValueLookup(Array.isArray(values) ? values : recursiveValues(values));
+export function createMappedProperty<T extends CSSValue>(fn: (value: string, property: string) => CSSProperties, values: PropertyValueMap<T> | string[], prefix = ''): PropertyFunction<T> {
+  let valueMap = createValueLookup(Array.isArray(values) ? values : recursiveValues(values), false, prefix);
   return (value, property) => {
-    let v = parseArbitraryValue(value);
+    let v = parseArbitraryValue(value, prefix);
     if (v) {
       return {default: [fn(v[0], property), v[1]]};
     }
@@ -40,15 +40,15 @@ export function createMappedProperty<T extends CSSValue>(fn: (value: string, pro
   };
 }
 
-export function createRenamedProperty<T extends CSSValue>(name: string, values: PropertyValueMap<T> | string[]): PropertyFunction<T> {
-  return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values);
+export function createRenamedProperty<T extends CSSValue>(name: string, values: PropertyValueMap<T> | string[], prefix = ''): PropertyFunction<T> {
+  return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values, prefix);
 }
 
 export type Color<C extends string> = C | `${string}/${number}`;
-export function createColorProperty<C extends string>(colors: PropertyValueMap<C>, property?: keyof CSSProperties): PropertyFunction<Color<C>> {
-  let valueMap = createValueLookup(Object.values(colors).flatMap((v: any) => typeof v === 'object' ? Object.values(v) : [v]));
+export function createColorProperty<C extends string>(colors: PropertyValueMap<C>, property?: keyof CSSProperties, prefix = ''): PropertyFunction<Color<C>> {
+  let valueMap = createValueLookup(Object.values(colors).flatMap((v: any) => typeof v === 'object' ? Object.values(v) : [v]), false, prefix);
   return (value: Color<C>, key: string) => {
-    let v = parseArbitraryValue(value);
+    let v = parseArbitraryValue(value, prefix);
     if (v) {
       return {default: [{[property || key]: v[0]}, v[1]]};
     }
@@ -92,21 +92,21 @@ function mapConditionalShorthand<T, C extends string, R extends RenderProps<stri
   }
 }
 
-function createValueLookup(values: Array<CSSValue>, atStart = false) {
+function createValueLookup(values: Array<CSSValue>, atStart = false, prefix = '') {
   let map = new Map<CSSValue, string>();
   for (let value of values) {
     if (!map.has(value)) {
-      map.set(value, generateName(map.size, atStart));
+      map.set(value, generateName(map.size, atStart, prefix));
     }
   }
   return map;
 }
 
-export function parseArbitraryValue(value: any) {
+export function parseArbitraryValue(value: any, prefix = '') {
   if (typeof value === 'string' && value.startsWith('--')) {
-    return [`var(${value})`, generateArbitraryValueSelector(value)];
+    return [`var(${value})`, generateArbitraryValueSelector(value, true, prefix)];
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
-    let s = generateArbitraryValueSelector(value.slice(1, -1));
+    let s = generateArbitraryValueSelector(value.slice(1, -1), true, prefix);
     return [value.slice(1, -1), s];
   }
 }
@@ -115,14 +115,40 @@ interface MacroContext {
   addAsset(asset: {type: string, content: string}): void
 }
 
+// djb2 hash function.
+// http://www.cse.yorku.ca/~oz/hash.html
+function hash(v: string) {
+  let hash = 5381;
+  for (let i = 0; i < v.length; i++) {
+    hash = ((hash << 5) + hash) + v.charCodeAt(i) >>> 0;
+  }
+  return hash;
+}
+
+function generateThemeHash(theme: Theme): string {
+  let themeString = JSON.stringify(theme, (_, value) => {
+    if (typeof value === 'function') {
+      return value.toString();
+    }
+    return value;
+  });
+  let c = hash(themeString).toString(36);
+  if (/^[0-9]/.test(c)) {
+    // Class names can't start with a number.
+    c = `_${c}`;
+  }
+  return c;
+}
+
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
-  let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
-  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true);
+  let themeHash = generateThemeHash(theme);
+  let themePropertyMap = createValueLookup(Object.keys(theme.properties), true, themeHash);
+  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true, themeHash);
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {
       return [k, v];
     }
-    return [k, createMappedProperty((value, p) => ({[p]: value}), v) as PropertyFunction<Value>];
+    return [k, createMappedProperty((value, p) => ({[p]: value}), v, themeHash) as PropertyFunction<Value>];
   }));
 
   let dependencies = new Set<string>();
@@ -492,42 +518,30 @@ interface Rule {
 // This maps to an alphabet containing lower case letters, upper case letters, and numbers.
 // For numbers larger than 62, an underscore is prepended.
 // This encoding allows easy parsing to enable runtime merging by property.
-function generateName(index: number, atStart = false): string {
+function generateName(index: number, atStart = false, prefix = ''): string {
+  let name = '';
   if (index < 26) {
     // lower case letters
-    return String.fromCharCode(index + 97);
-  }
-
-  if (index < 52) {
+    name = String.fromCharCode(index + 97);
+  } else if (index < 52) {
     // upper case letters
-    return String.fromCharCode((index - 26) + 65);
-  }
-
-  if (index < 62 && !atStart) {
+    name = String.fromCharCode(index - 26 + 65);
+  } else if (index < 62 && !atStart) {
     // numbers
-    return String.fromCharCode((index - 52) + 48);
+    name = String.fromCharCode(index - 52 + 48);
+  } else {
+    name = '_' + generateName(index - (atStart ? 52 : 62));
   }
-
-  return '_' + generateName(index - (atStart ? 52 : 62));
+  return prefix + name;
 }
 
 // For arbitrary values, we use a hash of the string to generate the class name.
-function generateArbitraryValueSelector(v: string, atStart = false) {
+function generateArbitraryValueSelector(v: string, atStart = false, prefix = '') {
   let c = hash(v).toString(36);
   if (atStart && /^[0-9]/.test(c)) {
     c = `_${c}`;
   }
-  return `-${c}`;
-}
-
-// djb2 hash function.
-// http://www.cse.yorku.ca/~oz/hash.html
-function hash(v: string) {
-  let hash = 5381;
-  for (let i = 0; i < v.length; i++) {
-    hash = ((hash << 5) + hash) + v.charCodeAt(i) >>> 0;
-  }
-  return hash;
+  return `${prefix}-${c}`;
 }
 
 function layerName(name: string) {
