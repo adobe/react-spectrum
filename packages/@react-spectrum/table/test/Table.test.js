@@ -2752,7 +2752,7 @@ export let tableTests = () => {
       expect(announce).toHaveBeenCalledTimes(2);
     });
 
-    it.skip('updates even if not focused', async () => {
+    it('updates even if not focused', async () => {
       let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let link = tree.getAllByRole('link')[1];
