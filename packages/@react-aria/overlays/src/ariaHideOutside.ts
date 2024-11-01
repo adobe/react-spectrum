@@ -36,20 +36,36 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   const shadowRoots = findShadowRoots(targets);
 
   if (shadowRoots.length > 0) {
-   // Add all ancestors of each target to the set of visible nodes to ensure they are not hidden
+    // First, identify which shadow root we're dealing with
+    const targetShadowRoot = targets[0].getRootNode() as ShadowRoot;
+
     targets.forEach(target => {
-      let current = target;
-      while (current && current !== document.body) {
-        visibleNodes.add(current);
-        if (current.getRootNode() instanceof ShadowRoot) {
-           // If within a shadow DOM, add the host element
-          current = (current.getRootNode() as ShadowRoot).host;
-        } else {
-          current = current.parentNode as Element;
-        }
+      // Add the target itself
+      visibleNodes.add(target);
+
+      // Add its parent container within shadow root
+      if (target.parentElement) {
+        visibleNodes.add(target.parentElement);
       }
+
+      // Walk up until we hit the shadow root's immediate child
+      let current = target;
+      while (current && current.parentElement && current.parentElement !== targetShadowRoot.host) {
+        visibleNodes.add(current.parentElement);
+        current = current.parentElement;
+      }
+
+      // Add the shadow host and its ancestors up to document.body
+      let host = targetShadowRoot.host;
+      while (host && host !== document.body) {
+        visibleNodes.add(host);
+        host = host.parentElement;
+      }
+      visibleNodes.add(document.body);
     });
   }
+
+  console.log(visibleNodes);
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
