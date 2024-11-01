@@ -6098,6 +6098,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.25.3"
     "@react-stately/collections": "npm:^3.11.0"
     "@react-stately/menu": "npm:^3.8.3"
+    "@react-stately/selection": "npm:^3.17.0"
     "@react-stately/tree": "npm:^3.8.5"
     "@react-types/button": "npm:^3.10.0"
     "@react-types/menu": "npm:^3.9.12"
@@ -27203,6 +27204,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode":
+  version: 0.0.0-use.local
+  resolution: "parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode"
+  dependencies:
+    "@parcel/plugin": "npm:2.0.0"
+  languageName: unknown
+  linkType: soft
+
 "parcel-packager-docs@workspace:packages/dev/parcel-packager-docs":
   version: 0.0.0-use.local
   resolution: "parcel-packager-docs@workspace:packages/dev/parcel-packager-docs"
@@ -29004,6 +29013,7 @@ __metadata:
     "@react-stately/disclosure": "npm:3.0.0-alpha.0"
     "@react-stately/layout": "npm:^4.0.3"
     "@react-stately/menu": "npm:^3.8.3"
+    "@react-stately/selection": "npm:^3.17.0"
     "@react-stately/table": "npm:^3.12.3"
     "@react-stately/utils": "npm:^3.10.4"
     "@react-stately/virtualizer": "npm:^4.1.0"
