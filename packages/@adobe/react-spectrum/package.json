@@ -42,6 +42,7 @@
     "@react-aria/ssr": "^3.9.6",
     "@react-aria/utils": "^3.25.3",
     "@react-aria/visually-hidden": "^3.8.17",
+    "@react-spectrum/accordion": "^3.0.0-alpha.35",
     "@react-spectrum/actionbar": "^3.6.1",
     "@react-spectrum/actiongroup": "^3.10.9",
     "@react-spectrum/avatar": "^3.0.16",

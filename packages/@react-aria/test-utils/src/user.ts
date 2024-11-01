@@ -68,6 +68,6 @@ export class User {
   }
 
   createTester<T extends PatternNames>(patternName: T, opts: ObjectOptionsTypes<T>): ObjectType<T> {
-    return new (keyToUtil)[patternName]({...opts, user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer}) as ObjectType<T>;
+    return new (keyToUtil)[patternName]({user: this.user, interactionType: this.interactionType, advanceTimer: this.advanceTimer, ...opts}) as ObjectType<T>;
   }
 }

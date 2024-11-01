@@ -1,7 +1,8 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Link} from '@react-spectrum/s2';
+import {Link, InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import {highlight} from './highlight' with {type: 'macro'};
 import {H2, H3, H3, P, Pre, Code, Strong} from './typography';
+import {Colors} from './Colors';
 
 export function StyleMacro() {
   return (
@@ -34,10 +35,97 @@ export function StyleMacro() {
         <H2>Values</H2>
         <P>The <Code>style</Code> macro supports a constrained set of values for each CSS property, which conform to the Spectrum design system. For example, the <Code>backgroundColor</Code> property supports Spectrum colors, and does not allow arbitrary hex or rgb values by default. This helps make it easier to build consistent UIs that are maintainable over time.</P>
         <H3>Colors</H3>
-        <P>The Spectrum 2 color palette is available across all color properties. The <Code>backgroundColor</Code> property also supports Spectrum’s background layers. In addition, semantic colors such as <Code>accent</Code> and <Code>negative</Code> are available across all properties, and automatically update according to states such as <Code>isHovered</Code> (see <Link href="#runtime-conditions" target="_self">runtime conditions</Link> below).</P>
+        <P>The Spectrum 2 color palette is available across all color properties. See the following sections for color values available for each property.</P>
+        <Colors />
         <H3>Spacing and sizing</H3>
         <P>Spacing properties such as <Code>margin</Code> and <Code>padding</Code>, and sizing properties such as <Code>width</Code> and <Code>height</Code> support a limited set of values. The API is represented in pixels, however, only values conforming to a 4px grid are allowed. This helps ensure that spacing and sizing are visually consistent.</P>
         <P>Internally, spacing and sizing values are converted from pixels to rems, which scale according to the user’s font size preference. In addition, sizing values are multiplied by 1.25x on touch screen devices to help increase the size of hit targets. Spacing values do not scale and remain fixed.</P>
+        <H3>Typography</H3>
+        <P>Spectrum 2 does not include specific components for typography. Instead, you can use the style macro to apply Spectrum typography to any HTML element or component.</P>
+        <P>The <Code>font</Code> shorthand applies default values for the <Code>fontFamily</Code>, <Code>fontSize</Code>, <Code>fontWeight</Code>, <Code>lineHeight</Code>, and <Code>color</Code> properties, following Spectrum design pairings. These individual properties can also be set to override the default set by the shorthand.</P>
+        <Pre>{highlight(`<main>
+  <h1 className={style({font: 'heading-xl'})}>Heading</h1>
+  <p className={style({font: 'body'})}>Body</p>
+  <ul className={style({font: 'body-sm', fontWeight: 'bold'})}>
+    <li>List item</li>
+  </ul>
+</main>
+`)}</Pre>
+        <P>There are several different type scales.</P>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>UI</Strong> – use within interactive UI components.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Body</Strong> – use for the content of pages that are primarily text.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Heading</Strong> – use for headings in content pages.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Title</Strong> – use for titles within UI components such as cards or panels.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Detail</Strong> – use for less important metadata.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Strong>Code</Strong> – use for source code.</li>
+        </ul>
+        <P>Each type scale has a default size, and several t-shirt size modifiers for additional sizes.</P>
+        <div
+          className={style({
+            display: 'grid',
+            gridTemplateColumns: {
+              default: '1fr',
+              sm: 'repeat(3, auto)',
+              md: 'repeat(6, auto)'
+            },
+            justifyContent: 'space-between'
+          })}>
+          <ul className={'sb-unstyled' + style({padding: 0, listStyleType: 'none'})}>
+            <li className={style({font: 'ui-xs'})}>ui-xs</li>
+            <li className={style({font: 'ui-sm'})}>ui-sm</li>
+            <li className={style({font: 'ui'})}>ui</li>
+            <li className={style({font: 'ui-lg'})}>ui-lg</li>
+            <li className={style({font: 'ui-xl'})}>ui-xl</li>
+            <li className={style({font: 'ui-2xl'})}>ui-2xl</li>
+            <li className={style({font: 'ui-3xl'})}>ui-3xl</li>
+          </ul>
+          <ul className={'sb-unstyled' + style({padding: 0, listStyleType: 'none'})}>
+            <li className={style({font: 'body-2xs'})}>body-2xs</li>
+            <li className={style({font: 'body-xs'})}>body-xs</li>
+            <li className={style({font: 'body-sm'})}>body-sm</li>
+            <li className={style({font: 'body'})}>body</li>
+            <li className={style({font: 'body-lg'})}>body-lg</li>
+            <li className={style({font: 'body-xl'})}>body-xl</li>
+            <li className={style({font: 'body-2xl'})}>body-2xl</li>
+            <li className={style({font: 'body-3xl'})}>body-3xl</li>
+          </ul>
+          <ul className={'sb-unstyled' + style({padding: 0, listStyleType: 'none'})}>
+            <li className={style({font: 'heading-2xs'})}>heading-2xs</li>
+            <li className={style({font: 'heading-xs'})}>heading-xs</li>
+            <li className={style({font: 'heading-sm'})}>heading-sm</li>
+            <li className={style({font: 'heading'})}>heading</li>
+            <li className={style({font: 'heading-lg'})}>heading-lg</li>
+            <li className={style({font: 'heading-xl'})}>heading-xl</li>
+            <li className={style({font: 'heading-2xl'})}>heading-2xl</li>
+            <li className={style({font: 'heading-3xl'})}>heading-3xl</li>
+          </ul>
+          <ul className={'sb-unstyled' + style({padding: 0, listStyleType: 'none'})}>
+            <li className={style({font: 'title-xs'})}>title-xs</li>
+            <li className={style({font: 'title-sm'})}>title-sm</li>
+            <li className={style({font: 'title'})}>title</li>
+            <li className={style({font: 'title-lg'})}>title-lg</li>
+            <li className={style({font: 'title-xl'})}>title-xl</li>
+            <li className={style({font: 'title-2xl'})}>title-2xl</li>
+            <li className={style({font: 'title-3xl'})}>title-3xl</li>
+          </ul>
+          <ul className={'sb-unstyled' + style({padding: 0, listStyleType: 'none'})}>
+            <li className={style({font: 'detail-sm'})}>detail-sm</li>
+            <li className={style({font: 'detail'})}>detail</li>
+            <li className={style({font: 'detail-lg'})}>detail-lg</li>
+            <li className={style({font: 'detail-xl'})}>detail-xl</li>
+          </ul>
+          <ul className={'sb-unstyled' + style({padding: 0, listStyleType: 'none'})}>
+            <li className={style({font: 'code-sm'})}>code-sm</li>
+            <li className={style({font: 'code'})}>code</li>
+            <li className={style({font: 'code-lg'})}>code-lg</li>
+            <li className={style({font: 'code-xl'})}>code-xl</li>
+          </ul>
+        </div>
+        <InlineAlert variant="notice" styles={style({maxWidth: '[600px]'})}>
+          <Heading>Important Note</Heading>
+          <Content>Only use <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<Heading>'}</code> and <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<Text>'}</code> inside other Spectrum components with predefined styles, such as <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<Dialog>'}</code> and <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<MenuItem>'}</code>. They do not include any styles by default, and should not be used standalone. Use HTML elements with the style macro directly instead.</Content>
+        </InlineAlert>
         <H2>Conditional styles</H2>
         <P>The <Code>style</Code> macro also supports conditional styles, such as media queries, UI states such as hover and press, and component variants. Conditional values are defined as an object where each key is a condition. This keeps all values for each property together in one place so it is easy to see where overrides are coming from.</P>
         <P>This example sets the padding of a div to 8px by default, and 32px at the large media query breakpoint (1024px) defined by Spectrum.</P>
@@ -132,6 +220,20 @@ const styles = style({
   ...horizontalStack(4),
   backgroundColor: 'base'
 });`)}</Pre>
+        <H3>Built-in Utilities</H3>
+        <P>The <Code>focusRing</Code> utility generates styles for the standard Spectrum focus ring, allowing you to reuse it in custom components.</P>
+        <Pre>{highlight(`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from 'react-aria-components';
+
+const buttonStyle = style({
+  ...focusRing(),
+  // ...
+});
+        
+export function CustomButton(props) {
+  return <Button {...props} className={buttonStyle} />;
+}
+`)}</Pre>
       </main>
     </div>
   )

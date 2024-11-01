@@ -12,7 +12,7 @@
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
 import React, {Ref, useCallback, useRef} from 'react';
-import {SpectrumTextAreaProps, TextFieldRef} from '@react-types/textfield';
+import {SpectrumTextAreaProps, SpectrumTextFieldBaseProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useFormProps} from '@react-spectrum/form';
@@ -76,7 +76,7 @@ function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAr
 
   return (
     <TextFieldBase
-      {...otherProps}
+      {...otherProps as SpectrumTextFieldBaseProps}
       ref={ref}
       inputRef={inputRef}
       {...result}
