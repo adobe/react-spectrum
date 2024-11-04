@@ -122,7 +122,13 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   font: 'control',
   display: 'flex',
   textAlign: 'start',
-  borderStyle: 'none',
+  borderStyle: {
+    default: 'none',
+    forcedColors: 'solid'
+  },
+  borderColor: {
+    forcedColors: 'ButtonText'
+  },
   borderRadius: 'control',
   alignItems: 'center',
   height: 'control',
