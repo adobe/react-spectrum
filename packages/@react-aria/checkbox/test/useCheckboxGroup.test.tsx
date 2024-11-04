@@ -20,15 +20,16 @@ import userEvent from '@testing-library/user-event';
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>(null);
   const {children} = props;
+  props.validationBehavior ??= 'native';
   const {inputProps, labelProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
   return <label {...labelProps}><input ref={ref} {...inputProps} />{children}</label>;
 }
 
 function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxGroupItemProps[]}) {
   const state = useCheckboxGroupState(groupProps);
-  const {groupProps: checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps, state);
+  const {groupProps: checkboxGroupProps, labelProps, isInvalid} = useCheckboxGroup(groupProps, state);
   return (
-    <div {...checkboxGroupProps}>
+    <div {...checkboxGroupProps} data-invalid={isInvalid || undefined}>
       {groupProps.label && <span {...labelProps}>{groupProps.label}</span>}
       <Checkbox checkboxGroupState={state} {...checkboxProps[0]} />
       <Checkbox checkboxGroupState={state} {...checkboxProps[1]} />
@@ -283,7 +284,7 @@ describe('useCheckboxGroup', () => {
   });
 
   it('should re-validate in realtime', async () => {
-    let {getByRole, getAllByRole, getByLabelText} = render(
+    let {getByRole, getByLabelText} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet', isRequired: true}}
         checkboxProps={[
