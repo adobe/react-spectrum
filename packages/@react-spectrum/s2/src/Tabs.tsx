@@ -58,12 +58,10 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
 
 export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
   /** The content to display in the tab. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className'>, StyleProps {
-  // why can't i omit the children and use ReactNode like other components which take items?
-}
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className'>, StyleProps {}
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */

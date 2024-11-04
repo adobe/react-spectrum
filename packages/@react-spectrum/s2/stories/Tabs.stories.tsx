@@ -33,9 +33,9 @@ export const Example = (args: any) => (
   <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
-        <Tab id="FoR" data-tab><Edit /><Text>Founding of Rome</Text></Tab>
-        <Tab id="MaR" data-tab>Monarchy and Republic</Tab>
-        <Tab id="Emp" data-tab>Empire</Tab>
+        <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
+        <Tab id="MaR">Monarchy and Republic</Tab>
+        <Tab id="Emp">Empire</Tab>
       </TabList>
       <TabPanel id="FoR" UNSAFE_style={{display: 'flex'}} data-panel>
         <div style={{overflow: 'auto'}}>
