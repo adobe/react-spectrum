@@ -60,6 +60,7 @@ describe('DatePicker', function () {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
+    jest.setSystemTime(new Date('2024-08-20T08:00:00Z'));
   });
   afterEach(() => {
     act(() => {
