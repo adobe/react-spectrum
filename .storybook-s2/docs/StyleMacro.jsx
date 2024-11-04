@@ -1,5 +1,5 @@
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
-import {Link, InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {Content, Disclosure, DisclosureTitle, DisclosurePanel, Heading, InlineAlert, Link} from '@react-spectrum/s2';
 import {highlight} from './highlight' with {type: 'macro'};
 import {H2, H3, H3, P, Pre, Code, Strong} from './typography';
 import {Colors} from './Colors';
@@ -234,6 +234,57 @@ export function CustomButton(props) {
   return <Button {...props} className={buttonStyle} />;
 }
 `)}</Pre>
+        <H2>CSS optimization</H2>
+        <P>The style macro relies on CSS bundling and minification to generate optimized output. When configuring your build tool, follow these best practices:</P>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body-lg', marginY: 8})}>Ensure that the styles are extracted into a CSS bundle and not injected at runtime by <Code>{'<style>'}</Code> elements.</li>
+          <li className={style({font: 'body-lg', marginY: 8})}>Use a CSS minifier such as <Link href="https://lightningcss.dev" target="_blank">Lightning CSS</Link> to deduplicate common rules used between components. Consider running this during development as well to reduce style duplication in developer tools for improved debugging.</li>
+          <li className={style({font: 'body-lg', marginY: 8})}>Configure your bundler to combine all CSS for S2 components and style macros into a single bundle instead of code splitting. Atomic CSS results in a lot of overlap between components. With code splitting, common rules are duplicated between bundles by default. To avoid this, load the CSS for all used S2 components in a single bundle. Because of the high degree of overlap between components, this initial bundle will be quite small.</li>
+        </ul>
+        <P>Guidance for specific build tools is below.</P>
+        <Disclosure isQuiet>
+          <DisclosureTitle>Parcel</DisclosureTitle>
+          <DisclosurePanel>
+            <P>Parcel includes support for macros out of the box, and automatically optimizes CSS with <Link href="https://lightningcss.dev" target="_blank">Lightning CSS</Link>. You can configure it to bundle all CSS for S2 components and style macros into a single file using the <Link href="https://parceljs.org/features/code-splitting/#manual-shared-bundles" target="_blank">manual shared bundles</Link> feature.</P>
+            <Pre>{highlight(`// package.json
+{
+  "@parcel/bundler-default": {
+    "manualSharedBundles": [
+      {
+        "name": "s2-styles",
+        "assets": [
+          "**/@react-spectrum/s2/**",
+          // Update this glob as needed to match your source files.
+          "src/**/*.{js,jsx,ts,tsx}"
+        ],
+        "types": ["css"]
+      }
+    ]
+  }
+}`)}</Pre>
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure isQuiet>
+          <DisclosureTitle>Webpack</DisclosureTitle>
+          <DisclosurePanel>
+            <ul className="sb-unstyled">
+              <li className={style({font: 'body-lg', marginY: 8})}>Use <Link href="https://webpack.js.org/plugins/mini-css-extract-plugin/" target="_blank">MiniCssExtractPlugin</Link> to extract the generated styles into a CSS bundle. Do not use <Code>style-loader</Code>, which injects individual <Code>{'<style>'}</Code> rules at runtime.</li>
+              <li className={style({font: 'body-lg', marginY: 8})}>Use <Link href="https://webpack.js.org/plugins/css-minimizer-webpack-plugin/" target="_blank">CssMinimizerWebpackPlugin</Link> to optimize the generated CSS using <Link href="https://lightningcss.dev" target="_blank">Lightning CSS</Link>. You can also configure this to run in development to remove duplicate rules and improve debugging.</li>
+              <li className={style({font: 'body-lg', marginY: 8})}>Use <Link href="https://webpack.js.org/plugins/split-chunks-plugin/" target="_blank">SplitChunksPlugin</Link> to bundle all S2 and style-macro generated CSS into a single bundle.</li>
+            </ul>
+            <P>See our <Link href="https://github.com/adobe/react-spectrum/blob/main/examples/s2-webpack-5-example/webpack.config.js" target="_blank">webpack example</Link> for full configuration options.</P>
+          </DisclosurePanel>
+          <Disclosure isQuiet>
+            <DisclosureTitle>Vite</DisclosureTitle>
+            <DisclosurePanel>
+              <ul className="sb-unstyled">
+                <li className={style({font: 'body-lg', marginY: 8})}>Configure the <Code>cssMinify</Code> option to use <Link href="https://lightningcss.dev" target="_blank">Lightning CSS</Link>, which produces much smaller output than the default minifier.</li>
+                <li className={style({font: 'body-lg', marginY: 8})}>Configure Rollup to bundle all S2 and style-macro generated CSS into a single bundle using the <Link href="https://rollupjs.org/configuration-options/#output-manualchunks" target="_blank">manualChunks</Link> feature.</li>
+              </ul>
+              <P>See our <Link href="https://github.com/adobe/react-spectrum/blob/main/examples/s2-vite-project/vite.config.ts" target="_blank">Vite example</Link> for full configuration options.</P>
+            </DisclosurePanel>
+          </Disclosure>
+        </Disclosure>
       </main>
     </div>
   )
