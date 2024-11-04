@@ -475,6 +475,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
           isDisabled={isDisabled || allKeysDisabled}
           density={density!}
           items={items}
+          disabledKeys={disabledKeys}
           selectedKey={selectedKey}
           onSelectionChange={onSelectionChange}
           aria-label={'Tab selector'}>

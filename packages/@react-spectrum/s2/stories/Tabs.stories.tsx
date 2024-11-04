@@ -112,7 +112,7 @@ let items: Item[] = [
 
 export const Dynamic = (args: any) => (
   <div className={style({width: '[700px]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-    <Tabs {...args} styles={style({width: 'full'})}>
+    <Tabs {...args} styles={style({width: 'full'})} disabledKeys={new Set([2])}>
       <TabList aria-label="History of Ancient Rome" items={items}>
         {item => <Tab>{item.title}</Tab>}
       </TabList>
