@@ -18,7 +18,7 @@ import {useMemo} from 'react';
 
 type Field = Intl.DateTimeFormatPartTypes;
 interface DisplayNames {
-  of(field: Field): string
+  of(field: Field): string | undefined
 }
 
 /** @private */
@@ -29,7 +29,6 @@ export function useDisplayNames(): DisplayNames {
     // Try to use Intl.DisplayNames if possible. It may be supported in browsers, but not support the dateTimeField
     // type as that was only added in v2. https://github.com/tc39/intl-displaynames-v2
     try {
-      // @ts-ignore
       return new Intl.DisplayNames(locale, {type: 'dateTimeField'});
     } catch {
       return new DisplayNamesPolyfill(locale, dictionary);

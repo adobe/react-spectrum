@@ -12,9 +12,9 @@
 
 import {
   Button,
-  UNSTABLE_Disclosure as Disclosure,
-  UNSTABLE_DisclosureGroup as DisclosureGroup,
-  UNSTABLE_DisclosurePanel as DisclosurePanel,
+  Disclosure,
+  DisclosureGroup,
+  DisclosurePanel,
   Heading,
   Menu,
   MenuItem,
@@ -295,6 +295,37 @@ describe('Disclosure', () => {
 
     await user.click(trigger2);
     expect(panel2).not.toBeVisible();
+  });
+
+  it('should not expand or collapse on repeat keydown events', async () => {
+    let onExpandedChange = jest.fn();
+    const {getByRole, queryByText} = render(
+      <Disclosure onExpandedChange={onExpandedChange}>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+
+    const panel = queryByText('Content');
+    const button = getByRole('button');
+
+    await user.tab();
+
+    expect(panel).not.toBeVisible();
+    expect(button).toHaveFocus();
+
+    // press Enter for 4 keydown events, then release it
+    await user.keyboard('{Enter>4/}');
+    expect(panel).toBeVisible();
+    expect(onExpandedChange).toHaveBeenCalledTimes(1);
+
+    await user.keyboard('{Enter>4/}');
+    expect(panel).not.toBeVisible();
+    expect(onExpandedChange).toHaveBeenCalledTimes(2);
   });
 });
 

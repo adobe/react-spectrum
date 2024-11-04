@@ -3,7 +3,7 @@ import rulesdir from "eslint-plugin-rulesdir";
 import jsxA11Y from "eslint-plugin-jsx-a11y";
 import reactHooks from "eslint-plugin-react-hooks";
 import jest from "eslint-plugin-jest";
-import monorepo from "eslint-plugin-monorepo";
+import monorepo from "@jdb8/eslint-plugin-monorepo";
 import * as rspRules from "eslint-plugin-rsp-rules";
 import { fixupPluginRules } from "@eslint/compat";
 import globals from "globals";
