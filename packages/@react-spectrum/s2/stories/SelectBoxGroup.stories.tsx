@@ -19,7 +19,7 @@ import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {SelectBox} from '../src/SelectBox';
-import {SelectBoxGroup} from '../src/SelectBoxGroup'
+import {SelectBoxGroup} from '../src/SelectBoxGroup';
 import {Text} from '../src';
 
 const meta: Meta<typeof SelectBoxGroup> = {
