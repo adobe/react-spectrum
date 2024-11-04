@@ -117,12 +117,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
           onSelectionChange={setValue}
           style={props.UNSAFE_style}
           className={renderProps => (props.UNSAFE_className || '') + tabs({...renderProps}, props.styles)}>
-          <Provider
-            values={[
-              [TabsContext, {density, isDisabled, disabledKeys, orientation}]
-            ]}>
-            {props.children}
-          </Provider>
+          {props.children}
         </RACTabs>
       </CollapsingCollection>
     </Provider>
