@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+let refCountMap = new WeakMap<Element, number>();
 let observerStack = [];
 
 function isInShadowDOM(node) {
@@ -32,40 +33,62 @@ function findShadowRoots(targets) {
 export function ariaHideOutside(targets: Element[], root = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
-  let refCountMap = new WeakMap<Element, number>();
   const shadowRoots = findShadowRoots(targets);
 
   if (shadowRoots.length > 0) {
-    // First, identify which shadow root we're dealing with
-    const targetShadowRoot = targets[0].getRootNode() as ShadowRoot;
+    const targetsByShadowRoot = new Map<ShadowRoot, Element[]>();
 
     targets.forEach(target => {
-      // Add the target itself
-      visibleNodes.add(target);
-
-      // Add its parent container within shadow root
-      if (target.parentElement) {
-        visibleNodes.add(target.parentElement);
+      const root = target.getRootNode();
+      if (root instanceof ShadowRoot) {
+        if (!targetsByShadowRoot.has(root)) {
+          targetsByShadowRoot.set(root, []);
+        }
+        targetsByShadowRoot.get(root).push(target);
+      } else {
+        // For non-shadow DOM targets, add all ancestors up to document.body
+        let current = target;
+        while (current && current !== document.body) {
+          visibleNodes.add(current);
+          current = current.parentElement;
+        }
       }
+    });
 
-      // Walk up until we hit the shadow root's immediate child
-      let current = target;
-      while (current && current.parentElement && current.parentElement !== targetShadowRoot.host) {
-        visibleNodes.add(current.parentElement);
-        current = current.parentElement;
-      }
+    // Handle targets in each shadow root
+    targetsByShadowRoot.forEach((groupedTargets, shadowRoot) => {
+      groupedTargets.forEach(target => {
+        // Add the target itself
+        visibleNodes.add(target);
+
+        // Add its parent container within shadow root
+        if (target.parentElement) {
+          visibleNodes.add(target.parentElement);
+        }
+
+        // Walk up until we hit the shadow root's immediate child
+        let current = target;
+        while (current && current.parentElement && current.parentElement !== shadowRoot.host) {
+          visibleNodes.add(current.parentElement);
+          current = current.parentElement;
+        }
+      });
 
       // Add the shadow host and its ancestors up to document.body
-      let host = targetShadowRoot.host;
+      let host = shadowRoot.host;
       while (host && host !== document.body) {
         visibleNodes.add(host);
-        host = host.parentElement;
+        if (host.getRootNode() instanceof ShadowRoot) {
+          host = (host.getRootNode() as ShadowRoot).host;
+        } else {
+          host = host.parentElement;
+        }
       }
-      visibleNodes.add(document.body);
     });
-  }
 
-  console.log(visibleNodes);
+    // Always add document.body
+    visibleNodes.add(document.body);
+  }
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.

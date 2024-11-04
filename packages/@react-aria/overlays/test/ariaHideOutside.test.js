@@ -650,5 +650,54 @@ describe('ariaHideOutside', function () {
       expect(shadowHostC3.getAttribute('aria-hidden')).toBe('true');
       expect(shadowRootC4.querySelector('#C5').getAttribute('aria-hidden')).toBe('true');
     });
+
+    it('should handle input and popup pattern in shadow DOM', () => {
+      // Set up the initial DOM with shadow hosts and content
+      document.body.innerHTML = `
+    <div id="P1">
+      <div id="C1"></div>
+      <div id="C2"></div>
+    </div>
+    <div id="P2">
+      <div id="C3"></div>
+      <div id="C4"></div>
+    </div>
+  `;
+
+      // Create a shadow root that will contain both our input and overlay
+      const shadowHostC4 = document.querySelector('#C4');
+      const shadowRootC4 = shadowHostC4.attachShadow({mode: 'open'});
+      shadowRootC4.innerHTML = `
+    <div class="content-container-2"></div>
+    <div class="content-container">
+      <input type="text" id="input" />
+    </div>
+    <div class="overlay-portal">
+      <div id="popup">Popup</div>
+    </div>
+  `;
+
+      // Get our target elements (input and popup) that should remain visible
+      const inputElement = shadowRootC4.querySelector('#input');
+      const popupElement = shadowRootC4.querySelector('#popup');
+
+      // Call ariaHideOutside with both the input and popup as targets
+      ariaHideOutside([inputElement, popupElement]);
+
+      // Input and popup should remain visible
+      expect(inputElement.getAttribute('aria-hidden')).toBeNull();
+      expect(popupElement.getAttribute('aria-hidden')).toBeNull();
+
+      // Their direct containers should remain visible
+      expect(shadowRootC4.querySelector('.content-container').getAttribute('aria-hidden')).toBeNull();
+      expect(shadowRootC4.querySelector('.overlay-portal').getAttribute('aria-hidden')).toBeNull();
+
+      // The unrelated container should be hidden
+      expect(shadowRootC4.querySelector('.content-container-2').getAttribute('aria-hidden')).toBe('true');
+
+      // Shadow host and its parent should be visible since they contain our targets
+      expect(shadowHostC4.getAttribute('aria-hidden')).toBeNull();
+      expect(document.getElementById('P2').getAttribute('aria-hidden')).toBeNull();
+    });
   });
 });
