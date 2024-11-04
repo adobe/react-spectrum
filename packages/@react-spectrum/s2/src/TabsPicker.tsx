@@ -16,7 +16,6 @@ import {
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   Button,
-  ButtonRenderProps,
   ContextValue,
   DEFAULT_SLOT,
   ListBox,
