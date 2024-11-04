@@ -471,7 +471,6 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
             }
           }})({density})}>
         <Picker
-          isQuiet
           isDisabled={isDisabled || allKeysDisabled}
           density={density!}
           items={items}

@@ -28,7 +28,6 @@ import {
   SectionProps,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -44,6 +43,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
@@ -71,12 +71,7 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /**
-   * Whether the picker should be displayed with a quiet style.
-   * @private
-   */
-  isQuiet?: boolean
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export interface PickerProps<T extends object> extends
@@ -112,7 +107,7 @@ interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {
 
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
 
-const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
+const inputButton = style({
   ...focusRing(),
   ...fieldInput(),
   outlineStyle: {
@@ -127,20 +122,9 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   borderRadius: 'sm',
   alignItems: 'center',
   transition: 'default',
-  columnGap: {
-    default: 'text-to-control',
-    isQuiet: 'text-to-visual'
-  },
-  paddingX: {
-    default: 'edge-to-text',
-    isQuiet: 0
-  },
-  backgroundColor: {
-    default: baseColor('gray-100'),
-    isOpen: 'gray-200',
-    isDisabled: 'disabled',
-    isQuiet: 'transparent'
-  },
+  columnGap: 'text-to-visual',
+  paddingX: 0,
+  backgroundColor: 'transparent',
   color: {
     default: 'neutral',
     isDisabled: 'disabled'
@@ -177,25 +161,8 @@ export let menu = style({
   fontSize: 'control'
 });
 
-const invalidBorder = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  bottom: 0,
-  right: 0,
-  pointerEvents: 'none',
-  borderRadius: 'control',
-  borderStyle: 'solid',
-  borderWidth: 2,
-  borderColor: 'negative',
-  transition: 'default'
-});
-
 const valueStyles = style({
-  flexGrow: {
-    default: 1,
-    isQuiet: 0
-  },
+  flexGrow: 0,
   truncate: true,
   display: 'flex',
   alignItems: 'center',
@@ -223,15 +190,14 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     direction = 'bottom',
     align = 'start',
     shouldFlip = true,
-    menuWidth,
     children,
     items,
     size = 'M',
     placeholder = stringFormatter.format('picker.placeholder'),
-    isQuiet,
     density,
     ...pickerProps
   } = props;
+  let isQuiet = true;
 
   // Better way to encode this into a style? need to account for flipping
   let menuOffset: number;
@@ -249,7 +215,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     <AriaSelect
       {...pickerProps}
       placeholder={placeholder}>
-      {({isDisabled, isOpen, isInvalid}) => (
+      {({isOpen}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel isQuiet={isQuiet} />
@@ -266,69 +232,50 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 isQuiet,
                 density
               })}>
-              {(renderProps) => (
-                <>
-                  <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-                    {({defaultChildren}) => {
-                      return (
-                        <Provider
-                          values={[
-                            [IconContext, {
-                              slots: {
-                                icon: {
-                                  render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                                  styles: icon
-                                }
-                              }
-                            }],
-                            [TextContext, {
-                              slots: {
-                                // Default slot is useful when converting other collections to PickerItems.
-                                [DEFAULT_SLOT]: {styles: style({
-                                  display: 'block',
-                                  flexGrow: 1,
-                                  truncate: true
-                                })}
-                              }
-                            }],
-                            [InsideSelectValueContext, true]
-                          ]}>
-                          {defaultChildren}
-                        </Provider>
-                      );
-                    }}
-                  </SelectValue>
-                  <ChevronIcon
-                    size={size}
-                    className={iconStyles} />
-                  {isInvalid && !isDisabled && !isQuiet &&
-                    // @ts-ignore known limitation detecting functions from the theme
-                    <div className={invalidBorder({...renderProps, size})} />
-                  }
-                </>
-              )}
+              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                {({defaultChildren}) => {
+                  return (
+                    <Provider
+                      values={[
+                        [IconContext, {
+                          slots: {
+                            icon: {
+                              render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                              styles: icon
+                            }
+                          }
+                        }],
+                        [TextContext, {
+                          slots: {
+                            // Default slot is useful when converting other collections to PickerItems.
+                            [DEFAULT_SLOT]: {styles: style({
+                              display: 'block',
+                              flexGrow: 1,
+                              truncate: true
+                            })}
+                          }
+                        }],
+                        [InsideSelectValueContext, true]
+                      ]}>
+                      {defaultChildren}
+                    </Provider>
+                  );
+                }}
+              </SelectValue>
+              <ChevronIcon
+                size={size}
+                className={iconStyles} />
             </Button>
             <Popover
               hideArrow
               offset={menuOffset}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
-              UNSAFE_style={{
-                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
-              }}
               styles={style({
-                marginStart: {
-                  isQuiet: -12
-                },
-                minWidth: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: 192
-                },
-                width: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
-                }
-              })(props)}>
+                marginStart: -12,
+                minWidth: 192,
+                width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+              })}>
               <Provider
                 values={[
                   [HeaderContext, {styles: sectionHeader({size})}],
