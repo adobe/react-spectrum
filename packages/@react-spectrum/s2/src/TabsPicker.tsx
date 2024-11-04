@@ -15,7 +15,6 @@ import {
   Section as AriaSection,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
-  SelectRenderProps as AriaSelectRenderProps,
   Button,
   ButtonRenderProps,
   ContextValue,
@@ -99,10 +98,6 @@ export interface PickerProps<T extends object> extends
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     density: 'compact' | 'regular'
-}
-
-interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {
-  density: 'compact' | 'regular'
 }
 
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
