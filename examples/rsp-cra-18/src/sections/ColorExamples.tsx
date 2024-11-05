@@ -1,5 +1,4 @@
-import {Flex, Divider} from '@adobe/react-spectrum';
-import {ColorArea, ColorField, ColorSlider, ColorWheel} from '@react-spectrum/color'
+import {ColorArea, ColorField, ColorSlider, ColorWheel, Flex, Divider} from '@adobe/react-spectrum';
 
 export default function ColorExamples() {
   return (

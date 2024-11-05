@@ -48,14 +48,20 @@ governing permissions and limitations under the License.
   list-style: none;
   margin: 0;
 
-  border-bottom: var(--spectrum-accordion-item-border-size) solid transparent;
+  border-bottom: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
+  border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
 
-  &:first-of-type {
-    border-top: var(--spectrum-accordion-item-border-size) solid transparent;
+  &.in-accordion:not(:first-of-type) {
+    border-top-width: 0;
   }
 
-  &.spectrum-Accordion-item--quiet, &.spectrum-Accordion-item--quiet:first-of-type {
-    border-color: transparent;
+  &.spectrum-Accordion-item--quiet {
+    border-bottom-width: 0;
+    border-top-width: 0;
+
+    &:first-of-type {
+      border-top-width: 0;
+    }
   }
 }
 
@@ -97,17 +103,18 @@ governing permissions and limitations under the License.
   width: 100%;
   border-style: solid;
   border-color: transparent;
-  border-radius: var(--spectrum-global-dimension-static-size-100);
 
   &.focus-ring {
+    border-radius: var(--spectrum-global-dimension-static-size-100);
     outline: solid 2px var(--spectrum-accordion-item-focus-ring-color);
     outline-offset: -4px;
   }
 }
 
-.spectrum-Accordion-itemContent {
-  padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
-  display: none;
+.spectrum-Accordion-item.is-expanded {
+  .spectrum-Accordion-itemContent {
+    padding: 8px 9px 16px 9px;
+  }
 }
 
 .spectrum-Accordion-item {

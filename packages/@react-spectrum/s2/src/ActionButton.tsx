@@ -11,7 +11,7 @@
  */
 
 import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, Text} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
@@ -19,7 +19,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macr
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
-import {TextContext} from './Content';
+import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
