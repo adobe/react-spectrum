@@ -259,6 +259,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     }
   }, [register, state, menuId, ref]);
 
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Update the focused key to be the first item in the menu only if the input value changes (aka match spotlight/other implementations).
   let focusFirstItem = useEffectEvent(() => {
     // TODO: the below is pretty much what the listkeyboard delegate would do when finding the first key
@@ -273,8 +274,13 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         }
         key = state.collection.getKeyAfter(key);
       }
+
+      clearTimeout(timeout.current);
       state.selectionManager.setFocusedKey(key);
-      setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
+      timeout.current = setTimeout(() => {
+        setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
+        console.log('set focused id')
+      }, 500);
     }
   });
 
@@ -288,7 +294,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   useEffect(() => {
     // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
     if (inputValue != null) {
-      if (lastInputValue != null && lastInputValue.current !== inputValue && lastInputValue.current?.length <= inputValue.length) {
+      if (lastInputValue.current != null && lastInputValue.current !== inputValue && lastInputValue.current?.length <= inputValue.length) {
         focusFirstItem();
       } else {
         clearVirtualFocus();
