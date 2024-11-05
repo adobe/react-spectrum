@@ -69,6 +69,7 @@ export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Tooltip, TooltipTrigger} from './Tooltip';
+export {TreeView, TreeViewItem} from './TreeView';
 
 export {pressScale} from './pressScale';
 
@@ -130,4 +131,5 @@ export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
 export type {ToggleButtonProps} from './ToggleButton';
 export type {TooltipProps} from './Tooltip';
+export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps} from './TreeView';
 export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';
