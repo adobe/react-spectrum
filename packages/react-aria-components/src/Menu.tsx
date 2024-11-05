@@ -279,7 +279,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       state.selectionManager.setFocusedKey(key);
       timeout.current = setTimeout(() => {
         setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
-        console.log('set focused id')
       }, 500);
     }
   });
