@@ -288,7 +288,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   useEffect(() => {
     // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
     if (inputValue != null) {
-      if (lastInputValue.current == null || lastInputValue.current?.length <= inputValue.length) {
+      if (lastInputValue != null && lastInputValue.current !== inputValue && lastInputValue.current?.length <= inputValue.length) {
         focusFirstItem();
       } else {
         clearVirtualFocus();
