@@ -13,7 +13,6 @@
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryFn} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style' with { type: 'macro' };
 import {Text, ToggleButton} from '../src';
 
 const meta: Meta<typeof ToggleButton> = {
@@ -33,7 +32,7 @@ export default meta;
 
 export const Example: StoryFn<typeof ToggleButton> = (args) => {
   return (
-    <div className={style({display: 'flex', gap: 8, padding: 8, justifyContent: 'center', resize: 'horizontal', overflow: 'auto'})}>
+    <div style={{display: 'flex', gap: 8}}>
       <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
       <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>

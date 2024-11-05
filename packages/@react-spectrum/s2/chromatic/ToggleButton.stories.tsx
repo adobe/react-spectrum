@@ -38,3 +38,13 @@ export const Example: StoryFn<typeof ToggleButton> = (args) => {
     </div>
   );
 };
+
+export const Truncate: StoryFn<typeof ToggleButton> = (args) => {
+  return (
+    <div style={{display: 'flex', gap: 8, width: 160}}>
+      <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
+      <ToggleButton {...args}>Press me</ToggleButton>
+      <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
+    </div>
+  );
+};
