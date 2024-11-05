@@ -54,7 +54,7 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
