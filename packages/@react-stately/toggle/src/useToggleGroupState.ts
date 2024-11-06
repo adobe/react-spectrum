@@ -36,16 +36,16 @@ export interface ToggleGroupState {
   /** Whether all items are disabled. */
   readonly isDisabled: boolean,
   
-  /** A set of keys for items that are expanded. */
+  /** A set of keys for items that are selected. */
   readonly selectedKeys: Set<Key>,
 
-  /** Toggles the expanded state for an item by its key. */
+  /** Toggles the selected state for an item by its key. */
   toggleKey(key: Key): void,
 
   /** Sets whether the given key is selected. */
   setSelected(key: Key, isSelected: boolean): void,
 
-  /** Replaces the set of expanded keys. */
+  /** Replaces the set of selected keys. */
   setSelectedKeys(keys: Set<Key>): void
 }
 
