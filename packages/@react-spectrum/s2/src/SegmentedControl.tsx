@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, Radio, RadioGroup, RadioGroupStateContext, SlotProps} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleGroupStateContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -32,12 +32,14 @@ export interface SegmentedControlProps extends AriaLabelingProps, StyleProps, Sl
    * Whether the segmented control is disabled.
    */
   isDisabled?: boolean,
+  /** Whether the items should divide the container width equally. */
+  isJustified?: boolean,
   /** The id of the currently selected item (controlled). */
-  selectedKey?: string | null,
+  selectedKey?: Key | null,
   /** The id of the initial selected item (uncontrolled). */
-  defaultSelectedKey?: string,
+  defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (id: string) => void
+  onSelectionChange?: (id: Key) => void
 }
 export interface SegmentedControlItemProps extends AriaLabelingProps, StyleProps {
   /**
@@ -45,25 +47,27 @@ export interface SegmentedControlItemProps extends AriaLabelingProps, StyleProps
    */
   children: ReactNode,
   /** The id of the item, matching the value used in SegmentedControl's `selectedKey` prop. */
-  id: string,
+  id: Key,
   /** Whether the item is disabled or not. */
   isDisabled?: boolean
 }
 
 export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const segmentedControl = style<{size: string}>({
-  font: 'control',
+const segmentedControl = style({
   display: 'flex',
+  gap: 4,
   backgroundColor: 'gray-100',
-  borderRadius: 'lg',
-  width: 'full'
+  borderRadius: 'default',
+  width: 'fit'
 }, getAllowedOverrides());
 
 const controlItem = style({
+  ...focusRing(),
   position: 'relative',
   display: 'flex',
   forcedColorAdjust: 'none',
+  font: 'control',
   color: {
     default: 'gray-700',
     isHovered: 'neutral-subdued',
@@ -78,17 +82,25 @@ const controlItem = style({
   // TODO: update this padding for icon-only items when we introduce the non-track style back
   paddingX: {
     default: 'edge-to-text',
-    ':has([slot=icon]:only-child)': size(6)
+    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': size(6)
   },
   height: 32,
   alignItems: 'center',
-  flexBasis: 0,
-  flexGrow: 1,
+  flexGrow: {
+    isJustified: 1
+  },
+  flexBasis: {
+    isJustified: 0
+  },
   flexShrink: 0,
   minWidth: 0,
   justifyContent: 'center',
   whiteSpace: 'nowrap',
   disableTapHighlight: true,
+  userSelect: 'none',
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  borderRadius: 'default',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -96,7 +108,6 @@ const controlItem = style({
 }, getAllowedOverrides());
 
 const slider = style({
-  ...focusRing(),
   backgroundColor: {
     default: 'gray-25',
     forcedColors: {
@@ -123,17 +134,19 @@ const slider = style({
 });
 
 interface InternalSegmentedControlContextProps {
-  register?: (value: string, isDisabled?: boolean) => void,
+  register?: (value: Key, isDisabled?: boolean) => void,
   prevRef?: RefObject<DOMRect | null>,
-  currentSelectedRef?: RefObject<HTMLDivElement | null>
+  currentSelectedRef?: RefObject<HTMLDivElement | null>,
+  isJustified?: boolean
 }
 
 interface DefaultSelectionTrackProps {
-  defaultValue?: string | null,
-  value?: string | null,
+  defaultValue?: Key | null,
+  value?: Key | null,
   children?: ReactNode,
   prevRef: RefObject<DOMRect | null>,
-  currentSelectedRef: RefObject<HTMLDivElement | null>
+  currentSelectedRef: RefObject<HTMLDivElement | null>,
+  isJustified?: boolean
 }
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
@@ -150,63 +163,63 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
   let prevRef = useRef<DOMRect>(null);
   let currentSelectedRef = useRef<HTMLDivElement>(null);
 
-  let onChange = (value: string) => {
+  let onChange = (values: Set<Key>) => {
     if (currentSelectedRef.current) {
       prevRef.current = currentSelectedRef?.current.getBoundingClientRect();
     }
     
     if (onSelectionChange) {
-      onSelectionChange(value);
+      onSelectionChange(values.values().next().value);
     }
   };
 
   return (
-    <RadioGroup 
+    <ToggleButtonGroup 
       {...props}
-      value={selectedKey}
-      defaultValue={defaultSelectedKey}
+      selectedKeys={selectedKey != null ? [selectedKey] : undefined}
+      defaultSelectedKeys={defaultSelectedKey != null ? [defaultSelectedKey] : undefined}
+      disallowEmptySelection
       ref={domRef}
       orientation="horizontal"
       style={props.UNSAFE_style}
-      onChange={onChange}
-      className={(props.UNSAFE_className || '') + segmentedControl({size: 'M'}, props.styles)}
+      onSelectionChange={onChange}
+      className={(props.UNSAFE_className || '') + segmentedControl(null, props.styles)}
       aria-label={props['aria-label']}>
-      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef}>
+      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef} isJustified={props.isJustified}>
         {props.children}
       </DefaultSelectionTracker>
-    </RadioGroup>
+    </ToggleButtonGroup>
   );
 }
 
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
-  let state = useContext(RadioGroupStateContext);
+  let state = useContext(ToggleGroupStateContext);
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
 
   // default select the first available item
-  let register = useCallback((value: string) => {
+  let register = useCallback((value: Key) => {
     if (state && !isRegistered.current) {
       isRegistered.current = true;
-      state.setSelectedValue(value);
+      state.toggleKey(value);
     }
   }, []);
 
   return (
     <Provider
       values={[
-        [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef}]
+        [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef, isJustified: props.isJustified}]
       ]}> 
       {props.children}
     </Provider>
   );
 }
 
-function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLLabelElement>) {
-  let inputRef = useRef<HTMLInputElement>(null);
-  let domRef = useFocusableRef(ref, inputRef);
+function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
   let divRef = useRef<HTMLDivElement>(null);
-  let {register, prevRef, currentSelectedRef} = useContext(InternalSegmentedControlContext);
-  let state = useContext(RadioGroupStateContext);
-  let isSelected = props.id === state?.selectedValue;
+  let {register, prevRef, currentSelectedRef, isJustified} = useContext(InternalSegmentedControlContext);
+  let state = useContext(ToggleGroupStateContext);
+  let isSelected = state?.selectedKeys.has(props.id);
   // do not apply animation if a user has the prefers-reduced-motion setting
   let isReduced = false;
   if (window?.matchMedia) {
@@ -239,16 +252,14 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
   }, [isSelected]);
 
   return (
-    <Radio 
+    <ToggleButton 
       {...props}
-      value={props.id}
       ref={domRef} 
-      inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps}, props.styles)} >
-      {({isSelected, isFocusVisible, isPressed, isDisabled}) => (
+      className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isJustified}, props.styles)} >
+      {({isSelected, isPressed, isDisabled}) => (
         <>
-          {isSelected && <div className={slider({isFocusVisible, isDisabled})} ref={currentSelectedRef} />}
+          {isSelected && <div className={slider({isDisabled})} ref={currentSelectedRef} />}
           <Provider 
             values={[
               [IconContext, {
@@ -264,7 +275,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
         </>
       )
       }
-    </Radio>
+    </ToggleButton>
   );
 }
 

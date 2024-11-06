@@ -12,7 +12,7 @@
 
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
+import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
@@ -21,6 +21,7 @@ import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';
+import {ToggleButtonGroupContext} from './ToggleButtonGroup';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -38,18 +39,33 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
+  let {
+    density = 'regular',
+    isJustified,
+    orientation = 'horizontal',
+    staticColor = props.staticColor,
+    isQuiet = props.isQuiet,
+    isEmphasized = props.isEmphasized,
+    size = props.size || 'M',
+    isDisabled = props.isDisabled
+  } = useSlottedContext(ToggleButtonGroupContext) || {};
+
   return (
     <RACToggleButton
       {...props}
+      isDisabled={isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
-        staticColor: props.staticColor,
-        size: props.size,
-        isQuiet: props.isQuiet,
-        isEmphasized: props.isEmphasized,
-        isPending: false
+        staticColor,
+        size,
+        isQuiet,
+        isEmphasized,
+        isPending: false,
+        density,
+        isJustified,
+        orientation
       }, props.styles)}>
       <Provider
         values={[
