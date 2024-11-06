@@ -5713,6 +5713,7 @@ __metadata:
   dependencies:
     "@react-aria/focus": "npm:^3.18.4"
     "@react-aria/interactions": "npm:^3.22.4"
+    "@react-aria/toolbar": "npm:3.0.0-beta.10"
     "@react-aria/utils": "npm:^3.25.3"
     "@react-stately/toggle": "npm:^3.7.8"
     "@react-types/button": "npm:^3.10.0"
@@ -8539,6 +8540,7 @@ __metadata:
   dependencies:
     "@react-stately/utils": "npm:^3.10.4"
     "@react-types/checkbox": "npm:^3.8.4"
+    "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
