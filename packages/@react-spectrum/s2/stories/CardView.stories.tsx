@@ -11,7 +11,7 @@
  */
 
 import {ActionMenu, Avatar, Card, CardPreview, CardView, CardViewProps, Collection, CollectionCardPreview, Content, Heading, IllustratedMessage, Image, MenuItem, SkeletonCollection, Text} from '../src';
-import EmptyIcon from 'illustration:../spectrum-illustrations/gradient/S2_fill_image_generic1_160.svg';
+import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import type {Meta} from '@storybook/react';
