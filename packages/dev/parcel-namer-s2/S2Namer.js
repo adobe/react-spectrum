@@ -33,7 +33,7 @@ module.exports = new Namer({
         return 'linear/' + name + ext;
       }
       return name
-        .replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1')
+        .replace(/^S2_Icon_(.*?)(Size\d+)?_\d+(?:x\d+)?_N$/, '$1')
         .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
           name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
           return 'gradient/' + style + '/' + name;
