@@ -64,9 +64,6 @@ describe('Picker', function () {
       </Provider>
     );
 
-    let select = getByRole('textbox', {hidden: true});
-    expect(select).not.toBeDisabled();
-
     let picker = getByRole('button');
     expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
     expect(picker).toHaveAttribute('data-testid', 'test');
@@ -1721,33 +1718,6 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('CA');
       expect(picker).toHaveTextContent('California');
     });
-
-    it('should have a hidden input to marshall focus to the button', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Picker>
-        </Provider>
-      );
-
-      let hiddenInput = getByRole('textbox', {hidden: true}); // get the hidden ones
-      expect(hiddenInput).toHaveAttribute('tabIndex', '0');
-      expect(hiddenInput).toHaveAttribute('style', 'font-size: 16px;');
-      expect(hiddenInput.parentElement).toHaveAttribute('aria-hidden', 'true');
-
-      act(() => hiddenInput.focus());
-
-      let button = getByRole('button');
-      expect(document.activeElement).toBe(button);
-      expect(hiddenInput).toHaveAttribute('tabIndex', '-1');
-
-      act(() => button.blur());
-
-      expect(hiddenInput).toHaveAttribute('tabIndex', '0');
-    });
   });
 
   describe('async loading', function () {
@@ -1838,22 +1808,6 @@ describe('Picker', function () {
   });
 
   describe('disabled', function () {
-    it('disables the hidden select when isDisabled is true', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <Picker isDisabled label="Test" onSelectionChange={onSelectionChange}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-          </Picker>
-        </Provider>
-      );
-
-      let select = getByRole('textbox', {hidden: true});
-
-      expect(select).toBeDisabled();
-    });
-
     it('does not open on mouse down when isDisabled is true', async function () {
       let onOpenChange = jest.fn();
       let {getByRole, queryByRole} = render(

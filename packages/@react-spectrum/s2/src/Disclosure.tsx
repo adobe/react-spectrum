@@ -116,7 +116,10 @@ interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
 
 const headingStyle = style({
   margin: 0,
-  flexGrow: 1
+  flexGrow: 1,
+  display: 'flex',
+  flexShrink: 1,
+  minWidth: 0
 });
 
 const buttonStyles = style({
@@ -138,6 +141,7 @@ const buttonStyles = style({
   },
   lineHeight: 'ui',
   display: 'flex',
+  flexGrow: 1,
   alignItems: 'baseline',
   paddingX: '[calc(self(minHeight) * 3/8 - 1px)]',
   paddingY: centerPadding(),

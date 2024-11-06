@@ -48,17 +48,20 @@ governing permissions and limitations under the License.
   list-style: none;
   margin: 0;
 
-  border-bottom: var(--spectrum-accordion-item-border-size) solid transparent;
+  border-bottom: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
+  border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
 
-  border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-alias-border-color);
-
-  &.in-accordion, &:first-of-type {
-    border-top: var(--spectrum-accordion-item-border-size) solid transparent;
+  &.in-accordion:not(:first-of-type) {
+    border-top-width: 0;
   }
 
-  &.spectrum-Accordion-item--quiet, &.spectrum-Accordion-item--quiet:first-of-type {
-    border-radius: var(--spectrum-global-dimension-static-size-100);
-    border-color: transparent;
+  &.spectrum-Accordion-item--quiet {
+    border-bottom-width: 0;
+    border-top-width: 0;
+
+    &:first-of-type {
+      border-top-width: 0;
+    }
   }
 }
 
@@ -110,7 +113,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Accordion-item.is-expanded {
   .spectrum-Accordion-itemContent {
-    padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
+    padding: 8px 9px 16px 9px;
   }
 }
 
