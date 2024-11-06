@@ -54,6 +54,38 @@ Then, queue a toast from anywhere:
 </Button>
 ```
 
+## Test
+
+```tsx example
+import {ActionButton, Button, ButtonGroup, Content, Dialog, DialogTrigger, Divider, Header, Heading, Text} from '@adobe/react-spectrum';
+
+import {ActionButton, Button, ButtonGroup, Content, Dialog, DialogTrigger, Divider, Header, Heading, Text} from '@adobe/react-spectrum';
+
+<DialogTrigger>
+  <ActionButton>Check connectivity</ActionButton>
+  {(close) => (
+    <Dialog height="600px">
+      <Heading>Internet Speed Test</Heading>
+      <Header>Connection status: Connected</Header>
+      <Divider />
+      <Content>
+        <Text>
+          Start speed test?
+        </Text>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button
+          onPress={() => ToastQueue.positive('Toast is done!')}
+          variant="primary">
+          Show toast
+        </Button>      
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
 ## Content
 
 Toasts are triggered using one of the methods of <TypeLink links={docs.links} type={docs.exports.ToastQueue} />. A &lt;<TypeLink links={docs.links} type={docs.exports.ToastContainer} />&gt; element must be rendered at the root of your app in order to display the queued toasts.
