@@ -274,5 +274,18 @@
   },
   "alias": {
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
+  },
+  "@parcel/bundler-default": {
+    "manualSharedBundles": [
+      {
+        "name": "s2-styles",
+        "assets": [
+          "packages/@react-spectrum/s2/**"
+        ],
+        "types": [
+          "css"
+        ]
+      }
+    ]
   }
 }
