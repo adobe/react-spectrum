@@ -107,7 +107,7 @@ governing permissions and limitations under the License.
   &.focus-ring {
     border-radius: var(--spectrum-global-dimension-static-size-100);
     outline: solid 2px var(--spectrum-accordion-item-focus-ring-color);
-    outline-offset: -4px;
+    outline-offset: -2px;
   }
 }
 
