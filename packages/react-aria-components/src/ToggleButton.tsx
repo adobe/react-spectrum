@@ -58,7 +58,7 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
-    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled: props.isDisabled || false, state},
+    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled, state},
     defaultClassName: 'react-aria-ToggleButton'
   });
 
